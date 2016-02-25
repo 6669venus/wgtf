@@ -28,7 +28,7 @@ bool Converters::toScriptType( const Variant & inVariant,
 
 bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant,
-	const ReflectedPython::DefinedInstance & parent,
+	const PyScript::ScriptObject & parentObject,
 	const std::string & childPath ) const
 {
 	const bool success = basicTypeConverters_.toVariant( inObject, outVariant );
@@ -38,20 +38,8 @@ bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 	}
 	return defaultConverter_.toVariant( inObject,
 		outVariant,
-		parent,
+		parentObject,
 		childPath );
-}
-
-
-bool Converters::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) const
-{
-	const bool success = basicTypeConverters_.toVariant( inObject, outVariant );
-	if (success)
-	{
-		return true;
-	}
-	return defaultConverter_.toVariant( inObject, outVariant );
 }
 
 

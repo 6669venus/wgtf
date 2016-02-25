@@ -107,12 +107,10 @@ class PropertyIterator : public PropertyIteratorImplBase
 public:	
 	PropertyIterator( IComponentContext & context,
 		const PyScript::ScriptObject& pythonObject,
-		const PyScript::ScriptDict & metaDataDict,
-		const ReflectedPython::DefinedInstance & parent )
+		const PyScript::ScriptDict & metaDataDict )
 		: context_( context )
 		, object_( pythonObject )
 		, metaDataDict_( metaDataDict )
-		, parent_( parent )
 	{
 		if (object_.get() == nullptr)
 		{
@@ -155,7 +153,7 @@ public:
 
 			auto meta = extractMetaData( name, metaDataDict_ );
 			IBasePropertyPtr property = std::make_shared< ReflectedPython::Property >(
-				context_, name, object_, parent_ );
+				context_, name, object_ );
 
 			current_ = meta != nullptr ?
 				std::make_shared< BasePropertyWithMetaData >( property, meta ) : property;
@@ -168,7 +166,6 @@ public:
 private:
 	IComponentContext &		context_;
 	PyScript::ScriptObject	object_;
-	const ReflectedPython::DefinedInstance & parent_;
 	PyScript::ScriptDict	metaDataDict_;
 	PyScript::ScriptIter	iterator_;
 	IBasePropertyPtr		current_;
@@ -183,7 +180,6 @@ DefinitionDetails::DefinitionDetails( IComponentContext & context,
 	, pythonObject_( pythonObject )
 	, metaData_( MetaNone() )
 	, hookLookup_( hookLookup )
-	, pInstance_( nullptr )
 {
 	assert( !name_.empty() );
 
@@ -245,9 +241,14 @@ ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition
 	{
 		return nullptr;
 	}
+
+	PyScript::ScriptObject parent;
+	const char * childPath = "";
 	return DefinedInstance::findOrCreate( context_,
 		PyScript::ScriptObject( newPyObject,
-			PyScript::ScriptObject::FROM_NEW_REFERENCE ) );
+			PyScript::ScriptObject::FROM_NEW_REFERENCE ),
+		parent,
+		childPath );
 }
 
 
@@ -271,14 +272,12 @@ IBasePropertyPtr DefinitionDetails::directLookupProperty( const char * name ) co
 	{
 		return nullptr;
 	}
-	assert( pInstance_ != nullptr );
 
 	auto meta = extractMetaData( name, metaDataDict_ );
 	IBasePropertyPtr property = std::make_shared< ReflectedPython::Property >(
 		context_,
 		name,
-		pythonObject_,
-		(*pInstance_) );
+		pythonObject_ );
 
 	return meta != nullptr ?
 		std::make_shared< BasePropertyWithMetaData >( property, meta ) : property;
@@ -287,11 +286,9 @@ IBasePropertyPtr DefinitionDetails::directLookupProperty( const char * name ) co
 
 PropertyIteratorImplPtr DefinitionDetails::getPropertyIterator() const
 {
-	assert( pInstance_ != nullptr );
 	return std::make_shared< PropertyIterator >( context_,
 		pythonObject_,
-		metaDataDict_,
-		(*pInstance_) );
+		metaDataDict_ );
 }
 
 
@@ -302,13 +299,11 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 
 IBasePropertyPtr DefinitionDetails::addProperty( const char * name, const TypeId & typeId, MetaHandle metaData )
 {
-	assert( pInstance_ != nullptr );
 	// TODO: update MetaData
 	return std::make_shared< ReflectedPython::Property >( context_,
 		name,
 		typeId,
-		pythonObject_,
-		(*pInstance_) );
+		pythonObject_ );
 }
 
 
@@ -336,13 +331,6 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 	}
 
 	return typeName;
-}
-
-
-void DefinitionDetails::instance( const DefinedInstance & instance ) const
-{
-	assert( pInstance_ == nullptr );
-	pInstance_ = &instance;
 }
 
 

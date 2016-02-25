@@ -1,16 +1,17 @@
 #include "pch.hpp"
 #include "property.hpp"
+
+#include "defined_instance.hpp"
 #include "type_converters/converter_queue.hpp"
 #include "type_converters/i_type_converter.hpp"
 
 #include "core_dependency_system/depends.hpp"
+#include "core_reflection/object_handle.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "type_converters/converters.hpp"
 
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_types/hash_utilities.hpp"
-
-#include "core_python27/defined_instance.hpp"
 
 
 namespace ReflectedPython
@@ -24,14 +25,12 @@ class Property::Implementation
 public:
 	Implementation( IComponentContext & context,
 		const char * key,
-		const PyScript::ScriptObject & pythonObject,
-		const ReflectedPython::DefinedInstance & parent );
+		const PyScript::ScriptObject & pythonObject );
 
 	Implementation( IComponentContext & context,
 		const char * key,
 		const TypeId & typeId,
-		const PyScript::ScriptObject & pythonObject,
-		const ReflectedPython::DefinedInstance & parent );
+		const PyScript::ScriptObject & pythonObject );
 
 	bool setValue( const Variant & value );
 	Variant getValue( const ObjectHandle & handle );
@@ -41,19 +40,16 @@ public:
 	std::string key_;
 	TypeId type_;
 	PyScript::ScriptObject pythonObject_;
-	const ReflectedPython::DefinedInstance & parent_;
 	uint64_t hash_;
 };
 
 
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
-	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance & parent )
+	const PyScript::ScriptObject & pythonObject )
 	: ImplementationDepends( context )
 	, key_( key )
 	, pythonObject_( pythonObject )
-	, parent_( parent )
 	, hash_( HashUtilities::compute( key_ ) )
 {
 	const auto attribute = pythonObject_.getAttribute( key_.c_str(),
@@ -66,13 +62,11 @@ Property::Implementation::Implementation( IComponentContext & context,
 Property::Implementation::Implementation( IComponentContext & context,
 	const char * key,
 	const TypeId & typeId,
-	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance & parent )
+	const PyScript::ScriptObject & pythonObject )
 	: ImplementationDepends( context )
 	, key_( key )
 	, type_( typeId )
 	, pythonObject_( pythonObject )
-	, parent_( parent )
 	, hash_( HashUtilities::compute( key_ ) )
 {
 	// TODO: set a default value of type_ on the attribute
@@ -105,7 +99,8 @@ Variant Property::Implementation::getValue( const ObjectHandle & handle )
 #if defined( _DEBUG )
 	auto pInstance = handle.getBase< DefinedInstance >();
 	assert( pInstance != nullptr );
-	assert( pInstance == &parent_ );
+	assert( pInstance->pythonObject().compareTo( pythonObject_,
+		PyScript::ScriptErrorPrint() ) == 0 );
 #endif // defined( _DEBUG )
 
 	PyScript::ScriptErrorPrint errorHandler;
@@ -119,7 +114,7 @@ Variant Property::Implementation::getValue( const ObjectHandle & handle )
 	assert( pTypeConverters != nullptr );
 
 	Variant value;
-	const bool success = pTypeConverters->toVariant( attribute, value, parent_, key_ );
+	const bool success = pTypeConverters->toVariant( attribute, value, pythonObject_, key_ );
 	assert( success );
 	return value;
 }
@@ -127,10 +122,9 @@ Variant Property::Implementation::getValue( const ObjectHandle & handle )
 
 Property::Property( IComponentContext & context,
 	const char * key,
-	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance & parent )
+	const PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
-	, impl_( new Implementation( context, key, pythonObject, parent ) )
+	, impl_( new Implementation( context, key, pythonObject ) )
 {
 }
 
@@ -138,10 +132,9 @@ Property::Property( IComponentContext & context,
 Property::Property( IComponentContext & context,
 	const char * key,
 	const TypeId & typeId,
-	const PyScript::ScriptObject & pythonObject,
-	const ReflectedPython::DefinedInstance & parent )
+	const PyScript::ScriptObject & pythonObject )
 	: IBaseProperty()
-	, impl_( new Implementation( context, key, typeId, pythonObject, parent ) )
+	, impl_( new Implementation( context, key, typeId, pythonObject ) )
 {
 }
 
@@ -272,7 +265,7 @@ Variant Property::invoke( const ObjectHandle& object,
 	{
 		const bool success = pTypeConverters->toVariant( returnValue,
 			result,
-			impl_->parent_,
+			impl_->pythonObject_,
 			impl_->key_ );
 		assert( success );
 	}

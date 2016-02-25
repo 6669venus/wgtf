@@ -28,11 +28,8 @@ public:
 
 	bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant,
-		const ReflectedPython::DefinedInstance & parent,
+		const PyScript::ScriptObject & parentObject,
 		const std::string & childPath ) const;
-
-	bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) const;
 
 	bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) const;

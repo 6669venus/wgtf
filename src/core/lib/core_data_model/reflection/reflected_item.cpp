@@ -54,13 +54,13 @@ bool ReflectedItem::EnumerateVisibleProperties(const PropertyCallback& callback)
 	auto object = getObject();
 	if (object == nullptr)
 	{
-		return false;
+		return true;
 	}
 
 	auto definitionManager = getDefinitionManager();
 	if (definitionManager == nullptr)
 	{
-		return false;
+		return true;
 	}
 
 	return EnumerateVisibleProperties(object, *definitionManager, "", callback);
@@ -78,9 +78,7 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const IDefin
 		auto inPlace = findFirstMetaData< MetaInPlaceObj >(*property, definitionManager);
 		if ( inPlace != nullptr )
 		{
-			std::string path = inplacePath + property->getName();
-			std::string subInplacePath = path + ".";
-			auto propertyAccessor = definition->bindProperty(path.c_str(), object);
+			auto propertyAccessor = definition->bindProperty(property->getName(), object);
 
 			if ( !propertyAccessor.canGetValue() )
 			{
@@ -96,7 +94,7 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const IDefin
 				// Currently Despair's ContainerProperty is pushed up to the collection
 				// Eventually we'll need a MetaContainer which we can check here
 
-				if ( !callback(property, subInplacePath) )
+				if ( !callback(property, inplacePath) )
 					return false;
 			}
 
@@ -105,7 +103,8 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const IDefin
 			if ( isObjectHandle )
 			{
 				handle = reflectedRoot(handle, definitionManager);
-				if ( !EnumerateVisibleProperties(handle, definitionManager, subInplacePath, callback) )
+				auto path = inplacePath + property->getName() + ".";
+				if ( !EnumerateVisibleProperties(handle, definitionManager, path, callback) )
 					return false;
 			}
 			continue;

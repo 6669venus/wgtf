@@ -13,7 +13,7 @@
 #include <codecvt>
 
 ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath )
-	: ReflectedItem( parent, parent->getPath() + inplacePath )
+	: ReflectedItem( parent, inplacePath )
 	, groupObj_( groupObj )
 {
 	assert( groupObj_ != nullptr );

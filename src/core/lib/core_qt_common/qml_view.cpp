@@ -78,6 +78,7 @@ void QmlView::update()
 
 void QmlView::setContextObject( QObject * object )
 {
+    object->setParent( quickView_ );
 	qmlContext_->setContextObject( object );
 }
 

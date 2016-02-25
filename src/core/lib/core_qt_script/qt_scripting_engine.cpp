@@ -30,6 +30,7 @@
 #include <QVariant>
 #include <QQmlEngine>
 #include <QQmlContext>
+#include <QPointer>
 
 Q_DECLARE_METATYPE( ObjectHandle );
 
@@ -79,18 +80,18 @@ struct QtScriptingEngine::Implementation
 	std::mutex metaObjectsMutex_;
 	std::map<std::string, QMetaObject*> metaObjects_;
 	std::vector<std::unique_ptr< IQtTypeConverter>> qtTypeConverters_;
-	std::map<ObjectHandle, QtScriptObject*> scriptObjects_;
+	std::map<ObjectHandle, QPointer<QtScriptObject>> scriptObjects_;
 
 	struct PropertyListener: public PropertyAccessorListener
 	{
-		PropertyListener( std::map<ObjectHandle, QtScriptObject*>& scriptObjects )
+		PropertyListener( std::map<ObjectHandle, QPointer<QtScriptObject>>& scriptObjects )
 			: scriptObjects_( scriptObjects )
 		{}
 
 		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
 		void postInvoke( const PropertyAccessor & accessor, Variant result, bool undo ) override;
 
-		std::map<ObjectHandle, QtScriptObject*>& scriptObjects_;
+		std::map<ObjectHandle, QPointer<QtScriptObject>>& scriptObjects_;
 	};
 
 	std::shared_ptr<PropertyAccessorListener> propListener_;
@@ -188,6 +189,9 @@ QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const Obj
 	QtScriptObject* scriptObject = new QtScriptObject(
 		*contextManager_, self_, *metaObject, root, nullptr );
 
+    auto ownership = QQmlEngine::objectOwnership( scriptObject );
+    QQmlEngine::setObjectOwnership( scriptObject, QQmlEngine::JavaScriptOwnership );
+    ownership = QQmlEngine::objectOwnership( scriptObject );
 	scriptObjects_.emplace( root, scriptObject );
 	return scriptObject;
 }
@@ -322,6 +326,7 @@ void QtScriptingEngine::finalise()
 	while (!impl_->scriptObjects_.empty())
 	{
 		auto iter = impl_->scriptObjects_.begin();
+         auto ownership = QQmlEngine::objectOwnership( iter->second );
 		delete iter->second;
 	}
 
@@ -330,7 +335,7 @@ void QtScriptingEngine::finalise()
 
 void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
 {
-	std::map<ObjectHandle, QtScriptObject*>::const_iterator findIt = 
+	std::map<ObjectHandle, QPointer<QtScriptObject>>::const_iterator findIt = 
 		impl_->scriptObjects_.find( scriptObject.object() );
 	assert (findIt != impl_->scriptObjects_.end());
 	impl_->scriptObjects_.erase( findIt );

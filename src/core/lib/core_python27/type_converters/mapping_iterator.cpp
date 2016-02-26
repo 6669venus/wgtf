@@ -138,6 +138,7 @@ Variant MappingIterator::value() const /* override */
 	
 	Variant result;
 	std::string childPath;
+	// TODO NGT-1561 needs unit test
 	childPath += INDEX_OPEN;
 	childPath += key_.str( PyScript::ScriptErrorPrint() ).c_str();
 	childPath += INDEX_CLOSE;

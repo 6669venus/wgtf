@@ -33,14 +33,6 @@ MetaHandle extractMetaData( const char * name,
 		return nullptr;
 	}
 
-	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );
-	if (!metaItem.exists())
-	{
-		// Class has metadata, but none for this attribute
-		return nullptr;
-	}
-
-
 	assert( name != nullptr );
 	assert( strlen( name ) > 0 );
 	if (name[0] == '_')
@@ -50,6 +42,12 @@ MetaHandle extractMetaData( const char * name,
 		return MetaHidden();
 	}
 
+	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );
+	if (!metaItem.exists())
+	{
+		// Class has metadata, but none for this attribute
+		return nullptr;
+	}
 
 	// Metadata should always be of the format
 	// { "attribute" : "string" }
@@ -300,6 +298,7 @@ IClassDefinitionModifier * DefinitionDetails::getDefinitionModifier() const
 	return const_cast< DefinitionDetails * >( this );
 }
 
+
 IBasePropertyPtr DefinitionDetails::addProperty( const char * name, const TypeId & typeId, MetaHandle metaData )
 {
 	// TODO: update MetaData
@@ -335,6 +334,5 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 
 	return typeName;
 }
-
 
 } // namespace ReflectedPython

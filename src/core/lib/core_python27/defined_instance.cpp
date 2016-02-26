@@ -2,7 +2,6 @@
 
 #include "defined_instance.hpp"
 #include "definition_details.hpp"
-#include "property.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_reflection/i_object_manager.hpp"
@@ -146,6 +145,7 @@ const DefinedInstance & DefinedInstance::root() const
 {
 	assert( context_ != nullptr );
 
+	// TODO NGT-1561 perhaps it can store root instead of parent
 	const DefinedInstance * pParent = this;
 	while (pParent->parentObject_.exists())
 	{

@@ -13,13 +13,6 @@
 
 namespace PythonType
 {
-class DefaultConverter;
-class IConverter;
-} // namespace PythonType
-
-
-namespace PythonType
-{
 
 
 /**

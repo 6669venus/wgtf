@@ -6,10 +6,6 @@ namespace PyScript
 {
 class ScriptObject;
 } // namespace PyScript
-namespace ReflectedPython
-{
-class DefinedInstance;
-} // namespace ReflectedPython
 class Variant;
 
 

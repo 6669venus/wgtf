@@ -18,9 +18,6 @@ namespace ReflectedPython
 {
 
 
-class DefinedInstance;
-
-
 /**
  *	Implements the IClassDefinitionDetails interface for Python objects.
  */

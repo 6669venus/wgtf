@@ -133,7 +133,7 @@ private:
 	struct CurveModification
 	{
 		CurveModification(ModificationFunction&& executeFunc, ModificationFunction&& undoFunc)
-			: redo_(std::move(executeFunc)), undo_(std::move(undoFunc))
+			: undo_(std::move(undoFunc)), redo_(std::move(executeFunc))
 		{}
 
 		ModificationFunction undo_;

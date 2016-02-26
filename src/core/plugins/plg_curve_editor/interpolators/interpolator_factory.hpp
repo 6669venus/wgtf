@@ -16,4 +16,4 @@
 
 ICurveInterpolatorPtr createInterpolator(CurveTypes::CurveType);
 
-#endif INTERPOLATOR_FACTORY_
+#endif //INTERPOLATOR_FACTORY_

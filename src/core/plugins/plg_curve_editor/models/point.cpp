@@ -25,10 +25,10 @@ Point::Point(const Point& other)
 }
 
 Point::Point(Point&& other)
-	: x(other.x)
-	, y(other.y)
-	, xChanged(std::move(other.xChanged))
+	: xChanged(std::move(other.xChanged))
 	, yChanged(std::move(other.yChanged))
+	, x(other.x)
+	, y(other.y)
 {
 }
 

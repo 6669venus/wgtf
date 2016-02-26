@@ -59,7 +59,7 @@ bool CurveEditor::addCurve(ICurvePtr curve)
 bool CurveEditor::removeCurve(ICurvePtr curve)
 {
 	auto storeIter = storage_.begin();
-	for(auto& iter = curves_.begin(); iter != curves_.end(); ++iter, ++ storeIter)
+	for(auto iter = curves_.begin(); iter != curves_.end(); ++iter, ++ storeIter)
 	{
 		auto current = &*storeIter->get();
 		if(current == curve.get())

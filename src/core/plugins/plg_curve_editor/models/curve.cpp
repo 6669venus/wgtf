@@ -37,11 +37,11 @@ void setPointData( const BezierPointData& data, BezierPoint& point )
 }
 
 Curve::Curve(ICurveInterpolatorPtr interpolator, IDefinitionManager* definitionManager)
-	: definitionManager_(definitionManager)
-	, dirty_(false)
+	: currentState_(-1)
+	, definitionManager_(definitionManager)
 	, showControlPoints_(false)
+	, dirty_(false)
 	, interpolator_(std::move(interpolator))
-	, currentState_(-1)
 {
 }
 
@@ -404,8 +404,6 @@ void Curve::insertPoint(ObjectHandleT<BezierPoint> bezierPoint, bool updateYPos,
 {
 	auto& newPoint = *bezierPoint.get();
 	auto& newPos = *bezierPoint->pos.get();
-	auto& newCp1 = *bezierPoint->cp1.get();
-	auto& newCp2 = *bezierPoint->cp2.get();
 	BezierPoint* prevPoint = nullptr;
 	BezierPoint* nextPoint = nullptr;
 
@@ -440,8 +438,6 @@ void Curve::insertPoint(ObjectHandleT<BezierPoint> bezierPoint, bool updateYPos,
 	{
 		auto& newPoint = *bezierPoint.get();
 		auto& newPos = *bezierPoint->pos.get();
-		auto& newCp1 = *bezierPoint->cp1.get();
-		auto& newCp2 = *bezierPoint->cp2.get();
 
 		size_t index = 0;
 		auto iter = std::begin(points);

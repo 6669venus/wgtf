@@ -124,17 +124,7 @@ void ConverterQueue::init()
 void ConverterQueue::fini()
 {
 	context_.deregisterInterface( pTypeConvertersInterface_ );
-
-	// Deregister type converters for converting between PyObjects and Variant
-	basicTypeConverters_.deregisterTypeConverter( noneTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( floatTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( longTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( intTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( dictTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( tupleTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( listTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( unicodeTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( strTypeConverter_ );
+	// Type converters deregistered on destruction
 }
 
 

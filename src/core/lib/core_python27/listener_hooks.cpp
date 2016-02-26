@@ -82,9 +82,12 @@ int pySetattrHook( PyObject * self,
 	auto & context = (*g_pHookContext);
 	auto handle = ReflectedPython::DefinedInstance::find( context, selfObject );
 
-	// Item should always be in the reflection system
-	// because the hook should be detached when it leaves the system
-	//assert( handle.isValid() );
+	// selfObject should always be found in the reflection system
+	// because the hook should be attached & detached when the object
+	// enters & leaves the system.
+	// But the setattr hook may be triggered by setting an attribute on
+	// a reflected object's *type*. So just ignore this as the type is not
+	// tracked by the reflection system.
 	if (!handle.isValid())
 	{
 		// -- Set attribute using default hook

@@ -114,7 +114,7 @@ bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & dat
 		if(definition != otherDef)
 			return false;
 
-		for(auto& prop : definition->allProperties())
+		for(auto prop : definition->allProperties())
 		{
 			auto accessor = definition->bindProperty(prop->getName(), obj);
 			auto otherAccessor = definition->bindProperty(prop->getName(), other);

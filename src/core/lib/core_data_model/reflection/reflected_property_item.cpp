@@ -233,6 +233,10 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			float minValue = .0f;
 			bool isOk = variant.tryCast( minValue );
 			assert( isOk );
+			if (!isOk)
+			{
+				return variant;
+			}
 			float diff = minValue - value;
 			float epsilon = std::numeric_limits<float>::epsilon();
 			if (diff > epsilon )
@@ -259,6 +263,10 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			float maxValue = .0f;
 			bool isOk = variant.tryCast( maxValue );
 			assert( isOk );
+			if (!isOk)
+			{
+				return variant;
+			}
 			float diff = value - maxValue;
 			float epsilon = std::numeric_limits<float>::epsilon();
 			if (diff > epsilon)
@@ -655,9 +663,6 @@ bool ReflectedPropertyItem::preSetValue(
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
-
-		ObjectHandle handle;
-		bool isObjectHandle = value.tryCast( handle );
 		if(isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;
@@ -705,9 +710,6 @@ bool ReflectedPropertyItem::postSetValue(
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
-
-		ObjectHandle handle;
-		bool isObjectHandle = value.tryCast( handle );
 		if(isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;

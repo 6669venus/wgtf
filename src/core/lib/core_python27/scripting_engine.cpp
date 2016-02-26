@@ -1,9 +1,9 @@
 #include "pch.hpp"
 
+#include "core_logging/logging.hpp"
+
 #include "scripting_engine.hpp"
 #include "defined_instance.hpp"
-
-#include "core_logging/logging.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 

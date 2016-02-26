@@ -62,6 +62,12 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 void cleanupListenerHooks( HookLookup & hookLookup );
 
 
+/**
+ *	Class for checking if a notification has already been fired before setattr
+ *	is called.
+ *	E.g. if a property is set by the command system then a notification has
+ *	already been fired and the setattr hook should not send another one.
+ */
 class HookListener : public PropertyAccessorListener
 {
 public:

@@ -228,34 +228,10 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 	}
 
 	// Attach hook
-	// TODO work out a way to use a wrapper instead?
-	// PyObject_GenericSetAttr?
+	// TODO work out a way to use a descriptor/wrapper instead
 	assert( pyType->tp_setattro != pySetattrHook );
 	pyType->tp_setattro = pySetattrHook;
 	PyType_Modified( pyType );
-
-	//// Construct new hook
-	//const char * SETATTR_NAME = "__setattr__";
-	//static PyMethodDef s_methods[] =
-	//{
-	//	{
-	//		SETATTR_NAME,
-	//		reinterpret_cast< PyCFunction >( &py_setattr_hook ),
-	//		METH_VARARGS|METH_KEYWORDS,
-	//		"Listener to notify the NGT Reflection System\n"
-	//		"x.__setattr__('name', value) <==> x.name = value"
-	//	},
-	//	{ nullptr, nullptr, 0, nullptr }
-	//};
-
-	//auto pyFunction = PyCFunction_New( s_methods, pythonObject.get() );
-	//auto functionObject = PyScript::ScriptObject( pyFunction,
-	//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
-
-	//PyObject * self = nullptr;
-	//auto pyMethod = PyMethod_New( pyFunction, self, typeObject.get() );
-	//auto methodObject = PyScript::ScriptObject( pyMethod,
-	//	PyScript::ScriptObject::FROM_NEW_REFERENCE );
 }
 
 

@@ -148,6 +148,7 @@ public:
 			std::lock_guard<std::mutex> lock(mutex_);
 			swap(entries_, temp);
 		}
+		return *this;
 	}
 
 	void clear()

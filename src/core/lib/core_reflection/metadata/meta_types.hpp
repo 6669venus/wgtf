@@ -6,6 +6,7 @@
 #include "../types/reflected_collection.hpp"
 
 class IEnumGenerator;
+typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
 
 /**
  *	Depricated: only for use with EXPOSE macros.
@@ -19,13 +20,13 @@ MetaHandle MetaDecimals( int decimals );
 
 #define MetaEnumFunc( getterFunc ) \
 	MetaEnum(\
-		new ReflectedCollectionImpl(\
+		std::unique_ptr<IEnumGenerator>(new ReflectedCollectionImpl(\
 			IBasePropertyPtr(\
 				new FunctionProperty< std::map< int, std::wstring >,SelfType, true, true >(\
 					"EnumTypes", &SelfType::getterFunc, NULL,\
-					TypeId::getType< std::map< int, std::wstring > >() ) ) ) )
+					TypeId::getType< std::map< int, std::wstring > >() ) ) ) ) )
 
-MetaHandle MetaEnum( IEnumGenerator * enumGenerator );
+MetaHandle MetaEnum( IEnumGeneratorPtr enumGenerator );
 MetaHandle MetaEnum( const wchar_t * enumString );
 
 MetaHandle MetaSlider();
@@ -105,7 +106,7 @@ MetaHandle MetaCommandBase(
 
 MetaHandle MetaNoSerialization();
 
-MetaHandle MetaUniqueId( const char * id);
+MetaHandle MetaUniqueId( const char * id );
 
 MetaHandle MetaOnStack();
 

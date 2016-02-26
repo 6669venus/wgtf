@@ -78,6 +78,7 @@ private:
 };
 
 class IEnumGenerator;
+typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
 //==============================================================================
 class MetaEnumObj
 	: public MetaBase
@@ -85,23 +86,9 @@ class MetaEnumObj
 	DECLARE_REFLECTED
 
 public:
-	MetaEnumObj()
-		: enumGenerator_( NULL )
-		, enumString_( NULL )
-	{
-	}
-
-	explicit MetaEnumObj( IEnumGenerator * enumGenerator )
-		: enumGenerator_( enumGenerator )
-		, enumString_( NULL )
-	{
-	}
-
-	explicit MetaEnumObj( const wchar_t * enumString )
-		: enumGenerator_( NULL )
-		, enumString_( enumString )
-	{
-	}
+	MetaEnumObj();
+	explicit MetaEnumObj( IEnumGeneratorPtr enumGenerator );
+	explicit MetaEnumObj( const wchar_t * enumString );
 
 	~MetaEnumObj();
 
@@ -110,7 +97,7 @@ public:
 	Collection generateEnum( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) const;
 
 private:
-	IEnumGenerator *	enumGenerator_;
+	IEnumGeneratorPtr	enumGenerator_;
 	const wchar_t *		enumString_;
 };
 
@@ -136,6 +123,7 @@ class MetaGroupObj
 public:
 	MetaGroupObj()
 		: groupName_( NULL )
+		, groupNameHash_( 0 )
 	{
 	}
 
@@ -143,9 +131,11 @@ public:
 	~MetaGroupObj() {}
 
 	const wchar_t * getGroupName() const;
+	uint64_t getGroupNameHash() const;
 
 private:
 	const wchar_t * groupName_;
+	uint64_t groupNameHash_;
 };
 
 

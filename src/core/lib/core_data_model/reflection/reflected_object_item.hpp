@@ -4,6 +4,8 @@
 #include "reflected_item.hpp"
 #include "core_reflection/object_handle.hpp"
 
+#include <set>
+
 
 /**
  *	Create an item in a ReflectedTreeModel from an ObjectHandle.
@@ -44,10 +46,16 @@ public:
 		const PropertyAccessor & accessor, const Variant & value ) override;
 
 private:
+	typedef std::set< const wchar_t *, bool(*)( const wchar_t *, const wchar_t * ) > Groups;
+	typedef std::function<bool(ReflectedItem&)> ReflectedItemCallback;
+
+	void EnumerateChildren(const ReflectedItemCallback& callback) const;
+	Groups& GetGroups() const;
 
 	ObjectHandle object_;
 	mutable std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
+	mutable Groups groups_;
 };
 
 #endif //REFLECTED_OBJECT_ITEM_HPP

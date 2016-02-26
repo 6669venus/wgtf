@@ -119,13 +119,11 @@ public:
 
 		if ( fullPath.empty() )
 			return nextPart;
+		// Check for a fully qualified path with file extension
 		if ( nextPart.empty() && fullPath.rfind(".") > fullPath.rfind(directorySeparator) )
 			return fullPath;
 		if ( nextPart.empty() )
-		{
-			const char dirSeperator[2] = {directorySeparator, '\0'};
-			return combine(fullPath, dirSeperator, directorySeparator);
-		}
+			nextPart.push_back(directorySeparator);
 		if ( fullPath.back() == directorySeparator
 			&& nextPart.front() != directorySeparator )
 			return fullPath + nextPart;

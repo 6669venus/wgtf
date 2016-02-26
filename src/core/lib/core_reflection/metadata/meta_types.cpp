@@ -22,9 +22,9 @@ MetaHandle MetaMinMax( float min, float max )
 
 
 //==============================================================================
-MetaHandle MetaEnum( IEnumGenerator * enumGenerator )
+MetaHandle MetaEnum( IEnumGeneratorPtr enumGenerator )
 {
-	SET_UP_OBJECT( MetaEnumObj, ( enumGenerator ) )
+	SET_UP_OBJECT( MetaEnumObj, ( std::move(enumGenerator) ) )
 }
 
 //==============================================================================

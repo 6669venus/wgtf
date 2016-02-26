@@ -58,9 +58,29 @@ MetaDecimalsObj::MetaDecimalsObj(int decimals)
 
 
 //==============================================================================
+MetaEnumObj::MetaEnumObj()
+	: enumGenerator_(nullptr)
+	, enumString_(nullptr)
+{
+}
+
+//==============================================================================
+MetaEnumObj::MetaEnumObj(IEnumGeneratorPtr enumGenerator)
+	: enumGenerator_(std::move(enumGenerator))
+	, enumString_(nullptr)
+{
+}
+
+//==============================================================================
+MetaEnumObj::MetaEnumObj(const wchar_t * enumString)
+	: enumGenerator_(nullptr)
+	, enumString_(enumString)
+{
+}
+
+//==============================================================================
 MetaEnumObj::~MetaEnumObj()
 {
-	delete enumGenerator_;
 }
 
 
@@ -94,6 +114,7 @@ END_EXPOSE()
 //==============================================================================
 MetaGroupObj::MetaGroupObj( const wchar_t * groupName )
 	: groupName_( groupName )
+	, groupNameHash_( HashUtilities::compute(groupName_) )
 {
 }
 
@@ -101,6 +122,12 @@ MetaGroupObj::MetaGroupObj( const wchar_t * groupName )
 const wchar_t * MetaGroupObj::getGroupName() const
 {
 	return groupName_;
+}
+
+//==============================================================================
+uint64_t MetaGroupObj::getGroupNameHash() const
+{
+	return groupNameHash_;
 }
 
 

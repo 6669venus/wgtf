@@ -3,6 +3,7 @@
 
 #include "../property_iterator.hpp"
 #include "../ref_object_id.hpp"
+#include <functional>
 
 class ObjectHandle;
 class IClassDefinitionDetails;
@@ -14,6 +15,8 @@ class TypeId;
 template<typename T> class ObjectHandleT;
 class MetaBase;
 typedef ObjectHandleT< MetaBase > MetaHandle;
+
+typedef std::function<void*( )> DataGetter;
 
 /**
  *	Interface for storing info that "defines" a class.

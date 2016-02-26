@@ -30,26 +30,18 @@ public:
 class ObjectHandleStorageVoid : public IObjectHandleStorage
 {
 public:
-	typedef std::function<void(void*)> Deleter;
-
-	ObjectHandleStorageVoid(void * data, TypeId type, Deleter deleter)
+	ObjectHandleStorageVoid(std::shared_ptr<void> data, TypeId type, DataGetter getter)
 		: data_(data)
 		, type_(type)
-		, deleter_(deleter)
+		, getter_(getter)
 	{
-	}
-
-	~ObjectHandleStorageVoid()
-	{
-		if ( deleter_ != nullptr )
-		{
-			deleter_(data_);
-		}
 	}
 
 	void * data() const
 	{
-		return data_;
+		if(getter_)
+			return getter_();
+		return data_.get();
 	}
 
 	TypeId type() const
@@ -62,15 +54,15 @@ public:
 		return false;
 	}
 
-	//const IClassDefinition * getDefinition(const IDefinitionManager & definitionManager) const
-	//{
-	//	return definitionManager.getDefinition(type_.getName());
-	//}
+	void * storedData() const
+	{
+		return data_.get();
+	}
 
 private:
-	void* data_;
+	std::shared_ptr<void> data_;
 	TypeId type_;
-	Deleter deleter_;
+	DataGetter getter_;
 };
 
 

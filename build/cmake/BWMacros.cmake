@@ -659,7 +659,7 @@ MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
 		GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
 		ADD_CUSTOM_COMMAND( OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
 			# Copy the file to our desired location
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}/${_fileName}
 			COMMENT "Verifying ${resFile} in target directory: ${_TARGET_DIR} ..."
 			MAIN_DEPENDENCY "${resFile}"
 			VERBATIM

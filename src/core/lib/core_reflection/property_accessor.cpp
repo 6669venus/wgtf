@@ -19,6 +19,7 @@ PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 	, rootObject_( other.rootObject_ )
 	, path_( std::move( other.path_ ) )
 	, definitionManager_( other.definitionManager_ )
+	, parentAccessor_( std::move(other.parentAccessor_) )
 {
 }
 
@@ -29,6 +30,7 @@ PropertyAccessor::PropertyAccessor( const PropertyAccessor & other )
 , rootObject_( other.rootObject_ )
 , path_( other.path_ )
 , definitionManager_( other.definitionManager_ )
+, parentAccessor_( other.parentAccessor_ )
 {
 }
 
@@ -47,6 +49,7 @@ PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 	rootObject_ = other.rootObject_;
 	path_ = std::move( other.path_ );
 	definitionManager_ = other.definitionManager_;
+	parentAccessor_ = other.parentAccessor_;
 	return *this;
 }
 
@@ -143,6 +146,11 @@ bool PropertyAccessor::setValue( const Variant & value ) const
 		listener->preSetValue( *this, value );
 	}
 	bool ret = getProperty()->set( object_, value, *definitionManager_ );
+	// Set the parent object to support properties returned by value
+	if( parentAccessor_ )
+	{
+		parentAccessor_->setValue( object_ );
+	}
 	for( auto it = itBegin; it != itEnd; ++it )
 	{
 		auto listener = it->lock();
@@ -346,6 +354,10 @@ void PropertyAccessor::setBaseProperty( const IBasePropertyPtr & property )
 	property_ = property;
 }
 
+void PropertyAccessor::setParent(const PropertyAccessor& parent)
+{
+	parentAccessor_ = std::make_shared<PropertyAccessor>(parent);
+}
 
 //==============================================================================
 const ObjectHandle & PropertyAccessor::getRootObject() const

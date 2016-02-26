@@ -29,7 +29,7 @@ public:
 	 *		Cannot be null.
 	 *		@warning the parent *must* correspond to the property.
 	 */
-	ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent );
+	ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent, const std::string & inplacePath );
 
 	/**
 	 *	Construct a data model by reflecting over the given property.

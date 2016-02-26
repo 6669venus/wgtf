@@ -53,6 +53,7 @@ public:
 
 	const IDefinitionManager * getDefinitionManager() const;
 private:
+	std::shared_ptr<PropertyAccessor> parentAccessor_;
 	ObjectHandle			object_;
 	IBasePropertyPtr		property_;
 
@@ -67,6 +68,7 @@ private:
 		const ObjectHandle & rootObject, const char * path );
 	void setObject( const ObjectHandle & object );
 	void setBaseProperty( const IBasePropertyPtr & property );
+	void setParent( const PropertyAccessor& parent );
 };
 
 #endif // PROPERTY_ACCESSOR_HPP

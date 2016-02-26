@@ -291,6 +291,7 @@ void ClassDefinition::bindPropertyImpl(
 			return;
 		}
 
+		o_PropertyAccessor.setParent(o_PropertyAccessor);
 		return definition->bindPropertyImpl(
 			propOperator + 1, // skip dot
 			propObject,

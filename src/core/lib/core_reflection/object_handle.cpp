@@ -81,8 +81,8 @@ ObjectHandle::ObjectHandle( Variant * variant, const IClassDefinition * definiti
 
 
 //------------------------------------------------------------------------------
-ObjectHandle::ObjectHandle( void * data, TypeId type, ObjectHandleStorageVoid::Deleter deleter )
-	: storage_(new ObjectHandleStorageVoid(data, type, deleter))
+ObjectHandle::ObjectHandle(std::shared_ptr<void> data, TypeId type, DataGetter getter)
+	: storage_(new ObjectHandleStorageVoid(data, type, getter))
 {
 }
 

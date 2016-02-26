@@ -177,6 +177,13 @@ namespace ReflectedPython
 {
 
 
+bool ScriptObjectCompare::operator()( const PyScript::ScriptObject & a,
+	const PyScript::ScriptObject & b ) const
+{
+	return a.compareTo( b, PyScript::ScriptErrorPrint() ) < 0;
+}
+
+
 HookListener::HookListener()
 	: entered_( 0 )
 {

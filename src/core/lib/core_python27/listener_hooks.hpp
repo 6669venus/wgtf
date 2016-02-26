@@ -17,10 +17,7 @@ class ScriptObjectCompare
 {
 public:
 	bool operator()( const PyScript::ScriptObject & a,
-		const PyScript::ScriptObject & b ) const
-	{
-		return a.compareTo( b, PyScript::ScriptErrorPrint() ) < 0;
-	}
+		const PyScript::ScriptObject & b ) const;
 };
 
 

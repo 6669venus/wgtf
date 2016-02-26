@@ -17,6 +17,7 @@ ReflectedPython::HookLookup * g_pHookLookup_ = nullptr;
 std::weak_ptr< ReflectedPython::HookListener > g_listener_;
 
 
+#if ENABLE_PYTHON_LISTENER_HOOKS
 /**
  *	Hook for listening to property changes.
  *
@@ -171,6 +172,7 @@ int pySetattrHook( PyObject * self,
 
 	return result;
 }
+#endif // ENABLE_PYTHON_LISTENER_HOOKS
 
 
 namespace ReflectedPython
@@ -213,14 +215,15 @@ bool HookListener::entered() const
 void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 	HookLookup & hookLookup )
 {
+#if ENABLE_PYTHON_LISTENER_HOOKS
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects
 	// Ignore errors if the attribute does not exist - first time hook is added
-	auto typeObject = PyScript::ScriptType::getType( pythonObject );
 	auto pyType = pythonObject.get()->ob_type;
-	assert( pyType != nullptr );
 	{
+		auto typeObject = PyScript::ScriptType::getType( pythonObject );
+		assert( typeObject.exists() );
 		auto foundIt = hookLookup.find( typeObject );
 		if (foundIt != hookLookup.end())
 		{
@@ -234,7 +237,7 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 		hookInfo.hookCount_ = 1;
 		hookInfo.defaultHook_ = pyType->tp_setattro;
 		assert( hookInfo.defaultHook_ != nullptr );
-		hookLookup[ typeObject ] = hookInfo;
+		hookLookup.emplace( typeObject, hookInfo );
 	}
 
 	// Attach hook
@@ -242,12 +245,14 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 	assert( pyType->tp_setattro != pySetattrHook );
 	pyType->tp_setattro = pySetattrHook;
 	PyType_Modified( pyType );
+#endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 
 
 void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 	HookLookup & hookLookup )
 {
+#if ENABLE_PYTHON_LISTENER_HOOKS
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects
@@ -279,11 +284,13 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 
 	// Remove from map
 	hookLookup.erase( foundIt );
+#endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 
 
 void cleanupListenerHooks( HookLookup & hookLookup )
 {
+#if ENABLE_PYTHON_LISTENER_HOOKS
 	// Remove reflection system hooks for any leaks
 	for (auto itr = std::begin( hookLookup ); itr != std::end( hookLookup ); ++itr)
 	{
@@ -297,6 +304,7 @@ void cleanupListenerHooks( HookLookup & hookLookup )
 		pyType->tp_setattro = itr->second.defaultHook_;
 		PyType_Modified( pyType );
 	}
+#endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 
 

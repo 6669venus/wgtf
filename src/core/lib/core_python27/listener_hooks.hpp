@@ -4,12 +4,15 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
+// Use this macro to enable/disable firing UI notifications from scripts
+#define ENABLE_PYTHON_LISTENER_HOOKS 1
+
 namespace ReflectedPython
 {
 
 
 /**
- *	Key compare functor.
+ *	Key compare less-than functor.
  *	Need to do a deep compare on PyScript::ScriptObject to prevent getting
  *	copies of the same object added to the map.
  */

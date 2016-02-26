@@ -74,8 +74,7 @@ int pySetattrHook( PyObject * self,
 	{
 		// -- Set attribute using default hook
 		// __setattr__( name, value )
-		defaultHook( self, name, value );
-		return 0;
+		return defaultHook( self, name, value );
 	}
 
 	// -- Check if listeners need to be notified
@@ -83,13 +82,14 @@ int pySetattrHook( PyObject * self,
 	auto & context = (*g_pHookContext);
 	auto handle = ReflectedPython::DefinedInstance::find( context, selfObject );
 
-	// Item is not in reflection system, do not need to send notification
+	// Item should always be in the reflection system
+	// because the hook should be detached when it leaves the system
+	//assert( handle.isValid() );
 	if (!handle.isValid())
 	{
 		// -- Set attribute using default hook
 		// __setattr__( name, value )
-		defaultHook( self, name, value );
-		return 0;
+		return defaultHook( self, name, value );
 	}
 
 	// -- Pre-notify UI
@@ -156,7 +156,7 @@ int pySetattrHook( PyObject * self,
 
 	// -- Set attribute using default hook
 	// __setattr__( name, value )
-	defaultHook( self, name, value );
+	const auto result = defaultHook( self, name, value );
 
 	// -- Post-notify UI
 	for (auto it = itBegin; it != itEnd; ++it)
@@ -166,7 +166,7 @@ int pySetattrHook( PyObject * self,
 		listener->postSetValue( propertyAccessor, variantValue );
 	}
 
-	return 0;
+	return result;
 }
 
 

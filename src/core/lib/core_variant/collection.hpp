@@ -126,9 +126,17 @@ public:
 		const CollectionIteratorImplPtr& pos,
 		size_t count );
 	typedef void NotificationCallbackSignature();
+	typedef void ElementPreChangeCallbackSignature(
+		const CollectionIteratorImplPtr& pos,
+		const Variant& newValue );
+	typedef void ElementPostChangedCallbackSignature(
+		const CollectionIteratorImplPtr& pos,
+		const Variant& oldValue );
 
 	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
 	typedef std::function< NotificationCallbackSignature > NotificationCallback;
+	typedef std::function< ElementPreChangeCallbackSignature > ElementPreChangeCallback;
+	typedef std::function< ElementPostChangedCallbackSignature > ElementPostChangedCallback;
 
 	virtual size_t size() const = 0;
 	virtual CollectionIteratorImplPtr begin() = 0;
@@ -184,12 +192,12 @@ public:
 		return Connection();
 	}
 
-	virtual Connection connectPreChange( ElementRangeCallback callback )
+	virtual Connection connectPreChange( ElementPreChangeCallback callback )
 	{
 		return Connection();
 	}
 
-	virtual Connection connectPostChanged( ElementRangeCallback callback )
+	virtual Connection connectPostChanged( ElementPostChangedCallback callback )
 	{
 		return Connection();
 	}
@@ -493,9 +501,17 @@ public:
 		const Iterator& pos,
 		size_t count );
 	typedef void NotificationCallbackSignature();
+	typedef void ElementPreChangeCallbackSignature(
+		const Iterator& pos,
+		const Variant& newValue );
+	typedef void ElementPostChangedCallbackSignature(
+		const Iterator& pos,
+		const Variant& oldValue );
 
 	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
 	typedef std::function< NotificationCallbackSignature > NotificationCallback;
+	typedef std::function< ElementPreChangeCallbackSignature > ElementPreChangeCallback;
+	typedef std::function< ElementPostChangedCallbackSignature > ElementPostChangedCallback;
 
 	/**
 	Construct Collection using given implementation.
@@ -696,8 +712,8 @@ public:
 	Connection connectPostInserted( ElementRangeCallback callback );
 	Connection connectPreErase( ElementRangeCallback callback );
 	Connection connectPostErased( NotificationCallback callback );
-	Connection connectPreChange( ElementRangeCallback callback );
-	Connection connectPostChanged( ElementRangeCallback callback );
+	Connection connectPreChange( ElementPreChangeCallback callback );
+	Connection connectPostChanged( ElementPostChangedCallback callback );
 
 private:
 	CollectionImplPtr impl_;

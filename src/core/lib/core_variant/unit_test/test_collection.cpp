@@ -1040,22 +1040,22 @@ TEST(Collection_linear_notifications)
 		CHECK_EQUAL( 0, pos.value().cast< int >() );
 	} );
 
-	c.connectPreChange( [&]( Collection::Iterator pos, size_t count )
+	c.connectPreChange( [&]( Collection::Iterator pos, const Variant& newValue )
 	{
 		CHECK_EQUAL( 4, counter );
 		counter += 1;
 
-		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 21, newValue.cast< int >() );
 		CHECK_EQUAL( 1, pos.key().cast< size_t >() );
 		CHECK_EQUAL( 0, pos.value().cast< int >() );
 	} );
 
-	c.connectPostChanged( [&]( Collection::Iterator pos, size_t count )
+	c.connectPostChanged( [&]( Collection::Iterator pos, const Variant& oldValue )
 	{
 		CHECK_EQUAL( 5, counter );
 		counter += 1;
 
-		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 0, oldValue.cast< int >() );
 		CHECK_EQUAL( 1, pos.key().cast< size_t >() );
 		CHECK_EQUAL( 21, pos.value().cast< int >() );
 	} );
@@ -1125,22 +1125,22 @@ TEST(Collection_mapping_notifications)
 		CHECK_EQUAL( 0, pos.value().cast< int >() );
 	} );
 
-	c.connectPreChange( [&]( Collection::Iterator pos, size_t count )
+	c.connectPreChange( [&]( Collection::Iterator pos, const Variant& newValue )
 	{
 		CHECK_EQUAL( 4, counter );
 		counter += 1;
 
-		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 1, newValue.cast< int >() );
 		CHECK_EQUAL( "1 uno", pos.key().castRef< const std::string >() );
 		CHECK_EQUAL( 0, pos.value().cast< int >() );
 	} );
 
-	c.connectPostChanged( [&]( Collection::Iterator pos, size_t count )
+	c.connectPostChanged( [&]( Collection::Iterator pos, const Variant& oldValue )
 	{
 		CHECK_EQUAL( 5, counter );
 		counter += 1;
 
-		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 0, oldValue.cast< int >() );
 		CHECK_EQUAL( "1 uno", pos.key().castRef< const std::string >() );
 		CHECK_EQUAL( 1, pos.value().cast< int >() );
 	} );

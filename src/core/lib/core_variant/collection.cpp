@@ -345,7 +345,7 @@ Connection Collection::connectPostErased( NotificationCallback callback )
 }
 
 
-Connection Collection::connectPreChange( ElementRangeCallback callback )
+Connection Collection::connectPreChange( ElementPreChangeCallback callback )
 {
 	if( impl_ )
 	{
@@ -358,7 +358,7 @@ Connection Collection::connectPreChange( ElementRangeCallback callback )
 }
 
 
-Connection Collection::connectPostChanged( ElementRangeCallback callback )
+Connection Collection::connectPostChanged( ElementPostChangedCallback callback )
 {
 	if( impl_ )
 	{

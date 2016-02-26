@@ -113,12 +113,14 @@ namespace collection_details
 					return false;
 				}
 
-				return v.with< value_type >( [ impl ]( const value_type& val )
+				return v.with< value_type >( [ impl, &v ]( const value_type& val )
 				{
 					auto pos = impl->collectionImpl_.makeIterator( impl->index_ );
-					impl->collectionImpl_.onPreChange_( pos, 1 );
-					impl->container()[ impl->index_ ] = val;
-					impl->collectionImpl_.onPostChanged_( pos, 1 );
+					impl->collectionImpl_.onPreChange_( pos, v );
+					auto& ref = impl->container()[ impl->index_ ];
+					auto oldValue = ref;
+					ref = val;
+					impl->collectionImpl_.onPostChanged_( pos, oldValue );
 				} );
 			}
 		};
@@ -481,12 +483,12 @@ namespace collection_details
 			return onPostErased_.connect( callback );
 		}
 
-		Connection connectPreChange( ElementRangeCallback callback ) override
+		Connection connectPreChange( ElementPreChangeCallback callback ) override
 		{
 			return onPreChange_.connect( callback );
 		}
 
-		Connection connectPostChanged( ElementRangeCallback callback ) override
+		Connection connectPostChanged( ElementPostChangedCallback callback ) override
 		{
 			return onPostChanged_.connect( callback );
 		}
@@ -497,8 +499,8 @@ namespace collection_details
 		Signal< ElementRangeCallbackSignature > onPostInserted_;
 		Signal< ElementRangeCallbackSignature > onPreErase_;
 		Signal< NotificationCallbackSignature > onPostErased_;
-		Signal< ElementRangeCallbackSignature > onPreChange_;
-		Signal< ElementRangeCallbackSignature > onPostChanged_;
+		Signal< ElementPreChangeCallbackSignature > onPreChange_;
+		Signal< ElementPostChangedCallbackSignature > onPostChanged_;
 
 		CollectionIteratorImplPtr makeIterator( key_type index ) const
 		{
@@ -678,20 +680,20 @@ namespace collection_details
 				ORDERED;
 		}
 
-		Connection connectPreChange( ElementRangeCallback callback ) override
+		Connection connectPreChange( ElementPreChangeCallback callback ) override
 		{
 			return onPreChange_.connect( callback );
 		}
 
-		Connection connectPostChanged( ElementRangeCallback callback ) override
+		Connection connectPostChanged( ElementPostChangedCallback callback ) override
 		{
 			return onPostChanged_.connect( callback );
 		}
 
 	private:
 		container_type& container_;
-		Signal< ElementRangeCallbackSignature > onPreChange_;
-		Signal< ElementRangeCallbackSignature > onPostChanged_;
+		Signal< ElementPreChangeCallbackSignature > onPreChange_;
+		Signal< ElementPostChangedCallbackSignature > onPostChanged_;
 
 		CollectionIteratorImplPtr makeIterator( key_type index ) const
 		{

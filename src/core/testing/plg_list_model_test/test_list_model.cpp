@@ -49,11 +49,14 @@ struct TestListModel::Implementation
 	char* copyString( const std::string& s ) const;
 	void generateData();
 	void clear();
+	int columnCount();
 
 	TestListModel& self_;
 	std::vector<TestListItem*> items_;
 	StringList2 dataSource_;
 	bool shortList_;
+	std::vector<std::string> headerText_;
+	std::vector<std::string> footerText_;
 };
 
 
@@ -62,6 +65,19 @@ TestListModel::Implementation::Implementation( TestListModel& self, bool shortLi
 	, shortList_( shortList )
 {
 	generateData();
+
+	headerText_.push_back( "Random Words" );
+
+	if (columnCount() == 2)
+	{
+		headerText_.push_back( "Second Column" );
+		footerText_.push_back( "The" );
+		footerText_.push_back( "End" );
+	}
+	else
+	{
+		footerText_.push_back( "The End" );
+	}
 }
 
 
@@ -124,6 +140,12 @@ void TestListModel::Implementation::clear()
 }
 
 
+int TestListModel::Implementation::columnCount()
+{
+	return shortList_ ? 1 : 2;
+}
+
+
 TestListModel::TestListModel( bool shortList )
 	: impl_( new Implementation( *this, shortList ) )
 {
@@ -180,7 +202,33 @@ size_t TestListModel::size() const
 
 int TestListModel::columnCount() const
 {
-	return impl_->shortList_ ? 1 : 2;
+	return impl_->columnCount();
+}
+
+
+Variant TestListModel::getData( int column, size_t roleId ) const
+{
+	if (column > columnCount())
+	{
+		return Variant();
+	}
+
+	if (roleId == headerTextRole::roleId_)
+	{
+		return impl_->headerText_[column].c_str();
+	}
+	else if (roleId == footerTextRole::roleId_)
+	{
+		return impl_->footerText_[column].c_str();
+	}
+
+	return Variant();
+}
+
+
+bool TestListModel::setData( int column, size_t roleId, const Variant & data )
+{
+	return false;
 }
 
 

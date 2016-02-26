@@ -63,6 +63,20 @@ namespace
 		bool set( const ObjectHandle &, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
 			assert( !this->readOnly() );
+
+			auto valueType = collectionIt_.valueType();
+			if (valueType.isPointer())
+			{
+				auto targetType = valueType.removePointer();
+				auto targetDefinition = definitionManager.getDefinition( targetType.getName() );
+				ObjectHandle source;
+				if (value.tryCast( source ))
+				{
+					auto target = reflectedCast( source, targetType, definitionManager );
+					return collectionIt_.setValue( target );
+				}
+			}
+
 			return collectionIt_.setValue( value );
 		}
 

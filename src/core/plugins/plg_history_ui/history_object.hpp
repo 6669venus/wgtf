@@ -32,17 +32,12 @@ private:
 	void bindCommandHistoryCallbacks();
 	void unbindCommandHistoryCallbacks();
 
-	void onPostCommandHistoryInserted( const ICommandManager* sender, 
-		const ICommandManager::HistoryPostInsertedArgs& args );
-	void onPostCommandHistoryRemoved( const ICommandManager* sender, 
-		const ICommandManager::HistoryPostRemovedArgs& args );
-	void onCommandHistoryPreReset( const ICommandManager* sender, 
-		const ICommandManager::HistoryPreResetArgs& args );
-	void onCommandHistoryPostReset( const ICommandManager* sender, 
-		const ICommandManager::HistoryPostResetArgs& args );
+	void onPostCommandHistoryInserted( const VariantList & history, size_t index, size_t count );
+	void onPostCommandHistoryRemoved( const VariantList & history, size_t index, size_t count );
+	void onCommandHistoryPreReset( const VariantList & history );
+	void onCommandHistoryPostReset( const VariantList & history );
 
-	void onPostHistoryItemsRemoved( const IListModel* sender, 
-		const IListModel::PostItemsRemovedArgs& args );
+	void onPostHistoryItemsRemoved( size_t index, size_t count );
 
 
 	ICommandManager* commandSystem_;
@@ -51,6 +46,8 @@ private:
 	// Eventually, we need to remove this
 	SelectionHandler selectionHandler_;
 	VariantList historyItems_;
+	Connection postHistoryItemsRemoved_;
+	ConnectionHolder historyCallbacks_;
 };
 
 

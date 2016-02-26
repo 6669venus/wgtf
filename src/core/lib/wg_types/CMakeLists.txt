@@ -11,7 +11,6 @@ SET( ALL_SRCS
 	hash_utilities.cpp
 	hashed_string_ref.hpp
 	hashed_string_ref.cpp
-	event.hpp
 	string_ref.hpp
 	string_ref.cpp
     vector2.hpp

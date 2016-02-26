@@ -34,8 +34,8 @@ public:
 
 	virtual QHash< int, QByteArray > roleNames() const = 0;
 
-	virtual QVariant data( const QModelIndex &index, int role ) const = 0;
-	virtual bool setData( const QModelIndex &index, const QVariant &value, int role ) = 0;
+	virtual QVariant data( const QModelIndex &index, int role ) const { return QVariant::Invalid; }
+	virtual bool setData( const QModelIndex &index, const QVariant &value, int role ) { return false; }
 
 	virtual void saveStates( const char * modelUniqueName ) {}
 	virtual void loadStates( const char * modelUniqueName ) {}

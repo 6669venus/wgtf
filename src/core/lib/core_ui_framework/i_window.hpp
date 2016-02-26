@@ -1,7 +1,7 @@
 #ifndef I_WINDOW_HPP
 #define I_WINDOW_HPP
 
-#include "wg_types/event.hpp"
+#include "core_common/signal.hpp"
 
 #include <vector>
 #include <memory>
@@ -16,6 +16,8 @@ typedef std::vector< std::unique_ptr<IRegion> > Regions;
 
 class IWindow
 {
+	typedef Signal<void(void)> SignalVoid;
+
 public:
 	virtual ~IWindow() {}
 
@@ -38,7 +40,7 @@ public:
 	virtual void setApplication( IUIApplication * application ) = 0;
 	virtual IUIApplication * getApplication() const = 0;
 
-	PUBLIC_EVENT( IWindow, CloseEvent )
+	SignalVoid signalClose;
 };
 
 #endif //I_WINDOW_HPP

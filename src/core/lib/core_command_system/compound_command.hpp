@@ -24,6 +24,9 @@ public:
 	ObjectHandle getMacroObject() const;
 	const SubCommandCollection & getSubCommands() const;
 
+	void serialize(ISerializer & serializer) const;
+	void deserialize(ISerializer & serializer);
+
 private:
 	void initDisplayData( IDefinitionManager & defManager, IReflectionController* controller );
 	void setId( const char * id );

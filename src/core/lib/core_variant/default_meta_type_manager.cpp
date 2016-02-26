@@ -278,6 +278,7 @@ namespace
 			std::string decodeValue;
 			if(!Base64::decode( dataStream.buffer(), decodeValue ))
 			{
+				stream.setState( std::ios_base::badbit );
 				return;
 			}
 			base::cast(value) = std::make_shared< BinaryBlock >(

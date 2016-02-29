@@ -98,8 +98,8 @@ namespace
 	}
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent )
-	: ReflectedItem( parent, parent ? parent->getPath() + property->getName() : "" )
+ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent, const std::string & inplacePath )
+	: ReflectedItem( parent, std::string(inplacePath) + property->getName() )
 {
 	// Must have a parent
 	assert( parent != nullptr );
@@ -151,7 +151,7 @@ const char * ReflectedPropertyItem::getDisplayText( int column ) const
 
 ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 {
-	auto obj = getRootObject();
+	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -173,7 +173,7 @@ ThumbnailData ReflectedPropertyItem::getThumbnail( int column ) const
 
 Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 {
-	auto obj = getRootObject();
+	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -183,7 +183,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
     else if (roleId == ObjectRole::roleId_)
     {
-        return getObject();;
+        return getObject();
     }
     else if (roleId == RootObjectRole::roleId_)
     {
@@ -233,6 +233,10 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			float minValue = .0f;
 			bool isOk = variant.tryCast( minValue );
 			assert( isOk );
+			if (!isOk)
+			{
+				return variant;
+			}
 			float diff = minValue - value;
 			float epsilon = std::numeric_limits<float>::epsilon();
 			if (diff > epsilon )
@@ -259,6 +263,10 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			float maxValue = .0f;
 			bool isOk = variant.tryCast( maxValue );
 			assert( isOk );
+			if (!isOk)
+			{
+				return variant;
+			}
 			float diff = value - maxValue;
 			float epsilon = std::numeric_limits<float>::epsilon();
 			if (diff > epsilon)
@@ -304,7 +312,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 		auto enumObj = findFirstMetaData< MetaEnumObj >( propertyAccessor, *getDefinitionManager() );
 		if (enumObj)
 		{
-			if (getRootObject().isValid() == false )
+			if (getObject().isValid() == false )
 			{
 				return Variant();
 			}
@@ -434,7 +442,7 @@ bool ReflectedPropertyItem::setData( int column, size_t roleId, const Variant & 
 		return false;
 	}
 
-	auto obj = getRootObject();
+	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -494,7 +502,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 		return child;
 	}
 
-	auto obj = getRootObject();
+	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -571,7 +579,7 @@ GenericTreeItem * ReflectedPropertyItem::getChild( size_t index ) const
 
 bool ReflectedPropertyItem::empty() const
 {
-	auto obj = getRootObject();
+	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -580,7 +588,7 @@ bool ReflectedPropertyItem::empty() const
 		return true;
 	}
 
-	const Variant & value = propertyAccessor.getValue();
+	Variant value = propertyAccessor.getValue();
 	const bool isCollection = value.typeIs< Collection >();
 
 	if (isCollection)
@@ -608,7 +616,7 @@ bool ReflectedPropertyItem::empty() const
 
 size_t ReflectedPropertyItem::size() const
 {
-	auto obj = getRootObject();
+	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
 		path_.c_str(), obj );
 
@@ -645,8 +653,8 @@ size_t ReflectedPropertyItem::size() const
 bool ReflectedPropertyItem::preSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getRootObject();
-	auto otherObj = accessor.getRootObject();
+	auto obj = getObject();
+	auto otherObj = accessor.getObject();
 	auto otherPath = accessor.getFullPath();
 
 	if (obj == otherObj && path_ == otherPath)
@@ -655,9 +663,6 @@ bool ReflectedPropertyItem::preSetValue(
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
-
-		ObjectHandle handle;
-		bool isObjectHandle = value.tryCast( handle );
 		if(isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;
@@ -695,8 +700,8 @@ bool ReflectedPropertyItem::preSetValue(
 bool ReflectedPropertyItem::postSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
-	auto obj = getRootObject();
-	auto otherObj = accessor.getRootObject();
+	auto obj = getObject();
+	auto otherObj = accessor.getObject();
 	auto otherPath = accessor.getFullPath();
 
 	if (obj == otherObj && path_ == otherPath)
@@ -705,9 +710,6 @@ bool ReflectedPropertyItem::postSetValue(
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
-
-		ObjectHandle handle;
-		bool isObjectHandle = value.tryCast( handle );
 		if(isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;

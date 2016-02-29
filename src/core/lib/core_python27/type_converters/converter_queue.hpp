@@ -24,7 +24,7 @@ namespace PythonType
  *	@param scriptObject script object from which to get the type.
  *	@return equivalent C++ type name, if supported by type converters.
  */
-TypeId scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject );
+const TypeId & scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject );
 
 
 /**

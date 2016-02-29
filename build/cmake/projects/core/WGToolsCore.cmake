@@ -79,6 +79,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_copy_paste				core/plugins/plg_copy_paste
 	plg_color_picker			core/plugins/plg_color_picker
 	plg_graph_editor			core/plugins/plg_graph_editor
+	plg_curve_editor			core/plugins/plg_curve_editor
 
 )
 

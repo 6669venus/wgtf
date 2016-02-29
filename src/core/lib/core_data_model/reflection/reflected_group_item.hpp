@@ -8,7 +8,7 @@ class MetaGroupObj;
 class ReflectedGroupItem : public ReflectedItem
 {
 public:
-	ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent );
+	ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath );
 	virtual ~ReflectedGroupItem() {}
 
 	// ReflectedItem
@@ -17,7 +17,8 @@ public:
 	// IItem
 	const char * getDisplayText( int column ) const override;
 	Variant getData( int column, size_t roleId ) const override;
-	bool setData( int column, size_t roleId, const Variant & data ) override;
+
+	bool setData(int column, size_t roleId, const Variant & data) override;
 
 	// GenericTreeItem
 	GenericTreeItem * getChild( size_t index ) const override;
@@ -31,6 +32,11 @@ public:
 		const PropertyAccessor & accessor, const Variant & value ) override;
 
 private:
+	typedef std::vector< Variant > Variants;
+
+	void getChildValues(Variants &childValues_) const;
+	bool isSameGroup(const MetaGroupObj* group) const;
+
 	const MetaGroupObj * groupObj_;
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;

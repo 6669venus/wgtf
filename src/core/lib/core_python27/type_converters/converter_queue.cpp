@@ -10,78 +10,92 @@ namespace PythonType
 {
 
 
-TypeId scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject )
+const TypeId & scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject )
 {
-	const auto typeName = scriptObject.typeNameOfObject();
-
 	// Convert Python type names to C++ type names
 	// @see https://docs.python.org/2/library/types.html
 	// Make sure that the corresponding type converter has been added to
 	// ConverterQueue::init()
-	if (strcmp( typeName, "NoneType" ) == 0)
+	if (scriptObject.isNone())
 	{
-		return TypeId::getType< void * >();
+		static auto type = TypeId::getType< void * >();
+		return type;
 	}
-	else if (strcmp( typeName, "type" ) == 0)
+	else if (PyScript::ScriptType::check( scriptObject ))
 	{
-		return TypeId::getType< ObjectHandle >();
+		static auto type = TypeId::getType< ObjectHandle >();
+		return type;
 	}
-	else if (strcmp( typeName, "bool" ) == 0)
+	else if (PyScript::ScriptBool::check( scriptObject ))
 	{
-		return TypeId::getType< bool >();
+		static auto type = TypeId::getType< bool >();
+		return type;
 	}
-	else if (strcmp( typeName, "int" ) == 0)
+	else if (PyScript::ScriptInt::check( scriptObject ))
 	{
-		return TypeId::getType< int >();
+		static auto type = TypeId::getType< int >();
+		return type;
 	}
-	else if (strcmp( typeName, "long" ) == 0)
+	else if (PyScript::ScriptLong::check( scriptObject ))
 	{
-		return TypeId::getType< digit >();
+		static auto type = TypeId::getType< digit >();
+		return type;
 	}
-	else if (strcmp( typeName, "float" ) == 0)
+	else if (PyScript::ScriptFloat::check( scriptObject ))
 	{
-		return TypeId::getType< double >();
+		static auto type = TypeId::getType< double >();
+		return type;
 	}
-	else if (strcmp( typeName, "str" ) == 0)
+	else if (PyScript::ScriptString::check( scriptObject ))
 	{
-		return TypeId::getType< std::string >();
+		static auto type = TypeId::getType< std::string >();
+		return type;
 	}
-	else if (strcmp( typeName, "unicode" ) == 0)
+	else if (PyScript::ScriptUnicode::check( scriptObject ))
 	{
-		return TypeId::getType< std::wstring >();
+		static auto type = TypeId::getType< std::wstring >();
+		return type;
 	}
-	else if (strcmp( typeName, "classobj" ) == 0)
+	else if (PyScript::ScriptClass::check( scriptObject ))
 	{
-		return TypeId::getType< ObjectHandle >();
+		static auto type = TypeId::getType< ObjectHandle >();
+		return type;
 	}
-	else if (strcmp( typeName, "instance" ) == 0)
+	else if (PyScript::ScriptInstance::check( scriptObject ))
 	{
-		return TypeId::getType< ObjectHandle >();
+		static auto type = TypeId::getType< ObjectHandle >();
+		return type;
 	}
-	else if (strcmp( typeName, "instancemethod" ) == 0)
+	else if (PyScript::ScriptMethod::check( scriptObject ))
 	{
-		return TypeId::getType< ObjectHandle >();
+		static auto type = TypeId::getType< ObjectHandle >();
+		return type;
 	}
-	else if (strcmp( typeName, "module" ) == 0)
+	else if (PyScript::ScriptModule::check( scriptObject ))
 	{
-		return TypeId::getType< ObjectHandle >();
+		static auto type = TypeId::getType< ObjectHandle >();
+		return type;
 	}
-	else if (strcmp( typeName, "tuple" ) == 0)
+	else if (PyScript::ScriptTuple::check( scriptObject ))
 	{
-		return TypeId::getType< Collection >();
+		static auto type = TypeId::getType< Collection >();
+		return type;
 	}
-	else if (strcmp( typeName, "list" ) == 0)
+	else if (PyScript::ScriptList::check( scriptObject ))
 	{
-		return TypeId::getType< Collection >();
+		static auto type = TypeId::getType< Collection >();
+		return type;
 	}
-	else if (strcmp( typeName, "dict" ) == 0)
+	else if (PyScript::ScriptDict::check( scriptObject ))
 	{
-		return TypeId::getType< Collection >();
+		static auto type = TypeId::getType< Collection >();
+		return type;
 	}
 
 	// Default type converter
 	// New-style class names or other types not converted
-	return TypeId::getType< ObjectHandle >();
+	static auto type = TypeId::getType< ObjectHandle >();
+	return type;
 }
 
 
@@ -124,17 +138,7 @@ void ConverterQueue::init()
 void ConverterQueue::fini()
 {
 	context_.deregisterInterface( pTypeConvertersInterface_ );
-
-	// Deregister type converters for converting between PyObjects and Variant
-	basicTypeConverters_.deregisterTypeConverter( noneTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( floatTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( longTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( intTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( dictTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( tupleTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( listTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( unicodeTypeConverter_ );
-	basicTypeConverters_.deregisterTypeConverter( strTypeConverter_ );
+	// Type converters deregistered on destruction
 }
 
 

@@ -2,8 +2,6 @@
 
 #include "definition_details.hpp"
 #include "defined_instance.hpp"
-#include "defined_instance.hpp"
-#include "listener_hooks.hpp"
 #include "property.hpp"
 
 #include "core_dependency_system/depends.hpp"

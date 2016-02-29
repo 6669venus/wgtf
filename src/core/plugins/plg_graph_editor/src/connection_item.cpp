@@ -9,6 +9,8 @@
 #include <QSGFlatColorMaterial>
 #include <QVector2D>
 
+#include <stdint.h>
+
 ConnectionItem::ConnectionItem(QQuickItem* parent)
     : QQuickItem(parent)
 	, outputSlot( nullptr )

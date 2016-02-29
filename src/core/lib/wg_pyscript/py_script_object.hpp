@@ -1089,6 +1089,30 @@ public:
 
 
 // -----------------------------------------------------------------------------
+// Section: ScriptBool
+// -----------------------------------------------------------------------------
+
+/**
+ *	This class provides the ability to create and use boolean objects
+ */
+class ScriptBool : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptBool, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptBool object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptBool object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyBool_Check( object.get() );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
 // Section: ScriptInt
 // -----------------------------------------------------------------------------
 
@@ -1420,6 +1444,31 @@ inline std::ostream & operator<<( std::ostream & o, const ScriptObject & obj )
 // -----------------------------------------------------------------------------
 
 typedef ScriptString ScriptBlob;
+
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptUnicode
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create unicode strings.
+ */
+class ScriptUnicode : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptUnicode, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptUnicode object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptUnicode object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyUnicode_Check( object.get() );
+	}
+};
+
 
 // -----------------------------------------------------------------------------
 // Section: ScriptMapping

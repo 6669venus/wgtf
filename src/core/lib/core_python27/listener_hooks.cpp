@@ -119,8 +119,9 @@ int pySetattrHook( PyObject * self,
 	assert( pTypeConverters != nullptr );
 
 	auto pDefinitionManager = context.queryInterface< IDefinitionManager >();
-	assert( pTypeConverters != nullptr );
+	assert( pDefinitionManager != nullptr );
 
+#if ENABLE_FULL_PATH_PYTHON_LISTENER_HOOKS
 	// Get root object to construct PropertyAccessor.
 	// PropertyAccessorListener requires a (root object, full path) pair to
 	// detect changes.
@@ -140,8 +141,15 @@ int pySetattrHook( PyObject * self,
 
 	auto pDefinition = rootInstance.getDefinition();
 	assert( pDefinition != nullptr );
-	//auto propertyAccessor = pDefinition->bindProperty( fullPath.c_str(), rootHandle );
-	auto propertyAccessor = definedInstance.getDefinition()->bindProperty( childPath.c_str(), handle );
+	auto propertyAccessor = pDefinition->bindProperty( fullPath.c_str(), rootHandle );
+
+#else // ENABLE_FULL_PATH_PYTHON_LISTENER_HOOKS
+
+	const std::string childPath( nameObject.c_str() );
+	auto pDefinition = definedInstance.getDefinition();
+	assert( pDefinition != nullptr );
+	auto propertyAccessor = pDefinition->bindProperty( childPath.c_str(), handle );
+#endif // ENABLE_FULL_PATH_PYTHON_LISTENER_HOOKS
 
 	Variant variantValue;
 	const bool success = pTypeConverters->toVariant( valueObject,

@@ -7,6 +7,12 @@
 // Use this macro to enable/disable firing UI notifications from scripts
 #define ENABLE_PYTHON_LISTENER_HOOKS 1
 
+// Use this macro to change if listeners are notified with a
+// full path + root object
+// or
+// child path + child object
+#define ENABLE_FULL_PATH_PYTHON_LISTENER_HOOKS 0
+
 namespace ReflectedPython
 {
 

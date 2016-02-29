@@ -18,7 +18,7 @@ ThumbnailExtension::~ThumbnailExtension()
 QHash< int, QByteArray > ThumbnailExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	registerRole( ThumbnailRole::role_, roleNames );
+	registerRole( ThumbnailRole::roleName_, roleNames );
 	return roleNames;
 }
 

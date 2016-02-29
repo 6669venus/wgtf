@@ -56,7 +56,7 @@ WGTokenizedStringFilter::~WGTokenizedStringFilter()
 
 void WGTokenizedStringFilter::updateInternalItemRole()
 {
-	impl_->filter_.setRole( itemRole_.second );
+	impl_->filter_.setRole( roleId_ );
 }
 
 QString WGTokenizedStringFilter::getFilterText() const

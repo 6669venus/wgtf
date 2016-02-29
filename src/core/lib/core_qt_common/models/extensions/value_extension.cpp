@@ -18,28 +18,31 @@ ValueExtension::~ValueExtension()
 QHash< int, QByteArray > ValueExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	registerRole( ValueRole::role_, roleNames );
-	registerRole( ValueTypeRole::role_, roleNames );
-	registerRole( EnumModelRole::role_, roleNames );
-	registerRole( DefinitionRole::role_, roleNames );
-	registerRole( DefinitionModelRole::role_, roleNames );
-    registerRole( ObjectRole::role_, roleNames );
-    registerRole( RootObjectRole::role_, roleNames );
-	registerRole( KeyRole::role_, roleNames );
-	registerRole( KeyTypeRole::role_, roleNames );
-	registerRole( MinValueRole::role_, roleNames );
-	registerRole( MaxValueRole::role_, roleNames );
-	registerRole( StepSizeRole::role_, roleNames);
-	registerRole( DecimalsRole::role_, roleNames);
-	registerRole( IndexPathRole::role_, roleNames );
-	registerRole( UrlIsAssetBrowserRole::role_, roleNames );
-	registerRole( UrlDialogTitleRole::role_, roleNames );
-	registerRole( UrlDialogDefaultFolderRole::role_, roleNames );
-	registerRole( UrlDialogNameFiltersRole::role_, roleNames );
-	registerRole( UrlDialogSelectedNameFilterRole::role_, roleNames );
-	registerRole( UrlDialogModalityRole::role_, roleNames );
-	registerRole( IsReadOnlyRole::role_, roleNames );
-
+	registerRole( ValueRole::roleName_, roleNames );
+	registerRole( ValueTypeRole::roleName_, roleNames );
+	registerRole( EnumModelRole::roleName_, roleNames );
+	registerRole( DefinitionRole::roleName_, roleNames );
+	registerRole( DefinitionModelRole::roleName_, roleNames );
+    registerRole( ObjectRole::roleName_, roleNames );
+    registerRole( RootObjectRole::roleName_, roleNames );
+	registerRole( KeyRole::roleName_, roleNames );
+	registerRole( KeyTypeRole::roleName_, roleNames );
+	registerRole( MinValueRole::roleName_, roleNames );
+	registerRole( MaxValueRole::roleName_, roleNames );
+	registerRole( StepSizeRole::roleName_, roleNames);
+	registerRole( DecimalsRole::roleName_, roleNames);
+	registerRole( IndexPathRole::roleName_, roleNames );
+	registerRole( UrlIsAssetBrowserRole::roleName_, roleNames );
+	registerRole( UrlDialogTitleRole::roleName_, roleNames );
+	registerRole( UrlDialogDefaultFolderRole::roleName_, roleNames );
+	registerRole( UrlDialogNameFiltersRole::roleName_, roleNames );
+	registerRole( UrlDialogSelectedNameFilterRole::roleName_, roleNames );
+	registerRole( UrlDialogModalityRole::roleName_, roleNames );
+	registerRole( IsReadOnlyRole::roleName_, roleNames );
+	for (auto i = 0; i < roles_.count(); ++i)
+	{
+		registerRole( roles_[i].toUtf8().constData(), roleNames );
+	}
 	return roleNames;
 }
 
@@ -157,4 +160,69 @@ void ValueExtension::onDataChanged( const QModelIndex &index, int role, const QV
 		parents.append( index );
 		emit model_->layoutChanged( parents, QAbstractItemModel::VerticalSortHint );
 	}
+}
+
+QQmlListProperty< QString > ValueExtension::getRoles() const
+{
+	return QQmlListProperty< QString >(
+		const_cast< ValueExtension * >( this ),
+		nullptr,
+		&appendRole, 
+		&countRoles,
+		&roleAt, 
+		&clearRoles );
+}
+
+void ValueExtension::appendRole( 
+	QQmlListProperty< QString > * property, 
+	QString * value )
+{
+	auto valueExtension = qobject_cast< ValueExtension * >( property->object );
+	if (valueExtension == nullptr)
+	{
+		return;
+	}
+
+	// beginResetModel
+	valueExtension->roles_.append( *value );
+	// endResetModel
+}
+
+QString * ValueExtension::roleAt( 
+	QQmlListProperty< QString > * property, 
+	int index )
+{
+	auto valueExtension = qobject_cast< ValueExtension * >( property->object );
+	if (valueExtension == nullptr)
+	{
+		return nullptr;
+	}
+
+	return &valueExtension->roles_[index];
+}
+
+void ValueExtension::clearRoles( 
+	QQmlListProperty< QString > * property )
+{
+	auto valueExtension = qobject_cast< ValueExtension * >( property->object );
+	if (valueExtension == nullptr)
+	{
+		return;
+	}
+
+	// beginResetModel
+	valueExtension->roles_.clear();
+	// endResetModel
+}
+
+int ValueExtension::countRoles( 
+	QQmlListProperty< QString > * property )
+{
+	auto valueExtension = qobject_cast< ValueExtension * >( property->object );
+	if (valueExtension == nullptr)
+	{
+		return 0;
+	}
+
+	return valueExtension->roles_.count();
 }

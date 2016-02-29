@@ -493,8 +493,8 @@ SelectionExtension::~SelectionExtension()
 QHash< int, QByteArray > SelectionExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	this->registerRole( SelectedRole::role_, roleNames );
-	this->registerRole( ExpandedRole::role_, roleNames );
+	this->registerRole( SelectedRole::roleName_, roleNames );
+	this->registerRole( ExpandedRole::roleName_, roleNames );
 	return roleNames;
 }
 

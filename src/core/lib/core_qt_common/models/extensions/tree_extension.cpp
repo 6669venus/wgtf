@@ -223,10 +223,10 @@ void TreeExtension::loadStates( const char * modelUniqueName )
 QHash< int, QByteArray > TreeExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	this->registerRole( ChildModelRole::role_, roleNames );
-	this->registerRole( HasChildrenRole::role_, roleNames );
-	this->registerRole( ExpandedRole::role_, roleNames );
-	this->registerRole( ParentIndexRole::role_, roleNames );
+	this->registerRole( ChildModelRole::roleName_, roleNames );
+	this->registerRole( HasChildrenRole::roleName_, roleNames );
+	this->registerRole( ExpandedRole::roleName_, roleNames );
+	this->registerRole( ParentIndexRole::roleName_, roleNames );
 	return roleNames;
 }
 

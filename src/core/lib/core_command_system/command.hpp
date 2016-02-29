@@ -40,8 +40,8 @@ public:
 	virtual CommandThreadAffinity threadAffinity() const { return CommandThreadAffinity::COMMAND_THREAD; }
 
 	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
-	virtual void undo( IDataStream & dataStore ) const {}
-	virtual void redo( IDataStream & dataStore ) const {}
+	virtual void undo( const ObjectHandle & arguments ) const {}
+	virtual void redo( const ObjectHandle & arguments ) const {}
 
 	virtual void setCommandSystemProvider( ICommandManager * commandSystemProvider );
 	virtual void registerCommandStatusListener( ICommandEventListener * listener );

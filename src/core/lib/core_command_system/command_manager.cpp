@@ -153,6 +153,7 @@ public:
 	void redo();
 	bool canUndo() const;
 	bool canRedo() const;
+    void removeCommands(const ICommandManager::TRemoveFunctor & functor);
 	VariantList & getHistory();
 	ValueChangeNotifier< int > & getCurrentIndex();
 	IListModel & getMacros();
@@ -354,7 +355,6 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setCommandId( command ->getId() );
 	instance->setArguments( arguments );
 	instance->setDefinitionManager( pCommandManager_->getDefManager() );
-	instance->init();
 	instance->setStatus( Queued );
 	queueCommand( instance );
 	return instance;
@@ -505,9 +505,9 @@ void CommandManagerImpl::updateSelected( const int & value )
 	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
 		&CommandManagerImpl::onPostDataChanged >( this );
 
+    historyState_->index_ = value;
+    historyState_->previousSelectedIndex_ = value;
 	currentIndex_.value( value );
-	historyState_->index_ = value;
-	historyState_->previousSelectedIndex_ = value;
 
 	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
 		&CommandManagerImpl::onPreDataChanged >( this );
@@ -535,6 +535,24 @@ bool CommandManagerImpl::canRedo() const
 		return true;
 	}
 	return false;
+}
+    
+void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & functor)
+{
+    flush();
+    std::unique_lock<std::mutex> lock( workerMutex_ );
+    VariantList::Iterator iter = historyState_->history_.begin();
+    while(iter != historyState_->history_.end())
+    {
+        if (functor((*iter).value<CommandInstancePtr>()))
+        {
+            iter = historyState_->history_.erase(iter);
+        }
+        else
+        {
+            ++iter;
+        }
+    }
 }
 
 //==============================================================================
@@ -883,100 +901,102 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 //==============================================================================
 void CommandManagerImpl::processCommands()
 {
-	std::thread::id currentThreadId = std::this_thread::get_id();
+    {
+        std::thread::id currentThreadId = std::this_thread::get_id();
 
-	std::unique_lock<std::mutex> lock( workerMutex_ );
+        std::unique_lock<std::mutex> lock( workerMutex_ );
 
-	for (;;)
-	{
-		auto commandFrame = historyState_->commandFrames_.back();		
-		if (commandFrame->commandQueue_.empty())
-		{
-			break;
-		}
+        for (;;)
+        {
+            auto commandFrame = historyState_->commandFrames_.back();		
+            if (commandFrame->commandQueue_.empty())
+            {
+                break;
+            }
 
-		auto job = commandFrame->commandQueue_.front();
-		auto threadAffinity = job->getCommand()->threadAffinity();
-		if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
-			currentThreadId != ownerThreadId_)
-		{
-			// The next command in the queue needs to be run on the UI thread.
-			// Notify the owner thread
-			ownerWakeUp_ = true;
-			break;
-		}
-		else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
-			currentThreadId != workerThreadId_)
-		{
-			// The next command in the queue needs to be run on the command thread.
-			// Notify the worker thread
-			workerWakeUp_.notify_all();
-			break;
-		}
+            auto job = commandFrame->commandQueue_.front();
+            auto threadAffinity = job->getCommand()->threadAffinity();
+            if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
+                currentThreadId != ownerThreadId_)
+            {
+                // The next command in the queue needs to be run on the UI thread.
+                // Notify the owner thread
+                ownerWakeUp_ = true;
+                break;
+            }
+            else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
+                currentThreadId != workerThreadId_)
+            {
+                // The next command in the queue needs to be run on the command thread.
+                // Notify the worker thread
+                workerWakeUp_.notify_all();
+                break;
+            }
 
-		commandFrame->commandQueue_.pop_front();
+            commandFrame->commandQueue_.pop_front();
 
-		if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
-		{
-			//execute undo/redo
-			lock.unlock(); // release lock while running commands
-			job->setStatus( Running );
-			job->execute();
-			job->setStatus( Complete );
-			lock.lock();
-		}
-		else
-		{
-			// Push a command frame for this job
-			auto previousFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
-			pushFrame( job );
-			auto currentFrame = historyState_->commandFrames_.back();
-			THREAD_LOCAL_SET( historyState_->currentFrame_, currentFrame );
+            if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
+            {
+                //execute undo/redo
+                lock.unlock(); // release lock while running commands
+                job->setStatus( Running );
+                job->execute();
+                job->setStatus( Complete );
+                lock.lock();
+            }
+            else
+            {
+                // Push a command frame for this job
+                auto previousFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
+                pushFrame( job );
+                auto currentFrame = historyState_->commandFrames_.back();
+                THREAD_LOCAL_SET( historyState_->currentFrame_, currentFrame );
 
-			lock.unlock(); // release lock while running commands
-			job->execute();
-			lock.lock();
+                lock.unlock(); // release lock while running commands
+                job->execute();
+                lock.lock();
 
-			// Spin and process commands until all sub commands for this frame have been executed
-			while (!currentFrame->commandQueue_.empty() || historyState_->commandFrames_.back() != currentFrame )
-			{
-				lock.unlock();
-				processCommands();
-				lock.lock();
-			}
+                // Spin and process commands until all sub commands for this frame have been executed
+                while (!currentFrame->commandQueue_.empty() || historyState_->commandFrames_.back() != currentFrame )
+                {
+                    lock.unlock();
+                    processCommands();
+                    lock.lock();
+                }
 
-			// Pop the command frame
-			THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
-			popFrame();
-		}
-	}
+                // Pop the command frame
+                THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
+                popFrame();
+            }
+        }
 
-	if (currentThreadId != ownerThreadId_)
-	{
-		if (!historyState_->pendingHistory_.empty())
-		{
-			ownerWakeUp_ = true;
-		}
-		return;
-	}
+        if (currentThreadId != ownerThreadId_)
+        {
+            if (!historyState_->pendingHistory_.empty())
+            {
+                ownerWakeUp_ = true;
+            }
+            return;
+        }
 
-	if (historyState_->pendingHistory_.empty())
-	{
-		return;
-	}
+        if (historyState_->pendingHistory_.empty())
+        {
+            return;
+        }
 
-	if (static_cast<int>(historyState_->history_.size()) > currentIndex_.value() + 1)
-	{
-		// erase all history after the current index as we have pending
-		// history that will make this invalid
-		historyState_->history_.resize( currentIndex_.value() + 1 );
-	}
+        if (static_cast<int>(historyState_->history_.size()) > currentIndex_.value() + 1)
+        {
+            // erase all history after the current index as we have pending
+            // history that will make this invalid
+            historyState_->history_.resize( currentIndex_.value() + 1 );
+        }
 
-	while (!historyState_->pendingHistory_.empty())
-	{
-		historyState_->history_.push_back( historyState_->pendingHistory_.front() );
-		historyState_->pendingHistory_.pop_front();
-	}
+        while (!historyState_->pendingHistory_.empty())
+        {
+            historyState_->history_.push_back( historyState_->pendingHistory_.front() );
+            historyState_->pendingHistory_.pop_front();
+        }
+    }
 	updateSelected( static_cast< int >( historyState_->history_.size() - 1 ) );
 }
 
@@ -1028,22 +1048,22 @@ void CommandManagerImpl::onAddEnv( IEnvState* state )
 	std::string file = state->description();
 	file += s_historyVersion;
 
-	const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
+//	const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+//	assert( fileSystem );
 
-	if (fileSystem->exists( file.c_str() ))
-	{
-		IDefinitionManager& defManager = pCommandManager_->getDefManager();
-
-		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
-		HistorySerializer serializer( *fileStream, defManager );
-		std::string version;
-		serializer.deserialize( version );
-		if( version == s_historyVersion)
-		{
-			LoadCommandHistory( serializer, ec );
-		}
-	}
+//	if (fileSystem->exists( file.c_str() ))
+//	{
+//		IDefinitionManager& defManager = pCommandManager_->getDefManager();
+//
+//		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+//		HistorySerializer serializer( *fileStream, defManager );
+//		std::string version;
+//		serializer.deserialize( version );
+//		if( version == s_historyVersion)
+//		{
+//			LoadCommandHistory( serializer, ec );
+//		}
+//	}
 }
 
 void CommandManagerImpl::onRemoveEnv( IEnvState* state )
@@ -1054,19 +1074,19 @@ void CommandManagerImpl::onRemoveEnv( IEnvState* state )
 		switchEnvContext( &nullHistoryState_ );
 	}
 
-	IDefinitionManager& defManager = pCommandManager_->getDefManager();
-	ResizingMemoryStream stream;
-	HistorySerializer serializer( stream, defManager );
-
-	serializer.serialize( s_historyVersion );
-
-	SaveCommandHistory( serializer, ec );
-
-	std::string file = state->description();
-	file += s_historyVersion;
-	IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
-	fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+//	IDefinitionManager& defManager = pCommandManager_->getDefManager();
+//	ResizingMemoryStream stream;
+//	HistorySerializer serializer( stream, defManager );
+//
+//	serializer.serialize( s_historyVersion );
+//
+//	SaveCommandHistory( serializer, ec );
+//
+//	std::string file = state->description();
+//	file += s_historyVersion;
+//	IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+//	assert( fileSystem );
+//	fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
 }
 
 void CommandManagerImpl::onSelectEnv( IEnvState* state )
@@ -1246,6 +1266,11 @@ bool CommandManager::canUndo() const
 bool CommandManager::canRedo() const
 {
 	return pImpl_->canRedo();
+}
+
+void CommandManager::removeCommands(const TRemoveFunctor & functor)
+{
+    pImpl_->removeCommands(functor);
 }
 
 

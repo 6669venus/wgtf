@@ -43,6 +43,9 @@ public:
 
 	virtual bool canUndo() const = 0;
 	virtual bool canRedo() const = 0;
+    
+    typedef std::function<bool (const CommandInstancePtr&)> TRemoveFunctor;
+    virtual void removeCommands(const TRemoveFunctor & functor) = 0;
 
 	virtual const VariantList & getHistory() const = 0;
 	virtual IValueChangeNotifier& currentIndex() = 0;

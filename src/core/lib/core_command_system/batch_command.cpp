@@ -49,12 +49,12 @@ CommandThreadAffinity BatchCommand::threadAffinity() const
 
 
 //--------------------------------------------------------------------------
-void BatchCommand::undo( IDataStream & stream ) const
+void BatchCommand::undo( const ObjectHandle & arguments ) const
 {
 }
 
 
 //--------------------------------------------------------------------------
-void BatchCommand::redo( IDataStream & stream ) const
+void BatchCommand::redo( const ObjectHandle & arguments ) const
 {
 }

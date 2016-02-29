@@ -139,7 +139,9 @@ int pySetattrHook( PyObject * self,
 	fullPath += childPath;
 
 	auto pDefinition = rootInstance.getDefinition();
-	auto propertyAccessor = pDefinition->bindProperty( fullPath.c_str(), rootHandle );
+	assert( pDefinition != nullptr );
+	//auto propertyAccessor = pDefinition->bindProperty( fullPath.c_str(), rootHandle );
+	auto propertyAccessor = definedInstance.getDefinition()->bindProperty( childPath.c_str(), handle );
 
 	Variant variantValue;
 	const bool success = pTypeConverters->toVariant( valueObject,

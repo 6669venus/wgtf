@@ -51,6 +51,7 @@ public:
 
 	Q_INVOKABLE QModelIndex find( QVariant data, QString roleName ) const;
 	Q_INVOKABLE QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE QVariant headerData( int column, QString roleName ) const;
 	Q_INVOKABLE QVariant data( const QModelIndex& index, QString roleName ) const;
 
 	template< typename T >

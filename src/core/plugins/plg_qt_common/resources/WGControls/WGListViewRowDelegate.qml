@@ -223,7 +223,7 @@ Item {
 
                         if (columnWidths.length === 0)
                         {
-                            columnWidth = Math.ceil((rowDelegate.width - rowDelegate.columnSpacing) / columns.count);
+                            columnWidth = Math.ceil(rowDelegate.width / columns.count - rowDelegate.columnSpacing);
                         }
                         else if (columnIndex < columnWidths.length)
                         {

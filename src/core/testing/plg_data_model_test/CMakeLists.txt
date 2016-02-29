@@ -32,6 +32,7 @@ BW_TARGET_LINK_LIBRARIES( plg_data_model_test PRIVATE
 	core_generic_plugin
 	core_reflection
 	core_ui_framework
+	core_data_model
     Qt5::Core
     Qt5::Gui
     Qt5::Quick

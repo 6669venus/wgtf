@@ -35,6 +35,9 @@ public:
 	virtual QVariant data( const QModelIndex &index, int role ) const { return QVariant::Invalid; }
 	virtual bool setData( const QModelIndex &index, const QVariant &value, int role ) { return false; }
 
+	virtual QVariant headerData( int section, Qt::Orientation orientation, int role ) const { return QVariant::Invalid; }
+	virtual bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) { return false; }
+
 	virtual void saveStates( const char * modelUniqueName ) {}
 	virtual void loadStates( const char * modelUniqueName ) {}
 

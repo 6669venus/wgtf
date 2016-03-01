@@ -8,6 +8,7 @@
 #include "controls/bw_copyable.hpp"
 #include "controls/wg_context_menu.hpp"
 #include "controls/wg_action.hpp"
+#include "controls/wg_item_view.hpp"
 #include "helpers/wg_filtered_list_model.hpp"
 #include "helpers/wg_filtered_tree_model.hpp"
 #include "helpers/wg_filter.hpp"
@@ -69,6 +70,7 @@
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
 	qmlRegisterType< WGContextMenu, 1 >( "WGControls", 1, 0, "WGContextMenu" );
 	qmlRegisterType< WGAction, 1 >( "WGControls", 1, 0, "WGAction" );
+	qmlRegisterType< WGItemView, 1 >( "WGControls", 1, 0, "WGItemView" );
 
 	// Filters
 	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );

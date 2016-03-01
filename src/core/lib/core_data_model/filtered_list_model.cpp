@@ -61,7 +61,7 @@ This is to tell the view to update its data.
 
 
 #include "filtered_list_model.hpp"
-
+#include "core_variant/variant.hpp"
 #include <algorithm>
 #include <atomic>
 #include <functional>
@@ -568,6 +568,26 @@ int FilteredListModel::columnCount() const
 	}
 
 	return impl_->model_->columnCount();
+}
+
+Variant FilteredListModel::getData( int column, size_t roleId ) const
+{
+	if (impl_->model_ == nullptr)
+	{
+		return Variant();
+	}
+
+	return impl_->model_->getData( column, roleId );
+}
+
+bool FilteredListModel::setData( int column, size_t roleId, const Variant & data )
+{
+	if (impl_->model_ == nullptr)
+	{
+		return false;
+	}
+
+	return impl_->model_->setData( column, roleId, data );
 }
 
 void FilteredListModel::setSource( IListModel * source )

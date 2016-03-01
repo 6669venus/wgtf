@@ -18,7 +18,8 @@ public:
 	~CompoundCommand();
 	
 	const char * getId() const override;
-	ObjectHandle execute( const ObjectHandle & arguments ) const override;
+	ObjectHandle execute(const ObjectHandle & arguments) const override;
+	bool validateArguments(const ObjectHandle & arguments) const override;
 	CommandThreadAffinity threadAffinity() const override;
 	void addCommand( const char * commandId, const ObjectHandle & commandArguments );
 	ObjectHandle getMacroObject() const;

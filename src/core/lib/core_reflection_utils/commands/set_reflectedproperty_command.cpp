@@ -105,6 +105,29 @@ const char * SetReflectedPropertyCommand::getId() const
 	return s_Id;
 }
 
+//==============================================================================
+bool SetReflectedPropertyCommand::validateArguments(const ObjectHandle& arguments) const
+{
+	auto commandArgs = arguments.getBase< ReflectedPropertyCommandArgument >();
+	if ( commandArgs == nullptr ) return false;
+
+	auto objManager = definitionManager_.getObjectManager();
+	if ( objManager == nullptr ) return false;
+
+	const ObjectHandle & object = objManager->getObject( commandArgs->getContextId() );
+	if (!object.isValid()) return false;
+
+	const IClassDefinition* defn = object.getDefinition( definitionManager_ );
+	PropertyAccessor property = defn->bindProperty(commandArgs->getPropertyPath(), object );
+	if (property.isValid() == false) return false;
+	
+	const MetaType * dataType = commandArgs->getPropertyValue().type();
+	const MetaType * propertyValueType = property.getValue().type();
+
+	if ( !dataType->canConvertTo(propertyValueType) ) return false;
+
+	return true;
+}
 
 //==============================================================================
 ObjectHandle SetReflectedPropertyCommand::execute(
@@ -132,6 +155,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	{
 		return CommandErrorCode::INVALID_VALUE;
 	}
+
 	return nullptr;
 }
 

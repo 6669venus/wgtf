@@ -45,7 +45,7 @@ MetaType::MetaType(
 {
 	addConversionFrom< std::string >( &convertFromString );
 }
-
+	
 
 bool MetaType::convertFrom( void* to, const MetaType* fromType, const void* from ) const
 {
@@ -72,12 +72,40 @@ bool MetaType::convertFrom( void* to, const MetaType* fromType, const void* from
 	return false;
 }
 
+bool MetaType::canConvertFrom( const MetaType* fromType ) const
+{
+	// identity conversion
+	if( fromType == this )
+	{
+		return true;
+	}
+
+	// custom conversion
+	auto conv = conversionsFrom_.find( &fromType->typeInfo() );
+	if( conv != conversionsFrom_.end() )
+	{
+		return true;
+	}
+
+	// default conversion
+	if( defaultConversionFrom_ )
+	{
+		return true;
+	}
+
+	return false;
+}
+
 
 bool MetaType::convertTo( const MetaType* toType, void* to, const void* from ) const
 {
 	return toType->convertFrom( to, this, from );
 }
 
+bool MetaType::canConvertTo( const MetaType* toType ) const
+{
+	return toType->canConvertFrom( this );
+}
 
 void MetaType::addConversionFrom( const std::type_info& fromType, ConversionFunc func )
 {

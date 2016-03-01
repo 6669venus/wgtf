@@ -22,6 +22,7 @@ public:
 	void init( size_t count );
 	const ObjectHandle & getCommandArgument( size_t id ) const;
 	const ObjectHandle & getCommandArgController( size_t id ) const;
+	size_t getArgCount() const{ return args_.size(); }
 	void setCommandHandlers( size_t id, const ObjectHandle & controller, const ObjectHandle & arg );
 
 	void resolveDependecy( size_t command, const std::vector<CommandInstance*>& instances );
@@ -111,15 +112,23 @@ public:
 	void init( ICommandManager& commandSystem, IDefinitionManager & defManager,
 		IReflectionController* controller, const char * cmdId );
 
-	void setContextObject( const ObjectHandle & obj );
+	bool setContextObject(const ObjectHandle & obj);
+	bool setContextObjectForCommand(size_t commandIndex, ObjectHandle & args, const ObjectHandle & obj) const;
+
+	bool validateArgsObject(const ObjectHandle & obj) const;
+	bool setArgumentObject(const ObjectHandle& args);
+	bool setArgumentObjectForCommand(size_t idx, const ObjectHandle& args);
+
 	ObjectHandle executeMacro() const;
+	ObjectHandle executeMacro(const ObjectHandle& contextObject ) const;
 	ObjectHandle getTreeModel() const;
 
 	void serialize(ISerializer & serializer) const;
 	void deserialize(ISerializer & serializer);
 
 private:
-	void bindMacroArgumenets();
+	ObjectHandle bindMacroArgumenets() const;
+	ObjectHandle createController(size_t idx, const ObjectHandle & args) const;
 
 	std::pair<ObjectHandle, ObjectHandle> bind( size_t idx, ReflectedPropertyCommandArgument* rpca ) const;
 	std::pair<ObjectHandle, ObjectHandle> bind( size_t idx, ReflectedMethodCommandParameters* rmcp ) const;

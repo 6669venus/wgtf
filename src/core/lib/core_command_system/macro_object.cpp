@@ -72,7 +72,10 @@ void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager& defM
 	cmdId_ = cmdId;
 	macroName_ = cmdId_;
 
-	bindMacroArgumenets();
+	assert(!argsEdit_.isValid());
+	ObjectHandle newArgs = bindMacroArgumenets();
+
+	setArgumentObject(newArgs);
 }
 
 ObjectHandle MacroObject::executeMacro() const
@@ -95,8 +98,7 @@ std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( size_t idx, ReflectedPr
 	argObj->setValue( rpca->getPropertyValue() );
 	argObj->setContextId( rpca->getContextId() );
 
-	auto ctrlObj = pDefManager_->create<ReflectedPropertyCommandArgumentController>();
-	ctrlObj->init( idx, argObj, pDefManager_);
+	auto ctrlObj = createController(idx, argObj);
 
 	return std::pair<ObjectHandle, ObjectHandle>(ctrlObj, argObj);
 }
@@ -108,16 +110,13 @@ std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( size_t idx, ReflectedMe
 	argObj->setId( rmcp->getId() );
 	argObj->setParameters( rmcp->getParameters() );
 
-	auto ctrlObj = pDefManager_->create<ReflectedMethodCommandParametersController>();
-	ctrlObj->init( argObj, pDefManager_);
+	auto ctrlObj = createController(idx, argObj);
 
 	return std::pair<ObjectHandle, ObjectHandle>(ctrlObj, argObj);
 }
 
-void MacroObject::bindMacroArgumenets()
+ObjectHandle MacroObject::bindMacroArgumenets() const
 {
-	assert( !argsEdit_.isValid());
-
 	auto argDef = pDefManager_->getDefinition<MacroEditObject>();
 	assert( argDef != nullptr );
 	ObjectHandle args = argDef->create();
@@ -150,7 +149,7 @@ void MacroObject::bindMacroArgumenets()
 			ccArgs->setCommandHandlers( i, commands[i].second, commands[i].second );
 		}
 	}
-	argsEdit_ = args;
+	return args;
 }
 
 void MacroObject::serialize(ISerializer & serializer) const
@@ -168,13 +167,134 @@ void MacroObject::deserialize(ISerializer & serializer)
 	}
 }
 
+//NOTE(aidan): for right now, this just sets the context object on the first 
+//command. 
+bool MacroObject::setContextObject(const ObjectHandle & obj)
+{
+	bool result = setContextObjectForCommand(0, argsEdit_, obj);
+	return result;
+}
+
+bool MacroObject::setContextObjectForCommand(size_t commandIndex, ObjectHandle & args, const ObjectHandle & obj) const
+{
+	if ( !obj.isValid() ) return false;
+	
+	RefObjectId objId;
+	if ( !obj.getId(objId) ) return false;
+
+	MacroEditObject* editObject = args.getBase<MacroEditObject>();
+	if ( editObject == nullptr ) return false;
+	if ( editObject->getArgCount() <= commandIndex ) return false;
+
+	ObjectHandle argHandle = editObject->getCommandArgument(commandIndex);
+	if ( !argHandle.isValid() ) return false;
+			
+	ReflectedPropertyCommandArgument* rpca = argHandle.getBase<ReflectedPropertyCommandArgument>();
+	if ( rpca == nullptr ) return false;
+				
+	const IClassDefinition* def = obj.getDefinition( *pDefManager_ );
+	if ( def == nullptr ) return false;
+					
+	PropertyAccessor pa;
+	ReflectedPropertyUndoRedoUtility::resolveProperty( obj, *def, rpca->getPropertyPath(), pa, *pDefManager_ );
+	if ( !pa.isValid() ) return false;
+		
+	const RefObjectId &oldId = rpca->getContextId();
+	rpca->setContextId(objId);
+	
+	return true;
+}
+
+ObjectHandle MacroObject::executeMacro(const ObjectHandle& contextObject ) const
+{
+	assert( commandSystem_ != nullptr );
+	assert( argsEdit_.isValid() );
+
+	ObjectHandle newArgs = bindMacroArgumenets();
+	
+	CommandInstancePtr result = nullptr;
+
+	if ( setContextObjectForCommand(0, newArgs, contextObject) )
+	{
+		result = commandSystem_->queueCommand( cmdId_.c_str(), newArgs );
+	}
+
+	return result;
+}
+
+
+bool MacroObject::validateArgsObject(const ObjectHandle & obj) const
+{
+	Command* command = commandSystem_->findCommand( cmdId_.c_str() );
+
+	if ( command->validateArguments(obj) )
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool MacroObject::setArgumentObject(const ObjectHandle& args)
+{
+	if ( validateArgsObject(args) )
+	{
+		argsEdit_ = args;
+		return true;
+	}
+
+	return false;
+}
+
+ObjectHandle MacroObject::createController(size_t idx, const ObjectHandle & args) const
+{
+	if (args.type() == TypeId::getType<ReflectedPropertyCommandArgument>())
+	{
+		auto ctrlObj = pDefManager_->create<ReflectedPropertyCommandArgumentController>();
+		ctrlObj->init( idx, args, pDefManager_);
+		return ctrlObj;
+	}
+	else if (args.type() == TypeId::getType<ReflectedMethodCommandParameters>())
+	{
+		auto ctrlObj = pDefManager_->create<ReflectedMethodCommandParametersController>();
+		ctrlObj->init( args, pDefManager_);
+		return ctrlObj;
+	}
+	else
+	{
+		return args;
+	}
+}
+
+bool MacroObject::setArgumentObjectForCommand(size_t idx, const ObjectHandle& args)
+{
+	Command* command = commandSystem_->findCommand( cmdId_.c_str() );
+	if ( !command ) return false;
+
+	CompoundCommand* compoundCommand = dynamic_cast<CompoundCommand*>(command);
+	if (!compoundCommand) return false;
+
+	auto subCommands = compoundCommand->getSubCommands();
+	if ( subCommands.size() <= idx ) return false;
+
+	Command* subCommand = commandSystem_->findCommand(subCommands[idx].first.c_str());
+	if (!subCommand ) return false;
+	if ( !subCommand->validateArguments(args) ) return false;
+
+	MacroEditObject* ccArgs = argsEdit_.getBase<MacroEditObject>();
+	if ( !ccArgs ) return false;
+	if ( ccArgs->getArgCount() <= idx ) return false;
+
+	ccArgs->setCommandHandlers(idx, createController(idx, args), args);
+	return true;
+}
+
 ReflectedPropertyCommandArgumentController::ReflectedPropertyCommandArgumentController()
 	: defMngr_( nullptr )
 	, arguments_( nullptr )
 	, subCommandIdx_( 0 )
 	, dependencyOffset_( 0 )
 {
-
 }
 
 void ReflectedPropertyCommandArgumentController::init(size_t subCommandIdx, ObjectHandle arguments, IDefinitionManager* defMngr)
@@ -239,7 +359,7 @@ void ReflectedPropertyCommandArgumentController::getObject(int * o_EnumValue) co
 		*o_EnumValue = dependencyOffset_;
 	}
 }
-
+ 
 void ReflectedPropertyCommandArgumentController::setObject(const int & o_EnumValue)
 {
 	if (o_EnumValue >= 0)

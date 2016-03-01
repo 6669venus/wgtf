@@ -31,7 +31,8 @@ WGPanel {
 		id: listModel
 		source: useModel ? sourceModel : null
 
-		ValueExtension {}
+        HeaderFooterTextExtension {}
+        ValueExtension {}
 		ColumnExtension {}
 		SelectionExtension {
 			id: listModelSelection
@@ -47,6 +48,8 @@ WGPanel {
         anchors.bottom: parent.bottom
         spacing: 1
         showColumnsFrame: true
+        showColumnHeaders: true
+        showColumnFooters: true
         model: listModel
         selectionExtension: listModelSelection
         columnDelegates: [defaultColumnDelegate, columnDelegate]

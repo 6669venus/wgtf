@@ -21,6 +21,9 @@ public:
 	virtual size_t size( const IItem* item ) const override;
 	virtual int columnCount() const override;
 
+	virtual Variant getData( int column, size_t roleId ) const;
+	virtual bool setData( int column, size_t roleId, const Variant & data );
+
 	void setSource( ITreeModel * source );
 	void setFilter( IItemFilter * filter );
 

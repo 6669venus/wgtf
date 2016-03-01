@@ -124,6 +124,9 @@ bool ValueExtension::setData( const QModelIndex &index, const QVariant &value, i
 
 void ValueExtension::onDataAboutToBeChanged( const QModelIndex &index, int role, const QVariant &value )
 {
+	auto model = index.model();
+	assert( model != nullptr );
+
 	size_t roleId;
 	if (!decodeRole( role, roleId ))
 	{
@@ -134,12 +137,15 @@ void ValueExtension::onDataAboutToBeChanged( const QModelIndex &index, int role,
 	{
 		QList<QPersistentModelIndex> parents;
 		parents.append( index );
-		emit model_->layoutAboutToBeChanged( parents, QAbstractItemModel::VerticalSortHint );
+		emit const_cast< QAbstractItemModel * >( model )->layoutAboutToBeChanged( parents, QAbstractItemModel::VerticalSortHint );
 	}
 }
 
 void ValueExtension::onDataChanged( const QModelIndex &index, int role, const QVariant &value )
 {
+	auto model = index.model();
+	assert( model != nullptr );
+
 	size_t roleId;
 	if (!decodeRole( role, roleId ))
 	{
@@ -151,14 +157,14 @@ void ValueExtension::onDataChanged( const QModelIndex &index, int role, const QV
 	{
 		QVector<int> roles;
 		roles.append( role );
-		emit model_->dataChanged( index, index, roles );
+		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 	}
 
 	if (roleId == DefinitionRole::roleId_)
 	{
 		QList<QPersistentModelIndex> parents;
 		parents.append( index );
-		emit model_->layoutChanged( parents, QAbstractItemModel::VerticalSortHint );
+		emit const_cast< QAbstractItemModel * >( model )->layoutChanged( parents, QAbstractItemModel::VerticalSortHint );
 	}
 }
 

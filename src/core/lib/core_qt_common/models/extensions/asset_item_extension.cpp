@@ -90,6 +90,9 @@ bool AssetItemExtension::setData( const QModelIndex &index, const QVariant &valu
 
 void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, const QVariant &value )
 {
+	auto model = index.model();
+	assert( model != nullptr );
+
 	size_t roleId;
 	if (!decodeRole( role, roleId ))
 	{
@@ -108,6 +111,6 @@ void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, cons
 	{
 		QVector<int> roles;
 		roles.append( role );
-		emit model_->dataChanged( index, index, roles );
+		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 	}
 }

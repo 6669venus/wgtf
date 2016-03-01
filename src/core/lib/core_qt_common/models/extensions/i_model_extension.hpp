@@ -22,13 +22,11 @@ class IModelExtension : public QObject
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	IModelExtension() : model_( nullptr ) {}
+	IModelExtension() : qtFramework_( nullptr ) {}
 	virtual ~IModelExtension() {}
 
-	void init( QAbstractItemModel * model, IQtFramework* qtFramework )
+	void init( IQtFramework* qtFramework )
 	{
-		assert( model_ == nullptr );
-		model_ = model;
 		qtFramework_ = qtFramework;
 	}
 
@@ -61,7 +59,6 @@ public slots:
 		const QModelIndex & parent, int first, int last ) {}
 
 protected:
-	QAbstractItemModel * model_;
 	IQtFramework * qtFramework_;
 };
 

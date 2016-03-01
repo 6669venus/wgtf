@@ -379,7 +379,7 @@ ListView {
         model: listView.model
         minimumRowHeight: listView.minimumRowHeight
         spacing: columnSpacing
-        visible: showColumnHeaders
+        visible: showColumnFooters
         width: listView.width - listView.rightMargin - listView.leftMargin
     }
 

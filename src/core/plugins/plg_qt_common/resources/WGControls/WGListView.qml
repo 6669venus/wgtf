@@ -322,7 +322,7 @@ ListView {
     */
     signal returnPressed()
 
-    delegate: WGListViewRowDelegate {
+    delegate: WGItemRow {
         anchors.left: parent.left
         width: Math.max(columnsFrame.width, minimumRowWidth)
         defaultColumnDelegate: listView.defaultColumnDelegate
@@ -355,7 +355,7 @@ ListView {
 
     header: !showColumnHeaders ? null : headerComponent
 
-    property Component headerComponent: WGDataModelHeaderRow {
+    property Component headerComponent: WGHeaderRow {
         topMargin: listView.topMargin
         columnCount: listView.columnCount
         columnWidthFunction: listView.columnWidthFunction
@@ -370,7 +370,7 @@ ListView {
 
     footer: !showColumnFooters ? null : footerComponent
 
-    property Component footerComponent: WGDataModelHeaderRow {
+    property Component footerComponent: WGHeaderRow {
         bottomMargin: listView.bottomMargin
         columnCount: listView.columnCount
         columnWidthFunction: listView.columnWidthFunction

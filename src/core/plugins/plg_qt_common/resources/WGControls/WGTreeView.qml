@@ -460,7 +460,7 @@ Item {
 
     property Component header: showColumnHeaders ? headerComponent : null
         
-    property Component headerComponent: WGDataModelHeaderRow {
+    property Component headerComponent: WGHeaderRow {
         topMargin: treeView.topMargin
         columnCount: treeView.columnCount
         columnWidthFunction: treeView.columnWidthFunction
@@ -486,7 +486,7 @@ Item {
 
     property Component footer: showColumnFooters ? footerComponent : null
 
-    property Component footerComponent: WGDataModelHeaderRow {
+    property Component footerComponent: WGHeaderRow {
         bottomMargin: treeView.bottomMargin
         columnCount: treeView.columnCount
         columnWidthFunction: treeView.columnWidthFunction

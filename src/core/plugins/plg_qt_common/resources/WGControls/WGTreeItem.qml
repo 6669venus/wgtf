@@ -222,7 +222,7 @@ WGListView {
                 }
             }
 
-            WGListViewRowDelegate { // The row
+            WGItemRow { // The row
                 id: rowDelegate
 
                 anchors.top: parent.top

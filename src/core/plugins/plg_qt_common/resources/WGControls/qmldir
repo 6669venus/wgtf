@@ -22,7 +22,6 @@ WGColorWheel 1.0 WGColorWheel.qml
 WGColumnLayout 1.0 WGColumnLayout.qml
 WGColumnScrollPanel 1.0 WGColumnScrollPanel.qml
 WGColumnsFrame 1.0 WGColumnsFrame.qml
-WGDataModelHeaderRow 1.0 WGDataModelHeaderRow.qml
 WGDragHandle 1.0 WGDragHandle.qml
 WGDraggableColumn 1.0 WGDraggableColumn.qml
 WGDropDownBox 1.0 WGDropDownBox.qml
@@ -30,13 +29,14 @@ WGExpandingRowLayout 1.0 WGExpandingRowLayout.qml
 WGFormLayout 1.0 WGFormLayout.qml
 WGFrame 1.0 WGFrame.qml
 WGGroupBox 1.0 WGGroupBox.qml
+WGHeaderRow 1.0 WGHeaderRow.qml
 WGHighlightFrame 1.0 WGHighlightFrame.qml
 WGHslSlider 1.0 WGHslSlider.qml
 WGIconTextBox 1.0 WGIconTextBox.qml
 WGInternalPanel 1.0 WGInternalPanel.qml
+WGItemRow 1.0 WGItemRow.qml
 WGLabel 1.0 WGLabel.qml
 WGListView 1.0 WGListView.qml
-WGListViewRowDelegate 1.0 WGListViewRowDelegate.qml
 WGLodSlider 1.0 WGLodSlider.qml
 WGMultiLineText 1.0 WGMultiLineText.qml
 WGNumberBox 1.0 WGNumberBox.qml

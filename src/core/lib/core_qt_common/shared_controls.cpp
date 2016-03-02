@@ -1,10 +1,6 @@
 #include "shared_controls.hpp"
 
-#include "controls/bw_checkbox.hpp"
-#include "controls/bw_combobox.hpp"
 #include "controls/bw_filedialog_qi.hpp"
-#include "controls/bw_textfield.hpp"
-#include "controls/popup_window.hpp"
 #include "controls/bw_copyable.hpp"
 #include "controls/wg_context_menu.hpp"
 #include "controls/wg_action.hpp"
@@ -48,13 +44,9 @@
 //==============================================================================
 /*static */void SharedControls::init()
 {
-	qmlRegisterType< PopupWindow, 1 >("BWControls", 1, 0, "PopupWindow" );
 	qmlRegisterType< DataChangeNotifier, 1 >( "BWControls", 1, 0, "BWDataChangeNotifier" );
 	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
 
-	qmlRegisterType< BWComboBox, 1 >("BWControls", 1, 0, "BWComboBox" );
-	qmlRegisterType< BWTextField, 1 >("BWControls", 1, 0, "BWTextField" );
-	qmlRegisterType< BWCheckBox, 1 >("BWControls", 1, 0, "BWCheckBox" );
 	qmlRegisterType< BWFileDialogQI, 1 >( "BWControls", 1, 0, "BWFileDialogQI" );
 	qmlRegisterType< BWCopyable, 1 >( "BWControls", 1, 0, "BWCopyable" );
 

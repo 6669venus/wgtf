@@ -83,21 +83,10 @@ SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
 
 SET( CONTROLS_SRC
-	controls/bw_checkbox.hpp
-	controls/bw_checkbox.cpp
-	controls/bw_checkbox.qml
-	controls/bw_combobox.hpp
-	controls/bw_combobox.cpp
-	controls/bw_combobox.qml
 	controls/bw_copyable.hpp
 	controls/bw_copyable.cpp
 	controls/bw_filedialog_qi.hpp
 	controls/bw_filedialog_qi.cpp
-	controls/bw_textfield.hpp
-	controls/bw_textfield.cpp
-	controls/bw_textfield.qml
-	controls/popup_window.hpp
-	controls/popup_window.cpp
 	controls/wg_action.hpp
 	controls/wg_action.cpp
 	controls/wg_context_menu.hpp
@@ -111,14 +100,6 @@ SET( INTERFACES
 	interfaces/i_check_filter.hpp
 )
 SOURCE_GROUP( "Interface" FILES ${INTERFACES} )
-
-
-SET( RESOURCE_FILES
-	qt_common.qrc
-)
-SOURCE_GROUP( "Resource Files" FILES ${RESOURCE_FILES} )
-qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
-SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
 
 
 SET( ALL_SRCS
@@ -176,8 +157,6 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${INTERFACES}
 )
 BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
-	${RESOURCE_FILES}
-	${COMPILED_RESOURCES}
 )
 
 BW_TARGET_LINK_LIBRARIES( core_qt_common

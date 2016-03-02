@@ -108,25 +108,44 @@ const char * SetReflectedPropertyCommand::getId() const
 //==============================================================================
 bool SetReflectedPropertyCommand::validateArguments(const ObjectHandle& arguments) const
 {
-	if ( !arguments.isValid() ) return false;
+	if ( !arguments.isValid() ) 
+	{
+		return false;
+	}
 
 	auto commandArgs = arguments.getBase< ReflectedPropertyCommandArgument >();
-	if ( commandArgs == nullptr ) return false;
+	
+	if ( commandArgs == nullptr ) 
+	{
+			return false;
+	}
 
 	auto objManager = definitionManager_.getObjectManager();
-	if ( objManager == nullptr ) return false;
+	if ( objManager == nullptr ) 
+	{
+		return false;
+	}
 
 	const ObjectHandle & object = objManager->getObject( commandArgs->getContextId() );
-	if (!object.isValid()) return false;
+	if (!object.isValid())
+	{
+		return false;
+	}
 
 	const IClassDefinition* defn = object.getDefinition( definitionManager_ );
 	PropertyAccessor property = defn->bindProperty(commandArgs->getPropertyPath(), object );
-	if (property.isValid() == false) return false;
+	if (property.isValid() == false)
+	{
+		return false;
+	}
 	
 	const MetaType * dataType = commandArgs->getPropertyValue().type();
 	const MetaType * propertyValueType = property.getValue().type();
 
-	if ( !dataType->canConvertTo(propertyValueType) ) return false;
+	if ( !dataType->canConvertTo(propertyValueType) ) 
+	{
+		return false;
+	}
 
 	return true;
 }

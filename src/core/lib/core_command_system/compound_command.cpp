@@ -51,17 +51,29 @@ void CompoundCommand::addCommand(  const char * commandId, const ObjectHandle & 
 bool CompoundCommand::validateArguments(const ObjectHandle & arguments) const
 {
 	ICommandManager* cmdSysProvider = getCommandSystemProvider();
-	if ( cmdSysProvider == nullptr ) return false;
+	if ( cmdSysProvider == nullptr ) 
+	{
+		return false;
+	}
 
 	MacroEditObject* ccArgs = arguments.getBase< MacroEditObject >();
-	if ( ccArgs == nullptr ) return false;
-	if ( ccArgs->getArgCount() != subCommands_.size() ) return false;
+	if ( ccArgs == nullptr ) 
+	{
+		return false;
+	}
+	if ( ccArgs->getArgCount() != subCommands_.size() )
+	{
+		return false;
+	}
 	
 	for (SubCommandCollection::size_type i = 0; i < subCommands_.size(); ++i)
 	{
 		Command* command = cmdSysProvider->findCommand(subCommands_[i].first.c_str());
 		
-		if ( command == nullptr ) return false;
+		if ( command == nullptr ) 
+		{
+			return false;
+		}
 		if ( !command->validateArguments(ccArgs->getCommandArgument(i)) )
 		{
 			return false;

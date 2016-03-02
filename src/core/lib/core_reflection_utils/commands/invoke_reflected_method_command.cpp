@@ -171,19 +171,34 @@ const char* InvokeReflectedMethodCommand::getId() const
 bool InvokeReflectedMethodCommand::validateArguments(const ObjectHandle& arguments ) const 
 {
 	auto objectManager = impl_->definitionManager_.getObjectManager();
-	if ( objectManager == nullptr ) return false;
+	if ( objectManager == nullptr ) 
+	{
+		return false;
+	}
 
 	auto commandParameters = arguments.getBase<ReflectedMethodCommandParameters>();
-	if ( commandParameters == nullptr ) return false;
+	if ( commandParameters == nullptr ) 
+	{
+		return false;
+	}
 
 	const ObjectHandle& object = objectManager->getObject( commandParameters->getId() );
-	if ( !object.isValid() ) return false;
+	if ( !object.isValid() )
+	{
+		return false;
+	}
 
 	auto defintion = object.getDefinition( impl_->definitionManager_ );
-	if ( defintion == nullptr ) return false;
+	if ( defintion == nullptr ) 
+	{
+		return false;
+	}
 
 	PropertyAccessor methodAccessor = defintion->bindProperty( commandParameters->getPath(), object );
-	if ( !methodAccessor.isValid() ) return false;
+	if ( !methodAccessor.isValid() ) 
+	{
+		return false;
+	}
 	
 
 	return true;

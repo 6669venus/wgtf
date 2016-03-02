@@ -229,23 +229,39 @@ ObjectHandle MacroObject::createController(size_t idx, const ObjectHandle & args
 bool MacroObject::setArgumentObjectForCommand(size_t idx, const ObjectHandle& args)
 {
 	Command* command = commandSystem_->findCommand( cmdId_.c_str() );
-	if ( !command ) return false;
+	if ( !command ) 
+	{
+		return false;
+	}
 
 	CompoundCommand* compoundCommand = dynamic_cast<CompoundCommand*>(command);
-	if (!compoundCommand) return false;
+	if (!compoundCommand) 
+	{
+		return false;
+	}
 
 	auto subCommands = compoundCommand->getSubCommands();
-	if ( subCommands.size() <= idx ) return false;
+	if ( subCommands.size() <= idx ) 
+	{
+		return false;
+	}
 
 	Command* subCommand = commandSystem_->findCommand(subCommands[idx].first.c_str());
 	if (!subCommand ) return false;
-	if ( !subCommand->validateArguments(args) ) return false;
+	if ( !subCommand->validateArguments(args) ) 
+	{
+		return false;
+	}
 
 	MacroEditObject* ccArgs = argsEdit_.getBase<MacroEditObject>();
 	if ( !ccArgs ) return false;
-	if ( ccArgs->getArgCount() <= idx ) return false;
+	if ( ccArgs->getArgCount() <= idx ) 
+	{
+		return false;
+	}
 
 	ccArgs->setCommandHandlers(idx, createController(idx, args), args);
+
 	return true;
 }
 

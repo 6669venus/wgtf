@@ -8,6 +8,7 @@
 #include "controls/bw_copyable.hpp"
 #include "controls/wg_context_menu.hpp"
 #include "controls/wg_action.hpp"
+#include "controls/wg_item_view.hpp"
 #include "helpers/wg_filtered_list_model.hpp"
 #include "helpers/wg_filtered_tree_model.hpp"
 #include "helpers/wg_filter.hpp"
@@ -75,6 +76,8 @@
 	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
 	qmlRegisterType< AssetItemExtension, 1 >( "WGControls", 1, 0, "AssetItemExtension" );
 	qmlRegisterType< HeaderFooterTextExtension, 1 >( "WGControls", 1, 0, "HeaderFooterTextExtension" );
+
+	qmlRegisterType< WGItemView, 1 >( "WGControls", 1, 0, "WGItemView" );
 
 	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );
 	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );

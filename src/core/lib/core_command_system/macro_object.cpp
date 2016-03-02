@@ -73,9 +73,8 @@ void MacroObject::init( ICommandManager& commandSystem, IDefinitionManager& defM
 	macroName_ = cmdId_;
 
 	assert(!argsEdit_.isValid());
-	ObjectHandle newArgs = bindMacroArgumenets();
+	bindMacroArgumenets();
 
-	setArgumentObject(newArgs);
 }
 
 ObjectHandle MacroObject::executeMacro() const
@@ -115,7 +114,7 @@ std::pair<ObjectHandle, ObjectHandle> MacroObject::bind( size_t idx, ReflectedMe
 	return std::pair<ObjectHandle, ObjectHandle>(ctrlObj, argObj);
 }
 
-ObjectHandle MacroObject::bindMacroArgumenets() const
+void MacroObject::bindMacroArgumenets()
 {
 	auto argDef = pDefManager_->getDefinition<MacroEditObject>();
 	assert( argDef != nullptr );
@@ -149,7 +148,8 @@ ObjectHandle MacroObject::bindMacroArgumenets() const
 			ccArgs->setCommandHandlers( i, commands[i].second, commands[i].second );
 		}
 	}
-	return args;
+	
+	setArgumentObject(args);
 }
 
 void MacroObject::serialize(ISerializer & serializer) const

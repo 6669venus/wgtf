@@ -125,7 +125,7 @@ public:
 	void deserialize(ISerializer & serializer);
 
 private:
-	ObjectHandle bindMacroArgumenets() const;
+	void bindMacroArgumenets();
 	ObjectHandle createController(size_t idx, const ObjectHandle & args) const;
 
 	std::pair<ObjectHandle, ObjectHandle> bind( size_t idx, ReflectedPropertyCommandArgument* rpca ) const;

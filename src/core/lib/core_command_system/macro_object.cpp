@@ -167,99 +167,16 @@ void MacroObject::deserialize(ISerializer & serializer)
 	}
 }
 
-//NOTE(aidan): for right now, this just sets the context object on the first 
-//command. 
-bool MacroObject::setContextObject(const ObjectHandle & obj)
-{
-	bool result = setContextObjectForCommand(0, argsEdit_, obj);
-	return result;
-}
-
-bool MacroObject::setContextObjectForCommand(size_t idx, ObjectHandle & argsToModify, const ObjectHandle & newContextObj) const
-{
-	if ( !newContextObj.isValid() ) return false;
-	
-	RefObjectId objId;
-	if ( !newContextObj.getId(objId) ) return false;
-
-	MacroEditObject* editObject = argsToModify.getBase<MacroEditObject>();
-	if ( editObject == nullptr ) return false;
-	if ( editObject->getArgCount() <= idx ) return false;
-
-	ObjectHandle argHandle = editObject->getCommandArgument(idx);
-	if ( !argHandle.isValid() ) return false;
-			
-	ReflectedPropertyCommandArgument* rpca = argHandle.getBase<ReflectedPropertyCommandArgument>();
-	if ( rpca == nullptr ) return false;
-				
-	const IClassDefinition* def = newContextObj.getDefinition( *pDefManager_ );
-	if ( def == nullptr ) return false;
-					
-	PropertyAccessor pa;
-	ReflectedPropertyUndoRedoUtility::resolveProperty( newContextObj, *def, rpca->getPropertyPath(), pa, *pDefManager_ );
-	if ( !pa.isValid() ) return false;
-
-	const MetaType * dataType = rpca->getPropertyValue().type();
-	const MetaType * propertyValueType = pa.getValue().type();
-
-	if ( !dataType->canConvertTo(propertyValueType) ) return false;
-		
-	//NOTE(aidan): Look forward to later commands and make sure that if any have a dependancy
-	//chain that leads back to the replaced contextobject, it can still handle those commands
-	for ( size_t i = idx + 1; i < editObject->getArgCount() ; ++i )
-	{
-		ObjectHandle controllerHandle = editObject->getCommandArgController(i);
-		auto controller = controllerHandle.getBase<ReflectedPropertyCommandArgumentController>();
-
-		int offset = controller->getDependencyOffset();
-		size_t newIdx = i + offset;
-
-		while ( offset < 0 )
-		{
-			ObjectHandle depControllerHandle = editObject->getCommandArgController(newIdx);
-			auto depController = depControllerHandle.getBase<ReflectedPropertyCommandArgumentController>();
-			offset = depController->getDependencyOffset();
-
-			newIdx += offset;
-		}
-
-		if ( newIdx == idx )
-		{
-			ObjectHandle depArgHandle = editObject->getCommandArgument(i);
-			
-			if ( !depArgHandle.isValid() ) return false;
-			
-			ReflectedPropertyCommandArgument* depArg = depArgHandle.getBase<ReflectedPropertyCommandArgument>();
-			if ( depArg == nullptr ) return false;
-			
-			PropertyAccessor pa;
-			ReflectedPropertyUndoRedoUtility::resolveProperty( newContextObj, *def, depArg->getPropertyPath(), pa, *pDefManager_ );
-			if ( !pa.isValid() ) return false;
-			
-			const MetaType * dataType = rpca->getPropertyValue().type();
-			const MetaType * propertyValueType = pa.getValue().type();
-			if ( !dataType->canConvertTo(propertyValueType) ) return false;
-		}
-	}
-
-	const RefObjectId &oldId = rpca->getContextId();
-	rpca->setContextId(objId);
-	
-	return true;
-}
-
 ObjectHandle MacroObject::executeMacro(const ObjectHandle& contextObject ) const
 {
 	assert( commandSystem_ != nullptr );
 	assert( argsEdit_.isValid() );
 
-	ObjectHandle newArgs = bindMacroArgumenets();
-	
 	CommandInstancePtr result = nullptr;
 
-	if ( setContextObjectForCommand(0, newArgs, contextObject) )
+	if ( validateArgsObject(contextObject) )
 	{
-		result = commandSystem_->queueCommand( cmdId_.c_str(), newArgs );
+		result = commandSystem_->queueCommand( cmdId_.c_str(), contextObject );
 	}
 
 	return result;

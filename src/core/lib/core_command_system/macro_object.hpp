@@ -112,10 +112,7 @@ public:
 
 	void init( ICommandManager& commandSystem, IDefinitionManager & defManager,
 		IReflectionController* controller, const char * cmdId );
-
-	bool setContextObject(const ObjectHandle & obj);
-	bool setContextObjectForCommand(size_t commandIndex, ObjectHandle & args, const ObjectHandle & obj) const;
-
+	
 	bool validateArgsObject(const ObjectHandle & obj) const;
 	bool setArgumentObject(const ObjectHandle& args);
 	bool setArgumentObjectForCommand(size_t idx, const ObjectHandle& args);

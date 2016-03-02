@@ -284,6 +284,19 @@ QVariant WGTreeModel::headerData(
 	return QtHelpers::toQVariant( model->getData( section, roleId ) );
 }
 
+QVariant WGTreeModel::headerData( int column, QString roleName ) const
+{
+	auto roles = roleNames().keys( roleName.toUtf8() );
+	
+	if (roles.empty())
+	{
+		return QVariant::Invalid;
+	}
+
+	int roleId = roles.first();
+	return headerData( column, Qt::Horizontal, roleId );
+}
+
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const
 {
 	ITreeModel* model = getModel();

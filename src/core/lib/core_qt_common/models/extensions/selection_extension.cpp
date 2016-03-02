@@ -395,8 +395,11 @@ bool SelectionExtension::Implementation::clearPreviousSelection()
 void SelectionExtension::Implementation::onRowsAboutToBeRemoved(
 	const QModelIndex& parent, int first, int last )
 {
-	auto model = parent.model();
-	assert( model != nullptr );
+	auto model = currentIndex_.model();
+	if (model == nullptr)
+	{
+		return;
+	}
 
 	pendingRemovingSelection_.clear();
 	int count = last + 1;

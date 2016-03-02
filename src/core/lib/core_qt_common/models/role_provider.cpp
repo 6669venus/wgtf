@@ -1,19 +1,21 @@
 #include "role_provider.hpp"
 #include "core_logging/logging.hpp"
 
-void RoleProvider::registerRole( const ItemRole & itemRole, 
+void RoleProvider::registerRole( const char * roleName, 
 	QHash< int, QByteArray > & o_RoleNames ) const
 {
+	auto roleId = ItemRole::compute( roleName );
+
 	// TODO: Need to move this out of roleNames() and into a modelReset callback
-	int role = ( itemRole.second % ( INT_MAX - Qt::UserRole ) ) + Qt::UserRole;
+	int role = ( roleId % ( INT_MAX - Qt::UserRole ) ) + Qt::UserRole;
 
 	auto it = o_RoleNames.find( role );
 	if (it != o_RoleNames.end())
 	{
-		if (it.value() != itemRole.first)
+		if (it.value() != roleName)
 		{
 			NGT_ERROR_MSG( "Cannot not register role %s. Collision detected with role %s\n", 
-				itemRole.first, it.value().data() );
+				roleName, it.value().data() );
 		}
 		return;
 	}
@@ -21,21 +23,21 @@ void RoleProvider::registerRole( const ItemRole & itemRole,
 	for (auto roleIt = o_RoleNames.begin(); 
 		roleIt != o_RoleNames.end(); ++roleIt)
 	{
-		if (roleIt.value() == itemRole.first)
+		if (roleIt.value() == roleName)
 		{
 			if (roleIt.key() != role)
 			{
 				NGT_ERROR_MSG( "Cannot register role %s with more than one key.\n", 
-					itemRole.first );
+					roleName );
 				return;
 			}
-			roleMap_[ role ] = itemRole.second;
+			roleMap_[ role ] = roleId;
 			return;
 		}
 	}
 
-	o_RoleNames[ role ] = itemRole.first;
-	roleMap_[ role ] = itemRole.second;
+	o_RoleNames[ role ] = roleName;
+	roleMap_[ role ] = roleId;
 }
 
 bool RoleProvider::encodeRole( size_t roleId, int & o_Role ) const

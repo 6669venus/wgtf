@@ -102,6 +102,8 @@ SET( CONTROLS_SRC
 	controls/wg_action.cpp
 	controls/wg_context_menu.hpp
 	controls/wg_context_menu.cpp
+	controls/wg_item_view.hpp
+	controls/wg_item_view.cpp
 )
 SOURCE_GROUP( "Controls" FILES ${CONTROLS_SRC} )
 
@@ -190,6 +192,8 @@ BW_TARGET_LINK_LIBRARIES( core_qt_common
     Qt5::UiTools
     Qt5::Xml
 )
+
+INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})
 
 BW_PROJECT_CATEGORY( core_qt_common "NGT Libs" )
 

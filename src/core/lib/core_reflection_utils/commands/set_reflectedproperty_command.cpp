@@ -108,6 +108,8 @@ const char * SetReflectedPropertyCommand::getId() const
 //==============================================================================
 bool SetReflectedPropertyCommand::validateArguments(const ObjectHandle& arguments) const
 {
+	if ( !arguments.isValid() ) return false;
+
 	auto commandArgs = arguments.getBase< ReflectedPropertyCommandArgument >();
 	if ( commandArgs == nullptr ) return false;
 
@@ -156,7 +158,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		return CommandErrorCode::INVALID_VALUE;
 	}
 
-	return nullptr;
+	return object;
 }
 
 

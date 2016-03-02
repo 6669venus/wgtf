@@ -49,6 +49,7 @@ public:
 
 	void getObject( int * o_EnumValue ) const;
 	void setObject( const int & o_EnumValue );
+	int getDependencyOffset() { return dependencyOffset_; }
 	void resolve( const std::vector<CommandInstance*>& instances );
 	void generateObjList( std::map< int, std::wstring > * o_enumMap ) const;
 

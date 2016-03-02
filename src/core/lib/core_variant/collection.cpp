@@ -1,6 +1,7 @@
 #include "collection.hpp"
 #include <cassert>
 
+
 Collection::ConstIterator& Collection::ConstIterator::operator++()
 {
 	detach();
@@ -53,7 +54,8 @@ bool Collection::isSame( const void* container ) const
 {
 	return
 		impl_ &&
-		impl_->containerData() == container;
+		container && // never match nullptr
+		impl_->container() == container;
 }
 
 
@@ -61,7 +63,7 @@ bool Collection::empty() const
 {
 	if (impl_)
 	{
-		return impl_->empty();
+		return impl_->size() == 0;
 	}
 	else
 	{
@@ -278,21 +280,94 @@ bool Collection::operator==(const Collection& that) const
 }
 
 
-bool Collection::isMapping() const
+int Collection::flags() const
 {
-	if (!impl_)
+	if( impl_ )
 	{
-		return false;
+		return impl_->flags();
 	}
-	return impl_->isMapping();
+	else
+	{
+		return 0;
+	}
 }
 
 
-bool Collection::canResize() const
+Connection Collection::connectPreInsert( ElementRangeCallback callback )
 {
-	if (!impl_)
+	if( impl_ )
 	{
-		return false;
+		return impl_->connectPreInsert( callback );
 	}
-	return impl_->canResize();
+	else
+	{
+		return Connection();
+	}
 }
+
+
+Connection Collection::connectPostInserted( ElementRangeCallback callback )
+{
+	if( impl_ )
+	{
+		return impl_->connectPostInserted( callback );
+	}
+	else
+	{
+		return Connection();
+	}
+}
+
+
+Connection Collection::connectPreErase( ElementRangeCallback callback )
+{
+	if( impl_ )
+	{
+		return impl_->connectPreErase( callback );
+	}
+	else
+	{
+		return Connection();
+	}
+}
+
+
+Connection Collection::connectPostErased( NotificationCallback callback )
+{
+	if( impl_ )
+	{
+		return impl_->connectPostErased( callback );
+	}
+	else
+	{
+		return Connection();
+	}
+}
+
+
+Connection Collection::connectPreChange( ElementPreChangeCallback callback )
+{
+	if( impl_ )
+	{
+		return impl_->connectPreChange( callback );
+	}
+	else
+	{
+		return Connection();
+	}
+}
+
+
+Connection Collection::connectPostChanged( ElementPostChangedCallback callback )
+{
+	if( impl_ )
+	{
+		return impl_->connectPostChanged( callback );
+	}
+	else
+	{
+		return Connection();
+	}
+}
+
+

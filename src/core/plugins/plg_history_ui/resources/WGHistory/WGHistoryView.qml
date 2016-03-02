@@ -113,12 +113,8 @@ WGPanel {
                         }
                     }
 
-                    onCurrentIndexChanged: {
-                        historySelection.data = currentIndex
-                    }
-
                     onRowDoubleClicked: {
-                        history.currentIndex = historyModel.indexRow(modelIndex);
+                        historySelection.data = historyModel.indexRow(modelIndex);
                     }
                 }
             }

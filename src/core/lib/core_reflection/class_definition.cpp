@@ -33,11 +33,13 @@ namespace
 
 	public:
 		CollectionElementHolder(
+			const Collection& collection,
 			const Collection::Iterator& collectionIt,
 			const TypeId& valueType,
 			std::string propName ):
 
 			base( "", valueType ),
+			collection_( collection ),
 			collectionIt_( collectionIt ),
 			propName_( std::move( propName ) )
 		{
@@ -81,6 +83,7 @@ namespace
 		}
 
 	private:
+		Collection collection_; // need to keep Collection data alive to keep iterator valid
 		Collection::Iterator collectionIt_;
 		std::string propName_;
 
@@ -252,6 +255,7 @@ void ClassDefinition::bindPropertyImpl(
 			{
 				// name parsing is completed
 				auto baseProp = std::make_shared< CollectionElementHolder >(
+					collection,
 					it,
 					collection.valueType(),
 					wholeIndex );

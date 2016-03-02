@@ -196,4 +196,5 @@ void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
 	}
 
 	uiApplication->removeView( *testView_ );
+	testView_.reset();
 }

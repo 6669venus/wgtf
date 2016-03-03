@@ -188,10 +188,9 @@ QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const Obj
 	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
 		*contextManager_, self_, *metaObject, root, nullptr );
-
-    auto ownership = QQmlEngine::objectOwnership( scriptObject );
+    // always set scripteObject ownership to QML
     QQmlEngine::setObjectOwnership( scriptObject, QQmlEngine::JavaScriptOwnership );
-    ownership = QQmlEngine::objectOwnership( scriptObject );
+
 	scriptObjects_.emplace( root, scriptObject );
 	return scriptObject;
 }
@@ -323,6 +322,7 @@ void QtScriptingEngine::initialise( IQtFramework & qtFramework, IComponentContex
 
 void QtScriptingEngine::finalise()
 {
+    assert( impl_->scriptObjects_.empty() );
 	while (!impl_->scriptObjects_.empty())
 	{
 		auto iter = impl_->scriptObjects_.begin();

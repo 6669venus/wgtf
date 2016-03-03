@@ -12,10 +12,12 @@
 #include <QQuickItem>
 #include <QVariantMap>
 #include <QFileSystemWatcher>
+#include <QApplication>
 
 QmlView::QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	: id_( id )
 	, qtFramework_( qtFramework )
+    , qmlEngine_( qmlEngine )
 	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, quickView_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, watcher_( nullptr )
@@ -32,6 +34,9 @@ QmlView::~QmlView()
 	{
 		delete quickView_;
 	}
+    qmlEngine_.collectGarbage();
+    // call sendPostedEvents to give chance to QScriptObject's DeferredDeleted event get handled in time
+    QApplication::sendPostedEvents( nullptr, QEvent::DeferredDelete );
 }
 
 const char * QmlView::id() const
@@ -78,13 +83,21 @@ void QmlView::update()
 
 void QmlView::setContextObject( QObject * object )
 {
-    object->setParent( quickView_ );
+    object->setParent( qmlContext_.get() );
 	qmlContext_->setContextObject( object );
 }
 
 void QmlView::setContextProperty(
 	const QString & name, const QVariant & property )
 {
+    if (property.canConvert< QObject * >())
+    {
+        auto object = property.value< QObject * >();
+        if(!object->isWidgetType() && !object->isWindowType())
+        {
+            object->setParent( qmlContext_.get() );
+        }
+    }
 	qmlContext_->setContextProperty( name, property );
 }
 

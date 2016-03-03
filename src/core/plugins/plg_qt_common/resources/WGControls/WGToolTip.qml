@@ -37,6 +37,7 @@ WGPushButton {
 */
 
 Rectangle {
+    objectName: "WGToolTip"
     property string mouseOverInfo: ""
     property url mouseOverImage: ""
     id: mouseOver_

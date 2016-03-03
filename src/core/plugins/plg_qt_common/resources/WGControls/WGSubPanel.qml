@@ -350,6 +350,7 @@ Rectangle {
         height: defaultSpacing.minimumRowHeight + mainPanel.radius * 2 + (squareModifier / 2)
 
         Rectangle {
+            objectName: "panel"
             //mouse over panel and activeFocus border
 
             id: mouseHighlight
@@ -446,6 +447,7 @@ Rectangle {
             width: childrenRect.width
             color: "transparent"
             Text {
+                objectName: "Text"
                 id: headerLabel
                 font.bold: boldHeader_
                 renderType: Text.NativeRendering
@@ -500,6 +502,7 @@ Rectangle {
             }
 
             WGCheckBox {
+                objectName: "CheckBox"
                 id: headerCheck
                 text: mainPanel.text
                 visible: toggleable_ ? true : false
@@ -538,6 +541,7 @@ Rectangle {
         }
 
         WGToolButton {
+            objectName: "Button"
             id: panelMenu
             anchors.right: parent.right
 

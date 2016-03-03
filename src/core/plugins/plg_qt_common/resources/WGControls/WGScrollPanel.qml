@@ -70,6 +70,7 @@ Item {
     }
 
     WGScrollBar {
+         objectName: "verticalScrollBar"
          id: verticalScrollBar
          width: scrollableFrame.vertical ? defaultSpacing.rightMargin : scrollPanel.width
          height: !scrollableFrame.vertical ? defaultSpacing.topBottomMargin : scrollPanel.height

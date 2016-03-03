@@ -34,6 +34,7 @@ Item {
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     TextField {
+        objectName: "textBox"
         id: textBox
         property string label_: ""
 

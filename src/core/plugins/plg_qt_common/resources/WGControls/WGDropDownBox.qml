@@ -121,6 +121,7 @@ ComboBox {
     }
 
     style: ComboBoxStyle {
+        objectName: "comboBox"
         id: comboBox
         renderType: Text.NativeRendering
         background: WGButtonFrame {

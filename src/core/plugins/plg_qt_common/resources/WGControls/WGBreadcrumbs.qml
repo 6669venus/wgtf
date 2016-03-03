@@ -17,6 +17,7 @@ WGBreadcrumbs {
 
 Rectangle {
     id: rootFrame
+    objectName: "WGBreadCrumbs"
 
     // Public properties
     /*! This property holds the dataModel containing all breadcrumbs data */
@@ -53,6 +54,7 @@ Rectangle {
 
     // Mouse area over the path text box
     MouseArea {
+        objectName: "pathSelect"
         anchors.fill: parent
         enabled: rootFrame.__showBreadcrumbs
         hoverEnabled: true
@@ -69,6 +71,7 @@ Rectangle {
     // a specific path in the tree.
     WGTextBox {
         id: pathTextBox
+        objectName: "pathTextBox"
         anchors.fill: parent
         visible: !rootFrame.__showBreadcrumbs
 
@@ -129,6 +132,7 @@ Rectangle {
 
                     MouseArea {
                         id: breadcrumbMouseArea
+                        objectName: "breadcrumbMouseArea"
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true
@@ -139,6 +143,7 @@ Rectangle {
                 }
 
                 WGToolButton {
+                    objectName: "folderDivide"
                     visible: index < breadcrumbRepeater.count - 1
 
                     Layout.preferredWidth: 16
@@ -170,6 +175,7 @@ Rectangle {
 
         WGExpandingRowLayout {
             id: breadcrumbRowLayout
+            objectName: "breadcrumbRowLayout"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 

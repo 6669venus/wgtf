@@ -502,7 +502,7 @@ Rectangle {
                         },
                         WGToolButton {
                             id: btnAssetBrowserHistory
-                            obectName: "historyButton"
+                            objectName: "historyButton"
                             iconSource: "icons/arrow_down_small_16x16.png"
                             tooltip: "History"
                             width: 16

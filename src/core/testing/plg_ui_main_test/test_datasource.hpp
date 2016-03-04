@@ -38,7 +38,7 @@ class TestDataSource
 	: public IDataSource
 {
 public:
-	TestDataSource( int id_ );
+	TestDataSource( TestDataSourceManager& dataSrcMgr, int id_ );
 	virtual ~TestDataSource();
 
 	void init( IComponentContext & contextManager, int id );
@@ -54,6 +54,7 @@ public:
 
 private:
 
+    TestDataSourceManager & dataSrcMgr_;
 	std::string testPageId_;
 	std::string testPageId2_;
 	std::string description_;

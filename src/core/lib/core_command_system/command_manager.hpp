@@ -5,6 +5,8 @@
 #include "i_command_manager.hpp"
 #include "wg_types/event.hpp"
 
+#include <functional>
+
 class IApplication;
 class IDefinitionManager;
 class BatchCommand;
@@ -59,6 +61,9 @@ public:
 	void redo() override;
 	bool canUndo() const override;
 	bool canRedo() const override;
+    
+    void removeCommands(const TRemoveFunctor & functor) override;
+    
 	const VariantList & getHistory() const override;
 	IValueChangeNotifier& currentIndex() override;
 	const IListModel & getMacros() const override;

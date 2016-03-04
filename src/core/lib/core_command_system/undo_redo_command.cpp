@@ -47,12 +47,12 @@ CommandThreadAffinity UndoRedoCommand::threadAffinity() const
 
 
 //--------------------------------------------------------------------------
-void UndoRedoCommand::undo( IDataStream & stream ) const
+void UndoRedoCommand::undo( const ObjectHandle & arguments ) const
 {
 }
 
 
 //--------------------------------------------------------------------------
-void UndoRedoCommand::redo( IDataStream & stream ) const
+void UndoRedoCommand::redo( const ObjectHandle & arguments ) const
 {
 }

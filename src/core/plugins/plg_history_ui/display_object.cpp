@@ -5,6 +5,7 @@
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
@@ -39,8 +40,12 @@ void DisplayObject::init( IDefinitionManager & defManager, const CommandInstance
 		auto& objectManager = (*pObjectManager);
 		const char * undoStreamHeaderTag = RPURU::getUndoStreamHeaderTag();
 		const char * redoStreamHeaderTag = RPURU::getRedoStreamHeaderTag();
-		const ResizingMemoryStream & undoData = instance->getUndoStream();
-		const ResizingMemoryStream & redoData = instance->getRedoStream();
+        ObjectHandle arguments = instance->getArguments();
+        ReflectedPropertyCommandArgument * args = arguments.getBase<ReflectedPropertyCommandArgument>();
+        if (args == nullptr)
+            return;
+		const ResizingMemoryStream & undoData = args->getUndoStream();
+		const ResizingMemoryStream & redoData = args->getRedoStream();
 		RPURU::UndoRedoHelperList propertyCache;
 		{
 			// Need to read undo/redo data separately and then consolidate it into

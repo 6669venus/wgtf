@@ -14,131 +14,9 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_iterator.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "wg_types/binary_block.hpp"
 #include "core_logging/logging.hpp"
-
-
-namespace RPURU = ReflectedPropertyUndoRedoUtility;
-namespace
-{
-
-	//==========================================================================
-	class PropertyAccessorWrapper
-		: public PropertyAccessorListener
-	{
-	public:
-		PropertyAccessorWrapper( RPURU::UndoRedoHelperList & undoRedoHelperList )
-			: undoRedoHelperList_( undoRedoHelperList ) 
-		{
-		}
-
-		~PropertyAccessorWrapper()
-		{
-		}
-
-		//======================================================================
-		void preSetValue(
-			const PropertyAccessor & accessor, const Variant & value ) override
-		{
-			const auto & obj = accessor.getRootObject();
-			assert( obj != nullptr );
-			RefObjectId id;
-			bool ok = obj.getId( id );
-			if (!ok)
-			{
-				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
-				// evgenys: we have to split notifications for managed and unmanaged objects
-				return;
-			}
-			const char * propertyPath = accessor.getFullPath();
-			const TypeId type = accessor.getType();
-			Variant prevalue = accessor.getValue();
-			auto pHelper = this->findUndoRedoHelper( id, propertyPath );
-			if (pHelper != nullptr)
-			{
-				return;
-			}
-			auto helper = new RPURU::ReflectedPropertyUndoRedoHelper();
-			helper->objectId_ = id;
-			helper->path_ = propertyPath;
-			helper->typeName_ = type.getName();
-			helper->preValue_ = std::move( prevalue );
-			undoRedoHelperList_.emplace_back( helper );
-		}
-
-
-		//======================================================================
-		void postSetValue(
-			const PropertyAccessor & accessor, const Variant & value ) override
-		{
-			const auto & obj = accessor.getRootObject();
-			assert( obj != nullptr );
-			RefObjectId id;
-			bool ok = obj.getId( id );
-			if (!ok)
-			{
-				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
-				// evgenys: we have to split notifications for managed and unmanaged objects
-				return;
-			}
-			const char * propertyPath = accessor.getFullPath();
-			 Variant postValue = accessor.getValue();
-			RPURU::ReflectedPropertyUndoRedoHelper* pHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(
-				this->findUndoRedoHelper( id, propertyPath ) );
-			assert( pHelper != nullptr );
-			pHelper->postValue_ = std::move( postValue );
-		}
-
-
-		void preInvoke(
-			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override
-		{
-			const char* path = accessor.getFullPath();
-			const auto& object = accessor.getRootObject();
-			assert( object != nullptr );
-
-			RefObjectId id;
-			bool ok = object.getId( id );
-			assert(ok);
-
-			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
-				this->findUndoRedoHelper( id, path ) );
-
-			if (helper == nullptr)
-			{
-				auto helper = new RPURU::ReflectedMethodUndoRedoHelper();
-				helper->objectId_ = id;
-				helper->path_ = path;
-				helper->parameters_ = parameters;
-				undoRedoHelperList_.emplace_back( helper );
-			}
-			else
-			{
-				helper->parameters_ = parameters;
-			}
-		}
-
-
-	private:
-		RPURU::ReflectedClassMemberUndoRedoHelper* findUndoRedoHelper( 
-			const RefObjectId & id, const char * propertyPath )
-		{
-			RPURU::ReflectedClassMemberUndoRedoHelper* helper = nullptr;
-			for (auto& findIt : undoRedoHelperList_)
-			{
-				if (findIt->objectId_ == id && findIt->path_ == propertyPath)
-				{
-					helper = findIt.get();
-					break;
-				}
-			}
-			return helper;
-		}
-	private:
-		RPURU::UndoRedoHelperList &	undoRedoHelperList_;
-	};
-
-}
 
 //==============================================================================
 CommandInstance::CommandInstance()
@@ -158,19 +36,10 @@ CommandInstance::CommandInstance( const CommandInstance& )
 	assert(!"Not copyable");
 }
 
-//==============================================================================
-/*virtual */void CommandInstance::init()
-{
-	paListener_ = std::make_shared< PropertyAccessorWrapper >( undoRedoHelperList_ );
-}
-
 
 //==============================================================================
 CommandInstance::~CommandInstance()
 {
-	assert( undoRedoHelperList_.empty() );
-	defManager_->deregisterPropertyAccessorListener( paListener_ );
-	paListener_ = nullptr;
 }
 
 
@@ -290,32 +159,14 @@ const Command * CommandInstance::getCommand() const
 //==============================================================================
 void CommandInstance::undo()
 {
-	assert( defManager_ != nullptr );
-	const auto pObjectManager = defManager_->getObjectManager();
-	assert( pObjectManager != nullptr );
-	if (!undoData_.buffer().empty())
-	{
-		undoData_.seek( 0 );
-		UndoRedoSerializer serializer( undoData_, *defManager_ );
-		RPURU::performReflectedUndo( serializer, *pObjectManager, *defManager_ );
-	}
-	getCommand()->undo( undoData_ );
+	getCommand()->undo( getArguments() );
 }
 
 
 //==============================================================================
 void CommandInstance::redo()
 {
-	assert( defManager_ != nullptr );
-	const auto pObjectManager = defManager_->getObjectManager();
-	assert( pObjectManager != nullptr );
-	if (!redoData_.buffer().empty())
-	{
-		redoData_.seek( 0 );
-		UndoRedoSerializer serializer( redoData_, *defManager_ );
-		RPURU::performReflectedRedo( serializer, *pObjectManager, *defManager_ );
-	}
-	getCommand()->redo( redoData_ );
+	getCommand()->redo( getArguments() );
 }
 
 
@@ -333,57 +184,21 @@ void CommandInstance::execute()
 //==============================================================================
 void CommandInstance::connectEvent()
 {
-	assert( paListener_ );
-	assert( defManager_ != nullptr );
-	defManager_->registerPropertyAccessorListener( paListener_ );
+    ReflectedPropertyCommandArgument * arguments = getArguments().getBase<ReflectedPropertyCommandArgument>();
+    if (arguments != nullptr)
+    {
+        arguments->connectEvents(defManager_);
+    }
 }
 
 //==============================================================================
 void CommandInstance::disconnectEvent()
 {
-	assert( paListener_ );
-	assert( defManager_ != nullptr );
-	defManager_->deregisterPropertyAccessorListener( paListener_ );
-
-	UndoRedoSerializer undoSerializer( undoData_, *defManager_ );
-	undoSerializer.serialize( RPURU::getUndoStreamHeaderTag() );
-	undoSerializer.serialize( undoRedoHelperList_.size() );
-
-	UndoRedoSerializer redoSerializer( redoData_, *defManager_ );
-	redoSerializer.serialize( RPURU::getRedoStreamHeaderTag() );
-	redoSerializer.serialize( undoRedoHelperList_.size() );
-
-	for (const auto& helper : undoRedoHelperList_)
-	{
-		RPURU::saveUndoData( undoSerializer, *helper );
-		RPURU::saveRedoData( redoSerializer, *helper );
-	}
-
-	undoRedoHelperList_.clear();
-}
-
-//==============================================================================
-std::shared_ptr< BinaryBlock > CommandInstance::getUndoData() const
-{
-	return std::make_shared< BinaryBlock >( undoData_.buffer().c_str(), undoData_.buffer().length(), true );
-}
-
-//==============================================================================
-void CommandInstance::setUndoData( const std::shared_ptr< BinaryBlock > & undoData )
-{
-	undoData_.setBuffer( std::string( undoData->cdata(), undoData->length()) );
-}
-
-//==============================================================================
-std::shared_ptr< BinaryBlock > CommandInstance::getRedoData() const
-{
-	return std::make_shared< BinaryBlock >( redoData_.buffer().c_str(), redoData_.buffer().length(), true );
-}
-
-//==============================================================================
-void CommandInstance::setRedoData( const std::shared_ptr< BinaryBlock > & redoData )
-{
-	redoData_.setBuffer( std::string( redoData->cdata(), redoData->length()) );
+    ReflectedPropertyCommandArgument * arguments = getArguments().getBase<ReflectedPropertyCommandArgument>();
+    if (arguments != nullptr)
+    {
+        arguments->disconnectEvents(defManager_);
+    }
 }
 
 //==============================================================================

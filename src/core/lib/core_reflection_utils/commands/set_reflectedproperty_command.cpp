@@ -4,12 +4,29 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
 {
+    void initReflectedMethodInDisplayObject(GenericObject& object, RPURU::ReflectedClassMemberUndoRedoHelper* helper)
+    {
+        object.set("Type", "Method");
+        auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(helper);
+        size_t max = methodHelper->parameters_.size();
+        std::string parameterName = "Parameter0";
+
+        for (size_t i = 0; i < max; ++i)
+        {
+            parameterName[parameterName.size() - 1] = char(i) + 48;
+            object.set(parameterName.c_str(), methodHelper->parameters_[i]);
+        }
+    }
+
     //==========================================================================
     class PropertyAccessorWrapper
     : public PropertyAccessorListener
@@ -319,4 +336,195 @@ void SetReflectedPropertyCommand::redo( const ObjectHandle & arguments ) const
         UndoRedoSerializer serializer( redoData, definitionManager_ );
         RPURU::performReflectedRedo( serializer, *pObjectManager, definitionManager_ );
     }
+}
+
+ObjectHandle SetReflectedPropertyCommand::getCommandDescription(const ObjectHandle & arguments) const
+{
+    auto pObjectManager = definitionManager_.getObjectManager();
+    assert(pObjectManager != nullptr);
+    auto& objectManager = (*pObjectManager);
+    const char * undoStreamHeaderTag = RPURU::getUndoStreamHeaderTag();
+    const char * redoStreamHeaderTag = RPURU::getRedoStreamHeaderTag();
+    ReflectedPropertyCommandArgument * args = arguments.getBase<ReflectedPropertyCommandArgument>();
+    if (args == nullptr)
+        return ObjectHandle();
+
+    const ResizingMemoryStream & undoData = args->getUndoStream();
+    const ResizingMemoryStream & redoData = args->getRedoStream();
+    ObjectHandle result;
+    RPURU::UndoRedoHelperList propertyCache;
+    {
+        // Need to read undo/redo data separately and then consolidate it into
+        // propertyCache.
+
+        // Make a copy because this function should not modify stream contents
+        // TODO ResizingMemoryStream const read implementation
+        ResizingMemoryStream undoStream(undoData.buffer());
+        assert(!undoStream.buffer().empty());
+        CommandInstance::UndoRedoSerializer undoSerializer(undoStream, definitionManager_);
+
+        // Read property header
+        std::string undoHeader;
+        undoHeader.reserve(strlen(undoStreamHeaderTag));
+        undoSerializer.deserialize(undoHeader);
+        assert(undoHeader == undoStreamHeaderTag);
+
+        // Make a copy because this function should not modify stream contents
+        // TODO ResizingMemoryStream const read implementation
+        ResizingMemoryStream redoStream(redoData.buffer());
+        assert(!redoStream.buffer().empty());
+        CommandInstance::UndoRedoSerializer redoSerializer(redoStream, definitionManager_);
+
+        // Read property header
+        std::string redoHeader;
+        redoHeader.reserve(strlen(redoStreamHeaderTag));
+        redoSerializer.deserialize(redoHeader);
+        assert(redoHeader == redoStreamHeaderTag);
+
+        // Read properties into cache
+        const bool reflectedPropertiesLoaded = loadReflectedProperties(
+            propertyCache,
+            undoSerializer,
+            redoSerializer,
+            objectManager,
+            definitionManager_);
+        if (!reflectedPropertiesLoaded)
+        {
+            return ObjectHandle();
+        }
+    }
+
+    // Create display object from cache
+    {
+        auto handle = GenericObject::create(definitionManager_);
+        assert(handle.get() != nullptr);
+        auto& genericObject = (*handle);
+
+        // command with no property change
+        if (propertyCache.empty())
+        {
+            genericObject.set("Name", "Unknown");
+            genericObject.set("Type", "Unknown");
+        }
+        // Single command
+        else if (propertyCache.size() == 1)
+        {
+            auto& helper = propertyCache.at(0);
+            // TODO: Refactor this and the section below as they do the same thing.
+            genericObject.set("Id", helper->objectId_);
+            ObjectHandle object = objectManager.getObject(helper->objectId_);
+
+            if (object == nullptr)
+            {
+                genericObject.set("Name", helper->path_);
+            }
+            else
+            {
+                assert(object != nullptr);
+                PropertyAccessor pa(object.getDefinition(definitionManager_)->bindProperty(
+                    helper->path_.c_str(), object));
+                auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >(pa, definitionManager_);
+                if (metaData != nullptr)
+                {
+                    const char * propName = metaData->getPropertyName();
+                    pa = object.getDefinition(definitionManager_)->bindProperty(propName, object);
+                    auto value = pa.getValue();
+                    std::string name;
+                    bool isOk = value.tryCast(name);
+                    assert(isOk);
+                    genericObject.set("Name", name);
+                }
+                else
+                {
+                    genericObject.set("Name", helper->path_);
+                }
+            }
+
+            if (helper->isMethod())
+            {
+                initReflectedMethodInDisplayObject(genericObject, helper.get());
+            }
+            else
+            {
+                auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(helper.get());
+                genericObject.set("Type", propertyHelper->typeName_);
+                genericObject.set("PreValue", propertyHelper->preValue_);
+                genericObject.set("PostValue", propertyHelper->postValue_);
+            }
+        }
+        else
+        {
+            genericObject.set("Name", "Batch");
+            genericObject.set("Type", "Batch");
+
+            // Need to create a CollectionHolder, otherwise
+            // genericObject.set( "Children", children );
+            // is unsafe, because it takes a reference
+            // which will be deleted when children goes out of scope
+            typedef std::vector< GenericObjectPtr > Children;
+            auto collectionHolder =
+                std::make_shared< CollectionHolder< Children > >();
+
+            Children& children = collectionHolder->storage();
+            children.reserve(propertyCache.size());
+
+            for (const auto& helper : propertyCache)
+            {
+                auto childHandle = GenericObject::create(definitionManager_);
+                assert(childHandle.get() != nullptr);
+
+                auto& childObject = (*childHandle);
+                // TODO: Refactor this and the section above as they do the same thing.
+                childObject.set("Id", helper->objectId_);
+                ObjectHandle object = objectManager.getObject(helper->objectId_);
+
+                if (object == nullptr)
+                {
+                    genericObject.set("Name", helper->path_);
+                }
+                else
+                {
+                    PropertyAccessor pa(object.getDefinition(definitionManager_)->bindProperty(
+                        helper->path_.c_str(), object));
+                    auto metaData = findFirstMetaData< MetaInPlacePropertyNameObj >(pa, definitionManager_);
+                    if (metaData != nullptr)
+                    {
+                        const char * propName = metaData->getPropertyName();
+                        pa = object.getDefinition(definitionManager_)->bindProperty(propName, object);
+                        auto value = pa.getValue();
+                        std::string name;
+                        bool isOk = value.tryCast(name);
+                        assert(isOk);
+                        childObject.set("Name", name);
+                    }
+                    else
+                    {
+                        genericObject.set("Name", helper->path_);
+                    }
+                }
+
+                if (helper->isMethod())
+                {
+                    initReflectedMethodInDisplayObject(genericObject, helper.get());
+                }
+                else
+                {
+                    auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(helper.get());
+                    childObject.set("Type", propertyHelper->typeName_);
+                    childObject.set("PreValue", propertyHelper->preValue_);
+                    childObject.set("PostValue", propertyHelper->postValue_);
+                }
+
+                children.push_back(childHandle);
+            }
+
+            // Convert CollectionHolder to Collection
+            Collection childrenCollection(collectionHolder);
+            genericObject.set("Children", childrenCollection);
+        }
+
+        result = ObjectHandle(std::move(handle));
+    }
+
+    return result;
 }

@@ -207,6 +207,11 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 	contextObject_ = contextObject;
 }
 
+ObjectHandle CommandInstance::getCommandDescription() const
+{
+    return getCommand()->getCommandDescription(getArguments());
+}
+
 //==============================================================================
 void CommandInstance::setCommandSystemProvider( ICommandManager * pCmdSysProvider )
 {

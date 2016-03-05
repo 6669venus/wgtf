@@ -59,6 +59,7 @@ public:
 
 	virtual void undo( const ObjectHandle & arguments ) const override;
 	virtual void redo( const ObjectHandle & arguments ) const override;
+    virtual ObjectHandle getCommandDescription(const ObjectHandle & arguments) const override;
 
 private:
 	IDefinitionManager & definitionManager_;

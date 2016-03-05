@@ -42,6 +42,7 @@ public:
 	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
 	virtual void undo( const ObjectHandle & arguments ) const {}
 	virtual void redo( const ObjectHandle & arguments ) const {}
+    virtual ObjectHandle getCommandDescription(const ObjectHandle & arguments) const { return ObjectHandle(); }
 
 	virtual void setCommandSystemProvider( ICommandManager * commandSystemProvider );
 	virtual void registerCommandStatusListener( ICommandEventListener * listener );

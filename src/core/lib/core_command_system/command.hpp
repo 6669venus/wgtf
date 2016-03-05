@@ -10,13 +10,13 @@ class ICommandManager;
 
 enum class CommandErrorCode : uint8_t
 {
-	NO_ERROR = 0,
+	COMMAND_NO_ERROR = 0,
 	ABORTED,
 	FAILED,
 	INVALID_VALUE,
 	INVALID_ARGUMENTS,
 	INVALID_OPERATIONS,
-	NOT_SUPPORTED,
+	NOT_SUPPORTED
 };
 
 enum class CommandThreadAffinity : uint8_t

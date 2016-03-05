@@ -35,7 +35,7 @@ ObjectHandle UndoRedoCommand::execute( const ObjectHandle & arguments ) const
 		return CommandErrorCode::INVALID_VALUE;
 	}
 	
-	return CommandErrorCode::NO_ERROR;
+    return CommandErrorCode::COMMAND_NO_ERROR;
 }
 
 

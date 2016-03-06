@@ -48,6 +48,7 @@ namespace
 
 QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	: qtFramework_( qtFramework )
+    , qmlEngine_( qmlEngine )
 	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, mainWindow_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
@@ -64,16 +65,28 @@ QmlWindow::~QmlWindow()
 		mainWindow_->removeEventFilter( this );
 		delete mainWindow_;
 	}
+    qmlEngine_.collectGarbage();
+    // call sendPostedEvents to give chance to QScriptObject's DeferredDeleted event get handled in time
+    QApplication::sendPostedEvents( nullptr, QEvent::DeferredDelete );
 }
 
 void QmlWindow::setContextObject( QObject * object )
 {
+    object->setParent( qmlContext_.get() );
 	qmlContext_->setContextObject( object );
 }
 
 void QmlWindow::setContextProperty(
 	const QString & name, const QVariant & property )
 {
+    if (property.canConvert< QObject * >())
+    {
+        auto object = property.value< QObject * >();
+        if(!object->isWidgetType() && !object->isWindowType())
+        {
+            object->setParent( qmlContext_.get() );
+        }
+    }
 	qmlContext_->setContextProperty( name, property );
 }
 

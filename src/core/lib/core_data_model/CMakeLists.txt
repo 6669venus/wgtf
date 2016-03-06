@@ -5,8 +5,8 @@ INCLUDE( WGToolsCoreLibrary )
 PROJECT( core_data_model )
 
 SET( MODEL_SRCS
-	collection_list_item.cpp
-	collection_list_item.hpp
+	abstract_item.hpp
+	abstract_item_model.hpp
 	collection_model.cpp
 	collection_model.hpp
 	filtered_list_model.cpp

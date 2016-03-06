@@ -138,6 +138,11 @@ QtItemModel::~QtItemModel()
 {
 }
 
+AbstractItemModel & QtItemModel::source() const
+{
+	return impl_->source_;
+}
+
 QObject * QtItemModel::item( int row, int column, const QObject * parent ) const
 {
 	auto parentItem = qobject_cast< const ItemData * >( parent );
@@ -265,6 +270,11 @@ QtListModel::QtListModel( AbstractListModel & source )
 	: QtItemModel( source ) 
 {}
 
+AbstractListModel & QtListModel::source() const
+{
+	return static_cast< AbstractListModel & >( QtItemModel::source() );
+}
+
 QObject * QtListModel::item( int row ) const 
 {
 	return QtItemModel::item( row, 0, nullptr ); 
@@ -279,6 +289,11 @@ QtTreeModel::QtTreeModel( AbstractTreeModel & source )
 	: QtItemModel( source ) 
 {}
 
+AbstractTreeModel & QtTreeModel::source() const
+{
+	return static_cast< AbstractTreeModel & >( QtItemModel::source() );
+}
+
 QObject * QtTreeModel::item( int row, QObject * parent ) const 
 { 
 	return QtItemModel::item( row, 0, parent ); 
@@ -292,6 +307,11 @@ int QtTreeModel::count( QObject * parent ) const
 QtTableModel::QtTableModel( AbstractTableModel & source ) 
 	: QtItemModel( source ) 
 {}
+
+AbstractTableModel & QtTableModel::source() const
+{
+	return static_cast< AbstractTableModel & >( QtItemModel::source() );
+}
 
 QObject * QtTableModel::item( int row, int column ) const 
 {

@@ -1,4 +1,7 @@
+#include "pch.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+
+#include "main_application.hpp"
 
 #include "core_dependency_system/di_ref.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
@@ -7,86 +10,6 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
-
-
-/**
- *	Obtains a Python scripting engine interface and runs unit tests on
- *	its interface.
- */
-class MainApplication
-	: public Implements< IApplication >
-{
-public:
-	MainApplication( IComponentContext& contextManager )
-		: contextManager_( contextManager )
-	{
-	}
-
-
-	int startApplication() override
-	{
-		Variant::setMetaTypeManager( contextManager_.queryInterface<IMetaTypeManager>() );
-
-		DIRef< IPythonScriptingEngine > scriptingEngine( contextManager_ );
-		if (scriptingEngine.get() == nullptr)
-		{
-			return 1;
-		}
-
-		// Import a builtin module
-		{
-			ObjectHandle module = scriptingEngine->appendPathAndImport( L"", "sys" );
-
-			if (!module.isValid())
-			{
-				NGT_ERROR_MSG( "Python test failed to import sys\n" );
-				return 1;
-			}
-		}
-
-		// Import a test module
-		{
-			const wchar_t* path = L"..\\..\\..\\src\\core\\testing\\plg_python27_interface_test\\scripts";
-			const char * moduleName = "python27_test";
-			auto module = scriptingEngine->appendPathAndImport( path, moduleName );
-			if (!module.isValid())
-			{
-				NGT_ERROR_MSG( "Python failed to import test script.\n" );
-				return 1;
-			}
-
-			DIRef<IDefinitionManager> definitionManager( contextManager_ );
-
-			if (definitionManager.get() == nullptr)
-			{
-				NGT_ERROR_MSG( "DefinitionManager not found.\n" );
-				return 1;
-			}
-
-			auto moduleDefinition = module.getDefinition( *definitionManager );
-			ReflectedMethodParameters parameters;
-			Variant result = moduleDefinition->bindProperty( "run", module ).invoke( parameters );
-			auto success = !result.isVoid() && !scriptingEngine->checkErrors();
-
-			if (!success)
-			{
-				NGT_ERROR_MSG( "Python failed to run test script.\n" );
-				return 1;
-			}
-		}
-
-		NGT_TRACE_MSG( "Python test successful\n" );
-		return 0;
-	}
-
-	void quitApplication() override
-	{
-
-	}
-
-private:
-	IComponentContext& contextManager_;
-};
 
 
 class Python27TestPlugin
@@ -100,14 +23,14 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		contextManager.registerInterface(
-			new MainApplication( contextManager ) );
+		contextManager.registerInterface( new MainApplication( contextManager ) );
 		return true;
 	}
 
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
+		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 	}
 
 

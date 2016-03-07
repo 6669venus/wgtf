@@ -10,6 +10,7 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_data_model/file_system/file_system_model.hpp"
+#include "core_serialization/interfaces/i_file_system.hpp"
 
 class ICustomModelInterface
 {

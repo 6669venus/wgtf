@@ -117,7 +117,7 @@ namespace collection_details
 				{
 					auto pos = impl->collectionImpl_.makeIterator( impl->index_ );
 					impl->collectionImpl_.onPreChange_( pos, v );
-					auto& ref = impl->container()[ impl->index_ ];
+					auto&& ref = impl->container()[ impl->index_ ];
 					auto oldValue = ref;
 					ref = val;
 					impl->collectionImpl_.onPostChanged_( pos, oldValue );

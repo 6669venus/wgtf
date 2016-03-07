@@ -21,7 +21,7 @@ Example:
 \endcode
 */
 WGListView {
-    objectName: itemData.IndexPath
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
     id: treeItem
     model: ChildModel
     height: visible ? contentHeight + topMargin + bottomMargin : 0

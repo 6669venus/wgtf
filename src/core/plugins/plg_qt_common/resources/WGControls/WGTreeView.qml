@@ -39,7 +39,7 @@ Example:
 */
 
 Item {
-    objectName: itemData != null ? itemData.IndexPath : "WGTreeView"
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
     id: treeView
 
     /*! This property holds the dataModel information that will be displayed in the tree view

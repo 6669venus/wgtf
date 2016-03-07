@@ -17,6 +17,8 @@ public:
 	QtItemModel( AbstractItemModel & source );
 	virtual ~QtItemModel();
 
+	AbstractItemModel & source() const;
+
 	Q_INVOKABLE QObject * item( int row, int column, const QObject * parent ) const;
 
 	Q_INVOKABLE int rowCount( const QObject * parent ) const;
@@ -47,6 +49,8 @@ class QtListModel : public QtItemModel
 public:
 	QtListModel( AbstractListModel & source );
 
+	AbstractListModel & source() const;
+
 	Q_INVOKABLE QObject * item( int row ) const;
 	Q_INVOKABLE int count() const;
 };
@@ -58,6 +62,8 @@ class QtTreeModel : public QtItemModel
 public:
 	QtTreeModel( AbstractTreeModel & source );
 
+	AbstractTreeModel & source() const;
+
 	Q_INVOKABLE QObject * item( int row, QObject * parent ) const;
 	Q_INVOKABLE int count( QObject * parent ) const ;
 };
@@ -68,6 +74,8 @@ class QtTableModel : public QtItemModel
 
 public:
 	QtTableModel( AbstractTableModel & source );
+
+	AbstractTableModel & source() const;
 
 	Q_INVOKABLE QObject * item( int row, int column ) const;
 	Q_INVOKABLE int rowCount() const;

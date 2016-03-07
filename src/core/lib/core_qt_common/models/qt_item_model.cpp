@@ -1,6 +1,7 @@
 #include "qt_item_model.hpp"
 
 #include "core_data_model/abstract_item_model.hpp"
+#include "core_data_model/i_item_role.hpp"
 #include "helpers/qt_helpers.hpp"
 
 #include <QUuid>
@@ -232,7 +233,26 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		return QVariant();
 	}
 
-	auto data = item->getData( index.row(), index.column(), role );
+	static size_t displayRole = ItemRole::compute( "display" );
+	static size_t decorationRole = ItemRole::compute( "decoration" );
+	
+	size_t roleId;
+	switch (role)
+	{
+	case Qt::DisplayRole:
+		roleId = displayRole;
+		break;
+
+	case Qt::DecorationRole:
+		roleId = decorationRole;
+		break;
+
+	default:
+		roleId = role;
+		break;
+	}
+
+	auto data = item->getData( index.row(), index.column(), roleId );
 	return QtHelpers::toQVariant( data );
 }
 

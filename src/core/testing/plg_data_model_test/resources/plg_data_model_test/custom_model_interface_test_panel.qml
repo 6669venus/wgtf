@@ -40,40 +40,19 @@ WGPanel {
 		}
 	}
 
+	property var folderModel : fileSystemModel
 
-	WGTreeModel {
-		id: fileModel
-		source: fileSystemModel
-		ValueExtension {}
-		ColumnExtension {}
-		ComponentExtension {}
-		TreeExtension {
-			id: treeModelExtension
-			selectionExtension: treeModelSelection
-		}
-		SelectionExtension {
-			id: treeModelSelection
-		}
-	}
-
-	WGTreeView {
+	ListView {
 		id: testTreeView
 
 		anchors.top: clones.bottom
 		anchors.left: parent.left
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
-		model: fileModel
-		selectionExtension: treeModelSelection
-		treeExtension: treeModelExtension
-		columnDelegates: [defaultColumnDelegate]
+		model: folderModel
 
-		rightMargin: 8
-		childRowMargin: 2
-		columnSpacing: 4
-		lineSeparator: false
-		autoUpdateLabelWidths: true
-		backgroundColourMode: incrementalGroupBackgroundColours
-		backgroundColourIncrements: 5
+		delegate: Text {
+			text: display
+		}
 	}
 }

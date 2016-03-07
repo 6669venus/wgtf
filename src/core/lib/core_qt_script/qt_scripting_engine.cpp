@@ -350,7 +350,7 @@ void QtScriptingEngine::finalise()
         auto& scriptObjects = iter->second;
         while (!scriptObjects.empty())
         {
-            auto& scriptObject = scriptObjects.begin();
+            auto&& scriptObject = scriptObjects.begin();
             if(!scriptObject->isNull())
             {
                 delete scriptObject->data();
@@ -366,12 +366,12 @@ void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
 	std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> >>::iterator findIt = 
 		impl_->scriptObjects_.find( scriptObject.object() );
 	assert (findIt != impl_->scriptObjects_.end());
-    auto& scriptObjects = findIt->second;
+    auto&& scriptObjects = findIt->second;
     scriptObjects.erase( 
         std::remove( scriptObjects.begin(), scriptObjects.end(), &scriptObject), scriptObjects.end());
     if( scriptObjects.empty() )
     {
-	    impl_->scriptObjects_.erase( findIt );
+	    impl_->scriptObjects_.erase( findIt->first );
     }
 }
 

@@ -1,27 +1,23 @@
 #ifndef FILE_SYSTEM_MODEL_HPP
 #define FILE_SYSTEM_MODEL_HPP
 
-#include "core_data_model/i_tree_model.hpp"
+#include "core_data_model/abstract_item_model.hpp"
 
 #include <memory>
 
 class IFileSystem;
 
-class FileSystemModel : public ITreeModel
+class FileSystemModel : public AbstractTreeModel
 {
 public:
 	FileSystemModel( IFileSystem & fileSystem, const char * rootDirectory );
 	~FileSystemModel();
 
-	virtual IItem * item(size_t index, const IItem * parent) const;
+	AbstractItem * item( const ItemIndex & index ) const override;
+	ItemIndex index( const AbstractItem * item ) const override;
 
-	virtual ItemIndex index(const IItem * item) const;
-
-	virtual bool empty(const IItem * item) const;
-
-	virtual size_t size(const IItem * item) const;
-
-	virtual int columnCount() const;
+	int rowCount( const AbstractItem * item ) const override;
+	int columnCount() const override;
 
 private:
 	struct Impl;

@@ -11,7 +11,6 @@
 #include "core_qt_common/qt_global_settings.hpp"
 #include "core_qt_common/qt_window.hpp"
 #include "core_qt_common/qml_window.hpp"
-#include "core_qt_common/model_qt_type_converter.hpp"
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
@@ -586,7 +585,6 @@ void QtFramework::registerDefaultTypeConverters()
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<float>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<double>() );
 	defaultTypeConverters_.emplace_back( new GenericQtTypeConverter<std::shared_ptr< BinaryBlock >>() );
-	defaultTypeConverters_.emplace_back( new ModelQtTypeConverter() );
 	defaultTypeConverters_.emplace_back( new StringQtTypeConverter() );
 	defaultTypeConverters_.emplace_back( new WGVectorQtTypeConverter() );
 	for (auto & defaultTypeConverter : defaultTypeConverters_)

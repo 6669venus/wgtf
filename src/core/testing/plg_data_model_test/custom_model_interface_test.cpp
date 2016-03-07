@@ -96,7 +96,7 @@ public:
 			new CustomModelImplementation2 );
 		implementation3_ = std::unique_ptr< ICustomModelInterface >(
 			new CustomModelImplementation3 );
-		fileSystemModel_ = std::unique_ptr< ITreeModel >(
+		fileSystemModel_ = std::unique_ptr< AbstractTreeModel >(
 			new FileSystemModel( *fileSystem, "c:/" ) );
 	}
 
@@ -115,7 +115,7 @@ public:
 		return implementation3_.get();
 	}
 
-	ITreeModel * fileSystemModel() const
+	AbstractTreeModel * fileSystemModel() const
 	{
 		return fileSystemModel_.get();
 	}
@@ -124,7 +124,7 @@ private:
 	std::unique_ptr< ICustomModelInterface > implementation1_;
 	std::unique_ptr< ICustomModelInterface > implementation2_;
 	std::unique_ptr< ICustomModelInterface > implementation3_;
-	std::unique_ptr< ITreeModel > fileSystemModel_;
+	std::unique_ptr< AbstractTreeModel > fileSystemModel_;
 };
 
 

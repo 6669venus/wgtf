@@ -21,6 +21,7 @@ Example:
 \endcode
 */
 WGListView {
+    objectName: itemData.IndexPath
     id: treeItem
     model: ChildModel
     height: visible ? contentHeight + topMargin + bottomMargin : 0
@@ -223,6 +224,7 @@ WGListView {
             }
 
             WGListViewRowDelegate { // The row
+                objectName: "WGListViewRowDelegate"
                 id: rowDelegate
 
                 anchors.top: parent.top

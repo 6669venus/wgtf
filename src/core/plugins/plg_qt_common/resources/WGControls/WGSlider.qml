@@ -73,6 +73,7 @@ WGSlider {
 */
 
 Control {
+    objectName: "WGSlider"
     id: slider
 
     /*!

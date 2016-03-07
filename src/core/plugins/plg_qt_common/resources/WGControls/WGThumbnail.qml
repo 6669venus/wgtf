@@ -92,6 +92,7 @@ Rectangle {
             }
         }
         WGLabel{
+            objectName: "Label"
             id: missingText
             anchors.centerIn: parent
             width: (parent.width - (defaultSpacing.leftMargin + defaultSpacing.rightMargin))

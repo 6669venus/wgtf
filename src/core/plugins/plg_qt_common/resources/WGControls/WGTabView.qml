@@ -19,6 +19,7 @@ WGTabView{
 */
 
 TabView {
+    objectName: "WGTabView"
     style: WGTabViewStyle{}
     clip: true
 }

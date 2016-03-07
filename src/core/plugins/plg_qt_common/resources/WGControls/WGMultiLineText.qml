@@ -14,6 +14,7 @@ WGMultiLineText {
 */
 
 WGLabel {
+    objectName: "WGMultiLineText"
     Layout.minimumHeight: lineCount * defaultSpacing.minimumRowHeight
     formLabel_: false
     wrapMode: Text.WordWrap

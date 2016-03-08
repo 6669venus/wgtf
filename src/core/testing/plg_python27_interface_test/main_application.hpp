@@ -16,9 +16,9 @@ class MainApplication
 {
 public:
 	MainApplication( IComponentContext & contextManager );
-	int startApplication() override;
-	void quitApplication() override;
+	virtual int startApplication() override;
+	virtual void quitApplication() override;
 
 private:
-	IComponentContext& contextManager_;
+	IComponentContext & contextManager_;
 };

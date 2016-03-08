@@ -13,8 +13,10 @@ class TestListener : public PropertyAccessorListener
 {
 public:
 	TestListener();
-	void preSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
-	void postSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+	virtual void preSetValue( const PropertyAccessor & accessor,
+		const Variant & value ) override;
+	virtual void postSetValue( const PropertyAccessor & accessor,
+		const Variant & value ) override;
 
 	bool preSetValueCalled_;
 	PropertyAccessor preSetAccessor_;
@@ -120,6 +122,8 @@ TEST( Python27Interface )
 			CHECK( testListener->preSetValueCalled_ );
 			CHECK_EQUAL( testDataAccessor.getType(), testListener->preSetAccessor_.getType() );
 			CHECK( strcmp( testDataAccessor.getName(), testListener->preSetAccessor_.getName() ) == 0 );
+			const char * expectedName = "testData";
+			CHECK( strcmp( expectedName, testListener->preSetAccessor_.getName() ) == 0 );
 			CHECK_EQUAL( testDataAccessor.getObject(), testListener->preSetAccessor_.getObject() );
 			int preSetValue = 0;
 			const auto preSetValueSuccess = testListener->preSetValue_.tryCast< int >( preSetValue );
@@ -131,6 +135,8 @@ TEST( Python27Interface )
 			CHECK( testListener->postSetValueCalled_ );
 			CHECK_EQUAL( testDataAccessor.getType(), testListener->postSetAccessor_.getType() );
 			CHECK( strcmp( testDataAccessor.getName(), testListener->postSetAccessor_.getName() ) == 0 );
+			const char * expectedName = "testData";
+			CHECK( strcmp( expectedName, testListener->postSetAccessor_.getName() ) == 0 );
 			CHECK_EQUAL( testDataAccessor.getObject(), testListener->postSetAccessor_.getObject() );
 			int postSetValue = 0;
 			const auto postSetValueSuccess = testListener->postSetValue_.tryCast< int >( postSetValue );

@@ -1,15 +1,8 @@
 #include "pch.hpp"
-#include "core_generic_plugin/generic_plugin.hpp"
-
 #include "main_application.hpp"
 
-#include "core_dependency_system/di_ref.hpp"
-#include "core_generic_plugin/interfaces/i_application.hpp"
-#include "core_python_script/i_scripting_engine.hpp"
-#include "core_logging/logging.hpp"
-#include "core_reflection/object_handle.hpp"
-#include "core_reflection/property_accessor.hpp"
-#include "core_reflection/reflected_method_parameters.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
+#include "core_variant/variant.hpp"
 
 
 class Python27TestPlugin

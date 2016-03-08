@@ -2,11 +2,6 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.2.3 )
 PROJECT( plg_python27_interface_test )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( WGPython27Project )
-
-IF( NOT PYTHON_FOUND )
-	RETURN()
-ENDIF()
 
 
 SET( PYTHON_SRCS

@@ -31,12 +31,22 @@ namespace
 					property.setNotifySignal( builder.addSignal( itr.value() + "Changed(QVariant)" ) );
 				}
 
-				metaObject_.reset( builder.toMetaObject() );
+				metaObject_ = builder.toMetaObject();
+			}
+
+			virtual ~MetaObject()
+			{
+				// @see QMetaObjectBuilder::toMetaObject()
+				// "The return value should be deallocated using free() once it
+				// is no longer needed."
+				// Allocation was done by the Qt dll, so use global free()
+				// Do not use the NGT allocator
+				::free( metaObject_ );
 			}
 
 			QAbstractItemModel & model_;
 			QList< int > roles_;
-			std::unique_ptr< QMetaObject > metaObject_;
+			QMetaObject * metaObject_;
 		};
 
 		ItemData( const QModelIndex & index, std::weak_ptr< MetaObject > metaObject )
@@ -53,7 +63,7 @@ namespace
 				return nullptr;
 			}
 
-			return metaObject->metaObject_.get();
+			return metaObject->metaObject_;
 		}
 
 		int qt_metacall( QMetaObject::Call c, int id, void **argv ) override

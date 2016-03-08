@@ -45,6 +45,8 @@ Item {
     */
     property var columnDelegates: []
 
+    property var columnSequence: []
+
 	/*! This property contains the column widths */
     property var columnWidths: []
 	
@@ -189,7 +191,7 @@ Item {
             // @see WGListView.columnSequence
             model: SequenceList {
                 model: ColumnModel
-                sequence: columnSequence
+                sequence: rowDelegate.columnSequence
             }
 
             x: indentation

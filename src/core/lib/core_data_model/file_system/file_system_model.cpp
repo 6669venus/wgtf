@@ -75,7 +75,7 @@ AbstractItem * FileSystemModel::item( const ItemIndex & index ) const
 
 	// See if we have cached this item already
 	auto & fileItems = parentItem != nullptr ? parentItem->children_ : impl_->rootItems_;
-	if (index.row_ < fileItems.size() )
+	if (index.row_ < static_cast< int >( fileItems.size() ) )
 	{
 		auto fileItem = fileItems[index.row_].get();
 		if (fileItem != nullptr)
@@ -86,7 +86,7 @@ AbstractItem * FileSystemModel::item( const ItemIndex & index ) const
 
 	// Item not cached, must enumerate
 	auto & directory = parentItem != nullptr ? parentItem->fileInfo_.fullPath : impl_->rootDirectory_;
-	size_t i = 0;
+	int i = 0;
 	impl_->fileSystem_.enumerate( directory.c_str(), [&]( FileInfo && fileInfo )
 	{
 		// Skip dots and hidden files
@@ -95,7 +95,7 @@ AbstractItem * FileSystemModel::item( const ItemIndex & index ) const
 			return true;
 		}
 
-		if (i == fileItems.size())
+		if (i == static_cast< int >( fileItems.size() ))
 		{
 			std::unique_ptr< FileItem > fileItem( new FileItem( std::move( fileInfo ), parentItem ) );
 			const_cast< FileItems & >( fileItems ).emplace_back( std::move( fileItem ) );

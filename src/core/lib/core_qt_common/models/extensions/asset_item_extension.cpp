@@ -21,15 +21,15 @@ AssetItemExtension::~AssetItemExtension()
 QHash< int, QByteArray > AssetItemExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	registerRole( StatusIconRole::role_, roleNames );
-	registerRole( TypeIconRole::role_, roleNames );
-	registerRole( SizeRole::role_, roleNames );
-	registerRole( CreatedTimeRole::role_, roleNames );
-	registerRole( ModifiedTimeRole::role_, roleNames );
-	registerRole( AccessedTimeRole::role_, roleNames );
-	registerRole( IsDirectoryRole::role_, roleNames );
-	registerRole( IsReadOnlyRole::role_, roleNames );
-	registerRole( IsCompressedRole::role_, roleNames );
+	registerRole( StatusIconRole::roleName_, roleNames );
+	registerRole( TypeIconRole::roleName_, roleNames );
+	registerRole( SizeRole::roleName_, roleNames );
+	registerRole( CreatedTimeRole::roleName_, roleNames );
+	registerRole( ModifiedTimeRole::roleName_, roleNames );
+	registerRole( AccessedTimeRole::roleName_, roleNames );
+	registerRole( IsDirectoryRole::roleName_, roleNames );
+	registerRole( IsReadOnlyRole::roleName_, roleNames );
+	registerRole( IsCompressedRole::roleName_, roleNames );
 
 	return roleNames;
 }
@@ -90,6 +90,9 @@ bool AssetItemExtension::setData( const QModelIndex &index, const QVariant &valu
 
 void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, const QVariant &value )
 {
+	auto model = index.model();
+	assert( model != nullptr );
+
 	size_t roleId;
 	if (!decodeRole( role, roleId ))
 	{
@@ -108,6 +111,6 @@ void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, cons
 	{
 		QVector<int> roles;
 		roles.append( role );
-		emit model_->dataChanged( index, index, roles );
+		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 	}
 }

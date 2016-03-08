@@ -24,6 +24,7 @@ WGOverlaySlider {
 */
 
 WGSliderHandle {
+    objectName: "WGOverlaySliderHandle"
     id: sliderHandle
     handleStyle: WGButtonFrame {
         implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2

@@ -28,6 +28,7 @@ WGSlider {
 */
 
 Item {
+    objectName: "WGSliderHandle"
     id: sliderHandle
 
     /*!
@@ -163,6 +164,7 @@ Item {
     activeFocusOnTab: true
 
     RangeModel {
+        objectName: "SliderRange"
         id: range
         stepSize: parentSlider.stepSize
         value: parentSlider.value

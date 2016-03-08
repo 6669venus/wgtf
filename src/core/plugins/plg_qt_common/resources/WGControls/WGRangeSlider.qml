@@ -204,6 +204,7 @@ Item {
 
 
         WGNumberBox {
+            objectName: "sliderLowerValue"
             id: sliderLowerValue
 
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
@@ -238,6 +239,7 @@ Item {
         }
 
         WGSlider {
+            objectName: "slider"
             id: slider
 
             property bool showValue: true
@@ -400,6 +402,7 @@ Item {
         }
 
         WGNumberBox {
+            objectName: "sliderUpperValue"
             id: sliderUpperValue
 
             Layout.preferredHeight: defaultSpacing.minimumRowHeight

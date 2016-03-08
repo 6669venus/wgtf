@@ -7,6 +7,7 @@ import BWControls 1.0
 */
 
 WGVector3 {
+    objectName: "WGVectorRGB"
     vectorLabels: ["R:", "G:", "B:"]
     minimumValue: 0
     maximumValue: 255

@@ -18,7 +18,7 @@ ComponentExtension::~ComponentExtension()
 QHash< int, QByteArray > ComponentExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	registerRole( ComponentRole::role_, roleNames );
+	registerRole( ComponentRole::roleName_, roleNames );
 	return roleNames;
 }
 

@@ -110,8 +110,6 @@ void QtFramework::initialise( IComponentContext & contextManager )
 		qmlEngine_->addImportPath(pPluginContextManager->getExecutablePath());
 	}
 
-	Q_INIT_RESOURCE( qt_common );
-
 	SharedControls::init();
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
@@ -167,8 +165,6 @@ void QtFramework::finalise()
 	defaultTypeConverters_.clear();
 	defaultComponentProviders_.clear();
 	defaultComponents_.clear();
-
-	Q_CLEANUP_RESOURCE( qt_common );
 }
 
 QQmlEngine * QtFramework::qmlEngine() const

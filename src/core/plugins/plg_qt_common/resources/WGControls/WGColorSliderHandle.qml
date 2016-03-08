@@ -10,6 +10,7 @@ import BWControls 1.0
 */
 
 WGSliderHandle {
+    objectName: "WGColorSliderHandle"
     id: sliderHandle
 
     minimumValue: handleIndex == 0 ? parentSlider.minimumValue : parentSlider.__handlePosList.children[handleIndex - 1].value

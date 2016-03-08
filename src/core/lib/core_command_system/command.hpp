@@ -30,12 +30,22 @@ enum class CommandThreadAffinity : uint8_t
 /**
  *	Command specifies the type of actions to be performed.
  */
+
 class Command
 {
 public:
 	virtual ~Command();
 	virtual const char * getId() const = 0;
-	virtual ObjectHandle execute( const ObjectHandle & arguments ) const = 0;
+	virtual ObjectHandle execute(const ObjectHandle & arguments) const = 0;
+
+
+	virtual bool validateArguments(const ObjectHandle & arguments) const 
+	{
+		//NOTE(aidan): 
+		//If there are any conditions that argument objects must follow, override this function. It should
+		//just return if the command could execute correctly with the given arguments
+		return true; 
+	}
 
 	virtual CommandThreadAffinity threadAffinity() const { return CommandThreadAffinity::COMMAND_THREAD; }
 

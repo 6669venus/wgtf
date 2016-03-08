@@ -31,6 +31,7 @@ WGSliderControl {
     textBoxStyle: WGOverlayTextBoxStyle {}
 
     buttonFrame: WGButtonFrame{
+        objectName: "button"
         id: button
         radius: 0
         property bool hovered: parent.hovered

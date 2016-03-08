@@ -54,6 +54,7 @@ private:
 	bool doLoad(const QUrl & qUrl);
 
 	IQtFramework & qtFramework_;
+    QQmlEngine & qmlEngine_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget * quickView_;
 	std::string id_;

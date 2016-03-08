@@ -12,7 +12,7 @@ class RoleProvider
 public:
 	virtual ~RoleProvider() { }
 
-	void registerRole( const ItemRole & itemRole, 
+	void registerRole( const char * roleName, 
 		QHash< int, QByteArray > & o_RoleNames ) const;
 
 	bool encodeRole( size_t roleId, int & o_Role ) const;

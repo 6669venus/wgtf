@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import WGControls 1.0
@@ -21,6 +21,7 @@ Example:
 \endcode
 */
 WGListView {
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
     id: treeItem
     model: ChildModel
     height: visible ? contentHeight + topMargin + bottomMargin : 0
@@ -223,6 +224,7 @@ WGListView {
             }
 
             WGListViewRowDelegate { // The row
+                objectName: "WGListViewRowDelegate"
                 id: rowDelegate
 
                 anchors.top: parent.top

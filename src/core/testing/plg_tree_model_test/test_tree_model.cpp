@@ -286,7 +286,12 @@ int TestTreeModel::columnCount() const
 
 Variant TestTreeModel::getData( int column, size_t roleId ) const
 {
-	if (roleId == headerTextRole::roleId_ && column == 0)
+	if (column >= columnCount())
+	{
+		return Variant();
+	}
+
+	if (roleId == headerTextRole::roleId_)
 	{
 		return impl_->headerText_.c_str();
 	}

@@ -39,4 +39,20 @@ WGPanel {
 			source: Implementation3
 		}
 	}
+
+	property var folderModel : fileSystemModel
+
+	ListView {
+		id: testTreeView
+
+		anchors.top: clones.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+		model: folderModel
+
+		delegate: Text {
+			text: display
+		}
+	}
 }

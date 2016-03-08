@@ -3,8 +3,17 @@
 
 #include "i_model_extension.hpp"
 
+#include <QQmlListProperty>
+#include <QStringList>
+
 class ValueExtension : public IModelExtension
 {
+	Q_OBJECT
+
+	Q_PROPERTY( QQmlListProperty< QString > roles
+		READ getRoles )
+
+	Q_CLASSINFO( "DefaultProperty", "roles" )
 public:
 	ValueExtension();
 	virtual ~ValueExtension();
@@ -21,6 +30,22 @@ public:
 	void onDataChanged( const QModelIndex &index,
 		int role,
 		const QVariant &value ) override;
+
+private:
+	QQmlListProperty< QString > getRoles() const;
+
+	static void appendRole( 
+		QQmlListProperty< QString > * property, 
+		QString * value );
+	static QString * roleAt( 
+		QQmlListProperty< QString > * property, 
+		int index );
+	static void clearRoles( 
+		QQmlListProperty< QString > * property );
+	static int countRoles( 
+		QQmlListProperty< QString > * property );
+
+	QStringList roles_;
 };
 
 #endif // COMPONENT_EXTENSION_HPP

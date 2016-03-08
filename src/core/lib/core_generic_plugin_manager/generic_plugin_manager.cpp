@@ -1,13 +1,3 @@
-#ifdef _WIN32
-#if _WIN32_WINNT < 0x0502
-#undef _WIN32_WINNT
-#undef NTDDI_VERSION
-#define _WIN32_WINNT _WIN32_WINNT_WS03 //required for SetDllDirectory
-#define NTDDI_VERSION NTDDI_WS03
-#include <windows.h>
-#endif // _WIN32_WINNT
-#endif // _WIN32
-
 #include "generic_plugin_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
@@ -31,21 +21,8 @@
 #include <shlwapi.h>
 #endif // _WIN32
 
-#ifdef __APPLE__
-#include <dlfcn.h>
-#include <libgen.h>
-#include <codecvt>
-#include <locale>
-#endif // __APPLE__
-
 namespace
 {
-
-	static char ngtHome[MAX_PATH];
-	static wchar_t exePath[MAX_PATH];
-
-	const char NGT_HOME[] = "NGT_HOME";
-	const char NGT_PATH[] = "PATH";
 
 	void setContext( IComponentContext* context )
 	{
@@ -93,54 +70,6 @@ GenericPluginManager::GenericPluginManager(bool applyDebugPostfix_)
 	: contextManager_( new PluginContextManager() )
     , applyDebugPostfix(applyDebugPostfix_)
 {
-	if (!Environment::getValue<MAX_PATH>( NGT_HOME, ngtHome ))
-	{
-#ifdef _WIN32
-		GetModuleFileNameA( NULL, ngtHome, MAX_PATH );
-		PathRemoveFileSpecA( ngtHome );
-		Environment::setValue( NGT_HOME, ngtHome );
-#endif // _WIN32
-
-#ifdef __APPLE__
-		Dl_info info;
-		if (!dladdr( reinterpret_cast<void*>(setContext), &info ))
-		{
-			NGT_ERROR_MSG( "Generic plugin manager: failed to get current module file name%s", "\n" );
-		}
-		strcpy(ngtHome, info.dli_fname);
-		const char* dir = dirname(ngtHome);
-		Environment::setValue( NGT_HOME, dir);
-
-		std::string dlybs = dir;
-		dlybs += "/../PlugIns";
-		Environment::setValue( "LD_LIBRARY_PATH", dlybs.c_str() );
-#endif // __APPLE__
-	}
-
-#ifdef _WIN32
-	size_t convertedChars = 0;
-	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
-	assert( convertedChars );
-#endif // _WIN32
-
-#ifdef __APPLE__
-	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
-	wcscpy(exePath, conv.from_bytes( ngtHome ).c_str());
-#endif // __APPLE__
-
-	char path[2048];
-	if(Environment::getValue<2048>( NGT_PATH, path ))
-	{
-		std::string newPath( "\"" );
-		newPath += ngtHome;
-		newPath += "\";";
-		newPath += path;
-		Environment::setValue( NGT_PATH, newPath.c_str() );
-	}
-
-#ifdef _WIN32
-	SetDllDirectoryA( ngtHome );
-#endif // _WIN32
 }
 
 

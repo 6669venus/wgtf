@@ -421,9 +421,9 @@ public:
 
 
 	//==========================================================================
-	void* containerData() const override
+	const void* container() const override
 	{
-		return (void*)(this);
+		return this;
 	}
 
 
@@ -530,15 +530,9 @@ public:
 	}
 
 
-	virtual bool isMapping() const override
+	virtual int flags() const override
 	{
-		return false;
-	}
-
-
-	virtual bool canResize() const override
-	{
-		return addKeyFunc_;
+		return ( addKeyFunc_ ? RESIZABLE : 0 );
 	}
 
 

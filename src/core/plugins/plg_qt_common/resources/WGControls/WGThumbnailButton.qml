@@ -123,6 +123,7 @@ Button {
         }
 
         WGLabel{
+            objectName: "Label"
             id: defaulttext1
             anchors.centerIn: parent
             width: (parent.width - (defaultSpacing.leftMargin + defaultSpacing.rightMargin))
@@ -135,6 +136,7 @@ Button {
     }
 
     FileDialog {
+        objectName: "FileDialog"
         id: fileDialog
         title: "Choose a texture"
         visible: false

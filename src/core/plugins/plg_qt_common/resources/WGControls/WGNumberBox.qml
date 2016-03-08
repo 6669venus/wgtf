@@ -29,6 +29,7 @@ WGNumberBox {
 */
 
 WGSpinBox {
+    objectName: "WGNumberBox"
     id: spinBox
 
     activeFocusOnTab: enabled

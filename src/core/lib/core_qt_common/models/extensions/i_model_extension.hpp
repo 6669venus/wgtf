@@ -22,13 +22,11 @@ class IModelExtension : public QObject
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	IModelExtension() : model_( nullptr ) {}
+	IModelExtension() : qtFramework_( nullptr ) {}
 	virtual ~IModelExtension() {}
 
-	void init( QAbstractItemModel * model, IQtFramework* qtFramework )
+	void init( IQtFramework* qtFramework )
 	{
-		assert( model_ == nullptr );
-		model_ = model;
 		qtFramework_ = qtFramework;
 	}
 
@@ -36,6 +34,9 @@ public:
 
 	virtual QVariant data( const QModelIndex &index, int role ) const { return QVariant::Invalid; }
 	virtual bool setData( const QModelIndex &index, const QVariant &value, int role ) { return false; }
+
+	virtual QVariant headerData( int section, Qt::Orientation orientation, int role ) const { return QVariant::Invalid; }
+	virtual bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) { return false; }
 
 	virtual void saveStates( const char * modelUniqueName ) {}
 	virtual void loadStates( const char * modelUniqueName ) {}
@@ -61,7 +62,6 @@ public slots:
 		const QModelIndex & parent, int first, int last ) {}
 
 protected:
-	QAbstractItemModel * model_;
 	IQtFramework * qtFramework_;
 };
 

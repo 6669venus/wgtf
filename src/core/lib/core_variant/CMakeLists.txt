@@ -9,6 +9,12 @@ SET( INTERFACES_SRC
 )
 SOURCE_GROUP( "interfaces" FILES ${INTERFACES_SRC} )
 
+SET( STL_CONTAINER_SRC
+	stl_container/linear_collection.hpp
+	stl_container/map_collection.hpp
+)
+SOURCE_GROUP( "stl_container" FILES ${STL_CONTAINER_SRC} )
+
 SET( ALL_SRCS
 	collection.cpp
 	collection.hpp
@@ -23,10 +29,11 @@ SET( ALL_SRCS
 	variant.cpp
 	variant.hpp
 )
-SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
+SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
 	${INTERFACES_SRC}
+	${STL_CONTAINER_SRC}
 	${ALL_SRCS}
 )
 BW_ADD_LIBRARY( core_variant ${BLOB_SRCS} )

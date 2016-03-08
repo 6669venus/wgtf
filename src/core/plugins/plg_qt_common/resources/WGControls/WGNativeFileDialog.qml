@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
 WGFileDialog {
+    objectName: "WGNativeFileDialog"
     id: mainDialog
 
     onOpen: {
@@ -16,6 +17,7 @@ WGFileDialog {
     }
 
     FileDialog {
+        objectName: "FileDialog"
         id: fileDialogInstance
         folder: mainDialog.folder
         modality: mainDialog.modality

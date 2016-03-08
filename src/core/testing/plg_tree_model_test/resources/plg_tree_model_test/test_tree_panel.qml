@@ -53,6 +53,7 @@ WGPanel {
 			splitterChar: " "
 		}
 
+		HeaderFooterTextExtension {}
         ValueExtension {}
         ColumnExtension {}
         ComponentExtension {}
@@ -74,12 +75,13 @@ WGPanel {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         model: testModel
-        columnDelegates: [defaultColumnDelegate]
         selectionExtension: treeModelSelection
         treeExtension: treeModelExtension
         childRowMargin: 2
         lineSeparator: false
         showColumnsFrame: true
-    	backgroundColourMode: incrementalGroupBackgroundColours
+        showColumnHeaders: true
+        showColumnFooters: true
+        backgroundColourMode: incrementalGroupBackgroundColours
     }
 }

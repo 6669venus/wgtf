@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.1
 import BWControls 1.0
 
 WGExpandingRowLayout {
+    objectName: "WGFileSelectBox"
     id: fileComponent
 
     /*! Determines whether text in the url is readOnly and can only be copied.
@@ -121,6 +122,7 @@ WGExpandingRowLayout {
     }
 
     WGTextBox {
+        objectName: "textField"
         id: textField
         Layout.fillWidth: true
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
@@ -154,6 +156,7 @@ WGExpandingRowLayout {
     }
 
     WGPushButton {
+        objectName: "openButton"
         id: openButton
         iconSource: "icons/open_16x16.png"
         Layout.preferredHeight: defaultSpacing.minimumRowHeight

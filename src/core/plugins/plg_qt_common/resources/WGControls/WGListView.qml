@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 
@@ -101,6 +101,60 @@ ListView {
         backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
         : Qt.darker(palette.MidLightColor,1.2)
 
+    property bool showColumnHeaders: false
+    property bool showColumnFooters: false
+
+    property Component columnHeaderDelegate: defaultColumnHeaderDelegate
+    property Component columnFooterDelegate: defaultColumnFooterDelegate
+
+    property color headerBackgroundColour: palette.MidDarkColor
+    property color footerBackgroundColour: palette.MidDarkColor
+
+    property Component defaultColumnHeaderDelegate: Item {
+        signal dataChanged;
+
+        property var headerTextVariant: getData("headerText");
+        property string headerText:
+            headerTextVariant !== null && typeof(headerTextVariant) === "string" ? headerTextVariant : ""
+
+        onDataChanged:headerTextVariant = getData("headerText");
+
+        Text {
+            id: textBox
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.TextColor
+            text: headerText
+        }
+    }
+
+    property Component defaultColumnFooterDelegate: Item {
+        signal dataChanged;
+
+        property var footerTextVariant: getData("footerText");
+        property string footerText:
+            footerTextVariant !== null && typeof(footerTextVariant) === "string" ? footerTextVariant : ""
+
+        onDataChanged:footerTextVariant = getData("footerText");
+
+        Text {
+            id: textBox
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.TextColor
+            text: footerText
+        }
+    }
+
+    headerPositioning: ListView.OverlayHeader
+    footerPositioning: ListView.OverlayFooter
+
     /*! This property holds the spacing between column items
         The default value is \c 1
     */
@@ -122,6 +176,8 @@ ListView {
                 columnsFrame.initialColumnWidths = listView.columnWidths;
             }
         }
+
+        onHeaderDataChanged: headerDataChanged(first, last);
     }
 
     /*! This property contains the column widths */
@@ -167,10 +223,16 @@ ListView {
 
     function updateColumnCount()
     {
-        if (showColumnsFrame)
+        if (typeof(model) === "undefined" || model === null)
         {
-            columnCount = model === null ? 0 : model.columnCount();
+            columnCount = 0;
         }
+        else
+        {
+            columnCount = model.columnCount();
+        }
+
+        headerDataChanged(0, columnCount - 1);
     }
 
     function calculateMaxTextWidth(index)
@@ -197,6 +259,37 @@ ListView {
 
         var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
         listView.positionViewAtIndex( currentRow, ListView.Contain );
+    }
+
+    function columnWidthFunction(index)
+    {
+        var columnWidths = listView.columnWidths;
+        var columnWidth = 0;
+
+        if (columnWidths.length === 0)
+        {
+            var listWidth = listView.width - listView.leftMargin - listView.rightMargin;
+            columnWidth = Math.ceil(listWidth / columnCount - listView.columnSpacing);
+        }
+        else if (index < columnWidths.length)
+        {
+            columnWidth = columnWidths[index];
+        }
+
+        return Math.max(0, columnWidth);
+    }
+
+    function headerDataChanged(fromColumn, toColumn)
+    {
+        if (header !== null)
+        {
+            headerItem.dataChanged(fromColumn, toColumn)
+        }
+
+        if (footer !== null)
+        {
+            footerItem.dataChanged(fromColumn, toColumn)
+        }
     }
 
     Keys.onUpPressed: {
@@ -260,6 +353,36 @@ ListView {
         }
     }
 
+    header: !showColumnHeaders ? null : headerComponent
+
+    property Component headerComponent: WGDataModelHeaderRow {
+        topMargin: listView.topMargin
+        columnCount: listView.columnCount
+        columnWidthFunction: listView.columnWidthFunction
+        backgroundColour: headerBackgroundColour
+        columnDelegate: columnHeaderDelegate
+        model: listView.model
+        minimumRowHeight: listView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnHeaders
+        width: listView.width - listView.rightMargin - listView.leftMargin
+    }
+
+    footer: !showColumnFooters ? null : footerComponent
+
+    property Component footerComponent: WGDataModelHeaderRow {
+        bottomMargin: listView.bottomMargin
+        columnCount: listView.columnCount
+        columnWidthFunction: listView.columnWidthFunction
+        backgroundColour: footerBackgroundColour
+        columnDelegate: columnFooterDelegate
+        model: listView.model
+        minimumRowHeight: listView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnFooters
+        width: listView.width - listView.rightMargin - listView.leftMargin
+    }
+
     WGColumnsFrame {
         id: columnsFrame
     	columnCount: listView.columnCount
@@ -280,6 +403,7 @@ ListView {
     }
 
     WGScrollBar {
+        objectName: "verticalScrollBar"
         id: verticalScrollBar
         width: defaultSpacing.rightMargin
         anchors.top: listView.top

@@ -1,14 +1,16 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
+import WGControls 1.0
 
 Row
 {
 	property var source;
 
-	TextField {
+	WGTextBox {
 		id: numeric
 		text: source.numeric
 		width: 100
+		height: 20
 		Binding {
 			target: source
 			property: "numeric"
@@ -16,23 +18,28 @@ Row
 		}
 	}
 
-	TextField {
+	WGTextBox {
 		text: source.string
-		width: 250
+		width: 120
+		height: 20
 		onTextChanged: {
 			source.string = text;
 		}
 	}
 
-	Button {
+	WGPushButton {
 		text: "Increment!"
+		width: 100
+		height: 20
 		onClicked: {
 			source.incrementNumeric(parseInt(incrementValue.text));
 		}
 	}
 
-	TextField {
+	WGTextBox {
 		id: incrementValue
+		width: 100
+		height: 20
 		text: "1"
 	}
 	

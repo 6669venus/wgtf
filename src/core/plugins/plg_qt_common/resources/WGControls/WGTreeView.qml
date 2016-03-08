@@ -39,6 +39,7 @@ Example:
 */
 
 Item {
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
     id: treeView
 
     /*! This property holds the dataModel information that will be displayed in the tree view
@@ -177,6 +178,57 @@ Item {
         backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
         : Qt.darker(palette.MidLightColor,1.2)
 
+    property bool showColumnHeaders: false
+    property bool showColumnFooters: false
+
+    property Component columnHeaderDelegate: defaultColumnHeaderDelegate
+    property Component columnFooterDelegate: defaultColumnFooterDelegate
+
+    property color headerBackgroundColour: palette.MidDarkColor
+    property color footerBackgroundColour: palette.MidDarkColor
+
+    property Component defaultColumnHeaderDelegate: Item {
+        signal dataChanged;
+
+        property var headerTextVariant: getData("headerText");
+        property string headerText:
+            headerTextVariant !== null && typeof(headerTextVariant) === "string" ? headerTextVariant : ""
+
+        onDataChanged:headerTextVariant = getData("headerText");
+
+        Text {
+            id: textBox
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.TextColor
+            text: headerText
+        }
+    }
+
+    property Component defaultColumnFooterDelegate: Item {
+        signal dataChanged;
+
+        property var footerTextVariant: getData("footerText");
+        property string footerText:
+            footerTextVariant !== null && typeof(footerTextVariant) === "string" ? footerTextVariant : ""
+
+        onDataChanged:footerTextVariant = getData("footerText");
+
+        Text {
+            id: textBox
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.TextColor
+            text: footerText
+        }
+    }
+
     /*! This property contains the number of columns */
     property int columnCount: 0
     
@@ -188,6 +240,8 @@ Item {
         onModelReset: {
             updateColumnCount();
         }
+
+        onHeaderDataChanged: headerDataChanged(first, last);
     }
 
     /*! This property contains the column widths */
@@ -231,10 +285,16 @@ Item {
 
     function updateColumnCount()
     {
-        if (showColumnsFrame)
+        if (typeof(model) === "undefined" || model === null)
         {
-            columnCount = model === null ? 0 : model.columnCount();
+            columnCount = 0;
         }
+        else
+        {
+            columnCount = model.columnCount();
+        }
+
+        headerDataChanged(0, columnCount - 1);
     }
 
     function calculateMaxTextWidth(column)
@@ -303,6 +363,37 @@ Item {
         return maxTextWidth;
     }
 
+    function columnWidthFunction(index)
+    {
+        var columnWidths = treeView.columnWidths;
+        var columnWidth = 0;
+
+        if (columnWidths.length === 0)
+        {
+            var treeWidth = rootItem.width;
+            columnWidth = Math.ceil(treeWidth / columnCount - treeView.columnSpacing);
+        }
+        else if (index < columnWidths.length)
+        {
+            columnWidth = columnWidths[index];
+        }
+
+        return Math.max(0, columnWidth);
+    }
+
+    function headerDataChanged(fromColumn, toColumn)
+    {
+        if (headerItemLoader.status === Loader.Ready)
+        {
+            headerItem.dataChanged(fromColumn, toColumn)
+        }
+
+        if (footerItemLoader.status === Loader.Ready)
+        {
+            footerItem.dataChanged(fromColumn, toColumn)
+        }
+    }
+
     function addDepthLevel(depth)
     {
     	if (depth >= depthLevelGroups.length)
@@ -340,20 +431,73 @@ Item {
 
     WGTreeItem {
         id: rootItem
-        y: treeView.topMargin
+        topMargin: treeView.topMargin + (treeView.header === null ? 0 : treeView.headerItem.height)
+        bottomMargin: treeView.bottomMargin + (treeView.footer === null ? 0 : treeView.footerItem.height)
         leftMargin: treeView.leftMargin
         rightMargin: treeView.rightMargin
         width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
         height: columnsFrame.height
         model: treeView.model
         enableVerticalScrollBar: true
-        
+
         onContentHeightChanged: {
             if (autoUpdateLabelWidths)
             {
                 columnsFrame.resizeColumnToIdealSize(0)
             }
         }
+    }
+
+    property alias headerItem: headerItemLoader.item
+
+    Loader {
+        id: headerItemLoader
+        x: leftMargin
+        anchors.top: treeView.top
+        width: rootItem.width
+        active: showColumnHeaders
+        sourceComponent: header
+    }
+
+    property Component header: showColumnHeaders ? headerComponent : null
+        
+    property Component headerComponent: WGDataModelHeaderRow {
+        topMargin: treeView.topMargin
+        columnCount: treeView.columnCount
+        columnWidthFunction: treeView.columnWidthFunction
+        backgroundColour: headerBackgroundColour
+        columnDelegate: columnHeaderDelegate
+        model: treeView.model
+        minimumRowHeight: treeView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnHeaders
+        width: treeView.width - treeView.rightMargin - treeView.leftMargin
+    }
+
+    property alias footerItem: footerItemLoader.item
+
+    Loader {
+        id: footerItemLoader
+        x: leftMargin
+        anchors.bottom: treeView.bottom
+        width: rootItem.width
+        active: showColumnFooters
+        sourceComponent: footer
+    }
+
+    property Component footer: showColumnFooters ? footerComponent : null
+
+    property Component footerComponent: WGDataModelHeaderRow {
+        bottomMargin: treeView.bottomMargin
+        columnCount: treeView.columnCount
+        columnWidthFunction: treeView.columnWidthFunction
+        backgroundColour: footerBackgroundColour
+        columnDelegate: columnFooterDelegate
+        model: treeView.model
+        minimumRowHeight: treeView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnFooters
+        width: treeView.width - treeView.rightMargin - treeView.leftMargin
     }
 
     WGColumnsFrame {

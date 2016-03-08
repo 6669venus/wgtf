@@ -9,6 +9,7 @@ import BWControls 1.0
 */
 
 WGExpandingRowLayout {
+    objectName: "WGVectorN"
     id: mainLayout
     Layout.fillWidth: true
     spacing: 0

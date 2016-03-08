@@ -223,16 +223,19 @@ void TreeExtension::loadStates( const char * modelUniqueName )
 QHash< int, QByteArray > TreeExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	this->registerRole( ChildModelRole::role_, roleNames );
-	this->registerRole( HasChildrenRole::role_, roleNames );
-	this->registerRole( ExpandedRole::role_, roleNames );
-	this->registerRole( ParentIndexRole::role_, roleNames );
+	this->registerRole( ChildModelRole::roleName_, roleNames );
+	this->registerRole( HasChildrenRole::roleName_, roleNames );
+	this->registerRole( ExpandedRole::roleName_, roleNames );
+	this->registerRole( ParentIndexRole::roleName_, roleNames );
 	return roleNames;
 }
 
 
 QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 {
+	auto model = index.model();
+	assert( model != nullptr );
+
 	size_t roleId;
 	if (!this->decodeRole( role, roleId ))
 	{
@@ -241,7 +244,7 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 
 	if (roleId == ChildModelRole::roleId_)
 	{
-		if (!model_->hasChildren(index) ||
+		if (!model->hasChildren(index) ||
 			!impl_->expanded( index ))
 		{
 			return QVariant( QVariant::Invalid );
@@ -262,7 +265,7 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 	}
 	else if (roleId == HasChildrenRole::roleId_)
 	{
-		return model_->hasChildren( index );
+		return model->hasChildren( index );
 	}
 	else if (roleId == ExpandedRole::roleId_)
 	{
@@ -270,7 +273,7 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 	}
 	else if (roleId == ParentIndexRole::roleId_)
 	{
-		QModelIndex parentIndex = model_->parent( index );
+		QModelIndex parentIndex = model->parent( index );
 		return parentIndex;
 	}
 
@@ -281,6 +284,9 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 bool TreeExtension::setData( 
 	const QModelIndex &index, const QVariant &value, int role )
 {
+	auto model = index.model();
+	assert( model != nullptr );
+
 	size_t roleId;
 	if (!this->decodeRole( role, roleId ))
 	{
@@ -305,7 +311,7 @@ bool TreeExtension::setData(
 		auto res = this->encodeRole( ChildModelRole::roleId_, role );
 		assert( res );
 		roles.append( role );
-		emit model_->dataChanged( index, index, roles );
+		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 
 		return true;
 	}
@@ -342,7 +348,10 @@ void TreeExtension::onLayoutChanged(
 	roles.append( role );
 	for (auto it = parents.begin(); it != parents.end(); ++it)
 	{
-		emit model_->dataChanged( *it, *it, roles );
+		auto model = it->model();
+		assert( model != nullptr );
+
+		emit const_cast< QAbstractItemModel * >( model )->dataChanged( *it, *it, roles );
 	}
 }
 
@@ -365,6 +374,9 @@ void TreeExtension::onRowsRemoved(
 /// Move to previous index
 bool TreeExtension::moveUp()
 {
+	auto model = impl_->currentIndex_.model();
+	assert( model != nullptr );
+
 	int prevRow = impl_->currentIndex_.row() - 1;
 
 	if (0 <= prevRow)
@@ -374,18 +386,18 @@ bool TreeExtension::moveUp()
 
 		do {
 			// Previous item's bottom row
-			prevIndexsBottomRow = model_->rowCount( prevIndex ) - 1;
+			prevIndexsBottomRow = model->rowCount( prevIndex ) - 1;
 
 			impl_->currentIndex_ = prevIndex;
 
-			if (model_->hasChildren( impl_->currentIndex_ ))
+			if (model->hasChildren( impl_->currentIndex_ ))
 			{
 				// Keep search in child tree if the bottom item has child tree and expanded
-				prevIndexsBottomRow = model_->rowCount( impl_->currentIndex_ ) - 1;
+				prevIndexsBottomRow = model->rowCount( impl_->currentIndex_ ) - 1;
 
 				prevIndex = impl_->currentIndex_.child( prevIndexsBottomRow, 0 );
 			}
-		} while (model_->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
+		} while (model->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
 
 		return handleCurrentIndexChanged();
 	}
@@ -409,6 +421,9 @@ bool TreeExtension::moveUp()
 /// Move to next index
 bool TreeExtension::moveDown()
 {
+	auto model = impl_->currentIndex_.model();
+	assert( model != nullptr );
+
 	if (impl_->expanded( impl_->currentIndex_ ))
 	{
 		// Move to the first child item when the current item is expanded
@@ -422,7 +437,7 @@ bool TreeExtension::moveDown()
 		int nextRow = impl_->currentIndex_.row() + 1;
 		while (parent.isValid())
 		{
-			if (nextRow < model_->rowCount( parent ))
+			if (nextRow < model->rowCount( parent ))
 			{
 				// Update the current index if the next item is available
 				impl_->currentIndex_ = parent.child( nextRow, 0 );
@@ -442,7 +457,7 @@ bool TreeExtension::moveDown()
 		}
 
 		parent = parent.isValid() ? parent : impl_->currentIndex_;
-		if (nextRow < model_->rowCount( parent ))
+		if (nextRow < model->rowCount( parent ))
 		{
 			QModelIndex sibling = parent.sibling( nextRow, impl_->currentIndex_.column() );
 			if (sibling.isValid())
@@ -460,8 +475,11 @@ bool TreeExtension::moveDown()
 /// Collapse the current item if it is collapsible or move to the parent
 bool TreeExtension::moveLeft()
 {
+	auto model = impl_->currentIndex_.model();
+	assert( model != nullptr );
+
 	// Move up to the parent if there are no children or not expanded
-	if (!model_->hasChildren( impl_->currentIndex_ ) || !impl_->expanded( impl_->currentIndex_ ))
+	if (!model->hasChildren( impl_->currentIndex_ ) || !impl_->expanded( impl_->currentIndex_ ))
 	{
 		// Move up to the parent
 		QModelIndex parent = impl_->currentIndex_.parent();
@@ -489,8 +507,11 @@ bool TreeExtension::moveLeft()
 /// Expand the current item if it is expandable or move to the first child
 bool TreeExtension::moveRight()
 {
+	auto model = impl_->currentIndex_.model();
+	assert( model != nullptr );
+
 	// Make sure the current item has children
-	if (model_->hasChildren( impl_->currentIndex_ ) )
+	if (model->hasChildren( impl_->currentIndex_ ) )
 	{
 		if (impl_->expanded( impl_->currentIndex_ ))
 		{

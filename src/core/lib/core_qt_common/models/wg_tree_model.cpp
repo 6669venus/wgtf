@@ -115,7 +115,7 @@ ITreeModel * WGTreeModel::getModel() const
 void WGTreeModel::registerExtension( IModelExtension * extension )
 {
 	beginResetModel();
-	extension->init( this, impl_->qtFramework_ );
+	extension->init( impl_->qtFramework_ );
 	std::string modelName = this->objectName().toUtf8().constData();
 	extension->loadStates( modelName.c_str() );
 	impl_->qtConnections_ += QObject::connect( 
@@ -282,6 +282,19 @@ QVariant WGTreeModel::headerData(
 	}
 
 	return QtHelpers::toQVariant( model->getData( section, roleId ) );
+}
+
+QVariant WGTreeModel::headerData( int column, QString roleName ) const
+{
+	auto roles = roleNames().keys( roleName.toUtf8() );
+	
+	if (roles.empty())
+	{
+		return QVariant::Invalid;
+	}
+
+	int roleId = roles.first();
+	return headerData( column, Qt::Horizontal, roleId );
 }
 
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const

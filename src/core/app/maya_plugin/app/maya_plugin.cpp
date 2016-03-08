@@ -5,6 +5,16 @@
 #pragma warning( disable: 4244 4100 4238 4239 4263 4245 4201 )
 #define WIN32_LEAN_AND_MEAN
 
+#ifdef _WIN32
+#if _WIN32_WINNT < 0x0502
+#undef _WIN32_WINNT
+#undef NTDDI_VERSION
+#define _WIN32_WINNT _WIN32_WINNT_WS03 //required for SetDllDirectory
+#define NTDDI_VERSION NTDDI_WS03
+#include <windows.h>
+#endif // _WIN32_WINNT
+#endif // _WIN32
+
 #include "core_ui_framework/i_ui_application.hpp"
 #include "../../generic_app/app/memory_plugin_context_creator.hpp"
 #include "core_generic_plugin_manager/generic_plugin_manager.hpp"
@@ -44,8 +54,12 @@ const char * NGT_MAYA_PLUGIN_NAME = "maya_plugin_d.mll";
 #endif
 
 static HMODULE hApp = ::GetModuleHandleA( NGT_MAYA_PLUGIN_NAME );
-;
+
 static char ngtHome[MAX_PATH];
+static wchar_t exePath[MAX_PATH];
+
+const char NGT_HOME[] = "NGT_HOME";
+const char NGT_PATH[] = "PATH";
 
 static NGTApplicationProxy * ngtApp = nullptr;
 static GenericPluginManager * pluginManager = nullptr;
@@ -170,19 +184,63 @@ PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
 {
 	MStatus status;
 
-	if (!Environment::getValue< MAX_PATH >( "NGT_HOME", ngtHome ))
-	{
-		GetModuleFileNameA( hApp, ngtHome, MAX_PATH );
-		PathRemoveFileSpecA( ngtHome );
-		PathAppendA( ngtHome, "\\" );
-		Environment::setValue( "NGT_HOME", ngtHome );
-	}
+
+    if (!Environment::getValue<MAX_PATH>( NGT_HOME, ngtHome ))
+    {
+#ifdef _WIN32
+        GetModuleFileNameA( hApp, ngtHome, MAX_PATH );
+        PathRemoveFileSpecA( ngtHome );
+        Environment::setValue( NGT_HOME, ngtHome );
+#endif // _WIN32
 
 #ifdef __APPLE__
-	Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/../PlugIns/platforms").c_str() );
+        Dl_info info;
+        if (!dladdr( reinterpret_cast<void*>(setContext), &info ))
+        {
+            NGT_ERROR_MSG( "Generic plugin manager: failed to get current module file name%s", "\n" );
+        }
+        strcpy(ngtHome, info.dli_fname);
+        const char* dir = dirname(ngtHome);
+        Environment::setValue( NGT_HOME, dir);
+
+        std::string dlybs = dir;
+        dlybs += "/../PlugIns";
+        Environment::setValue( "LD_LIBRARY_PATH", dlybs.c_str() );
+#endif // __APPLE__
+    }
+
+#ifdef __APPLE__
+    Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/../PlugIns/platforms").c_str() );
 #else
-	Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
+    Environment::setValue( "QT_QPA_PLATFORM_PLUGIN_PATH", (std::string( ngtHome ) + "/platforms").c_str() );
 #endif
+
+#ifdef _WIN32
+    size_t convertedChars = 0;
+    mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
+    assert( convertedChars );
+#endif // _WIN32
+
+#ifdef __APPLE__
+    std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
+    wcscpy(exePath, conv.from_bytes( ngtHome ).c_str());
+#endif // __APPLE__
+
+    char path[2048];
+    if(Environment::getValue<2048>( NGT_PATH, path ))
+    {
+        std::string newPath( "\"" );
+        newPath += ngtHome;
+        newPath += "\";";
+        newPath += path;
+        Environment::setValue( NGT_PATH, newPath.c_str() );
+    }
+
+#ifdef _WIN32
+    SetDllDirectoryA( ngtHome );
+#endif // _WIN32
+
+
 
 	pluginManager = new GenericPluginManager();
 

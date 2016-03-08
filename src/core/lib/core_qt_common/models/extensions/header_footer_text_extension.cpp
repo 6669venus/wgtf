@@ -19,7 +19,7 @@ HeaderFooterTextExtension::~HeaderFooterTextExtension()
 QHash<int, QByteArray> HeaderFooterTextExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	registerRole( headerTextRole::role_, roleNames );
-	registerRole( footerTextRole::role_, roleNames );
+	registerRole( headerTextRole::roleName_, roleNames );
+	registerRole( footerTextRole::roleName_, roleNames );
 	return roleNames;
 }

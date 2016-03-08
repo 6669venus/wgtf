@@ -21,6 +21,7 @@ public:
 	PropertyAccessor( const PropertyAccessor & other );
 	PropertyAccessor( PropertyAccessor && other );
 	
+	PropertyAccessor& operator = ( const PropertyAccessor & other );
 	PropertyAccessor& operator = ( PropertyAccessor && other );
 
 	bool isValid() const;

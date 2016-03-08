@@ -363,6 +363,15 @@ int Sequence< T >::flags() const /* override */
 }
 
 
+template<>
+int Sequence< PyScript::ScriptTuple >::flags() const /* override */
+{
+	return
+		WRITABLE |
+		ORDERED;
+}
+
+
 // Explicit instantiations
 template class Sequence< PyScript::ScriptList >;
 template class Sequence< PyScript::ScriptSequence >;

@@ -117,7 +117,7 @@ Variant MappingIterator::key() const /* override */
 {
 	Variant result;
 	PyScript::ScriptObject parent;
-	const char * childPath = "";
+	const std::string childPath = key_.str( PyScript::ScriptErrorPrint() ).c_str();
 	const bool success = typeConverters_.toVariant( key_, result, parent, childPath );
 	assert( success );
 	return result;

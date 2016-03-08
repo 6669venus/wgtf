@@ -53,9 +53,22 @@ def firstn(n):
 		yield num
 		num += 1
 
+class ValueObjectTest( object ):
+	def __init__( self, value ):
+		self.value = value
+
 class ChildObjectTest( object ):
 	def __init__( self ):
 		self.stringTest = "Child"
+		self.tupleTest = (ValueObjectTest( 1 ),
+			ValueObjectTest( 2 ),
+			ValueObjectTest( 3 ),
+			ValueObjectTest( "Spam" ))
+		self.listTest = [ValueObjectTest( 0 ),
+			ValueObjectTest( 1 ),
+			ValueObjectTest( 2 ),
+			ValueObjectTest( 3 )]
+		self.dictTest = {ValueObjectTest( 'Bacon' ) : ValueObjectTest( 1 )}
 
 class OldClassTest:
 	'''Test of old-style classes'''

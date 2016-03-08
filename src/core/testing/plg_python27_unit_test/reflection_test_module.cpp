@@ -2684,6 +2684,71 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		const char * expectedFullPath = "childTest";
 		CHECK_EQUAL( expectedFullPath, fullPath );
 	}
+	{
+		Collection collection;
+		const bool getSuccess = instance.get< Collection >(
+			"childTest.dictTest", collection );
+
+		CHECK( getSuccess );
+		CHECK( collection.isValid() );
+		if (!collection.isValid())
+		{
+			return;
+		}
+
+		auto itr = collection.begin();
+
+		ObjectHandle key;
+		const auto keySuccess = itr.key().tryCast( key );
+
+		const auto pKeyInstance = key.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pKeyInstance != nullptr );
+		if (pKeyInstance == nullptr)
+		{
+			return;
+		}
+		const auto & keyInstance = (*pKeyInstance);
+
+		const auto & keyRoot = keyInstance.root();
+		CHECK_EQUAL( &keyInstance, &keyRoot );
+
+		// Python objects are printed in the format:
+		// <some_type object at 0xsome_address>
+		// Note that using %p for the address is implementation dependent
+		// Must check that it has a 0x prefix on each supported platform
+		const auto & keyFullPath = keyInstance.fullPath();
+		const char * typeName = "python27_test.ValueObjectTest object at";
+		char buffer[ 256 ];
+		snprintf( buffer, sizeof( buffer ),
+			"<%s 0x%p>",
+			typeName,
+			keyInstance.pythonObject().get() );
+		buffer[ sizeof( buffer ) - 1 ] = '\0';
+		CHECK_EQUAL( buffer, keyFullPath );
+
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		//const auto & valueRoot = valueInstance.root();
+		//CHECK_EQUAL( &instance, &valueRoot );
+
+		//const auto & valueFullPath = valueInstance.fullPath();
+
+		//snprintf( buffer, sizeof( buffer ),
+		//	"childTest.dictTest[<%s 0x%p>",
+		//	typeName,
+		//	valueInstance.pythonObject().get() );
+		//buffer[ sizeof( buffer ) - 1 ] = '\0';
+		//CHECK_EQUAL( buffer, valueFullPath );
+	}
 }
 
 

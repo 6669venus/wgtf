@@ -42,6 +42,18 @@ PropertyAccessor::PropertyAccessor()
 }
 
 //==============================================================================
+PropertyAccessor& PropertyAccessor::operator = (const PropertyAccessor & other)
+{
+	object_ = other.object_;
+	property_ = other.property_;
+	rootObject_ = other.rootObject_;
+	path_ = other.path_;
+	definitionManager_ = other.definitionManager_;
+	parentAccessor_ = other.parentAccessor_;
+	return *this;
+}
+
+//==============================================================================
 PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 {
 	object_ = other.object_;

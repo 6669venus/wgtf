@@ -51,8 +51,6 @@ public:
 		if (definitionManager == nullptr)
 			return;
 
-		SharedControls::init();
-
 		// Setup the models for the view
 		definitionManager->registerDefinition(new TypeClassDefinition<Point>);
 		definitionManager->registerDefinition(new TypeClassDefinition<BezierPoint>);
@@ -60,8 +58,46 @@ public:
 		definitionManager->registerDefinition(new TypeClassDefinition<ICurveEditor>);
 
 		std::unique_ptr<ICurveEditor> curvesModel = std::unique_ptr<ICurveEditor>( new CurveEditor() );
-		
-		auto& curves = *curvesModel.get();
+
+		auto curve = curvesModel->createCurve(CurveTypes::Linear, true);
+		{
+			BezierPointData pointData1 = { { 0.0f, 0.00f }, { -0.2f, 0.00f }, { 0.2f, 0.0f } };
+			curve->add(pointData1);
+			BezierPointData pointData2 = {{ 0.25f, 0.25f }, { -0.2f, 0.00f }, { 0.2f, 0.0f }};
+			curve->add(pointData2);
+			BezierPointData pointData3 = { { 0.5f, 0.50f }, { -0.1f, -0.2f }, { 0.1f, 0.2f } };
+			curve->add(pointData3);
+			BezierPointData pointData4 = { { 1.0f, 1.00f }, { -0.2f, 0.00f }, { 0.2f, 0.0f } };
+			curve->add(pointData4);
+		}
+
+		curve = curvesModel->createCurve(CurveTypes::Linear, true);
+		{
+			BezierPointData pointData1 = { { 0.0f, 0.0f }, { -0.1f, 0.00f }, { 0.1f, 0.1f } };
+			curve->add(pointData1);
+            BezierPointData pointData2 = { {1.0f, 0.5f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
+			curve->add(pointData2);
+		}
+
+		curve = curvesModel->createCurve(CurveTypes::CubicBezier, true);
+		{
+			BezierPointData pointData1 = { { 0.0f, 0.0f }, { -0.1f, 0.00f }, { 0.1f, 0.1f } };
+			curve->add(pointData1);
+			BezierPointData pointData2 = { { 0.8f, 0.1f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
+			curve->add(pointData2);
+			BezierPointData pointData3 = { { 0.9f, 0.9f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
+			curve->add(pointData3);
+			BezierPointData pointData4 = { { 1.0f, 0.1f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
+			curve->add(pointData4);
+		}
+
+		curve = curvesModel->createCurve(CurveTypes::CubicBezier, true);
+		{
+			BezierPointData pointData1 = { { 0.0f, 0.75f }, { 0.00f, 0.00f }, { 0.1f, 0.1f } };
+			curve->add(pointData1);
+			BezierPointData pointData2 = { { 1.0f, 0.25f }, { -0.1f, -0.1f }, { 0.0f, 0.0f } };
+			curve->add(pointData2);
+		}
 		
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
@@ -71,27 +107,6 @@ public:
 		curvePanel_ = uiFramework->createView("plg_curve_editor/CurveEditor.qml", IUIFramework::ResourceType::Url, std::move(curvesModel));
 		uiApplication->addView(*curvePanel_);
 
-		// Example code for using the curve editor
-		//auto curveEditor = contextManager.queryInterface<ICurveEditor>();
-		//auto curve = curveEditor->createCurve();
-		//curve->add({{0.0f,	0.00f}, {-0.2f, 0.00f}, {0.2f, 0.0f}});
-		//curve->add({{0.25f, 0.25f}, {-0.2f, 0.00f}, {0.2f, 0.0f}});
-		//curve->add({{0.5f,	0.50f}, {-0.1f, -0.2f}, {0.1f, 0.2f}});
-		//curve->add({{1.0f,	1.00f}, {-0.2f, 0.00f}, {0.2f, 0.0f}});
-		//
-		//curve = curveEditor->createCurve();
-		//curve->add({{0.0f, 0.0f}, {-0.1f, 0.00f}, {0.1f, 0.1f}});
-		//curve->add({{1.0f, 0.5f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//
-		//curve = curveEditor->createCurve();
-		//curve->add({{0.0f, 0.0f}, {-0.1f, 0.00f}, {0.1f, 0.1f}});
-		//curve->add({{0.8f, 0.1f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//curve->add({{0.9f, 0.9f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//curve->add({{1.0f, 0.1f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//
-		//curve = curveEditor->createCurve();
-		//curve->add({{0.0f, 0.75f}, {0.00f, 0.00f}, {0.1f, 0.1f}});
-		//curve->add({{1.0f, 0.25f}, {-0.1f, -0.1f}, {0.0f, 0.0f}});
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

@@ -99,8 +99,8 @@ TEST( Python27Interface )
 
 		// Test property listeners
 		auto testListener = std::make_shared< TestListener >();
-		definitionManager->registerPropertyAccessorListener(
-			std::static_pointer_cast< PropertyAccessorListener >( testListener ) );
+		auto paListener = std::static_pointer_cast< PropertyAccessorListener >( testListener );
+		definitionManager->registerPropertyAccessorListener( paListener );
 
 		// Listen to object
 		auto moduleDefinition = module.getDefinition( *definitionManager );
@@ -144,8 +144,7 @@ TEST( Python27Interface )
 			CHECK_EQUAL( expectedNewValue, postSetValue );
 		}
 
-		definitionManager->deregisterPropertyAccessorListener(
-			std::static_pointer_cast< PropertyAccessorListener >( testListener ) );
+		definitionManager->deregisterPropertyAccessorListener( paListener );
 	}
 
 	return;

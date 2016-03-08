@@ -38,7 +38,7 @@ Example:
 \endcode
 */
 
-WGItemView {
+Item {
     objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
     id: treeView
 

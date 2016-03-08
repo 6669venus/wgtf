@@ -37,7 +37,7 @@ WGListView {
 \endcode
 */
 
-WGItemView {
+Item {
     id: listView
     objectName: "WGListView"
 

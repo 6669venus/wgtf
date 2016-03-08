@@ -150,6 +150,7 @@ Item {
 
     // support copy&paste
     WGCopyable {
+        objectName: "copyableControl"
         id: copyableControl
 
         BWCopyable {
@@ -264,6 +265,7 @@ Item {
         }
 
         WGNumberBox {
+            objectName: "NumberBox"
             id: sliderValue
 
             Layout.fillWidth: true

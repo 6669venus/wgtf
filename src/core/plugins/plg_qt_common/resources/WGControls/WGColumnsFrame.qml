@@ -1,6 +1,7 @@
 import QtQuick 2.0
 
 Item {
+    objectName: "WGColumnsFrame"
     id: columnsFrame
     property int columnCount: 0
     property real firstColumnIndentation: 0
@@ -38,6 +39,7 @@ Item {
     }
 
     Item {
+        objectName: "columns"
         id: columns
         anchors.top: parent.top
         anchors.bottom: parent.bottom

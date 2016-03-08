@@ -286,6 +286,7 @@ Control {
     property Component textBoxStyle: WGTextBoxStyle{}
 
     property Component buttonFrame: WGButtonFrame{
+        objectName: "button"
         id: button
         radius: 0
         property bool hovered: parent.hovered
@@ -393,6 +394,7 @@ Control {
     }
 
     WGTextBox {
+        objectName: "TextBox"
         id: input
         anchors.left: parent.left
         anchors.top: parent.top
@@ -490,6 +492,7 @@ Control {
 
     // Spinbox arrow buttons
     Item {
+        objectName: "SpinboxArrowButtons"
         id: arrowBox
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter

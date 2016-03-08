@@ -1,10 +1,17 @@
 #ifndef I_ITEM_ROLE_HPP
 #define I_ITEM_ROLE_HPP
 
-#include <Utility>
+#include "wg_types/hash_utilities.hpp"
 
-typedef std::pair< const char *, unsigned int > ItemRole;
+namespace ItemRole
+{
+	inline unsigned int compute( const char * roleName )
+	{
+		return static_cast<unsigned int>(HashUtilities::compute( roleName ));
+	}
+}
 
+// DEPRECATED
 // Add new role types here
 #define ITEM_ROLES																\
 	/* Tree Adapter */															\
@@ -63,7 +70,6 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	public:																		\
 		static const char * roleName_;											\
 		static unsigned int roleId_;											\
-		static ItemRole role_;													\
 	};
 	ITEM_ROLES
 #undef X

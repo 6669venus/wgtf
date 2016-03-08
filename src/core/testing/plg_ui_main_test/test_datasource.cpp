@@ -21,8 +21,9 @@ namespace {
 	}
 }
 
-TestDataSource::TestDataSource( int id )
-	: testPageId_ ( "" )
+TestDataSource::TestDataSource( TestDataSourceManager& dataSrcMgr, int id )
+	: dataSrcMgr_( dataSrcMgr )
+    , testPageId_ ( "" )
 	, testPageId2_( "" )
 	, description_( std::string("TestDataSource_") + std::to_string(id) )
 	, testPage_( nullptr )
@@ -63,6 +64,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 			testPage2_ = safeCast<TestPage2>(objManager->getObject( testPageId2_ ));
 		}
 	}
+      objManager->registerListener( &dataSrcMgr_ );
 	if (testPage_ == nullptr)
 	{
 		testPage_ = defManager->create< TestPage >();
@@ -81,6 +83,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 		assert( ok );
 		testPageId2_ = id.toString();
 	}
+    objManager->deregisterListener( &dataSrcMgr_ );
 }
 
 void TestDataSource::fini( IComponentContext & contextManager, int id )
@@ -243,8 +246,8 @@ void TestDataSourceManager::init(IComponentContext & contextManager)
 			if(version == s_objectVersion)
 			{
 				// load objects
-				loadedObj_.clear();
-				objManager->registerListener( this );
+                loadedObj_.clear();
+                objManager->registerListener( this );
 				defManager->deserializeDefinitions( serializer );
 				bool br = objManager->loadObjects( serializer );
 				objManager->deregisterListener( this );
@@ -294,7 +297,7 @@ void TestDataSourceManager::fini()
 
 IDataSource* TestDataSourceManager::openDataSource()
 {
-	TestDataSource* ds = new TestDataSource( id_ );
+	TestDataSource* ds = new TestDataSource( *this, id_ );
 	sources_.emplace_back( DataSources::value_type(id_, std::unique_ptr<TestDataSource>(ds)) );
 	ds->init(*contextManager_, id_);
 	++id_;

@@ -208,7 +208,7 @@ int TestListModel::columnCount() const
 
 Variant TestListModel::getData( int column, size_t roleId ) const
 {
-	if (column > columnCount())
+	if (column >= columnCount())
 	{
 		return Variant();
 	}

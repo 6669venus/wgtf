@@ -39,6 +39,7 @@ WGPanel {
 			itemRole: "Value"
 		}
 
+		HeaderFooterTextExtension {}
 		ValueExtension {}
 		ColumnExtension {}
 		SelectionExtension {
@@ -54,7 +55,9 @@ WGPanel {
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
 		backgroundColourMode: alternatingRowBackgroundColours
-		model: filteredListModel
+	    showColumnHeaders: true
+	    showColumnFooters: true
+	    model: filteredListModel
 		selectionExtension: filteredListModelSelection
 		columnDelegates: [columnDelegate]
 

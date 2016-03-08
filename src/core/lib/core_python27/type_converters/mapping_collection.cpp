@@ -52,12 +52,6 @@ Mapping::Mapping( const Mapping::container_type & container,
 }
 
 
-bool Mapping::empty() const /* override */
-{
-	return (container_.size() == 0);
-}
-
-
 size_t Mapping::size() const /* override */
 {
 	return container_.size();
@@ -271,21 +265,18 @@ const TypeId & Mapping::containerType() const /* override */
 }
 
 
-void * Mapping::containerData() const /* override */
+const void * Mapping::container() const /* override */
 {
-	return const_cast< void * >( static_cast< const void * >( &container_ ) );
+	return &container_;
 }
 
 
-bool Mapping::isMapping() const /* override */
+int Mapping::flags() const /* override */
 {
-	return true;
-}
-
-
-bool Mapping::canResize() const /* override */
-{
-	return true;
+	return
+		MAPPING |
+		WRITABLE |
+		RESIZABLE;
 }
 
 

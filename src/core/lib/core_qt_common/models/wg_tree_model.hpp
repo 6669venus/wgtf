@@ -40,6 +40,7 @@ public:
 	Q_INVOKABLE int rowCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE int columnCount( const QModelIndex &parent = QModelIndex() ) const Q_DECL_OVERRIDE;
 	Q_INVOKABLE QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+	Q_INVOKABLE QVariant headerData( int column, QString roleName ) const;
 
 	template< typename T >
 	void registerExtension()

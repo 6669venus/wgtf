@@ -97,6 +97,8 @@ This is to tell the view to update its data.
 */
 
 #include "filtered_tree_model.hpp"
+#include "core_variant/variant.hpp"
+
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
@@ -1137,6 +1139,26 @@ int FilteredTreeModel::columnCount() const
 	}
 
 	return 1;
+}
+
+Variant FilteredTreeModel::getData( int column, size_t roleId ) const
+{
+	if (impl_->model_ == nullptr)
+	{
+		return Variant();
+	}
+
+	return impl_->model_->getData( column, roleId );
+}
+
+bool FilteredTreeModel::setData( int column, size_t roleId, const Variant & data )
+{
+	if (impl_->model_ == nullptr)
+	{
+		return false;
+	}
+
+	return impl_->model_->setData( column, roleId, data );
 }
 
 void FilteredTreeModel::setSource( ITreeModel * source )

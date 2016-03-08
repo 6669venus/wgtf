@@ -161,13 +161,6 @@ Sequence< T >::Sequence(
 
 
 template< typename T >
-bool Sequence< T >::empty() const /* override */
-{
-	return (container_.size() == 0);
-}
-
-
-template< typename T >
 size_t Sequence< T >::size() const /* override */
 {
 	return container_.size();
@@ -354,23 +347,28 @@ const TypeId & Sequence< T >::containerType() const /* override */
 
 
 template< typename T >
-void * Sequence< T >::containerData() const /* override */
+const void * Sequence< T >::container() const /* override */
 {
-	return const_cast< void * >( static_cast< const void * >( &container_ ) );
+	return &container_;
 }
 
 
 template< typename T >
-bool Sequence< T >::isMapping() const /* override */
+int Sequence< T >::flags() const /* override */
 {
-	return false;
+	return
+		WRITABLE |
+		RESIZABLE |
+		ORDERED;
 }
 
 
-template< typename T >
-bool Sequence< T >::canResize() const /* override */
+template<>
+int Sequence< PyScript::ScriptTuple >::flags() const /* override */
 {
-	return can_resize;
+	return
+		WRITABLE |
+		ORDERED;
 }
 
 

@@ -190,7 +190,7 @@ QVariant WGListModel::data( const QModelIndex& index, QString roleName ) const
 void WGListModel::registerExtension( IModelExtension * extension )
 {
 	beginResetModel();
-	extension->init( this, impl_->qtFramework_ );
+	extension->init( impl_->qtFramework_ );
 	impl_->qtConnections_ += QObject::connect( 
 		this, &WGListModel::itemDataAboutToBeChanged, 
 		extension, &IModelExtension::onDataAboutToBeChanged );
@@ -295,6 +295,19 @@ QVariant WGListModel::headerData(
 	}
 
 	return QtHelpers::toQVariant( model->getData( section, roleId ) );
+}
+
+QVariant WGListModel::headerData( int column, QString roleName ) const
+{
+	auto roles = roleNames().keys( roleName.toUtf8() );
+	
+	if (roles.empty())
+	{
+		return QVariant::Invalid;
+	}
+
+	int roleId = roles.first();
+	return headerData( column, Qt::Horizontal, roleId );
 }
 
 QVariant WGListModel::data( const QModelIndex &index, int role ) const

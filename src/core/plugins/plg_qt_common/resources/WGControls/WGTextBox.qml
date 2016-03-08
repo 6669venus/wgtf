@@ -145,10 +145,12 @@ TextField {
     // Some context menu items may be data driven.
     // I have added a visibility switch to contextMenu
     WGMenu {
+        objectName: "Menu"
         id: contextMenu
         title: "Edit"
 
         MenuItem {
+            objectName: "Cut"
             text: "Cut"
             shortcut: "Ctrl+X"
             enabled: readOnly == true ? false : true
@@ -158,6 +160,7 @@ TextField {
         }
 
         MenuItem {
+            objectName: "Copy"
             text: "Copy"
             shortcut: "Ctrl+C"
             onTriggered: {
@@ -166,6 +169,7 @@ TextField {
         }
 
         MenuItem {
+            objectName: "Paste"
             text: "Paste"
             shortcut: "Ctrl+V"
             enabled: canPaste == true ? true : false
@@ -177,6 +181,7 @@ TextField {
         MenuSeparator { }
 
         MenuItem {
+            objectName: "SelectAll"
             text: "Select All"
             shortcut: "Ctrl+A"
             onTriggered: {
@@ -187,6 +192,7 @@ TextField {
         MenuSeparator { }
 
         MenuItem {
+            objectName: "FindInAssetBrowser"
             text: "Find In AssetBrowser"
             shortcut: "Ctrl+?"
             visible: assetBrowserContextMenu == true ? true : false

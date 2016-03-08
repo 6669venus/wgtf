@@ -461,6 +461,7 @@ Item {
     }
 
     WGScrollBar {
+        objectName: "verticalScrollBar"
         id: verticalScrollBar
         width: defaultSpacing.rightMargin
         anchors.top: listView.top

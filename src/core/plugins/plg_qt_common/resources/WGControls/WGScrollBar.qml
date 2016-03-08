@@ -262,6 +262,7 @@ Item {
     //Fake drag handle as the actual handle needs to get its position from the flickable which causes binding issues.
     Rectangle {
 
+        objectName: "dragHandle"
         id: dragHandle
         color: "transparent"
         anchors.verticalCenter: handle.verticalCenter

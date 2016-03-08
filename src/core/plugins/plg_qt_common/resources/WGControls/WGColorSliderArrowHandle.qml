@@ -9,6 +9,7 @@ import BWControls 1.0
 */
 
 WGColorSliderHandle {
+    objectName: "WGColorSliderArrowHandle"
     handleStyle:
         Item {
         implicitHeight: parentSlider.__horizontal ? parentSlider.height - 2 : 11

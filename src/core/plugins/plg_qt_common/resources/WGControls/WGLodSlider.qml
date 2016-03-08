@@ -25,6 +25,7 @@ WGColumnLayout {
     //TODO: This should be renamed, it does not require "_"
     property QtObject lodList_: ListModel{
         ListElement {
+            objectName: "testLod1_"
             model_: "testLod1_.model"
             text_: "testLOD1"
             minDist_: 0
@@ -34,6 +35,7 @@ WGColumnLayout {
             locked_:false
         }
         ListElement {
+            objectName: "testLod2_"
             model_: "testLod2_.model"
             text_: "testLOD2"
             minDist_: 25
@@ -43,6 +45,7 @@ WGColumnLayout {
             locked_:false
         }
         ListElement {
+            objectName: "testLod3_"
             model_: "testLod3_.model"
             text_: "testLOD3"
             minDist_: 75
@@ -52,6 +55,7 @@ WGColumnLayout {
             locked_:false
         }
         ListElement {
+            objectName: "testLod4_"
             model_: "testLod4_.model"
             text_: "testLOD4"
             minDist_: 150
@@ -61,6 +65,7 @@ WGColumnLayout {
             locked_:false
         }
         ListElement {
+            objectName: "testLod5_"
             model_: "testLod5_.model"
             text_: "testLOD5"
             minDist_: 250
@@ -673,6 +678,7 @@ WGColumnLayout {
 
                             //model name next to the bar. Click to change the model
                             Text {
+                                objectName: "barName"
                                 id: barName
                                 color: state == "" || parent.highlighted_ ? palette.TextColor : parent.color
                                 text: deleting_ ? "" : lodList_.get(index).text_
@@ -1054,10 +1060,12 @@ WGColumnLayout {
 
 
             WGButtonBar {
+                objectName: "WGButtonBar"
                 id: lodOptions
                 Layout.fillWidth: true
                 buttonList: [
                     WGPushButton {
+                        objectName: "buttonOpen"
                         id: button_open
                         iconSource: "icons/open_16x16.png"
                         tooltip: "Open Model"
@@ -1065,6 +1073,7 @@ WGColumnLayout {
                         onClicked: chooseLODModelDialog.open()
                     },
                     WGPushButton {
+                        objectName: "buttonUp"
                         id: button_up
                         iconSource: "icons/arrow2_up_16x16.png"
                         tooltip: "Move LOD Up"
@@ -1076,6 +1085,7 @@ WGColumnLayout {
                         }
                     },
                     WGPushButton {
+                        objectName: "buttonDown"
                         id: button_down
                         iconSource: "icons/arrow2_down_16x16.png"
                         tooltip: "Move LOD Down"
@@ -1086,6 +1096,7 @@ WGColumnLayout {
                         }
                     },
                     WGPushButton {
+                        objectName: "buttonHide"
                         id: button_hide
                         iconSource: checked ? "icons/show_16x16.png" : "icons/hide_16x16.png"
                         tooltip: checked ? "Unhide LOD" : "Hide LOD"
@@ -1097,6 +1108,7 @@ WGColumnLayout {
                         }
                     },
                     WGPushButton {
+                        objectName: "buttonUseCamera"
                         id: button_use_camera
                         iconSource: "icons/camera_dist_16x16.png"
                         tooltip: "Use Current Camera Distance"
@@ -1108,6 +1120,7 @@ WGColumnLayout {
                         }
                     },
                     WGPushButton {
+                        objectName: "buttonLockSelectedLod"
                         id: button_lock_selected_lod
                         iconSource: "icons/lock_16x16.png"
                         tooltip: "Lock the selected LOD"
@@ -1130,6 +1143,7 @@ WGColumnLayout {
 
 
             WGPushButton {
+                objectName: "buttonExtendLOD"
                 iconSource: "icons/infinite_16x16.png"
                 Layout.preferredWidth: implicitWidth
                 tooltip: "Extend LOD to Infinity"
@@ -1150,6 +1164,7 @@ WGColumnLayout {
             }
 
             WGPushButton {
+                objectName: "buttonAddNewLOD"
                 iconSource: "icons/add_16x16.png"
                 Layout.preferredWidth: implicitWidth
                 tooltip: "Add New LOD"
@@ -1172,6 +1187,7 @@ WGColumnLayout {
         spacing: defaultSpacing.rowSpacing
 
         WGNumberBox {
+            objectName: "cameraDistance"
             //Camera distance
             id: currentDistanceNum
             Layout.preferredWidth: valueBoxWidth_
@@ -1193,6 +1209,7 @@ WGColumnLayout {
 
         //camera distance control
         WGSliderControl {
+            objectName: "cameraDistanceSlider"
             id: distanceSlider
             Layout.fillWidth: true
             minimumValue: 0
@@ -1234,6 +1251,7 @@ WGColumnLayout {
 
         //add LOD button
         WGToolButton {
+            objectName: "buttonVirtualLODDistance"
             iconSource: checked ? "icons/camera_lock_16x16.png" : "icons/camera_16x16.png"
             checkable: true
             checked: false
@@ -1245,6 +1263,7 @@ WGColumnLayout {
     }
 
     FileDialog {
+        objectName: "chooseLODModelDialog"
         id: chooseLODModelDialog
         title: "Choose a model"
         visible: false

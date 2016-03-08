@@ -7,6 +7,7 @@ import BWControls 1.0
 */
 
 WGVectorN {
+    objectName: "WGVector4"
     id: vector4
     property vector4d value
 

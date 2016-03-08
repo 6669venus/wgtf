@@ -45,6 +45,7 @@ WGSliderStyle {
             //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
 
             Item {
+                objectName: "gradientFrame"
                 id: gradientFrame
                 anchors.centerIn: parent
 

@@ -21,6 +21,7 @@ Example:
 \endcode
 */
 ListView {
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
     id: treeItem
     model: ChildModel
     height: visible ? contentHeight + topMargin + bottomMargin : 0
@@ -224,6 +225,7 @@ ListView {
             }
 
             WGItemRow { // The row
+                objectName: "WGListViewRowDelegate"
                 id: rowDelegate
 
                 anchors.top: parent.top

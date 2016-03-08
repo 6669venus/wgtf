@@ -142,6 +142,7 @@ Rectangle { // Transparent rectangle sits behind all controls
 
     //the target for a dragged object
     DropArea{
+        objectName: "dropArea"
         id: dropArea
         anchors.fill: parent
         property bool hovered: false

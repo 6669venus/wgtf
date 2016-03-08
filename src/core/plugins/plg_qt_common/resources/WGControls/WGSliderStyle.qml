@@ -61,6 +61,7 @@ import BWControls 1.0
     \endcode
 */
 Style {
+    objectName: "WGSliderStyle"
     id: styleitem
 
     /*! The \l Slider this style is attached to. */
@@ -140,6 +141,7 @@ Style {
         implicitHeight: !__horizontal ? parent.height : grooveLoader.implicitHeight
 
         Item {
+            objectName: "sliderFrame"
             id: sliderFrame
             anchors.centerIn: parent
             height: control.height

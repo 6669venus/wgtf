@@ -44,6 +44,11 @@ PropertyAccessor::PropertyAccessor()
 //==============================================================================
 PropertyAccessor& PropertyAccessor::operator = (const PropertyAccessor & other)
 {
+	if (this == &other)
+	{
+		return *this;
+	}
+
 	object_ = other.object_;
 	property_ = other.property_;
 	rootObject_ = other.rootObject_;

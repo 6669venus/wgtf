@@ -1,0 +1,639 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report>
+	<activity
+		result="Success"
+		duration="0ms"
+		durationms="0"
+		type="root"
+		rid="15ee063ccb6d8089"
+		totalerrorcount="2"
+		totalwarningcount="1"
+		totalsuccesscount="0"
+		totalfailedcount="2"
+		totalblockedcount="0"
+		user="adamm"
+		host="ADAMM-PC2"
+		rxversion="5.4.5.19886"
+		osversion="Windows 7 Service Pack 1 64bit"
+		runtimeversion="4.0.30319.34209"
+		procarch="32bit"
+		language="en-US"
+		screenresolution="3840x1200"
+		timestamp="2/03/2016 4:24:19 PM"
+		timestampiso="2016-03-02T05:24:19"
+		timeoutfactor="1">
+		<detail>
+			Ranorex Testscript
+		</detail>
+		<activity
+			result="Failed"
+			duration="1.3m"
+			durationms="80294"
+			type="test suite"
+			rid="c9c2eea61c5de8b"
+			totalerrorcount="2"
+			totalwarningcount="1"
+			totalsuccesscount="0"
+			totalfailedcount="2"
+			totalblockedcount="0"
+			testsuitename="NGTTestAutomation"
+			runconfigname="TestRun"
+			runlabel=""
+			maxchildren="0">
+			<params>
+				<param
+					name="path">
+					D:\git\ngt2\bin\generic_app_test\win64
+				</param>
+			</params>
+			<detail>
+			</detail>
+			<activity
+				result="Failed"
+				duration="1.3m"
+				durationms="80282"
+				type="folder"
+				rid="8091eafc11b59ed"
+				totalerrorcount="2"
+				totalwarningcount="1"
+				totalsuccesscount="0"
+				totalfailedcount="2"
+				totalblockedcount="0"
+				foldername="Programming_Generic_App_UI">
+				<detail>
+				</detail>
+				<activity
+					result="Failed"
+					duration="1.3m"
+					durationms="80282"
+					type="folder"
+					rid="790c1ee5bf5fd65"
+					totalerrorcount="2"
+					totalwarningcount="1"
+					totalsuccesscount="0"
+					totalfailedcount="2"
+					totalblockedcount="0"
+					foldername="Miscellaneous">
+					<detail>
+					</detail>
+					<activity
+						result="Failed"
+						duration="38.5s"
+						durationms="38496"
+						type="test case"
+						rid="15b8ff17815e8c92"
+						totalerrorcount="1"
+						totalwarningcount="1"
+						totalsuccesscount="0"
+						totalfailedcount="1"
+						totalblockedcount="0"
+						testcasename="Selection"
+						testcaseid="5fa41ae9-508f-4ceb-87c8-20f644bff555"
+						maxchildren="0">
+						<params/>
+						<detail>
+							&lt;P&gt;Select an item in NGT property panel.&lt;BR&gt;This test needs altering, I changed 
+properties, not selected items&lt;/P&gt;
+						</detail>
+						<activity
+							result="Success"
+							duration="259ms"
+							durationms="259"
+							type="test case setup"
+							rid="294d5bfd444c3ac9"
+							totalerrorcount="0"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0">
+							<detail>
+							</detail>
+							<activity
+								result="Success"
+								duration="244ms"
+								durationms="244"
+								type="test module"
+								rid="13cc579ea90a9900"
+								totalerrorcount="0"
+								totalwarningcount="0"
+								totalsuccesscount="0"
+								totalfailedcount="0"
+								totalblockedcount="0"
+								modulename="OpenGenericApp"
+								moduleid="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+								moduletype="Recording">
+								<detail>
+								</detail>
+								<varbindings>
+									<varbinding
+										name="path"
+										value="D:\git\ngt2\bin\generic_app_test\win64"/>
+								</varbindings>
+								<item
+									timeRelativeToTestSuiteStartTime="00:00.128"
+									timeRelativeToTestModuleStartTime="00:00.005"
+									timeWallClock="16:24:19"
+									time="00:00.128"
+									level="Info"
+									category="Data">
+									<message>
+										Current variable values:<br/>$path = 'D:\git\ngt2\bin\generic_app_test\win64'
+									</message>
+									<metainfo
+										loglvl="Info"/>
+								</item>
+								<item
+									timeRelativeToTestSuiteStartTime="00:00.198"
+									timeRelativeToTestModuleStartTime="00:00.075"
+									timeWallClock="16:24:19"
+									time="00:00.198"
+									level="Info"
+									category="Application">
+									<message>
+										Run application 'generic_app.exe' with arguments '--config plugins_ui.txt' in normal mode.
+									</message>
+									<metainfo
+										itemindex="0"
+										codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\OpenGenericApp.cs"
+										codeline="95"
+										loglvl="Info"/>
+								</item>
+							</activity>
+						</activity>
+						<activity
+							result="Success"
+							duration="7092ms"
+							durationms="7092"
+							type="test module"
+							rid="f19b975ff7b0bff"
+							totalerrorcount="0"
+							totalwarningcount="1"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0"
+							modulename="OpenPropertyTreeTestPanel"
+							moduleid="9dc3d550-46c7-437f-b20a-29986e1ceddc"
+							moduletype="Recording">
+							<detail>
+							</detail>
+							<varbindings/>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.373"
+								timeRelativeToTestModuleStartTime="00:00.004"
+								timeWallClock="16:24:19"
+								time="00:00.373"
+								level="Info"
+								category="Mouse">
+								<message>
+									Mouse Left Click item 'MainWindow.TestData' at Center.
+								</message>
+								<metainfo
+									type="repoitem"
+									path="/form[@name='MainWindow']/?/?/menuitem[@text='TestData']"
+									fullname="NGTTestAutomationRepository.MainWindow.TestData"
+									id="e23a4e3e98cd4a8793b450bb04b89d7b"
+									timeout="60000"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\OpenPropertyTreeTestPanel.cs"
+									codeline="82"
+									itemindex="0"
+									loglvl="Info"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.794"
+								timeRelativeToTestModuleStartTime="00:00.425"
+								timeWallClock="16:24:20"
+								time="00:00.794"
+								level="Warn"
+								category="Win32">
+								<message>
+									The automating process does not have the required security permissions to access the process 'Jing'. UI element identification capabilities for controls in that process are limited.<br/>The following website provides more information on this technology limitation:<br/>http://www.ranorex.com/support/user-guide-20/technology-instrumentation/general-troubleshooting.html#c3252<br/>(This message is only shown once per report.)
+								</message>
+								<metainfo
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\OpenPropertyTreeTestPanel.cs"
+									codeline="83"
+									loglvl="Warn"
+									itemindex="0"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:06.328"
+								timeRelativeToTestModuleStartTime="00:05.959"
+								timeWallClock="16:24:25"
+								time="00:06.328"
+								level="Info"
+								category="Mouse">
+								<message>
+									Mouse Left Click item 'TestData.Open' at Center.
+								</message>
+								<metainfo
+									type="repoitem"
+									path="/contextmenu[@name='TestData']/menuitem[@text='Open']"
+									fullname="NGTTestAutomationRepository.TestData.Open"
+									id="04903362ea0b4e49937dd71dadcd7f8e"
+									timeout="60000"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\OpenPropertyTreeTestPanel.cs"
+									codeline="86"
+									itemindex="1"
+									loglvl="Info"/>
+							</item>
+						</activity>
+						<activity
+							result="Failed"
+							duration="31.07s"
+							durationms="31073"
+							type="test module"
+							rid="7bbc1c424b065e6"
+							totalerrorcount="1"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0"
+							modulename="SelectPropertyTreeTestPanel"
+							moduleid="a167d7f1-18e8-4104-8333-35233bf382c8"
+							moduletype="Recording">
+							<detail>
+							</detail>
+							<errmsg>
+								Failed to find item 'NGTTestAutomationRepository.MainWindow.PropertyTreeTest'.
+							</errmsg>
+							<varbindings/>
+							<item
+								timeRelativeToTestSuiteStartTime="00:07.464"
+								timeRelativeToTestModuleStartTime="00:00.002"
+								timeWallClock="16:24:26"
+								time="00:07.464"
+								level="Info"
+								category="Mouse"
+								errimg="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_04a1ca49_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_04a1ca49_trace_thumb.jpg">
+								<message>
+									Mouse Left Click item 'MainWindow.PropertyTreeTest' at Center.
+								</message>
+								<metainfo
+									type="repoitem"
+									path="/form[@name='MainWindow']/?/?/tabpage[@index='10']"
+									fullname="NGTTestAutomationRepository.MainWindow.PropertyTreeTest"
+									id="5a234d52fb1a4513ac3b66e0fa90c84b"
+									timeout="60000"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\SelectPropertyTreeTestPanel.cs"
+									codeline="82"
+									itemindex="0"
+									loglvl="Info"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:38.407"
+								timeRelativeToTestModuleStartTime="00:30.945"
+								timeWallClock="16:24:57"
+								time="00:38.407"
+								level="Error"
+								category="Module"
+								errimg="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_7e222414_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_7e222414_trace_thumb.jpg">
+								<message>
+									Failed to find item 'NGTTestAutomationRepository.MainWindow.PropertyTreeTest'.<br/>No element found for path '?/?/tabpage[@index='10']' within 30s.
+								</message>
+								<metainfo
+									stacktrace="   at Ranorex.Core.Repository.RepoItemInfo.Find[T](Boolean findSingle, Boolean throwException, Duration effectiveTimeoutOverride)
+   at Ranorex.Core.Repository.RepoItemInfo.CreateAdapter[T](Boolean throwException, Duration waitTimeout)
+   at Ranorex.Core.Repository.RepoItemInfo.CreateAdapter[T](Boolean throwException)
+   at NGTTestAutomation.NGTTestAutomationRepositoryFolders.MainWindowAppFolder.get_PropertyTreeTest() in c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\NGTTestAutomationRepository.cs:line 178
+   at NGTTestAutomation.SelectPropertyTreeTestPanel.Ranorex.Core.Testing.ITestModule.Run() in c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\SelectPropertyTreeTestPanel.cs:line 83
+   at Ranorex.Core.Testing.TestSuiteModule.RunInternal(DataContext parentDataContext)"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\SelectPropertyTreeTestPanel.cs"
+									codeline="83"
+									type="repoitem"
+									path="/form[@name='MainWindow']/?/?/tabpage[@index='10']"
+									fullname="NGTTestAutomationRepository.MainWindow.PropertyTreeTest"
+									id="5a234d52fb1a4513ac3b66e0fa90c84b"
+									timeout="60000"
+									loglvl="Error"
+									itemindex="0"/>
+							</item>
+						</activity>
+						<activity
+							result="Success"
+							duration="66ms"
+							durationms="66"
+							type="test case teardown"
+							rid="335bfd074219f50"
+							totalerrorcount="0"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0">
+							<detail>
+							</detail>
+							<activity
+								result="Success"
+								duration="63ms"
+								durationms="63"
+								type="test module"
+								rid="326c798579ff69b2"
+								totalerrorcount="0"
+								totalwarningcount="0"
+								totalsuccesscount="0"
+								totalfailedcount="0"
+								totalblockedcount="0"
+								modulename="CloseGenericApp"
+								moduleid="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+								moduletype="Recording">
+								<detail>
+								</detail>
+								<varbindings/>
+								<item
+									timeRelativeToTestSuiteStartTime="00:38.540"
+									timeRelativeToTestModuleStartTime="00:00.002"
+									timeWallClock="16:24:57"
+									time="00:38.540"
+									level="Info"
+									category="Application">
+									<message>
+										Closing application containing item 'MainWindow'.
+									</message>
+									<metainfo
+										type="repoitem"
+										path="/form[@name='MainWindow']"
+										fullname="NGTTestAutomationRepository.MainWindow.Self"
+										id="cd35dc4ee2304536a27eebaa15eecd9e"
+										timeout="30000"
+										codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\CloseGenericApp.cs"
+										codeline="82"
+										itemindex="0"
+										loglvl="Info"/>
+								</item>
+							</activity>
+						</activity>
+					</activity>
+					<activity
+						result="Failed"
+						duration="41.78s"
+						durationms="41780"
+						type="test case"
+						rid="20a4e5605ec7b7b0"
+						totalerrorcount="1"
+						totalwarningcount="0"
+						totalsuccesscount="0"
+						totalfailedcount="1"
+						totalblockedcount="0"
+						testcasename="Multiple_item_Selection"
+						testcaseid="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef"
+						maxchildren="0">
+						<params/>
+						<detail>
+						</detail>
+						<activity
+							result="Success"
+							duration="168ms"
+							durationms="168"
+							type="test case setup"
+							rid="c90719355bcec35"
+							totalerrorcount="0"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0">
+							<detail>
+							</detail>
+							<activity
+								result="Success"
+								duration="166ms"
+								durationms="166"
+								type="test module"
+								rid="f43470803351cb2"
+								totalerrorcount="0"
+								totalwarningcount="0"
+								totalsuccesscount="0"
+								totalfailedcount="0"
+								totalblockedcount="0"
+								modulename="OpenGenericApp"
+								moduleid="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+								moduletype="Recording">
+								<detail>
+								</detail>
+								<varbindings>
+									<varbinding
+										name="path"
+										value="D:\git\ngt2\bin\generic_app_test\win64"/>
+								</varbindings>
+								<item
+									timeRelativeToTestSuiteStartTime="00:38.607"
+									timeRelativeToTestModuleStartTime="00:00.001"
+									timeWallClock="16:24:58"
+									time="00:38.607"
+									level="Info"
+									category="Data">
+									<message>
+										Current variable values:<br/>$path = 'D:\git\ngt2\bin\generic_app_test\win64'
+									</message>
+									<metainfo
+										loglvl="Info"/>
+								</item>
+								<item
+									timeRelativeToTestSuiteStartTime="00:38.663"
+									timeRelativeToTestModuleStartTime="00:00.057"
+									timeWallClock="16:24:58"
+									time="00:38.663"
+									level="Info"
+									category="Application">
+									<message>
+										Run application 'generic_app.exe' with arguments '--config plugins_ui.txt' in normal mode.
+									</message>
+									<metainfo
+										itemindex="0"
+										codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\OpenGenericApp.cs"
+										codeline="95"
+										loglvl="Info"/>
+								</item>
+							</activity>
+						</activity>
+						<activity
+							result="Success"
+							duration="10.45s"
+							durationms="10447"
+							type="test module"
+							rid="1ee63fca9ab63c12"
+							totalerrorcount="0"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0"
+							modulename="OpenPropertyTreeTestPanel"
+							moduleid="9dc3d550-46c7-437f-b20a-29986e1ceddc"
+							moduletype="Recording">
+							<detail>
+							</detail>
+							<varbindings/>
+							<item
+								timeRelativeToTestSuiteStartTime="00:38.773"
+								timeRelativeToTestModuleStartTime="00:00.000"
+								timeWallClock="16:24:58"
+								time="00:38.773"
+								level="Info"
+								category="Mouse">
+								<message>
+									Mouse Left Click item 'MainWindow.TestData' at Center.
+								</message>
+								<metainfo
+									type="repoitem"
+									path="/form[@name='MainWindow']/?/?/menuitem[@text='TestData']"
+									fullname="NGTTestAutomationRepository.MainWindow.TestData"
+									id="e23a4e3e98cd4a8793b450bb04b89d7b"
+									timeout="60000"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\OpenPropertyTreeTestPanel.cs"
+									codeline="82"
+									itemindex="0"
+									loglvl="Info"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:48.065"
+								timeRelativeToTestModuleStartTime="00:09.291"
+								timeWallClock="16:25:07"
+								time="00:48.065"
+								level="Info"
+								category="Mouse">
+								<message>
+									Mouse Left Click item 'TestData.Open' at Center.
+								</message>
+								<metainfo
+									type="repoitem"
+									path="/contextmenu[@name='TestData']/menuitem[@text='Open']"
+									fullname="NGTTestAutomationRepository.TestData.Open"
+									id="04903362ea0b4e49937dd71dadcd7f8e"
+									timeout="60000"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\OpenPropertyTreeTestPanel.cs"
+									codeline="86"
+									itemindex="1"
+									loglvl="Info"/>
+							</item>
+						</activity>
+						<activity
+							result="Failed"
+							duration="31.1s"
+							durationms="31098"
+							type="test module"
+							rid="14796d8cdbaefed0"
+							totalerrorcount="1"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0"
+							modulename="SelectPropertyTreeTestPanel"
+							moduleid="a167d7f1-18e8-4104-8333-35233bf382c8"
+							moduletype="Recording">
+							<detail>
+							</detail>
+							<errmsg>
+								Failed to find item 'NGTTestAutomationRepository.MainWindow.PropertyTreeTest'.
+							</errmsg>
+							<varbindings/>
+							<item
+								timeRelativeToTestSuiteStartTime="00:49.222"
+								timeRelativeToTestModuleStartTime="00:00.001"
+								timeWallClock="16:25:08"
+								time="00:49.222"
+								level="Info"
+								category="Mouse"
+								errimg="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_23b9ae0d_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_23b9ae0d_trace_thumb.jpg">
+								<message>
+									Mouse Left Click item 'MainWindow.PropertyTreeTest' at Center.
+								</message>
+								<metainfo
+									type="repoitem"
+									path="/form[@name='MainWindow']/?/?/tabpage[@index='10']"
+									fullname="NGTTestAutomationRepository.MainWindow.PropertyTreeTest"
+									id="5a234d52fb1a4513ac3b66e0fa90c84b"
+									timeout="60000"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\SelectPropertyTreeTestPanel.cs"
+									codeline="82"
+									itemindex="0"
+									loglvl="Info"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="01:20.194"
+								timeRelativeToTestModuleStartTime="00:30.972"
+								timeWallClock="16:25:39"
+								time="01:20.194"
+								level="Error"
+								category="Module"
+								errimg="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_12a2f36a_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160302_162419\NGTTestAutomation_20160302_162419_12a2f36a_trace_thumb.jpg">
+								<message>
+									Failed to find item 'NGTTestAutomationRepository.MainWindow.PropertyTreeTest'.<br/>No element found for path '?/?/tabpage[@index='10']' within 30s.
+								</message>
+								<metainfo
+									stacktrace="   at Ranorex.Core.Repository.RepoItemInfo.Find[T](Boolean findSingle, Boolean throwException, Duration effectiveTimeoutOverride)
+   at Ranorex.Core.Repository.RepoItemInfo.CreateAdapter[T](Boolean throwException, Duration waitTimeout)
+   at Ranorex.Core.Repository.RepoItemInfo.CreateAdapter[T](Boolean throwException)
+   at NGTTestAutomation.NGTTestAutomationRepositoryFolders.MainWindowAppFolder.get_PropertyTreeTest() in c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\NGTTestAutomationRepository.cs:line 178
+   at NGTTestAutomation.SelectPropertyTreeTestPanel.Ranorex.Core.Testing.ITestModule.Run() in c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\SelectPropertyTreeTestPanel.cs:line 83
+   at Ranorex.Core.Testing.TestSuiteModule.RunInternal(DataContext parentDataContext)"
+									codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\SelectPropertyTreeTestPanel.cs"
+									codeline="83"
+									type="repoitem"
+									path="/form[@name='MainWindow']/?/?/tabpage[@index='10']"
+									fullname="NGTTestAutomationRepository.MainWindow.PropertyTreeTest"
+									id="5a234d52fb1a4513ac3b66e0fa90c84b"
+									timeout="60000"
+									loglvl="Error"
+									itemindex="0"/>
+							</item>
+						</activity>
+						<activity
+							result="Success"
+							duration="64ms"
+							durationms="64"
+							type="test case teardown"
+							rid="2e9cd003bfc8996c"
+							totalerrorcount="0"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0">
+							<detail>
+							</detail>
+							<activity
+								result="Success"
+								duration="60ms"
+								durationms="60"
+								type="test module"
+								rid="141baef0f14772b8"
+								totalerrorcount="0"
+								totalwarningcount="0"
+								totalsuccesscount="0"
+								totalfailedcount="0"
+								totalblockedcount="0"
+								modulename="CloseGenericApp"
+								moduleid="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+								moduletype="Recording">
+								<detail>
+								</detail>
+								<varbindings/>
+								<item
+									timeRelativeToTestSuiteStartTime="01:20.323"
+									timeRelativeToTestModuleStartTime="00:00.001"
+									timeWallClock="16:25:39"
+									time="01:20.323"
+									level="Info"
+									category="Application">
+									<message>
+										Closing application containing item 'MainWindow'.
+									</message>
+									<metainfo
+										type="repoitem"
+										path="/form[@name='MainWindow']"
+										fullname="NGTTestAutomationRepository.MainWindow.Self"
+										id="cd35dc4ee2304536a27eebaa15eecd9e"
+										timeout="30000"
+										codefile="c:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\CloseGenericApp.cs"
+										codeline="82"
+										itemindex="0"
+										loglvl="Info"/>
+								</item>
+							</activity>
+						</activity>
+					</activity>
+				</activity>
+			</activity>
+		</activity>
+	</activity>
+</report>

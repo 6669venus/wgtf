@@ -58,54 +58,14 @@ public:
 		definitionManager->registerDefinition(new TypeClassDefinition<ICurveEditor>);
 
 		std::unique_ptr<ICurveEditor> curvesModel = std::unique_ptr<ICurveEditor>( new CurveEditor() );
-
-		auto curve = curvesModel->createCurve(CurveTypes::Linear, true);
-		{
-			BezierPointData pointData1 = { { 0.0f, 0.00f }, { -0.2f, 0.00f }, { 0.2f, 0.0f } };
-			curve->add(pointData1);
-			BezierPointData pointData2 = {{ 0.25f, 0.25f }, { -0.2f, 0.00f }, { 0.2f, 0.0f }};
-			curve->add(pointData2);
-			BezierPointData pointData3 = { { 0.5f, 0.50f }, { -0.1f, -0.2f }, { 0.1f, 0.2f } };
-			curve->add(pointData3);
-			BezierPointData pointData4 = { { 1.0f, 1.00f }, { -0.2f, 0.00f }, { 0.2f, 0.0f } };
-			curve->add(pointData4);
-		}
-
-		curve = curvesModel->createCurve(CurveTypes::Linear, true);
-		{
-			BezierPointData pointData1 = { { 0.0f, 0.0f }, { -0.1f, 0.00f }, { 0.1f, 0.1f } };
-			curve->add(pointData1);
-            BezierPointData pointData2 = { {1.0f, 0.5f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
-			curve->add(pointData2);
-		}
-
-		curve = curvesModel->createCurve(CurveTypes::CubicBezier, true);
-		{
-			BezierPointData pointData1 = { { 0.0f, 0.0f }, { -0.1f, 0.00f }, { 0.1f, 0.1f } };
-			curve->add(pointData1);
-			BezierPointData pointData2 = { { 0.8f, 0.1f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
-			curve->add(pointData2);
-			BezierPointData pointData3 = { { 0.9f, 0.9f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
-			curve->add(pointData3);
-			BezierPointData pointData4 = { { 1.0f, 0.1f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
-			curve->add(pointData4);
-		}
-
-		curve = curvesModel->createCurve(CurveTypes::CubicBezier, true);
-		{
-			BezierPointData pointData1 = { { 0.0f, 0.75f }, { 0.00f, 0.00f }, { 0.1f, 0.1f } };
-			curve->add(pointData1);
-			BezierPointData pointData2 = { { 1.0f, 0.25f }, { -0.1f, -0.1f }, { 0.0f, 0.0f } };
-			curve->add(pointData2);
-		}
-		
-		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		auto uiFramework = contextManager.queryInterface< IUIFramework >();
-
 		types_.emplace_back( contextManager.registerInterface<ICurveEditor>(curvesModel.get(), false) );
-		
+
+        auto uiApplication = contextManager.queryInterface< IUIApplication >();
+        auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		curvePanel_ = uiFramework->createView("plg_curve_editor/CurveEditor.qml", IUIFramework::ResourceType::Url, std::move(curvesModel));
 		uiApplication->addView(*curvePanel_);
+
+        
 
 	}
 

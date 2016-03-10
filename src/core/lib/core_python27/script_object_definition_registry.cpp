@@ -6,6 +6,10 @@
 #include "definition_helper.hpp"
 
 
+namespace ReflectedPython
+{
+
+
 struct ScriptObjectDefinitionDeleter
 {
 	ScriptObjectDefinitionDeleter( const PyScript::ScriptObject& object, ScriptObjectDefinitionRegistry& registry )
@@ -28,12 +32,22 @@ struct ScriptObjectDefinitionDeleter
 ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContext& context )
 	: context_( context )
 	, definitionManager_( context )
+	, hookListener_( new HookListener() )
 {
+	g_pHookContext = &context_;
+	g_pHookLookup_ = &hookLookup_;
+	g_listener_ = hookListener_;
 }
 
 
 ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
 {
+	// All reflected Python objects should have been removed by this point
+	assert( hookLookup_.empty() );
+	cleanupListenerHooks( hookLookup_ );
+	g_listener_.reset();
+	g_pHookLookup_ = nullptr;
+	g_pHookContext = nullptr;
 }
 
 
@@ -43,12 +57,18 @@ void ScriptObjectDefinitionRegistry::init()
 
 	definitionHelper_.reset( new ReflectedPython::DefinitionHelper );
 	definitionManager_->registerDefinitionHelper( *definitionHelper_ );
+
+	definitionManager_->registerPropertyAccessorListener(
+		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
 }
 
 
 void ScriptObjectDefinitionRegistry::fini()
 {
 	assert( definitionManager_ != nullptr );
+
+	definitionManager_->deregisterPropertyAccessorListener(
+		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
 
 	definitionManager_->deregisterDefinitionHelper( *definitionHelper_ );
 	definitionHelper_.reset();
@@ -81,8 +101,8 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 		definitionManager_->deregisterDefinition( definition );
 	}
 
-	auto definition =
-		definitionManager_->registerDefinition( new ReflectedPython::DefinitionDetails( context_, object ) );
+	auto definition = definitionManager_->registerDefinition(
+		new ReflectedPython::DefinitionDetails( context_, object, hookLookup_ ) );
 	assert( definition != nullptr );
 
 	std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
@@ -148,3 +168,6 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 
 	return itr->second;
 }
+
+
+} // namespace ReflectedPython

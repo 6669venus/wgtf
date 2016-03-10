@@ -93,6 +93,18 @@
       <UserCode>true</UserCode>
       <id>3cac6b1c-f196-444e-899a-9e359a39256e</id>
     </Compile>
+    <Compile Include="Minimise.cs">
+      <BoundTo>4427c1d3-77fe-4f3c-8e32-859f6251deb2</BoundTo>
+      <DependentUpon>Minimise.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>7d354800-41d3-45d0-a645-8f7ef70af436</id>
+    </Compile>
+    <Compile Include="Minimise.UserCode.cs">
+      <BoundTo>4427c1d3-77fe-4f3c-8e32-859f6251deb2</BoundTo>
+      <DependentUpon>Minimise.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>fb5cf463-e113-401c-b044-0b28ff4041dc</id>
+    </Compile>
     <Compile Include="NGTTestAutomationRepository.cs">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <DependentUpon>NGTTestAutomationRepository.rxrep</DependentUpon>
@@ -125,6 +137,18 @@
       <DependentUpon>OpenGenericApp.rxrec</DependentUpon>
       <UserCode>true</UserCode>
       <id>816c5c3d-f982-426c-8681-ed9035efa4a7</id>
+    </Compile>
+    <Compile Include="Restore.cs">
+      <BoundTo>f6d337bc-9544-481e-a920-b5f382180b62</BoundTo>
+      <DependentUpon>Restore.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>506f0615-f927-4af3-8749-0d681b8e7746</id>
+    </Compile>
+    <Compile Include="Restore.UserCode.cs">
+      <BoundTo>f6d337bc-9544-481e-a920-b5f382180b62</BoundTo>
+      <DependentUpon>Restore.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>5d5fb339-68b7-435a-b26d-beb0a83fc4c5</id>
     </Compile>
     <Compile Include="SelectPropertyTreeTestPanel.cs">
       <BoundTo>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</BoundTo>
@@ -192,6 +216,11 @@
       <id>6d194385-fa00-43d3-a362-3bea03ccb16d</id>
       <recordtableid>2c6bd3a2-29ad-40a3-a561-be9010850cb0</recordtableid>
     </None>
+    <None Include="Minimise.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>4427c1d3-77fe-4f3c-8e32-859f6251deb2</id>
+      <recordtableid>820ae111-c1b1-4287-ab1e-a12f1150a1ea</recordtableid>
+    </None>
     <None Include="NGTTestAutomationRepository.rximg">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <DependentUpon>NGTTestAutomationRepository.rxrep</DependentUpon>
@@ -212,6 +241,11 @@
       <id>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</id>
       <recordtableid>9dc3d550-46c7-437f-b20a-29986e1ceddc</recordtableid>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Restore.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>f6d337bc-9544-481e-a920-b5f382180b62</id>
+      <recordtableid>cde9b760-a059-4738-95d8-1197bd51bccc</recordtableid>
     </None>
     <None Include="SelectPropertyTreeTestPanel.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

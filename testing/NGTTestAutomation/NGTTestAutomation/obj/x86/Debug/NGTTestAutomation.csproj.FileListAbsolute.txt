@@ -14,3 +14,11 @@ C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NG
 C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.csprojResolveAssemblyReference.cache
 C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.exe
 C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.pdb
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.rxtmg
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.rxtst
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.exe.config
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.exe
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.pdb
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.csprojResolveAssemblyReference.cache
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.exe
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.pdb

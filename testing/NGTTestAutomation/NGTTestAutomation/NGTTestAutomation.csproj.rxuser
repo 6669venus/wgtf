@@ -156,5 +156,21 @@
 			lastcodegentimestamp="131013715898635748"
 			filelength="1104"/>
 		</codegenfilechangeinfo>
+		<codegenfilechangeinfo
+		fileitemid="4427c1d3-77fe-4f3c-8e32-859f6251deb2"
+		changehash="2715556594048186490"
+		lastcodegentimestamp="131020582423835814"
+		filelength="982">
+			<codegenfilechangeinfo
+			fileitemid="7d354800-41d3-45d0-a645-8f7ef70af436"
+			changehash="1387701573"
+			lastcodegentimestamp="131020582423835814"
+			filelength="2726"/>
+			<codegenfilechangeinfo
+			fileitemid="fb5cf463-e113-401c-b044-0b28ff4041dc"
+			changehash="18446744073220261181"
+			lastcodegentimestamp="131020582423835814"
+			filelength="1087"/>
+		</codegenfilechangeinfo>
 	</changestatecache>
 </projectusersettings>

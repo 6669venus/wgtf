@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="cde9b760-a059-4738-95d8-1197bd51bccc"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		Restore
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="Restore"
+	namespace="NGTTestAutomation"/>
+	<variables/>
+	<recorditems>
+		<invokeactionrecorditem
+		enabled="True"
+		optional="False"
+		searchpropertyid="510d2220-8e03-43db-b00d-013751180000"
+		action="Press"
+		actiontype="Adaptor"
+		varname="">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="81fdc637-4c07-4ef8-93f6-8fbc17816e0e">
+				<path>
+					/form[@name='MainWindow']/?/?/button[@accessiblename='Restore']
+				</path>
+			</info>
+			<arguments
+			id="bfe3f81d-2fff-41e7-8ad2-6d0f47c04943"/>
+		</invokeactionrecorditem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		Restore.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

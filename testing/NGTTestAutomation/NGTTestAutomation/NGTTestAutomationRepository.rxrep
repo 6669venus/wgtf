@@ -134,6 +134,26 @@ rxversion="5.4.5.19886">
 			refimgid="5f654372-c18c-4beb-8997-5ac43c3cb6c5">
 				/form[@name='MainWindow']/?/?/tabpage[@index='7']
 			</item>
+			<item
+			name="Minimize"
+			id="4359380c-0e8b-46e6-ac19-de0bd6ea5308"
+			searchtimeout="30000ms"
+			capname="button"
+			refpath="/form[@objectname='MainWindow']/titlebar[@accessiblerole='TitleBar']/button[@accessiblename='Minimize']"
+			addcaps="button,accessible"
+			refimgid="23079819-7f4d-4525-bd69-a2929f1ea138">
+				/form[@name='MainWindow']/?/?/button[@accessiblename='Minimize']
+			</item>
+			<item
+			name="Restore"
+			id="81fdc637-4c07-4ef8-93f6-8fbc17816e0e"
+			searchtimeout="30000ms"
+			capname="button"
+			refpath="/form[@objectname='MainWindow']/titlebar[@accessiblerole='TitleBar']/button[@accessiblename='Restore']"
+			addcaps="button,accessible"
+			refimgid="f17f1768-c1e6-4c29-9e76-bdace9539588">
+				/form[@name='MainWindow']/?/?/button[@accessiblename='Restore']
+			</item>
 			<basepath>
 				/form[@name='MainWindow']
 			</basepath>

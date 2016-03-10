@@ -135,6 +135,50 @@ properties, not selected items</P>]]>
 					</teardown>
 				</testcase>
 			</folder>
+			<folder
+			name="Initial_Test"
+			id="71c1a0bf-4222-44d0-bc10-6d5caa643052">
+				<testcase
+				name="Maximise/minimise"
+				id="b7308b9a-1454-4734-8cb6-c72173fe524a">
+					<setup
+					name="setup"
+					id="09170e73-ce55-4ae5-b6b4-4662a5c540e4">
+						<testmodule
+						name="OpenGenericApp"
+						id="671b4af8-86b0-4725-9d25-f14364d1f1fc"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="Minimise"
+					id="d55cf4fc-1bd1-4f13-8246-2fe4e36feca3"
+					ref="820ae111-c1b1-4287-ab1e-a12f1150a1ea"
+					type="Recording"/>
+					<testmodule
+					name="Restore"
+					id="0ea43405-a8a3-4c8e-b0ff-e12e78441942"
+					ref="cde9b760-a059-4738-95d8-1197bd51bccc"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="beb37bbe-e788-48d9-9c71-33389b14ef37">
+						<testmodule
+						name="CloseGenericApp"
+						id="9890b8d4-b8e6-4f30-ae14-8bd174f61e66"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
 		</folder>
 	</content>
 	<testconfigurations
@@ -146,11 +190,9 @@ properties, not selected items</P>]]>
 			<testcase
 			id="033e65d6-e4cb-4780-a7cb-16900dbb6277"/>
 			<testcase
-			id="5fa41ae9-508f-4ceb-87c8-20f644bff555"/>
+			id="71c1a0bf-4222-44d0-bc10-6d5caa643052"/>
 			<testcase
-			id="65c6b675-1d26-4ea9-95df-8bc930b9a642"/>
-			<testcase
-			id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef"/>
+			id="b7308b9a-1454-4734-8cb6-c72173fe524a"/>
 		</testconfiguration>
 	</testconfigurations>
 	<references/>

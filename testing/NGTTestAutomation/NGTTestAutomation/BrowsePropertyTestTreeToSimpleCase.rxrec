@@ -192,6 +192,7 @@ mode="Global">
 					name="ObjectName"
 					type="System.String"
 					description="The Qt QQuickRectangle.objectName property of type String."
+					weight="999"
 					readonly="False"/>
 					<dynamicattribute
 					name="Opacity"

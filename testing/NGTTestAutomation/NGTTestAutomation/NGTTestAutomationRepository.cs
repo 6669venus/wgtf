@@ -104,6 +104,8 @@ namespace NGTTestAutomation
             RepoItemInfo _wgtextboxframeInfo;
             RepoItemInfo _wgbuttonframeInfo;
             RepoItemInfo _propertytreetest1Info;
+            RepoItemInfo _minimizeInfo;
+            RepoItemInfo _restoreInfo;
 
             /// <summary>
             /// Creates a new MainWindow  folder.
@@ -119,6 +121,8 @@ namespace NGTTestAutomation
                 _wgtextboxframeInfo = new RepoItemInfo(this, "WGTextBoxFrame", "container[3]//list[@name='WGListView']/list[@name='WGListView']/list[1]/list[2]//container[@name='WGTextBoxFrame']", 30000, null, "a91fe9bb-237b-4692-a2f1-09a2d5b02802");
                 _wgbuttonframeInfo = new RepoItemInfo(this, "WGButtonFrame", "container[3]//list/list[@name='WGListView']/list[1]/list[8]//element[@name='WGSpinBox']/container[1]", 30000, null, "c2060909-7a9a-4143-afb9-4f258e97afc5");
                 _propertytreetest1Info = new RepoItemInfo(this, "PropertyTreeTest1", "?/?/tabpage[@index='7']", 30000, null, "5e855b1d-a287-4e18-bc92-c3af076fbe62");
+                _minimizeInfo = new RepoItemInfo(this, "Minimize", "?/?/button[@accessiblename='Minimize']", 30000, null, "4359380c-0e8b-46e6-ac19-de0bd6ea5308");
+                _restoreInfo = new RepoItemInfo(this, "Restore", "?/?/button[@accessiblename='Restore']", 30000, null, "81fdc637-4c07-4ef8-93f6-8fbc17816e0e");
             }
 
             /// <summary>
@@ -310,6 +314,54 @@ namespace NGTTestAutomation
                 get
                 {
                     return _propertytreetest1Info;
+                }
+            }
+
+            /// <summary>
+            /// The Minimize item.
+            /// </summary>
+            [RepositoryItem("4359380c-0e8b-46e6-ac19-de0bd6ea5308")]
+            public virtual Ranorex.Button Minimize
+            {
+                get
+                {
+                    return _minimizeInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Minimize item info.
+            /// </summary>
+            [RepositoryItemInfo("4359380c-0e8b-46e6-ac19-de0bd6ea5308")]
+            public virtual RepoItemInfo MinimizeInfo
+            {
+                get
+                {
+                    return _minimizeInfo;
+                }
+            }
+
+            /// <summary>
+            /// The Restore item.
+            /// </summary>
+            [RepositoryItem("81fdc637-4c07-4ef8-93f6-8fbc17816e0e")]
+            public virtual Ranorex.Button Restore
+            {
+                get
+                {
+                    return _restoreInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Restore item info.
+            /// </summary>
+            [RepositoryItemInfo("81fdc637-4c07-4ef8-93f6-8fbc17816e0e")]
+            public virtual RepoItemInfo RestoreInfo
+            {
+                get
+                {
+                    return _restoreInfo;
                 }
             }
 

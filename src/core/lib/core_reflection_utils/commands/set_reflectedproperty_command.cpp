@@ -18,12 +18,13 @@ namespace
         object.set("Type", "Method");
         auto methodHelper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(helper);
         size_t max = methodHelper->parameters_.size();
-        std::string parameterName = "Parameter0";
+        char parameterName[32] = "Parameter";
+        char * counterPointer = &parameterName[strlen(parameterName)];
 
         for (size_t i = 0; i < max; ++i)
         {
-            parameterName[parameterName.size() - 1] = char(i) + 48;
-            object.set(parameterName.c_str(), methodHelper->parameters_[i]);
+            sprintf(counterPointer, "%d", i);
+            object.set(parameterName, methodHelper->parameters_[i]);
         }
     }
 

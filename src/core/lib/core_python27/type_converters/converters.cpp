@@ -1,5 +1,7 @@
 #include "pch.hpp"
 #include "converters.hpp"
+#include "default_converter.hpp"
+#include "dict_converter.hpp"
 
 
 namespace PythonType
@@ -7,9 +9,11 @@ namespace PythonType
 
 
 Converters::Converters( const BasicTypeConverters & basicTypeConverters,
-	const DefaultConverter & defaultConverter )
+	DefaultConverter & defaultConverter,
+	DictConverter & dictConverter )
 	: basicTypeConverters_( basicTypeConverters )
 	, defaultConverter_( defaultConverter )
+	, dictConverter_( dictConverter )
 {
 }
 
@@ -19,6 +23,10 @@ bool Converters::toScriptType( const Variant & inVariant,
 {
 	const bool success = basicTypeConverters_.toScriptType( inVariant, outObject );
 	if (success)
+	{
+		return true;
+	}
+	if (dictConverter_.toScriptType( inVariant, outObject ))
 	{
 		return true;
 	}
@@ -33,6 +41,14 @@ bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 {
 	const bool success = basicTypeConverters_.toVariant( inObject, outVariant );
 	if (success)
+	{
+		return true;
+	}
+
+	if (dictConverter_.toVariant( inObject,
+		outVariant,
+		parentObject,
+		childPath ))
 	{
 		return true;
 	}

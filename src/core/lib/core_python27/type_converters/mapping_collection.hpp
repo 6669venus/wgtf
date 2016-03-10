@@ -2,7 +2,7 @@
 #ifndef _PYTHON_MAPPING_COLLECTION_HPP
 #define _PYTHON_MAPPING_COLLECTION_HPP
 
-
+#include "core_reflection/object_handle.hpp"
 #include "core_variant/collection.hpp"
 
 #include "mapping_iterator.hpp"
@@ -33,6 +33,7 @@ public:
 	typedef MappingIterator iterator_impl_type;
 
 	Mapping( const container_type & container,
+		const ObjectHandle & containerHandle,
 		const Converters & typeConverters );
 
 	virtual size_t size() const override;
@@ -59,7 +60,9 @@ public:
 	virtual int flags() const override;
 
 private:
+	// Need to hold a reference to handle
 	container_type container_;
+	const ObjectHandle handle_;
 	const Converters & typeConverters_;
 };
 

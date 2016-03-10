@@ -98,6 +98,7 @@ private:
 	// property path to this object
 	// TODO NGT-1561 Should be a weak reference
 	PyScript::ScriptObject parentObject_;
+	const DefinedInstance * pRoot_;
 	std::string fullPath_;
 };
 

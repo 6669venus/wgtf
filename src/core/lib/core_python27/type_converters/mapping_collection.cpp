@@ -44,9 +44,11 @@ namespace Detail
 
 
 Mapping::Mapping( const Mapping::container_type & container,
+	const ObjectHandle & containerHandle,
 	const Converters & typeConverters )
 	: CollectionImplBase()
 	, container_( container )
+	, handle_( containerHandle )
 	, typeConverters_( typeConverters )
 {
 }

@@ -21,6 +21,7 @@ DefinedInstance::DefinedInstance()
 	, pDefinition_( nullptr )
 	, context_( nullptr )
 	, parentObject_( nullptr )
+	, pRoot_( this )
 {
 	assert( false && "Always construct with a Python object" );
 }
@@ -37,17 +38,54 @@ DefinedInstance::DefinedInstance(
 	, pDefinition_( definition )
 	, context_( &context )
 	, parentObject_( parentObject )
+	, pRoot_( this )
 {
-	if (parentObject_.exists())
+	if (parentObject.exists())
 	{
+		// Update root object
+		assert( context_ != nullptr );
+
+		const DefinedInstance * pParent = this;
+		while (pParent->parentObject_.exists())
+		{
+			auto parentHandle = find( (*context_), pParent->parentObject_ );
+			auto pOtherParent = parentHandle.getBase< DefinedInstance >();
+
+			// If pParent->parentObject_ exists,
+			// then a corresponding DefinedInstance should exist for it
+			assert( pOtherParent != nullptr );
+			if (pOtherParent == nullptr)
+			{
+				// Failed to get parent
+				break;
+			}
+
+			assert( pOtherParent != pParent );
+			if (pOtherParent == pParent)
+			{
+				// Prevent cycles
+				break;
+			}
+
+			pParent = pOtherParent;
+		}
+		assert( pParent != nullptr );
+		pRoot_ = pParent;
+
+		// Update full path
+		PyScript::ScriptObject nullObj;
 		auto parentHandle = find( (*context_), parentObject_ );
-		auto pParent = parentHandle.getBase< DefinedInstance >();
+		pParent = parentHandle.getBase< DefinedInstance >();
 		if (pParent != nullptr)
 		{
+			assert( pParent->pythonObject() != pythonObject_ );
 			fullPath_ = pParent->fullPath();
-			if (!fullPath_.empty())
+			if (!fullPath_.empty() && !childPath.empty())
 			{
-				fullPath_ += DOT_OPERATOR;
+				if (childPath[0] != INDEX_OPEN)
+				{
+					fullPath_ += DOT_OPERATOR;
+				}
 			}
 		}
 	}
@@ -143,22 +181,8 @@ const PyScript::ScriptObject & DefinedInstance::pythonObject() const
 
 const DefinedInstance & DefinedInstance::root() const
 {
-	assert( context_ != nullptr );
-
-	// TODO NGT-1561 perhaps it can store root instead of parent
-	const DefinedInstance * pParent = this;
-	while (pParent->parentObject_.exists())
-	{
-		auto parentHandle = find( (*context_), parentObject_ );
-		auto pOtherParent = parentHandle.getBase< DefinedInstance >();
-		if (pParent == nullptr)
-		{
-			break;
-		}
-		pParent = pOtherParent;
-	}
-	assert( pParent != nullptr );
-	return (*pParent);
+	assert( pRoot_ != nullptr );
+	return (*pRoot_);
 }
 
 

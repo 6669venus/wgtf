@@ -2685,11 +2685,31 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		CHECK_EQUAL( expectedFullPath, fullPath );
 	}
 	{
-		Collection collection;
-		const bool getSuccess = instance.get< Collection >(
-			"childTest.dictTest", collection );
+		// TODO broken if you access "childTest.dictTest"
+		ObjectHandle childHandle;
+		const bool getChildSuccess = instance.get< ObjectHandle >(
+			"childTest", childHandle );
 
-		CHECK( getSuccess );
+		CHECK( getChildSuccess );
+		CHECK( childHandle.isValid() );
+		if (!childHandle.isValid())
+		{
+			return;
+		}
+
+		const auto pInstance = childHandle.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pInstance != nullptr );
+		if (pInstance == nullptr)
+		{
+			return;
+		}
+		const auto & child = (*pInstance);
+
+		Collection collection;
+		const bool getCollectionSuccess = child.get< Collection >(
+			"dictTest", collection );
+
+		CHECK( getCollectionSuccess );
 		CHECK( collection.isValid() );
 		if (!collection.isValid())
 		{
@@ -2712,19 +2732,10 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		const auto & keyRoot = keyInstance.root();
 		CHECK_EQUAL( &keyInstance, &keyRoot );
 
-		// Python objects are printed in the format:
-		// <some_type object at 0xsome_address>
-		// Note that using %p for the address is implementation dependent
-		// Must check that it has a 0x prefix on each supported platform
 		const auto & keyFullPath = keyInstance.fullPath();
-		const char * typeName = "python27_test.ValueObjectTest object at";
-		char buffer[ 256 ];
-		snprintf( buffer, sizeof( buffer ),
-			"<%s 0x%p>",
-			typeName,
-			keyInstance.pythonObject().get() );
-		buffer[ sizeof( buffer ) - 1 ] = '\0';
-		CHECK_EQUAL( buffer, keyFullPath );
+		const std::string expectedKeyFullPath =
+			keyInstance.pythonObject().str( PyScript::ScriptErrorPrint() ).c_str();
+		CHECK_EQUAL( expectedKeyFullPath, keyFullPath );
 
 		ObjectHandle value;
 		const auto valueSuccess = itr.value().tryCast( value );
@@ -2737,17 +2748,15 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		}
 		const auto & valueInstance = (*pValueInstance);
 
-		//const auto & valueRoot = valueInstance.root();
-		//CHECK_EQUAL( &instance, &valueRoot );
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
 
-		//const auto & valueFullPath = valueInstance.fullPath();
+		const auto & valueFullPath = valueInstance.fullPath();
 
-		//snprintf( buffer, sizeof( buffer ),
-		//	"childTest.dictTest[<%s 0x%p>",
-		//	typeName,
-		//	valueInstance.pythonObject().get() );
-		//buffer[ sizeof( buffer ) - 1 ] = '\0';
-		//CHECK_EQUAL( buffer, valueFullPath );
+		std::string expectedValueFullPath = "childTest.dictTest[";
+		expectedValueFullPath += expectedKeyFullPath;
+		expectedValueFullPath += "]";
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
 	}
 }
 

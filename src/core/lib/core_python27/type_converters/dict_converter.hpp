@@ -2,9 +2,10 @@
 #ifndef _PYTHON_DICT_CONVERTER_HPP
 #define _PYTHON_DICT_CONVERTER_HPP
 
-#include "i_type_converter.hpp"
 #include "converters.hpp"
+#include "i_python_converter.hpp"
 
+class IComponentContext;
 
 namespace PythonType
 {
@@ -13,16 +14,20 @@ namespace PythonType
 /**
  *	Attempts to convert ScriptDict<->Collection<->Variant.
  */
-class DictConverter final : public IConverter
+class DictConverter final : public IPythonConverter
 {
 public:
-	DictConverter( const Converters & typeConverters );
+	DictConverter( IComponentContext & context,
+		const Converters & typeConverters );
 
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) override;
+		Variant & outVariant,
+		const PyScript::ScriptObject & parentObject,
+		const std::string & childPath ) override;
 	virtual bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) override;
 private:
+	IComponentContext & context_;
 	const Converters & typeConverters_;
 };
 

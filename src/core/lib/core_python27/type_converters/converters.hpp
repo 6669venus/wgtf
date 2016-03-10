@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core_script/type_converter_queue.hpp"
-#include "default_converter.hpp"
 #include "i_type_converter.hpp"
 
 #include <string>
@@ -19,6 +18,8 @@ namespace PythonType
 
 typedef TypeConverterQueue< IConverter,
 	PyScript::ScriptObject > BasicTypeConverters;
+class DefaultConverter;
+class DictConverter;
 
 
 /**
@@ -31,7 +32,8 @@ class Converters
 public:
 
 	Converters( const BasicTypeConverters & basicTypeConverters,
-		const DefaultConverter & defaultConverter );
+		DefaultConverter & defaultConverter,
+		DictConverter & dictConverter );
 
 	/**
 	 *	Convert the given Variant into a ScriptType by searching through the
@@ -67,7 +69,8 @@ public:
 
 private:
 	const BasicTypeConverters & basicTypeConverters_;
-	const DefaultConverter & defaultConverter_;
+	DefaultConverter & defaultConverter_;
+	DictConverter & dictConverter_;
 };
 
 

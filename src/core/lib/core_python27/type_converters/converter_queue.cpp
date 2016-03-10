@@ -102,10 +102,10 @@ const TypeId & scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject )
 ConverterQueue::ConverterQueue( IComponentContext & context )
 	: context_( context )
 	, defaultTypeConverter_( context )
-	, allConverters_( basicTypeConverters_, defaultTypeConverter_ )
+	, allConverters_( basicTypeConverters_, defaultTypeConverter_, dictTypeConverter_ )
 	, listTypeConverter_( allConverters_ )
 	, tupleTypeConverter_( allConverters_ )
-	, dictTypeConverter_( allConverters_ )
+	, dictTypeConverter_( context, allConverters_ )
 	, pTypeConvertersInterface_( nullptr )
 {
 }
@@ -122,7 +122,7 @@ void ConverterQueue::init()
 	basicTypeConverters_.registerTypeConverter( unicodeTypeConverter_ );
 	basicTypeConverters_.registerTypeConverter( listTypeConverter_ );
 	basicTypeConverters_.registerTypeConverter( tupleTypeConverter_ );
-	basicTypeConverters_.registerTypeConverter( dictTypeConverter_ );
+	//basicTypeConverters_.registerTypeConverter( dictTypeConverter_ );
 	basicTypeConverters_.registerTypeConverter( intTypeConverter_ );
 	basicTypeConverters_.registerTypeConverter( longTypeConverter_ );
 	basicTypeConverters_.registerTypeConverter( floatTypeConverter_ );

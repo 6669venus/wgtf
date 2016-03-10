@@ -82,7 +82,9 @@ ObjectHandle import( IComponentContext & context, const char * name )
 		return nullptr;
 	}
 
-	return ReflectedPython::DefinedInstance::create( context, module );
+	PyScript::ScriptObject parent;
+	const char * childPath = "";
+	return ReflectedPython::DefinedInstance::findOrCreate( context, module, parent, childPath );
 }
 
 

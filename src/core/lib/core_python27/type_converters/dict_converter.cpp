@@ -12,7 +12,7 @@ namespace PythonType
 {
 
 
-DictConverter::DictConverter( const PythonTypeConverters & typeConverters )
+DictConverter::DictConverter( const Converters & typeConverters )
 	: IConverter()
 	, typeConverters_( typeConverters )
 {

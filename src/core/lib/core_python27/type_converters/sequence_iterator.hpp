@@ -5,20 +5,10 @@
 
 #include "core_variant/collection.hpp"
 
-#include "core_script/type_converter_queue.hpp"
+#include "converters.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 #include <type_traits>
-
-
-namespace PythonType
-{
-class IConverter;
-} // namespace PythonType
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 namespace PythonType
@@ -46,7 +36,7 @@ public:
 
 	SequenceIterator( const container_type & container,
 		key_type index,
-		const PythonTypeConverters & typeConverters );
+		const Converters & typeConverters );
 
 	const container_type & container() const;
 	/**
@@ -73,7 +63,7 @@ public:
 private:
 	container_type container_;
 	key_type index_;
-	const PythonTypeConverters & typeConverters_;
+	const Converters & typeConverters_;
 };
 
 

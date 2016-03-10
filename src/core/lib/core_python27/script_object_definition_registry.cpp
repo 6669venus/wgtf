@@ -55,7 +55,8 @@ void ScriptObjectDefinitionRegistry::fini()
 }
 
 
-std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition( const PyScript::ScriptObject& object )
+std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreateDefinition(
+	const PyScript::ScriptObject & object )
 {
 	assert( object.exists() );
 	assert( definitionManager_ != nullptr );
@@ -89,6 +90,23 @@ std::shared_ptr<IClassDefinition> ScriptObjectDefinitionRegistry::getDefinition(
 	idMap_[ object ] = RefObjectId::generate();
 
 	return pointer;
+}
+
+
+std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findDefinition(
+	const PyScript::ScriptObject & object )
+{
+	assert( object.exists() );
+
+	std::lock_guard< std::mutex > lock( definitionsMutex_ );
+	const auto itr = definitions_.find( object );
+
+	if (itr != definitions_.cend())
+	{
+		return itr->second.lock();
+	}
+
+	return nullptr;
 }
 
 

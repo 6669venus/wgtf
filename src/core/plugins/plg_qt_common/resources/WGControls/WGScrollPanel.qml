@@ -13,9 +13,9 @@ WGScrollPanel{
         WGColumnLayout {
             WGInternalPanel{
                 text: "SubPanel"
-                clipContents_: true
-                expanded_: true
-                childObject_ :
+                clipContents: true
+                expanded: true
+                childObject :
                     WGColumnLayout{
                         WGTextBox {
                             width: 150

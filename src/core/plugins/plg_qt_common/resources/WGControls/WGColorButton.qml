@@ -51,10 +51,10 @@ WGPushButton {
 
             onDataPasted : {
                 colourButton.colourVec = data
-				if(colourButton.colourVec != data)
-				{
-					pasted = false;
-				}
+                if(colourButton.colourVec != data)
+                {
+                    pasted = false;
+                }
             }
         }
 
@@ -103,6 +103,7 @@ WGPushButton {
 
     ColorDialog {
         id: colorDialog
+        objectName: "colorDialog"
         title: "Choose a Color"
         visible: false
         onAccepted: {

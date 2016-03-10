@@ -8,6 +8,7 @@ import BWControls 1.0
 
 WGVector2 {
     id: vector2
+    objectName: itemData != null ? itemData.IndexPath : "vector2_component"
     value: itemData.Value
 
     Binding {

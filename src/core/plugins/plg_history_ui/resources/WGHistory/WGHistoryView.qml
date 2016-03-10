@@ -7,7 +7,7 @@ import WGControls 1.0
 // This component is for displaying the history panel
 WGPanel {
     id: root
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     title: "History"
     layoutHints: { 'history': 1.0 }

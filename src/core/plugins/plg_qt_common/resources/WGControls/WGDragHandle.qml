@@ -48,7 +48,7 @@ Rectangle { // Transparent rectangle sits behind all controls
         anchors.bottom: parent.top
         z: 10
         anchors.horizontalCenter: parent.horizontalCenter
-        color: palette.HighlightColor
+        color: palette.highlightColor
 
         visible: {
             if (dropArea.hovered)
@@ -117,7 +117,7 @@ Rectangle { // Transparent rectangle sits behind all controls
             anchors.fill: parent
             anchors.margins: defaultSpacing.rowSpacing
 
-            color: mouseArea.containsMouse || mouseArea.drag.active ? palette.HighlightShade : "transparent"
+            color: mouseArea.containsMouse || mouseArea.drag.active ? palette.highlightShade : "transparent"
         }
     }
 
@@ -128,7 +128,7 @@ Rectangle { // Transparent rectangle sits behind all controls
 
             PropertyChanges {
                 target: dragRect
-                color: palette.LighterShade
+                color: palette.lighterShade
             }
 
             AnchorChanges {

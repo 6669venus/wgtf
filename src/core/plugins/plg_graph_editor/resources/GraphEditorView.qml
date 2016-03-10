@@ -8,7 +8,7 @@ Rectangle
 {
     id: graphEditorComponent
     objectName: "GraphEditorView"
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     property var title: "Graph Editor"
     property var layoutHints: { 'left': 0.5 }
@@ -39,7 +39,7 @@ Rectangle
         id: graphCanvas;
         anchors.fill: parent
 
-        color: palette.LightPanelColor
+        color: palette.lightPanelColor
 
         property var viewTransform: ViewTransform
         {

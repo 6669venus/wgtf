@@ -41,6 +41,6 @@ WGSubPanel {
 
 WGSubPanel{
     objectName: "WGInternalPanel"
-    colorHeader_: palette.MainWindowColor
-    colorBody_: palette.MainWindowColor
+    colorHeader_: palette.mainWindowColor
+    colorBody_: palette.mainWindowColor
 }

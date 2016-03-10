@@ -7,16 +7,16 @@ TextFieldStyle {
     id: baseStyle
     objectName: "WGTexBoxStyle"
 
-    textColor: palette.TextColor
+    textColor: palette.textColor
 
     /*! An undocumented (Qt) Style property required to centre the edit text properly */
     padding { top: 2 ; left: 4 ; right: 4 ; bottom: 2 }
 
-    selectedTextColor: palette.HighlightTextColor
+    selectedTextColor: palette.highlightTextColor
 
-    selectionColor: palette.HighlightColor
+    selectionColor: palette.highlightColor
 
-    placeholderTextColor: palette.PlaceholderTextColor
+    placeholderTextColor: palette.placeholderTextColor
 
     background: WGTextBoxFrame {
         id: textFrame
@@ -24,12 +24,12 @@ TextFieldStyle {
             State {
                 name: "READ ONLY"
                 when: control.enabled && control.readOnly && !control.activeFocus
-                PropertyChanges {target: baseStyle; textColor: palette.NeutralTextColor}
+                PropertyChanges {target: baseStyle; textColor: palette.neutralTextColor}
             },
             State {
                 name: "DISABLED"
                 when: !control.enabled
-                PropertyChanges {target: baseStyle; textColor: palette.DisabledTextColor}
+                PropertyChanges {target: baseStyle; textColor: palette.disabledTextColor}
             }
         ]
 

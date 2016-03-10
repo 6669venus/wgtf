@@ -117,7 +117,7 @@ Item {
                     width: handleWidth
                     y: 0
                     height: parent.height
-                    color: drawHandles ? palette.DarkColor : "transparent"
+                    color: drawHandles ? palette.darkColor : "transparent"
 
                     MouseArea {
                         id: columnHandleMouseArea
@@ -148,7 +148,7 @@ Item {
 
                     Rectangle {
                         id: innerShade
-                        color: drawHandles ? palette.MainWindowColor : "transparent"
+                        color: drawHandles ? palette.mainWindowColor : "transparent"
                         visible: drawHandles && width > 0
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
@@ -160,7 +160,7 @@ Item {
                     
                     Rectangle {
                         id: rightSideShade
-                    	color: drawHandles ? palette.MidLightColor : "transparent"
+                    	color: drawHandles ? palette.midLightColor : "transparent"
                         visible: drawHandles && handleWidth > 1
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom

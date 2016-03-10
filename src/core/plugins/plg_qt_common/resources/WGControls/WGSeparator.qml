@@ -34,7 +34,7 @@ Rectangle {
     Rectangle {
         width: vertical_ ? defaultSpacing.separatorWidth / 2 : parent.width
         height: vertical_ ? parent.height : defaultSpacing.separatorWidth / 2
-        color: palette.DarkerShade
+        color: palette.darkerShade
         anchors.left: parent.left
         anchors.top: parent.top
     }
@@ -42,7 +42,7 @@ Rectangle {
     Rectangle {
         width: vertical_ ? defaultSpacing.separatorWidth / 2 : parent.width
         height: vertical_ ? parent.height : defaultSpacing.separatorWidth / 2
-        color: palette.LighterShade
+        color: palette.lighterShade
         anchors.right: parent.right
         anchors.bottom: parent.bottom
     }

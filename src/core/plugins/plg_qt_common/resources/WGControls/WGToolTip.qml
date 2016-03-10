@@ -54,9 +54,9 @@ Rectangle {
     x: parent.width + 20
     radius: defaultSpacing.standardRadius
     border.width: defaultSpacing.standardBorderSize
-    border.color: palette.HighlightTextColor  //must be vec3 needs to be more subtle but have no options in palette
+    border.color: palette.highlightTextColor  //must be vec3 needs to be more subtle but have no options in palette
     //opacity: 0.8
-    color: palette.DarkestShade
+    color: palette.darkestShade
     width: drawMouseOverImage.paintedWidth + drawLayout.anchors.leftMargin + drawLayout.anchors.rightMargin
     height: drawMouseOverImage.paintedHeight + drawMouseOverInfo.contentHeight + drawLayout.anchors.topMargin + drawLayout.anchors.bottomMargin
     WGColumnLayout {
@@ -85,7 +85,7 @@ Rectangle {
             text: mouseOver_.mouseOverInfo
             width: parent.width
             wrapMode: Text.Wrap
-            color: palette.HighlightTextColor
+            color: palette.highlightTextColor
         }
     }
 }

@@ -222,7 +222,7 @@ Rectangle {
             PropertyChanges {
                 target: copyable
                 border.color: "transparent"
-                color: palette.HighlightShade
+                color: palette.highlightShade
             }
         },
         State {
@@ -234,7 +234,7 @@ Rectangle {
             PropertyChanges {
                 target: copyable
                 color: "transparent"
-                border.color: palette.LighterShade
+                border.color: palette.lighterShade
             }
         },
         State {
@@ -246,7 +246,7 @@ Rectangle {
             PropertyChanges {
                 target: copyable
                 color: "transparent"
-                border.color: palette.HighlightShade
+                border.color: palette.highlightShade
             }
         }
     ]

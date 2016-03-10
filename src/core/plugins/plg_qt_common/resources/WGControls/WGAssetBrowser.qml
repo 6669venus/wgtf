@@ -29,7 +29,7 @@ WGAssetBrowser {
 Rectangle {
     id: rootFrame
     objectName: "WGAssetBrowser"
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     //Public properties
     /*! This property holds the viewModel containing the assets to be displayed*/
@@ -597,9 +597,9 @@ Rectangle {
                             width: 140
 
 
-                            color: palette.MainWindowColor
+                            color: palette.mainWindowColor
                             border.width: defaultSpacing.standardBorderSize
-                            border.color: palette.DarkColor
+                            border.color: palette.darkColor
 
                             MouseArea {
                                 // prevents items being selected behind drop down
@@ -1085,7 +1085,7 @@ Rectangle {
                                 }
                                 Text {
                                     anchors.left: folderFileIcon.right
-                                    color: palette.TextColor
+                                    color: palette.textColor
                                     clip: itemData != null && itemData.Component != null
                                     text: itemData != null ? (itemData.Value != null ? itemData.Value : "") : ""
                                     anchors.leftMargin: folderView.expandIconMargin // TODO no defined error
@@ -1184,7 +1184,7 @@ Rectangle {
                         //Assets/Files Frame
                         id: folderContentsRect
 
-                        color: palette.LightPanelColor
+                        color: palette.lightPanelColor
 
                         Layout.fillHeight: true
                         Layout.fillWidth: true

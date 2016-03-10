@@ -121,7 +121,7 @@ ListView {
             anchors.top: parent.top
             anchors.horizontalCenterOffset: -(content.height + treeView.footerSpacing)
             height: 1
-            color: Qt.darker(palette.MidLightColor,1.2)
+            color: Qt.darker(palette.midLightColor,1.2)
             visible: treeView.lineSeparator && depth !== 0
         }
 
@@ -347,9 +347,9 @@ ListView {
 
                                 color:
                                     !showExpandIcon ? "transparent" :
-                                    expandMouseArea.containsMouse ? palette.HighlightColor :
-                                    Expanded ? palette.TextColor :
-                                    palette.NeutralTextColor
+                                    expandMouseArea.containsMouse ? palette.highlightColor :
+                                    Expanded ? palette.textColor :
+                                    palette.neutralTextColor
 
                                 width: firstColumn ? paintedWidth : 0
                                 font.family : "Marlett"

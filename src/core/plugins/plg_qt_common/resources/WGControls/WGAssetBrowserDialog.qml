@@ -30,7 +30,7 @@ WGFileDialog {
         contentItem: Rectangle {
             width: parent.width
             height: parent.height
-            color: palette.MainWindowColor
+            color: palette.mainWindowColor
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: defaultSpacing.standardMargin

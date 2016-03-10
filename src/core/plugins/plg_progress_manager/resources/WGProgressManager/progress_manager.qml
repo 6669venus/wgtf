@@ -8,7 +8,7 @@ import WGControls 1.0
 Rectangle {
 	id: root
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     width: 500
     height: 100
 

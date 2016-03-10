@@ -17,9 +17,9 @@ WGLabel {
     id: labelText
     objectName: "WGOverlayLabel"
 
-    color: enabled ? "white" : palette.DisabledTextColor
+    color: enabled ? "white" : palette.disabledTextColor
     style: Text.Raised
 
-    styleColor: enabled ? palette.OverlayTextColor : palette.OverlayDarkShade
+    styleColor: enabled ? palette.overlayTextColor : palette.overlayDarkShade
 }
 

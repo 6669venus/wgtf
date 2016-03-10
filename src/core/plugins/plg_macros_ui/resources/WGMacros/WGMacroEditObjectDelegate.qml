@@ -8,7 +8,7 @@ import WGControls 1.0
 
 Rectangle {
 	id: macroEditObject
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	width: 200
 	height: 20
 	property variant path;
@@ -63,7 +63,7 @@ Rectangle {
 			width: paintedWidth
 			clip: false
 			text: "Property:"
-			color: palette.TextColor
+			color: palette.textColor
 		}
 
 		WGTextBox {
@@ -84,7 +84,7 @@ Rectangle {
 			width: paintedWidth
 			clip: false
 			text: "Value:"
-			color: palette.TextColor
+			color: palette.textColor
 		}
 
 	

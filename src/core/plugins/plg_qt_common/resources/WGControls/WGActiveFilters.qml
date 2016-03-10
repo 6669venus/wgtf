@@ -317,7 +317,7 @@ Item {
 
             WGTextBoxFrame {
                 id: textFrame
-                color: palette.TextBoxColor
+                color: palette.textBoxColor
                 Layout.fillWidth: true
                 Layout.preferredHeight: childrenRect.height + defaultSpacing.standardBorderSize
                 Layout.maximumHeight: childrenRect.height + defaultSpacing.standardBorderSize

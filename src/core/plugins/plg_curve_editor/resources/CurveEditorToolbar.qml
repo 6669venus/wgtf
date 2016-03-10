@@ -111,7 +111,7 @@ RowLayout {
     // Parent our sub-title with a rectangle filling up the remaining space, otherwise our text doesn't show
     Rectangle{
         id: toolbarTitleWrapper
-        color: palette.MainWindowColor
+        color: palette.mainWindowColor
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         Layout.fillWidth: true

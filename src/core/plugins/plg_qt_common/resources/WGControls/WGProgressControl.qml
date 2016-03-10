@@ -98,7 +98,7 @@ Rectangle {
 
                 renderType: Text.NativeRendering
 
-                color: palette.TextColor
+                color: palette.textColor
             }
 
             Text {
@@ -113,7 +113,7 @@ Rectangle {
                 text: percentage_
 
                 visible: !indeterminate_
-                color: palette.TextColor
+                color: palette.textColor
                 horizontalAlignment: Text.AlignRight
             }
 
@@ -127,7 +127,7 @@ Rectangle {
                 text: units_
 
                 visible: !indeterminate_ && units_ != ""
-                color: palette.TextColor
+                color: palette.textColor
                 horizontalAlignment: Text.AlignRight
             }
 
@@ -163,7 +163,7 @@ Rectangle {
                 background: WGTextBoxFrame {}
 
                 progress: Rectangle {
-                    color: palette.HighlightColor
+                    color: palette.highlightColor
                     radius: defaultSpacing.halfRadius
                     Item {
                             anchors.fill: parent
@@ -173,7 +173,7 @@ Rectangle {
                             Row {
                                 Repeater {
                                     Rectangle {
-                                        color: index % 2 ? "transparent" : palette.DarkShade
+                                        color: index % 2 ? "transparent" : palette.darkShade
                                         width: 10 ; height: control.height
                                     }
                                     model: control.width / 10 + 2

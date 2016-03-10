@@ -32,7 +32,7 @@ WGFileDialog {
         property color currentColor: initialColor
 
         contentItem: Rectangle {
-            color: palette.MainWindowColor
+            color: palette.mainWindowColor
             anchors.margins: defaultSpacing.standardMargin
 
             WGColorPicker {

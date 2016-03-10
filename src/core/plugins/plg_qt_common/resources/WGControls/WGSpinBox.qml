@@ -295,7 +295,7 @@ Control {
 
         Text {
             id: arrowText
-            color : palette.NeutralTextColor
+            color : palette.neutralTextColor
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -313,22 +313,22 @@ Control {
             State {
                 name: "PRESSED"
                 when: button.pressed && spinbox.enabled
-                PropertyChanges {target: button; color: palette.DarkShade}
+                PropertyChanges {target: button; color: palette.darkShade}
                 PropertyChanges {target: button; innerBorderColor: "transparent"}
             },
             State {
                 name: "HOVERED"
                 when: button.hovered && spinbox.enabled
-                PropertyChanges {target: button; highlightColor: palette.LighterShade}
-                PropertyChanges {target: arrowText; color: palette.TextColor}
+                PropertyChanges {target: button; highlightColor: palette.lighterShade}
+                PropertyChanges {target: arrowText; color: palette.textColor}
             },
             State {
                 name: "DISABLED"
                 when: !spinbox.enabled
                 PropertyChanges {target: button; color: "transparent"}
-                PropertyChanges {target: button; borderColor: palette.DarkShade}
+                PropertyChanges {target: button; borderColor: palette.darkShade}
                 PropertyChanges {target: button; innerBorderColor: "transparent"}
-                PropertyChanges {target: arrowText; color: palette.DisabledTextColor}
+                PropertyChanges {target: arrowText; color: palette.disabledTextColor}
             }
         ]
     }

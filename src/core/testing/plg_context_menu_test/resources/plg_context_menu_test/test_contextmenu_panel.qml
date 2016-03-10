@@ -9,7 +9,7 @@ WGPanel {
 	title: "WGContextMenu Test"
 	layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	z: 1
 
 	WGExpandingRowLayout {

@@ -10,7 +10,7 @@ WGPanel {
     layoutHints: { 'macros': 1.0 }
 
     id: root
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     property string activeMacro: ""
 
@@ -27,7 +27,7 @@ WGPanel {
             PropertyChanges {
                 target: macroStatus
                 text: "Idle"
-                color: palette.DisabledTextColor
+                color: palette.disabledTextColor
             }
             PropertyChanges {
                 target: stopButton
@@ -51,7 +51,7 @@ WGPanel {
             PropertyChanges {
                 target: macroStatus
                 text: "Playing " + activeMacro + "..."
-                color: palette.TextColor
+                color: palette.textColor
             }
             PropertyChanges {
                 target: stopButton
@@ -73,7 +73,7 @@ WGPanel {
             PropertyChanges {
                 target: macroStatus
                 text: "Recording Macro..."
-                color: palette.TextColor
+                color: palette.textColor
             }
             PropertyChanges {
                 target: stopButton
@@ -177,7 +177,7 @@ WGPanel {
                 WGLabel {
                     id: macroStatus
                     text: "Idle"
-                    color: palette.DisabledTextColor
+                    color: palette.disabledTextColor
                 }
 
                 Item {

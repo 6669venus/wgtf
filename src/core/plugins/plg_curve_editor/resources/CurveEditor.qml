@@ -14,7 +14,7 @@ Rectangle {
 	property var selection: [];
 
 	Layout.fillHeight: true
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 
 	QtObject
 	{

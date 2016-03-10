@@ -7,16 +7,16 @@ TextFieldStyle {
     id: baseStyle
     objectName: "WGTexBoxStyle"
 
-    textColor: palette.OverlayTextColor
+    textColor: palette.overlayTextColor
 
     /*! An undocumented (Qt) Style property required to centre the edit text properly */
     padding { top: 2 ; left: 4 ; right: 4 ; bottom: 2 }
 
-    selectedTextColor: palette.HighlightTextColor
+    selectedTextColor: palette.highlightTextColor
 
-    selectionColor: palette.HighlightShade
+    selectionColor: palette.highlightShade
 
-    placeholderTextColor: palette.OverlayDarkShade
+    placeholderTextColor: palette.overlayDarkShade
 
     background: WGTextBoxFrame {
         id: textFrame
@@ -24,34 +24,34 @@ TextFieldStyle {
             State {
                 name: "ACTIVE FOCUS"
                 when: control.activeFocus && control.enabled && !control.readOnly
-                PropertyChanges {target: textFrame; border.color: palette.HighlightShade}
+                PropertyChanges {target: textFrame; border.color: palette.highlightShade}
             },
             State {
                 name: "ACTIVE FOCUS READ ONLY"
                 when: control.activeFocus && control.enabled && control.readOnly
-                PropertyChanges {target: textFrame; color: palette.LightestShade}
-                PropertyChanges {target: textFrame; border.color: palette.HighlightShade}
-                PropertyChanges {target: baseStyle; textColor: palette.OverlayDarkerShade}
+                PropertyChanges {target: textFrame; color: palette.lightestShade}
+                PropertyChanges {target: textFrame; border.color: palette.highlightShade}
+                PropertyChanges {target: baseStyle; textColor: palette.overlayDarkerShade}
             },
             State {
                 name: "READ ONLY"
                 when: control.enabled && control.readOnly && !control.activeFocus
-                PropertyChanges {target: textFrame; color: palette.LightestShade}
-                PropertyChanges {target: textFrame; border.color: palette.OverlayDarkShade}
-                PropertyChanges {target: baseStyle; textColor: palette.OverlayDarkerShade}
+                PropertyChanges {target: textFrame; color: palette.lightestShade}
+                PropertyChanges {target: textFrame; border.color: palette.overlayDarkShade}
+                PropertyChanges {target: baseStyle; textColor: palette.overlayDarkerShade}
             },
             State {
                 name: "DISABLED"
                 when: !control.enabled
-                PropertyChanges {target: textFrame; color: palette.LightShade}
-                PropertyChanges {target: textFrame; border.color: palette.DarkestShade}
-                PropertyChanges {target: baseStyle; textColor: palette.DarkestShade}
+                PropertyChanges {target: textFrame; color: palette.lightShade}
+                PropertyChanges {target: textFrame; border.color: palette.darkestShade}
+                PropertyChanges {target: baseStyle; textColor: palette.darkestShade}
             }
         ]
 
 
-        color: palette.OverlayLightShade
+        color: palette.overlayLightShade
 
-        border.color: palette.OverlayDarkerShade
+        border.color: palette.overlayDarkerShade
     }
 }

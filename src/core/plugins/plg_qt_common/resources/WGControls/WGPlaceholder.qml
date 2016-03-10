@@ -17,7 +17,7 @@ Rectangle {
     objectName: "WGPlaceholder"
     color: "transparent"
     border.width: defaultSpacing.standardBorderSize
-    border.color: palette.LighterShade
+    border.color: palette.lighterShade
 
     /*!
         This property determines the text to display in the placeholder

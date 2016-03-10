@@ -31,7 +31,7 @@ Text {
         The default value is null
     */
 
-    color: enabled ? palette.TextColor : palette.DisabledTextColor
+    color: enabled ? palette.textColor : palette.disabledTextColor
 
     renderType: Text.NativeRendering
 

@@ -110,11 +110,11 @@ Rectangle {
 
     /*! This property determines the colour of the panel header.*/
     //TODO: This should be renamed, it does not require "_"
-    property color colorHeader_ : palette.DarkHeaderColor
+    property color colorHeader_ : palette.darkHeaderColor
 
     /*! This property determines the colour of the panel body.*/
     //TODO: This should be renamed, it does not require "_"
-    property color colorBody_ : palette.LightPanelColor
+    property color colorBody_ : palette.lightPanelColor
 
     //best for minor group box frames
 
@@ -262,8 +262,8 @@ Rectangle {
     Rectangle {
         id: expandingOuterFrame
         radius: defaultSpacing.halfRadius
-        color: palette.HighlightShade
-        visible: collapsible_ && !palette.GlowStyle
+        color: palette.highlightShade
+        visible: collapsible_ && !palette.glowStyle
         anchors.top: headerPanel.top
         anchors.bottom: headerPanel.bottom
         anchors.topMargin: mainPanel.radius + (squareModifier / 2)
@@ -301,7 +301,7 @@ Rectangle {
                      }
                      else
                      {
-                         expandingOuterFrame.color = palette.HighlightShade
+                         expandingOuterFrame.color = palette.highlightShade
                      }
                  }
             }
@@ -315,11 +315,11 @@ Rectangle {
 
         gradient: Gradient {
                  GradientStop { position: 0.0; color: "transparent" }
-                 GradientStop { position: 0.5; color: expanded_ ? palette.HighlightShade : palette.HighlightColor }
+                 GradientStop { position: 0.5; color: expanded_ ? palette.highlightShade : palette.highlightColor }
                  GradientStop { position: 1.0; color: "transparent" }
              }
 
-        visible: collapsible_ && palette.GlowStyle
+        visible: collapsible_ && palette.glowStyle
 
         anchors.top: mainColor.top
         anchors.bottom: mainColor.bottom
@@ -362,7 +362,7 @@ Rectangle {
             activeFocusOnTab: collapsible_
 
             border.width: defaultSpacing.standardBorderSize
-            border.color: activeFocus && collapsible_ ? palette.LighterShade : "transparent"
+            border.color: activeFocus && collapsible_ ? palette.lighterShade : "transparent"
 
             Keys.onPressed: {
                 if (event.key == Qt.Key_Space && collapsible_)
@@ -410,7 +410,7 @@ Rectangle {
             onEntered: {
                 if (collapsible_)
                 {
-                    mouseHighlight.color = palette.LighterShade
+                    mouseHighlight.color = palette.lighterShade
                 }
             }
 
@@ -451,7 +451,7 @@ Rectangle {
                 id: headerLabel
                 font.bold: boldHeader_
                 renderType: Text.NativeRendering
-                color: palette.HighlightTextColor
+                color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 text: mainPanel.text
                 visible: toggleable_ ? false : true
@@ -494,7 +494,7 @@ Rectangle {
                 font.bold: boldSubHeader_
                 font.italic: italicSubHeader_
                 renderType: Text.NativeRendering
-                color: palette.HighlightTextColor
+                color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: headerLabel.right
                 text: (mainPanel.subText == "") ? "" : " - " + mainPanel.subText

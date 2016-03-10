@@ -49,7 +49,7 @@ ComboBox {
 
     /*! \internal */
     // helper property for text color so states can all be in the background object
-    property color __textColor: palette.NeutralTextColor
+    property color __textColor: palette.neutralTextColor
 
     activeFocusOnTab: true
 
@@ -127,32 +127,32 @@ ComboBox {
         background: WGButtonFrame {
             id: buttonFrame
 
-            color: palette.LightShade
+            color: palette.lightShade
 
             states: [
                 State {
                     name: "PRESSED"
                     when: control.pressed && control.enabled
-                    PropertyChanges {target: buttonFrame; color: palette.DarkShade}
+                    PropertyChanges {target: buttonFrame; color: palette.darkShade}
                     PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
                 },
                 State {
                     name: "HOVERED"
                     when: control.hovered && control.enabled
-                    PropertyChanges {target: box; __textColor: palette.TextColor}
+                    PropertyChanges {target: box; __textColor: palette.textColor}
                 },
                 State {
                     name: "DISABLED"
                     when: !control.enabled
                     PropertyChanges {target: buttonFrame; color: "transparent"}
-                    PropertyChanges {target: buttonFrame; borderColor: palette.DarkShade}
+                    PropertyChanges {target: buttonFrame; borderColor: palette.darkShade}
                     PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
-                    PropertyChanges {target: box; __textColor: palette.DisabledTextColor}
+                    PropertyChanges {target: box; __textColor: palette.disabledTextColor}
                 },
                 State {
                     name: "ACTIVE FOCUS"
                     when: control.enabled && control.activeFocus
-                    PropertyChanges {target: buttonFrame; innerBorderColor: palette.LightestShade}
+                    PropertyChanges {target: buttonFrame; innerBorderColor: palette.lightestShade}
                 }
 
             ]
@@ -187,16 +187,16 @@ ComboBox {
             __menuItemType: "comboboxitem"
 
             frame: Rectangle {              // background
-                color: palette.MainWindowColor
+                color: palette.mainWindowColor
                 border.width: defaultSpacing.standardBorderSize
-                border.color: palette.DarkColor
+                border.color: palette.darkColor
             }
 
             itemDelegate.label:             // an item text
                 Text {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                color: styleData.selected ? palette.TextColor : palette.HighlightTextColor
+                color: styleData.selected ? palette.textColor : palette.highlightTextColor
                 text: styleData.text
                 renderType: Text.NativeRendering
             }

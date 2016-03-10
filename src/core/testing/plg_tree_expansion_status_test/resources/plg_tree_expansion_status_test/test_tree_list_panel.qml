@@ -10,7 +10,7 @@ WGPanel{
 	id: root
 	title: "Tree Expansion Test"
 	layoutHints: { 'test': 0.1 }
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	Layout.fillWidth: true
 	Layout.fillHeight: true
 	property var testListModel: listSource
@@ -99,7 +99,7 @@ WGPanel{
 						verticalAlignment: Text.AlignVCenter
 						visible: true
 						text: itemData != null ? itemData.ValueType : ""
-						color: palette.TextColor
+						color: palette.textColor
 					}
 
 					Connections {

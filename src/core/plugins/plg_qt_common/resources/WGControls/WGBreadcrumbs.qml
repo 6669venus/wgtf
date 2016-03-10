@@ -124,7 +124,7 @@ Rectangle {
                     font.bold: true
                     font.pointSize: 11
 
-                    color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
+                    color: breadcrumbMouseArea.containsMouse ? palette.textColor : palette.neutralTextColor;
 
                     Component.onCompleted: {
                         breadcrumbRowLayout.breadcrumbIndex_ = index;

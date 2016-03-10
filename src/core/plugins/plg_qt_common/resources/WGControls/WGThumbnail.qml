@@ -37,7 +37,7 @@ Rectangle {
     */
     property string notFoundString: "Image not found"
 
-    color: palette.LightShade
+    color: palette.lightShade
 
     implicitWidth: {
         defaultSpacing.minimumRowHeight * 4

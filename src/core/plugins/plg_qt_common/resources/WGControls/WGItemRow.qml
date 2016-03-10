@@ -65,10 +65,10 @@ Item {
     property bool showBackgroundColour: false
 
     /*! This property specifies the main colour for the row background */
-    property color backgroundColour: palette.MidDarkColor
+    property color backgroundColour: palette.midDarkColor
 
     /*! This property specifies the alternate colour for the row background */
-    property color alternateBackgroundColour: Qt.darker(palette.MidLightColor,1.2)
+    property color alternateBackgroundColour: Qt.darker(palette.midLightColor,1.2)
 
     /*! This signal is sent on a single click
     */
@@ -169,7 +169,7 @@ Item {
 
         Rectangle {
             id: selectionHighlight
-            color: hasActiveFocusDelegate ? palette.HighlightShade : "grey"
+            color: hasActiveFocusDelegate ? palette.highlightShade : "grey"
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
             visible: !itemMouseArea.pressed && typeof Selected != 'undefined' && Selected
@@ -180,7 +180,7 @@ Item {
             anchors.fill: itemMouseArea
             visible: itemMouseArea.containsMouse
             opacity: 0.5
-            color: palette.HighlightShade
+            color: palette.highlightShade
         }
 
         ListView {

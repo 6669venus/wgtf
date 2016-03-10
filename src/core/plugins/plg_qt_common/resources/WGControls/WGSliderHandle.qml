@@ -38,7 +38,7 @@ Item {
 
     property alias range: range
 
-    property color handleColor: palette.LightPanelColor
+    property color handleColor: palette.lightPanelColor
 
     property color barColor: parentSlider.barColor
 
@@ -92,10 +92,10 @@ Item {
         This can be any Item based component.
     */
     property Component handleStyle: WGButtonFrame{
-        color: parentSlider.enabled ? handleColor : palette.MainWindowColor
-        borderColor: parentSlider.enabled ? palette.DarkerShade : palette.DarkShade
-        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.LighterShade : "transparent"
-        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.HighlightShade : "transparent"
+        color: parentSlider.enabled ? handleColor : palette.mainWindowColor
+        borderColor: parentSlider.enabled ? palette.darkerShade : palette.darkShade
+        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
+        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
         implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
         implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
     }

@@ -7,7 +7,7 @@ Rectangle {
 	property var title: "List Test"
 	property var layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	
 	WGListModel {
 		id: listModel
@@ -62,7 +62,7 @@ Rectangle {
 					verticalAlignment: Text.AlignVCenter
 					visible: typeof itemData.Value === "string"
 					text: typeof itemData.Value === "string" ? itemData.Value : ""
-					color: palette.TextColor
+					color: palette.textColor
 				}
 			}
 		}

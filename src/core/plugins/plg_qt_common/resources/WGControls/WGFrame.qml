@@ -82,22 +82,22 @@ Rectangle {
             {
                 if (dark_)
                 {
-                    palette.DarkShade
+                    palette.darkShade
                 }
                 else
                 {
-                    palette.LightShade
+                    palette.lightShade
                 }
             }
             else
             {
                 if (dark_)
                 {
-                    palette.MainWindowColor
+                    palette.mainWindowColor
                 }
                 else
                 {
-                    palette.LightPanelColor
+                    palette.lightPanelColor
                 }
             }
         }

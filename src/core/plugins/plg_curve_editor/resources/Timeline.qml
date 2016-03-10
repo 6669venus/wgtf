@@ -17,9 +17,9 @@ Canvas {
     property real valueScale: 1;
     property var mouseDragStart;
 
-    property color majorLineColor: palette.PlaceholderTextColor
-    property color minorLineColor: Qt.tint(palette.PlaceholderTextColor, palette.MainWindowColor)
-    property color backgroundColor: Qt.tint(Qt.tint(Qt.tint(palette.MainWindowColor, palette.TextBoxColor), palette.TextBoxColor), palette.TextBoxColor)
+    property color majorLineColor: palette.placeholderTextColor
+    property color minorLineColor: Qt.tint(palette.placeholderTextColor, palette.mainWindowColor)
+    property color backgroundColor: Qt.tint(Qt.tint(Qt.tint(palette.mainWindowColor, palette.textBoxColor), palette.textBoxColor), palette.textBoxColor)
     property color zeroAxisColor: Qt.tint(majorLineColor, '#007f00');
     property color oneAxisColor: Qt.tint(majorLineColor, '#7f6600')
 

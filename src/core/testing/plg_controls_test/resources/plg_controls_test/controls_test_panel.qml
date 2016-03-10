@@ -13,7 +13,7 @@ Rectangle {
     visible: true
     property var title: qsTr("QML Controls Test Window")
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 	function getColor(vectorColor) {
         return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, vectorColor.w / 255);
     }

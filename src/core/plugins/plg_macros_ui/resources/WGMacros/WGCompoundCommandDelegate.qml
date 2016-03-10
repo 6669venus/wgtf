@@ -63,7 +63,7 @@ Item {
             Layout.minimumWidth: paintedWidth
             clip: false
             text: itemData.Value.DisplayObject.DisplayName
-            color: palette.TextColor
+            color: palette.textColor
         }
 
         WGToolButton {
@@ -96,7 +96,7 @@ Item {
             Layout.minimumWidth: paintedWidth
             clip: false
             text: "SelectContextObject:"
-            color: palette.TextColor
+            color: palette.textColor
         }
 
         WGDropDownBox {

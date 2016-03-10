@@ -136,7 +136,7 @@ Rectangle {
     property bool __updateRGB: false
 
     /*! \internal */
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     /*!
         This signal is fired when the Ok dialog button is clicked.
@@ -443,7 +443,7 @@ Rectangle {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: parent.height - defaultSpacing.standardRadius
                         width: parent.width
-                        color: palette.DarkColor
+                        color: palette.darkColor
 
                         GridLayout {
                             id: paletteGrid
@@ -486,7 +486,7 @@ Rectangle {
                                         width: height
                                         color: typeof swatchColor != "undefined" ? swatchColor : "transparent"
                                         border.width: containsColor ? 0 : 1
-                                        border.color: containsColor ? "transparent" : palette.MidLightColor
+                                        border.color: containsColor ? "transparent" : palette.midLightColor
 
                                         Image {
                                             source: "icons/bw_check_6x6.png"
@@ -588,7 +588,7 @@ Rectangle {
                                 id: secondSquareBorder
                                 height: Math.round(parent.height * 0.75)
                                 width: height
-                                color: palette.DarkColor
+                                color: palette.darkColor
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
                             }
@@ -596,7 +596,7 @@ Rectangle {
                             Rectangle {
                                 height: Math.round(parent.height * 0.75)
                                 width: height
-                                color: palette.DarkColor
+                                color: palette.darkColor
 
                                 // Initial square. Can be clicked to reset currentColor to initialColor
                                 Rectangle {

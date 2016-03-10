@@ -40,8 +40,8 @@ Rectangle {
     implicitHeight: childrenRect.height
     radius: defaultSpacing.standardRadius
     border.width: 1
-    border.color: palette.DarkestShade
-    color: palette.LightShade
+    border.color: palette.darkestShade
+    color: palette.lightShade
 
     // Remove alert when the timer is triggered
 

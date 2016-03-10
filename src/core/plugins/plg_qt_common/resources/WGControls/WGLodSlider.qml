@@ -500,19 +500,19 @@ WGColumnLayout {
                     textColor: {
                         if(enabled && index == selectedLOD_ && !activeFocus)
                         {
-                            palette.HighlightColor
+                            palette.highlightColor
                         }
                         else if(enabled && !readOnly)
                         {
-                            palette.TextColor
+                            palette.textColor
                         }
                         else if(enabled && readOnly)
                         {
-                            palette.NeutralTextColor
+                            palette.neutralTextColor
                         }
                         else
                         {
-                            palette.DisabledTextColor
+                            palette.disabledTextColor
                         }
                     }
 
@@ -566,7 +566,7 @@ WGColumnLayout {
 
                 Rectangle {
                     id: cameraDistanceBar
-                    color: palette.TextColor
+                    color: palette.textColor
                     opacity: 0.3
                     width: defaultSpacing.standardBorderSize
                     anchors.top: parent.top
@@ -611,7 +611,7 @@ WGColumnLayout {
                             }
 
                             border.width: highlighted_ ? defaultSpacing.standardBorderSize : 0
-                            border.color: highlighted_ ? palette.TextColor : "transparent"
+                            border.color: highlighted_ ? palette.textColor : "transparent"
 
                             //3 repeating colours
                             color: {
@@ -680,7 +680,7 @@ WGColumnLayout {
                             Text {
                                 objectName: "barName"
                                 id: barName
-                                color: state == "" || parent.highlighted_ ? palette.TextColor : parent.color
+                                color: state == "" || parent.highlighted_ ? palette.textColor : parent.color
                                 text: deleting_ ? "" : lodList_.get(index).text_
                                 opacity: state == "" || parent.highlighted_  ? 1 : 0.5
                                 y: defaultSpacing.standardBorderSize
@@ -728,7 +728,7 @@ WGColumnLayout {
                             Text {
                                 id: lodNumber
                                 text: (infinite_ == index) ? "∞" : index
-                                color: model.maxDist_ === model.minDist_ ? palette.DisabledTextColor : palette.TextColor
+                                color: model.maxDist_ === model.minDist_ ? palette.disabledTextColor : palette.textColor
                                 anchors.centerIn: parent
                                 horizontalAlignment: Text.AlignHCenter
                                 font.pixelSize: (infinite_ == index) ? 22 : 12
@@ -964,19 +964,19 @@ WGColumnLayout {
                     textColor: {
                         if (enabled && index == selectedLOD_ && !activeFocus)
                         {
-                            palette.HighlightColor
+                            palette.highlightColor
                         }
                         else if (enabled && !readOnly)
                         {
-                            palette.TextColor
+                            palette.textColor
                         }
                         else if (enabled && readOnly)
                         {
-                            palette.NeutralTextColor
+                            palette.neutralTextColor
                         }
                         else
                         {
-                            palette.DisabledTextColor
+                            palette.disabledTextColor
                         }
                     }
 

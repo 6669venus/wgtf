@@ -5,6 +5,7 @@ import BWControls 1.0
 
 WGFileDialog {
     id: mainDialog
+    objectName: "WGAssetBrowserDialog"
 
     onOpen: {
         abInstance.width = dWidth
@@ -35,6 +36,7 @@ WGFileDialog {
                 anchors.margins: defaultSpacing.standardMargin
 
                 WGAssetBrowser {
+                    objectName: "assetBrowser"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
@@ -51,6 +53,7 @@ WGFileDialog {
                     }
 
                     WGTextBox {
+                        objectName: "fileSelectBox"
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.fillWidth: true
                         readOnly: true
@@ -58,6 +61,7 @@ WGFileDialog {
                     }
 
                     WGPushButton {
+                        objectName: "openButton"
                         text: "Open"
                         onClicked: {
                             abInstance.accepted()
@@ -65,6 +69,7 @@ WGFileDialog {
                     }
 
                     WGPushButton {
+                        objectName: "openButton"
                         text: "Cancel"
                         onClicked: {
                             abInstance.rejected()

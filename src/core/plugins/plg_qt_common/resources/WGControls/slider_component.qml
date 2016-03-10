@@ -7,6 +7,7 @@ import QtQuick.Controls.Styles 1.2
 
 WGSliderControl {
     id: reflectedSlider
+    objectName:  itemData != null ? itemData.IndexPath : "slider_component"
     anchors.fill: parent
 
     value: itemData.Value

@@ -1,0 +1,246 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{7E74F5A9-0636-4271-8AEA-F521D60CBB17}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>NGTTestAutomation</RootNamespace>
+    <AssemblyName>NGTTestAutomation</AssemblyName>
+    <RanorexVersion>5</RanorexVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <projectdefaultrepository>49172274-ed44-471e-93c8-f446bb147c29</projectdefaultrepository>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="Ranorex.Core, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.ChromeWeb, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Flex, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Java, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Mobile, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.MozillaWeb, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Msaa, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Office, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Qt, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.RawText, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Sap, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Uia, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Web, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Win32, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.WinForms, Version=$(RanorexVersion)" />
+    <Reference Include="Ranorex.Plugin.Wpf, Version=$(RanorexVersion)" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <id>6814585f-9fea-40df-b530-e4a39bd39c4d</id>
+    </Compile>
+    <Compile Include="BrowsePropertyTestTreeToSimpleCase.cs">
+      <BoundTo>c9a73b30-45ed-484f-a62a-ed2834ef0020</BoundTo>
+      <DependentUpon>BrowsePropertyTestTreeToSimpleCase.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>0f15147f-be63-4296-86eb-fa25853c7dd0</id>
+    </Compile>
+    <Compile Include="BrowsePropertyTestTreeToSimpleCase.UserCode.cs">
+      <BoundTo>c9a73b30-45ed-484f-a62a-ed2834ef0020</BoundTo>
+      <DependentUpon>BrowsePropertyTestTreeToSimpleCase.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>c876c242-85c4-4415-9e79-1a9af82fe265</id>
+    </Compile>
+    <Compile Include="BrowsePropertyTreeSimpleCases.cs">
+      <BoundTo>2ed09b99-868d-49b2-9842-855387e6ec02</BoundTo>
+      <DependentUpon>BrowsePropertyTreeSimpleCases.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>c73c83cf-59da-43e3-9208-7321b96a924f</id>
+    </Compile>
+    <Compile Include="BrowsePropertyTreeSimpleCases.UserCode.cs">
+      <BoundTo>2ed09b99-868d-49b2-9842-855387e6ec02</BoundTo>
+      <DependentUpon>BrowsePropertyTreeSimpleCases.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>1a2c8b17-9c39-4ed8-83df-b24c598c2201</id>
+    </Compile>
+    <Compile Include="CloseGenericApp.cs">
+      <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
+      <DependentUpon>CloseGenericApp.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>0a294dd3-6b65-4e3b-9d34-9608ba70675d</id>
+    </Compile>
+    <Compile Include="CloseGenericApp.UserCode.cs">
+      <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
+      <DependentUpon>CloseGenericApp.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>3cac6b1c-f196-444e-899a-9e359a39256e</id>
+    </Compile>
+    <Compile Include="NGTTestAutomationRepository.cs">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <DependentUpon>NGTTestAutomationRepository.rxrep</DependentUpon>
+      <RepositoryCode>true</RepositoryCode>
+      <id>11c15068-68ed-42b9-bfa9-10c9722e6427</id>
+    </Compile>
+    <Compile Include="OpenPropertyTreeTestPanel.cs">
+      <BoundTo>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</BoundTo>
+      <DependentUpon>OpenPropertyTreeTestPanel.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>423c56ef-c4d8-4399-a93f-5851424c7f49</id>
+    </Compile>
+    <Compile Include="OpenPropertyTreeTestPanel.UserCode.cs">
+      <BoundTo>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</BoundTo>
+      <DependentUpon>OpenPropertyTreeTestPanel.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>e0e6449a-57fd-48f4-babc-5513f704731b</id>
+    </Compile>
+    <Compile Include="Program.cs">
+      <id>36b6e828-7305-4c80-bb18-3022b08cef23</id>
+    </Compile>
+    <Compile Include="OpenGenericApp.cs">
+      <BoundTo>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</BoundTo>
+      <DependentUpon>OpenGenericApp.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>9ca1e975-348c-49ce-a14d-fe6ef29e9895</id>
+    </Compile>
+    <Compile Include="OpenGenericApp.UserCode.cs">
+      <BoundTo>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</BoundTo>
+      <DependentUpon>OpenGenericApp.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>816c5c3d-f982-426c-8681-ed9035efa4a7</id>
+    </Compile>
+    <Compile Include="SelectPropertyTreeTestPanel.cs">
+      <BoundTo>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</BoundTo>
+      <DependentUpon>SelectPropertyTreeTestPanel.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>f0b1018d-8fee-4678-910c-df93ee8ba7a8</id>
+    </Compile>
+    <Compile Include="SelectPropertyTreeTestPanel.UserCode.cs">
+      <BoundTo>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</BoundTo>
+      <DependentUpon>SelectPropertyTreeTestPanel.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>3fd23c51-ecda-4bed-98f2-24c45a222a66</id>
+    </Compile>
+    <Compile Include="SimpleCasesChangeBool.cs">
+      <BoundTo>d3dc525a-e8a1-466c-9c61-d270e9967b22</BoundTo>
+      <DependentUpon>SimpleCasesChangeBool.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>70b7f443-915c-439b-850b-bd639adea8ea</id>
+    </Compile>
+    <Compile Include="SimpleCasesChangeBool.UserCode.cs">
+      <BoundTo>d3dc525a-e8a1-466c-9c61-d270e9967b22</BoundTo>
+      <DependentUpon>SimpleCasesChangeBool.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>f2147d1a-25fe-4575-9464-c3647109f2a6</id>
+    </Compile>
+    <Compile Include="SimpleCasesMultipleSelect.cs">
+      <BoundTo>da9cc559-3a0f-4ea1-9253-3a7324f3f338</BoundTo>
+      <DependentUpon>SimpleCasesMultipleSelect.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>22694ea3-2612-4687-9e2e-7c72bbb62bae</id>
+    </Compile>
+    <Compile Include="SimpleCasesMultipleSelect.UserCode.cs">
+      <BoundTo>da9cc559-3a0f-4ea1-9253-3a7324f3f338</BoundTo>
+      <DependentUpon>SimpleCasesMultipleSelect.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>86483fa6-468b-42d2-98eb-0bd66a7fe3ed</id>
+    </Compile>
+    <Compile Include="SimpleCasesSlideUp.cs">
+      <BoundTo>d6319c40-efbb-488b-be2e-24566e759ef5</BoundTo>
+      <DependentUpon>SimpleCasesSlideUp.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>3c5a3449-5348-4494-8542-ed34cfb06ec6</id>
+    </Compile>
+    <Compile Include="SimpleCasesSlideUp.UserCode.cs">
+      <BoundTo>d6319c40-efbb-488b-be2e-24566e759ef5</BoundTo>
+      <DependentUpon>SimpleCasesSlideUp.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>a785c479-e350-4fd6-85b4-635b2ce9525e</id>
+    </Compile>
+    <None Include="app.config">
+      <id>6893a9a8-ba4c-443a-b852-decf187e1c46</id>
+    </None>
+    <None Include="BrowsePropertyTestTreeToSimpleCase.rxrec">
+      <id>c9a73b30-45ed-484f-a62a-ed2834ef0020</id>
+      <recordtableid>fee4b6b1-4aba-450a-9ccb-a46659c0fc96</recordtableid>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="BrowsePropertyTreeSimpleCases.rxrec">
+      <id>2ed09b99-868d-49b2-9842-855387e6ec02</id>
+      <recordtableid>6894454c-4c1b-4b4c-a17b-fce50e2f2f54</recordtableid>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="CloseGenericApp.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>6d194385-fa00-43d3-a362-3bea03ccb16d</id>
+      <recordtableid>2c6bd3a2-29ad-40a3-a561-be9010850cb0</recordtableid>
+    </None>
+    <None Include="NGTTestAutomationRepository.rximg">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <DependentUpon>NGTTestAutomationRepository.rxrep</DependentUpon>
+      <imageblob>true</imageblob>
+      <id>5d9a9d87-17d8-41c8-b094-94e523754ee0</id>
+    </None>
+    <None Include="NGTTestAutomationRepository.rxrep">
+      <id>49172274-ed44-471e-93c8-f446bb147c29</id>
+      <repoid>0f1dd445-65cb-47c8-a69d-e0f2154f9e50</repoid>
+      <reporootid>3936ed74-78e9-40c3-8819-a806f6a02759</reporootid>
+    </None>
+    <None Include="OpenGenericApp.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</id>
+      <recordtableid>3a17130a-ec04-4660-a6a2-a4be9e4d2244</recordtableid>
+    </None>
+    <None Include="OpenPropertyTreeTestPanel.rxrec">
+      <id>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</id>
+      <recordtableid>9dc3d550-46c7-437f-b20a-29986e1ceddc</recordtableid>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="SelectPropertyTreeTestPanel.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</id>
+      <recordtableid>a167d7f1-18e8-4104-8333-35233bf382c8</recordtableid>
+    </None>
+    <None Include="SimpleCasesChangeBool.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>d3dc525a-e8a1-466c-9c61-d270e9967b22</id>
+      <recordtableid>4a620fbf-de10-45fc-b45c-c91bb4a0d9b7</recordtableid>
+    </None>
+    <None Include="SimpleCasesMultipleSelect.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>da9cc559-3a0f-4ea1-9253-3a7324f3f338</id>
+      <recordtableid>681b404c-ceac-4ddc-9f64-e4e6cda5ff71</recordtableid>
+    </None>
+    <None Include="SimpleCasesSlideUp.rxrec">
+      <id>d6319c40-efbb-488b-be2e-24566e759ef5</id>
+      <recordtableid>fe4210aa-3276-462b-93b5-2ae968fccb62</recordtableid>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <Content Include="NGTTestAutomation.rxtmg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <id>b67efc66-31e4-4dfa-8dd3-af70ea233da3</id>
+    </Content>
+    <Content Include="NGTTestAutomation.rxtst">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <id>d13b3430-f6ba-492c-accf-114a6c68ec8f</id>
+    </Content>
+  </ItemGroup>
+  <Import Condition="Exists('$(MSBuildExtensionsPath)\Ranorex$(RanorexVersion)\Ranorex.MSBuild.Targets')" Project="$(MSBuildExtensionsPath)\Ranorex$(RanorexVersion)\Ranorex.MSBuild.Targets" />
+</Project>

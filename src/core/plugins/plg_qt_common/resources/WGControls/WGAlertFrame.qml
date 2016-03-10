@@ -100,6 +100,7 @@ Rectangle {
         // Text is an odd exception where it doesn't need a specific height or width - it gets this from the font.pixelSize and the text itself.
         WGMultiLineText {
             id: message
+            objectName: "message"
             text: Value.message
             font.pixelSize: 22
             horizontalAlignment: Text.AlignRight
@@ -111,6 +112,7 @@ Rectangle {
     // Remove the alert on mouse click
     // MouseArea is also outside the Layout and at the bottom so it is highest in the Zorder.
     MouseArea {
+        objectName: "removeAlert"
         anchors.fill: parent
         onClicked: {
             removeAlertAt( index )

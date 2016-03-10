@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import WGControls 1.0
@@ -20,7 +20,7 @@ Example:
     }
 \endcode
 */
-WGListView {
+ListView {
     objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
     id: treeItem
     model: ChildModel
@@ -29,17 +29,18 @@ WGListView {
     rightMargin: 0
     topMargin: treeView.childListMargin
     bottomMargin: treeView.childListMargin
-    columnSpacing: treeView.columnSpacing
-    selectionMargin: treeView.selectionMargin
-    minimumRowHeight: treeView.minimumRowHeight
-    selectionExtension: treeView.selectionExtension
-    treeExtension: treeView.treeExtension
-    columnDelegates: treeView.columnDelegates
-    defaultColumnDelegate: treeView.defaultColumnDelegate
-    enableVerticalScrollBar: false
-    showColumnsFrame: false
-    columnCount: treeView.columnCount
-    columnWidths: treeView.columnWidths
+
+    property real columnSpacing: treeView.columnSpacing
+    property real selectionMargin: treeView.selectionMargin
+    property real minimumRowHeight: treeView.minimumRowHeight
+
+    property var selectionExtension: treeView.selectionExtension
+    property var treeExtension: treeView.treeExtension
+
+    property int columnCount: treeView.columnCount
+    property var columnWidths: treeView.columnWidths
+    property var columnDelegates: treeView.columnDelegates
+    property var defaultColumnDelegate: treeView.defaultColumnDelegate
 
     property int depth: typeof(childItems) === "undefined" ? 0 : childItems.depth
     property int parentListIndex: typeof(index) === "undefined" ? 0 : index
@@ -223,7 +224,7 @@ WGListView {
                 }
             }
 
-            WGListViewRowDelegate { // The row
+            WGItemRow { // The row
                 objectName: "WGListViewRowDelegate"
                 id: rowDelegate
 

@@ -220,6 +220,7 @@ Item {
 
     MessageDialog {
         id: overwritePromptDialog
+        objectName: "overwrite_dialog"
         title: "Overwrite?"
         icon: StandardIcon.Question
         text: "This filter already exists. Would you like to overwrite it with the new terms?"
@@ -253,6 +254,7 @@ Item {
             WGPushButton {
                 //Save filters and load previous filters
                 id: btnListviewFilters
+                objectName: "searchPushButton"
                 iconSource: "icons/search_folder_16x16.png"
 
                 tooltip: "Filter Options"
@@ -342,6 +344,7 @@ Item {
 
                     WGTextBox {
                         id: filterText
+                        objectName: "filterText"
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
@@ -350,9 +353,9 @@ Item {
                         placeholderText: "Filter"
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-						Component.onCompleted: {
-							WGCopyableHelper.disableChildrenCopyable(filterText);
-						}
+                        Component.onCompleted: {
+                            WGCopyableHelper.disableChildrenCopyable(filterText);
+                        }
 
                         Keys.onReturnPressed: {
                             addFilter( text );
@@ -364,6 +367,7 @@ Item {
                     }
                     WGToolButton {
                         id: clearCurrentFilterButton
+                        objectName: "clearFilterButton"
                         iconSource: "icons/close_sml_16x16.png"
 
                         tooltip: "Clear Filters"
@@ -421,6 +425,7 @@ Item {
                         buttonList: [
                             WGPushButton {
                                 id: filterString
+                                objectName: "filterStringButton"
                                 text: Value.value
                                 checkable: true
                                 checked: Value.active
@@ -441,6 +446,7 @@ Item {
                             },
                             WGToolButton {
                                 id: closeButton
+                                objectName: "closeButton"
                                 iconSource: "icons/close_sml_16x16.png"
 
                                 onClicked: {

@@ -4,9 +4,10 @@ import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
 Loader
-{	
-	id: color3_Loader
-	Component.onCompleted: {
-		color3_Loader.setSource("color4_component.qml", { "showAlpha": false });
-	}
+{
+    id: color3_Loader
+    objectName:  itemData != null ? itemData.IndexPath : "color3_component"
+    Component.onCompleted: {
+        color3_Loader.setSource("color4_component.qml", { "showAlpha": false });
+    }
 }

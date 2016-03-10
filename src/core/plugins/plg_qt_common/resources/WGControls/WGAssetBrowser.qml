@@ -24,6 +24,8 @@ WGAssetBrowser {
 \endcode
 */
 
+//ToDo: Better naming of ObjectName for the thumbnails and repeated elements within assetbrowser using itemData
+
 Rectangle {
     id: rootFrame
     objectName: "WGAssetBrowser"
@@ -371,10 +373,10 @@ Rectangle {
             onSelectionChanged: {
                 fileModelSelectionHelper.select(getSelection());
 
-				// Prepare the context menu by passing the selected asset from the
-				// list model and telling the menu to show, which will update
-				// the actions data with the selected asset for processing.
-				contextMenu.contextObject = listModelSelection.selectedItem;
+                // Prepare the context menu by passing the selected asset from the
+                // list model and telling the menu to show, which will update
+                // the actions data with the selected asset for processing.
+                contextMenu.contextObject = listModelSelection.selectedItem;
             }
 
             onCurrentIndexChanged: {
@@ -428,6 +430,7 @@ Rectangle {
     //--------------------------------------
     WGContextArea {
         id: fileContextMenu
+        objectName: "fileContextMenu"
         onAboutToShow: {
             // Prepare the context menu by passing the selected asset from the
             // list model and telling the menu to show, which will update
@@ -435,7 +438,7 @@ Rectangle {
             contextMenu.contextObject = listModelSelection.selectedItem;
         }
         WGContextMenu {
-			id: contextMenu
+            id: contextMenu
             path: "WGAssetBrowserAssetMenu"
         }
     }
@@ -476,6 +479,7 @@ Rectangle {
                         // Breadcrumbs and back/forward
                         WGToolButton {
                             id: btnAssetBrowserBack
+                            objectName: "backButton"
                             iconSource: "icons/back_16x16.png"
                             tooltip: "Back"
                             enabled: (currentFolderHistoryIndex != 0)
@@ -486,6 +490,7 @@ Rectangle {
                         },
                         WGToolButton {
                             id: btnAssetBrowserForward
+                            objectName: "backButton"
                             iconSource: "icons/fwd_16x16.png"
                             tooltip: "Forward"
                             enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
@@ -497,6 +502,7 @@ Rectangle {
                         },
                         WGToolButton {
                             id: btnAssetBrowserHistory
+                            objectName: "historyButton"
                             iconSource: "icons/arrow_down_small_16x16.png"
                             tooltip: "History"
                             width: 16
@@ -524,6 +530,7 @@ Rectangle {
 
                 WGBreadcrumbs {
                     id: breadcrumbControl
+                    objectName: "breadCrumbs"
                     dataModel: rootFrame.viewModel.breadcrumbsModel
 
                     onBreadcrumbClicked: {
@@ -557,6 +564,7 @@ Rectangle {
 
                     WGPushButton {
                         id: displayButton
+                        objectName: "displayButton"
                         Layout.preferredWidth: 100
                         checkable: true
 
@@ -612,6 +620,7 @@ Rectangle {
 
                             WGSlider {
                                 id: slider
+                                objectName: "slider"
                                 stepSize: 32
                                 minimumValue: 0
                                 maximumValue: 256
@@ -625,6 +634,7 @@ Rectangle {
 
                                 WGSliderHandle {
                                     id: sliderHandle
+                                    objectName: "sliderHandle"
                                     minimumValue: slider.minimumValue
                                     maximumValue: slider.maximumValue
                                     showBar: true
@@ -652,6 +662,7 @@ Rectangle {
 
                                 WGPushButton {
                                     id: listViewButton
+                                    objectName: "listViewButton"
                                     anchors.top: menuItems.top
                                     anchors.left: menuItems.left
                                     width: menuItems.width
@@ -672,6 +683,7 @@ Rectangle {
                                 }
                                 WGPushButton {
                                     id: smallIconsButton
+                                    objectName: "smallIconsButton"
                                     anchors.top: listViewButton.bottom
                                     anchors.left: menuItems.left
                                     width: menuItems.width
@@ -692,6 +704,7 @@ Rectangle {
                                 }
                                 WGPushButton {
                                     id: mediumIconsButton
+                                    objectName: "mediumIconsButton"
                                     anchors.top: smallIconsButton.bottom
                                     anchors.left: menuItems.left
                                     width: menuItems.width
@@ -712,6 +725,7 @@ Rectangle {
                                 }
                                 WGPushButton {
                                     id: largeIconsButton
+                                    objectName: "largeIconsButton"
                                     anchors.top: mediumIconsButton.bottom
                                     anchors.left: menuItems.left
                                     width: menuItems.width
@@ -732,6 +746,7 @@ Rectangle {
                                 }
                                 WGPushButton {
                                     id: extraLargeIconsButton
+                                    objectName: "extraLargeIconsButton"
                                     anchors.top: largeIconsButton.bottom
                                     anchors.left: menuItems.left
                                     width: menuItems.width
@@ -755,6 +770,7 @@ Rectangle {
 
                         MouseArea {
                             id: sliderCoverMouseArea
+                            objectName: "sliderCoverMouseArea"
 
                             anchors.top: parent.top
                             anchors.left: sizeMenu.left
@@ -789,6 +805,7 @@ Rectangle {
                     // Asset Browser View Options
                     WGPushButton {
                         id: btnAssetBrowserOrientation
+                        objectName: "btnAssetBrowserOrientation"
                         iconSource: checked ? "icons/rows_16x16.png" : "icons/columns_16x16.png"
                         checkable: true
                         checked: false
@@ -808,6 +825,7 @@ Rectangle {
 
                     WGPushButton {
                         id: btnAssetBrowserHideFolders
+                        objectName: "btnAssetBrowserHideFolders"
                         iconSource: checked ? "icons/folder_tree_off_16x16.png" : "icons/folder_tree_16x16.png"
                         checkable: true
                         checked: false
@@ -825,6 +843,8 @@ Rectangle {
                     /*
                     WGToolButton {
                         id: btnUseSelectedAsset
+                        objectName: "btnUseSelectedAsset"
+
                         iconSource: "icons/list_plus_16x16.png"
 
                         tooltip: "Apply Asset"
@@ -867,6 +887,7 @@ Rectangle {
 
                 WGActiveFilters {
                     id: activeFilters
+                    objectName: "activeFilters"
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: childrenRect.height
                     inlineTags: true
@@ -1039,6 +1060,7 @@ Rectangle {
 
                     WGTreeView {
                         id: folderView
+                        objectName: "folderView"
                         model : folderModel
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -1178,6 +1200,7 @@ Rectangle {
 
                         GridView {
                             id: assetGrid
+                            objectName: "assetGrid"
                             visible: showIcons
 
                             height: folderContentsRect.height
@@ -1200,6 +1223,7 @@ Rectangle {
 
                             WGScrollBar {
                                  id: verticalScrollBar
+                                 objectName: "verticalScrollBar"
                                  width: defaultSpacing.rightMargin
                                  anchors.top: assetGrid.top
                                  anchors.right: assetGrid.right
@@ -1260,6 +1284,7 @@ Rectangle {
 
                                     WGMultiLineText {
                                         id: iconLabel
+
                                         text: Value
                                         horizontalAlignment: Text.AlignHCenter
 
@@ -1300,6 +1325,7 @@ Rectangle {
 
                                 MouseArea {
                                     id: assetMouseArea
+                                    objectName: "assetEntry"
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
 
@@ -1359,6 +1385,7 @@ Rectangle {
 
                             Item {
                                 visible: !showIcons
+                                objectName: "showIcons"
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
                                 Item {

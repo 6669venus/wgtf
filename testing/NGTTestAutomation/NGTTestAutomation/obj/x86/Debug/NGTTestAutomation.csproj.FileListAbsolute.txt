@@ -1,0 +1,16 @@
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.rxtmg
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.rxtst
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.exe.config
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.exe
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.pdb
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.csprojResolveAssemblyReference.cache
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.exe
+C:\Users\adamm\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.pdb
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.rxtmg
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.rxtst
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.exe.config
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.exe
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAutomation.pdb
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.csprojResolveAssemblyReference.cache
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.exe
+C:\Users\francoism\Documents\Ranorex\RanorexStudio Projects\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.pdb

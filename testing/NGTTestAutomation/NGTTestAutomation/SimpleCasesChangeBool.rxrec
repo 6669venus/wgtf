@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="4a620fbf-de10-45fc-b45c-c91bb4a0d9b7"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		SimpleCasesChangeBool
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="SimpleCasesChangeBool"
+	namespace="NGTTestAutomation"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="a3454fb2-dc9a-449c-a67b-6940416cba31"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="0"
+		sy="0"
+		loc="Center">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="a91fe9bb-237b-4692-a2f1-09a2d5b02802">
+				<path>
+					/form[@name='MainWindow']/container[3]//list[@name='WGListView']/list[@name='WGListView']/list[1]/list[2]//container[@name='WGTextBoxFrame']
+				</path>
+			</info>
+		</mouseitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		SimpleCasesChangeBool.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

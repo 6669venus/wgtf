@@ -1,0 +1,157 @@
+﻿<testsuite
+name="NGTTestAutomation"
+rxversion="5.4.5.19886"
+id="030bf048-9635-494c-a06c-ab2cd1728573"
+reportfilename="%S_%Y%M%D_%T.rxlog"
+reporttemplatefolder=""
+reportxslfilename=""
+placescreenshotsinfolder="True"
+ReportTime="RelativeToTestSuiteStartTime"
+reportwriteinterval="30000ms"
+reportcompress="False"
+enabletracingscreenshots="True"
+TracingScreenshotMode="Foreground"
+TracingScreenshotQuality="40"
+reportlevel="Info;20">
+	<parameters>
+		<param
+		name="path"
+		value="C:\Ngt-project\bin\generic_app_test\win64"/>
+	</parameters>
+	<content>
+		<folder
+		name="Programming_Generic_App_UI"
+		id="033e65d6-e4cb-4780-a7cb-16900dbb6277">
+			<folder
+			name="Miscellaneous"
+			id="65c6b675-1d26-4ea9-95df-8bc930b9a642">
+				<testcase
+				name="Selection"
+				id="5fa41ae9-508f-4ceb-87c8-20f644bff555">
+					<htmlcomment>
+						<![CDATA[<P>Select an item in NGT property panel.<BR>This test needs altering, I changed 
+properties, not selected items</P>]]>
+					</htmlcomment>
+					<setup
+					name="setup"
+					id="08b195db-52f7-40d6-a4bb-4fd8cf54a278">
+						<testmodule
+						name="OpenGenericApp"
+						id="7a04f546-eb88-4bdb-9aaf-d7e16fc424d3"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="OpenPropertyTreeTestPanel"
+					id="4de0cff4-935b-4e0f-a616-7992d9afc545"
+					ref="9dc3d550-46c7-437f-b20a-29986e1ceddc"
+					type="Recording"/>
+					<testmodule
+					name="SelectPropertyTreeTestPanel"
+					id="95ade365-67b4-452a-a37b-b461e5bf0475"
+					ref="a167d7f1-18e8-4104-8333-35233bf382c8"
+					type="Recording"/>
+					<testmodule
+					name="BrowsePropertyTreeSimpleCases"
+					id="7f83dbe4-8a06-48c0-a380-869097087ff3"
+					ref="6894454c-4c1b-4b4c-a17b-fce50e2f2f54"
+					type="Recording"/>
+					<testmodule
+					name="SimpleCasesChangeBool"
+					id="5e94e849-05ff-4eed-9ed7-6a3caabb25f1"
+					ref="4a620fbf-de10-45fc-b45c-c91bb4a0d9b7"
+					type="Recording"/>
+					<testmodule
+					name="SimpleCasesSlideUp"
+					id="ed1e7782-5c33-4c2b-80e8-50121c1670f8"
+					ref="fe4210aa-3276-462b-93b5-2ae968fccb62"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="1402807a-63e2-4813-8be7-80430657fef7">
+						<testmodule
+						name="CloseGenericApp"
+						id="c93459a6-4b9a-48df-9801-2515f8883cb8"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+				<testcase
+				name="Multiple_item_Selection"
+				id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef">
+					<setup
+					name="setup"
+					id="2a8aa7c6-1923-4663-b047-e69305a2c953">
+						<testmodule
+						name="OpenGenericApp"
+						id="bf92ab5e-73da-49ab-ae34-bf647c11c279"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="OpenPropertyTreeTestPanel"
+					id="5c6021a9-62d1-4aab-b1d4-fd2dd2406e05"
+					ref="9dc3d550-46c7-437f-b20a-29986e1ceddc"
+					type="Recording"/>
+					<testmodule
+					name="SelectPropertyTreeTestPanel"
+					id="ccfb1742-7e9a-44a2-821c-92f9708efae9"
+					ref="a167d7f1-18e8-4104-8333-35233bf382c8"
+					type="Recording"/>
+					<testmodule
+					name="BrowsePropertyTreeSimpleCases"
+					id="003b1da1-7d84-48da-b68a-99e2d71d309e"
+					ref="6894454c-4c1b-4b4c-a17b-fce50e2f2f54"
+					type="Recording"/>
+					<testmodule
+					name="SimpleCasesMultipleSelect"
+					id="41e9397f-f16e-4ead-aa15-6333311b5556"
+					ref="681b404c-ceac-4ddc-9f64-e4e6cda5ff71"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="45e64aa3-b47c-4ada-abc0-164f34d0decf">
+						<testmodule
+						name="CloseGenericApp"
+						id="fb1a684f-d3e2-4509-b545-824fd81379b3"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
+		</folder>
+	</content>
+	<testconfigurations
+	default="TestRun">
+		<testconfiguration
+		name="TestRun">
+			<testcase
+			id="030bf048-9635-494c-a06c-ab2cd1728573"/>
+			<testcase
+			id="033e65d6-e4cb-4780-a7cb-16900dbb6277"/>
+			<testcase
+			id="5fa41ae9-508f-4ceb-87c8-20f644bff555"/>
+			<testcase
+			id="65c6b675-1d26-4ea9-95df-8bc930b9a642"/>
+			<testcase
+			id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef"/>
+		</testconfiguration>
+	</testconfigurations>
+	<references/>
+</testsuite>

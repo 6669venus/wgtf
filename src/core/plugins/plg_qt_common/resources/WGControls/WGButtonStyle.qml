@@ -38,6 +38,7 @@ ButtonStyle {
     label:
         Item {
         id: buttonLabel
+        objectName: "buttonLabel"
 
         implicitWidth: labelFrame.implicitWidth
         implicitHeight: labelFrame.implicitHeight
@@ -77,6 +78,7 @@ ButtonStyle {
 
                 Image{
                     id: icon
+                    objectName: "icon"
                     anchors.verticalCenter: parent.verticalCenter
                     source: control.iconSource
                     visible: control.enabled

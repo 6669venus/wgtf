@@ -7,6 +7,7 @@ import QtQuick.Layouts 1.1
 */
 
 Button {
+    objectName: "WGAbstractButton"
 
     property bool buttonChecked: checked
 

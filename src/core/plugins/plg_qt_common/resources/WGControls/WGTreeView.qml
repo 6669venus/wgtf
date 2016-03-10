@@ -38,7 +38,7 @@ Example:
 \endcode
 */
 
-Item {
+WGItemView {
     objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
     id: treeView
 
@@ -257,10 +257,10 @@ Item {
     //property var maximumColumnText: []
 
     readonly property real minimumScrollbarWidth:
-        enableVerticalScrollBar ? rootItem.verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
+        enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
 
     readonly property real maximumScrollbarWidth:
-        enableVerticalScrollBar ? rootItem.verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
+        enableVerticalScrollBar ? verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
 
     readonly property real rowMargins: leftMargin + rightMargin + minimumScrollbarWidth
 
@@ -431,14 +431,16 @@ Item {
 
     WGTreeItem {
         id: rootItem
-        topMargin: treeView.topMargin + (treeView.header === null ? 0 : treeView.headerItem.height)
-        bottomMargin: treeView.bottomMargin + (treeView.footer === null ? 0 : treeView.footerItem.height)
-        leftMargin: treeView.leftMargin
-        rightMargin: treeView.rightMargin
-        width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
-        height: columnsFrame.height
         model: treeView.model
-        enableVerticalScrollBar: true
+        clip: true
+        x: treeView.leftMargin
+        y: treeView.topMargin + headerHeight
+        width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
+        height: treeView.height - y - footerHeight
+
+        property real headerHeight: headerItemLoader.status === Loader.Ready ? treeView.headerItem.height : 0
+        property real footerHeight: footerItemLoader.status === Loader.Ready ? treeView.footerItem.height : 0
+        property bool scrollable: contentHeight > height
 
         onContentHeightChanged: {
             if (autoUpdateLabelWidths)
@@ -461,7 +463,7 @@ Item {
 
     property Component header: showColumnHeaders ? headerComponent : null
         
-    property Component headerComponent: WGDataModelHeaderRow {
+    property Component headerComponent: WGHeaderRow {
         topMargin: treeView.topMargin
         columnCount: treeView.columnCount
         columnWidthFunction: treeView.columnWidthFunction
@@ -487,7 +489,7 @@ Item {
 
     property Component footer: showColumnFooters ? footerComponent : null
 
-    property Component footerComponent: WGDataModelHeaderRow {
+    property Component footerComponent: WGHeaderRow {
         bottomMargin: treeView.bottomMargin
         columnCount: treeView.columnCount
         columnWidthFunction: treeView.columnWidthFunction
@@ -519,4 +521,21 @@ Item {
             treeView.columnWidths = columnWidths;
         }
     }
+
+    WGScrollBar {
+        id: verticalScrollBar
+        width: defaultSpacing.rightMargin
+        anchors.top: treeView.top
+        anchors.right: treeView.right
+        anchors.bottom: treeView.bottom
+        anchors.topMargin: treeView.topMargin
+        anchors.bottomMargin: treeView.bottomMargin
+        anchors.rightMargin: treeView.rightMargin
+        orientation: Qt.Vertical
+        position: rootItem.visibleArea.yPosition
+        pageSize: rootItem.visibleArea.heightRatio
+        scrollFlickable: rootItem
+        visible: rootItem.scrollable && enableVerticalScrollBar
+    }
+    property alias verticalScrollBar: verticalScrollBar
 }

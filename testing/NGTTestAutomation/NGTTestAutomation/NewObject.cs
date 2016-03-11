@@ -79,25 +79,9 @@ namespace NGTTestAutomation
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.Column1' at 80;161.", repo.MainWindow.Column1Info, new RecordItemIndex(0));
-            repo.MainWindow.Column1.Click("80;161");
-            Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.Column1' at 80;161.", repo.MainWindow.Column1Info, new RecordItemIndex(1));
-            repo.MainWindow.Column1.Click("80;161");
-            Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.Column1' at 80;161.", repo.MainWindow.Column1Info, new RecordItemIndex(2));
-            repo.MainWindow.Column1.Click("80;161");
-            Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.Column1' at 80;161.", repo.MainWindow.Column1Info, new RecordItemIndex(3));
-            repo.MainWindow.Column1.Click("80;161");
-            Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.Column1' at 80;161.", repo.MainWindow.Column1Info, new RecordItemIndex(4));
-            repo.MainWindow.Column1.Click("80;161");
-            Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Select() on item 'NewObject.NewObject'.", repo.NewObject.NewObjectInfo, new RecordItemIndex(0));
+            repo.NewObject.NewObject.Select();
+            Delay.Milliseconds(0);
             
         }
 

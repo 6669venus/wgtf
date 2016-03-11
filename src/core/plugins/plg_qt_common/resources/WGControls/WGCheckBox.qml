@@ -8,7 +8,7 @@ import BWControls 1.0
 Example:
 \code{.js}
 WGCheckBox {
-    label_: "Option"
+    label: "Option"
     text: "Save Automatically?"
 }
 \endcode
@@ -21,8 +21,7 @@ WGCheckBase {
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*! This property determines the checked state of the control
         The default value is false
@@ -33,16 +32,7 @@ WGCheckBase {
 
     activeFocusOnTab: enabled
 
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
-
-    /*! This property holds the target control's id to be bound to this control's b_Value */
-    property alias b_Target: dataBinding.target
-
-    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
-    property alias b_Property: dataBinding.property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
+    implicitHeight: defaultSpacing.minimumRowHeight
 
     onCheckedStateChanged: {
         if (checkedState === Qt.PartiallyChecked) {
@@ -62,10 +52,6 @@ WGCheckBase {
         {
             checkedState = Qt.Checked
         }
-    }
-
-    Binding {
-        id: dataBinding
     }
 
     // support copy&paste
@@ -104,4 +90,6 @@ WGCheckBase {
     style: WGCheckStyle {
     }
 
+    /*! Deprecated */
+    property alias label_: checkBox.label
 }

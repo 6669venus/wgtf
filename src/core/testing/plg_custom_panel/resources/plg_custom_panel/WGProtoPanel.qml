@@ -56,10 +56,6 @@ Rectangle {
     property alias checked_ : headerCheck.checked
     property alias exclusiveGroup: headerCheck.exclusiveGroup
 
-    property alias b_Target: headerCheck.b_Target
-    property alias b_Property: headerCheck.b_Property
-    property alias b_Value: headerCheck.b_Value
-
     //change to true if contains a ScrollPanel or similar childObject which needs to obscure content
     property bool clipContents_: false
 

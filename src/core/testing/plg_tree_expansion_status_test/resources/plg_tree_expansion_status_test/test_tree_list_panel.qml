@@ -55,7 +55,7 @@ WGPanel{
 			color: "transparent"
 			width: defaultSpacing.doubleMargin
 			WGSeparator {
-				vertical_: true
+				vertical: true
 				width: 2
 				anchors.horizontalCenter: parent.horizontalCenter
 				anchors.top: parent.top

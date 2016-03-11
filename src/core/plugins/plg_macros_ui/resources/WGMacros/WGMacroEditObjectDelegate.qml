@@ -76,7 +76,7 @@ Rectangle {
 		}
 
 		WGSeparator {
-			vertical_: true
+			vertical: true
 		}
 
 		Text {

@@ -33,9 +33,9 @@ Rectangle {
 
 					WGProgressControl {
 						Layout.fillWidth: true
-						fakeProgress_: false
+						fakeProgress: false
 						text: commandId
-						units_: "%"
+						units: "%"
 						value: progValue
 						maximumValue: 100
 

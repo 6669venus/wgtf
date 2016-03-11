@@ -9,7 +9,7 @@ MenuStyle {
     frame: Rectangle {
         color: palette.darkHeaderColor
         WGSeparator {
-            vertical_: true
+            vertical: true
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: defaultSpacing.minimumRowHeight
@@ -125,7 +125,7 @@ MenuStyle {
         height: defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
         WGSeparator {
-            vertical_: false
+            vertical: false
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.left: parent.left

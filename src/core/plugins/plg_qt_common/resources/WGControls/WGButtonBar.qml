@@ -133,7 +133,7 @@ WGButtonFrame {
                     anchors.horizontalCenter: parent.left
                     height: mainFrame.height - defaultSpacing.doubleBorderSize
                     anchors.verticalCenter: parent.verticalCenter
-                    vertical_: true
+                    vertical: true
                 }
             }
         }
@@ -142,7 +142,7 @@ WGButtonFrame {
             visible: showSeparators
             height: mainFrame.height - defaultSpacing.doubleBorderSize
             anchors.verticalCenter: parent.verticalCenter
-            vertical_: true
+            vertical: true
         }
     }
 

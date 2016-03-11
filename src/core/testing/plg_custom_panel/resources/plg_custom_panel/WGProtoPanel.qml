@@ -454,7 +454,7 @@ Rectangle {
 
         //separators only for group boxes
         WGSeparator {
-            vertical_: false
+            vertical: false
 
             visible: hasSeparators_
 
@@ -580,7 +580,7 @@ Rectangle {
 
     //separators only for group boxes
     WGSeparator {
-        vertical_: false
+        vertical: false
 
         visible: hasSeparators_
 

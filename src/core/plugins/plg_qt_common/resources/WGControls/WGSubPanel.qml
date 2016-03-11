@@ -476,7 +476,7 @@ Rectangle {
 
         //separators only for group boxes
         WGSeparator {
-            vertical_: false
+            vertical: false
             visible: hasSeparators
             anchors.left: headerBox.right
             anchors.right: panelMenu.left
@@ -590,7 +590,7 @@ Rectangle {
 
     //separators only for group boxes
     WGSeparator {
-        vertical_: false
+        vertical: false
 
         visible: hasSeparators
 

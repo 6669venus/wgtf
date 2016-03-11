@@ -121,7 +121,7 @@ Style {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
         WGSeparator {
-            vertical_: __horizontal
+            vertical: __horizontal
             width: __horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
             height: !__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
 

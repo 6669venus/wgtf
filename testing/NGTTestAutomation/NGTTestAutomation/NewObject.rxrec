@@ -1,0 +1,2748 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="dbe4d3f5-b07d-45aa-ac93-8ae098a5b09d"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		NewObject
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="NewObject"
+	namespace="NGTTestAutomation"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="8ea5bcb8-684d-4f04-b26d-ae39ba5f3938"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="1713"
+		sy="285"
+		loc="80;161">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="43678c00-fc48-4f7b-ab2f-d7fb32124bdd">
+				<element
+				role="container"
+				prefcap="container"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="1633,124,275,737"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						QQuickRectangle_QML_492;QQuickRectangle;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						318
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						column
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QQuickRectangle
+					</attribute>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Border"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.border property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Color"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.color property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Gradient"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.gradient property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PreviousColumn"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.previousColumn property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Radius"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.radius property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt QQuickRectangle_QML_492.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt QQuickRectangle_QML_492.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt QQuickRectangle_QML_492.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QQuickRectangle_QML_492.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt QQuickRectangle_QML_492.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt QQuickRectangle_QML_492.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt QQuickRectangle_QML_492.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt QQuickRectangle_QML_492.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt QQuickRectangle_QML_492.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt QQuickRectangle_QML_492.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//element[@objectname='WGColumnsFrame']/container[2]
+				</path>
+			</info>
+			<helperscreenshot
+			guid="d42df1e4-ec98-4611-9c0d-8ce27089e4ea">
+				/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDABwTFRgVERwYFhgfHRwhKUUtKSYmKVQ8QDJFZFhpZ2JY
+YF9ufJ6GbnWWd19giruLlqOpsbOxa4TC0MGszp6usar/2wBDAR0fHykkKVEtLVGqcmByqqqqqqqq
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr/wAARCAH0AfQDASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDLooop
+gFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVDGB3HjvSbT6UrE7jz3pNx9aa2Jn
+8TDafSjafSjcfWjcfWmSG0+lG0+lG4+tG4+tABtPpRtPpRuPrRuPrQAbT6UbT6Ubj60bj60AG0+l
+G0+lG4+tG4+tABtPpRtPpRuPrRuPrQAbT6UbT6Ubj60bj60AG0+lG0+lG4+tG4+tABtPpRtPpRuP
+rRuPrQAbT6UbT6Ubj60bj60AG0+lG0+lG4+tG4+tABtPpRtPpRuPrRuPrQAbT6UbT6Ubj60bj60A
+G0+lG0+lG4+tG4+tABtPpSFTjpS7j60hY460ATRTSQyb49yn8Ka7M7EtuJJySadFC80myPcx/Cmu
+rIxDbgQcEGkA5OtNpydabUr4mbT/AIUfn+hBRRRVmAUUUUAHaijtRQAUo6UlKOlAwooooEaCf6tP
+90UtNT/Vp/uinUAFFFFAFSiiigYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR/iR9UP
+s9v2+MPGsitIAQ2cdarnqakjmeCfzIyoYHglQcfnTHcu5ZsZPoAB+QprYmfxMSikopki0UlFAC0U
+lFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0UlFAC0h6UUH
+pQBMkssZOwsmeu18U2R3c5fJPHJbNTW86QyEukcinqGxUc0gkcsAi5Iwq4AHNIBU602nJ1ptSviZ
+tP8AhR+f6EFFFFWYBRRRQAdqKO1FABSjpSUo6UhhRRRTEX0/1af7op1NT/VJ/uinUAFFFFAFfZ70
+bPenUVdkTdjdnvRs96dRRZBdjdnvRs96dRRZBdjdnvRs96dRRZBdjdnvRs96dRRZBdjdnvRs96dR
+RZBdjdnvQFwc5p1FTNLlZpRb9pH1Q0pk9aNnvVryYxB524lSNoHQ7+/4d/xFQumzb8ytuXPynOPY
++9OKViZt8zIKKKs+VC1o8qrKhTA3MQVZu4HH49aLIV2VqKmt0jYO0iuwQA4Ugd8ZyfrUzW0UZd33
+tGNm0BgD8wz1x2+lFhXKdFXTZopeM7y4LhXyAvyjOMden86pEYOD2osh6hT1idgCNvPvTKtWl4ls
+yuAjMAMbgTiiyC5AYnUEnbx70bPerF1NLKn2mWJEjm3BGjBwSCRg+h4psKo77XbbkYBzwD2z7UJI
+G2Q7PekZcDOatvAqjyy22VV3NubAH+z9elVX+7TshXYyinR7A48wMV7hTg1LdwrC6hQ6kqCUfqp9
+D/nvSsh3ZBRVn7OhtiwDhxGJMkjBG7HA/wDr9qe1tCVYKJFdFViSQcg47duvrRYLlOirlxaIlu0y
+bl2SGJkYhjkd8iqdFkF2AyTgYpdrYzx+dICAeTjirP20eR5OyPb9DnPrRYLlcKScGnbPehCCx7jA
+zV4Q25t/MKvHu4TdKDk+pG3p1/KiyFdlDZ702p5U8tiu5WwOqnIqCiyC7Cip5oo08gozlZFySQM9
+SOmfb1qW4tES3aZNy7JDEyMQxyO+RRZDuynRVmG3SSEEh97ByGyMfKM4x1P6U5LZDGqtu810Zwc8
+DGeMY56GiyC7KlFW5LeLy5NgkV41DkswIYHHYDjr6mqlFguKFJGePzo2NnBxT4ZljZWwrEdmBxT5
+rkTyBmCBunyg80WC4xVwetR1LUVZ/aZvL+FH5/oQUUUVRiFFFFAB2oo7UlAC0o+7+NNp38P40hiU
+UUUxGgn+qT/dFOqrDcbVCt0HQ1J9oj9f0oAmoqL7RH6/pRQAlFR7j60bj61XMieUkoqPcfWjcfWj
+mQcpJRUe4+tG4+tHMg5SSio9x9aNx9aOZByklFR7j60bj60cyDlJKKj3H1o3H1o5kHKSUVHuPrSq
+xJpSl7rNaK/eR9UWTMPKWILhAORnq3rUbsrbdibcLg85yfWoixyeaTcfWhSViZp8zFjkeJ90bsje
+qnBqXz08pxsfzHXDMXyDznOMf1qCjFFybE6zxrK+2IiJ12lA/PbofqKf9rVmcSRkxttwobBG0YHO
+PT2qrijFFwsWhek+YXUlmLMCrYwWGD2ORVWjFGKLoLMKnt/KLKJiwUgcqelQYo/E/nRcLHTadDBN
+owhcCSJmkGD3G81gTRpDOY450njxlHVgTj0OO/8AOoxcXCrCFk4gJaNe2ck8+vXFEjKZZDCrJGWy
+qkDjPbj3zQnYbRM8ivJu8sAbQMA98Yz/AFqF/u03cfWgkkc0+ZE8o+OZlURsztDnJj3EA1I88TAL
+5TFFQqoZ8kHk5yAPXpVfFGKV0OzLAuR9m8oq27bsDBuMZzyMevvStdboiAhEjKEZt3GBjHGOvA71
+WxRii4WLVxeGaExhCu5/MfLZy2O3HH61VoxRii6Cwqfe/CrWLb7Pu3Seb025GPr0qp+f50c+p/Oi
+4WJB94/Qf1qzLNBIoAhdSq7RiQYH4Y/rVMEjvRuPrTugsTSsrMSibFx93OaiilkiyYpHQkYO1iM0
+m4+tJii4WJppo3jiVI3UxjGS+c8k+g9ame+WRQrwlkaTzJFL9Wx244/WqeKMUroLFiG5EcJQqxxu
+2kNjGRg54OaEugsQBQmRVZFbdxg5zkY9zVfFGKLoLMsPdBoSuwiRlCM27ggY7Y68DvVejFGKLhYm
+h2bl83dswM7TzT5xCsm2BmZR1LHrVb8T+dGT6n86LhYlqKnqSTzTKi95M6JK1KPz/QgoooqjAKKK
+KADtSUp6UlABS/w/jSUo5GKQwooopiCiiigAooooAnooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq
+/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAK
+KKKAA9KSlPQUlABRRRQAu5vU/nRub+8fzpKKAF3N/eP50bm/vH86SigBdzf3j+dFJRQBYooooGFF
+FFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACii
+igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm
+05OtNqF8TNp/wo/P9CCiiirMAooooAD0FJQegpKAFopKKAFopKUDJA9aACirQAQYUfjS7j60AVKK
+t7j60UAMooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAQ9BSUp6CkoAKKKKACnR/wCsX6im06P/
+AFi/UUAWj1NJSnqaSgAoq5aWS3EW8zBOcYop2C5RooopDCiiigAooooAKKKKACiiigAooooAKVfv
+CkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm1C+Jm0/4Ufn+hBRRRVmAUUUU
+AIegpKU9BSUAFFFFABTo/wDWL9RTadH/AKxfqKALR6mkpT1NJQBZgsZp4/MTbtzjk0VEk8qLtSV1
+HoGIooAhooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooARugpKVugptAC0UlFAC06P8A1i/UUylo
+AuHqaSohOD97g07zU9aAH0UzzU9aKAFooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMt
+maUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAEboKbTm
+6Cm0AFFFFABRRRQAUUUUAFFFFAFqiiigYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR
+/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0IKKKKswCiiigBG6Cm05ugptA
+BQKKKAF+X1P5UfL6n8qSigBfl9T+VHy+p/KkooAX5fU/lRSUUgLVFFFMYUUUUAFFFFABRRRQAUUU
+UAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0
+IKKKKswCiiigBG6Cm05ugptABRRRQAUUUUAFFSpASMsduad9nH/PT9KAIKKn+zj/AJ6fpRQA+iii
+gYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigB
+ydabTk602oXxM2n/AAo/P9CCiiirMAooooAa3QU2nN0FNoAKKKKQBToxmRQe5FNp0f8ArU+ooAuH
+qaSlPU0lMAopQCegJooAZRRRQMKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI+qA9
+TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
+FABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUANfoKbTn6Cm0AFFFFI
+Ap0f+tT6im06L/Wp/vCgC4eppKU9TSUwLlrfm2h8vyw3Oc5xRT7bTfPgWTzgu7ttz/WigDOooooG
+FFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcn
+Wm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAGv0FNpz9BTaQBRRRQAU6L/Wp/vCm0qHa4Poc0AXT1NJ
+QSDyDkGimA9JpEGEkZR6A4oplFADaKKKBhRRRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZml
+H+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKAHJ1ptOTrTahfEzaf8KPz/AEIKKKKswCiiigBr9BTKe/QU
+ykAUUUUAFFFFADldl6Gl81/X9KZRQA/zX9f0oplFAFyiiimMKKKKACiiigAooooAKKKKACiiigAp
+V+8KSlX7wqZbM0o/xI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBR
+RRQA1xkfSmVLR+A/KgCKipePQflRx6D8qAIqKl49B+VHHoPyoAioqXj0H5Uceg/KgCKipOPQflRQ
+BYooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFM
+kKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAKKKKACiiigAooooAKKKKACiiigAooooAnooooGFFF
+FABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiii
+gAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0
+5OtNqF8TNp/wo/P9CCiiirMAooooAKKKXaaAEopdpo2mgBKKXaaNpoASil2mjaaAEopdpooAmooo
+oGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA
+cnWm05OtNqF8TNp/wo/P9CCiiirMAooooAUcKTTad/AabQAUUUUAFFFFABRRRQAUUUUAWKKKKBhR
+RRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZmlH+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAoo
+ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAHJ1p
+tOTrTahfEzaf8KPz/QgoooqzAKKKKAD+A02nfwGmUALRSUUALRSVYgs5Z4JZlwEiGST39hQBBRSU
+UALRRRQBZooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP
+4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAD9w0ynn7hqOgBaKSigCe0t2upxGv1J
+xnArWgSdre8jFvLHGItsSMpyf8Sawqt2d0kEFyjhiZU2rjsfekwIPJlCMxjfapwx2nAPoaZThLII
+zGHYITkrng/hTKYxaKSigRbooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfV
+AeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAA/6s1HUh/1ZqKgB
+aKSigYtFJRQAtFJRQAtFJRQBcooooAKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI
++qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUU
+AFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUAB+4QaiqWkwPQU
+AR0VJgegowPQUAR0VJgegowPQUAR0VJgegowPQUAR0VJgelFAFiiiigYUUUUAFFFFABRRRQAUUUU
+AFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0I
+KKKKswCiiigAooAzS4HrQAlFLgetGB60AJRS4HrRgetACUUuB60YHrQAlFLgetFAE1FFFAwooooA
+KKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/Ej6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1
+ptQviZtP+FH5/oQUUUVZgFFFFACj7pptO/gNMoAWikooAWikooAWikooAWikooAs0UUUDCiiigAo
+oooAKKKKACiiigAooooAKVfvCkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm
+1C+Jm0/4Ufn+hBRRRVmAUUUUAH8BptO/gNMoAWikooAWipbWFZ5xG8nlqQSWxnGBmrcdjZykiPUM
+kAsf3JHA/GgDPopKKAFopKKALVFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/E
+j6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1ptQviZtP+FH5/oQUUUVZgFFFFAAfuGmU8/cNR0AL
+RSUUALVs/wCjWAHSS45Psg/xP8qqKQGBYZGeRnGakuZzcTtIRtB4CjsOwpDFe3ljhSZ0xHJ905HN
+RUlFMQtFSw3UsKlY9mCc/NGrfzFFAEtFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCpls
+zSj/ABI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRR
+RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBRRRQAH/Vmo6k
+P+rNRUALRSUUhi0UlFAC0UlFAC0UlFAFyiiimAUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hU
+y2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACi
+iigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/AAo/P9CCiiirMAooooACflIq
+KpaKAIqKlooAioqWigCKipaKAIqKlooAnooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94V
+MtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAKKAM0v
+y+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tFAE1FFFAwooooAKKKKACiiigAoooo
+AKKKKAClX7wooqZbM0o/xI+qA9TSUUU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0UVC+Jm0/4Ufn+hBRRRVmAUUU
+UAL/AAmm0UUAFFFFABRRRQAUUUUAFFFFAH//2Q==
+			</helperscreenshot>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="8ea5bcb8-684d-4f04-b26d-ae39ba5f3938"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="1713"
+		sy="285"
+		loc="80;161">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="43678c00-fc48-4f7b-ab2f-d7fb32124bdd">
+				<element
+				role="container"
+				prefcap="container"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="1633,124,275,737"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						QQuickRectangle_QML_492;QQuickRectangle;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						318
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						column
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QQuickRectangle
+					</attribute>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Border"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.border property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Color"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.color property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Gradient"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.gradient property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PreviousColumn"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.previousColumn property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Radius"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.radius property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt QQuickRectangle_QML_492.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt QQuickRectangle_QML_492.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt QQuickRectangle_QML_492.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QQuickRectangle_QML_492.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt QQuickRectangle_QML_492.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt QQuickRectangle_QML_492.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt QQuickRectangle_QML_492.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt QQuickRectangle_QML_492.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt QQuickRectangle_QML_492.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt QQuickRectangle_QML_492.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//element[@objectname='WGColumnsFrame']/container[2]
+				</path>
+			</info>
+			<helperscreenshot
+			guid="d42df1e4-ec98-4611-9c0d-8ce27089e4ea">
+				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
+/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAK
+KKKAA9KSlPQUlABRRRQAu5vU/nRub+8fzpKKAF3N/eP50bm/vH86SigBdzf3j+dFJRQBYooooGFF
+FFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACii
+igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm
+05OtNqF8TNp/wo/P9CCiiirMAooooAD0FJQegpKAFopKKAFopKUDJA9aACirQAQYUfjS7j60AVKK
+t7j60UAMooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAQ9BSUp6CkoAKKKKACnR/wCsX6im06P/
+AFi/UUAWj1NJSnqaSgAoq5aWS3EW8zBOcYop2C5RooopDCiiigAooooAKKKKACiiigAooooAKVfv
+CkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm1C+Jm0/4Ufn+hBRRRVmAUUUU
+AIegpKU9BSUAFFFFABTo/wDWL9RTadH/AKxfqKALR6mkpT1NJQBZgsZp4/MTbtzjk0VEk8qLtSV1
+HoGIooAhooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooARugpKVugptAC0UlFAC06P8A1i/UUylo
+AuHqaSohOD97g07zU9aAH0UzzU9aKAFooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMt
+maUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAEboKbTm
+6Cm0AFFFFABRRRQAUUUUAFFFFAFqiiigYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR
+/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0IKKKKswCiiigBG6Cm05ugptA
+BQKKKAF+X1P5UfL6n8qSigBfl9T+VHy+p/KkooAX5fU/lRSUUgLVFFFMYUUUUAFFFFABRRRQAUUU
+UAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0
+IKKKKswCiiigBG6Cm05ugptABRRRQAUUUUAFFSpASMsduad9nH/PT9KAIKKn+zj/AJ6fpRQA+iii
+gYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigB
+ydabTk602oXxM2n/AAo/P9CCiiirMAooooAa3QU2nN0FNoAKKKKQBToxmRQe5FNp0f8ArU+ooAuH
+qaSlPU0lMAopQCegJooAZRRRQMKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI+qA9
+TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
+FABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUANfoKbTn6Cm0AFFFFI
+Ap0f+tT6im06L/Wp/vCgC4eppKU9TSUwLlrfm2h8vyw3Oc5xRT7bTfPgWTzgu7ttz/WigDOooooG
+FFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcn
+Wm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAGv0FNpz9BTaQBRRRQAU6L/Wp/vCm0qHa4Poc0AXT1NJ
+QSDyDkGimA9JpEGEkZR6A4oplFADaKKKBhRRRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZml
+H+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKAHJ1ptOTrTahfEzaf8KPz/AEIKKKKswCiiigBr9BTKe/QU
+ykAUUUUAFFFFADldl6Gl81/X9KZRQA/zX9f0oplFAFyiiimMKKKKACiiigAooooAKKKKACiiigAp
+V+8KSlX7wqZbM0o/xI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBR
+RRQA1xkfSmVLR+A/KgCKipePQflRx6D8qAIqKl49B+VHHoPyoAioqXj0H5Uceg/KgCKipOPQflRQ
+BYooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFM
+kKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAKKKKACiiigAooooAKKKKACiiigAooooAnooooGFFF
+FABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiii
+gAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0
+5OtNqF8TNp/wo/P9CCiiirMAooooAKKKXaaAEopdpo2mgBKKXaaNpoASil2mjaaAEopdpooAmooo
+oGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA
+cnWm05OtNqF8TNp/wo/P9CCiiirMAooooAUcKTTad/AabQAUUUUAFFFFABRRRQAUUUUAWKKKKBhR
+RRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZmlH+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAoo
+ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAHJ1p
+tOTrTahfEzaf8KPz/QgoooqzAKKKKAD+A02nfwGmUALRSUUALRSVYgs5Z4JZlwEiGST39hQBBRSU
+UALRRRQBZooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP
+4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAD9w0ynn7hqOgBaKSigCe0t2upxGv1J
+xnArWgSdre8jFvLHGItsSMpyf8Sawqt2d0kEFyjhiZU2rjsfekwIPJlCMxjfapwx2nAPoaZThLII
+zGHYITkrng/hTKYxaKSigRbooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfV
+AeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAA/6s1HUh/1ZqKgB
+aKSigYtFJRQAtFJRQAtFJRQBcooooAKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI
++qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUU
+AFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUAB+4QaiqWkwPQU
+AR0VJgegowPQUAR0VJgegowPQUAR0VJgegowPQUAR0VJgelFAFiiiigYUUUUAFFFFABRRRQAUUUU
+AFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0I
+KKKKswCiiigAooAzS4HrQAlFLgetGB60AJRS4HrRgetACUUuB60YHrQAlFLgetFAE1FFFAwooooA
+KKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/Ej6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1
+ptQviZtP+FH5/oQUUUVZgFFFFACj7pptO/gNMoAWikooAWikooAWikooAWikooAs0UUUDCiiigAo
+oooAKKKKACiiigAooooAKVfvCkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm
+1C+Jm0/4Ufn+hBRRRVmAUUUUAH8BptO/gNMoAWikooAWipbWFZ5xG8nlqQSWxnGBmrcdjZykiPUM
+kAsf3JHA/GgDPopKKAFopKKALVFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/E
+j6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1ptQviZtP+FH5/oQUUUVZgFFFFAAfuGmU8/cNR0AL
+RSUUALVs/wCjWAHSS45Psg/xP8qqKQGBYZGeRnGakuZzcTtIRtB4CjsOwpDFe3ljhSZ0xHJ905HN
+RUlFMQtFSw3UsKlY9mCc/NGrfzFFAEtFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCpls
+zSj/ABI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRR
+RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBRRRQAH/Vmo6k
+P+rNRUALRSUUhi0UlFAC0UlFAC0UlFAFyiiimAUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hU
+y2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACi
+iigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/AAo/P9CCiiirMAooooACflIq
+KpaKAIqKlooAioqWigCKipaKAIqKlooAnooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94V
+MtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAKKAM0v
+y+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tFAE1FFFAwooooAKKKKACiiigAoooo
+AKKKKAClX7wooqZbM0o/xI+qA9TSUUU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0UVC+Jm0/4Ufn+hBRRRVmAUUU
+UAL/AAmm0UUAFFFFABRRRQAUUUUAFFFFAH//2Q==
+			</helperscreenshot>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="8ea5bcb8-684d-4f04-b26d-ae39ba5f3938"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="1713"
+		sy="285"
+		loc="80;161">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="43678c00-fc48-4f7b-ab2f-d7fb32124bdd">
+				<element
+				role="container"
+				prefcap="container"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="1633,124,275,737"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						QQuickRectangle_QML_492;QQuickRectangle;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						318
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						column
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QQuickRectangle
+					</attribute>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Border"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.border property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Color"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.color property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Gradient"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.gradient property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PreviousColumn"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.previousColumn property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Radius"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.radius property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt QQuickRectangle_QML_492.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt QQuickRectangle_QML_492.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt QQuickRectangle_QML_492.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QQuickRectangle_QML_492.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt QQuickRectangle_QML_492.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt QQuickRectangle_QML_492.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt QQuickRectangle_QML_492.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt QQuickRectangle_QML_492.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt QQuickRectangle_QML_492.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt QQuickRectangle_QML_492.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//element[@objectname='WGColumnsFrame']/container[2]
+				</path>
+			</info>
+			<helperscreenshot
+			guid="d42df1e4-ec98-4611-9c0d-8ce27089e4ea">
+				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
+/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAK
+KKKAA9KSlPQUlABRRRQAu5vU/nRub+8fzpKKAF3N/eP50bm/vH86SigBdzf3j+dFJRQBYooooGFF
+FFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACii
+igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm
+05OtNqF8TNp/wo/P9CCiiirMAooooAD0FJQegpKAFopKKAFopKUDJA9aACirQAQYUfjS7j60AVKK
+t7j60UAMooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAQ9BSUp6CkoAKKKKACnR/wCsX6im06P/
+AFi/UUAWj1NJSnqaSgAoq5aWS3EW8zBOcYop2C5RooopDCiiigAooooAKKKKACiiigAooooAKVfv
+CkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm1C+Jm0/4Ufn+hBRRRVmAUUUU
+AIegpKU9BSUAFFFFABTo/wDWL9RTadH/AKxfqKALR6mkpT1NJQBZgsZp4/MTbtzjk0VEk8qLtSV1
+HoGIooAhooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooARugpKVugptAC0UlFAC06P8A1i/UUylo
+AuHqaSohOD97g07zU9aAH0UzzU9aKAFooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMt
+maUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAEboKbTm
+6Cm0AFFFFABRRRQAUUUUAFFFFAFqiiigYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR
+/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0IKKKKswCiiigBG6Cm05ugptA
+BQKKKAF+X1P5UfL6n8qSigBfl9T+VHy+p/KkooAX5fU/lRSUUgLVFFFMYUUUUAFFFFABRRRQAUUU
+UAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0
+IKKKKswCiiigBG6Cm05ugptABRRRQAUUUUAFFSpASMsduad9nH/PT9KAIKKn+zj/AJ6fpRQA+iii
+gYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigB
+ydabTk602oXxM2n/AAo/P9CCiiirMAooooAa3QU2nN0FNoAKKKKQBToxmRQe5FNp0f8ArU+ooAuH
+qaSlPU0lMAopQCegJooAZRRRQMKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI+qA9
+TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
+FABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUANfoKbTn6Cm0AFFFFI
+Ap0f+tT6im06L/Wp/vCgC4eppKU9TSUwLlrfm2h8vyw3Oc5xRT7bTfPgWTzgu7ttz/WigDOooooG
+FFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcn
+Wm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAGv0FNpz9BTaQBRRRQAU6L/Wp/vCm0qHa4Poc0AXT1NJ
+QSDyDkGimA9JpEGEkZR6A4oplFADaKKKBhRRRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZml
+H+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKAHJ1ptOTrTahfEzaf8KPz/AEIKKKKswCiiigBr9BTKe/QU
+ykAUUUUAFFFFADldl6Gl81/X9KZRQA/zX9f0oplFAFyiiimMKKKKACiiigAooooAKKKKACiiigAp
+V+8KSlX7wqZbM0o/xI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBR
+RRQA1xkfSmVLR+A/KgCKipePQflRx6D8qAIqKl49B+VHHoPyoAioqXj0H5Uceg/KgCKipOPQflRQ
+BYooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFM
+kKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAKKKKACiiigAooooAKKKKACiiigAooooAnooooGFFF
+FABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiii
+gAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0
+5OtNqF8TNp/wo/P9CCiiirMAooooAKKKXaaAEopdpo2mgBKKXaaNpoASil2mjaaAEopdpooAmooo
+oGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA
+cnWm05OtNqF8TNp/wo/P9CCiiirMAooooAUcKTTad/AabQAUUUUAFFFFABRRRQAUUUUAWKKKKBhR
+RRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZmlH+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAoo
+ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAHJ1p
+tOTrTahfEzaf8KPz/QgoooqzAKKKKAD+A02nfwGmUALRSUUALRSVYgs5Z4JZlwEiGST39hQBBRSU
+UALRRRQBZooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP
+4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAD9w0ynn7hqOgBaKSigCe0t2upxGv1J
+xnArWgSdre8jFvLHGItsSMpyf8Sawqt2d0kEFyjhiZU2rjsfekwIPJlCMxjfapwx2nAPoaZThLII
+zGHYITkrng/hTKYxaKSigRbooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfV
+AeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAA/6s1HUh/1ZqKgB
+aKSigYtFJRQAtFJRQAtFJRQBcooooAKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI
++qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUU
+AFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUAB+4QaiqWkwPQU
+AR0VJgegowPQUAR0VJgegowPQUAR0VJgegowPQUAR0VJgelFAFiiiigYUUUUAFFFFABRRRQAUUUU
+AFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0I
+KKKKswCiiigAooAzS4HrQAlFLgetGB60AJRS4HrRgetACUUuB60YHrQAlFLgetFAE1FFFAwooooA
+KKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/Ej6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1
+ptQviZtP+FH5/oQUUUVZgFFFFACj7pptO/gNMoAWikooAWikooAWikooAWikooAs0UUUDCiiigAo
+oooAKKKKACiiigAooooAKVfvCkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm
+1C+Jm0/4Ufn+hBRRRVmAUUUUAH8BptO/gNMoAWikooAWipbWFZ5xG8nlqQSWxnGBmrcdjZykiPUM
+kAsf3JHA/GgDPopKKAFopKKALVFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/E
+j6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1ptQviZtP+FH5/oQUUUVZgFFFFAAfuGmU8/cNR0AL
+RSUUALVs/wCjWAHSS45Psg/xP8qqKQGBYZGeRnGakuZzcTtIRtB4CjsOwpDFe3ljhSZ0xHJ905HN
+RUlFMQtFSw3UsKlY9mCc/NGrfzFFAEtFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCpls
+zSj/ABI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRR
+RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBRRRQAH/Vmo6k
+P+rNRUALRSUUhi0UlFAC0UlFAC0UlFAFyiiimAUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hU
+y2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACi
+iigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/AAo/P9CCiiirMAooooACflIq
+KpaKAIqKlooAioqWigCKipaKAIqKlooAnooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94V
+MtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAKKAM0v
+y+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tFAE1FFFAwooooAKKKKACiiigAoooo
+AKKKKAClX7wooqZbM0o/xI+qA9TSUUU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0UVC+Jm0/4Ufn+hBRRRVmAUUU
+UAL/AAmm0UUAFFFFABRRRQAUUUUAFFFFAH//2Q==
+			</helperscreenshot>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="8ea5bcb8-684d-4f04-b26d-ae39ba5f3938"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="1713"
+		sy="285"
+		loc="80;161">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="43678c00-fc48-4f7b-ab2f-d7fb32124bdd">
+				<element
+				role="container"
+				prefcap="container"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="1633,124,275,737"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						QQuickRectangle_QML_492;QQuickRectangle;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						318
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						column
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QQuickRectangle
+					</attribute>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Border"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.border property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Color"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.color property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Gradient"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.gradient property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PreviousColumn"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.previousColumn property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Radius"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.radius property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt QQuickRectangle_QML_492.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt QQuickRectangle_QML_492.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt QQuickRectangle_QML_492.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QQuickRectangle_QML_492.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt QQuickRectangle_QML_492.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt QQuickRectangle_QML_492.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt QQuickRectangle_QML_492.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt QQuickRectangle_QML_492.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt QQuickRectangle_QML_492.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt QQuickRectangle_QML_492.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//element[@objectname='WGColumnsFrame']/container[2]
+				</path>
+			</info>
+			<helperscreenshot
+			guid="d42df1e4-ec98-4611-9c0d-8ce27089e4ea">
+				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
+/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAK
+KKKAA9KSlPQUlABRRRQAu5vU/nRub+8fzpKKAF3N/eP50bm/vH86SigBdzf3j+dFJRQBYooooGFF
+FFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACii
+igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm
+05OtNqF8TNp/wo/P9CCiiirMAooooAD0FJQegpKAFopKKAFopKUDJA9aACirQAQYUfjS7j60AVKK
+t7j60UAMooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAQ9BSUp6CkoAKKKKACnR/wCsX6im06P/
+AFi/UUAWj1NJSnqaSgAoq5aWS3EW8zBOcYop2C5RooopDCiiigAooooAKKKKACiiigAooooAKVfv
+CkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm1C+Jm0/4Ufn+hBRRRVmAUUUU
+AIegpKU9BSUAFFFFABTo/wDWL9RTadH/AKxfqKALR6mkpT1NJQBZgsZp4/MTbtzjk0VEk8qLtSV1
+HoGIooAhooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooARugpKVugptAC0UlFAC06P8A1i/UUylo
+AuHqaSohOD97g07zU9aAH0UzzU9aKAFooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMt
+maUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAEboKbTm
+6Cm0AFFFFABRRRQAUUUUAFFFFAFqiiigYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR
+/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0IKKKKswCiiigBG6Cm05ugptA
+BQKKKAF+X1P5UfL6n8qSigBfl9T+VHy+p/KkooAX5fU/lRSUUgLVFFFMYUUUUAFFFFABRRRQAUUU
+UAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0
+IKKKKswCiiigBG6Cm05ugptABRRRQAUUUUAFFSpASMsduad9nH/PT9KAIKKn+zj/AJ6fpRQA+iii
+gYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigB
+ydabTk602oXxM2n/AAo/P9CCiiirMAooooAa3QU2nN0FNoAKKKKQBToxmRQe5FNp0f8ArU+ooAuH
+qaSlPU0lMAopQCegJooAZRRRQMKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI+qA9
+TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
+FABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUANfoKbTn6Cm0AFFFFI
+Ap0f+tT6im06L/Wp/vCgC4eppKU9TSUwLlrfm2h8vyw3Oc5xRT7bTfPgWTzgu7ttz/WigDOooooG
+FFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcn
+Wm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAGv0FNpz9BTaQBRRRQAU6L/Wp/vCm0qHa4Poc0AXT1NJ
+QSDyDkGimA9JpEGEkZR6A4oplFADaKKKBhRRRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZml
+H+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKAHJ1ptOTrTahfEzaf8KPz/AEIKKKKswCiiigBr9BTKe/QU
+ykAUUUUAFFFFADldl6Gl81/X9KZRQA/zX9f0oplFAFyiiimMKKKKACiiigAooooAKKKKACiiigAp
+V+8KSlX7wqZbM0o/xI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBR
+RRQA1xkfSmVLR+A/KgCKipePQflRx6D8qAIqKl49B+VHHoPyoAioqXj0H5Uceg/KgCKipOPQflRQ
+BYooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFM
+kKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAKKKKACiiigAooooAKKKKACiiigAooooAnooooGFFF
+FABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiii
+gAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0
+5OtNqF8TNp/wo/P9CCiiirMAooooAKKKXaaAEopdpo2mgBKKXaaNpoASil2mjaaAEopdpooAmooo
+oGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA
+cnWm05OtNqF8TNp/wo/P9CCiiirMAooooAUcKTTad/AabQAUUUUAFFFFABRRRQAUUUUAWKKKKBhR
+RRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZmlH+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAoo
+ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAHJ1p
+tOTrTahfEzaf8KPz/QgoooqzAKKKKAD+A02nfwGmUALRSUUALRSVYgs5Z4JZlwEiGST39hQBBRSU
+UALRRRQBZooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP
+4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAD9w0ynn7hqOgBaKSigCe0t2upxGv1J
+xnArWgSdre8jFvLHGItsSMpyf8Sawqt2d0kEFyjhiZU2rjsfekwIPJlCMxjfapwx2nAPoaZThLII
+zGHYITkrng/hTKYxaKSigRbooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfV
+AeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAA/6s1HUh/1ZqKgB
+aKSigYtFJRQAtFJRQAtFJRQBcooooAKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI
++qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUU
+AFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUAB+4QaiqWkwPQU
+AR0VJgegowPQUAR0VJgegowPQUAR0VJgegowPQUAR0VJgelFAFiiiigYUUUUAFFFFABRRRQAUUUU
+AFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0I
+KKKKswCiiigAooAzS4HrQAlFLgetGB60AJRS4HrRgetACUUuB60YHrQAlFLgetFAE1FFFAwooooA
+KKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/Ej6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1
+ptQviZtP+FH5/oQUUUVZgFFFFACj7pptO/gNMoAWikooAWikooAWikooAWikooAs0UUUDCiiigAo
+oooAKKKKACiiigAooooAKVfvCkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm
+1C+Jm0/4Ufn+hBRRRVmAUUUUAH8BptO/gNMoAWikooAWipbWFZ5xG8nlqQSWxnGBmrcdjZykiPUM
+kAsf3JHA/GgDPopKKAFopKKALVFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/E
+j6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1ptQviZtP+FH5/oQUUUVZgFFFFAAfuGmU8/cNR0AL
+RSUUALVs/wCjWAHSS45Psg/xP8qqKQGBYZGeRnGakuZzcTtIRtB4CjsOwpDFe3ljhSZ0xHJ905HN
+RUlFMQtFSw3UsKlY9mCc/NGrfzFFAEtFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCpls
+zSj/ABI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRR
+RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBRRRQAH/Vmo6k
+P+rNRUALRSUUhi0UlFAC0UlFAC0UlFAFyiiimAUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hU
+y2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACi
+iigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/AAo/P9CCiiirMAooooACflIq
+KpaKAIqKlooAioqWigCKipaKAIqKlooAnooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94V
+MtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAKKAM0v
+y+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tFAE1FFFAwooooAKKKKACiiigAoooo
+AKKKKAClX7wooqZbM0o/xI+qA9TSUUU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0UVC+Jm0/4Ufn+hBRRRVmAUUU
+UAL/AAmm0UUAFFFFABRRRQAUUUUAFFFFAH//2Q==
+			</helperscreenshot>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="8ea5bcb8-684d-4f04-b26d-ae39ba5f3938"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="1713"
+		sy="285"
+		loc="80;161">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="43678c00-fc48-4f7b-ab2f-d7fb32124bdd">
+				<element
+				role="container"
+				prefcap="container"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="1633,124,275,737"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						QQuickRectangle_QML_492;QQuickRectangle;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						318
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						column
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QQuickRectangle
+					</attribute>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Border"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.border property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Color"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.color property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Gradient"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.gradient property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PreviousColumn"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.previousColumn property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Radius"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.radius property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt QQuickRectangle_QML_492.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt QQuickRectangle_QML_492.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QQuickRectangle_QML_492.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QQuickRectangle_QML_492.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QQuickRectangle_QML_492.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt QQuickRectangle_QML_492.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt QQuickRectangle_QML_492.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt QQuickRectangle_QML_492.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QQuickRectangle_QML_492.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt QQuickRectangle_QML_492.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt QQuickRectangle_QML_492.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt QQuickRectangle_QML_492.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt QQuickRectangle_QML_492.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt QQuickRectangle_QML_492.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt QQuickRectangle_QML_492.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//element[@objectname='WGColumnsFrame']/container[2]
+				</path>
+			</info>
+			<helperscreenshot
+			guid="d42df1e4-ec98-4611-9c0d-8ce27089e4ea">
+				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
+/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAK
+KKKAA9KSlPQUlABRRRQAu5vU/nRub+8fzpKKAF3N/eP50bm/vH86SigBdzf3j+dFJRQBYooooGFF
+FFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACii
+igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm
+05OtNqF8TNp/wo/P9CCiiirMAooooAD0FJQegpKAFopKKAFopKUDJA9aACirQAQYUfjS7j60AVKK
+t7j60UAMooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAQ9BSUp6CkoAKKKKACnR/wCsX6im06P/
+AFi/UUAWj1NJSnqaSgAoq5aWS3EW8zBOcYop2C5RooopDCiiigAooooAKKKKACiiigAooooAKVfv
+CkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm1C+Jm0/4Ufn+hBRRRVmAUUUU
+AIegpKU9BSUAFFFFABTo/wDWL9RTadH/AKxfqKALR6mkpT1NJQBZgsZp4/MTbtzjk0VEk8qLtSV1
+HoGIooAhooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4
+mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooARugpKVugptAC0UlFAC06P8A1i/UUylo
+AuHqaSohOD97g07zU9aAH0UzzU9aKAFooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMt
+maUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAEboKbTm
+6Cm0AFFFFABRRRQAUUUUAFFFFAFqiiigYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR
+/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0IKKKKswCiiigBG6Cm05ugptA
+BQKKKAF+X1P5UfL6n8qSigBfl9T+VHy+p/KkooAX5fU/lRSUUgLVFFFMYUUUUAFFFFABRRRQAUUU
+UAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0
+IKKKKswCiiigBG6Cm05ugptABRRRQAUUUUAFFSpASMsduad9nH/PT9KAIKKn+zj/AJ6fpRQA+iii
+gYUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigB
+ydabTk602oXxM2n/AAo/P9CCiiirMAooooAa3QU2nN0FNoAKKKKQBToxmRQe5FNp0f8ArU+ooAuH
+qaSlPU0lMAopQCegJooAZRRRQMKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI+qA9
+TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
+FABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUANfoKbTn6Cm0AFFFFI
+Ap0f+tT6im06L/Wp/vCgC4eppKU9TSUwLlrfm2h8vyw3Oc5xRT7bTfPgWTzgu7ttz/WigDOooooG
+FFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcn
+Wm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAGv0FNpz9BTaQBRRRQAU6L/Wp/vCm0qHa4Poc0AXT1NJ
+QSDyDkGimA9JpEGEkZR6A4oplFADaKKKBhRRRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZml
+H+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKAHJ1ptOTrTahfEzaf8KPz/AEIKKKKswCiiigBr9BTKe/QU
+ykAUUUUAFFFFADldl6Gl81/X9KZRQA/zX9f0oplFAFyiiimMKKKKACiiigAooooAKKKKACiiigAp
+V+8KSlX7wqZbM0o/xI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBR
+RRQA1xkfSmVLR+A/KgCKipePQflRx6D8qAIqKl49B+VHHoPyoAioqXj0H5Uceg/KgCKipOPQflRQ
+BYooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFM
+kKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAcnWm05OtNqF8TNp/wAKPz/QgoooqzAKKKKACiiigAooooAKKKKACiiigAooooAnooooGFFF
+FABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiii
+gAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0
+5OtNqF8TNp/wo/P9CCiiirMAooooAKKKXaaAEopdpo2mgBKKXaaNpoASil2mjaaAEopdpooAmooo
+oGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA
+cnWm05OtNqF8TNp/wo/P9CCiiirMAooooAUcKTTad/AabQAUUUUAFFFFABRRRQAUUUUAWKKKKBhR
+RRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFTLZmlH+JH1QHqaSlPU0lNbEz+JhRRRTJCiiigAoo
+ooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAHJ1p
+tOTrTahfEzaf8KPz/QgoooqzAKKKKAD+A02nfwGmUALRSUUALRSVYgs5Z4JZlwEiGST39hQBBRSU
+UALRRRQBZooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfVAeppKU9TSU1sTP
+4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAD9w0ynn7hqOgBaKSigCe0t2upxGv1J
+xnArWgSdre8jFvLHGItsSMpyf8Sawqt2d0kEFyjhiZU2rjsfekwIPJlCMxjfapwx2nAPoaZThLII
+zGHYITkrng/hTKYxaKSigRbooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94VMtmaUf4kfV
+AeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P8AQgoooqzAKKKKAA/6s1HUh/1ZqKgB
+aKSigYtFJRQAtFJRQAtFJRQBcooooAKKKKACiiigAooooAKKKKACiiigApV+8KSlX7wqZbM0o/xI
++qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUU
+AFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/AIUfn+hBRRRVmAUUUUAB+4QaiqWkwPQU
+AR0VJgegowPQUAR0VJgegowPQUAR0VJgegowPQUAR0VJgelFAFiiiigYUUUUAFFFFABRRRQAUUUU
+AFFFFABSr94UlKv3hUy2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/Cj8/0I
+KKKKswCiiigAooAzS4HrQAlFLgetGB60AJRS4HrRgetACUUuB60YHrQAlFLgetFAE1FFFAwooooA
+KKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/Ej6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1
+ptQviZtP+FH5/oQUUUVZgFFFFACj7pptO/gNMoAWikooAWikooAWikooAWikooAs0UUUDCiiigAo
+oooAKKKKACiiigAooooAKVfvCkpV+8KmWzNKP8SPqgPU0lKeppKa2Jn8TCiiimSFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAOTrTacnWm
+1C+Jm0/4Ufn+hBRRRVmAUUUUAH8BptO/gNMoAWikooAWipbWFZ5xG8nlqQSWxnGBmrcdjZykiPUM
+kAsf3JHA/GgDPopKKAFopKKALVFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCplszSj/E
+j6oD1NJSnqaSmtiZ/EwooopkhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFFFFADk602nJ1ptQviZtP+FH5/oQUUUVZgFFFFAAfuGmU8/cNR0AL
+RSUUALVs/wCjWAHSS45Psg/xP8qqKQGBYZGeRnGakuZzcTtIRtB4CjsOwpDFe3ljhSZ0xHJ905HN
+RUlFMQtFSw3UsKlY9mCc/NGrfzFFAEtFFFAwooooAKKKKACiiigAooooAKKKKAClX7wpKVfvCpls
+zSj/ABI+qA9TSUp6mkprYmfxMKKKKZIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRR
+RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQA5OtNpydabUL4mbT/hR+f6EFFFFWYBRRRQAH/Vmo6k
+P+rNRUALRSUUhi0UlFAC0UlFAC0UlFAFyiiimAUUUUAFFFFABRRRQAUUUUAFFFFABSr94UlKv3hU
+y2ZpR/iR9UB6mkpT1NJTWxM/iYUUUUyQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACi
+iigAooooAKKKKACiiigAooooAKKKKACiiigBydabTk602oXxM2n/AAo/P9CCiiirMAooooACflIq
+KpaKAIqKlooAioqWigCKipaKAIqKlooAnooooGFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94V
+MtmaUf4kfVAeppKU9TSU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm05OtNqF8TNp/wo/P9CCiiirMAooooAKKAM0v
+y+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tHy+tACUUvy+tFAE1FFFAwooooAKKKKACiiigAoooo
+AKKKKAClX7wooqZbM0o/xI+qA9TSUUU1sTP4mFFFFMkKKKKACiiigAooooAKKKKACiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAcnWm0UVC+Jm0/4Ufn+hBRRRVmAUUU
+UAL/AAmm0UUAFFFFABRRRQAUUUUAFFFFAH//2Q==
+			</helperscreenshot>
+		</mouseitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		NewObject.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

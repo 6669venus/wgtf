@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report>
+	<activity
+		result="Success"
+		duration="0ms"
+		durationms="0"
+		type="root"
+		rid="b74571aeb7127f0"
+		totalerrorcount="1"
+		totalwarningcount="1"
+		totalsuccesscount="0"
+		totalfailedcount="1"
+		totalblockedcount="0"
+		user="francoism"
+		host="FRANCOISM-PC"
+		rxversion="5.4.5.19886"
+		osversion="Windows 7 Service Pack 1 64bit"
+		runtimeversion="4.0.30319.34209"
+		procarch="32bit"
+		language="en-US"
+		screenresolution="3840x1200"
+		timestamp="10/03/2016 3:40:22 PM"
+		timestampiso="2016-03-10T04:40:22"
+		timeoutfactor="1">
+		<detail>
+			Ranorex Testscript
+		</detail>
+		<activity
+			result="Failed"
+			duration="600ms"
+			durationms="600"
+			type="test suite"
+			rid="2091608530b5e8"
+			totalerrorcount="1"
+			totalwarningcount="1"
+			totalsuccesscount="0"
+			totalfailedcount="1"
+			totalblockedcount="0"
+			testsuitename="NGTTestAutomation"
+			runconfigname="TestRun"
+			runlabel=""
+			maxchildren="0">
+			<params>
+				<param
+					name="path">
+					C:\Ngt-project\bin\generic_app_test\win64
+				</param>
+			</params>
+			<detail>
+			</detail>
+			<activity
+				result="Failed"
+				duration="532ms"
+				durationms="532"
+				type="folder"
+				rid="1155513792be6f0"
+				totalerrorcount="1"
+				totalwarningcount="1"
+				totalsuccesscount="0"
+				totalfailedcount="1"
+				totalblockedcount="0"
+				foldername="Programming_Generic_App_UI">
+				<detail>
+				</detail>
+				<activity
+					result="Failed"
+					duration="531ms"
+					durationms="531"
+					type="folder"
+					rid="3b8d409282d0f680"
+					totalerrorcount="1"
+					totalwarningcount="1"
+					totalsuccesscount="0"
+					totalfailedcount="1"
+					totalblockedcount="0"
+					foldername="Initial_Test">
+					<detail>
+					</detail>
+					<activity
+						result="Failed"
+						duration="526ms"
+						durationms="526"
+						type="test case"
+						rid="1b389b539034dfa"
+						totalerrorcount="1"
+						totalwarningcount="1"
+						totalsuccesscount="0"
+						totalfailedcount="1"
+						totalblockedcount="0"
+						testcasename="Maximise/minimise"
+						testcaseid="b7308b9a-1454-4734-8cb6-c72173fe524a"
+						maxchildren="0">
+						<params/>
+						<detail>
+						</detail>
+						<activity
+							result="Failed"
+							duration="502ms"
+							durationms="502"
+							type="test module"
+							rid="b3667a6d76d011a"
+							totalerrorcount="1"
+							totalwarningcount="1"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0"
+							modulename="OpenGenericApp"
+							moduleid="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+							moduletype="Recording">
+							<detail>
+							</detail>
+							<errmsg>
+								Failed to run application 'generic_app.exe'.
+							</errmsg>
+							<varbindings/>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.321"
+								timeRelativeToTestModuleStartTime="00:00.005"
+								timeWallClock="15:40:23"
+								time="00:00.321"
+								level="Warn"
+								category="Data"
+								errimg="images_NGTTestAutomation_20160310_154022\NGTTestAutomation_20160310_154022_6ffeefa3_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160310_154022\NGTTestAutomation_20160310_154022_6ffeefa3_trace_thumb.jpg">
+								<message>
+									The following module variables are not bound to a data column:<br/>path
+								</message>
+								<metainfo
+									loglvl="Warn"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.366"
+								timeRelativeToTestModuleStartTime="00:00.050"
+								timeWallClock="15:40:23"
+								time="00:00.366"
+								level="Info"
+								category="Application"
+								errimg="images_NGTTestAutomation_20160310_154022\NGTTestAutomation_20160310_154022_340ddd01_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160310_154022\NGTTestAutomation_20160310_154022_340ddd01_trace_thumb.jpg">
+								<message>
+									Run application 'generic_app.exe' with arguments '--config plugins_ui.txt' in normal mode.
+								</message>
+								<metainfo
+									itemindex="0"
+									codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\OpenGenericApp.cs"
+									codeline="95"
+									loglvl="Info"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.626"
+								timeRelativeToTestModuleStartTime="00:00.310"
+								timeWallClock="15:40:23"
+								time="00:00.626"
+								level="Error"
+								category="Module"
+								errimg="images_NGTTestAutomation_20160310_154022\NGTTestAutomation_20160310_154022_58c27ce6_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160310_154022\NGTTestAutomation_20160310_154022_58c27ce6_trace_thumb.jpg">
+								<message>
+									Failed to run application 'generic_app.exe'.<br/>The system cannot find the file specified
+								</message>
+								<metainfo
+									stacktrace="   at Ranorex.Host.RunApplication(String fileName, String arguments, String workingDirectory, Boolean maximized)
+   at NGTTestAutomation.OpenGenericApp.Ranorex.Core.Testing.ITestModule.Run() in c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\OpenGenericApp.cs:line 96
+   at Ranorex.Core.Testing.TestSuiteModule.RunInternal(DataContext parentDataContext)"
+									codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\OpenGenericApp.cs"
+									codeline="96"
+									loglvl="Error"
+									itemindex="0"/>
+							</item>
+						</activity>
+					</activity>
+				</activity>
+			</activity>
+		</activity>
+	</activity>
+</report>

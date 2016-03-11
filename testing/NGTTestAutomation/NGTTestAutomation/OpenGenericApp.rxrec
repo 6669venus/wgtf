@@ -49,7 +49,7 @@ mode="Global">
 				path
 			</workingdir>
 			<args>
-				--config plugins_ui.txt
+				--config plugins_demo.txt
 			</args>
 		</runapprecorditem>
 	</recorditems>

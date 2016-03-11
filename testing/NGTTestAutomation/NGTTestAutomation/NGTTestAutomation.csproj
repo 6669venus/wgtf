@@ -54,6 +54,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AjustingObjectProperties.cs">
+      <BoundTo>5114b90a-dab0-4a75-83a0-f4656f9f2a81</BoundTo>
+      <DependentUpon>AjustingObjectProperties.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>57464aa9-88fb-437c-acdf-10986f975744</id>
+    </Compile>
+    <Compile Include="AjustingObjectProperties.UserCode.cs">
+      <BoundTo>5114b90a-dab0-4a75-83a0-f4656f9f2a81</BoundTo>
+      <DependentUpon>AjustingObjectProperties.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>a26827c5-57d4-49ef-82f4-16a44d4dd02a</id>
+    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <id>6814585f-9fea-40df-b530-e4a39bd39c4d</id>
     </Compile>
@@ -105,11 +117,35 @@
       <UserCode>true</UserCode>
       <id>fb5cf463-e113-401c-b044-0b28ff4041dc</id>
     </Compile>
+    <Compile Include="NewObject.cs">
+      <BoundTo>b3501be2-8a99-40c0-aa50-694bb0d1027a</BoundTo>
+      <DependentUpon>NewObject.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>dc862947-f453-4fa6-90da-e0b262e6c420</id>
+    </Compile>
+    <Compile Include="NewObject.UserCode.cs">
+      <BoundTo>b3501be2-8a99-40c0-aa50-694bb0d1027a</BoundTo>
+      <DependentUpon>NewObject.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>f49a1f25-797d-4e83-bd07-fa2fd84a215d</id>
+    </Compile>
     <Compile Include="NGTTestAutomationRepository.cs">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <DependentUpon>NGTTestAutomationRepository.rxrep</DependentUpon>
       <RepositoryCode>true</RepositoryCode>
       <id>11c15068-68ed-42b9-bfa9-10c9722e6427</id>
+    </Compile>
+    <Compile Include="Object_selection.cs">
+      <BoundTo>bb95c40f-11cc-45c5-9731-f1793d3ecb10</BoundTo>
+      <DependentUpon>Object_selection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>da97167e-122b-451e-808d-5921c3e73818</id>
+    </Compile>
+    <Compile Include="Object_selection.UserCode.cs">
+      <BoundTo>bb95c40f-11cc-45c5-9731-f1793d3ecb10</BoundTo>
+      <DependentUpon>Object_selection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>5ace0e17-cb96-4be3-a221-bec087dffc39</id>
     </Compile>
     <Compile Include="OpenPropertyTreeTestPanel.cs">
       <BoundTo>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</BoundTo>
@@ -122,6 +158,18 @@
       <DependentUpon>OpenPropertyTreeTestPanel.rxrec</DependentUpon>
       <UserCode>true</UserCode>
       <id>e0e6449a-57fd-48f4-babc-5513f704731b</id>
+    </Compile>
+    <Compile Include="PositionPropertieChanges.cs">
+      <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
+      <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>32681eff-5f54-451a-83ec-8934bdd73bd4</id>
+    </Compile>
+    <Compile Include="PositionPropertieChanges.UserCode.cs">
+      <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
+      <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>54f166aa-9d4e-40c9-9dfe-48a504e0a22a</id>
     </Compile>
     <Compile Include="Program.cs">
       <id>36b6e828-7305-4c80-bb18-3022b08cef23</id>
@@ -162,6 +210,18 @@
       <UserCode>true</UserCode>
       <id>3fd23c51-ecda-4bed-98f2-24c45a222a66</id>
     </Compile>
+    <Compile Include="SelectSceneBrowser.cs">
+      <BoundTo>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</BoundTo>
+      <DependentUpon>SelectSceneBrowser.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>03ae3e30-76d0-43a5-8687-915e3b5d0f17</id>
+    </Compile>
+    <Compile Include="SelectSceneBrowser.UserCode.cs">
+      <BoundTo>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</BoundTo>
+      <DependentUpon>SelectSceneBrowser.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>43ef905f-d920-44d9-b7b8-4925b164ab0b</id>
+    </Compile>
     <Compile Include="SimpleCasesChangeBool.cs">
       <BoundTo>d3dc525a-e8a1-466c-9c61-d270e9967b22</BoundTo>
       <DependentUpon>SimpleCasesChangeBool.rxrec</DependentUpon>
@@ -198,6 +258,11 @@
       <UserCode>true</UserCode>
       <id>a785c479-e350-4fd6-85b4-635b2ce9525e</id>
     </Compile>
+    <None Include="AjustingObjectProperties.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>5114b90a-dab0-4a75-83a0-f4656f9f2a81</id>
+      <recordtableid>e7f3ca85-eb71-4e5d-aaf5-397ea5b4ba45</recordtableid>
+    </None>
     <None Include="app.config">
       <id>6893a9a8-ba4c-443a-b852-decf187e1c46</id>
     </None>
@@ -221,6 +286,11 @@
       <id>4427c1d3-77fe-4f3c-8e32-859f6251deb2</id>
       <recordtableid>820ae111-c1b1-4287-ab1e-a12f1150a1ea</recordtableid>
     </None>
+    <None Include="NewObject.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>b3501be2-8a99-40c0-aa50-694bb0d1027a</id>
+      <recordtableid>dbe4d3f5-b07d-45aa-ac93-8ae098a5b09d</recordtableid>
+    </None>
     <None Include="NGTTestAutomationRepository.rximg">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <DependentUpon>NGTTestAutomationRepository.rxrep</DependentUpon>
@@ -232,6 +302,11 @@
       <repoid>0f1dd445-65cb-47c8-a69d-e0f2154f9e50</repoid>
       <reporootid>3936ed74-78e9-40c3-8819-a806f6a02759</reporootid>
     </None>
+    <None Include="Object_selection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>bb95c40f-11cc-45c5-9731-f1793d3ecb10</id>
+      <recordtableid>2c6cfd0f-2386-4a41-adb1-0c6987082d25</recordtableid>
+    </None>
     <None Include="OpenGenericApp.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</id>
@@ -242,6 +317,11 @@
       <recordtableid>9dc3d550-46c7-437f-b20a-29986e1ceddc</recordtableid>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
+    <None Include="PositionPropertieChanges.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>52d4aefb-51c3-48f7-9c34-9c4fb5100814</id>
+      <recordtableid>6c8f5dce-bc7a-41e4-843b-ad564923a087</recordtableid>
+    </None>
     <None Include="Restore.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>f6d337bc-9544-481e-a920-b5f382180b62</id>
@@ -251,6 +331,11 @@
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</id>
       <recordtableid>a167d7f1-18e8-4104-8333-35233bf382c8</recordtableid>
+    </None>
+    <None Include="SelectSceneBrowser.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</id>
+      <recordtableid>4cfc2b4a-88a2-405f-82c0-1f261aa975d3</recordtableid>
     </None>
     <None Include="SimpleCasesChangeBool.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

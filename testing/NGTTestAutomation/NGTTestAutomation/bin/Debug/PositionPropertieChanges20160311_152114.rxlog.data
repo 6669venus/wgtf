@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report>
+	<activity
+		result="Success"
+		duration="0ms"
+		durationms="0"
+		type="root"
+		rid="4e8ceebb4b223c8"
+		totalerrorcount="0"
+		totalwarningcount="0"
+		totalsuccesscount="0"
+		totalfailedcount="0"
+		totalblockedcount="0"
+		user="francoism"
+		host="FRANCOISM-PC"
+		rxversion="5.4.5.19886"
+		osversion="Windows 7 Service Pack 1 64bit"
+		runtimeversion="4.0.30319.34209"
+		procarch="32bit"
+		language="en-US"
+		screenresolution="3840x1200"
+		timestamp="11/03/2016 3:21:19 PM"
+		timestampiso="2016-03-11T04:21:19"
+		timeoutfactor="1"
+		module="PositionPropertieChanges">
+		<detail>
+			PositionPropertieChanges
+		</detail>
+		<varbindings/>
+		<item
+			timeRelativeToTestSuiteStartTime="00:00.332"
+			timeRelativeToTestModuleStartTime="00:00.333"
+			timeWallClock="15:21:19"
+			time="00:00.332"
+			level="Info"
+			category="Invoke Action">
+			<message>
+				Invoking PerformClick() on item 'MainWindow.WGVector31.ArrowText1'.
+			</message>
+			<metainfo
+				type="repoitem"
+				path="/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='-3.000']/container[1]/text[@name='arrowText']"
+				fullname="NGTTestAutomationRepository.MainWindow.WGVector31.ArrowText1"
+				id="4fd3011b878e408c992aac8926c0916e"
+				timeout="90000"
+				codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\PositionPropertieChanges.cs"
+				codeline="82"
+				itemindex="0"
+				loglvl="Info"/>
+		</item>
+		<item
+			timeRelativeToTestSuiteStartTime="00:02.858"
+			timeRelativeToTestModuleStartTime="00:02.859"
+			timeWallClock="15:21:22"
+			time="00:02.858"
+			level="Info"
+			category="Invoke Action">
+			<message>
+				Invoking PerformClick() on item 'MainWindow.WGVector31.ArrowText1'.
+			</message>
+			<metainfo
+				type="repoitem"
+				path="/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='-3.000']/container[1]/text[@name='arrowText']"
+				fullname="NGTTestAutomationRepository.MainWindow.WGVector31.ArrowText1"
+				id="4fd3011b878e408c992aac8926c0916e"
+				timeout="90000"
+				codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\PositionPropertieChanges.cs"
+				codeline="86"
+				itemindex="1"
+				loglvl="Info"/>
+		</item>
+		<item
+			timeRelativeToTestSuiteStartTime="00:03.406"
+			timeRelativeToTestModuleStartTime="00:03.407"
+			timeWallClock="15:21:22"
+			time="00:03.406"
+			level="Info"
+			category="Invoke Action">
+			<message>
+				Invoking PerformClick() on item 'MainWindow.WGVector31.ArrowText1'.
+			</message>
+			<metainfo
+				type="repoitem"
+				path="/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='-3.000']/container[1]/text[@name='arrowText']"
+				fullname="NGTTestAutomationRepository.MainWindow.WGVector31.ArrowText1"
+				id="4fd3011b878e408c992aac8926c0916e"
+				timeout="90000"
+				codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\PositionPropertieChanges.cs"
+				codeline="90"
+				itemindex="2"
+				loglvl="Info"/>
+		</item>
+	</activity>
+</report>

@@ -92,8 +92,8 @@ namespace NGTTestAutomation
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Application", "Run application 'generic_app.exe' with arguments '--config plugins_ui.txt' in normal mode.", new RecordItemIndex(0));
-            Host.Local.RunApplication("generic_app.exe", "--config plugins_ui.txt", path, false);
+            Report.Log(ReportLevel.Info, "Application", "Run application 'generic_app.exe' with arguments '--config plugins_demo.txt' in normal mode.", new RecordItemIndex(0));
+            Host.Local.RunApplication("generic_app.exe", "--config plugins_demo.txt", path, false);
             Delay.Milliseconds(0);
             
         }

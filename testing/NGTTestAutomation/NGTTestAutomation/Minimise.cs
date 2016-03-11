@@ -79,8 +79,12 @@ namespace NGTTestAutomation
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Press() on item 'MainWindow.Minimize'.", repo.MainWindow.MinimizeInfo, new RecordItemIndex(0));
-            repo.MainWindow.Minimize.Press();
+            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking PerformClick() on item 'MainWindow.NewObject'.", repo.MainWindow.NewObjectInfo, new RecordItemIndex(0));
+            repo.MainWindow.NewObject.As<QtElement>().PerformClick();
+            Delay.Milliseconds(0);
+            
+            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Select() on item 'NewObject.NewObject'.", repo.NewObject.NewObjectInfo, new RecordItemIndex(1));
+            repo.NewObject.NewObject.Select();
             Delay.Milliseconds(0);
             
         }

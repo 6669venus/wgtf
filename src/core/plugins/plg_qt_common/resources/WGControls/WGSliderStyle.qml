@@ -256,6 +256,7 @@ Style {
                     }
 
                     MouseArea {
+                        objectName: "sliderHandleArea"
                         hoverEnabled: true
                         anchors.fill: parent
 

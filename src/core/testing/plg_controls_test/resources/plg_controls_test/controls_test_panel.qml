@@ -392,7 +392,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                                                 model: 10
                                                 WGPushButton {
                                                     text: "Button"
-                                                    label_: "Repeated Label: "
+                                                    label: "Repeated Label: "
                                                 }
                                             }
                                         }

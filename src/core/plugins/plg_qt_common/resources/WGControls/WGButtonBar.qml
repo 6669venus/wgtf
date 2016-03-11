@@ -61,8 +61,7 @@ WGButtonFrame {
         This property is used to define the label displayed used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*!
         This property defines whether the width alocated to each button is evenly distributed.
@@ -85,8 +84,7 @@ WGButtonFrame {
     /*! \internal */
     property int __totalWidth: defaultSpacing.doubleMargin
 
-
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    implicitHeight: defaultSpacing.minimumRowHeight
 
     //if Layout.preferredWidth is not defined, or set to -1, the button bar will use the total width of all buttons
     implicitWidth: __totalWidth
@@ -147,4 +145,8 @@ WGButtonFrame {
             vertical_: true
         }
     }
+
+
+    /*! Deprecated */
+    property alias label_: mainFrame.label
 }

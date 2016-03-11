@@ -26,7 +26,7 @@ public:
 
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant,
-		const PyScript::ScriptObject & parentObject,
+		const ObjectHandle & parentHandle,
 		const std::string & childPath ) override;
 
 	virtual bool toScriptType( const Variant & inVariant,

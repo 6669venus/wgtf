@@ -6,6 +6,7 @@ namespace PyScript
 	class ScriptObject;
 } // namespace PyScript
 
+class ObjectHandle;
 class Variant;
 
 
@@ -32,7 +33,7 @@ public:
 	 */
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant,
-		const PyScript::ScriptObject & parentObject,
+		const ObjectHandle & parentHandle,
 		const std::string & childPath ) = 0;
 
 

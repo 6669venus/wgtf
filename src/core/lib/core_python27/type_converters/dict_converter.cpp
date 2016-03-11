@@ -24,7 +24,7 @@ DictConverter::DictConverter( IComponentContext & context,
 
 bool DictConverter::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant,
-	const PyScript::ScriptObject & parentObject,
+	const ObjectHandle & parentHandle,
 	const std::string & childPath ) /* override */
 {
 	if (!PyScript::ScriptDict::check( inObject ))
@@ -35,7 +35,7 @@ bool DictConverter::toVariant( const PyScript::ScriptObject & inObject,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 	auto dictHandle = ReflectedPython::DefinedInstance::findOrCreate( context_,
 		scriptDict,
-		parentObject,
+		parentHandle,
 		childPath );
 	assert( dictHandle.isValid() );
 

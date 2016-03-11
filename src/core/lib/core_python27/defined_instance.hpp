@@ -49,7 +49,7 @@ public:
 
 	static ObjectHandle findOrCreate( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
-		const PyScript::ScriptObject & parentObject,
+		const ObjectHandle & parentHandle,
 		const std::string & childPath );
 
 	static ObjectHandle find( IComponentContext & context,
@@ -67,7 +67,7 @@ private:
 		IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
 		std::shared_ptr< IClassDefinition > & definition,
-		const PyScript::ScriptObject & parentObject,
+		const ObjectHandle & parentHandle,
 		const std::string & childPath );
 
 	// Prevent copy and move
@@ -96,8 +96,10 @@ private:
 
 	// Track parent object so that the reflection system can get the full
 	// property path to this object
-	// TODO NGT-1561 Should be a weak reference
-	PyScript::ScriptObject parentObject_;
+	// Need to keep a strong reference to the parent DefinedInstance
+	// in the case of accessing properties like "parent.child1.child2",
+	// then the only thing holding a reference alive to "child1" will be "child2"
+	ObjectHandle parentHandle_;
 	const DefinedInstance * pRoot_;
 	std::string fullPath_;
 };

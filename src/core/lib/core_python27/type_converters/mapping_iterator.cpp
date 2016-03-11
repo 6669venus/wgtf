@@ -14,10 +14,12 @@ namespace PythonType
 {
 
 
-MappingIterator::MappingIterator( const container_type & container,
+MappingIterator::MappingIterator( const ObjectHandle & containerHandle,
+	const container_type & container,
 	const PyScript::ScriptList::size_type index,
 	const Converters & typeConverters )
-	: container_( container )
+	: containerHandle_( containerHandle )
+	, container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( index )
 	, key_( nullptr )
@@ -32,10 +34,12 @@ MappingIterator::MappingIterator( const container_type & container,
 }
 
 
-MappingIterator::MappingIterator( const container_type & container,
+MappingIterator::MappingIterator( const ObjectHandle & containerHandle,
+	const container_type & container,
 	const key_type & key,
 	const Converters & typeConverters )
-	: container_( container )
+	: containerHandle_( containerHandle )
+	, container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( 0 )
 	, key_( key )
@@ -65,9 +69,9 @@ MappingIterator::MappingIterator( const container_type & container,
 		if (!found)
 		{
 			Variant result;
-			PyScript::ScriptObject parent;
+			ObjectHandle parentHandle;
 			const char * childPath = "";
-			const bool success = typeConverters_.toVariant( key_, result, parent, childPath );
+			const bool success = typeConverters_.toVariant( key_, result, parentHandle, childPath );
 			PyScript::ScriptList::size_type fakeIndex = container_.size();
 			const bool isIndex = result.tryCast( fakeIndex );
 
@@ -116,9 +120,9 @@ const TypeId& MappingIterator::valueType() const
 Variant MappingIterator::key() const /* override */
 {
 	Variant result;
-	PyScript::ScriptObject parent;
+	ObjectHandle parentHandle;
 	const std::string childPath = key_.str( PyScript::ScriptErrorPrint() ).c_str();
-	const bool success = typeConverters_.toVariant( key_, result, parent, childPath );
+	const bool success = typeConverters_.toVariant( key_, result, parentHandle, childPath );
 	assert( success );
 	return result;
 }
@@ -141,7 +145,7 @@ Variant MappingIterator::value() const /* override */
 	childPath += INDEX_OPEN;
 	childPath += key_.str( PyScript::ScriptErrorPrint() ).c_str();
 	childPath += INDEX_CLOSE;
-	const bool success = typeConverters_.toVariant( item, result, container_, childPath );
+	const bool success = typeConverters_.toVariant( item, result, containerHandle_, childPath );
 	assert( success );
 	return result;
 }

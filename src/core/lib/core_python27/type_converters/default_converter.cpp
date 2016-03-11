@@ -17,13 +17,13 @@ DefaultConverter::DefaultConverter( IComponentContext & context )
 
 bool DefaultConverter::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant,
-	const PyScript::ScriptObject & parentObject,
+	const ObjectHandle & parentHandle,
 	const std::string & childPath ) /* override */
 {
 	// Default for anything that didn't match another type converter
 	outVariant = ReflectedPython::DefinedInstance::findOrCreate( context_,
 		inObject,
-		parentObject,
+		parentHandle,
 		childPath );
 	return true;
 }

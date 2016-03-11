@@ -62,7 +62,7 @@ public:
 private:
 	// Need to hold a reference to handle
 	container_type container_;
-	const ObjectHandle handle_;
+	const ObjectHandle containerHandle_;
 	const Converters & typeConverters_;
 };
 

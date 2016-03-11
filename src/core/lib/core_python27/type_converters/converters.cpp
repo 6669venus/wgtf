@@ -36,7 +36,7 @@ bool Converters::toScriptType( const Variant & inVariant,
 
 bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant,
-	const PyScript::ScriptObject & parentObject,
+	const ObjectHandle & parentHandle,
 	const std::string & childPath ) const
 {
 	const bool success = basicTypeConverters_.toVariant( inObject, outVariant );
@@ -47,14 +47,14 @@ bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 
 	if (dictConverter_.toVariant( inObject,
 		outVariant,
-		parentObject,
+		parentHandle,
 		childPath ))
 	{
 		return true;
 	}
 	return defaultConverter_.toVariant( inObject,
 		outVariant,
-		parentObject,
+		parentHandle,
 		childPath );
 }
 

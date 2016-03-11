@@ -10,13 +10,13 @@ class ICommandManager;
 
 enum class CommandErrorCode : uint8_t
 {
-	NO_ERROR = 0,
+	COMMAND_NO_ERROR = 0,
 	ABORTED,
 	FAILED,
 	INVALID_VALUE,
 	INVALID_ARGUMENTS,
 	INVALID_OPERATIONS,
-	NOT_SUPPORTED,
+	NOT_SUPPORTED
 };
 
 enum class CommandThreadAffinity : uint8_t
@@ -42,6 +42,7 @@ public:
 	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
 	virtual void undo( const ObjectHandle & arguments ) const {}
 	virtual void redo( const ObjectHandle & arguments ) const {}
+    virtual ObjectHandle getCommandDescription(const ObjectHandle & arguments) const { return ObjectHandle(); }
 
 	virtual void setCommandSystemProvider( ICommandManager * commandSystemProvider );
 	virtual void registerCommandStatusListener( ICommandEventListener * listener );

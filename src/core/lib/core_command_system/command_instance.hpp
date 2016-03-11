@@ -78,6 +78,8 @@ public:
 
 	ICommandManager * getCommandSystemProvider() { return pCmdSysProvider_; }
 
+    ObjectHandle getCommandDescription() const;
+
 private:
 	void waitForCompletion();
 

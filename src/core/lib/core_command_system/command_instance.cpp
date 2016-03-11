@@ -26,7 +26,7 @@ CommandInstance::CommandInstance()
 	, pCmdSysProvider_( nullptr )
 	, commandId_("")
 	, contextObject_( nullptr )
-	, errorCode_( CommandErrorCode::NO_ERROR )
+	, errorCode_( CommandErrorCode::COMMAND_NO_ERROR )
 {
 }
 
@@ -80,7 +80,7 @@ CommandErrorCode CommandInstance::getErrorCode() const
 	for (const auto & child : children_)
 	{
 		CommandErrorCode childErrorCode = child->getErrorCode();
-		if (childErrorCode == CommandErrorCode::NO_ERROR)
+        if (childErrorCode == CommandErrorCode::COMMAND_NO_ERROR)
 		{
 			errorCode = childErrorCode;
 			continue;
@@ -205,6 +205,11 @@ void CommandInstance::disconnectEvent()
 void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 {
 	contextObject_ = contextObject;
+}
+
+ObjectHandle CommandInstance::getCommandDescription() const
+{
+    return getCommand()->getCommandDescription(getArguments());
 }
 
 //==============================================================================

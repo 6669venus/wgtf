@@ -756,7 +756,7 @@ void CommandManagerImpl::popFrame()
 		// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
 		instance->disconnectEvent();
 
-		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
+        if (instance->getErrorCode() == CommandErrorCode::COMMAND_NO_ERROR)
 		{
 			addToHistory( instance );
 			if (instance->isMultiCommand())
@@ -777,7 +777,7 @@ void CommandManagerImpl::popFrame()
 
 	// TODO: This does not actually work for sub commands. No undo data is stored
 	// for sub commands so calling undo does nothing.
-	if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
+    if (instance->getErrorCode() != CommandErrorCode::COMMAND_NO_ERROR)
 	{
 		instance->undo();
 		if (instance->isMultiCommand())

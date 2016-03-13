@@ -55,7 +55,7 @@ Item {
 
 		WGSeparator {
 			id: timelineSeparator
-			vertical_: true
+			vertical: true
 			anchors.top: parent.top
 			anchors.bottom: parent.bottom
 		}

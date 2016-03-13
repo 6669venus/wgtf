@@ -247,8 +247,12 @@ Control {
     */
     signal handleCtrlClicked(int index)
 
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
+
     MouseArea {
         id: mouseArea
+        objectName: "sliderDragArea"
 
         z:-1
 

@@ -26,8 +26,6 @@ WGAbstractButton {
     */
     property bool checked: false
 
-    buttonChecked: checked
-
     /*! This property determines the radius of the button corners
     */
     property int radius: defaultSpacing.standardRadius
@@ -35,13 +33,12 @@ WGAbstractButton {
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
-	/*! This property holds the menu for the button
-		This intentionally hides the menu property of the Button base class
-	*/
-	property WGMenu menu: null
+    /*! This property holds the menu for the button
+        This intentionally hides the menu property of the Button base class
+    */
+    property WGMenu menu: null
 
     /*! This property determines if the down arrow should appear if the button has a menu
     */
@@ -55,31 +52,23 @@ WGAbstractButton {
         buttonChecked = checked
     }
 
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    // Assists in maintaining the checked property binding.
+    buttonChecked: checked
 
-    /*! This property holds the target control's id to be bound to this control's b_Value */
-    property alias b_Target: dataBinding.target
-
-    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
-    property alias b_Property: dataBinding.property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
-
-    Binding {
-        id: dataBinding
-
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight
 
     style: WGButtonStyle{
 
     }
 
-	Connections {
+    Connections {
         target: __behavior
-		onReleased: {
+        onReleased: {
             if (__behavior.containsMouse && menu)
                 menu.popup()
         }
     }
+
+    /*! Deprecated */
+    property alias label_: pushButton.label
 }

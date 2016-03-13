@@ -12,7 +12,7 @@ Example:
 
 WGSubPanel {
     text: "Form Layout"
-    childObject_ :
+    childObject :
         WGFormLayout {
             id: topForm
             localForm_: true

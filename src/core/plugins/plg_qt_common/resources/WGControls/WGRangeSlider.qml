@@ -72,10 +72,6 @@ Item {
     /*! This property defines the colour of the slider */
     property alias barColor: slider.barColor
 
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias slider: slider
-
     /*! This property determines the prefix string displayed within the slider textbox.
         Typically used to display unit type.
         The default value is an empty string.
@@ -93,11 +89,10 @@ Item {
     */
     property int decimals: 1
 
-    /*! This property is used to define the buttons label when used in a WGFormLayout
+    /*! This property is used to define the sliders label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*! This property is used to define the width of the number box.
         The default value is the implicit width.
@@ -131,28 +126,8 @@ Item {
     property alias upperTextBoxStyle: sliderUpperValue.textBoxStyle
     property alias upperButtonFrame: sliderUpperValue.buttonFrame
 
-    implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
-
-    property alias b_Target: dataBinding.target
-    property alias b_Property: dataBinding.property
-    property alias b_Value: dataBinding.value
-
-    /*! This property holds the target control's id to be bound to this controls b_Value2 */
-    property alias b_Target2: dataBinding2.target
-
-    /*! This property determines b_Target's property which is to be bound to this controls b_Value2 */
-    property alias b_Property2: dataBinding2.property
-
-    /*! This property determines this control's value which will drive b_Target2's b_Property2 */
-    property alias b_Value2: dataBinding2.value
-
-    Binding {
-        id: dataBinding
-    }
-
-    Binding {
-        id: dataBinding2
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
 
     onLowerValueChanged: {
         setValueHelper(slider, "value", sliderFrame.lowerValue);
@@ -437,4 +412,7 @@ Item {
             }
         }
     }
+
+    /*! Deprecated */
+    property alias label_: sliderFrame.label
 }

@@ -38,8 +38,14 @@ Item {
 
     property alias range: range
 
+    /*!
+        The internal color of the handle
+    */
     property color handleColor: palette.lightPanelColor
 
+    /*!
+        The color of the bar attached to the handle
+    */
     property color barColor: parentSlider.barColor
 
     /*!
@@ -50,7 +56,7 @@ Item {
     property bool showBar: true
 
     /*!
-        A paired handle that handles the max value in a range slider.
+        A paired handle that handles the max or min value in a range slider.
     */
 
     property QtObject rangePartnerHandle: sliderHandle
@@ -136,6 +142,9 @@ Item {
     width: parentSlider.__handleWidth
 
     height: parentSlider.__handleHeight
+
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.minimumRowHeight
 
     anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
     anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined

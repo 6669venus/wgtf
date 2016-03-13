@@ -89,7 +89,7 @@ Rectangle {
 
             WGSubPanel {
                 text: "Form Layout"
-                headerObject_ :
+                headerObject :
                     WGExpandingRowLayout {
                         Rectangle {
                             color: "transparent"
@@ -105,7 +105,7 @@ Rectangle {
                             }
                         }
                     }
-                childObject_ :
+                childObject :
                     WGFormLayout {
                         id: topForm
                         localForm_: true
@@ -198,7 +198,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                         WGProgressControl {
                             Layout.fillWidth: true
-                            indeterminate_: true
+                            indeterminate: true
                             text: "File Importing..."
                         }
 
@@ -232,8 +232,8 @@ It is recommended to look at the generic_app_test to view other controls such as
 
             WGGroupBox {
                 text: "Group Box"
-                toggleable_ : true
-                childObject_ :
+                toggleable : true
+                childObject :
                 WGBoolGridLayout {
                     ExclusiveGroup { id: radioPanelGroup }
                     WGRadioButton {
@@ -253,7 +253,7 @@ It is recommended to look at the generic_app_test to view other controls such as
             }
             WGSubPanel {
                 text: "Color Sliders"
-                childObject_ :
+                childObject :
                     WGColumnLayout {
 
                     WGColorSlider {
@@ -290,7 +290,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     }
 
                     WGSeparator {
-                        vertical_: false
+                        vertical: false
 
                     }
 
@@ -331,7 +331,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
             WGSubPanel {
                 text: "Sub Panel"
-                childObject_ :
+                childObject :
                     WGColumnLayout {
 
                         WGExpandingRowLayout {
@@ -365,7 +365,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                                 iconSource: "icons/play_16x16.png"
                             }
                             WGSeparator {
-                                vertical_: true
+                                vertical: true
                             }
 
                             WGToolButton {
@@ -378,7 +378,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                             text: "Scrolling Panel of Buttons"
                             clipContents_: true
                             expanded_: false
-                            childObject_ :
+                            childObject :
                                 WGSubScrollPanel {
                                     implicitHeight: 100
                                     childObject_:
@@ -392,7 +392,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                                                 model: 10
                                                 WGPushButton {
                                                     text: "Button"
-                                                    label_: "Repeated Label: "
+                                                    label: "Repeated Label: "
                                                 }
                                             }
                                         }
@@ -400,14 +400,14 @@ It is recommended to look at the generic_app_test to view other controls such as
                         }
 
                         WGFrame {
-                            childObject_ :
+                            childObject :
                             WGColumnLayout {
                                 WGProgressControl {
                                     Layout.fillWidth: true
                                     maximumValue: 100
-                                    fakeProgress_: true
+                                    fakeProgress: true
                                     text: "Progress Bar Complete..."
-                                    units_: "%"
+                                    units: "%"
                                 }
                             }
                         }
@@ -430,7 +430,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                                 text: "Panel within a tab"
                                 clipContents_: true
                                 expanded_: true
-                                childObject_ :
+                                childObject :
                                 WGColumnLayout{
                                     WGMultiLineText {
                                         Layout.fillWidth: true
@@ -792,7 +792,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
             WGSubPanel {
                 text: "LOD Control"
-                childObject_ :
+                childObject :
                     WGColumnLayout {
                         WGLodSlider {
                             Layout.fillWidth: true
@@ -937,7 +937,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                 WGSeparator {
                     Layout.fillWidth: true
-                    vertical_: false
+                    vertical: false
                 }
             }
         }

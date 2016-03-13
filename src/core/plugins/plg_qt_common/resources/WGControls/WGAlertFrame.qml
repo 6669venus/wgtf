@@ -26,6 +26,7 @@ WGListView {
 */
 
 Rectangle {
+    id: baseAlertFrame
     objectName: "WGAlertFrame"
 
     /*! This property holds the index of the item within the list of alert messages.
@@ -38,6 +39,8 @@ Rectangle {
     // This can cause binding loops very easily though so we have to be careful that none of the children look to the parent for their height
 
     implicitHeight: childrenRect.height
+    implicitWidth: defaultSpacing.standardMargin
+
     radius: defaultSpacing.standardRadius
     border.width: 1
     border.color: palette.darkestShade

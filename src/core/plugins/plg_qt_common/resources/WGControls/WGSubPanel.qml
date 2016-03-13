@@ -12,7 +12,7 @@ Example:
 \code{.js}
 WGSubPanel {
     text: "Example Title"
-    childObject_ :
+    childObject :
         WGColumnLayout {
             WGLodSlider {
                 Layout.fillWidth: true
@@ -35,52 +35,43 @@ Rectangle {
         This property defines what objects are inside the panel.
         Use a layout for multiple controls eg. WGColumnLayout, WGFormLayout.
     */
-    //TODO: This should be renamed, it does not require "_"
-    property Component childObject_
+    property Component childObject
 
     /*!
         This property defines what objects might appear in the header of the sub panel.
         Use a layout for multiple controls eg. WGExpandingRowLayout
         Current designs have not included this functionality.
     */
-    //TODO: This should be renamed, it does not require "_"
-    property Component headerObject_
+    property Component headerObject
 
     /*! This property toggles holds a link to the text inside the header so it can be attached to a copyable */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property QtObject headerLabelObject_: headerLabel
+    property QtObject __headerLabelObject: headerLabel
 
     /*! This property defines whether a panel should be collapsible by the user
         The default value is \c true
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool collapsible_ : true
+    property bool collapsible : true
 
     /*! This property determines whether a panel has an icon in its title
         The default value is \c true
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool hasIcon_ : true
+    property bool hasIcon : true
 
     /*! This property determines if a panel is expanded by default
         The default value is \c true
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool expanded_ : true
+    property bool expanded : true
 
     /*! This property defines the location of the icon displayed when a panel is closed */
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    property string closedIcon_: "icons/arrow_right_16x16.png"
+    property string closedIcon: "icons/arrow_right_16x16.png"
 
     /*! This property defines the location of the icon displayed when a panel is open */
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    property string openIcon_: "icons/arrow_down_16x16.png"
+    property string openIcon: "icons/arrow_down_16x16.png"
 
     /*! This property determines if the sub panel header will be in bold text
         The default value is \c true
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool boldHeader_: true
+    property bool boldHeader: true
 
     //sub header properties
 
@@ -93,96 +84,65 @@ Rectangle {
     /*! This property toggles determines if the sub header will be in italic text.
         The default value is \c true
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool italicSubHeader_: true
+    property bool italicSubHeader: true
 
     /*! This property toggles determines if the sub header will be in bold text.
         The default value is \c false
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool boldSubHeader_: false
+    property bool boldSubHeader: false
 
     /*! This property toggles the visibility of the background frame that contains the sub panels contents.
         The default value is \c true
-    //TODO: When set true this creates undesirable UI unless used in conjuction with collapsible_:false.
-    //This property needs to be made internal and a new sub class (WGStaticPanel) made with default transparentPanel:true and collapsible_:false
-    */property bool transparentPanel_: false
+    //TODO: When set true this creates undesirable UI unless used in conjuction with collapsible:false.
+    //This property needs to be made internal and a new sub class (WGStaticPanel) made with default transparentPanel:true and collapsible:false
+    */property bool transparentPanel: false
 
     /*! This property determines the colour of the panel header.*/
-    //TODO: This should be renamed, it does not require "_"
-    property color colorHeader_ : palette.darkHeaderColor
+    property color colorHeader : palette.darkHeaderColor
 
     /*! This property determines the colour of the panel body.*/
-    //TODO: This should be renamed, it does not require "_"
-    property color colorBody_ : palette.lightPanelColor
+    property color colorBody : palette.lightPanelColor
 
     //best for minor group box frames
 
     /*! This property toggles the visibility of thin lines at the top and bottom of the frame
         The default value is \c false
     */
-    //TODO The separator in the title does not work well when the panel has headerObject_'s.
+    //TODO The separator in the title does not work well when the panel has headerObject's.
     //If headerObjects are going to be used this should be fixed.
-    property bool hasSeparators_ : false
+    property bool hasSeparators : false
 
     /*! This property adds a checkbox to a panels title bar that enables/disables the panel contents.
         The default value is \c false
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool toggleable_ : false
+    property bool toggleable : false
 
-    /*! This property sets the checked state of the header checkbox enabled by toggleable_:true */
-    //TODO: This should be renamed, it does not require "_"
-    property alias checked_ : headerCheck.checked
+    /*! This property sets the checked state of the header checkbox enabled by toggleable:true */
+    property alias checked : headerCheck.checked
 
-    //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! This can be used to assign an exclusive group to the checkbox for the SubPanel */
     property alias exclusiveGroup: headerCheck.exclusiveGroup
-
-    /*! This property holds the target control's id to be bound to this controls b_Value
-        The default settings are designed to bind Header Objects to the duplicate control within the panel*/
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    property alias b_Target: headerCheck.b_Target
-
-    /*! This property determines b_Target's property which is to be bound to this controls b_Value
-        The default settings are designed to bind Header Objects to the duplicate control within the panel
-    */
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    property alias b_Property: headerCheck.b_Property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property
-        The default settings are designed to bind Header Objects to the duplicate control within the panel
-    */
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    property alias b_Value: headerCheck.b_Value
 
     /*! This property will clip child components such as WGScrollPanel or similar which may extend outside the bounds of the scroll panel
         The default value is \c false
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool clipContents_: false
+    property bool clipContents: false
 
-    //Recommend not changing these properties:
+    /*! This property determines the amount of spacing on the left side of the content item. Changing this value can easily give undesirable results. */
+    property int contentLeftMargin : defaultSpacing.leftMargin
 
-    //TODO: This should be renamed and marked as internal by "__" prefix
+    /*! This property determines the amount of spacing on the right side of the content item. Changing this value can easily give undesirable results. */
+    property int contentRightMargin : defaultSpacing.rightMargin
+
+    /*! This property determines the amount of extra indent on the left side of the content item. Changing this value can easily give undesirable results. */
+    property int contentIndent : 0
+
     /*! \internal */
-    property int contentLeftMargin_ : defaultSpacing.leftMargin
-
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    /*! \internal */
-    property int contentRightMargin_ : defaultSpacing.rightMargin
-
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    /*! \internal */
-    property int contentIndent_ : 0
-
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    /*! \internal */
-    property bool finishedLoading_: false
+    property bool __finishedLoading: false
 
     //if radius < 2, these panels look awful. This adds a bit more spacing.
-    //TODO: This should be renamed and marked as internal by "__" prefix
     /*! \internal */
-    property int squareModifier: radius < 2 ? 8 : 0
+    property int __squareModifier: radius < 2 ? 8 : 0
 
     property alias menu: panelMenu.menu
 
@@ -190,34 +150,46 @@ Rectangle {
 
     property alias subtitleFontSize: headerSubLabel.font.pointSize
 
+    //delay so panels don't animate when control is created
+    Component.onCompleted: {
+        animationDelay.start()
+        if (transparentPanel)
+        {
+            colorHeader = "transparent"
+            colorBody = "transparent"
+            mainPanel.radius = 0
+        }
+        subPanel_HeaderLaber_WGCopyable.setParentCopyable( mainPanel )
+    }
+
     Layout.fillWidth: true
 
     color: "transparent"
 
     radius: defaultSpacing.standardRadius
 
-    //Can have child panels indent further if set in global settings
-    anchors.leftMargin: defaultSpacing.childIndentation
+    implicitHeight: defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + __squareModifier
+    implicitWidth: defaultSpacing.standardMargin
 
     height: {
-        if (expanded_)
+        if (expanded)
         {
-            content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + squareModifier
+            content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + __squareModifier
         }
-        else if (!expanded_)
+        else if (!expanded)
         {
-            defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (squareModifier / 2)
+            defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (__squareModifier / 2)
         }
     }
 
     Layout.preferredHeight: {
-        if (expanded_)
+        if (expanded)
         {
-            content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + squareModifier
+            content.height + defaultSpacing.minimumRowHeight + (radius * 4) + (defaultSpacing.topBottomMargin * 4) + __squareModifier
         }
-        else if (!expanded_)
+        else if (!expanded)
         {
-            defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (squareModifier / 2)
+            defaultSpacing.minimumRowHeight + (radius * 2) + (defaultSpacing.topBottomMargin * 2) + (__squareModifier / 2)
         }
     }
 
@@ -225,29 +197,17 @@ Rectangle {
         id: subPanel_HeaderLaber_WGCopyable
     }
 
-    //delay so panels don't animate when control is created
-    Component.onCompleted: {
-        animationDelay.start()
-        if (transparentPanel_)
-        {
-            colorHeader_ = "transparent"
-            colorBody_ = "transparent"
-            mainPanel.radius = 0
-        }
-        subPanel_HeaderLaber_WGCopyable.setParentCopyable( mainPanel )
-    }
-
     Timer {
         id: animationDelay
         interval: 100
         onTriggered: {
-            finishedLoading_ = true
+            __finishedLoading = true
         }
     }
 
     Behavior on Layout.preferredHeight{
         id: popAnimation
-        enabled: finishedLoading_ && collapsible_
+        enabled: __finishedLoading && collapsible
         NumberAnimation {
             duration: 120
             easing {
@@ -263,17 +223,17 @@ Rectangle {
         id: expandingOuterFrame
         radius: defaultSpacing.halfRadius
         color: palette.highlightShade
-        visible: collapsible_ && !palette.glowStyle
+        visible: collapsible && !palette.glowStyle
         anchors.top: headerPanel.top
         anchors.bottom: headerPanel.bottom
-        anchors.topMargin: mainPanel.radius + (squareModifier / 2)
-        anchors.bottomMargin: mainPanel.radius + (squareModifier / 2)
+        anchors.topMargin: mainPanel.radius + (__squareModifier / 2)
+        anchors.bottomMargin: mainPanel.radius + (__squareModifier / 2)
         anchors.horizontalCenter: mainColor.horizontalCenter
 
-        width: expanded_ ? mainColor.width - 6 : mainColor.width + 6 + (squareModifier)
+        width: expanded ? mainColor.width - 6 : mainColor.width + 6 + (__squareModifier)
 
         Component.onCompleted: {
-            if(expanded_)
+            if(expanded)
             {
                 expandingOuterFrame.color = "transparent"
             }
@@ -294,7 +254,7 @@ Rectangle {
                      if (!running)
                      {
                          expandAnimation.enabled = false
-                         if (expanded_)
+                         if (expanded)
                          {
                             expandingOuterFrame.color = "transparent"
                          }
@@ -315,11 +275,11 @@ Rectangle {
 
         gradient: Gradient {
                  GradientStop { position: 0.0; color: "transparent" }
-                 GradientStop { position: 0.5; color: expanded_ ? palette.highlightShade : palette.highlightColor }
+                 GradientStop { position: 0.5; color: expanded ? palette.highlightShade : palette.highlightColor }
                  GradientStop { position: 1.0; color: "transparent" }
              }
 
-        visible: collapsible_ && palette.glowStyle
+        visible: collapsible && palette.GlowStyle
 
         anchors.top: mainColor.top
         anchors.bottom: mainColor.bottom
@@ -334,7 +294,7 @@ Rectangle {
     Rectangle {
         id: mainColor
         radius: mainPanel.radius
-        color: colorHeader_
+        color: colorHeader
         anchors.fill: parent
         anchors.topMargin: defaultSpacing.topBottomMargin
         anchors.bottomMargin: defaultSpacing.topBottomMargin
@@ -347,7 +307,7 @@ Rectangle {
         color: "transparent"
 
         anchors.top: mainColor.top
-        height: defaultSpacing.minimumRowHeight + mainPanel.radius * 2 + (squareModifier / 2)
+        height: defaultSpacing.minimumRowHeight + mainPanel.radius * 2 + (__squareModifier / 2)
 
         Rectangle {
             objectName: "panel"
@@ -359,24 +319,24 @@ Rectangle {
             anchors.margins: defaultSpacing.doubleBorderSize
             radius: defaultSpacing.halfRadius
 
-            activeFocusOnTab: collapsible_
+            activeFocusOnTab: collapsible
 
             border.width: defaultSpacing.standardBorderSize
-            border.color: activeFocus && collapsible_ ? palette.lighterShade : "transparent"
+            border.color: activeFocus && collapsible ? palette.lighterShade : "transparent"
 
             Keys.onPressed: {
-                if (event.key == Qt.Key_Space && collapsible_)
+                if (event.key == Qt.Key_Space && collapsible)
                 {
-                    if (expanded_ && collapsible_)
+                    if (expanded && collapsible)
                     {
                         expandAnimation.enabled = true
                         content.opacity = 0
-                        expanded_ = false;
+                        expanded = false;
                     }
-                    else if (!expanded_ && collapsible_)
+                    else if (!expanded && collapsible)
                     {
                         expandAnimation.enabled = true
-                        expanded_ = true;
+                        expanded = true;
                         content.visible = true
                         content.opacity = 1;
                     }
@@ -386,52 +346,53 @@ Rectangle {
 
         Image {
             id: headerIcon
-            visible: hasIcon_
-            width: hasIcon_ ? sourceSize.width : 0
-            source: expanded_ ? mainPanel.openIcon_ : mainPanel.closedIcon_
+            visible: hasIcon
+            width: hasIcon ? sourceSize.width : 0
+            source: expanded ? mainPanel.openIcon : mainPanel.closedIcon
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: contentLeftMargin_
+            anchors.leftMargin: contentLeftMargin
         }
 
         //mouse area that expands the panel. Doesn't overlap any controls in the header
         MouseArea {
             id: expandMouseArea
+            objectName: "expandSubPanel"
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            visible: collapsible_
+            visible: collapsible
 
             activeFocusOnTab: false
 
             hoverEnabled: true
 
             onEntered: {
-                if (collapsible_)
+                if (collapsible)
                 {
                     mouseHighlight.color = palette.lighterShade
                 }
             }
 
             onExited: {
-                if (collapsible_)
+                if (collapsible)
                 {
                     mouseHighlight.color = "transparent"
                 }
             }
 
             onClicked: {
-                if (expanded_ && collapsible_)
+                if (expanded && collapsible)
                 {
                     expandAnimation.enabled = true
                     content.opacity = 0
-                    expanded_ = false;
+                    expanded = false;
                 }
-                else if (!expanded_ && collapsible_)
+                else if (!expanded && collapsible)
                 {
                     expandAnimation.enabled = true
-                    expanded_ = true;
+                    expanded = true;
                     content.visible = true
                     content.opacity = 1;
                 }
@@ -442,19 +403,19 @@ Rectangle {
         Rectangle {
             id: headerBox
             anchors.left: headerIcon.right
-            anchors.leftMargin: collapsible_ ? defaultSpacing.leftMargin : 0
+            anchors.leftMargin: collapsible ? defaultSpacing.leftMargin : 0
             anchors.verticalCenter: parent.verticalCenter
             width: childrenRect.width
             color: "transparent"
             Text {
                 objectName: "Text"
                 id: headerLabel
-                font.bold: boldHeader_
+                font.bold: boldHeader
                 renderType: Text.NativeRendering
                 color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 text: mainPanel.text
-                visible: toggleable_ ? false : true
+                visible: toggleable ? false : true
 
                 MouseArea {
                     anchors.fill: enabled ? parent : undefined
@@ -491,23 +452,23 @@ Rectangle {
             //SubPanel secondary title
             Text {
                 id: headerSubLabel
-                font.bold: boldSubHeader_
-                font.italic: italicSubHeader_
+                font.bold: boldSubHeader
+                font.italic: italicSubHeader
                 renderType: Text.NativeRendering
                 color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: headerLabel.right
                 text: (mainPanel.subText == "") ? "" : " - " + mainPanel.subText
-                visible: toggleable_ ? false : true
+                visible: toggleable ? false : true
             }
 
             WGCheckBox {
                 objectName: "CheckBox"
                 id: headerCheck
                 text: mainPanel.text
-                visible: toggleable_ ? true : false
+                visible: toggleable ? true : false
                 enabled: visible
-                width: toggleable_ ? implicitWidth : 0
+                width: toggleable ? implicitWidth : 0
                 checked: true
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -515,8 +476,8 @@ Rectangle {
 
         //separators only for group boxes
         WGSeparator {
-            vertical_: false
-            visible: hasSeparators_
+            vertical: false
+            visible: hasSeparators
             anchors.left: headerBox.right
             anchors.right: panelMenu.left
 
@@ -534,15 +495,15 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
 
             anchors.leftMargin: defaultSpacing.leftMargin
-            anchors.rightMargin: contentRightMargin_
+            anchors.rightMargin: contentRightMargin
             enabled: headerCheck.checked
 
-            sourceComponent: headerObject_
+            sourceComponent: headerObject
         }
 
         WGToolButton {
-            objectName: "Button"
             id: panelMenu
+            objectName: "subPanelMenuButton"
             anchors.right: parent.right
 
             anchors.verticalCenter: parent.verticalCenter
@@ -559,20 +520,21 @@ Rectangle {
     Loader {
         id: content
 
-        clip: clipContents_
+        clip: clipContents
 
         anchors {left: parent.left; right: parent.right}
 
         anchors.top: headerPanel.bottom
         anchors.topMargin: defaultSpacing.topBottomMargin
+
+        anchors.leftMargin: contentLeftMargin + contentIndent
+        anchors.rightMargin: contentRightMargin
+
         z: 1
 
-        anchors.leftMargin: contentLeftMargin_ + contentIndent_
-        anchors.rightMargin: contentRightMargin_
+        sourceComponent: childObject
 
-        sourceComponent: childObject_
-
-        enabled: (headerCheck.checked && expanded_)
+        enabled: (headerCheck.checked && expanded)
 
         onOpacityChanged: {
             if(opacity == 0){
@@ -581,7 +543,7 @@ Rectangle {
         }
 
         Component.onCompleted: {
-            if (!expanded_){
+            if (!expanded){
                 visible = false
                 opacity = 0
             }
@@ -589,7 +551,7 @@ Rectangle {
 
         Behavior on opacity{
             id: fadeAnimation
-            enabled: finishedLoading_ && collapsible_
+            enabled: __finishedLoading && collapsible
             NumberAnimation {
                  duration: 120
                  easing {
@@ -606,15 +568,15 @@ Rectangle {
         id: bodyPanel
         anchors {left: parent.left; right: parent.right}
 
-        color: parent.colorBody_
+        color: parent.colorBody
 
         anchors.top: headerPanel.bottom
 
-        height: parent.expanded_ ? content.height + defaultSpacing.doubleMargin - (squareModifier / 2): 0
+        height: parent.expanded ? content.height + defaultSpacing.doubleMargin - (__squareModifier / 2): 0
 
         Behavior on height{
             id: bodyPopAnimation
-            enabled: finishedLoading_ && collapsible_
+            enabled: __finishedLoading && collapsible
             NumberAnimation {
                  duration: 120
                  easing {
@@ -628,17 +590,86 @@ Rectangle {
 
     //separators only for group boxes
     WGSeparator {
-        vertical_: false
+        vertical: false
 
-        visible: hasSeparators_
+        visible: hasSeparators
 
         anchors.left: parent.left
         anchors.right: parent.right
 
-        anchors.leftMargin: contentLeftMargin_
-        anchors.rightMargin: contentRightMargin_
+        anchors.leftMargin: contentLeftMargin
+        anchors.rightMargin: contentRightMargin
 
         anchors.top: content.bottom
         anchors.topMargin: defaultSpacing.topBottomMargin
     }
+
+    /*! Deprecated */
+    property alias childObject_: mainPanel.childObject
+
+    /*! Deprecated */
+    property alias headerObject_: mainPanel.headerObject
+
+    /*! Deprecated */
+    property alias headerLabelObject_: mainPanel.__headerLabelObject
+
+    /*! Deprecated */
+    property alias collapsible_ : mainPanel.collapsible
+
+    /*! Deprecated */
+    property alias hasIcon_ : mainPanel.hasIcon
+
+    /*! Deprecated */
+    property alias expanded_ : mainPanel.expanded
+
+    /*! Deprecated */
+    property alias closedIcon_: mainPanel.closedIcon
+
+    /*! Deprecated */
+    property alias openIcon_: mainPanel.openIcon
+
+    /*! Deprecated */
+    property alias boldHeader_: mainPanel.boldHeader
+
+    /*! Deprecated */
+    property alias italicSubHeader_: mainPanel.italicSubHeader
+
+    /*! Deprecated */
+    property alias boldSubHeader_: mainPanel.boldSubHeader
+
+    /*! Deprecated */
+    property alias transparentPanel_: mainPanel.transparentPanel
+
+    /*! Deprecated */
+    property alias colorHeader_ : mainPanel.colorHeader
+
+    /*! Deprecated */
+    property alias colorBody_ : mainPanel.colorBody
+
+    /*! Deprecated */
+    property alias hasSeparators_ : mainPanel.hasSeparators
+
+    /*! Deprecated */
+    property alias toggleable_ : mainPanel.toggleable
+
+    /*! Deprecated */
+    property alias checked_ : mainPanel.checked
+
+    /*! Deprecated */
+    property alias clipContents_: mainPanel.clipContents
+
+    /*! Deprecated */
+    property alias contentLeftMargin_ : mainPanel.contentLeftMargin
+
+    /*! Deprecated */
+    property alias contentRightMargin_ : mainPanel.contentRightMargin
+
+    /*! Deprecated */
+    property alias contentIndent_ : mainPanel.contentIndent
+
+    /*! Deprecated */
+    property alias finishedLoading_: mainPanel.__finishedLoading
+
+    /*! Deprecated */
+    property alias squareModifier: mainPanel.__squareModifier
 }

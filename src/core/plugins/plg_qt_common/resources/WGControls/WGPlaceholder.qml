@@ -19,6 +19,9 @@ Rectangle {
     border.width: defaultSpacing.standardBorderSize
     border.color: palette.lighterShade
 
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
+
     /*!
         This property determines the text to display in the placeholder
     */

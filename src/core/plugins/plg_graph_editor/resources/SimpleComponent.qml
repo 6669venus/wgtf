@@ -83,7 +83,7 @@ Rectangle
         {
             Layout.fillWidth : true
             Layout.preferredHeight : defaultSpacing.separatorWidth
-            vertical_: false
+            vertical: false
         }
 
         WGExpandingRowLayout

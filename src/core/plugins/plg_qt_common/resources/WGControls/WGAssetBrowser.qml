@@ -959,12 +959,12 @@ Rectangle {
                 height: vertical ? assetSplitter.height : defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
                 WGSeparator {
-                    vertical_: parent.vertical
+                    vertical: parent.vertical
 
                     anchors.centerIn: parent
 
-                    width: vertical_ ? defaultSpacing.separatorWidth : parent.width
-                    height: vertical_ ? parent.height : defaultSpacing.separatorWidth
+                    width: vertical ? defaultSpacing.separatorWidth : parent.width
+                    height: vertical ? parent.height : defaultSpacing.separatorWidth
                 }
             }
 

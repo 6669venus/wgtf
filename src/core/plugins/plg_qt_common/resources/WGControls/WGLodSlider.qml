@@ -22,8 +22,7 @@ WGColumnLayout {
     objectName: "WGLodSlider"
 
     /*! This property holds a Sample LOD data set if used if one isnt explicitly set */
-    //TODO: This should be renamed, it does not require "_"
-    property QtObject lodList_: ListModel{
+    property QtObject lodList: ListModel{
         ListElement {
             objectName: "testLod1_"
             model_: "testLod1_.model"
@@ -76,95 +75,82 @@ WGColumnLayout {
         }
     }
 
-    /* TODO: Make this property do something.
-    It is based on the ModelEditor feature that has the optional ability to prevent the currently selected object from modifying parent LOD model settings. */
-
-    /*!
-        This property is used to display the locked status of a LoD model. It does not currently work.
-        The default value is \c false
-    */
-    property bool lockLod: false
-
     /*!
         This property defines the absolute maximum distance a LoD model can be set to
         The default value is \c 999
         */
-    /* TODO: This value should probably be a fallback, the value should read from a game configuration file.
-    Should this be marked as internal? */
-    property int maxDistanceAbs_: 999
+    property int maxDistanceAbs: 999
 
     /*!
         This property is determines the width taken up by the WGNumberBox's either side of the LOD control
         The default value is \c 60
     */
-    //TODO: This should be renamed, it does not require "_"
-    property int valueBoxWidth_: 60
+    property int valueBoxWidth: 60
 
     /*!
         This property is determines the width of the gap to the right of the LoD sliders which is used to indicate a
         LoD value goes off to infinity
         The default value is \c 10
     */
-    //TODO: This should be renamed, it does not require "_"
-    property int rightGapWidth_: 10
+    property int rightGapWidth: 10
 
     /*!
         This property holds the current camera distance
         The default value is \c 0
     */
-    //TODO: Should this be an internal property?
-    property int currentDistance_: 0
+    property int currentDistance: 0
+
+    /*!
+        This property holds the currently selected LOD
+    */
+    property int selectedLOD: -1
 
     /*! \internal */
-    property real upperBound_: {
-        if(infinite_ >= 0)
+    property real upperBound: {
+        if(__infinite >= 0)
         {
-            Math.max(lodList_.get(lodList_.count - 1).maxDist_, rightGapWidth_) //if infinite upper value = last max value
+            Math.max(lodList.get(lodList.count - 1).maxDist_, rightGapWidth) //if infinite upper value = last max value
         }
         else
         {
-            lodList_.get(lodList_.count - 1).maxDist_ + rightGapWidth_ //if not infinite upper value = last max value plus an extra gap
+            lodList.get(lodList.count - 1).maxDist_ + rightGapWidth //if not infinite upper value = last max value plus an extra gap
         }
     }
 
     //disable bindings when deleting a LOD to prevent errors
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
     /*! \internal */
-    property bool deleting_: false
-
-    //TODO: Document this
-    property bool addLOD_: false
-
-    //TODO: Document this
-    property int selectedLOD_: -1
+    property bool __deletingLOD: false
 
     /*! \internal */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property int infinite_: -1 //does the last LOD stretch to infinity
+    property bool __addingLOD: false
 
     /*! \internal */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property bool virtual_: false
-
-    property real unitWidth_: (lodFrame.width - (defaultSpacing.standardMargin * 2)) / upperBound_
+    property int __infinite: -1 //does the last LOD stretch to infinity
 
     /*! \internal */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property bool changingMin_: false
+    property bool __virtual: false
 
     /*! \internal */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property bool changingMax_: false
+    property real __unitWidth: (lodFrame.width - (defaultSpacing.standardMargin * 2)) / upperBound
+
+    /*! \internal */
+    property bool __changingMin: false
+
+    /*! \internal */
+    property bool __changingMax: false
+
+    implicitHeight: defaultSpacing.minimumRowHeight * 5
+    implicitWidth: defaultSpacing.standardMargin
 
     //stop the distance slider overrunning when upperBound_ is changed
-    onUpperBound_Changed: {
-        if (currentDistance_ > upperBound_){
-            currentDistance_ = upperBound_
+    onUpperBoundChanged: {
+        if (currentDistance > upperBound){
+            currentDistance = upperBound
         }
     }
 
-    onSelectedLOD_Changed: {
-        if (selectedLOD_ < 0)
+    onSelectedLODChanged: {
+        if (selectedLOD < 0)
         { // if no LOD is selected disable buttons and set hide to false
             var i
             for (i = 0; i < lodOptions.buttonList.count; i++)
@@ -182,10 +168,10 @@ WGColumnLayout {
             button_use_camera.enabled = true
             button_lock_selected_lod.enabled = true
 
-            button_lock_selected_lod.checked = lodList_.get(selectedLOD_).locked_
-            button_hide.checked = lodList_.get(selectedLOD_).hidden_
+            button_lock_selected_lod.checked = lodList.get(selectedLOD).locked_
+            button_hide.checked = lodList.get(selectedLOD).hidden_
 
-            if (selectedLOD_ == 0)
+            if (selectedLOD == 0)
             { //first lod is selected
                 lodOptions.buttonList[1].enabled = false
             }
@@ -194,7 +180,7 @@ WGColumnLayout {
                 lodOptions.buttonList[1].enabled = true
             }
 
-            if (selectedLOD_ == lodList_.count - 1)
+            if (selectedLOD == lodList.count - 1)
             { //last LOD is selected
                 lodOptions.buttonList[2].enabled = false
             } else
@@ -208,28 +194,28 @@ WGColumnLayout {
     function checkValues (index, newVal)
     {
         //checks max and min of current LOD are ok
-        if (lodList_.get(index).maxDist_ < newVal)
+        if (lodList.get(index).maxDist_ < newVal)
         {
-            lodList_.set(index,{"maxDist_": newVal})
+            lodList.set(index,{"maxDist_": newVal})
         }
-        else if (lodList_.get(index).minDist_ > newVal)
+        else if (lodList.get(index).minDist_ > newVal)
         {
-            lodList_.set(index,{"minDist_": newVal})
+            lodList.set(index,{"minDist_": newVal})
         }
 
         //set hidden on current LOD
-        if (lodList_.get(index).maxDist_ == lodList_.get(index).minDist_)
+        if (lodList.get(index).maxDist_ == lodList.get(index).minDist_)
         {
-            lodList_.set(index,{"hidden_": true})
-            if(index == selectedLOD_)
+            lodList.set(index,{"hidden_": true})
+            if(index == selectedLOD)
             {
                 button_hide.checked = true
             }
         }
         else
         {
-            lodList_.set(index,{"hidden_": false})
-            if(index == selectedLOD_)
+            lodList.set(index,{"hidden_": false})
+            if(index == selectedLOD)
             {
                 button_hide.checked = false
             }
@@ -240,33 +226,33 @@ WGColumnLayout {
         {
             for(var i = 0; i < index; i++)
             {
-                var checkMax = lodList_.get(i).maxDist_
+                var checkMax = lodList.get(i).maxDist_
                 if (checkMax > newVal)
                 {
-                    lodList_.set(i,{"maxDist_": newVal})
+                    lodList.set(i,{"maxDist_": newVal})
                 }
-                var checkMin = lodList_.get(i).minDist_
+                var checkMin = lodList.get(i).minDist_
                 if (checkMin > newVal)
                 {
-                    lodList_.set(i,{"minDist_": newVal})
+                    lodList.set(i,{"minDist_": newVal})
                 }
             }
         }
 
         //Checks all mins and maxes of LODS further than current LOD are not lower than the new value
-        if (index < (lodList_.count - 1))
+        if (index < (lodList.count - 1))
         {
-            for(var j = index + 1; j < lodList_.count; j++)
+            for(var j = index + 1; j < lodList.count; j++)
             {
-                var checkMax = lodList_.get(j).maxDist_
+                var checkMax = lodList.get(j).maxDist_
                 if (checkMax < newVal)
                 {
-                    lodList_.set(j,{"maxDist_": newVal})
+                    lodList.set(j,{"maxDist_": newVal})
                 }
-                var checkMin = lodList_.get(j).minDist_
+                var checkMin = lodList.get(j).minDist_
                 if (checkMin < newVal)
                 {
-                    lodList_.set(j,{"minDist_": newVal})
+                    lodList.set(j,{"minDist_": newVal})
                 }
             }
         }
@@ -275,60 +261,60 @@ WGColumnLayout {
     //checks that all the lods are continuous and that the upperBound is correct
     function checkLods()
     {
-        for(var i = 0; i < lodList_.count; i++)
+        for(var i = 0; i < lodList.count; i++)
         {
-            if(lodList_.get(i).minDist_ > lodList_.get(i).maxDist_)
+            if(lodList.get(i).minDist_ > lodList.get(i).maxDist_)
             {
-                lodList_.set(i,{"maxDist_": lodList_.get(i).minDist_})
+                lodList.set(i,{"maxDist_": lodList.get(i).minDist_})
             }
 
-            if (i != lodList_.count - 1)
+            if (i != lodList.count - 1)
             {
-                if(lodList_.get(i).maxDist_ != lodList_.get(i + 1).minDist_)
+                if(lodList.get(i).maxDist_ != lodList.get(i + 1).minDist_)
                 {
-                    lodList_.set(i + 1,{"minDist_": lodList_.get(i).maxDist_})
+                    lodList.set(i + 1,{"minDist_": lodList.get(i).maxDist_})
                 }
             }
 
-            if(lodList_.get(i).maxDist_ == lodList_.get(i).minDist_)
+            if(lodList.get(i).maxDist_ == lodList.get(i).minDist_)
             {
-                lodList_.set(i,{"hidden_": true})
-                if(i == selectedLOD_)
+                lodList.set(i,{"hidden_": true})
+                if(i == selectedLOD)
                 {
                     button_hide.checked = true
                 }
             }
             else
             {
-                lodList_.set(i,{"hidden_": false})
-                if(i == selectedLOD_)
+                lodList.set(i,{"hidden_": false})
+                if(i == selectedLOD)
                 {
                     button_hide.checked = false
                 }
             }
         }
 
-        if(infinite_ >= 0)
+        if(__infinite >= 0)
         {
             setInfinite()
         }
 
-        if(infinite_ >= 0 && upperBound_ <= maxDistanceAbs_)
+        if(__infinite >= 0 && upperBound <= maxDistanceAbs)
         {
-            upperBound_ = Math.max(lodList_.get(lodList_.count - 1).maxDist_, rightGapWidth_) //if infinite upper value = last max value
+            upperBound = Math.max(lodList.get(lodList.count - 1).maxDist_, rightGapWidth) //if infinite upper value = last max value
         }
-        else  if (infinite_ == -1 && upperBound_ <= maxDistanceAbs_)
+        else  if (__infinite == -1 && upperBound <= maxDistanceAbs)
         {
-            upperBound_ = lodList_.get(lodList_.count - 1).maxDist_ + rightGapWidth_ //if not infinite upper value = last max value plus an extra gap
+            upperBound = lodList.get(lodList.count - 1).maxDist_ + rightGapWidth //if not infinite upper value = last max value plus an extra gap
         }
 
-        if (upperBound_ > maxDistanceAbs_)
+        if (upperBound > maxDistanceAbs)
         {
-            upperBound_ = maxDistanceAbs_
+            upperBound = maxDistanceAbs
         }
-        else if (upperBound_ < rightGapWidth_)
+        else if (upperBound < rightGapWidth)
         {
-            upperBound_ = rightGapWidth_
+            upperBound = rightGapWidth
         }
     }
 
@@ -348,29 +334,29 @@ WGColumnLayout {
                 console.log("Reached start of LOD list")
                 i = count
             }
-            else if (fromIndex == lodList_.count -1 && direction == 1)
+            else if (fromIndex == lodList.count -1 && direction == 1)
             {
                 console.log("Reached end of LOD list")
                 i = count
             }
 
             var toIndex = fromIndex + direction
-            var toModel = lodList_.get(toIndex).model_
-            var toName = lodList_.get(toIndex).text_
+            var toModel = lodList.get(toIndex).model_
+            var toName = lodList.get(toIndex).text_
 
-            lodList_.set(toIndex, {"model_": lodList_.get(fromIndex).model_, "text_": lodList_.get(fromIndex).text_,})
-            lodList_.set(fromIndex, {"model_": toModel, "text_": toName,})
+            lodList.set(toIndex, {"model_": lodList.get(fromIndex).model_, "text_": lodList.get(fromIndex).text_,})
+            lodList.set(fromIndex, {"model_": toModel, "text_": toName,})
 
-            var fromWidth = lodList_.get(fromIndex).maxDist_ - lodList_.get(fromIndex).minDist_
-            var toWidth = lodList_.get(toIndex).maxDist_ - lodList_.get(toIndex).minDist_
+            var fromWidth = lodList.get(fromIndex).maxDist_ - lodList.get(fromIndex).minDist_
+            var toWidth = lodList.get(toIndex).maxDist_ - lodList.get(toIndex).minDist_
 
             if (direction == 1)
             {
-                lodList_.set(fromIndex, {"maxDist_": lodList_.get(fromIndex).minDist_ + toWidth})
+                lodList.set(fromIndex, {"maxDist_": lodList.get(fromIndex).minDist_ + toWidth})
             }
             else if (direction == -1)
             {
-                lodList_.set(toIndex, {"maxDist_": lodList_.get(toIndex).minDist_ + fromWidth})
+                lodList.set(toIndex, {"maxDist_": lodList.get(toIndex).minDist_ + fromWidth})
             }
 
             checkLods()
@@ -395,62 +381,62 @@ WGColumnLayout {
         var lastDot = filename.toString().lastIndexOf(".")
         var trimmedName = filename.toString().substring(lastSlash + 1, lastDot)
 
-        var oldMaxDist = lodList_.get(lodList_.count - 1).maxDist_
+        var oldMaxDist = lodList.get(lodList.count - 1).maxDist_
 
-        lodList_.append({
+        lodList.append({
                     "model_": filename.toString(),
                     "text_": trimmedName,
                     "minDist_": oldMaxDist,
-                    "maxDist_": oldMaxDist + rightGapWidth_
+                    "maxDist_": oldMaxDist + rightGapWidth
                         })
-        addLOD_ = false
+        __addingLOD = false
         checkLods()
-        selectedLOD_ = lodList_.count - 1
+        selectedLOD = lodList.count - 1
     }
 
     //Set hidden_ and change LOD width
     function hideLOD(index)
     {
-        if(lodList_.get(index).hidden_)
+        if(lodList.get(index).hidden_)
         {
-            lodList_.set(index,{"hidden_": false, "maxDist_": lodList_.get(index).maxDist_ + 10})
+            lodList.set(index,{"hidden_": false, "maxDist_": lodList.get(index).maxDist_ + 10})
         } else
         {
-            lodList_.set(index,{"hidden_": true, "maxDist_": lodList_.get(index).minDist_})
+            lodList.set(index,{"hidden_": true, "maxDist_": lodList.get(index).minDist_})
         }
-        checkValues(index, lodList_.get(index).maxDist_)
+        checkValues(index, lodList.get(index).maxDist_)
         checkLods()
     }
 
     //Delete a LOD and shuffle everything up.
     function deleteLOD(index)
     {
-        deleting_ = true
+        __deletingLOD = true
 
-        var deletedWidth = lodList_.get(index).maxDist_ - lodList_.get(index).minDist_
-        for (var i = index + 1; i < lodList_.count - 1; i++)
+        var deletedWidth = lodList.get(index).maxDist_ - lodList.get(index).minDist_
+        for (var i = index + 1; i < lodList.count - 1; i++)
         {
-            lodList_.set(i,{"minDist_": lodList_.get(i).minDist_ - deletedWidth, "maxDist_": lodList_.get(i).maxDist_ - deletedWidth})
+            lodList.set(i,{"minDist_": lodList.get(i).minDist_ - deletedWidth, "maxDist_": lodList.get(i).maxDist_ - deletedWidth})
         }
 
         lodStack.children[index].Layout.row += 1
 
-        lodList_.remove(index)
+        lodList.remove(index)
 
         checkLods()
 
-        selectedLOD_ = -1
-        deleting_ = false
+        selectedLOD = -1
+        __deletingLOD = false
     }
 
     function setInfinite()
     {
-        infinite_ = -1
-        for (var i = lodList_.count - 1; i >= 0; i--)
+        __infinite = -1
+        for (var i = lodList.count - 1; i >= 0; i--)
         {
-            if (lodList_.get(i).minDist_ != lodList_.get(i).maxDist_)
+            if (lodList.get(i).minDist_ != lodList.get(i).maxDist_)
             {
-                infinite_ = i
+                __infinite = i
                 i = -1
             }
         }
@@ -463,7 +449,7 @@ WGColumnLayout {
 
         WGLabel {
             text: "Min Dist (m)"
-            width: valueBoxWidth_
+            width: valueBoxWidth
         }
 
         WGLabel {
@@ -475,7 +461,7 @@ WGColumnLayout {
 
         WGLabel {
             text: "Max Dist (m)"
-            width: valueBoxWidth_
+            width: valueBoxWidth
         }
 
     }
@@ -490,15 +476,15 @@ WGColumnLayout {
 
             Repeater {
                 // Stack of minimum distance number boxes
-                model: lodList_
+                model: lodList
                 delegate: WGNumberBox {
                     value: model.minDist_
-                    Layout.preferredWidth: valueBoxWidth_
+                    Layout.preferredWidth: valueBoxWidth
                     minimumValue: 0
-                    maximumValue: index > 0 ? maxDistanceAbs_ : 0 //min distance on LOD 0 should always be 0
+                    maximumValue: index > 0 ? maxDistanceAbs : 0 //min distance on LOD 0 should always be 0
 
                     textColor: {
-                        if(enabled && index == selectedLOD_ && !activeFocus)
+                        if(enabled && index == selectedLOD && !activeFocus)
                         {
                             palette.highlightColor
                         }
@@ -518,34 +504,34 @@ WGColumnLayout {
 
 
                     onValueChanged: {
-                        if (!changingMin_ && !changingMax_ && index > 0)
+                        if (!__changingMin && !__changingMax && index > 0)
                         {
                             //change this LOD's min distance and the LOD above's max distance
                             if (dragging_)
                             {
-                                changingMin_ = true
-                                lodList_.set(index,{"minDist_": value})
-                                lodList_.set(index-1,{"maxDist_": value})
+                                __changingMin = true
+                                lodList.set(index,{"minDist_": value})
+                                lodList.set(index-1,{"maxDist_": value})
                                 checkValues(index, value)
                                 checkLods()
-                                changingMin_ = false
+                                __changingMin = false
                             }
                         }
                     }
 
                     onEditingFinished: {
-                        changingMin_ = true
-                        lodList_.set(index,{"minDist_": value})
-                        lodList_.set(index-1,{"maxDist_": value})
+                        __changingMin = true
+                        lodList.set(index,{"minDist_": value})
+                        lodList.set(index-1,{"maxDist_": value})
                         checkValues(index, value)
                         checkLods()
-                        changingMin_ = false
+                        __changingMin = false
                     }
 
                     readOnly: index == 0 ? true : false
 
                     Connections {
-                        target: deleting_ ? null : lodList_.get(index)
+                        target: __deletingLOD ? null : lodList.get(index)
                         onMinDist_Changed: {
                             value = minDist_
                         }
@@ -560,7 +546,7 @@ WGColumnLayout {
                 id: lodFrame
                 Layout.fillWidth: true
                 //(Number of Lods * rowHeight) + spacing between rows + top & bottom margins
-                Layout.preferredHeight: (lodList_.count * defaultSpacing.minimumRowHeight) + ((lodList_.count - 1) * defaultSpacing.rowSpacing) + (defaultSpacing.standardMargin * 2)
+                Layout.preferredHeight: (lodList.count * defaultSpacing.minimumRowHeight) + ((lodList.count - 1) * defaultSpacing.rowSpacing) + (defaultSpacing.standardMargin * 2)
 
                 clip: true
 
@@ -572,7 +558,7 @@ WGColumnLayout {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     z: 2
-                    x: (currentDistance_ * unitWidth_) + defaultSpacing.standardMargin
+                    x: (currentDistance * __unitWidth) + defaultSpacing.standardMargin
                 }
 
                 GridLayout {
@@ -583,14 +569,14 @@ WGColumnLayout {
                     columnSpacing: 0
 
                     Repeater {
-                        model: lodList_
+                        model: lodList
                         delegate: Rectangle {
                             id: colorBar
 
-                            property bool highlighted_: {
-                                if (!deleting_)
+                            property bool highlighted: {
+                                if (!__deletingLOD)
                                 {
-                                    lodList_.get(index).selected_
+                                    lodList.get(index).selected_
                                 } else
                                 {
                                     false
@@ -599,24 +585,24 @@ WGColumnLayout {
 
                             Connections {
                                 target: mainBody
-                                onSelectedLOD_Changed: {
-                                    if (target.selectedLOD_ == index)
+                                onSelectedLODChanged: {
+                                    if (target.selectedLOD == index)
                                     {
-                                        highlighted_ = true
+                                        highlighted = true
                                     } else
                                     {
-                                        highlighted_ = false
+                                        highlighted = false
                                     }
                                 }
                             }
 
-                            border.width: highlighted_ ? defaultSpacing.standardBorderSize : 0
-                            border.color: highlighted_ ? palette.textColor : "transparent"
+                            border.width: highlighted ? defaultSpacing.standardBorderSize : 0
+                            border.color: highlighted ? palette.textColor : "transparent"
 
                             //3 repeating colours
                             color: {
                                 var barColor = "transparent"
-                                if (!deleting_)
+                                if (!__deletingLOD)
                                 {
                                     var colorCount = index % 3
                                     if (colorCount == 0)
@@ -640,15 +626,15 @@ WGColumnLayout {
 
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             Layout.preferredWidth: {
-                                if(!deleting_)
+                                if(!__deletingLOD)
                                 {
-                                    if (lodList_.get(index).maxDist_ == lodList_.get(index).minDist_)
+                                    if (lodList.get(index).maxDist_ == lodList.get(index).minDist_)
                                     {
                                         0
                                     }
                                     else
                                     {
-                                        (lodList_.get(index).maxDist_ - lodList_.get(index).minDist_) * unitWidth_
+                                        (lodList.get(index).maxDist_ - lodList.get(index).minDist_) * __unitWidth
                                     }
                                 }
                                 else
@@ -670,8 +656,8 @@ WGColumnLayout {
                                 cursorShape: Qt.PointingHandCursor
 
                                 onClicked: {
-                                    selectedLOD_ = index
-                                    lodList_.set(index, {"selected_": true})
+                                    selectedLOD = index
+                                    lodList.set(index, {"selected_": true})
                                     parent.focus = true
                                 }
                             }
@@ -680,19 +666,19 @@ WGColumnLayout {
                             Text {
                                 objectName: "barName"
                                 id: barName
-                                color: state == "" || parent.highlighted_ ? palette.textColor : parent.color
-                                text: deleting_ ? "" : lodList_.get(index).text_
-                                opacity: state == "" || parent.highlighted_  ? 1 : 0.5
+                                color: state == "" || parent.highlighted ? palette.textColor : parent.color
+                                text: __deletingLOD ? "" : lodList.get(index).text_
+                                opacity: state == "" || parent.highlighted  ? 1 : 0.5
                                 y: defaultSpacing.standardBorderSize
                                 horizontalAlignment: Text.AlignLeft
                                 x: defaultSpacing.standardMargin
 
-                                font.bold: parent.highlighted_ ? true : false
+                                font.bold: parent.highlighted ? true : false
 
                                 states: [
                                     State {
                                         name: "RIGHT"
-                                        when: ((upperBound_ * unitWidth_) - (lodList_.get(index).maxDist_ * unitWidth_) > barName.paintedWidth)
+                                        when: ((upperBound * __unitWidth) - (lodList.get(index).maxDist_ * __unitWidth) > barName.paintedWidth)
 
                                         PropertyChanges {target: barName; x: parent.width + defaultSpacing.standardMargin}
                                         PropertyChanges {target: barName; horizontalAlignment: Text.AlignLeft}
@@ -700,7 +686,7 @@ WGColumnLayout {
                                     },
                                     State {
                                         name: "LEFT"
-                                        when: ((lodList_.get(index).minDist_ * unitWidth_ > barName.paintedWidth))
+                                        when: ((lodList.get(index).minDist_ * __unitWidth > barName.paintedWidth))
 
                                         PropertyChanges {target: barName; x: -barName.paintedWidth - defaultSpacing.standardMargin}
                                         PropertyChanges {target: barName; horizontalAlignment: Text.AlignRight}
@@ -717,8 +703,8 @@ WGColumnLayout {
                                     cursorShape: Qt.PointingHandCursor
 
                                     onClicked: {
-                                        selectedLOD_ = index
-                                        lodList_.set(index, {"selected_": true})
+                                        selectedLOD = index
+                                        lodList.set(index, {"selected_": true})
                                     }
                                 }
 
@@ -727,13 +713,13 @@ WGColumnLayout {
                             //LOD number inside LOD bar, greys out and italics when LOD is zero width (hidden)
                             Text {
                                 id: lodNumber
-                                text: (infinite_ == index) ? "∞" : index
+                                text: (__infinite == index) ? "∞" : index
                                 color: model.maxDist_ === model.minDist_ ? palette.disabledTextColor : palette.textColor
                                 anchors.centerIn: parent
                                 horizontalAlignment: Text.AlignHCenter
-                                font.pixelSize: (infinite_ == index) ? 22 : 12
+                                font.pixelSize: (__infinite == index) ? 22 : 12
                                 font.bold: true
-                                font.italic: model.maxDist_ === model.minDist_ && infinite_ != index ? true : false
+                                font.italic: model.maxDist_ === model.minDist_ && __infinite != index ? true : false
                             }
 
                             //draggable handle on left side of LOD bar
@@ -759,47 +745,47 @@ WGColumnLayout {
                                             //map mouse to inside LOD Frame Box
                                             var pos = mapToItem(lodFrame,mouse.x, mouse.y)
                                             var newVal = 0
-                                            if (infinite_ >= 0)
+                                            if (__infinite >= 0)
                                             {
                                                 if (pos.x > 0 && pos.x < lodFrame.width)
                                                 { //move value to position of mouse inside Frame Box
-                                                    newVal = Math.round((pos.x / lodFrame.width) * upperBound_)
+                                                    newVal = Math.round((pos.x / lodFrame.width) * upperBound)
                                                 } else if (pos.x <= 0)
                                                 { //set value to 0 if mouse to left of Frame Box
                                                     newVal = 0
                                                 } else if (pos.x >= lodFrame.width)
                                                 { //set value to max if mouse to right of Frame Box
-                                                    newVal = upperBound_
+                                                    newVal = upperBound
                                                 }
                                             }
                                             else
                                             {
-                                                if (pos.x > 0 && pos.x < (lodFrame.width - rightGapWidth_))
+                                                if (pos.x > 0 && pos.x < (lodFrame.width - rightGapWidth))
                                                 { //move value to position of mouse inside Frame Box and extra gap at max
-                                                    newVal = Math.round((pos.x / lodFrame.width) * upperBound_)
+                                                    newVal = Math.round((pos.x / lodFrame.width) * upperBound)
                                                 }
                                                 else if (pos.x <= 0)
                                                 { //set value to 0 if mouse to left of Frame Box
                                                     newVal = 0
                                                 }
-                                                else if (pos.x >= (lodFrame.width - rightGapWidth_))
+                                                else if (pos.x >= (lodFrame.width - rightGapWidth))
                                                 { //increase the upper bound and set value to upper bound
 
                                                     //TODO:: This should probably not be per tick but on some nice real time value
-                                                    if (upperBound_ < maxDistanceAbs_)
+                                                    if (upperBound < maxDistanceAbs)
                                                     {
-                                                        upperBound_ += 1
+                                                        upperBound += 1
                                                     }
-                                                    newVal = upperBound_
+                                                    newVal = upperBound
                                                 }
                                             }
 
-                                            changingMin_ = true
+                                            __changingMin = true
 
                                             //update this LODS min value and the previous LODS max value
 
-                                            lodList_.set((index - 1),{"maxDist_": newVal})
-                                            lodList_.set((index),{"minDist_": newVal})
+                                            lodList.set((index - 1),{"maxDist_": newVal})
+                                            lodList.set((index),{"minDist_": newVal})
 
                                             checkValues(index, newVal)
                                         }
@@ -815,8 +801,8 @@ WGColumnLayout {
 
                                     checkLods()
 
-                                    changingMin_ = false
-                                    changingMax_ = false
+                                    __changingMin = false
+                                    __changingMax = false
                                 }
 
 
@@ -834,11 +820,11 @@ WGColumnLayout {
 
                                 //no minimum handle on last LOD if infinite = true
                                 visible: {
-                                    if (infinite_ == -1)
+                                    if (__infinite == -1)
                                     {
                                         true
                                     }
-                                    else if (infinite_ >= 0 && index < lodList_.count - 1)
+                                    else if (__infinite >= 0 && index < lodList.count - 1)
                                     {
                                         true
                                     }
@@ -856,11 +842,11 @@ WGColumnLayout {
                                         //map mouse to inside LOD Frame Box
                                         var pos = mapToItem(lodFrame,mouse.x, mouse.y)
                                         var newVal = 0
-                                        if (infinite_ >= 0)
+                                        if (__infinite >= 0)
                                         {
                                             if (pos.x > 0 && pos.x < lodFrame.width)
                                             { //move value to position of mouse inside Frame Box
-                                                newVal = Math.round((pos.x / lodFrame.width) * upperBound_)
+                                                newVal = Math.round((pos.x / lodFrame.width) * upperBound)
                                             }
                                             else if (pos.x <= 0)
                                             { //set value to 0 if mouse to left of Frame Box
@@ -868,40 +854,40 @@ WGColumnLayout {
                                             }
                                             else if (pos.x >= lodFrame.width)
                                             { //set value to max if mouse to right of Frame Box
-                                                newVal = upperBound_
+                                                newVal = upperBound
                                             }
                                         }
                                         else
                                         {
-                                            if (pos.x > 0 && pos.x < (lodFrame.width - rightGapWidth_))
+                                            if (pos.x > 0 && pos.x < (lodFrame.width - rightGapWidth))
                                             { //move value to position of mouse inside Frame Box and extra gap at max
-                                                newVal = Math.round((pos.x / lodFrame.width) * upperBound_)
+                                                newVal = Math.round((pos.x / lodFrame.width) * upperBound)
                                             }
                                             else if (pos.x <= 0)
                                             { //set value to 0 if mouse to left of Frame Box
                                                 newVal = 0
                                             }
-                                            else if (pos.x >= (lodFrame.width - rightGapWidth_))
+                                            else if (pos.x >= (lodFrame.width - rightGapWidth))
                                             { //increase the upper bound and set value to upper bound
 
                                                 //TODO:: This should probably not be per tick but on some nice real time value
-                                                if (upperBound_ < maxDistanceAbs_)
+                                                if (upperBound < maxDistanceAbs)
                                                 {
-                                                    upperBound_ += 1
+                                                    upperBound += 1
                                                 }
-                                                newVal = upperBound_
+                                                newVal = upperBound
                                             }
                                         }
 
-                                        changingMax_ = true
+                                        __changingMax = true
 
                                         //update this LODS max value and the next LODS min value
-                                        if (index < lodList_.count - 1)
+                                        if (index < lodList.count - 1)
                                         {
-                                            lodList_.set((index + 1),{"minDist_": newVal})
+                                            lodList.set((index + 1),{"minDist_": newVal})
                                         }
 
-                                        lodList_.set((index),{"maxDist_": newVal})
+                                        lodList.set((index),{"maxDist_": newVal})
 
                                         checkValues(index, newVal)
                                     }
@@ -916,8 +902,8 @@ WGColumnLayout {
 
                                     checkLods()
 
-                                    changingMin_ = false
-                                    changingMax_ = false
+                                    __changingMin = false
+                                    __changingMax = false
                                 }
                             }
                         }
@@ -929,21 +915,21 @@ WGColumnLayout {
                         color: "transparent"
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.preferredWidth: {
-                            if (infinite_ >= 0 && lodList_.get(lodList_.count - 1).maxDist_ >= rightGapWidth_)
+                            if (__infinite >= 0 && lodList.get(lodList.count - 1).maxDist_ >= rightGapWidth)
                             {
                                 0
                             }
-                            else if (infinite_ >= 0 && lodList_.get(lodList_.count - 1).maxDist_ <= rightGapWidth_)
+                            else if (__infinite >= 0 && lodList.get(lodList.count - 1).maxDist_ <= rightGapWidth)
                             {
-                                (rightGapWidth_ - lodList_.get(lodList_.count - 1).maxDist_) * unitWidth_
+                                (rightGapWidth - lodList.get(lodList.count - 1).maxDist_) * __unitWidth
                             }
                             else
                             {
-                                rightGapWidth_ * unitWidth_
+                                rightGapWidth * __unitWidth
                             }
                         }
-                        Layout.column: lodList_.count
-                        Layout.row: lodList_.count - 1
+                        Layout.column: lodList.count
+                        Layout.row: lodList.count - 1
                     }
                 }
             }
@@ -954,15 +940,15 @@ WGColumnLayout {
 
             Repeater {
                 // Stack of maximum distance number boxes
-                model: lodList_
+                model: lodList
                 delegate: WGNumberBox {
                     value: model.maxDist_
-                    Layout.preferredWidth: valueBoxWidth_
+                    Layout.preferredWidth: valueBoxWidth
                     minimumValue: 0
-                    maximumValue: infinite_ >= 0 ? maxDistanceAbs_ : maxDistanceAbs_ - rightGapWidth_
+                    maximumValue: __infinite >= 0 ? maxDistanceAbs : maxDistanceAbs - rightGapWidth
 
                     textColor: {
-                        if (enabled && index == selectedLOD_ && !activeFocus)
+                        if (enabled && index == selectedLOD && !activeFocus)
                         {
                             palette.highlightColor
                         }
@@ -981,42 +967,42 @@ WGColumnLayout {
                     }
 
                     onValueChanged: {
-                        if (!changingMin_ && !changingMax_)
+                        if (!__changingMin && !__changingMax)
                         {
                             //change this LOD's max distance and the LOD before's max distance
                             if (dragging_)
                             {
-                                changingMax_ = true
-                                lodList_.set(index,{"maxDist_": value})
+                                __changingMax = true
+                                lodList.set(index,{"maxDist_": value})
 
-                                if (index < lodList_.count - 1)
+                                if (index < lodList.count - 1)
                                 {
-                                    lodList_.set(index + 1,{"minDist_": value})
+                                    lodList.set(index + 1,{"minDist_": value})
                                 }
 
                                 checkValues(index, value)
                                 checkLods()
-                                changingMax_ = false
+                                __changingMax = false
                             }
                         }
                     }
 
                     onEditingFinished: {
-                        changingMax_ = true
-                        lodList_.set(index,{"maxDist_": value})
+                        __changingMax = true
+                        lodList.set(index,{"maxDist_": value})
 
-                        if (index < lodList_.count - 1)
+                        if (index < lodList.count - 1)
                         {
-                            lodList_.set(index + 1,{"minDist_": value})
+                            lodList.set(index + 1,{"minDist_": value})
                         }
 
                         checkValues(index, value)
                         checkLods()
-                        changingMax_ = false
+                        __changingMax = false
                     }
 
                     Connections {
-                        target: deleting_ ? null : lodList_.get(index)
+                        target: __deletingLOD ? null : lodList.get(index)
                         onMaxDist_Changed: {
                             value = maxDist_
                         }
@@ -1029,9 +1015,9 @@ WGColumnLayout {
         //Delete LOD buttons. Disabled if only one LOD left.
         WGColumnLayout {
             Repeater {
-                model: lodList_
+                model: lodList
                 delegate: WGToolButton {
-                    enabled: lodList_.count > 1 && index == selectedLOD_
+                    enabled: lodList.count > 1 && index == selectedLOD
                     iconSource: "icons/delete_16x16.png"
                     tooltip: "Delete Selected LOD"
                     onClicked: {
@@ -1080,8 +1066,8 @@ WGColumnLayout {
                         enabled: false
 
                         onClicked: {
-                            moveLOD(selectedLOD_,-1,1)
-                            selectedLOD_ -= 1
+                            moveLOD(selectedLOD,-1,1)
+                            selectedLOD -= 1
                         }
                     },
                     WGPushButton {
@@ -1091,8 +1077,8 @@ WGColumnLayout {
                         tooltip: "Move LOD Down"
                         enabled: false
                         onClicked: {
-                            moveLOD(selectedLOD_,1,1)
-                            selectedLOD_ += 1
+                            moveLOD(selectedLOD,1,1)
+                            selectedLOD += 1
                         }
                     },
                     WGPushButton {
@@ -1104,7 +1090,7 @@ WGColumnLayout {
                         checkable: true
                         checked: false
                         onClicked: {
-                            hideLOD(selectedLOD_)
+                            hideLOD(selectedLOD)
                         }
                     },
                     WGPushButton {
@@ -1114,8 +1100,8 @@ WGColumnLayout {
                         tooltip: "Use Current Camera Distance"
                         enabled: false
                         onClicked: { //ToDo Test if the lod is locked
-                            lodList_.set(selectedLOD_, {"maxDist_": currentDistance_})
-                            checkValues(selectedLOD_, lodList_.get(selectedLOD_).maxDist_)
+                            lodList.set(selectedLOD, {"maxDist_": currentDistance})
+                            checkValues(selectedLOD, lodList.get(selectedLOD).maxDist_)
                             checkLods()
                         }
                     },
@@ -1128,13 +1114,13 @@ WGColumnLayout {
                         checkable: true
                         checked: false
                         onClicked: {
-                            if (lodList_.get(selectedLOD_).locked_ == true)
+                            if (lodList.get(selectedLOD).locked_ == true)
                             {
-                                lodList_.set(selectedLOD_, {"locked_": false})
+                                lodList.set(selectedLOD, {"locked_": false})
                             }
                             else
                             {
-                                lodList_.set(selectedLOD_, {"locked_": true})
+                                lodList.set(selectedLOD, {"locked_": true})
                             }
                         }
                     }
@@ -1148,7 +1134,7 @@ WGColumnLayout {
                 Layout.preferredWidth: implicitWidth
                 tooltip: "Extend LOD to Infinity"
                 checkable: true
-                checked: infinite_ >= 0
+                checked: __infinite >= 0
                 onClicked: {
                     if(checked)
                     {
@@ -1157,7 +1143,7 @@ WGColumnLayout {
                     }
                     else
                     {
-                        infinite_ = -1
+                        __infinite = -1
                         checkLods()
                     }
                 }
@@ -1169,7 +1155,7 @@ WGColumnLayout {
                 Layout.preferredWidth: implicitWidth
                 tooltip: "Add New LOD"
                 onClicked: {
-                    addLOD_ = true
+                    __addingLOD = true
                     chooseLODModelDialog.open()
                 }
             }
@@ -1190,19 +1176,19 @@ WGColumnLayout {
             objectName: "cameraDistance"
             //Camera distance
             id: currentDistanceNum
-            Layout.preferredWidth: valueBoxWidth_
-            value: currentDistance_
+            Layout.preferredWidth: valueBoxWidth
+            value: currentDistance
             minimumValue: 0
-            maximumValue: upperBound_
+            maximumValue: upperBound
 
             onValueChanged: {
-                currentDistance_ = value
+                currentDistance = value
             }
 
             Connections {
                 target: mainBody
-                onCurrentDistance_Changed: {
-                    currentDistanceNum.value = target.currentDistance_
+                onCurrentDistanceChanged: {
+                    currentDistanceNum.value = target.currentDistance
                 }
             }
         }
@@ -1213,21 +1199,21 @@ WGColumnLayout {
             id: distanceSlider
             Layout.fillWidth: true
             minimumValue: 0
-            maximumValue: upperBound_
-            value: currentDistance_
+            maximumValue: upperBound
+            value: currentDistance
             decimals: 0
 
             //no value box because we want it on the left
             showValue: false
 
             onValueChanged: {
-                currentDistance_ = value
+                currentDistance = value
             }
 
             Connections {
                 target: mainBody
-                onCurrentDistance_Changed: {
-                    distanceSlider.value = target.currentDistance_
+                onCurrentDistanceChanged: {
+                    distanceSlider.value = target.currentDistance
                 }
             }
         }
@@ -1235,16 +1221,16 @@ WGColumnLayout {
         //uneditable textbox that shows the upperBound
         WGNumberBox {
             id: upperBoundNum
-            Layout.preferredWidth: valueBoxWidth_
-            value: upperBound_
-            minimumValue: upperBound_
-            maximumValue: upperBound_
+            Layout.preferredWidth: valueBoxWidth
+            value: upperBound
+            minimumValue: upperBound
+            maximumValue: upperBound
             readOnly: true
 
             Connections {
                 target: mainBody
-                onUpperBound_Changed: {
-                    upperBoundNum.value = target.upperBound_
+                onUpperBoundChanged: {
+                    upperBoundNum.value = target.upperBound
                 }
             }
         }
@@ -1257,7 +1243,7 @@ WGColumnLayout {
             checked: false
             tooltip: "Virtual LOD Distance"
             onClicked: {
-                virtual_ = checked
+                __virtual = checked
             }
         }
     }
@@ -1269,7 +1255,7 @@ WGColumnLayout {
         visible: false
         nameFilters: [ "Model files (*.model)" ]
         onAccepted: {
-            if (addLOD_)
+            if (__addingLOD)
             {
                 addLOD(chooseLODModelDialog.fileUrl)
             } else
@@ -1282,4 +1268,46 @@ WGColumnLayout {
             console.log("Open Model Cancelled")
         }
     }
+
+    /*! Deprecated */
+        property alias lodList_: mainBody.lodList
+
+        /*! Deprecated */
+        property alias maxDistanceAbs_: mainBody.maxDistanceAbs
+
+        /*! Deprecated */
+        property alias valueBoxWidth_: mainBody.valueBoxWidth
+
+        /*! Deprecated */
+        property alias rightGapWidth_: mainBody.rightGapWidth
+
+        /*! Deprecated */
+        property alias currentDistance_: mainBody.currentDistance
+
+        /*! Deprecated */
+        property alias upperBound_: mainBody.upperBound
+
+        /*! Deprecated */
+        property alias deleting_: mainBody.__deletingLOD
+
+        /*! Deprecated */
+        property alias addLOD_: mainBody.__addingLOD
+
+        /*! Deprecated */
+        property alias selectedLOD_: mainBody.selectedLOD
+
+        /*! Deprecated */
+        property alias infinite_: mainBody.__infinite
+
+        /*! Deprecated */
+        property alias virtual_: mainBody.__virtual
+
+        /*! Deprecated */
+        property alias unitWidth_: mainBody.__unitWidth
+
+        /*! Deprecated */
+        property alias changingMin_: mainBody.__changingMin
+
+        /*! Deprecated */
+        property alias changingMax_: mainBody.__changingMax
 }

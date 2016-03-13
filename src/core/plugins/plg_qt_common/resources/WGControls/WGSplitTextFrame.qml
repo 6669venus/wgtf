@@ -140,7 +140,7 @@ WGTextBoxFrame {
                     anchors.horizontalCenter: parent.left
                     height: mainFrame.height - defaultSpacing.doubleBorderSize
                     anchors.verticalCenter: parent.verticalCenter
-                    vertical_: true
+                    vertical: true
 
                     //first separator is invisible
                     visible: index != 0 && !decimalSeparator ? true : false

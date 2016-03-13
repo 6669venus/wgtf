@@ -60,11 +60,6 @@ Control {
     objectName: "WGAbstractCheckable"
 
     /*!
-        Emitted whenever the control is clicked.
-    */
-    signal clicked
-
-    /*!
         \qmlproperty bool AbstractCheckable::pressed
 
         This property is \c true if the control is being pressed.
@@ -82,8 +77,6 @@ Control {
         This property is \c true if the control is checked.
     */
     property bool checked: false
-    Accessible.checked: checked
-    Accessible.checkable: true
 
     /*!
         This property is \c true if the control takes the focus when it is
@@ -105,26 +98,10 @@ Control {
     /*! \internal */
     property var __cycleStatesHandler: cycleRadioButtonStates
 
-    activeFocusOnTab: true
-
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: Settings.hoverEnabled
-        enabled: !keyPressed
-
-        property bool keyPressed: false
-        property bool effectivePressed: pressed && containsMouse || keyPressed
-
-        onClicked: abstractCheckable.clicked();
-
-        onPressed: if (activeFocusOnPress) forceActiveFocus();
-
-        onReleased: {
-            if (containsMouse && (!exclusiveGroup || !checked))
-                __cycleStatesHandler();
-        }
-    }
+    /*!
+        Emitted whenever the control is clicked.
+    */
+    signal clicked
 
     /*! \internal */
     onExclusiveGroupChanged: {
@@ -143,6 +120,30 @@ Control {
             if (!exclusiveGroup || !checked)
                 __cycleStatesHandler();
             clicked();
+        }
+    }
+
+    Accessible.checked: checked
+    Accessible.checkable: true
+
+    activeFocusOnTab: true
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: Settings.hoverEnabled
+        enabled: !keyPressed
+
+        property bool keyPressed: false
+        property bool effectivePressed: pressed && containsMouse || keyPressed
+
+        onClicked: abstractCheckable.clicked();
+
+        onPressed: if (activeFocusOnPress) forceActiveFocus();
+
+        onReleased: {
+            if (containsMouse && (!exclusiveGroup || !checked))
+                __cycleStatesHandler();
         }
     }
 

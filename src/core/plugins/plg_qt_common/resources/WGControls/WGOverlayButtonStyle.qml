@@ -10,7 +10,9 @@ ButtonStyle {
     id: baseStyle
     objectName: "WGOverlayButtonStyle"
 
-    property int pushOffset: 0
+    /*! \internal */
+    // Variable for the amount of offset the button will move when pressed. Is zero in neutral state.
+    property int __pushOffset: 0
 
     /*! \internal */
     // helper property for text color so states can all be in the background object
@@ -55,7 +57,7 @@ ButtonStyle {
             //Disabled icons are desaturated and faded.
             //For some reason having the opacity change in the image didn't work with Desaturate so added parent Item
 
-            anchors.verticalCenterOffset: 0 + pushOffset
+            anchors.verticalCenterOffset: 0 + __pushOffset
 
             Item {
                 anchors.verticalCenter: parent.verticalCenter
@@ -142,14 +144,14 @@ ButtonStyle {
             State {
                 name: "PRESSED"
                 when: control.pressed && control.enabled && !control.checked
-                PropertyChanges {target: baseStyle; pushOffset: 1}
+                PropertyChanges {target: baseStyle; __pushOffset: 1}
                 PropertyChanges {target: buttonFrame; color: palette.darkestShade}
             },
 
             State {
                 name: "PRESSED CHECKED"
                 when: control.pressed && control.enabled && control.checked
-                PropertyChanges {target: baseStyle; pushOffset: 1}
+                PropertyChanges {target: baseStyle; __pushOffset: 1}
                 PropertyChanges {target: buttonFrame; color: palette.highlightShade}
             },
 
@@ -200,4 +202,7 @@ ButtonStyle {
 
         ]
     }
+
+    /*! Deprecated */
+    property alias pushOffset: baseStyle.__pushOffset
 }

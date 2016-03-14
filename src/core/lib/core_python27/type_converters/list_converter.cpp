@@ -2,8 +2,10 @@
 
 #include "list_converter.hpp"
 
+#include "converters.hpp"
 #include "sequence_collection.hpp"
 
+#include "core_python27/defined_instance.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
@@ -12,15 +14,19 @@ namespace PythonType
 {
 
 
-ListConverter::ListConverter( const Converters & typeConverters )
-	: IConverter()
+ListConverter::ListConverter( IComponentContext & context,
+	const Converters & typeConverters )
+	: IPythonConverter()
+	, context_( context )
 	, typeConverters_( typeConverters )
 {
 }
 
 
 bool ListConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) /* override */
+	Variant & outVariant,
+	const ObjectHandle & parentHandle,
+	const std::string & childPath ) /* override */
 {
 	if (!PyScript::ScriptList::check( inObject ))
 	{
@@ -28,9 +34,15 @@ bool ListConverter::toVariant( const PyScript::ScriptObject & inObject,
 	}
 	PyScript::ScriptList scriptList( inObject.get(),
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	auto listHandle = ReflectedPython::DefinedInstance::findOrCreate( context_,
+		scriptList,
+		parentHandle,
+		childPath );
+	assert( listHandle.isValid() );
 
 	auto collectionHolder = std::make_shared< Sequence< PyScript::ScriptList > >(
 		scriptList,
+		listHandle,
 		typeConverters_ );
 	Collection collection( collectionHolder );
 	outVariant = Variant( collection );

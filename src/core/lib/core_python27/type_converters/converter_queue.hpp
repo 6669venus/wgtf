@@ -2,12 +2,13 @@
 #ifndef _PYTHON_TYPE_CONVERTER_QUEUE_HPP
 #define _PYTHON_TYPE_CONVERTER_QUEUE_HPP
 
-#include "core_python27/type_converters/default_converter.hpp"
-#include "core_python27/type_converters/dict_converter.hpp"
-#include "core_python27/type_converters/list_converter.hpp"
-#include "core_python27/type_converters/primitive_converter.hpp"
-#include "core_python27/type_converters/tuple_converter.hpp"
-#include "core_python27/type_converters/none_converter.hpp"
+#include "converters.hpp"
+#include "default_converter.hpp"
+#include "dict_converter.hpp"
+#include "list_converter.hpp"
+#include "primitive_converter.hpp"
+#include "tuple_converter.hpp"
+#include "none_converter.hpp"
 
 #include <longintrepr.h>
 

@@ -60,10 +60,12 @@ bool setItem< PyScript::ScriptSequence >(
 
 
 template< typename T >
-SequenceIterator< T >::SequenceIterator( const container_type & container,
+SequenceIterator< T >::SequenceIterator( const ObjectHandle & containerHandle,
+	const container_type & container,
 	typename SequenceIterator< T >::key_type index,
 	const Converters & typeConverters )
-	: container_( container )
+	: containerHandle_( containerHandle )
+	, container_( container )
 	, index_( index )
 	, typeConverters_( typeConverters )
 {
@@ -121,13 +123,11 @@ Variant SequenceIterator< T >::value() const /* override */
 	PyScript::ScriptObject item = Detail::getItem< T >( container_, index_ );
 	
 	Variant result;
-	ObjectHandle containerHandle;
 	std::string childPath;
-	// TODO NGT-1561 needs unit test
 	childPath += INDEX_OPEN;
 	childPath += std::to_string( index_ );
 	childPath += INDEX_CLOSE;
-	const bool success = typeConverters_.toVariant( item, result, containerHandle, childPath );
+	const bool success = typeConverters_.toVariant( item, result, containerHandle_, childPath );
 	return result;
 }
 

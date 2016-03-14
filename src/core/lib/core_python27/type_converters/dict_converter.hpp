@@ -2,13 +2,14 @@
 #ifndef _PYTHON_DICT_CONVERTER_HPP
 #define _PYTHON_DICT_CONVERTER_HPP
 
-#include "converters.hpp"
 #include "i_python_converter.hpp"
 
 class IComponentContext;
 
 namespace PythonType
 {
+
+class Converters;
 
 
 /**

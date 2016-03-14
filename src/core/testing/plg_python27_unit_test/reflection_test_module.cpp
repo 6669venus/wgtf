@@ -2649,6 +2649,7 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ )
 {
+	// Access root (no path)
 	{
 		const auto & root = instance.root();
 		CHECK_EQUAL( &instance, &root );
@@ -2657,6 +2658,223 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		const char * expectedFullPath = "";
 		CHECK_EQUAL( expectedFullPath, fullPath );
 	}
+	// Access "childTest", then "listTest"
+	{
+		ObjectHandle handleResult;
+		const bool getSuccess = instance.get< ObjectHandle >(
+			"childTest", handleResult );
+
+		CHECK( getSuccess );
+		CHECK( handleResult.isValid() );
+		if (!handleResult.isValid())
+		{
+			return;
+		}
+
+		const auto pInstance = handleResult.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pInstance != nullptr );
+		if (pInstance == nullptr)
+		{
+			return;
+		}
+		const auto & childInstance = (*pInstance);
+
+		const auto & root = childInstance.root();
+		CHECK_EQUAL( &instance, &root );
+
+		Collection collection;
+		const bool getCollectionSuccess = childInstance.get< Collection >(
+			"listTest", collection );
+
+		CHECK( getCollectionSuccess );
+		CHECK( collection.isValid() );
+		if (!collection.isValid())
+		{
+			return;
+		}
+
+		auto itr = collection.begin();
+
+		int key = -1;
+		const auto keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+
+		const auto expectedKey = 0;
+		CHECK_EQUAL( expectedKey, key );
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest.listTest[";
+		expectedValueFullPath += std::to_string( key );
+		expectedValueFullPath += "]";
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+	}
+	// Access "childTest.listTest"
+	{
+		Collection collection;
+		const bool getCollectionSuccess = instance.get< Collection >(
+			"childTest.listTest", collection );
+
+		CHECK( getCollectionSuccess );
+		CHECK( collection.isValid() );
+		if (!collection.isValid())
+		{
+			return;
+		}
+
+		auto itr = collection.begin();
+
+		int key = -1;
+		const auto keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+
+		const auto expectedKey = 0;
+		CHECK_EQUAL( expectedKey, key );
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest.listTest[";
+		expectedValueFullPath += std::to_string( key );
+		expectedValueFullPath += "]";
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+	}
+	// Access "childTest", then "tupleTest"
+	{
+		ObjectHandle handleResult;
+		const bool getSuccess = instance.get< ObjectHandle >(
+			"childTest", handleResult );
+
+		CHECK( getSuccess );
+		CHECK( handleResult.isValid() );
+		if (!handleResult.isValid())
+		{
+			return;
+		}
+
+		const auto pInstance = handleResult.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pInstance != nullptr );
+		if (pInstance == nullptr)
+		{
+			return;
+		}
+		const auto & childInstance = (*pInstance);
+
+		const auto & root = childInstance.root();
+		CHECK_EQUAL( &instance, &root );
+
+		const auto & fullPath = childInstance.fullPath();
+		const char * expectedFullPath = "childTest";
+		CHECK_EQUAL( expectedFullPath, fullPath );
+
+		Collection collection;
+		const bool getCollectionSuccess = childInstance.get< Collection >(
+			"tupleTest", collection );
+
+		CHECK( getCollectionSuccess );
+		CHECK( collection.isValid() );
+		if (!collection.isValid())
+		{
+			return;
+		}
+
+		auto itr = collection.begin();
+
+		int key = -1;
+		const auto keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+
+		const auto expectedKey = 0;
+		CHECK_EQUAL( expectedKey, key );
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest.tupleTest[";
+		expectedValueFullPath += std::to_string( key );
+		expectedValueFullPath += "]";
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+	}
+	// Access "childTest.tupleTest"
+	{
+		Collection collection;
+		const bool getCollectionSuccess = instance.get< Collection >(
+			"childTest.tupleTest", collection );
+
+		CHECK( getCollectionSuccess );
+		CHECK( collection.isValid() );
+		if (!collection.isValid())
+		{
+			return;
+		}
+
+		auto itr = collection.begin();
+
+		int key = -1;
+		const auto keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+
+		const auto expectedKey = 0;
+		CHECK_EQUAL( expectedKey, key );
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest.tupleTest[";
+		expectedValueFullPath += std::to_string( key );
+		expectedValueFullPath += "]";
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+	}
+	// Access "childTest", then "dictTest"
 	{
 		ObjectHandle handleResult;
 		const bool getSuccess = instance.get< ObjectHandle >(
@@ -2684,6 +2902,7 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		const char * expectedFullPath = "childTest";
 		CHECK_EQUAL( expectedFullPath, fullPath );
 	}
+	// Access "childTest.dictTest"
 	{
 		Collection collection;
 		const bool getCollectionSuccess = instance.get< Collection >(

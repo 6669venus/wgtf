@@ -21,6 +21,8 @@ typedef TypeConverterQueue< IConverter,
 	PyScript::ScriptObject > BasicTypeConverters;
 class DefaultConverter;
 class DictConverter;
+class ListConverter;
+class TupleConverter;
 
 
 /**
@@ -34,7 +36,9 @@ public:
 
 	Converters( const BasicTypeConverters & basicTypeConverters,
 		DefaultConverter & defaultConverter,
-		DictConverter & dictConverter );
+		DictConverter & dictConverter,
+		ListConverter & listConverter,
+		TupleConverter & tupleConverter );
 
 	/**
 	 *	Convert the given Variant into a ScriptType by searching through the
@@ -72,6 +76,8 @@ private:
 	const BasicTypeConverters & basicTypeConverters_;
 	DefaultConverter & defaultConverter_;
 	DictConverter & dictConverter_;
+	ListConverter & listConverter_;
+	TupleConverter & tupleConverter_;
 };
 
 

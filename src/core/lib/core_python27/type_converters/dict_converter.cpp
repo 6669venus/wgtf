@@ -2,6 +2,7 @@
 
 #include "dict_converter.hpp"
 
+#include "converters.hpp"
 #include "mapping_collection.hpp"
 
 #include "core_python27/defined_instance.hpp"

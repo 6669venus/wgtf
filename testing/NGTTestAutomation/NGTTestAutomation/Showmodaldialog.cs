@@ -24,47 +24,34 @@ namespace NGTTestAutomation
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The OpenGenericApp recording.
+    ///The Showmodaldialog recording.
     /// </summary>
-    [TestModule("3a17130a-ec04-4660-a6a2-a4be9e4d2244", ModuleType.Recording, 1)]
-    public partial class OpenGenericApp : ITestModule
+    [TestModule("c5adfba7-b506-4caf-ba72-7fd6b37705c9", ModuleType.Recording, 1)]
+    public partial class Showmodaldialog : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomationRepository repo = NGTTestAutomationRepository.Instance;
 
-        static OpenGenericApp instance = new OpenGenericApp();
+        static Showmodaldialog instance = new Showmodaldialog();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public OpenGenericApp()
+        public Showmodaldialog()
         {
-            path = "";
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static OpenGenericApp Instance
+        public static Showmodaldialog Instance
         {
             get { return instance; }
         }
 
 #region Variables
-
-        string _path;
-
-        /// <summary>
-        /// Gets or sets the value of variable path.
-        /// </summary>
-        [TestVariable("50d4a791-38d2-4dcf-b6a4-7ee327b91776")]
-        public string path
-        {
-            get { return _path; }
-            set { _path = value; }
-        }
 
 #endregion
 
@@ -92,8 +79,12 @@ namespace NGTTestAutomation
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Application", "Run application 'generic_app.exe' with arguments '--config plugins_demo.txt' in normal mode.", new RecordItemIndex(0));
-            Host.Local.RunApplication("generic_app.exe", "--config plugins_demo.txt", path, false);
+            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Press() on item 'MainWindow.ShowModalDialog'.", repo.MainWindow.ShowModalDialogInfo, new RecordItemIndex(0));
+            repo.MainWindow.ShowModalDialog.Press();
+            Delay.Milliseconds(0);
+            
+            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Press() on item 'CustomQmlWindow.ButtonOk'.", repo.CustomQmlWindow.ButtonOkInfo, new RecordItemIndex(1));
+            repo.CustomQmlWindow.ButtonOk.Press();
             Delay.Milliseconds(0);
             
         }

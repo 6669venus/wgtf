@@ -17,76 +17,50 @@ rxversion="5.4.5.19886">
 		id="cd35dc4e-e230-4536-a27e-ebaa15eecd9e"
 		searchtimeout="30000ms"
 		capname="form"
-		refpath="/form[@name='MainWindow']"
 		addcaps="form,qtelement,qtwindow,nativewindow"
 		isrooted="True"
 		usecache="True">
-			<item
-			name="TestData"
-			id="e23a4e3e-98cd-4a87-93b4-50bb04b89d7b"
-			searchtimeout="30000ms"
-			capname="menuitem"
-			refpath="/form[@name='MainWindow']/menubar[@name='defaultMenuBar']/menuitem[@text='TestData']"
-			addcaps="menuitem,qtelement"
-			refimgid="72bd1a34-e847-4cf9-91ab-ea2f9535e4da">
-				/form[@name='MainWindow']/?/?/menuitem[@text='TestData']
-			</item>
-			<item
-			name="PropertyTreeTest"
-			id="5a234d52-fb1a-4513-ac3b-66e0fa90c84b"
-			searchtimeout="30000ms"
-			capname="tabpage"
-			refpath="/form[@name='MainWindow']/tabpagelist[3]/tabpage[@title='PropertyTree Test' and @index='10']"
-			addcaps="tabpage"
-			refimgid="7a540f33-d017-4c61-abcf-cc167a5a3eae">
-				/form[@name='MainWindow']/?/?/tabpage[@index='10']
-			</item>
 			<item
 			name="ExpandIconArea"
 			id="ba396634-3184-442d-995b-245ca62c9129"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@name='MainWindow']/container[2]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[2]/container[1]"
 			addcaps="container,qtelement"
 			refimgid="686c5c11-a24e-437e-9d09-5a45da0cf67e">
-				/form[@name='MainWindow']/container[2]//list/list[@name='WGListView']/list[2]/container[1]
+				/form[@objectname='MainWindow']/container[2]//list/list[@name='WGListView']/list[2]/container[1]
 			</item>
 			<item
 			name="ExpandIconArea1"
 			id="c7ee06dd-9931-47d1-b632-57957e3b6489"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@name='MainWindow']/container[3]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[2]/container[1]"
 			addcaps="container,qtelement"
 			refimgid="30da0e2b-7bb7-4d25-9701-68426a6b9377">
-				/form[@name='MainWindow']/container[3]//list/list[@name='WGListView']/list[2]/container[1]
+				/form[@objectname='MainWindow']/container[3]//list/list[@name='WGListView']/list[2]/container[1]
 			</item>
 			<item
 			name="WGTextBoxFrame"
 			id="a91fe9bb-237b-4692-a2f1-09a2d5b02802"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@name='MainWindow']/container[3]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[1]/list[2]/element[@name='WGCheckBox']/container[@name='row']/container[@name='WGTextBoxFrame']"
 			addcaps="container,qtelement"
 			refimgid="6eb205e3-e4ad-438c-8238-d440e2a47a21">
-				/form[@name='MainWindow']/container[3]//list[@name='WGListView']/list[@name='WGListView']/list[1]/list[2]//container[@name='WGTextBoxFrame']
+				/form[@objectname='MainWindow']/container[3]//list[@name='WGListView']/list[@name='WGListView']/list[1]/list[2]//container[@name='WGTextBoxFrame']
 			</item>
 			<item
 			name="WGButtonFrame"
 			id="c2060909-7a9a-4143-afb9-4f258e97afc5"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@name='MainWindow']/container[3]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[1]/list[8]/element[@name='WGSliderControl']/container[@name='WGExpandingRowLayout']/element[@name='WGSpinBox']/container[1]"
 			addcaps="container,qtelement"
 			refimgid="2852f7a7-0a06-460f-9b90-abb2acfa84e9">
-				/form[@name='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/list[8]//element[@name='WGSpinBox']/container[1]
+				/form[@objectname='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/list[8]//element[@name='WGSpinBox']/container[1]
 			</item>
 			<folder
 			name="WGListView"
 			id="42a637e0-024f-4a7f-8b3d-944655bd0321"
 			searchtimeout="30000ms"
 			capname="list"
-			refpath="/form[@name='MainWindow']/container[3]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[1]"
 			addcaps="list,qtelement"
 			isrooted="True"
 			usecache="False">
@@ -95,33 +69,30 @@ rxversion="5.4.5.19886">
 				id="e2057148-67c4-4cd1-9d01-23343e367e28"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@name='MainWindow']/container[3]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[1]/element[4]"
 				addcaps="unknown,qtelement"
 				refimgid="1b66ddb9-a045-4db1-993d-1b12c36de02e">
-					/form[@name='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/element[4]
+					/form[@objectname='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/element[4]
 				</item>
 				<item
 				name="WGListViewRowDelegate1"
 				id="8ab11a00-59a9-48bf-8c22-418d0f8102ba"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@name='MainWindow']/container[3]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[1]/element[6]"
 				addcaps="unknown,qtelement"
 				refimgid="8e93a68b-b253-40a8-a59d-6445ce407714">
-					/form[@name='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/element[6]
+					/form[@objectname='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/element[6]
 				</item>
 				<item
 				name="WGListViewRowDelegate2"
 				id="404f5671-874a-4d0c-a3a0-d9c6dca0e8d6"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@name='MainWindow']/container[3]/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@name='testTreeView']/list[@name='WGListView']/list[@name='WGListView']/list[1]/element[7]"
 				addcaps="unknown,qtelement"
 				refimgid="429be005-b44c-4480-800f-abd92245b10f">
-					/form[@name='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/element[7]
+					/form[@objectname='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/element[7]
 				</item>
 				<basepath>
-					/form[@name='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]
+					/form[@objectname='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]
 				</basepath>
 			</folder>
 			<item
@@ -129,57 +100,51 @@ rxversion="5.4.5.19886">
 			id="5e855b1d-a287-4e18-bc92-c3af076fbe62"
 			searchtimeout="30000ms"
 			capname="tabpage"
-			refpath="/form[@name='MainWindow']/tabpagelist[3]/tabpage[@title='PropertyTree Test' and @index='7']"
 			addcaps="tabpage"
 			refimgid="5f654372-c18c-4beb-8997-5ac43c3cb6c5">
-				/form[@name='MainWindow']/?/?/tabpage[@index='7']
+				/form[@objectname='MainWindow']/?/?/tabpage[@index='7']
 			</item>
 			<item
 			name="Minimize"
 			id="4359380c-0e8b-46e6-ac19-de0bd6ea5308"
 			searchtimeout="30000ms"
 			capname="button"
-			refpath="/form[@objectname='MainWindow']/titlebar[@accessiblerole='TitleBar']/button[@accessiblename='Minimize']"
 			addcaps="button,accessible"
 			refimgid="23079819-7f4d-4525-bd69-a2929f1ea138">
-				/form[@name='MainWindow']/?/?/button[@accessiblename='Minimize']
+				/form[@objectname='MainWindow']/?/?/button[@accessiblename='Minimize']
 			</item>
 			<item
 			name="Restore"
 			id="81fdc637-4c07-4ef8-93f6-8fbc17816e0e"
 			searchtimeout="30000ms"
 			capname="button"
-			refpath="/form[@objectname='MainWindow']/titlebar[@accessiblerole='TitleBar']/button[@accessiblename='Restore']"
 			addcaps="button,accessible"
 			refimgid="f17f1768-c1e6-4c29-9e76-bdace9539588">
-				/form[@name='MainWindow']/?/?/button[@accessiblename='Restore']
+				/form[@objectname='MainWindow']/?/?/button[@accessiblename='Restore']
 			</item>
 			<item
 			name="NewObject"
 			id="2cd6e6bc-c107-4870-a47b-25b966cbf1f0"
 			searchtimeout="30000ms"
 			capname="menuitem"
-			refpath="/form[@objectname='MainWindow']/menubar[@objectname='defaultMenuBar']/menuitem[@text='New Object']"
 			addcaps="menuitem,qtelement"
 			refimgid="9475b4c9-4ed2-4a3b-a255-6bd867a28193">
-				/form[@name='MainWindow']/?/?/menuitem[@text='New Object']
+				/form[@objectname='MainWindow']/?/?/menuitem[@text='New Object']
 			</item>
 			<item
 			name="SceneBrowser"
 			id="1dcfe234-8cac-4921-988a-61e928a4d82a"
 			searchtimeout="30000ms"
 			capname="tabpage"
-			refpath="/form[@objectname='MainWindow']/tabpagelist[2]/tabpage[@title='SceneBrowser']"
 			addcaps="tabpage"
 			refimgid="f98ac380-a9e3-4ea4-b793-c52cb0291b53">
-				/form[@name='MainWindow']/?/?/tabpage[@title='SceneBrowser']
+				/form[@objectname='MainWindow']/?/?/tabpage[@title='SceneBrowser']
 			</item>
 			<folder
 			name="List"
 			id="5eb0818f-453f-498b-a715-fcb59d743884"
 			searchtimeout="30000ms"
 			capname="list"
-			refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']"
 			addcaps="list,qtelement"
 			isrooted="True"
 			usecache="False">
@@ -188,83 +153,75 @@ rxversion="5.4.5.19886">
 				id="af75b23e-4c97-4017-a337-3a9dff31ff37"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/element[1]"
 				addcaps="unknown,qtelement"
 				refimgid="87e36fc2-4883-4813-ba32-0782084b78e4">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[1]
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[1]
 				</item>
 				<item
 				name="WGListViewRowDelegate1"
 				id="a03150e7-3b44-4baa-9d4d-426704fb6591"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/element[2]"
 				addcaps="unknown,qtelement"
 				refimgid="678b16b5-e6c4-43e9-9a13-59b080d5ea16">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[2]
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[2]
 				</item>
 				<item
 				name="WGListViewRowDelegate2"
 				id="e3e7bca3-0c54-4bff-ae3b-babb690d374e"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/element[3]"
 				addcaps="unknown,qtelement"
 				refimgid="a050d242-4f66-42b4-853e-746ac0c03e7d">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[3]
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[3]
 				</item>
 				<item
 				name="WGListViewRowDelegate3"
 				id="68244582-7efb-4cfd-b536-397949c2e753"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/element[4]"
 				addcaps="unknown,qtelement"
 				refimgid="2badacb3-ec53-455a-9ac7-826a373b9efc">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[4]
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/element[4]
 				</item>
 				<item
 				name="TextObject1"
 				id="88dc2b08-16ae-41a5-86b3-a85abe1a075f"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/list[1]/text[@caption=' object1 ']"
 				addcaps="text,qtelement"
 				refimgid="9f47ace7-70c8-4b0b-acfc-323b891d1795">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[1]/text[@caption=' object1 ']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[1]/text[@caption=' object1 ']
 				</item>
 				<item
 				name="TextObject2"
 				id="3b81d18e-ba13-4c78-85f4-8acb2be8645a"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/list[2]/text[@caption=' object2 ']"
 				addcaps="text,qtelement"
 				refimgid="fb786c8f-9f06-4279-a36d-1996d7106d9c">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[2]/text[@caption=' object2 ']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[2]/text[@caption=' object2 ']
 				</item>
 				<item
 				name="TextObject3"
 				id="725ba839-7ed5-4c6b-bee2-721c00784f03"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/list[3]/text[@caption=' object3 ']"
 				addcaps="text,qtelement"
 				refimgid="74bcbf12-0fcf-4296-ba4a-29c6f786ae57">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[3]/text[@caption=' object3 ']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[3]/text[@caption=' object3 ']
 				</item>
 				<item
 				name="TextObject4"
 				id="04fae0d4-7f29-423a-ba20-cbf40004e079"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGListView']/list[@name='list']/list[4]/text[@caption=' object4 ']"
 				addcaps="text,qtelement"
 				refimgid="8cf43c01-a0e6-4b92-9171-351199aa7f38">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[4]/text[@caption=' object4 ']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']/list[4]/text[@caption=' object4 ']
 				</item>
 				<basepath>
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//list[@name='list']
 				</basepath>
 			</folder>
 			<folder
@@ -272,7 +229,6 @@ rxversion="5.4.5.19886">
 			id="1af15674-51a4-444d-8b89-ac6084ab4b9d"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']"
 			addcaps="container,qtelement"
 			isrooted="True"
 			usecache="False">
@@ -281,43 +237,39 @@ rxversion="5.4.5.19886">
 				id="13faeb13-abb3-4fdb-9f29-8b6f86077c83"
 				searchtimeout="30000ms"
 				capname="container"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']/container[3]/container[2]/element[@objectname='WGNumberBox']/container[1]"
 				addcaps="container,qtelement"
 				refimgid="06cf138a-255f-43e6-b5f4-87cbee264112">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='3.000']/container[1]
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='3.000']/container[1]
 				</item>
 				<item
 				name="Button1"
 				id="7728d581-c479-43e7-8492-a3835d87d6a4"
 				searchtimeout="30000ms"
 				capname="container"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']/container[3]/container[2]/element[@objectname='WGNumberBox']/container[2]"
 				addcaps="container,qtelement"
 				refimgid="22865e19-231e-45eb-beb6-342e866f234c">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='3.000']/container[2]
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='3.000']/container[2]
 				</item>
 				<item
 				name="TextBox"
 				id="e1243436-1e47-450e-a196-e4cdf916eae5"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']/container[3]/container[2]/element[@objectname='WGNumberBox']/text[@objectname='TextBox']"
 				addcaps="text,qtelement"
 				refimgid="fdb0e171-c075-420d-9a56-be68251005a0">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//text[@name='TextBox' and @accessiblename='3.000']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//text[@name='TextBox' and @accessiblename='3.000']
 				</item>
 				<item
 				name="WGNumberBox"
 				id="27a606bc-e045-472d-b1bf-576b30a1b769"
 				searchtimeout="30000ms"
 				capname="unknown"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']/container[3]/container[2]/element[@objectname='WGNumberBox']"
 				addcaps="unknown,qtelement"
 				refimgid="6a916f2a-343c-4d8a-a312-b51f14376c21">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='3.000']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='3.000']
 				</item>
 				<basepath>
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[10]/container[@objectname='WGVector3']
 				</basepath>
 			</folder>
 			<item
@@ -325,17 +277,15 @@ rxversion="5.4.5.19886">
 			id="0b0e52e7-3d78-40bb-9f40-5453ff1bf89b"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']/element/container/element/element[@objectname='WGColumnsFrame']/container[@name='column']"
 			addcaps="container,qtelement"
 			refimgid="7c90e238-0045-4959-bac7-e092f58ad2ed">
-				/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//element[@objectname='WGListView']/?/?/container[@name='column']
+				/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_list_panel.qml']//element[@objectname='WGListView']/?/?/container[@name='column']
 			</item>
 			<folder
 			name="WGVector31"
 			id="7ab57e1f-167b-49ae-9d1b-74ee06b3b637"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']"
 			addcaps="container,qtelement"
 			isrooted="True"
 			usecache="False">
@@ -344,33 +294,30 @@ rxversion="5.4.5.19886">
 				id="4fd3011b-878e-408c-992a-ac8926c0916e"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']/container[2]/container[2]/element[@objectname='WGNumberBox']/container[1]/text[@name='arrowText']"
 				addcaps="text,qtelement"
 				refimgid="3147dbdc-8c22-4c0a-a8d7-cf56e943d9fb">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='-3.000']/container[1]/text[@name='arrowText']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='-3.000']/container[1]/text[@name='arrowText']
 				</item>
 				<item
 				name="ArrowText"
 				id="eac63dc3-3905-4040-9c4b-7cebff7bc8f5"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']/container[2]/container[2]/element[@objectname='WGNumberBox']/container[2]/text[@name='arrowText']"
 				addcaps="text,qtelement"
 				refimgid="036d23bf-7372-4993-bdc0-7c66d168cb67">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='-3.000']/container[2]/text[@name='arrowText']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//element[@name='WGNumberBox' and @accessiblename='-3.000']/container[2]/text[@name='arrowText']
 				</item>
 				<item
 				name="TextBox"
 				id="2792fae7-4cd7-4de0-be20-d0883b4858c4"
 				searchtimeout="30000ms"
 				capname="text"
-				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element[@type='QQuickWidget']/container[@type='QQuickRectangle']/element[@objectname='WGTreeView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']/container[2]/container[2]/element[@objectname='WGNumberBox']/text[@objectname='TextBox']"
 				addcaps="text,qtelement"
 				refimgid="4a0e28f4-8bbf-4282-802c-3e23537220b5">
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//text[@name='TextBox' and @accessiblename='-3.000']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']//text[@name='TextBox' and @accessiblename='-3.000']
 				</item>
 				<basepath>
-					/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']
+					/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[12]/container[@objectname='WGVector3']
 				</basepath>
 			</folder>
 			<item
@@ -378,13 +325,46 @@ rxversion="5.4.5.19886">
 			id="43678c00-fc48-4f7b-ab2f-d7fb32124bdd"
 			searchtimeout="30000ms"
 			capname="container"
-			refpath="/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']/element/container/element/element[@objectname='WGColumnsFrame']/container[2]"
 			addcaps="container,qtelement"
 			refimgid="e685c142-9751-4fc7-af60-9997799e5b2b">
-				/form[@name='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//element[@objectname='WGColumnsFrame']/container[2]
+				/form[@objectname='MainWindow']/container[@objectname='plg_demo_test/demo_property_panel.qml']//element[@objectname='WGColumnsFrame']/container[2]
+			</item>
+			<item
+			name="TestData"
+			id="da246d87-62b3-4991-ac25-738a032bfb19"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			addcaps="menuitem,qtelement"
+			refimgid="07c5e890-4283-4fea-8e76-0110590ad234">
+				/form[@objectname='MainWindow']/?/?/menuitem[@text='TestData']
+			</item>
+			<item
+			name="Close"
+			id="4a57ad41-8b33-4955-a3b8-82c6893bef71"
+			searchtimeout="30000ms"
+			capname="button"
+			addcaps="button,accessible">
+				/form[@objectname='MainWindow']/?/?/button[@accessiblename='Close' and @accessiblerole='PushButton']
+			</item>
+			<item
+			name="GenericAppTest"
+			id="b4649924-da99-451f-9251-e8d8818f646b"
+			searchtimeout="30000ms"
+			capname="titlebar"
+			addcaps="titlebar,accessible">
+				/form[@objectname='MainWindow']/titlebar[@accessiblerole='TitleBar']
+			</item>
+			<item
+			name="ShowModalDialog"
+			id="47c07d18-dc0c-4e81-9adf-5b49c4c133a2"
+			searchtimeout="30000ms"
+			capname="button"
+			addcaps="button,qtelement"
+			refimgid="c1429508-635a-4e29-a29a-921014bc28df">
+				/form[@objectname='MainWindow']/?/?/button[@text='ShowModalDialog']
 			</item>
 			<basepath>
-				/form[@name='MainWindow']
+				/form[@objectname='MainWindow']
 			</basepath>
 			<icon>
 				iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
@@ -400,83 +380,6 @@ f5Kt/v8ubQWwAZtsTXAbsMXD6P/bTDdwoO0Ptfl/LsIGHLWPHTThBuxys/lfXl7+PyMjA2FAnL1N
 ZpGx9geQIV1Gqv+Ph1j+3+pl8h/EP64JiVpkA6qrq/+lp6dvdHNzEwIbAALAgBNPsTGfW26g/hek
 sRmYLkD0UWB8wwy4oSbxf7aD5VVgGLlBtWGCADc34yxLoyM1uipwA0DxXu7r8bba3ioXmEtZoErx
 gwgXx0hg2Dxar6v4u9/KeGpAQIAwVAoJMDAAAClAicN9JWMMAAAAAElFTkSuQmCC
-			</icon>
-		</appfolder>
-		<appfolder
-		name="TestData"
-		id="ea4e4791-1978-455e-a295-ca0c395238dc"
-		searchtimeout="30000ms"
-		capname="contextmenu"
-		refpath="/contextmenu[@name='TestData']"
-		addcaps="contextmenu,qtelement,qtwindow,nativewindow"
-		isrooted="True"
-		usecache="True">
-			<item
-			name="Open"
-			id="04903362-ea0b-4e49-937d-d71dadcd7f8e"
-			searchtimeout="30000ms"
-			capname="menuitem"
-			refpath="/contextmenu[@name='TestData']/menuitem[@text='Open']"
-			addcaps="menuitem,qtelement"
-			refimgid="b3679996-da32-4496-b9f4-23c6f66a3310">
-				/contextmenu[@name='TestData']/menuitem[@text='Open']
-			</item>
-			<basepath>
-				/contextmenu[@name='TestData']
-			</basepath>
-			<icon>
-				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
 			</icon>
 		</appfolder>
 		<appfolder
@@ -641,6 +544,229 @@ DsQBlSsOGwAAAKdJREFUOE9j+P//P0UYqyApGKsgKZhh/eq5/ynBDCeObv3/5dMzgvjNyxsYGCQO
 dkFdVTZWBU8fX8EqDsOvX96HuAAmMHVCA9gwMK7M/t/TUYldDohXLJkCFkdxQUtDEYqihuqc/y+f
 QVyBLgcznOHMyZ1gBrkY7oKP7x+AMbqCt6/vYIjBMDgMQC5AD3FSMNwF5GKsqYsUjFWQFIxVkBSM
 VZB4/J8BADyZI3kwAy98AAAAAElFTkSuQmCC
+			</icon>
+		</appfolder>
+		<appfolder
+		name="CustomQmlWindow"
+		id="cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0"
+		searchtimeout="30000ms"
+		capname="form"
+		refpath="/form[@title='Custom Qml Window']"
+		addcaps="form,qtelement,qtwindow,nativewindow"
+		isrooted="True"
+		usecache="True">
+			<item
+			name="Cancel"
+			id="5e6979cc-0a96-41af-9b1f-e2407b90ca09"
+			searchtimeout="30000ms"
+			capname="button"
+			refpath="/form[@title='Custom Qml Window']/element[@type='QQuickItem']/container[@objectname='WGFrame']/container[@objectname='WGColumnLayout']/container[@objectname='WGExpandingRowLayout']/button[@objectname='WGPushButton' and @text='Cancel']"
+			addcaps="button,qtelement"
+			refimgid="d60773be-b220-4e00-9f39-eba038cbba5c">
+				/form[@title='Custom Qml Window']/element[@type='QQuickItem']//container[@objectname='WGExpandingRowLayout']/button[@text='Cancel']
+			</item>
+			<item
+			name="ButtonOk"
+			id="759aad40-286c-40ca-99c9-dadb09239706"
+			searchtimeout="30000ms"
+			capname="button"
+			refpath="/form[@title='Custom Qml Window']/element[@type='QQuickItem']/container[@objectname='WGFrame']/container[@objectname='WGColumnLayout']/container[@objectname='WGExpandingRowLayout']/button[@objectname='WGPushButton' and @text='Ok']"
+			addcaps="button,qtelement"
+			refimgid="65095050-a9e5-4260-8d2a-b2d05dc4bddd">
+				/form[@title='Custom Qml Window']/element[@type='QQuickItem']//container[@objectname='WGExpandingRowLayout']/button[@text='Ok']
+			</item>
+			<basepath>
+				/form[@title='Custom Qml Window']
+			</basepath>
+			<icon>
+				iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAGWSURBVDhPpdDZSwJBAMfxxYdepP+oPyCKsAO7
+i4Je6kGIEgzK0sy77LLCIsM0FEmKIgjquWz1oX/CnlzvPUr7NTt5oNE98GVnBuazs8v8exhMVvwl
+k9luIMcVzF2UxVdFH2J4iMURZeO4J/PKvowQQMnw0gv+UhloZorFIm5uH6HWh9FnDGHAEsTQagCj
+Wz48JRKQRKGulqkj+qwCpTKgcV9i2nOBGe8ZtP4IdKHwz4BsnqfAYuAaKus+2uyb6Fh3oWvHUQVE
+OYGn865dRz2QKwOt5m20r25AtbWG7j071IdmCoiiSA9UmrzSNAAFgQIdrnV0up3o8djQd2TCYGCJ
+As9SPVDpAyBfTX1gQb9vGcMneoyF594/oXz1b4Fe7woG/QaMBOcxfqrDxPksBViWrSYKAjKZNNIp
+rgYUeBG+4whFGmsECvk8OI4Dl0zWgFRWAEoSgGcUpQKZi2ReouvXF57+fYHnkctlkSZvl2+Qy2Zq
+wIJhRZAXn2W2OWGxu2Bs2J/R6rYJoCQxTVT6ffJhBek/g2HeADJDdhhUDbHJAAAAAElFTkSuQmCC
+			</icon>
+		</appfolder>
+		<appfolder
+		name="MainWindow1"
+		id="4a398a01-4bb3-49f5-9d5f-2edfcbaf04dd"
+		searchtimeout="30000ms"
+		capname="form"
+		refpath="/form[@objectname='MainWindow']"
+		addcaps="form,qtelement,qtwindow,nativewindow"
+		isrooted="True"
+		usecache="True">
+			<item
+			name="View"
+			id="4ca955eb-7bfb-4bbc-a4aa-261b1cbbb50a"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@objectname='MainWindow']/menubar[3]/menuitem[@accessiblename='View']"
+			addcaps="menuitem,accessible">
+				/form[@objectname='MainWindow']/?/?/menuitem[@accessiblename='View']
+			</item>
+			<item
+			name="File"
+			id="3889a9a4-edc3-431e-b91e-bb6b6ee97019"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@objectname='MainWindow']/menubar[3]/menuitem[@accessiblename='File']"
+			addcaps="menuitem,accessible">
+				/form[@objectname='MainWindow']/?/?/menuitem[@accessiblename='File']
+			</item>
+			<item
+			name="TestData"
+			id="4031c73b-6b04-40aa-a41f-10a9b01ee695"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@objectname='MainWindow']/menubar[3]/menuitem[@accessiblename='TestData']"
+			addcaps="menuitem,accessible">
+				/form[@objectname='MainWindow']/?/?/menuitem[@accessiblename='TestData']
+			</item>
+			<item
+			name="Edit"
+			id="b597e246-cb77-4efe-9dce-2cae69d7734a"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@objectname='MainWindow']/menubar[3]/menuitem[@accessiblename='Edit']"
+			addcaps="menuitem,accessible">
+				/form[@objectname='MainWindow']/?/?/menuitem[@accessiblename='Edit']
+			</item>
+			<item
+			name="TestCommand1"
+			id="c9d3054c-2a12-4da6-9914-a21202c9cb97"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@objectname='MainWindow']/menubar[3]/menuitem[@accessiblename='TestCommand1']"
+			addcaps="menuitem,accessible">
+				/form[@objectname='MainWindow']/?/?/menuitem[@accessiblename='TestCommand1']
+			</item>
+			<item
+			name="TestCommand2"
+			id="57b051ed-8642-4122-8b46-6575863fa6dc"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@objectname='MainWindow']/menubar[3]/menuitem[@accessiblename='TestCommand2']"
+			addcaps="menuitem,accessible">
+				/form[@objectname='MainWindow']/?/?/menuitem[@accessiblename='TestCommand2']
+			</item>
+			<item
+			name="MenuBar"
+			id="b9e58188-9ac1-46ba-9d32-edd4d9ee2c61"
+			searchtimeout="30000ms"
+			capname="menubar"
+			refpath="/form[@objectname='MainWindow']/menubar[3]"
+			addcaps="menubar,accessible"
+			refimgid="128ef8f5-57f7-40b9-afc4-0885e9b9bbbb">
+				/form[@objectname='MainWindow']/menubar[3]
+			</item>
+			<item
+			name="File1"
+			id="70f9d447-fc59-4164-a97c-9d2685f7401a"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@objectname='MainWindow']/menubar[@objectname='defaultMenuBar']/menuitem[@text='File']"
+			addcaps="menuitem,qtelement"
+			refimgid="4e76e9d1-021a-4cf2-9bfc-1a240f219ec5">
+				/form[@objectname='MainWindow']/?/?/menuitem[@text='File']
+			</item>
+			<basepath>
+				/form[@objectname='MainWindow']
+			</basepath>
+			<icon>
+				iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJxSURBVDhPY8AF7O3tOTojvGpWxHluCPLx0YAK
+EwdKgjyD9yZ53v+Y4/H/c67H//OpHj/DwsJ6XVxc+KFKsIMYb2/9tXGe+19kefz/lOP+/32yI9iA
+h1G2/1NTU//Hx8e/DA4OTgUqZYLogAIfHx+R2dFe029muP8BaXgXZ/f/oZnS/5f+xmADrnqb/k9L
+SwPjnvSY/xsTvM6lBXnZQbUzMDS7WR97mur8/0Oa8/8njpr/76iJ/78NxO8THcAGbPGw/l+Vnvj/
+RFYAmP8p2/3/JW+Tf56enrpgA/LN9E636Cn/v6UlBdZ8VEf+f6urLdAbHv8/Zrj8vxxu//89NDze
+RFr9v28o//+auuR/b29vY7gB9TpK/28ANe/VU/rv7+P9vz3CG6wBhkHh8chGDe669TZG2A3YbKD2
+39fX93+9p93/e4mO/z9muv5/5q73/46GBFjzGT3F/43hweBAxWtAmrXZ/wag2CUdGbDG60AMojfa
+GoMDE68B4eHh/8rSU//VWxr+P60h9X+Tluz/fi15wgbc0pP5fz/U6v/Sypx/LfV1/7eXJP2/nO77
+f5Kt/v8ubQWwAZtsTXAbsMXD6P/bTDdwoO0Ptfl/LsIGHLWPHTThBuxys/lfXl7+PyMjA2FAnL1N
+ZpGx9geQIV1Gqv+Ph1j+3+pl8h/EP64JiVpkA6qrq/+lp6dvdHNzEwIbAALAgBNPsTGfW26g/hek
+sRmYLkD0UWB8wwy4oSbxf7aD5VVgGLlBtWGCADc34yxLoyM1uipwA0DxXu7r8bba3ioXmEtZoErx
+gwgXx0hg2Dxar6v4u9/KeGpAQIAwVAoJMDAAAClAicN9JWMMAAAAAElFTkSuQmCC
+			</icon>
+		</appfolder>
+		<appfolder
+		name="File"
+		id="19d79684-b65e-461c-9325-b4a1a589be43"
+		searchtimeout="30000ms"
+		capname="contextmenu"
+		refpath="/contextmenu[@objectname='File']"
+		addcaps="contextmenu,qtelement,qtwindow,nativewindow"
+		isrooted="True"
+		usecache="True">
+			<item
+			name="Exit"
+			id="8e9b3663-82f0-4113-ac93-6e1535ffa1a3"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='File']/menuitem[@text='E&amp;xit']"
+			addcaps="menuitem,qtelement"
+			refimgid="002de22e-bce3-4644-a67c-c80f996f68ec">
+				/contextmenu[@objectname='File']/menuitem[@text='E&amp;xit']
+			</item>
+			<basepath>
+				/contextmenu[@objectname='File']
+			</basepath>
+			<icon>
+				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
 			</icon>
 		</appfolder>
 		<basepath/>

@@ -80,7 +80,7 @@ namespace NGTTestAutomation
             Init();
 
             Report.Log(ReportLevel.Info, "Application", "Closing application containing item 'MainWindow'.", repo.MainWindow.SelfInfo, new RecordItemIndex(0));
-            Host.Local.CloseApplication(repo.MainWindow.Self, new Duration(0));
+            Host.Local.CloseApplication(repo.MainWindow.Self, 30000);
             Delay.Milliseconds(0);
             
         }

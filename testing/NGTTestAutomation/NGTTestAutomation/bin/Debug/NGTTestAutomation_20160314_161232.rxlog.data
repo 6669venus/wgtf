@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report>
+	<activity
+		result="Success"
+		duration="0ms"
+		durationms="0"
+		type="root"
+		rid="50cef9fa79cc03c"
+		totalerrorcount="1"
+		totalwarningcount="0"
+		totalsuccesscount="0"
+		totalfailedcount="1"
+		totalblockedcount="0"
+		user="francoism"
+		host="FRANCOISM-PC"
+		rxversion="5.4.5.19886"
+		osversion="Windows 7 Service Pack 1 64bit"
+		runtimeversion="4.0.30319.34209"
+		procarch="32bit"
+		language="en-US"
+		screenresolution="3840x1200"
+		timestamp="14/03/2016 4:12:32 PM"
+		timestampiso="2016-03-14T05:12:32"
+		timeoutfactor="1">
+		<detail>
+			Ranorex Testscript
+		</detail>
+		<activity
+			result="Failed"
+			duration="30.92s"
+			durationms="30919"
+			type="test suite"
+			rid="19d330bc244ac54"
+			totalerrorcount="1"
+			totalwarningcount="0"
+			totalsuccesscount="0"
+			totalfailedcount="1"
+			totalblockedcount="0"
+			testsuitename="NGTTestAutomation"
+			runconfigname="TestRun"
+			runlabel=""
+			maxchildren="0">
+			<params>
+				<param
+					name="path">
+					C:\Ngt-project\bin\generic_app_test\win64
+				</param>
+			</params>
+			<detail>
+			</detail>
+			<activity
+				result="Failed"
+				duration="30.9s"
+				durationms="30903"
+				type="folder"
+				rid="128b9d08d331d144"
+				totalerrorcount="1"
+				totalwarningcount="0"
+				totalsuccesscount="0"
+				totalfailedcount="1"
+				totalblockedcount="0"
+				foldername="Generic_App_Demo_Plugin">
+				<detail>
+				</detail>
+				<activity
+					result="Failed"
+					duration="30.9s"
+					durationms="30898"
+					type="test case"
+					rid="ebe8847447b4f48"
+					totalerrorcount="1"
+					totalwarningcount="0"
+					totalsuccesscount="0"
+					totalfailedcount="1"
+					totalblockedcount="0"
+					testcasename="Starting"
+					testcaseid="a98b06bb-2a5a-481e-8bea-ebab59d7fad0"
+					maxchildren="0">
+					<params/>
+					<detail>
+					</detail>
+					<activity
+						result="Success"
+						duration="321ms"
+						durationms="321"
+						type="test case setup"
+						rid="23f801a59b6a0cb8"
+						totalerrorcount="0"
+						totalwarningcount="0"
+						totalsuccesscount="0"
+						totalfailedcount="0"
+						totalblockedcount="0">
+						<detail>
+						</detail>
+						<activity
+							result="Success"
+							duration="287ms"
+							durationms="287"
+							type="test module"
+							rid="37df77f1ea4ef276"
+							totalerrorcount="0"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0"
+							modulename="OpenGenericApp_Demo"
+							moduleid="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
+							moduletype="Recording">
+							<detail>
+							</detail>
+							<varbindings>
+								<varbinding
+									name="path"
+									value="C:\Ngt-project\bin\generic_app_test\win64"/>
+							</varbindings>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.200"
+								timeRelativeToTestModuleStartTime="00:00.007"
+								timeWallClock="16:12:32"
+								time="00:00.200"
+								level="Info"
+								category="Data">
+								<message>
+									Current variable values:<br/>$path = 'C:\Ngt-project\bin\generic_app_test\win64'
+								</message>
+								<metainfo
+									loglvl="Info"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.239"
+								timeRelativeToTestModuleStartTime="00:00.046"
+								timeWallClock="16:12:32"
+								time="00:00.239"
+								level="Info"
+								category="Application">
+								<message>
+									Run application 'C:\Ngt-project\bin\generic_app_test\win64\generic_app.exe' with arguments '--congif plugins_demo.txt' in normal mode.
+								</message>
+								<metainfo
+									itemindex="0"
+									codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\OpenGenericApp_Demo.cs"
+									codeline="95"
+									loglvl="Info"/>
+							</item>
+						</activity>
+					</activity>
+					<activity
+						result="Failed"
+						duration="30.57s"
+						durationms="30573"
+						type="test case teardown"
+						rid="dae5b1be4a064b0"
+						totalerrorcount="1"
+						totalwarningcount="0"
+						totalsuccesscount="0"
+						totalfailedcount="0"
+						totalblockedcount="0">
+						<detail>
+						</detail>
+						<activity
+							result="Failed"
+							duration="30.57s"
+							durationms="30569"
+							type="test module"
+							rid="c673c6790ab34d4"
+							totalerrorcount="1"
+							totalwarningcount="0"
+							totalsuccesscount="0"
+							totalfailedcount="0"
+							totalblockedcount="0"
+							modulename="CloseGenericApp"
+							moduleid="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+							moduletype="Recording">
+							<detail>
+							</detail>
+							<errmsg>
+								Failed to find item 'NGTTestAutomationRepository.MainWindow.Self'.
+							</errmsg>
+							<varbindings/>
+							<item
+								timeRelativeToTestSuiteStartTime="00:00.491"
+								timeRelativeToTestModuleStartTime="00:00.006"
+								timeWallClock="16:12:33"
+								time="00:00.491"
+								level="Info"
+								category="Application"
+								errimg="images_NGTTestAutomation_20160314_161232\NGTTestAutomation_20160314_161232_c68f1c37_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160314_161232\NGTTestAutomation_20160314_161232_c68f1c37_trace_thumb.jpg">
+								<message>
+									Closing application containing item 'MainWindow'.
+								</message>
+								<metainfo
+									type="repoitem"
+									path="/form[@name='MainWindow']"
+									fullname="NGTTestAutomationRepository.MainWindow.Self"
+									id="cd35dc4ee2304536a27eebaa15eecd9e"
+									timeout="30000"
+									codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\CloseGenericApp.cs"
+									codeline="82"
+									itemindex="0"
+									loglvl="Info"/>
+							</item>
+							<item
+								timeRelativeToTestSuiteStartTime="00:30.916"
+								timeRelativeToTestModuleStartTime="00:30.431"
+								timeWallClock="16:13:03"
+								time="00:30.916"
+								level="Error"
+								category="Module"
+								errimg="images_NGTTestAutomation_20160314_161232\NGTTestAutomation_20160314_161232_715da9ad_trace.jpg"
+								errthumb="images_NGTTestAutomation_20160314_161232\NGTTestAutomation_20160314_161232_715da9ad_trace_thumb.jpg">
+								<message>
+									Failed to find item 'NGTTestAutomationRepository.MainWindow.Self'.<br/>No element found for path '/form[@name='MainWindow']' within 30s.
+								</message>
+								<metainfo
+									stacktrace="   at Ranorex.Core.Repository.RepoItemInfo.Find[T](Boolean findSingle, Boolean throwException, Duration effectiveTimeoutOverride)
+   at Ranorex.Core.Repository.RepoItemInfo.CreateAdapter[T](Boolean throwException, Duration waitTimeout)
+   at Ranorex.Core.Repository.RepoItemInfo.CreateAdapter[T](Boolean throwException)
+   at NGTTestAutomation.NGTTestAutomationRepositoryFolders.MainWindowAppFolder.get_Self() in c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\NGTTestAutomationRepository.cs:line 198
+   at NGTTestAutomation.CloseGenericApp.Ranorex.Core.Testing.ITestModule.Run() in c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\CloseGenericApp.cs:line 83
+   at Ranorex.Core.Testing.TestSuiteModule.RunInternal(DataContext parentDataContext)"
+									codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\CloseGenericApp.cs"
+									codeline="83"
+									type="repoitem"
+									path="/form[@name='MainWindow']"
+									fullname="NGTTestAutomationRepository.MainWindow.Self"
+									id="cd35dc4ee2304536a27eebaa15eecd9e"
+									timeout="30000"
+									loglvl="Error"
+									itemindex="0"/>
+							</item>
+						</activity>
+					</activity>
+				</activity>
+			</activity>
+		</activity>
+	</activity>
+</report>

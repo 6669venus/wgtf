@@ -30,7 +30,7 @@ mode="Global">
 		<invokeactionrecorditem
 		enabled="True"
 		optional="False"
-		searchpropertyid="510d2220-8e03-43db-b00d-013751180000"
+		searchpropertyid="4fb60fbe-fbe4-4e3d-93d2-9a4bbff2d875"
 		action="Press"
 		actiontype="Adaptor"
 		varname="">
@@ -44,7 +44,7 @@ mode="Global">
 				</path>
 			</info>
 			<arguments
-			id="bfe3f81d-2fff-41e7-8ad2-6d0f47c04943"/>
+			id="52e9f3bf-811b-468e-95f9-3c9bb8fb7a84"/>
 		</invokeactionrecorditem>
 	</recorditems>
 	<repository

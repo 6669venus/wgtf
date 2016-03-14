@@ -79,9 +79,13 @@ namespace NGTTestAutomation
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Select() on item 'NewObject.NewObject'.", repo.NewObject.NewObjectInfo, new RecordItemIndex(0));
-            repo.NewObject.NewObject.Select();
-            Delay.Milliseconds(0);
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.NewObject' at 26;9.", repo.MainWindow.NewObjectInfo, new RecordItemIndex(0));
+            repo.MainWindow.NewObject.Click("26;9");
+            Delay.Milliseconds(200);
+            
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'NewObject.NewObject' at 43;13.", repo.NewObject.NewObjectInfo, new RecordItemIndex(1));
+            repo.NewObject.NewObject.Click("43;13");
+            Delay.Milliseconds(200);
             
         }
 

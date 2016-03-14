@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report>
+	<activity
+		result="Failed"
+		duration="0ms"
+		durationms="0"
+		type="root"
+		rid="1ceadd87b707312b"
+		totalerrorcount="1"
+		totalwarningcount="1"
+		totalsuccesscount="0"
+		totalfailedcount="0"
+		totalblockedcount="0"
+		user="francoism"
+		host="FRANCOISM-PC"
+		rxversion="5.4.5.19886"
+		osversion="Windows 7 Service Pack 1 64bit"
+		runtimeversion="4.0.30319.34209"
+		procarch="32bit"
+		language="en-US"
+		screenresolution="3840x1200"
+		timestamp="14/03/2016 4:37:35 PM"
+		timestampiso="2016-03-14T05:37:35"
+		timeoutfactor="1"
+		module="OpenGenericApp_ui">
+		<detail>
+			OpenGenericApp_ui
+		</detail>
+		<errmsg>
+			Failed to run application 'generic_app.exe'.
+		</errmsg>
+		<varbindings/>
+		<item
+			timeRelativeToTestSuiteStartTime="00:00.313"
+			timeRelativeToTestModuleStartTime="00:00.313"
+			timeWallClock="16:37:35"
+			time="00:00.313"
+			level="Warn"
+			category="Data"
+			errimg=".\OpenGenericApp_ui20160314_163728_b5cf9842_trace.jpg"
+			errthumb=".\OpenGenericApp_ui20160314_163728_b5cf9842_trace_thumb.jpg">
+			<message>
+				The following module variables are not bound to a data column:<br/>path
+			</message>
+			<metainfo
+				loglvl="Warn"/>
+		</item>
+		<item
+			timeRelativeToTestSuiteStartTime="00:00.353"
+			timeRelativeToTestModuleStartTime="00:00.353"
+			timeWallClock="16:37:35"
+			time="00:00.353"
+			level="Info"
+			category="Application"
+			errimg=".\OpenGenericApp_ui20160314_163728_b5cf9842_trace.jpg"
+			errthumb=".\OpenGenericApp_ui20160314_163728_b5cf9842_trace_thumb.jpg">
+			<message>
+				Run application 'generic_app.exe' with arguments '--config plugins_ui.txt' in normal mode.
+			</message>
+			<metainfo
+				itemindex="0"
+				codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\OpenGenericApp_ui.cs"
+				codeline="95"
+				loglvl="Info"/>
+		</item>
+		<item
+			timeRelativeToTestSuiteStartTime="00:00.396"
+			timeRelativeToTestModuleStartTime="00:00.396"
+			timeWallClock="16:37:35"
+			time="00:00.396"
+			level="Error"
+			category="Module"
+			errimg=".\OpenGenericApp_ui20160314_163728_5605626f_trace.jpg"
+			errthumb=".\OpenGenericApp_ui20160314_163728_5605626f_trace_thumb.jpg">
+			<message>
+				Failed to run application 'generic_app.exe'.<br/>The system cannot find the file specified
+			</message>
+			<metainfo
+				stacktrace="   at Ranorex.Host.RunApplication(String fileName, String arguments, String workingDirectory, Boolean maximized)
+   at NGTTestAutomation.OpenGenericApp_ui.Ranorex.Core.Testing.ITestModule.Run() in c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\OpenGenericApp_ui.cs:line 96
+   at Ranorex.Core.Testing.TestSuiteModule.RunInternal(DataContext parentDataContext)"
+				codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\OpenGenericApp_ui.cs"
+				codeline="96"
+				loglvl="Error"
+				itemindex="0"/>
+		</item>
+	</activity>
+</report>

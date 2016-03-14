@@ -79,14 +79,6 @@ namespace NGTTestAutomation
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.TestData' at Center.", repo.MainWindow.TestDataInfo, new RecordItemIndex(0));
-            repo.MainWindow.TestData.Click();
-            Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'TestData.Open' at Center.", repo.TestData.OpenInfo, new RecordItemIndex(1));
-            repo.TestData.Open.Click();
-            Delay.Milliseconds(200);
-            
         }
 
 #region Image Feature Data

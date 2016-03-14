@@ -21,7 +21,7 @@ using Ranorex.Core.Testing;
 
 namespace NGTTestAutomation
 {
-    public partial class OpenGenericApp
+    public partial class OpenGenericApp_Demo
     {
         /// <summary>
         /// This method gets called right after the recording has been started.

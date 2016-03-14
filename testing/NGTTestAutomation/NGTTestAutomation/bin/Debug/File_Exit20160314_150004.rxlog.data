@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report>
+	<activity
+		result="Failed"
+		duration="16.18s"
+		durationms="16178"
+		type="root"
+		rid="7fa87233569c5a"
+		totalerrorcount="1"
+		totalwarningcount="0"
+		totalsuccesscount="0"
+		totalfailedcount="0"
+		totalblockedcount="0"
+		user="francoism"
+		host="FRANCOISM-PC"
+		rxversion="5.4.5.19886"
+		osversion="Windows 7 Service Pack 1 64bit"
+		runtimeversion="4.0.30319.34209"
+		procarch="32bit"
+		language="en-US"
+		screenresolution="3840x1200"
+		timestamp="14/03/2016 3:00:10 PM"
+		timestampiso="2016-03-14T04:00:10"
+		timeoutfactor="1"
+		module="File_Exit">
+		<detail>
+			File_Exit
+		</detail>
+		<varbindings/>
+		<item
+			timeRelativeToTestSuiteStartTime="00:00.338"
+			timeRelativeToTestModuleStartTime="00:00.339"
+			timeWallClock="15:00:10"
+			time="00:00.338"
+			level="Info"
+			category="Invoke Action">
+			<message>
+				Invoking PerformClick() on item 'MainWindow1.File1'.
+			</message>
+			<metainfo
+				type="repoitem"
+				path="/form[@objectname='MainWindow']/?/?/menuitem[@text='File']"
+				fullname="NGTTestAutomationRepository.MainWindow1.File1"
+				id="70f9d447fc594164a97c9d2685f7401a"
+				timeout="60000"
+				codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\File_Exit.cs"
+				codeline="82"
+				itemindex="0"
+				loglvl="Info"/>
+		</item>
+		<item
+			timeRelativeToTestSuiteStartTime="00:01.455"
+			timeRelativeToTestModuleStartTime="00:01.456"
+			timeWallClock="15:00:11"
+			time="00:01.455"
+			level="Info"
+			category="Invoke Action">
+			<message>
+				Invoking PerformClick() on item 'File.Exit'.
+			</message>
+			<metainfo
+				type="repoitem"
+				path="/contextmenu[@objectname='File']/menuitem[@text='E&amp;xit']"
+				fullname="NGTTestAutomationRepository.File.Exit"
+				id="8e9b366382f04113ac936e1535ffa1a3"
+				timeout="60000"
+				codefile="c:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\File_Exit.cs"
+				codeline="86"
+				itemindex="1"
+				loglvl="Info"/>
+		</item>
+		<item
+			timeRelativeToTestSuiteStartTime="00:16.178"
+			timeRelativeToTestModuleStartTime="00:16.179"
+			timeWallClock="15:00:26"
+			time="00:16.178"
+			level="Error"
+			category="Module">
+			<message>
+				Test run was aborted by the user.
+			</message>
+			<metainfo
+				loglvl="Error"/>
+		</item>
+	</activity>
+</report>

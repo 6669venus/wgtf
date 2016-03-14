@@ -5,7 +5,7 @@ id="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 embeddedrepository="false"
 mode="Global">
 	<name>
-		OpenGenericApp
+		OpenGenericApp_ui
 	</name>
 	<repeatcount>
 		1
@@ -23,7 +23,7 @@ mode="Global">
 		True
 	</useDefaultItemLogging>
 	<codegen
-	classname="OpenGenericApp"
+	classname="OpenGenericApp_ui"
 	namespace="NGTTestAutomation"/>
 	<variables>
 		<var
@@ -49,7 +49,7 @@ mode="Global">
 				path
 			</workingdir>
 			<args>
-				--config plugins_demo.txt
+				--config plugins_ui.txt
 			</args>
 		</runapprecorditem>
 	</recorditems>
@@ -67,7 +67,7 @@ mode="Global">
 	</repository>
 	<usercodefile
 	lang="CSharp">
-		OpenGenericApp.UserCode.cs
+		OpenGenericApp_ui.UserCode.cs
 	</usercodefile>
 	<references/>
 </recordtable>

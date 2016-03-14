@@ -23,119 +23,6 @@ reportlevel="Info;20">
 		name="Programming_Generic_App_UI"
 		id="033e65d6-e4cb-4780-a7cb-16900dbb6277">
 			<folder
-			name="Miscellaneous"
-			id="65c6b675-1d26-4ea9-95df-8bc930b9a642">
-				<testcase
-				name="Selection"
-				id="5fa41ae9-508f-4ceb-87c8-20f644bff555">
-					<htmlcomment>
-						<![CDATA[<P>Select an item in NGT property panel.<BR>This test needs altering, I changed 
-properties, not selected items</P>]]>
-					</htmlcomment>
-					<setup
-					name="setup"
-					id="08b195db-52f7-40d6-a4bb-4fd8cf54a278">
-						<testmodule
-						name="OpenGenericApp"
-						id="7a04f546-eb88-4bdb-9aaf-d7e16fc424d3"
-						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
-						type="Recording">
-							<databinding>
-								<var
-								variablename="path"
-								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
-								dataname="path"
-								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
-							</databinding>
-						</testmodule>
-					</setup>
-					<testmodule
-					name="OpenPropertyTreeTestPanel"
-					id="4de0cff4-935b-4e0f-a616-7992d9afc545"
-					ref="9dc3d550-46c7-437f-b20a-29986e1ceddc"
-					type="Recording"/>
-					<testmodule
-					name="SelectPropertyTreeTestPanel"
-					id="95ade365-67b4-452a-a37b-b461e5bf0475"
-					ref="a167d7f1-18e8-4104-8333-35233bf382c8"
-					type="Recording"/>
-					<testmodule
-					name="BrowsePropertyTreeSimpleCases"
-					id="7f83dbe4-8a06-48c0-a380-869097087ff3"
-					ref="6894454c-4c1b-4b4c-a17b-fce50e2f2f54"
-					type="Recording"/>
-					<testmodule
-					name="SimpleCasesChangeBool"
-					id="5e94e849-05ff-4eed-9ed7-6a3caabb25f1"
-					ref="4a620fbf-de10-45fc-b45c-c91bb4a0d9b7"
-					type="Recording"/>
-					<testmodule
-					name="SimpleCasesSlideUp"
-					id="ed1e7782-5c33-4c2b-80e8-50121c1670f8"
-					ref="fe4210aa-3276-462b-93b5-2ae968fccb62"
-					type="Recording"/>
-					<teardown
-					name="teardown"
-					id="1402807a-63e2-4813-8be7-80430657fef7">
-						<testmodule
-						name="CloseGenericApp"
-						id="c93459a6-4b9a-48df-9801-2515f8883cb8"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
-						type="Recording"/>
-					</teardown>
-				</testcase>
-				<testcase
-				name="Multiple_item_Selection"
-				id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef">
-					<setup
-					name="setup"
-					id="2a8aa7c6-1923-4663-b047-e69305a2c953">
-						<testmodule
-						name="OpenGenericApp"
-						id="bf92ab5e-73da-49ab-ae34-bf647c11c279"
-						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
-						type="Recording">
-							<databinding>
-								<var
-								variablename="path"
-								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
-								dataname="path"
-								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
-							</databinding>
-						</testmodule>
-					</setup>
-					<testmodule
-					name="OpenPropertyTreeTestPanel"
-					id="5c6021a9-62d1-4aab-b1d4-fd2dd2406e05"
-					ref="9dc3d550-46c7-437f-b20a-29986e1ceddc"
-					type="Recording"/>
-					<testmodule
-					name="SelectPropertyTreeTestPanel"
-					id="ccfb1742-7e9a-44a2-821c-92f9708efae9"
-					ref="a167d7f1-18e8-4104-8333-35233bf382c8"
-					type="Recording"/>
-					<testmodule
-					name="BrowsePropertyTreeSimpleCases"
-					id="003b1da1-7d84-48da-b68a-99e2d71d309e"
-					ref="6894454c-4c1b-4b4c-a17b-fce50e2f2f54"
-					type="Recording"/>
-					<testmodule
-					name="SimpleCasesMultipleSelect"
-					id="41e9397f-f16e-4ead-aa15-6333311b5556"
-					ref="681b404c-ceac-4ddc-9f64-e4e6cda5ff71"
-					type="Recording"/>
-					<teardown
-					name="teardown"
-					id="45e64aa3-b47c-4ada-abc0-164f34d0decf">
-						<testmodule
-						name="CloseGenericApp"
-						id="fb1a684f-d3e2-4509-b545-824fd81379b3"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
-						type="Recording"/>
-					</teardown>
-				</testcase>
-			</folder>
-			<folder
 			name="Initial_Test"
 			id="71c1a0bf-4222-44d0-bc10-6d5caa643052">
 				<testcase
@@ -145,7 +32,7 @@ properties, not selected items</P>]]>
 					name="setup"
 					id="1c811a21-8a7f-4361-9286-8894a926aae5">
 						<testmodule
-						name="OpenGenericApp"
+						name="OpenGenericApp_ui"
 						id="1fdcea5c-eef4-43fd-9691-a3d7a6f4462f"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -175,7 +62,7 @@ properties, not selected items</P>]]>
 					name="setup"
 					id="09170e73-ce55-4ae5-b6b4-4662a5c540e4">
 						<testmodule
-						name="OpenGenericApp"
+						name="OpenGenericApp_ui"
 						id="671b4af8-86b0-4725-9d25-f14364d1f1fc"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -209,6 +96,169 @@ properties, not selected items</P>]]>
 					</teardown>
 				</testcase>
 			</folder>
+			<folder
+			name="Menu"
+			id="6ae71e00-ea11-46d1-aa1c-a2d0882e06fb">
+				<testcase
+				name="File"
+				id="0432b46d-4642-401b-bc53-9a065f5c269a">
+					<setup
+					name="setup"
+					id="e9fd02d7-3bc3-4a8f-9085-d8dcf14a52c8">
+						<testmodule
+						name="OpenGenericApp_ui"
+						id="eb5a4452-9e63-4ce8-83f2-30516c066555"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="File_Exit_MC"
+					id="77066a4a-ad31-4bc3-a6d6-caffdb95d2c7"
+					ref="8b524829-458f-4520-a23b-b87b47e200ae"
+					type="Recording"/>
+				</testcase>
+				<testcase
+				name="ShowMod"
+				id="8919c9a0-abc7-492f-ad70-8c647ef85378">
+					<setup
+					name="setup"
+					id="0204f1bd-a48d-41c2-b001-58f666c835fa">
+						<testmodule
+						name="OpenGenericApp_ui"
+						id="7f2c3995-722a-43f5-8dcd-63790967e6c2"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="Showmodaldialog"
+					id="8fc7817a-6244-4ef7-8aa2-970d8fa3056c"
+					ref="c5adfba7-b506-4caf-ba72-7fd6b37705c9"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="b5876c05-3b70-4af7-9b27-d1e13bedcdf4">
+						<testmodule
+						name="CloseGenericApp"
+						id="c46000e4-e05e-4efb-b344-95fe8afbcdcf"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+				<testcase
+				name="View"
+				id="b946ca30-95c6-42e4-b8ed-2c5e938dd9e7">
+					<setup
+					name="setup"
+					id="414f7408-4ac4-416e-8825-6a24f4bc0005">
+						<testmodule
+						name="OpenGenericApp_ui"
+						id="9c10f01c-5e36-45cb-bd05-752bc8a87889"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<teardown
+					name="teardown"
+					id="c9c0ba38-35e7-4dff-941b-d9c1eeb5e711">
+						<testmodule
+						name="CloseGenericApp"
+						id="290bca09-7bb4-4dd2-9779-9f182b34e86f"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
+			<folder
+			name="Miscellaneous"
+			id="65c6b675-1d26-4ea9-95df-8bc930b9a642">
+				<testcase
+				name="Selection"
+				id="5fa41ae9-508f-4ceb-87c8-20f644bff555">
+					<htmlcomment>
+						<![CDATA[<P>Select an item in NGT property panel.<BR>This test needs altering, I changed 
+properties, not selected items</P>]]>
+					</htmlcomment>
+					<setup
+					name="setup"
+					id="08b195db-52f7-40d6-a4bb-4fd8cf54a278">
+						<testmodule
+						name="OpenGenericApp_ui"
+						id="7a04f546-eb88-4bdb-9aaf-d7e16fc424d3"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<teardown
+					name="teardown"
+					id="1402807a-63e2-4813-8be7-80430657fef7">
+						<testmodule
+						name="CloseGenericApp"
+						id="c93459a6-4b9a-48df-9801-2515f8883cb8"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+				<testcase
+				name="Multiple_item_Selection"
+				id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef">
+					<setup
+					name="setup"
+					id="2a8aa7c6-1923-4663-b047-e69305a2c953">
+						<testmodule
+						name="OpenGenericApp_ui"
+						id="bf92ab5e-73da-49ab-ae34-bf647c11c279"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<teardown
+					name="teardown"
+					id="45e64aa3-b47c-4ada-abc0-164f34d0decf">
+						<testmodule
+						name="CloseGenericApp"
+						id="fb1a684f-d3e2-4509-b545-824fd81379b3"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
 		</folder>
 		<folder
 		name="Generic_App_Demo_Plugin"
@@ -218,46 +268,37 @@ properties, not selected items</P>]]>
 			id="a98b06bb-2a5a-481e-8bea-ebab59d7fad0">
 				<setup
 				name="setup"
-				id="c550587f-0475-4384-9b95-f8633f71eaec">
+				id="a58d40d9-7b9a-4ab2-b0b6-671914e9b698">
 					<testmodule
-					name="OpenGenericApp"
-					id="00910738-a4cb-4025-a70e-e77f1ab0b773"
-					ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+					name="OpenGenericApp_Demo"
+					id="42608a5a-656f-4139-a199-dd2942fae2db"
+					ref="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
 					type="Recording">
 						<databinding>
 							<var
 							variablename="path"
-							variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+							variableid="adfd36f9-addf-4be4-80ca-f6a02ac8f5ce"
 							dataname="path"
 							datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
 						</databinding>
 					</testmodule>
 				</setup>
-				<teardown
-				name="teardown"
-				id="c450141e-497c-43d4-b8fb-a0304ac8f5f4">
-					<testmodule
-					name="CloseGenericApp"
-					id="6dfd89cc-8344-4968-a339-3f2f8dba5e65"
-					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
-					type="Recording"/>
-				</teardown>
 			</testcase>
 			<testcase
 			name="New_Object"
 			id="8f507aea-7a61-4a13-abcb-6364b8cbd62e">
 				<setup
 				name="setup"
-				id="902ee971-7285-4d7c-a340-9bc4e8a53923">
+				id="cf456108-7a2f-4281-8f46-8100f72c71f4">
 					<testmodule
-					name="OpenGenericApp"
-					id="1d38b9cc-ed08-402f-8594-ae3b3bfce15f"
-					ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+					name="OpenGenericApp_Demo"
+					id="49ffa9e1-66bf-4199-bdb3-b9ede8610bb4"
+					ref="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
 					type="Recording">
 						<databinding>
 							<var
 							variablename="path"
-							variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+							variableid="adfd36f9-addf-4be4-80ca-f6a02ac8f5ce"
 							dataname="path"
 							datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
 						</databinding>
@@ -283,16 +324,16 @@ properties, not selected items</P>]]>
 			id="d53e1411-1111-4727-9ae5-91dc74e9663e">
 				<setup
 				name="setup"
-				id="4df4955b-7f22-4a90-a857-4c505d3f0736">
+				id="4ce48f89-a550-4859-a665-bc93a606bfcd">
 					<testmodule
-					name="OpenGenericApp"
-					id="06933c6d-24b5-4bbc-a07f-da5b7dd9609c"
-					ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+					name="OpenGenericApp_Demo"
+					id="d1a8b172-bd84-4647-90c3-5ce02a579dfc"
+					ref="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
 					type="Recording">
 						<databinding>
 							<var
 							variablename="path"
-							variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+							variableid="adfd36f9-addf-4be4-80ca-f6a02ac8f5ce"
 							dataname="path"
 							datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
 						</databinding>
@@ -308,17 +349,12 @@ properties, not selected items</P>]]>
 				id="899ad7b6-8092-4730-9a3c-b6f3f57cee85"
 				ref="2c6cfd0f-2386-4a41-adb1-0c6987082d25"
 				type="Recording"/>
-				<testmodule
-				name="PositionPropertieChanges"
-				id="be59161d-7ff7-4b40-861b-129afe4d5243"
-				ref="6c8f5dce-bc7a-41e4-843b-ad564923a087"
-				type="Recording"/>
 				<teardown
 				name="teardown"
-				id="ecd785f1-09c3-47aa-97df-ffe083973f74">
+				id="28aaa9c7-fcf6-4370-850d-fea84080d5b1">
 					<testmodule
 					name="CloseGenericApp"
-					id="6fc10688-409e-4969-b013-8a69450ba0be"
+					id="49351d4c-50dc-408c-a844-6be793a5b00e"
 					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 					type="Recording"/>
 				</teardown>
@@ -332,21 +368,7 @@ properties, not selected items</P>]]>
 			<testcase
 			id="030bf048-9635-494c-a06c-ab2cd1728573"/>
 			<testcase
-			id="033e65d6-e4cb-4780-a7cb-16900dbb6277"/>
-			<testcase
 			id="4cb23d72-9dd2-4de1-8a95-afc8c438644f"/>
-			<testcase
-			id="4d36ff13-1412-4a18-af20-e8d4909351e8"/>
-			<testcase
-			id="5fa41ae9-508f-4ceb-87c8-20f644bff555"/>
-			<testcase
-			id="65c6b675-1d26-4ea9-95df-8bc930b9a642"/>
-			<testcase
-			id="71c1a0bf-4222-44d0-bc10-6d5caa643052"/>
-			<testcase
-			id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef"/>
-			<testcase
-			id="b7308b9a-1454-4734-8cb6-c72173fe524a"/>
 			<testcase
 			id="d53e1411-1111-4727-9ae5-91dc74e9663e"/>
 		</testconfiguration>

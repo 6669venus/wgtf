@@ -2684,7 +2684,6 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		const char * expectedFullPath = "childTest";
 		CHECK_EQUAL( expectedFullPath, fullPath );
 	}
-	// TODO broken if you access "childTest.dictTest"
 	{
 		Collection collection;
 		const bool getCollectionSuccess = instance.get< Collection >(

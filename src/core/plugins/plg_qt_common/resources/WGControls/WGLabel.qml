@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.1
 
 /*!
  \brief A non-editable single line of text that can align to a panel wide width in defaultSpacing
- Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
+ Will appear in the left column if placed in a WGFormLayout && formLabel == true
 
 \code{.js}
 WGLabel {
@@ -20,31 +20,18 @@ Text {
     /*! This property right aligns the label and sets width to the largest label in the panel.
         The default value is false
     */
-    property bool formLabel_: false
+    property bool formLabel: false
 
     /*! This property ignores the panel wide label column width
         The default is false
     */
-    property bool localForm_: false
-
-    /*! property only for the copy/paste prototype
-        The default value is null
-    */
-
-    color: enabled ? palette.textColor : palette.disabledTextColor
-
-    renderType: Text.NativeRendering
-
-	smooth: true
-
-    horizontalAlignment: formLabel_ ? Text.AlignRight : Text.AlignLeft
+    property bool localForm: false
 
     /*
         Links the label to it's control object and then finds the copyable inside it.
         Only works with form labels.
         @param type:object parentObject The parent control object
     */
-    //TODO: This should be an internal function and should be marked as private by "__" prefix
     /*! \internal */
     function selectLabelControl(parentObject){
         for (var i=0; i<parentObject.children.length; i++)
@@ -61,9 +48,6 @@ Text {
         }
     }
 
-    /*!
-        TODO document this
-    */
     function selectControlCopyable(parentObject){
         for (var i=0; i<parentObject.children.length; i++)
         {
@@ -74,27 +58,35 @@ Text {
         }
     }
 
-    width: formLabel_ && !localForm_ ? defaultSpacing.labelColumnWidth: implicitWidth
-
-    Layout.preferredWidth: formLabel_ && !localForm_ ? defaultSpacing.labelColumnWidth : implicitWidth
-
     Component.onCompleted: {
-        if (formLabel_ && paintedWidth > defaultSpacing.labelColumnWidth && !localForm_)
+        if (formLabel && paintedWidth > defaultSpacing.labelColumnWidth && !localForm)
         {
             defaultSpacing.labelColumnWidth = paintedWidth;
         }
 
-        if (formLabel_)
+        if (formLabel)
         {
             selectLabelControl(labelText.parent)
         }
     }
 
+    width: formLabel && !localForm ? defaultSpacing.labelColumnWidth: implicitWidth
+
+    Layout.preferredWidth: formLabel && !localForm ? defaultSpacing.labelColumnWidth : implicitWidth
+
+    color: enabled ? palette.textColor : palette.disabledTextColor
+
+    renderType: Text.NativeRendering
+
+    smooth: true
+
+    horizontalAlignment: formLabel ? Text.AlignRight : Text.AlignLeft
+
     MouseArea {
         anchors.fill: parent
-        enabled: labelText.formLabel_
-        hoverEnabled: labelText.formLabel_
-        cursorShape: labelText.formLabel_ ? Qt.PointingHandCursor : Qt.ArrowCursor
+        enabled: labelText.formLabel
+        hoverEnabled: labelText.formLabel
+        cursorShape: labelText.formLabel ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         onClicked:{
             if ((formControlCopyable_ === null) || (!formControlCopyable_.enabled))
@@ -124,4 +116,10 @@ Text {
             }
         }
     }
+
+    /*! Deprecated */
+    property alias formLabel_: labelText.formLabel
+
+    /*! Deprecated */
+    property alias localForm_: labelText.localForm
 }

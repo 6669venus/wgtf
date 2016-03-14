@@ -20,6 +20,9 @@ TextFieldStyle {
 
     background: WGTextBoxFrame {
         id: textFrame
+        color: "transparent"
+        border.color: "transparent"
+
         states: [
             State {
                 name: "READ ONLY"
@@ -32,10 +35,5 @@ TextFieldStyle {
                 PropertyChanges {target: baseStyle; textColor: palette.disabledTextColor}
             }
         ]
-
-
-        color: "transparent"
-
-        border.color: "transparent"
     }
 }

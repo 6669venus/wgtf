@@ -131,8 +131,8 @@ TextField {
     // Some context menu items may be data driven.
     // I have added a visibility switch to contextMenu
     WGMenu {
-        objectName: "Menu"
         id: contextMenu
+        objectName: "Menu"
         title: "Edit"
 
         MenuItem {

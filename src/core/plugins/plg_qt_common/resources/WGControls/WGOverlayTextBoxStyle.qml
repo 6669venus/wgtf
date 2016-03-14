@@ -20,6 +20,9 @@ TextFieldStyle {
 
     background: WGTextBoxFrame {
         id: textFrame
+        color: palette.overlayLightShade
+        border.color: palette.overlayDarkerShade
+
         states: [
             State {
                 name: "ACTIVE FOCUS"
@@ -48,10 +51,5 @@ TextFieldStyle {
                 PropertyChanges {target: baseStyle; textColor: palette.darkestShade}
             }
         ]
-
-
-        color: palette.overlayLightShade
-
-        border.color: palette.overlayDarkerShade
     }
 }

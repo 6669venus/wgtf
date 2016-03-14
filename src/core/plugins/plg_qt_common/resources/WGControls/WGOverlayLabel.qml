@@ -3,7 +3,8 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
 /*!
- \brief A non-editable single line of text intended to be used in a 3D viewport that can align to a panel wide width in defaultSpacing
+ \brief A non-editable single line of text intended to be used in a 3D viewport
+ that can align to a panel wide width in defaultSpacing
  Will appear in the left column if placed in a WGFormLayout && formLabel_ == true
 
 \code{.js}

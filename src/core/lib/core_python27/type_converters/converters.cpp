@@ -1,9 +1,5 @@
 #include "pch.hpp"
 #include "converters.hpp"
-#include "default_converter.hpp"
-#include "dict_converter.hpp"
-#include "list_converter.hpp"
-#include "tuple_converter.hpp"
 
 
 namespace PythonType

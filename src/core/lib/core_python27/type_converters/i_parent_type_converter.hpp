@@ -45,6 +45,11 @@ public:
 	 *	@param outVariant the object to be converted.
 	 *	@param outObject storage for the converted item.
 	 *		Should not be modified if conversion fails.
+	 *	@param parentHandle holds a reference to the parent of inObject.
+	 *	@param childPath the reflected property path from parentHandle
+	 *		to the child object.
+	 *		e.g. parentHandle has the path "root.child1.child2" and
+	 *			inObject is "child3".
 	 *	@return true on success.
 	 */
 	virtual bool toScriptType( const Variant & inVariant,

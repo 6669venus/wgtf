@@ -2,6 +2,7 @@
 #ifndef _PYTHON_MAPPING_COLLECTION_HPP
 #define _PYTHON_MAPPING_COLLECTION_HPP
 
+
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/collection.hpp"
 

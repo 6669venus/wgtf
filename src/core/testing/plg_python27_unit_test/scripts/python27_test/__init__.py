@@ -54,21 +54,28 @@ def firstn(n):
 		num += 1
 
 class ValueObjectTest( object ):
+	'''
+	Test object for reflected property paths.
+
+	The reflection system can get a path for "childTest.tupleTest[0]" only if
+	the value type is a Python object.
+	Basic types like int and string do not have path info stored on them.
+	'''
 	def __init__( self, value ):
 		self.value = value
 
 class ChildObjectTest( object ):
 	def __init__( self ):
 		self.stringTest = "Child"
-		self.tupleTest = (ValueObjectTest( 1 ),
+		self.tupleTest = (ValueObjectTest( 0 ),
+			ValueObjectTest( 1 ),
 			ValueObjectTest( 2 ),
-			ValueObjectTest( 3 ),
-			ValueObjectTest( "Spam" ))
+			ValueObjectTest( 3 ) )
 		self.listTest = [ValueObjectTest( 0 ),
 			ValueObjectTest( 1 ),
 			ValueObjectTest( 2 ),
 			ValueObjectTest( 3 )]
-		self.dictTest = {ValueObjectTest( 'Bacon' ) : ValueObjectTest( 1 )}
+		self.dictTest = {ValueObjectTest( 'Bacon' ) : ValueObjectTest( 0 )}
 
 class OldClassTest:
 	'''Test of old-style classes'''

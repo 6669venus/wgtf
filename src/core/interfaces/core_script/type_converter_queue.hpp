@@ -2,12 +2,14 @@
 #ifndef TYPE_CONVERTER_QUEUE_HPP
 #define TYPE_CONVERTER_QUEUE_HPP
 
+
 #include <string>
-#include <type_traits>
 #include <vector>
+
 
 class ObjectHandle;
 class Variant;
+
 
 template < typename ITypeConverter, typename ScriptType >
 class TypeConverterQueue

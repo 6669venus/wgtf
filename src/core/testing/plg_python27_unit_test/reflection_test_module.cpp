@@ -2743,6 +2743,10 @@ void checkSequencePaths( const ReflectedPython::DefinedInstance & instance,
 		expectedValueFullPath += std::to_string( expectedKey );
 		expectedValueFullPath += INDEX_CLOSE;
 		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+
+		int valueValue = -1;
+		valueInstance.get< int >( "value", valueValue );
+		CHECK_EQUAL( valueValue, expectedKey );
 	}
 }
 

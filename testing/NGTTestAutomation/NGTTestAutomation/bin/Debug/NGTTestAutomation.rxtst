@@ -32,7 +32,7 @@ reportlevel="Info;20">
 					name="setup"
 					id="1c811a21-8a7f-4361-9286-8894a926aae5">
 						<testmodule
-						name="OpenGenericApp_ui"
+						name="Open_GenericApp_ui"
 						id="1fdcea5c-eef4-43fd-9691-a3d7a6f4462f"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -49,7 +49,7 @@ reportlevel="Info;20">
 					name="teardown"
 					id="dc3ba085-f62d-4ced-a612-c5e38b8ef08d">
 						<testmodule
-						name="CloseGenericApp"
+						name="Close_GenericApp_ui"
 						id="15443d67-7746-49d3-b400-c94540abc237"
 						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 						type="Recording"/>
@@ -62,7 +62,7 @@ reportlevel="Info;20">
 					name="setup"
 					id="09170e73-ce55-4ae5-b6b4-4662a5c540e4">
 						<testmodule
-						name="OpenGenericApp_ui"
+						name="Open_GenericApp_ui"
 						id="671b4af8-86b0-4725-9d25-f14364d1f1fc"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -89,7 +89,7 @@ reportlevel="Info;20">
 					name="teardown"
 					id="beb37bbe-e788-48d9-9c71-33389b14ef37">
 						<testmodule
-						name="CloseGenericApp"
+						name="Close_GenericApp_ui"
 						id="9890b8d4-b8e6-4f30-ae14-8bd174f61e66"
 						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 						type="Recording"/>
@@ -106,7 +106,7 @@ reportlevel="Info;20">
 					name="setup"
 					id="e9fd02d7-3bc3-4a8f-9085-d8dcf14a52c8">
 						<testmodule
-						name="OpenGenericApp_ui"
+						name="Open_GenericApp_ui"
 						id="eb5a4452-9e63-4ce8-83f2-30516c066555"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -119,16 +119,11 @@ reportlevel="Info;20">
 							</databinding>
 						</testmodule>
 					</setup>
-					<testmodule
-					name="File_Exit_MC"
-					id="77066a4a-ad31-4bc3-a6d6-caffdb95d2c7"
-					ref="8b524829-458f-4520-a23b-b87b47e200ae"
-					type="Recording"/>
 					<teardown
 					name="teardown"
 					id="6b15f8a7-4a10-401d-85c0-b946a44c2309">
 						<testmodule
-						name="Closing_generic_app_Fail_Pass"
+						name="Teardown_Fail_Pass"
 						id="8465e232-f2d8-4f90-9b35-ab81cfed0504"
 						ref="9aa203be-54e6-4c74-8b85-0f06c75a3aac"
 						type="Recording"/>
@@ -141,7 +136,7 @@ reportlevel="Info;20">
 					name="setup"
 					id="0204f1bd-a48d-41c2-b001-58f666c835fa">
 						<testmodule
-						name="OpenGenericApp_ui"
+						name="Open_GenericApp_ui"
 						id="7f2c3995-722a-43f5-8dcd-63790967e6c2"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -163,7 +158,7 @@ reportlevel="Info;20">
 					name="teardown"
 					id="b5876c05-3b70-4af7-9b27-d1e13bedcdf4">
 						<testmodule
-						name="CloseGenericApp"
+						name="Close_GenericApp_ui"
 						id="c46000e4-e05e-4efb-b344-95fe8afbcdcf"
 						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 						type="Recording"/>
@@ -176,7 +171,7 @@ reportlevel="Info;20">
 					name="setup"
 					id="414f7408-4ac4-416e-8825-6a24f4bc0005">
 						<testmodule
-						name="OpenGenericApp_ui"
+						name="Open_GenericApp_ui"
 						id="9c10f01c-5e36-45cb-bd05-752bc8a87889"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -193,7 +188,7 @@ reportlevel="Info;20">
 					name="teardown"
 					id="c9c0ba38-35e7-4dff-941b-d9c1eeb5e711">
 						<testmodule
-						name="CloseGenericApp"
+						name="Close_GenericApp_ui"
 						id="290bca09-7bb4-4dd2-9779-9f182b34e86f"
 						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 						type="Recording"/>
@@ -214,7 +209,7 @@ properties, not selected items</P>]]>
 					name="setup"
 					id="08b195db-52f7-40d6-a4bb-4fd8cf54a278">
 						<testmodule
-						name="OpenGenericApp_ui"
+						name="Open_GenericApp_ui"
 						id="7a04f546-eb88-4bdb-9aaf-d7e16fc424d3"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -231,7 +226,7 @@ properties, not selected items</P>]]>
 					name="teardown"
 					id="1402807a-63e2-4813-8be7-80430657fef7">
 						<testmodule
-						name="Closing_GenericApp_demo"
+						name="Close_GenericApp_demo"
 						id="374b80a5-331e-46f4-9e49-56a4599be69e"
 						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
@@ -244,7 +239,7 @@ properties, not selected items</P>]]>
 					name="setup"
 					id="2a8aa7c6-1923-4663-b047-e69305a2c953">
 						<testmodule
-						name="OpenGenericApp_ui"
+						name="Open_GenericApp_ui"
 						id="bf92ab5e-73da-49ab-ae34-bf647c11c279"
 						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
 						type="Recording">
@@ -261,7 +256,7 @@ properties, not selected items</P>]]>
 					name="teardown"
 					id="45e64aa3-b47c-4ada-abc0-164f34d0decf">
 						<testmodule
-						name="CloseGenericApp"
+						name="Close_GenericApp_ui"
 						id="fb1a684f-d3e2-4509-b545-824fd81379b3"
 						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 						type="Recording"/>
@@ -279,7 +274,7 @@ properties, not selected items</P>]]>
 				name="setup"
 				id="a58d40d9-7b9a-4ab2-b0b6-671914e9b698">
 					<testmodule
-					name="OpenGenericApp_Demo"
+					name="Open_GenericApp_Demo"
 					id="42608a5a-656f-4139-a199-dd2942fae2db"
 					ref="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
 					type="Recording">
@@ -296,7 +291,7 @@ properties, not selected items</P>]]>
 				name="teardown"
 				id="95397143-9c34-4d41-a714-fc61f67b355d">
 					<testmodule
-					name="CloseGenericApp"
+					name="Close_GenericApp_ui"
 					id="321fd73c-f307-4dad-bd5c-123815322944"
 					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 					type="Recording"/>
@@ -309,7 +304,7 @@ properties, not selected items</P>]]>
 				name="setup"
 				id="cf456108-7a2f-4281-8f46-8100f72c71f4">
 					<testmodule
-					name="OpenGenericApp_Demo"
+					name="Open_GenericApp_Demo"
 					id="49ffa9e1-66bf-4199-bdb3-b9ede8610bb4"
 					ref="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
 					type="Recording">
@@ -331,7 +326,7 @@ properties, not selected items</P>]]>
 				name="teardown"
 				id="8a0d3dc1-3e0d-4472-b35c-3bfd9d892d65">
 					<testmodule
-					name="CloseGenericApp"
+					name="Close_GenericApp_ui"
 					id="ddba87f2-da84-4421-808e-238fe02bbc9a"
 					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 					type="Recording"/>
@@ -344,7 +339,7 @@ properties, not selected items</P>]]>
 				name="setup"
 				id="4ce48f89-a550-4859-a665-bc93a606bfcd">
 					<testmodule
-					name="OpenGenericApp_Demo"
+					name="Open_GenericApp_Demo"
 					id="d1a8b172-bd84-4647-90c3-5ce02a579dfc"
 					ref="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
 					type="Recording">
@@ -371,7 +366,7 @@ properties, not selected items</P>]]>
 				name="teardown"
 				id="28aaa9c7-fcf6-4370-850d-fea84080d5b1">
 					<testmodule
-					name="CloseGenericApp"
+					name="Close_GenericApp_ui"
 					id="49351d4c-50dc-408c-a844-6be793a5b00e"
 					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
 					type="Recording"/>
@@ -390,7 +385,31 @@ properties, not selected items</P>]]>
 			<testcase
 			id="0432b46d-4642-401b-bc53-9a065f5c269a"/>
 			<testcase
+			id="4cb23d72-9dd2-4de1-8a95-afc8c438644f"/>
+			<testcase
+			id="4d36ff13-1412-4a18-af20-e8d4909351e8"/>
+			<testcase
+			id="5fa41ae9-508f-4ceb-87c8-20f644bff555"/>
+			<testcase
+			id="65c6b675-1d26-4ea9-95df-8bc930b9a642"/>
+			<testcase
 			id="6ae71e00-ea11-46d1-aa1c-a2d0882e06fb"/>
+			<testcase
+			id="71c1a0bf-4222-44d0-bc10-6d5caa643052"/>
+			<testcase
+			id="8919c9a0-abc7-492f-ad70-8c647ef85378"/>
+			<testcase
+			id="8f507aea-7a61-4a13-abcb-6364b8cbd62e"/>
+			<testcase
+			id="a98b06bb-2a5a-481e-8bea-ebab59d7fad0"/>
+			<testcase
+			id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef"/>
+			<testcase
+			id="b7308b9a-1454-4734-8cb6-c72173fe524a"/>
+			<testcase
+			id="b946ca30-95c6-42e4-b8ed-2c5e938dd9e7"/>
+			<testcase
+			id="d53e1411-1111-4727-9ae5-91dc74e9663e"/>
 		</testconfiguration>
 	</testconfigurations>
 	<references/>

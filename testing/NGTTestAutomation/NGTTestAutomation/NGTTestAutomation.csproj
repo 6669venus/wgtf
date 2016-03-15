@@ -54,116 +54,68 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AjustingObjectProperties.cs">
-      <BoundTo>5114b90a-dab0-4a75-83a0-f4656f9f2a81</BoundTo>
-      <DependentUpon>AjustingObjectProperties.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>57464aa9-88fb-437c-acdf-10986f975744</id>
-    </Compile>
-    <Compile Include="AjustingObjectProperties.UserCode.cs">
-      <BoundTo>5114b90a-dab0-4a75-83a0-f4656f9f2a81</BoundTo>
-      <DependentUpon>AjustingObjectProperties.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
-      <id>a26827c5-57d4-49ef-82f4-16a44d4dd02a</id>
-    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <id>6814585f-9fea-40df-b530-e4a39bd39c4d</id>
     </Compile>
-    <Compile Include="BrowsePropertyTestTreeToSimpleCase.cs">
-      <BoundTo>c9a73b30-45ed-484f-a62a-ed2834ef0020</BoundTo>
-      <DependentUpon>BrowsePropertyTestTreeToSimpleCase.rxrec</DependentUpon>
+    <Compile Include="Generic_app_demo\AjustingObjectProperties.cs">
+      <id>57464aa9-88fb-437c-acdf-10986f975744</id>
       <RecorderCode>true</RecorderCode>
-      <id>0f15147f-be63-4296-86eb-fa25853c7dd0</id>
+      <DependentUpon>AjustingObjectProperties.rxrec</DependentUpon>
+      <BoundTo>5114b90a-dab0-4a75-83a0-f4656f9f2a81</BoundTo>
     </Compile>
-    <Compile Include="BrowsePropertyTestTreeToSimpleCase.UserCode.cs">
-      <BoundTo>c9a73b30-45ed-484f-a62a-ed2834ef0020</BoundTo>
-      <DependentUpon>BrowsePropertyTestTreeToSimpleCase.rxrec</DependentUpon>
+    <Compile Include="Generic_app_demo\AjustingObjectProperties.UserCode.cs">
+      <id>a26827c5-57d4-49ef-82f4-16a44d4dd02a</id>
       <UserCode>true</UserCode>
-      <id>c876c242-85c4-4415-9e79-1a9af82fe265</id>
+      <DependentUpon>AjustingObjectProperties.rxrec</DependentUpon>
+      <BoundTo>5114b90a-dab0-4a75-83a0-f4656f9f2a81</BoundTo>
     </Compile>
-    <Compile Include="BrowsePropertyTreeSimpleCases.cs">
-      <BoundTo>2ed09b99-868d-49b2-9842-855387e6ec02</BoundTo>
-      <DependentUpon>BrowsePropertyTreeSimpleCases.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>c73c83cf-59da-43e3-9208-7321b96a924f</id>
-    </Compile>
-    <Compile Include="BrowsePropertyTreeSimpleCases.UserCode.cs">
-      <BoundTo>2ed09b99-868d-49b2-9842-855387e6ec02</BoundTo>
-      <DependentUpon>BrowsePropertyTreeSimpleCases.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
-      <id>1a2c8b17-9c39-4ed8-83df-b24c598c2201</id>
-    </Compile>
-    <Compile Include="CloseGenericApp.cs">
-      <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
-      <DependentUpon>CloseGenericApp.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>0a294dd3-6b65-4e3b-9d34-9608ba70675d</id>
-    </Compile>
-    <Compile Include="CloseGenericApp.UserCode.cs">
-      <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
-      <DependentUpon>CloseGenericApp.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
-      <id>3cac6b1c-f196-444e-899a-9e359a39256e</id>
-    </Compile>
-    <Compile Include="Closing_GenericApp_demo.cs">
-      <BoundTo>ae2747b9-fb98-4fd9-b0d2-c53305d45781</BoundTo>
-      <DependentUpon>Closing_GenericApp_demo.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>73add408-d746-40bc-a2c1-e6fcc72bbb49</id>
-    </Compile>
-    <Compile Include="Closing_GenericApp_demo.UserCode.cs">
-      <BoundTo>ae2747b9-fb98-4fd9-b0d2-c53305d45781</BoundTo>
-      <DependentUpon>Closing_GenericApp_demo.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
-      <id>e6a86afc-1b9e-45b2-8a91-3e59737cf51f</id>
-    </Compile>
-    <Compile Include="Closing_generic_app_Fail_Pass.cs">
-      <BoundTo>cb8eba8d-ed82-417f-87a4-f80682b11a41</BoundTo>
-      <DependentUpon>Closing_generic_app_Fail_Pass.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>803ff2a6-c5b1-4e3b-912c-7c4eab996c23</id>
-    </Compile>
-    <Compile Include="Closing_generic_app_Fail_Pass.UserCode.cs">
-      <BoundTo>cb8eba8d-ed82-417f-87a4-f80682b11a41</BoundTo>
-      <DependentUpon>Closing_generic_app_Fail_Pass.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
-      <id>a7ffa1d1-6945-483c-a3db-23c189c9c173</id>
-    </Compile>
-    <Compile Include="File_Exit_MC.cs">
-      <BoundTo>67f08f57-2188-4074-b843-9525d794a184</BoundTo>
-      <DependentUpon>File_Exit_MC.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
+    <Compile Include="Generic_app_demo\File_Exit_MC.cs">
       <id>ba44e63c-7cba-47c8-bbfa-b251273dce0b</id>
-    </Compile>
-    <Compile Include="File_Exit_MC.UserCode.cs">
-      <BoundTo>67f08f57-2188-4074-b843-9525d794a184</BoundTo>
+      <RecorderCode>true</RecorderCode>
       <DependentUpon>File_Exit_MC.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+      <BoundTo>67f08f57-2188-4074-b843-9525d794a184</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_demo\File_Exit_MC.UserCode.cs">
       <id>09fc4579-9c0b-42f8-9105-4492044cac4c</id>
-    </Compile>
-    <Compile Include="Minimise.cs">
-      <BoundTo>4427c1d3-77fe-4f3c-8e32-859f6251deb2</BoundTo>
-      <DependentUpon>Minimise.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>7d354800-41d3-45d0-a645-8f7ef70af436</id>
-    </Compile>
-    <Compile Include="Minimise.UserCode.cs">
-      <BoundTo>4427c1d3-77fe-4f3c-8e32-859f6251deb2</BoundTo>
-      <DependentUpon>Minimise.rxrec</DependentUpon>
       <UserCode>true</UserCode>
-      <id>fb5cf463-e113-401c-b044-0b28ff4041dc</id>
+      <DependentUpon>File_Exit_MC.rxrec</DependentUpon>
+      <BoundTo>67f08f57-2188-4074-b843-9525d794a184</BoundTo>
     </Compile>
-    <Compile Include="NewObject.cs">
-      <BoundTo>b3501be2-8a99-40c0-aa50-694bb0d1027a</BoundTo>
-      <DependentUpon>NewObject.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
+    <Compile Include="Generic_app_demo\NewObject.cs">
       <id>dc862947-f453-4fa6-90da-e0b262e6c420</id>
-    </Compile>
-    <Compile Include="NewObject.UserCode.cs">
-      <BoundTo>b3501be2-8a99-40c0-aa50-694bb0d1027a</BoundTo>
+      <RecorderCode>true</RecorderCode>
       <DependentUpon>NewObject.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+      <BoundTo>b3501be2-8a99-40c0-aa50-694bb0d1027a</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_demo\NewObject.UserCode.cs">
       <id>f49a1f25-797d-4e83-bd07-fa2fd84a215d</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>NewObject.rxrec</DependentUpon>
+      <BoundTo>b3501be2-8a99-40c0-aa50-694bb0d1027a</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_demo\Object_selection.cs">
+      <id>da97167e-122b-451e-808d-5921c3e73818</id>
+      <RecorderCode>true</RecorderCode>
+      <DependentUpon>Object_selection.rxrec</DependentUpon>
+      <BoundTo>bb95c40f-11cc-45c5-9731-f1793d3ecb10</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_demo\Object_selection.UserCode.cs">
+      <id>5ace0e17-cb96-4be3-a221-bec087dffc39</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>Object_selection.rxrec</DependentUpon>
+      <BoundTo>bb95c40f-11cc-45c5-9731-f1793d3ecb10</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_demo\PositionPropertieChanges.cs">
+      <id>32681eff-5f54-451a-83ec-8934bdd73bd4</id>
+      <RecorderCode>true</RecorderCode>
+      <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
+      <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_demo\PositionPropertieChanges.UserCode.cs">
+      <id>54f166aa-9d4e-40c9-9dfe-48a504e0a22a</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
+      <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
     </Compile>
     <Compile Include="NGTTestAutomationRepository.cs">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
@@ -171,200 +123,228 @@
       <RepositoryCode>true</RepositoryCode>
       <id>11c15068-68ed-42b9-bfa9-10c9722e6427</id>
     </Compile>
-    <Compile Include="Object_selection.cs">
-      <BoundTo>bb95c40f-11cc-45c5-9731-f1793d3ecb10</BoundTo>
-      <DependentUpon>Object_selection.rxrec</DependentUpon>
+    <Compile Include="Open Close\Close_GenericApp_ui.cs">
+      <id>0a294dd3-6b65-4e3b-9d34-9608ba70675d</id>
       <RecorderCode>true</RecorderCode>
-      <id>da97167e-122b-451e-808d-5921c3e73818</id>
+      <DependentUpon>Close_GenericApp_ui.rxrec</DependentUpon>
+      <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
     </Compile>
-    <Compile Include="Object_selection.UserCode.cs">
-      <BoundTo>bb95c40f-11cc-45c5-9731-f1793d3ecb10</BoundTo>
-      <DependentUpon>Object_selection.rxrec</DependentUpon>
+    <Compile Include="Open Close\Close_GenericApp_ui.UserCode.cs">
+      <id>3cac6b1c-f196-444e-899a-9e359a39256e</id>
       <UserCode>true</UserCode>
-      <id>5ace0e17-cb96-4be3-a221-bec087dffc39</id>
+      <DependentUpon>Close_GenericApp_ui.rxrec</DependentUpon>
+      <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
     </Compile>
-    <Compile Include="OpenGenericApp_Demo.cs">
-      <BoundTo>f66eb298-c844-42ec-9833-f8665d249c2c</BoundTo>
-      <DependentUpon>OpenGenericApp_Demo.rxrec</DependentUpon>
+    <Compile Include="Open Close\Close_GenericApp_demo.cs">
+      <id>73add408-d746-40bc-a2c1-e6fcc72bbb49</id>
       <RecorderCode>true</RecorderCode>
+      <DependentUpon>Close_GenericApp_demo.rxrec</DependentUpon>
+      <BoundTo>ae2747b9-fb98-4fd9-b0d2-c53305d45781</BoundTo>
+    </Compile>
+    <Compile Include="Open Close\Close_GenericApp_demo.UserCode.cs">
+      <id>e6a86afc-1b9e-45b2-8a91-3e59737cf51f</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>Close_GenericApp_demo.rxrec</DependentUpon>
+      <BoundTo>ae2747b9-fb98-4fd9-b0d2-c53305d45781</BoundTo>
+    </Compile>
+    <Compile Include="Open Close\Open_GenericApp_Demo.cs">
       <id>fc296fe9-c8b9-4d00-ab4f-108ed52d9e18</id>
-    </Compile>
-    <Compile Include="OpenGenericApp_Demo.UserCode.cs">
+      <RecorderCode>true</RecorderCode>
+      <DependentUpon>Open_GenericApp_Demo.rxrec</DependentUpon>
       <BoundTo>f66eb298-c844-42ec-9833-f8665d249c2c</BoundTo>
-      <DependentUpon>OpenGenericApp_Demo.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+    </Compile>
+    <Compile Include="Open Close\Open_GenericApp_Demo.UserCode.cs">
       <id>738b85fd-1caf-4891-98d4-b1defc5a3958</id>
-    </Compile>
-    <Compile Include="OpenPropertyTreeTestPanel.cs">
-      <BoundTo>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</BoundTo>
-      <DependentUpon>OpenPropertyTreeTestPanel.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>423c56ef-c4d8-4399-a93f-5851424c7f49</id>
-    </Compile>
-    <Compile Include="OpenPropertyTreeTestPanel.UserCode.cs">
-      <BoundTo>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</BoundTo>
-      <DependentUpon>OpenPropertyTreeTestPanel.rxrec</DependentUpon>
       <UserCode>true</UserCode>
-      <id>e0e6449a-57fd-48f4-babc-5513f704731b</id>
+      <DependentUpon>Open_GenericApp_Demo.rxrec</DependentUpon>
+      <BoundTo>f66eb298-c844-42ec-9833-f8665d249c2c</BoundTo>
     </Compile>
-    <Compile Include="PositionPropertieChanges.cs">
-      <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
-      <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
+    <Compile Include="Open Close\Teardown_Fail_Pass.cs">
+      <id>803ff2a6-c5b1-4e3b-912c-7c4eab996c23</id>
       <RecorderCode>true</RecorderCode>
-      <id>32681eff-5f54-451a-83ec-8934bdd73bd4</id>
+      <DependentUpon>Teardown_Fail_Pass.rxrec</DependentUpon>
+      <BoundTo>cb8eba8d-ed82-417f-87a4-f80682b11a41</BoundTo>
     </Compile>
-    <Compile Include="PositionPropertieChanges.UserCode.cs">
-      <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
-      <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
+    <Compile Include="Open Close\Teardown_Fail_Pass.UserCode.cs">
+      <id>a7ffa1d1-6945-483c-a3db-23c189c9c173</id>
       <UserCode>true</UserCode>
-      <id>54f166aa-9d4e-40c9-9dfe-48a504e0a22a</id>
+      <DependentUpon>Teardown_Fail_Pass.rxrec</DependentUpon>
+      <BoundTo>cb8eba8d-ed82-417f-87a4-f80682b11a41</BoundTo>
+    </Compile>
+    <Compile Include="Open Close\Open_GenericApp_ui.cs">
+      <id>9ca1e975-348c-49ce-a14d-fe6ef29e9895</id>
+      <RecorderCode>true</RecorderCode>
+      <DependentUpon>Open_GenericApp_ui.rxrec</DependentUpon>
+      <BoundTo>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</BoundTo>
+    </Compile>
+    <Compile Include="Open Close\Open_GenericApp_ui.UserCode.cs">
+      <id>816c5c3d-f982-426c-8681-ed9035efa4a7</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>Open_GenericApp_ui.rxrec</DependentUpon>
+      <BoundTo>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</BoundTo>
     </Compile>
     <Compile Include="Program.cs">
       <id>36b6e828-7305-4c80-bb18-3022b08cef23</id>
     </Compile>
-    <Compile Include="OpenGenericApp_ui.cs">
-      <BoundTo>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</BoundTo>
-      <DependentUpon>OpenGenericApp_ui.rxrec</DependentUpon>
+    <Compile Include="Generic_app_UI\BrowsePropertyTestTreeToSimpleCase.cs">
+      <id>0f15147f-be63-4296-86eb-fa25853c7dd0</id>
       <RecorderCode>true</RecorderCode>
-      <id>9ca1e975-348c-49ce-a14d-fe6ef29e9895</id>
+      <DependentUpon>BrowsePropertyTestTreeToSimpleCase.rxrec</DependentUpon>
+      <BoundTo>c9a73b30-45ed-484f-a62a-ed2834ef0020</BoundTo>
     </Compile>
-    <Compile Include="OpenGenericApp_ui.UserCode.cs">
-      <BoundTo>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</BoundTo>
-      <DependentUpon>OpenGenericApp_ui.rxrec</DependentUpon>
+    <Compile Include="Generic_app_UI\BrowsePropertyTestTreeToSimpleCase.UserCode.cs">
+      <id>c876c242-85c4-4415-9e79-1a9af82fe265</id>
       <UserCode>true</UserCode>
-      <id>816c5c3d-f982-426c-8681-ed9035efa4a7</id>
+      <DependentUpon>BrowsePropertyTestTreeToSimpleCase.rxrec</DependentUpon>
+      <BoundTo>c9a73b30-45ed-484f-a62a-ed2834ef0020</BoundTo>
     </Compile>
-    <Compile Include="Restore.cs">
-      <BoundTo>f6d337bc-9544-481e-a920-b5f382180b62</BoundTo>
-      <DependentUpon>Restore.rxrec</DependentUpon>
+    <Compile Include="Generic_app_UI\BrowsePropertyTreeSimpleCases.cs">
+      <id>c73c83cf-59da-43e3-9208-7321b96a924f</id>
       <RecorderCode>true</RecorderCode>
+      <DependentUpon>BrowsePropertyTreeSimpleCases.rxrec</DependentUpon>
+      <BoundTo>2ed09b99-868d-49b2-9842-855387e6ec02</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\BrowsePropertyTreeSimpleCases.UserCode.cs">
+      <id>1a2c8b17-9c39-4ed8-83df-b24c598c2201</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>BrowsePropertyTreeSimpleCases.rxrec</DependentUpon>
+      <BoundTo>2ed09b99-868d-49b2-9842-855387e6ec02</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\Minimise.cs">
+      <id>7d354800-41d3-45d0-a645-8f7ef70af436</id>
+      <RecorderCode>true</RecorderCode>
+      <DependentUpon>Minimise.rxrec</DependentUpon>
+      <BoundTo>4427c1d3-77fe-4f3c-8e32-859f6251deb2</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\Minimise.UserCode.cs">
+      <id>fb5cf463-e113-401c-b044-0b28ff4041dc</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>Minimise.rxrec</DependentUpon>
+      <BoundTo>4427c1d3-77fe-4f3c-8e32-859f6251deb2</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\OpenPropertyTreeTestPanel.cs">
+      <id>423c56ef-c4d8-4399-a93f-5851424c7f49</id>
+      <RecorderCode>true</RecorderCode>
+      <DependentUpon>OpenPropertyTreeTestPanel.rxrec</DependentUpon>
+      <BoundTo>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\OpenPropertyTreeTestPanel.UserCode.cs">
+      <id>e0e6449a-57fd-48f4-babc-5513f704731b</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>OpenPropertyTreeTestPanel.rxrec</DependentUpon>
+      <BoundTo>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\Restore.cs">
       <id>506f0615-f927-4af3-8749-0d681b8e7746</id>
-    </Compile>
-    <Compile Include="Restore.UserCode.cs">
-      <BoundTo>f6d337bc-9544-481e-a920-b5f382180b62</BoundTo>
+      <RecorderCode>true</RecorderCode>
       <DependentUpon>Restore.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+      <BoundTo>f6d337bc-9544-481e-a920-b5f382180b62</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\Restore.UserCode.cs">
       <id>5d5fb339-68b7-435a-b26d-beb0a83fc4c5</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>Restore.rxrec</DependentUpon>
+      <BoundTo>f6d337bc-9544-481e-a920-b5f382180b62</BoundTo>
     </Compile>
-    <Compile Include="SelectPropertyTreeTestPanel.cs">
-      <BoundTo>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</BoundTo>
-      <DependentUpon>SelectPropertyTreeTestPanel.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
+    <Compile Include="Generic_app_UI\SelectPropertyTreeTestPanel.cs">
       <id>f0b1018d-8fee-4678-910c-df93ee8ba7a8</id>
-    </Compile>
-    <Compile Include="SelectPropertyTreeTestPanel.UserCode.cs">
-      <BoundTo>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</BoundTo>
+      <RecorderCode>true</RecorderCode>
       <DependentUpon>SelectPropertyTreeTestPanel.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+      <BoundTo>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\SelectPropertyTreeTestPanel.UserCode.cs">
       <id>3fd23c51-ecda-4bed-98f2-24c45a222a66</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>SelectPropertyTreeTestPanel.rxrec</DependentUpon>
+      <BoundTo>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</BoundTo>
     </Compile>
-    <Compile Include="SelectSceneBrowser.cs">
-      <BoundTo>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</BoundTo>
-      <DependentUpon>SelectSceneBrowser.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
+    <Compile Include="Generic_app_UI\SelectSceneBrowser.cs">
       <id>03ae3e30-76d0-43a5-8687-915e3b5d0f17</id>
-    </Compile>
-    <Compile Include="SelectSceneBrowser.UserCode.cs">
-      <BoundTo>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</BoundTo>
+      <RecorderCode>true</RecorderCode>
       <DependentUpon>SelectSceneBrowser.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+      <BoundTo>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\SelectSceneBrowser.UserCode.cs">
       <id>43ef905f-d920-44d9-b7b8-4925b164ab0b</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>SelectSceneBrowser.rxrec</DependentUpon>
+      <BoundTo>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</BoundTo>
     </Compile>
-    <Compile Include="Showmodaldialog.cs">
-      <BoundTo>d6f6079d-db76-4a12-96e2-678bcace1daf</BoundTo>
-      <DependentUpon>Showmodaldialog.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
+    <Compile Include="Generic_app_UI\Showmodaldialog.cs">
       <id>594da4c5-dc20-44c4-b5cb-36f64faf18e9</id>
-    </Compile>
-    <Compile Include="Showmodaldialog.UserCode.cs">
-      <BoundTo>d6f6079d-db76-4a12-96e2-678bcace1daf</BoundTo>
+      <RecorderCode>true</RecorderCode>
       <DependentUpon>Showmodaldialog.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+      <BoundTo>d6f6079d-db76-4a12-96e2-678bcace1daf</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\Showmodaldialog.UserCode.cs">
       <id>97b9b070-9618-495d-9987-50a1f936d010</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>Showmodaldialog.rxrec</DependentUpon>
+      <BoundTo>d6f6079d-db76-4a12-96e2-678bcace1daf</BoundTo>
     </Compile>
-    <Compile Include="SimpleCasesChangeBool.cs">
-      <BoundTo>d3dc525a-e8a1-466c-9c61-d270e9967b22</BoundTo>
-      <DependentUpon>SimpleCasesChangeBool.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
+    <Compile Include="Generic_app_UI\SimpleCasesChangeBool.cs">
       <id>70b7f443-915c-439b-850b-bd639adea8ea</id>
-    </Compile>
-    <Compile Include="SimpleCasesChangeBool.UserCode.cs">
-      <BoundTo>d3dc525a-e8a1-466c-9c61-d270e9967b22</BoundTo>
+      <RecorderCode>true</RecorderCode>
       <DependentUpon>SimpleCasesChangeBool.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
+      <BoundTo>d3dc525a-e8a1-466c-9c61-d270e9967b22</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\SimpleCasesChangeBool.UserCode.cs">
       <id>f2147d1a-25fe-4575-9464-c3647109f2a6</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>SimpleCasesChangeBool.rxrec</DependentUpon>
+      <BoundTo>d3dc525a-e8a1-466c-9c61-d270e9967b22</BoundTo>
     </Compile>
-    <Compile Include="SimpleCasesMultipleSelect.cs">
-      <BoundTo>da9cc559-3a0f-4ea1-9253-3a7324f3f338</BoundTo>
-      <DependentUpon>SimpleCasesMultipleSelect.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
+    <Compile Include="Generic_app_UI\SimpleCasesMultipleSelect.cs">
       <id>22694ea3-2612-4687-9e2e-7c72bbb62bae</id>
-    </Compile>
-    <Compile Include="SimpleCasesMultipleSelect.UserCode.cs">
-      <BoundTo>da9cc559-3a0f-4ea1-9253-3a7324f3f338</BoundTo>
-      <DependentUpon>SimpleCasesMultipleSelect.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
-      <id>86483fa6-468b-42d2-98eb-0bd66a7fe3ed</id>
-    </Compile>
-    <Compile Include="SimpleCasesSlideUp.cs">
-      <BoundTo>d6319c40-efbb-488b-be2e-24566e759ef5</BoundTo>
-      <DependentUpon>SimpleCasesSlideUp.rxrec</DependentUpon>
       <RecorderCode>true</RecorderCode>
-      <id>3c5a3449-5348-4494-8542-ed34cfb06ec6</id>
+      <DependentUpon>SimpleCasesMultipleSelect.rxrec</DependentUpon>
+      <BoundTo>da9cc559-3a0f-4ea1-9253-3a7324f3f338</BoundTo>
     </Compile>
-    <Compile Include="SimpleCasesSlideUp.UserCode.cs">
-      <BoundTo>d6319c40-efbb-488b-be2e-24566e759ef5</BoundTo>
-      <DependentUpon>SimpleCasesSlideUp.rxrec</DependentUpon>
+    <Compile Include="Generic_app_UI\SimpleCasesMultipleSelect.UserCode.cs">
+      <id>86483fa6-468b-42d2-98eb-0bd66a7fe3ed</id>
       <UserCode>true</UserCode>
-      <id>a785c479-e350-4fd6-85b4-635b2ce9525e</id>
+      <DependentUpon>SimpleCasesMultipleSelect.rxrec</DependentUpon>
+      <BoundTo>da9cc559-3a0f-4ea1-9253-3a7324f3f338</BoundTo>
     </Compile>
-    <None Include="AjustingObjectProperties.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>5114b90a-dab0-4a75-83a0-f4656f9f2a81</id>
-      <recordtableid>e7f3ca85-eb71-4e5d-aaf5-397ea5b4ba45</recordtableid>
-    </None>
+    <Compile Include="Generic_app_UI\SimpleCasesSlideUp.cs">
+      <id>3c5a3449-5348-4494-8542-ed34cfb06ec6</id>
+      <RecorderCode>true</RecorderCode>
+      <DependentUpon>SimpleCasesSlideUp.rxrec</DependentUpon>
+      <BoundTo>d6319c40-efbb-488b-be2e-24566e759ef5</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_UI\SimpleCasesSlideUp.UserCode.cs">
+      <id>a785c479-e350-4fd6-85b4-635b2ce9525e</id>
+      <UserCode>true</UserCode>
+      <DependentUpon>SimpleCasesSlideUp.rxrec</DependentUpon>
+      <BoundTo>d6319c40-efbb-488b-be2e-24566e759ef5</BoundTo>
+    </Compile>
     <None Include="app.config">
       <id>6893a9a8-ba4c-443a-b852-decf187e1c46</id>
     </None>
-    <None Include="BrowsePropertyTestTreeToSimpleCase.rxrec">
-      <id>c9a73b30-45ed-484f-a62a-ed2834ef0020</id>
-      <recordtableid>fee4b6b1-4aba-450a-9ccb-a46659c0fc96</recordtableid>
+    <None Include="Generic_app_demo\AjustingObjectProperties.rxrec">
+      <recordtableid>e7f3ca85-eb71-4e5d-aaf5-397ea5b4ba45</recordtableid>
+      <id>5114b90a-dab0-4a75-83a0-f4656f9f2a81</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
-    <None Include="BrowsePropertyTreeSimpleCases.rxrec">
-      <id>2ed09b99-868d-49b2-9842-855387e6ec02</id>
-      <recordtableid>6894454c-4c1b-4b4c-a17b-fce50e2f2f54</recordtableid>
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-    </None>
-    <None Include="CloseGenericApp.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>6d194385-fa00-43d3-a362-3bea03ccb16d</id>
-      <recordtableid>2c6bd3a2-29ad-40a3-a561-be9010850cb0</recordtableid>
-    </None>
-    <None Include="Closing_GenericApp_demo.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>ae2747b9-fb98-4fd9-b0d2-c53305d45781</id>
-      <recordtableid>d99ac968-d85e-4092-9b1a-5a85aa8e9780</recordtableid>
-    </None>
-    <None Include="Closing_generic_app_Fail_Pass.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>cb8eba8d-ed82-417f-87a4-f80682b11a41</id>
-      <recordtableid>9aa203be-54e6-4c74-8b85-0f06c75a3aac</recordtableid>
-    </None>
-    <None Include="File_Exit_MC.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>67f08f57-2188-4074-b843-9525d794a184</id>
+    <None Include="Generic_app_demo\File_Exit_MC.rxrec">
       <recordtableid>8b524829-458f-4520-a23b-b87b47e200ae</recordtableid>
-    </None>
-    <None Include="Minimise.rxrec">
+      <id>67f08f57-2188-4074-b843-9525d794a184</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>4427c1d3-77fe-4f3c-8e32-859f6251deb2</id>
-      <recordtableid>820ae111-c1b1-4287-ab1e-a12f1150a1ea</recordtableid>
     </None>
-    <None Include="NewObject.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>b3501be2-8a99-40c0-aa50-694bb0d1027a</id>
+    <None Include="Generic_app_demo\NewObject.rxrec">
       <recordtableid>dbe4d3f5-b07d-45aa-ac93-8ae098a5b09d</recordtableid>
+      <id>b3501be2-8a99-40c0-aa50-694bb0d1027a</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_demo\Object_selection.rxrec">
+      <recordtableid>2c6cfd0f-2386-4a41-adb1-0c6987082d25</recordtableid>
+      <id>bb95c40f-11cc-45c5-9731-f1793d3ecb10</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_demo\PositionPropertieChanges.rxrec">
+      <recordtableid>6c8f5dce-bc7a-41e4-843b-ad564923a087</recordtableid>
+      <id>52d4aefb-51c3-48f7-9c34-9c4fb5100814</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
     <None Include="NGTTestAutomationRepository.rximg">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
@@ -377,64 +357,84 @@
       <repoid>0f1dd445-65cb-47c8-a69d-e0f2154f9e50</repoid>
       <reporootid>3936ed74-78e9-40c3-8819-a806f6a02759</reporootid>
     </None>
-    <None Include="Object_selection.rxrec">
+    <None Include="Generic_app_UI\BrowsePropertyTestTreeToSimpleCase.rxrec">
+      <recordtableid>fee4b6b1-4aba-450a-9ccb-a46659c0fc96</recordtableid>
+      <id>c9a73b30-45ed-484f-a62a-ed2834ef0020</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>bb95c40f-11cc-45c5-9731-f1793d3ecb10</id>
-      <recordtableid>2c6cfd0f-2386-4a41-adb1-0c6987082d25</recordtableid>
     </None>
-    <None Include="OpenGenericApp_Demo.rxrec">
+    <None Include="Generic_app_UI\BrowsePropertyTreeSimpleCases.rxrec">
+      <recordtableid>6894454c-4c1b-4b4c-a17b-fce50e2f2f54</recordtableid>
+      <id>2ed09b99-868d-49b2-9842-855387e6ec02</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>f66eb298-c844-42ec-9833-f8665d249c2c</id>
-      <recordtableid>2f3308b4-e6e0-484d-b0f1-f27a12cb0e74</recordtableid>
     </None>
-    <None Include="OpenGenericApp_ui.rxrec">
+    <None Include="Generic_app_UI\Minimise.rxrec">
+      <id>4427c1d3-77fe-4f3c-8e32-859f6251deb2</id>
+      <recordtableid>820ae111-c1b1-4287-ab1e-a12f1150a1ea</recordtableid>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</id>
-      <recordtableid>3a17130a-ec04-4660-a6a2-a4be9e4d2244</recordtableid>
     </None>
-    <None Include="OpenPropertyTreeTestPanel.rxrec">
-      <id>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</id>
+    <None Include="Generic_app_UI\OpenPropertyTreeTestPanel.rxrec">
       <recordtableid>9dc3d550-46c7-437f-b20a-29986e1ceddc</recordtableid>
+      <id>d8cc9c0d-1d60-47eb-8173-1d36f45ecaaf</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
-    <None Include="PositionPropertieChanges.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>52d4aefb-51c3-48f7-9c34-9c4fb5100814</id>
-      <recordtableid>6c8f5dce-bc7a-41e4-843b-ad564923a087</recordtableid>
-    </None>
-    <None Include="Restore.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    <None Include="Generic_app_UI\Restore.rxrec">
       <id>f6d337bc-9544-481e-a920-b5f382180b62</id>
       <recordtableid>cde9b760-a059-4738-95d8-1197bd51bccc</recordtableid>
-    </None>
-    <None Include="SelectPropertyTreeTestPanel.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_UI\SelectPropertyTreeTestPanel.rxrec">
       <id>576534d6-27d2-4ea4-9d22-7b00f1d9d27a</id>
       <recordtableid>a167d7f1-18e8-4104-8333-35233bf382c8</recordtableid>
-    </None>
-    <None Include="SelectSceneBrowser.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_UI\SelectSceneBrowser.rxrec">
       <id>b03e75a4-75fc-4f9f-b0bf-06f99fbdc557</id>
       <recordtableid>4cfc2b4a-88a2-405f-82c0-1f261aa975d3</recordtableid>
-    </None>
-    <None Include="Showmodaldialog.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_UI\Showmodaldialog.rxrec">
       <id>d6f6079d-db76-4a12-96e2-678bcace1daf</id>
       <recordtableid>c5adfba7-b506-4caf-ba72-7fd6b37705c9</recordtableid>
-    </None>
-    <None Include="SimpleCasesChangeBool.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_UI\SimpleCasesChangeBool.rxrec">
       <id>d3dc525a-e8a1-466c-9c61-d270e9967b22</id>
       <recordtableid>4a620fbf-de10-45fc-b45c-c91bb4a0d9b7</recordtableid>
-    </None>
-    <None Include="SimpleCasesMultipleSelect.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_UI\SimpleCasesMultipleSelect.rxrec">
       <id>da9cc559-3a0f-4ea1-9253-3a7324f3f338</id>
       <recordtableid>681b404c-ceac-4ddc-9f64-e4e6cda5ff71</recordtableid>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
-    <None Include="SimpleCasesSlideUp.rxrec">
-      <id>d6319c40-efbb-488b-be2e-24566e759ef5</id>
+    <None Include="Generic_app_UI\SimpleCasesSlideUp.rxrec">
       <recordtableid>fe4210aa-3276-462b-93b5-2ae968fccb62</recordtableid>
+      <id>d6319c40-efbb-488b-be2e-24566e759ef5</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Open Close\Close_GenericApp_ui.rxrec">
+      <recordtableid>2c6bd3a2-29ad-40a3-a561-be9010850cb0</recordtableid>
+      <id>6d194385-fa00-43d3-a362-3bea03ccb16d</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Open Close\Close_GenericApp_demo.rxrec">
+      <recordtableid>d99ac968-d85e-4092-9b1a-5a85aa8e9780</recordtableid>
+      <id>ae2747b9-fb98-4fd9-b0d2-c53305d45781</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Open Close\Open_GenericApp_Demo.rxrec">
+      <recordtableid>2f3308b4-e6e0-484d-b0f1-f27a12cb0e74</recordtableid>
+      <id>f66eb298-c844-42ec-9833-f8665d249c2c</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Open Close\Teardown_Fail_Pass.rxrec">
+      <recordtableid>9aa203be-54e6-4c74-8b85-0f06c75a3aac</recordtableid>
+      <id>cb8eba8d-ed82-417f-87a4-f80682b11a41</id>
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Open Close\Open_GenericApp_ui.rxrec">
+      <recordtableid>3a17130a-ec04-4660-a6a2-a4be9e4d2244</recordtableid>
+      <id>f01f45dd-32ae-4d1f-8ff1-794cd5b94f24</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
     <Content Include="NGTTestAutomation.rxtmg">
@@ -447,4 +447,15 @@
     </Content>
   </ItemGroup>
   <Import Condition="Exists('$(MSBuildExtensionsPath)\Ranorex$(RanorexVersion)\Ranorex.MSBuild.Targets')" Project="$(MSBuildExtensionsPath)\Ranorex$(RanorexVersion)\Ranorex.MSBuild.Targets" />
+  <ItemGroup>
+    <Folder Include="Generic_app_UI">
+      <id>7aea3ec9-fffe-4625-bb41-12fafe0a80ed</id>
+    </Folder>
+    <Folder Include="Generic_app_demo">
+      <id>377036c1-e2d7-4b8c-bed7-6a15d8192730</id>
+    </Folder>
+    <Folder Include="Open Close">
+      <id>3a52a2fc-52d6-4a93-9c53-e165204f6f62</id>
+    </Folder>
+  </ItemGroup>
 </Project>

@@ -124,6 +124,15 @@ reportlevel="Info;20">
 					id="77066a4a-ad31-4bc3-a6d6-caffdb95d2c7"
 					ref="8b524829-458f-4520-a23b-b87b47e200ae"
 					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="6b15f8a7-4a10-401d-85c0-b946a44c2309">
+						<testmodule
+						name="CloseGenericApp"
+						id="fb08f035-a0b7-4de3-ba7b-0918d218ab5e"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
 				</testcase>
 				<testcase
 				name="ShowMod"
@@ -283,6 +292,15 @@ properties, not selected items</P>]]>
 						</databinding>
 					</testmodule>
 				</setup>
+				<teardown
+				name="teardown"
+				id="95397143-9c34-4d41-a714-fc61f67b355d">
+					<testmodule
+					name="CloseGenericApp"
+					id="321fd73c-f307-4dad-bd5c-123815322944"
+					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+					type="Recording"/>
+				</teardown>
 			</testcase>
 			<testcase
 			name="New_Object"
@@ -370,33 +388,9 @@ properties, not selected items</P>]]>
 			<testcase
 			id="033e65d6-e4cb-4780-a7cb-16900dbb6277"/>
 			<testcase
-			id="0432b46d-4642-401b-bc53-9a065f5c269a"/>
-			<testcase
-			id="4cb23d72-9dd2-4de1-8a95-afc8c438644f"/>
-			<testcase
 			id="4d36ff13-1412-4a18-af20-e8d4909351e8"/>
 			<testcase
-			id="5fa41ae9-508f-4ceb-87c8-20f644bff555"/>
-			<testcase
-			id="65c6b675-1d26-4ea9-95df-8bc930b9a642"/>
-			<testcase
-			id="6ae71e00-ea11-46d1-aa1c-a2d0882e06fb"/>
-			<testcase
 			id="71c1a0bf-4222-44d0-bc10-6d5caa643052"/>
-			<testcase
-			id="8919c9a0-abc7-492f-ad70-8c647ef85378"/>
-			<testcase
-			id="8f507aea-7a61-4a13-abcb-6364b8cbd62e"/>
-			<testcase
-			id="a98b06bb-2a5a-481e-8bea-ebab59d7fad0"/>
-			<testcase
-			id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef"/>
-			<testcase
-			id="b7308b9a-1454-4734-8cb6-c72173fe524a"/>
-			<testcase
-			id="b946ca30-95c6-42e4-b8ed-2c5e938dd9e7"/>
-			<testcase
-			id="d53e1411-1111-4727-9ae5-91dc74e9663e"/>
 		</testconfiguration>
 	</testconfigurations>
 	<references/>

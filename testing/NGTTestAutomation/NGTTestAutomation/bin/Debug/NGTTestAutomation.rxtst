@@ -368,9 +368,11 @@ properties, not selected items</P>]]>
 			<testcase
 			id="030bf048-9635-494c-a06c-ab2cd1728573"/>
 			<testcase
-			id="4cb23d72-9dd2-4de1-8a95-afc8c438644f"/>
+			id="033e65d6-e4cb-4780-a7cb-16900dbb6277"/>
 			<testcase
-			id="d53e1411-1111-4727-9ae5-91dc74e9663e"/>
+			id="4d36ff13-1412-4a18-af20-e8d4909351e8"/>
+			<testcase
+			id="71c1a0bf-4222-44d0-bc10-6d5caa643052"/>
 		</testconfiguration>
 	</testconfigurations>
 	<references/>

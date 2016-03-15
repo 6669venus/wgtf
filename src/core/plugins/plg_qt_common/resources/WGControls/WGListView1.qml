@@ -171,7 +171,7 @@ Item {
         onDataChanged:footerTextVariant = getData("footerText");
 
         Text {
-            id: textBox
+            id: textBoxFooter
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -203,7 +203,7 @@ Item {
 
     /*! This property contains the number of columns */
     property int columnCount: 0
-    
+
     Component.onCompleted: updateColumnCount()
 
     Connections {
@@ -454,7 +454,7 @@ Item {
         initialColumnWidths: listView.initialColumnWidths
         defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
-		
+
         onColumnsChanged: {
             listView.columnWidths = columnWidths;
         }

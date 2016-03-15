@@ -35,17 +35,7 @@ ComboBox {
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
-
-    /*! This property holds the target control's id to be bound to this control's b_Value */
-    property alias b_Target: dataBinding.target
-
-    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
-    property alias b_Property: dataBinding.property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
+    property string label: ""
 
     /*! \internal */
     // helper property for text color so states can all be in the background object
@@ -60,10 +50,6 @@ ComboBox {
     implicitWidth: textMetricsCreator.maxWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
-
-    Binding {
-        id: dataBinding
-    }
 
     //find the widest text in model
     Repeater {
@@ -121,8 +107,8 @@ ComboBox {
     }
 
     style: ComboBoxStyle {
-        objectName: "comboBox"
         id: comboBox
+        objectName: "comboBox"
         renderType: Text.NativeRendering
         background: WGButtonFrame {
             id: buttonFrame
@@ -208,4 +194,7 @@ ComboBox {
             __scrollerStyle: ScrollViewStyle { }
         }
     }
+
+    /*! Deprecatead */
+    property alias label_: box.label
 }

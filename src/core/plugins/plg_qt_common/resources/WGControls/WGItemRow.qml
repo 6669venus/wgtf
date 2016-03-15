@@ -8,14 +8,11 @@ import BWControls 1.0
  WGListViewRowDelegate will load custom column delegates in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
  See WGTreeItem for an example of its use.
-
 */
 
 Item {
     id: rowDelegate
     objectName: "WGListViewRowDelegate"
-    height: minimumRowHeight
-    clip: true
 
     /*!
         This property defines the indentation before the first element on each row
@@ -47,12 +44,12 @@ Item {
 
     property var columnSequence: []
 
-	/*! This property contains the column widths */
+    /*! This property contains the column widths */
     property var columnWidths: []
-	
+
     property real columnSpacing: 0
 
-	/*!
+    /*!
         This property describes mouse selection behaviour
     */
     property var selectionExtension: null
@@ -109,6 +106,9 @@ Item {
 
         return maxTextWidth;
     }
+
+    height: minimumRowHeight
+    clip: true
 
     MouseArea {
         id: itemMouseArea

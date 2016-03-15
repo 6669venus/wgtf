@@ -120,8 +120,7 @@ MenuStyle {
         }
     }
 
-    separator: Rectangle {
-        color: "transparent"
+    separator: Item {
         height: defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
         WGSeparator {

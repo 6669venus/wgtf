@@ -39,8 +39,8 @@ Example:
 */
 
 WGItemView {
-    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
     id: treeView
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
 
     /*! This property holds the dataModel information that will be displayed in the tree view
     */
@@ -137,10 +137,10 @@ WGItemView {
     */
     property var columnDelegates: []
 
-	/*! This property causes the first column to resize based on the largest label width
+    /*! This property causes the first column to resize based on the largest label width
         when a row item is expanded or contracted.
         The default value is \c true if the column handle is visible */
-	property bool autoUpdateLabelWidths: false
+    property bool autoUpdateLabelWidths: false
 
     /*!  This property enables the vertical scrollbar (both flickable and conventional).
         Mouse wheel scrolling is unaffected by this setting.
@@ -218,7 +218,7 @@ WGItemView {
         onDataChanged:footerTextVariant = getData("footerText");
 
         Text {
-            id: textBox
+            id: textBoxFooter
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -231,12 +231,12 @@ WGItemView {
 
     /*! This property contains the number of columns */
     property int columnCount: 0
-    
+
     Component.onCompleted: updateColumnCount()
 
     Connections {
         target: typeof(model) === "undefined" ? null : model
-        
+
         onModelReset: {
             updateColumnCount();
         }
@@ -396,20 +396,20 @@ WGItemView {
 
     function addDepthLevel(depth)
     {
-    	if (depth >= depthLevelGroups.length)
-    	{
-    		depthLevelGroups.push(1);
-    	}
+        if (depth >= depthLevelGroups.length)
+        {
+            depthLevelGroups.push(1);
+        }
 
-    	++depthLevelGroups[depth];
+        ++depthLevelGroups[depth];
     }
 
     function removeDepthLevel(depth)
     {
-    	if (--depthLevelGroups[depth] == 0)
-    	{
-    		depthLevelGroups.pop();
-    	}
+        if (--depthLevelGroups[depth] == 0)
+        {
+            depthLevelGroups.pop();
+        }
     }
 
     function setExpandIconWidth(width)
@@ -462,7 +462,7 @@ WGItemView {
     }
 
     property Component header: showColumnHeaders ? headerComponent : null
-        
+
     property Component headerComponent: WGHeaderRow {
         topMargin: treeView.topMargin
         columnCount: treeView.columnCount
@@ -516,7 +516,7 @@ WGItemView {
         defaultInitialColumnWidth: treeView.columnCount === 0 ? 0 : initialColumnsFrameWidth / treeView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
         firstColumnIndentation: expandIconWidth + (depthLevelGroups.length - 1) * indentation
-		
+
         onColumnsChanged: {
             treeView.columnWidths = columnWidths;
         }

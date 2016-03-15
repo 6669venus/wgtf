@@ -27,6 +27,10 @@ Rectangle {
     property var breadcrumbRepeater_: breadcrumbRepeater
     property var breadcrumbRowLayout_: breadcrumbRowLayout
 
+    // Private properties
+    property bool __showBreadcrumbs: true
+
+    // Signals
     /*! This signal is sent when a top level breadcrumb is clicked */
     signal breadcrumbClicked(var index)
 
@@ -36,13 +40,11 @@ Rectangle {
     /*! This signal is sent when the user enters a path manually and hits "enter" to confirm navigation */
     signal breadcrumbPathEntered(var path)
 
-    // Layout properties
+    // Object properties
     Layout.fillHeight: false
     Layout.preferredHeight: defaultSpacing.minimumRowHeight
     Layout.fillWidth: true
     color: "transparent"
-
-    property bool __showBreadcrumbs: true
 
     // List model needed to convert the crumbs into a QML-usable model
     WGListModel {
@@ -69,13 +71,12 @@ Rectangle {
 
     // Text box to store the full, raw path of the breadcrumbs. May be used to manually navigate to
     // a specific path in the tree.
+    //TODO MUCH LATER: Auto complete.
     WGTextBox {
         id: pathTextBox
         objectName: "pathTextBox"
         anchors.fill: parent
         visible: !rootFrame.__showBreadcrumbs
-
-        //TODO MUCH LATER: Auto complete.
 
         text: rootFrame.dataModel.path
 
@@ -101,9 +102,11 @@ Rectangle {
 
             RowLayout {
                 id: breadcrumbRowLayout
+
+                property var breadcrumbIndex_
+
                 Layout.fillWidth: false
                 spacing: 1
-                property var breadcrumbIndex_
 
                 WGListModel {
                     id: subItemsListModel

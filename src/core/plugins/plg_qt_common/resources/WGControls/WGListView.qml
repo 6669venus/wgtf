@@ -85,7 +85,6 @@ WGItemView {
 
     property alias currentIndex: list.currentIndex
 
-    //TODO: Document this. Should this be internal?
     /*! This property holds multi select state information */
     property var selectionExtension: null
     property var treeExtension: null
@@ -171,7 +170,7 @@ WGItemView {
         onDataChanged:footerTextVariant = getData("footerText");
 
         Text {
-            id: textBox
+            id: textBoxFooter
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -203,7 +202,7 @@ WGItemView {
 
     /*! This property contains the number of columns */
     property int columnCount: 0
-    
+
     Component.onCompleted: updateColumnCount()
 
     Connections {
@@ -454,7 +453,7 @@ WGItemView {
         initialColumnWidths: listView.initialColumnWidths
         defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
-		
+
         onColumnsChanged: {
             listView.columnWidths = columnWidths;
         }

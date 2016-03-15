@@ -36,12 +36,11 @@ Grid {
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
-    /*! This property is holds the total width of the child controls */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property int totalWidth_: 0
+    // This property is holds the total width of the child controls //
+    /*! internal */
+    property int __totalWidth: 0
 
     /*! This function calculates the width of all the child objects */
     function getWidth(){
@@ -53,16 +52,11 @@ Grid {
         return width;
     }
 
-    flow: GridLayout.TopToBottom
-    rowSpacing: defaultSpacing.rowSpacing
-    columnSpacing: defaultSpacing.doubleMargin
-    anchors {left: parent.left; right: parent.right}
-
     Component.onCompleted: {
 
         //set columns to 2 if too wide or unlimited otherwise
-        totalWidth_ = getWidth();
-        if (totalWidth_ > gridFrame.width)
+        __totalWidth = getWidth();
+        if (__totalWidth > gridFrame.width)
         {
             gridFrame.columns = 2
             gridFrame.rows = -1
@@ -76,8 +70,8 @@ Grid {
 
     //Handle the window being resized
     onWidthChanged: {
-        totalWidth_ = getWidth();
-        if (totalWidth_ > gridFrame.width)
+        __totalWidth = getWidth();
+        if (__totalWidth > gridFrame.width)
         {
             gridFrame.columns = 2
             gridFrame.rows = -1
@@ -88,4 +82,16 @@ Grid {
             gridFrame.rows = 1
         }
     }
+
+    flow: GridLayout.TopToBottom
+    rowSpacing: defaultSpacing.rowSpacing
+    columnSpacing: defaultSpacing.doubleMargin
+    anchors {left: parent.left; right: parent.right}
+
+    /*! Deprecated */
+    property alias label_: gridFrame.label
+
+    /*! Deprecated */
+    property alias totalWidth_: gridFrame.__totalWidth
+
 }

@@ -29,7 +29,7 @@ Item {
     /*! This property holds the filter string
         The default value is an empty string
     */
-    property var stringValue: internalStringValue
+    property var stringValue: __internalStringValue
 
     /*! This property makes the filter tags appear to the left of the search text instead of below it.
         When the search tags exceed half the width of the search field they are moved to a flow layout beneath the search text field
@@ -39,33 +39,39 @@ Item {
 
     // Locals for referencing interior fields
     /*! \internal */
-    property var internalStringValue: ""
+    property var __internalStringValue: ""
 
     /*! \internal */
-    property var filterText_: filterText
+    property var __filterText: filterText
 
     //This property denotes what splitter character is used when generating the string value for filter components
     /*! \internal */
-    property var splitterChar: ","
+    property var __splitterChar: ","
 
     /*  This property holds the original inlineTags value.
         inLineTags can change and the original state must be kept. */
     /*! \internal */
-    property bool _originalInlineTagSetting: false
+    property bool __originalInlineTagSetting: false
 
     /*! \internal */
-    property int _currentFilterWidth: 0
+    property int __currentFilterWidth: 0
 
     /*! \internal */
-    property int _filterTags: 0
+    property int __filterTags: 0
 
     // This property holds the flip state between filter tags being drawn inline or on a new line
     /*! \internal */
-    property bool _changeLayout: false
+    property bool __changeLayout: false
 
     // This property indicates what the currently loaded filter is
     /*! \internal */
-    property var _loadedFilterId: ""
+    property var __loadedFilterId: ""
+
+    //------------------------------------------
+    // Signals
+    //------------------------------------------
+
+    signal changeFilterWidth(int filterWidth, bool add)
 
     //------------------------------------------
     // Functions
@@ -96,7 +102,7 @@ Item {
         var filtersIter = iterator( rootFrame.dataModel.currentFilterTerms );
         while (filtersIter.moveNext()) {
             if (iteration != 0) {
-                combinedStr += splitterChar;
+                combinedStr += __splitterChar;
             }
 
             if (filtersIter.current.active == true) {
@@ -105,7 +111,7 @@ Item {
             }
         }
 
-        internalStringValue = combinedStr;
+        __internalStringValue = combinedStr;
     }
 
     // Handles saving an active filter
@@ -113,69 +119,67 @@ Item {
     function saveActiveFilter( /*bool*/ overwrite ) {
         var filterName = rootFrame.dataModel.saveFilter( overwrite );
         if (filterName.length > 0) {
-            rootFrame._loadedFilterId = filterName;
+            rootFrame.__loadedFilterId = filterName;
         }
     }
 
     // Moves active filters to and from a flow layout when containter is resized
     /*! \internal */
     function checkActiveFilterSize(){
-        if (_originalInlineTagSetting && inlineTags)
+        if (__originalInlineTagSetting && inlineTags)
         {
-            if (_currentFilterWidth > textFrame.width / 2)
+            if (__currentFilterWidth > textFrame.width / 2)
             {
-                _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
-                _currentFilterWidth = 0
+                __filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
+                __currentFilterWidth = 0
                 inlineTags = false // move to flow layout
             }
         }
-        if (_originalInlineTagSetting && !inlineTags)
+        if (__originalInlineTagSetting && !inlineTags)
         {
-            if (_currentFilterWidth < textFrame.width / 2)
+            if (__currentFilterWidth < textFrame.width / 2)
             {
-                _filterTags = 0
-                _currentFilterWidth = 0
+                __filterTags = 0
+                __currentFilterWidth = 0
                 inlineTags = true
             }
         }
     }
 
-    signal changeFilterWidth(int filterWidth, bool add)
-
     Component.onCompleted: {
-        _originalInlineTagSetting = inlineTags
+        __originalInlineTagSetting = inlineTags
     }
 
     onChangeFilterWidth: {
         if(add)
         {
-            _currentFilterWidth += filterWidth
-            _filterTags += 1
-            if (_originalInlineTagSetting && inlineTags)
+            __currentFilterWidth += filterWidth
+            __filterTags += 1
+            if (__originalInlineTagSetting && inlineTags)
             {
                 // are the filters taking up more than half the space?
-                if (_currentFilterWidth > (textFrame.width / 2))
+                if (__currentFilterWidth > (textFrame.width / 2))
                 {
-                    _filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
-                    _currentFilterWidth = 0
+                    __filterTags = 0 // all filter tags are rebuilt when inlineTags changes, must reset value
+                    __currentFilterWidth = 0
                     inlineTags = false
                 }
             }
         }
         else // active filter being removed
         {
-            _currentFilterWidth -= filterWidth
-            _filterTags -= 1
-            if (_originalInlineTagSetting && !inlineTags)
+            __currentFilterWidth -= filterWidth
+            __filterTags -= 1
+            if (__originalInlineTagSetting && !inlineTags)
             {
-                if (_currentFilterWidth > (textFrame.width / 2))
+                if (__currentFilterWidth > (textFrame.width / 2))
                 {
                     inlineTags = false
                 }
                 else
                 {
-                    _filterTags = 0
-                    _currentFilterWidth = 0
+                    __filterTags = 0
+                    __currentFilterWidth = 0
                     inlineTags = true
                 }
             }
@@ -269,7 +273,7 @@ Item {
                             // TODO - Refine saving to allow for naming of the filter
                             // JIRA - http://jira.bigworldtech.com/browse/NGT-1484
 
-                            if (rootFrame._loadedFilterId.length > 0) {
+                            if (rootFrame.__loadedFilterId.length > 0) {
                                 // Prompt the user!
                                 overwritePromptDialog.open()
                             }
@@ -300,10 +304,10 @@ Item {
                                 onTriggered: {
                                     var result = rootFrame.dataModel.loadFilter(Value.filterId);
                                     if (result) {
-                                        rootFrame._loadedFilterId = Value.filterId;
+                                        rootFrame.__loadedFilterId = Value.filterId;
                                     }
                                     else {
-                                        rootFrame._loadedFilterId = "";
+                                        rootFrame.__loadedFilterId = "";
                                     }
                                 }
                             }
@@ -336,8 +340,8 @@ Item {
 
                     Loader {
                         id: activeFiltersInlineRect
-                        visible: _filterTags > 0 && inlineTags
-                        Layout.preferredWidth: _currentFilterWidth + (defaultSpacing.rowSpacing * _filterTags) + defaultSpacing.rowSpacing
+                        visible: __filterTags > 0 && inlineTags
+                        Layout.preferredWidth: __currentFilterWidth + (defaultSpacing.rowSpacing * __filterTags) + defaultSpacing.rowSpacing
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         sourceComponent: inlineTags ? filterTagList : null
                     } // activeFiltersLayoutRect
@@ -375,9 +379,9 @@ Item {
 
                         onClicked: {
                             rootFrame.dataModel.clearCurrentFilter();
-                            rootFrame.internalStringValue = "";
-                            _currentFilterWidth = 0
-                            _filterTags = 0
+                            rootFrame.__internalStringValue = "";
+                            __currentFilterWidth = 0
+                            __filterTags = 0
                         }
                     }
 
@@ -390,14 +394,14 @@ Item {
         //------------------------------------------
         Loader {
             id: activeFiltersBelowLoader
-            visible: !inlineTags && _filterTags > 0
+            visible: !inlineTags && __filterTags > 0
             Layout.fillWidth: true
             sourceComponent: inlineTags ? null : filterTagList
         }
 
         Rectangle {
             id: spacer
-            visible: !inlineTags && _filterTags > 0
+            visible: !inlineTags && __filterTags > 0
             Layout.fillWidth: true
             Layout.minimumHeight: defaultSpacing.doubleBorderSize
             color: "transparent"
@@ -460,4 +464,29 @@ Item {
             } // activeFiltersBelowRect
         } //filterTags
     } // mainRowLayout
+
+    /*! Deprecated */
+    property alias internalStringValue: rootFrame.__internalStringValue
+
+    /*! Deprecated */
+    property alias filterText_: rootFrame.__filterText
+
+    /*! Deprecated */
+    property alias splitterChar: rootFrame.__splitterChar
+
+    /*! Deprecated */
+    property alias _originalInlineTagSetting: rootFrame.__originalInlineTagSetting
+
+    /*! Deprecated */
+    property alias _currentFilterWidth: rootFrame.__currentFilterWidth
+
+    /*! Deprecated */
+    property alias _filterTags: rootFrame.__filterTags
+
+    /*! Deprecated */
+    property alias _changeLayout: rootFrame.__changeLayout
+
+    /*! Deprecated */
+    property alias _loadedFilterId: rootFrame.__loadedFilterId
+
 } // rootFrame

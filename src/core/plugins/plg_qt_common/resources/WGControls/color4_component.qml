@@ -14,8 +14,6 @@ import BWControls 1.0
 WGExpandingRowLayout {
     id: colorLayout
     objectName:  itemData != null ? itemData.IndexPath : "color4_component"
-    anchors.left: parent.left
-    anchors.right: parent.right
 
     property bool showAlpha: true
 
@@ -40,6 +38,9 @@ WGExpandingRowLayout {
             return Qt.vector3d(color.r * 255, color.g * 255, color.b * 255)
         }
     }
+
+    anchors.left: parent.left
+    anchors.right: parent.right
 
     Item {
         Layout.preferredHeight: parent.height
@@ -111,10 +112,9 @@ WGExpandingRowLayout {
                 setValueHelper(colButton, "color", reflectColorDialog.color);
                 abortUndoFrame();
             }
-
-
         }
     }
+
     Item {
         Layout.preferredHeight: parent.height
         Layout.minimumWidth: 160 + defaultSpacing.rowSpacing
@@ -190,8 +190,7 @@ WGExpandingRowLayout {
         }
     }
 
-    Rectangle{
-        color: "transparent"
+    Item{
         Layout.fillWidth: true
     }
 }

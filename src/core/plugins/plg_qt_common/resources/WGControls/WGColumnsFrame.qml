@@ -1,8 +1,9 @@
 import QtQuick 2.0
 
 Item {
-    objectName: "WGColumnsFrame"
     id: columnsFrame
+    objectName: "WGColumnsFrame"
+
     property int columnCount: 0
     property real firstColumnIndentation: 0
     property real handleWidth: 2
@@ -15,7 +16,6 @@ Item {
     property real minimumColumnSize: 0
     property real maximumColumnSize: 10000
     property var idealColumnSizeFunction: null
-    visible: columnCount > 0
 
     signal columnsChanged(var columnWidths);
 
@@ -37,6 +37,8 @@ Item {
         var minimumSize = (index === 0 ? firstColumnIndentation + minimumColumnSize : minimumColumnSize);
         handle.x = Math.max(minimumSize, idealColumnSizeFunction(index));
     }
+
+    visible: columnCount > 0
 
     Item {
         objectName: "columns"
@@ -91,7 +93,7 @@ Item {
             {
                 maxSize -= (handleWidth + columnWidths[i]);
             }
-        
+
             return maxSize;
         }
 
@@ -157,10 +159,10 @@ Item {
                         anchors.leftMargin: 1
                         anchors.rightMargin: 1
                     }
-                    
+
                     Rectangle {
                         id: rightSideShade
-                    	color: drawHandles ? palette.midLightColor : "transparent"
+                        color: drawHandles ? palette.midLightColor : "transparent"
                         visible: drawHandles && handleWidth > 1
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom

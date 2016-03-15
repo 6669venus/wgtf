@@ -19,10 +19,10 @@ WGCopyable {
 
         onDataPasted : {
             slider.value = data
-			if(slider.value != data)
-			{
-				pasted = false;
-			}
+            if(slider.value != data)
+            {
+                pasted = false;
+            }
         }
     }
 
@@ -44,6 +44,10 @@ Rectangle {
     id: copyable
     objectName: "WGCopyable"
 
+    //----------------------------------
+    // Property Declarations
+    //----------------------------------
+
     /*! This property holds the selected state of this object.
         The default value is \c false
     */
@@ -59,7 +63,6 @@ Rectangle {
     */
     property int selectedChildrenCount: 0
 
-
     /*! This property searches for the root copyable control.
     */
     property QtObject rootCopyable: parentCopyable === null ? copyable : parentCopyable.rootCopyable
@@ -69,31 +72,22 @@ Rectangle {
     */
     property QtObject parentCopyable: null
 
-    anchors.fill: visible ? parent : undefined
-    anchors.leftMargin: -1
-    anchors.rightMargin: -1
-
-    //for some reason without this the control is 1 pixel too low.
-    anchors.topMargin: -2
-
-    radius: defaultSpacing.halfRadius
-
-    color: "transparent"
-    border.width: defaultSpacing.standardBorderSize
-    border.color: "transparent"
-
-    enabled: parent.enabled
-    visible: parent.visible
+    //----------------------------------
+    // Signals
+    //----------------------------------
 
     /*! children copyables listen for this and 'can' deselect themselves if all have been selected. */
     signal selectChildren()
     /*! children copyables listen for this and 'can' deselect themselves if all have been selected. */
     signal deSelectChildren()
 
-	Component.onDestruction: {
-		copyable.selected = false;
-	}
+    //----------------------------------
+    // Functions
+    //----------------------------------
 
+    Component.onDestruction: {
+        copyable.selected = false;
+    }
 
     //TODO: This seems a little dependent on whether or not the lowest parent copyable runs this first... seems a bit risky.
     /*! This function Recursively finds a copyable child and sets this object as its parent if it doesn't have one. */
@@ -137,7 +131,6 @@ Rectangle {
         }
     }
 
-
     /*! This function recursively finds copyable children and disables them, as this object
         will be copied as a whole instead of copying its children separately
     */
@@ -166,7 +159,6 @@ Rectangle {
         }
     }
 
-
     /*! This function selects this object and toggles all selected */
     function select(){
         copyable.selected = true
@@ -180,7 +172,6 @@ Rectangle {
         //deselects all children
         deSelectChildren(copyable)
     }
-
 
     onSelectedChanged: {
         if (parentCopyable === null)
@@ -203,6 +194,26 @@ Rectangle {
         }
     }
 
+    //----------------------------------
+    // Object Properties
+    //----------------------------------
+
+    anchors.fill: visible ? parent : undefined
+    anchors.leftMargin: -1
+    anchors.rightMargin: -1
+
+    //for some reason without this the control is 1 pixel too low.
+    anchors.topMargin: -2
+
+    radius: defaultSpacing.halfRadius
+
+    color: "transparent"
+    border.width: defaultSpacing.standardBorderSize
+    border.color: "transparent"
+
+    enabled: parent.enabled
+    visible: parent.visible
+
     Connections {
         target: parentCopyable
         onSelectChildren: {
@@ -213,6 +224,45 @@ Rectangle {
             deSelect()
         }
     }
+
+    //----------------------------------
+    // Child Objects
+    //----------------------------------
+
+    //Click area over the control when Ctrl key is held.
+    MouseArea {
+        id: copySelect
+        anchors.fill: copyable.visible ? parent : undefined
+        enabled: copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
+
+        hoverEnabled: enabled
+        cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+        preventStealing: true
+
+        onClicked: {
+            if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
+            {
+                if (copyable.selected)
+                {
+                        copyable.deSelect()
+                }
+                else
+                {
+                        copyable.select()
+                }
+            }
+            else if (mouse.button == Qt.LeftButton)
+            {
+                copyable.rootCopyable.deSelect();
+                copyable.select();
+            }
+        }
+    }
+
+    //----------------------------------
+    // States
+    //----------------------------------
 
     states: [
         State {
@@ -250,35 +300,4 @@ Rectangle {
             }
         }
     ]
-
-    //Click area over the control when Ctrl key is held.
-    MouseArea {
-        id: copySelect
-        anchors.fill: copyable.visible ? parent : undefined
-        enabled: copyable.enabled && copyable.visible && globalSettings.wgCopyableEnabled
-
-        hoverEnabled: enabled
-        cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-
-        preventStealing: true
-
-        onClicked: {
-            if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
-            {
-                if (copyable.selected)
-                {
-                        copyable.deSelect()
-                }
-                else
-                {
-                        copyable.select()
-                }
-            }
-            else if (mouse.button == Qt.LeftButton)
-            {
-                copyable.rootCopyable.deSelect();
-                copyable.select();
-            }
-        }
-    }
 }

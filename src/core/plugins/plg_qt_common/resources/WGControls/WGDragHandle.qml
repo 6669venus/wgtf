@@ -12,6 +12,7 @@ import QtQuick.Layouts 1.1
 */
 
 Rectangle { // Transparent rectangle sits behind all controls
+    id: dragRect
     objectName: "WGDragHandle"
 
     /*! This property holds the indexed location of the drag handle within the parent control WGDraggableColumn
@@ -24,14 +25,15 @@ Rectangle { // Transparent rectangle sits behind all controls
 
     // This property determines if index is the last item in the DraggableColumn
     /*! \internal */
-    property bool lastSpace: (typeof parent.lineSpaces_ != "undefined")
+    property bool __lastSpace: (typeof parent.lineSpaces_ != "undefined")
 
-    id: dragRect
     width: dragLayout.width + defaultSpacing.leftMargin + defaultSpacing.rightMargin
     height: parent.height
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
     color: "transparent"
+
+    Drag.active: mouseArea.drag.active
 
     //check that the parent doesn't change height for some other reason eg. panel expanding
     Connections {
@@ -83,7 +85,7 @@ Rectangle { // Transparent rectangle sits behind all controls
         width: defaultSpacing.leftMargin
 
         drag.target: dragRect
-        enabled: !lastSpace && dragLayout.unLocked_
+        enabled: !__lastSpace && dragLayout.unLocked_
 
         //because the dragged object contains a dragtarget, need to give it a key
         Component.onCompleted: {
@@ -120,25 +122,6 @@ Rectangle { // Transparent rectangle sits behind all controls
             color: mouseArea.containsMouse || mouseArea.drag.active ? palette.highlightShade : "transparent"
         }
     }
-
-    //state changes for when drag is active
-    states: [
-        State {
-            when: dragRect.Drag.active
-
-            PropertyChanges {
-                target: dragRect
-                color: palette.lighterShade
-            }
-
-            AnchorChanges {
-                target: dragRect
-                anchors.bottom: undefined
-            }
-        }
-    ]
-
-    Drag.active: mouseArea.drag.active
 
     //the target for a dragged object
     DropArea{
@@ -212,4 +195,24 @@ Rectangle { // Transparent rectangle sits behind all controls
             dragLayout.dragItemIndex = -1
         }
     }
+
+    //state changes for when drag is active
+    states: [
+        State {
+            when: dragRect.Drag.active
+
+            PropertyChanges {
+                target: dragRect
+                color: palette.lighterShade
+            }
+
+            AnchorChanges {
+                target: dragRect
+                anchors.bottom: undefined
+            }
+        }
+    ]
+
+    /*! Deprecated */
+    property alias lastSpace: dragRect.__lastSpace
 }

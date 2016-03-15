@@ -1,8 +1,8 @@
 import QtQuick 2.3
 
 Item {
-    objectName: "WGScrollBarStyle"
     id: scrollStyleBase
+    objectName: "WGScrollBarStyle"
 
     property Component scrollHandle: Rectangle {
         color: palette.highlightColor

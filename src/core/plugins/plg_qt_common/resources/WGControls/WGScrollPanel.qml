@@ -29,8 +29,8 @@ WGScrollPanel{
 */
 
 Item {
-    objectName: "WGScrollPanel"
     id: scrollableFrame
+    objectName: "WGScrollPanel"
 
     property Component childObject_
 

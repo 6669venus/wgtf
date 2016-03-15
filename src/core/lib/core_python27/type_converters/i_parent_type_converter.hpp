@@ -19,7 +19,7 @@ namespace PythonType
  *	Interface for adding conversion of types between Python scripts with C++.
  *	Implement this interface to allow conversion of custom types.
  */
-class IPythonConverter
+class IParentConverter
 {
 public:
 

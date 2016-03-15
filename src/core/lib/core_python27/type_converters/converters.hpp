@@ -2,6 +2,7 @@
 
 #include "core_script/type_converter_queue.hpp"
 #include "i_type_converter.hpp"
+#include "i_parent_type_converter.hpp"
 
 #include <string>
 
@@ -19,10 +20,8 @@ namespace PythonType
 
 typedef TypeConverterQueue< IConverter,
 	PyScript::ScriptObject > BasicTypeConverters;
-class DefaultConverter;
-class DictConverter;
-class ListConverter;
-class TupleConverter;
+typedef TypeConverterQueue< IParentConverter,
+	PyScript::ScriptObject > ParentTypeConverters;
 
 
 /**
@@ -35,10 +34,7 @@ class Converters
 public:
 
 	Converters( const BasicTypeConverters & basicTypeConverters,
-		DefaultConverter & defaultConverter,
-		DictConverter & dictConverter,
-		ListConverter & listConverter,
-		TupleConverter & tupleConverter );
+		const ParentTypeConverters & parentTypeConverters );
 
 	/**
 	 *	Convert the given Variant into a ScriptType by searching through the
@@ -74,10 +70,7 @@ public:
 
 private:
 	const BasicTypeConverters & basicTypeConverters_;
-	DefaultConverter & defaultConverter_;
-	DictConverter & dictConverter_;
-	ListConverter & listConverter_;
-	TupleConverter & tupleConverter_;
+	const ParentTypeConverters & parentTypeConverters_;
 };
 
 

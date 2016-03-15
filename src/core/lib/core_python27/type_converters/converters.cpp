@@ -11,15 +11,9 @@ namespace PythonType
 
 
 Converters::Converters( const BasicTypeConverters & basicTypeConverters,
-	DefaultConverter & defaultConverter,
-	DictConverter & dictConverter,
-	ListConverter & listConverter,
-	TupleConverter & tupleConverter )
+	const ParentTypeConverters & parentTypeConverters )
 	: basicTypeConverters_( basicTypeConverters )
-	, defaultConverter_( defaultConverter )
-	, dictConverter_( dictConverter )
-	, listConverter_( listConverter )
-	, tupleConverter_( tupleConverter )
+	, parentTypeConverters_( parentTypeConverters )
 {
 }
 
@@ -32,19 +26,7 @@ bool Converters::toScriptType( const Variant & inVariant,
 	{
 		return true;
 	}
-	if (dictConverter_.toScriptType( inVariant, outObject ))
-	{
-		return true;
-	}
-	if (listConverter_.toScriptType( inVariant, outObject ))
-	{
-		return true;
-	}
-	if (tupleConverter_.toScriptType( inVariant, outObject ))
-	{
-		return true;
-	}
-	return defaultConverter_.toScriptType( inVariant, outObject );
+	return parentTypeConverters_.toScriptType( inVariant, outObject );
 }
 
 
@@ -58,29 +40,7 @@ bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 	{
 		return true;
 	}
-
-	if (dictConverter_.toVariant( inObject,
-		outVariant,
-		parentHandle,
-		childPath ))
-	{
-		return true;
-	}
-	if (listConverter_.toVariant( inObject,
-		outVariant,
-		parentHandle,
-		childPath ))
-	{
-		return true;
-	}
-	if (tupleConverter_.toVariant( inObject,
-		outVariant,
-		parentHandle,
-		childPath ))
-	{
-		return true;
-	}
-	return defaultConverter_.toVariant( inObject,
+	return parentTypeConverters_.toVariantWithParent( inObject,
 		outVariant,
 		parentHandle,
 		childPath );

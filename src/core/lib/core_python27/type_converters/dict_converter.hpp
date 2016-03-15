@@ -2,7 +2,7 @@
 #ifndef _PYTHON_DICT_CONVERTER_HPP
 #define _PYTHON_DICT_CONVERTER_HPP
 
-#include "i_python_converter.hpp"
+#include "i_parent_type_converter.hpp"
 
 class IComponentContext;
 
@@ -15,7 +15,7 @@ class Converters;
 /**
  *	Attempts to convert ScriptDict<->Collection<->Variant.
  */
-class DictConverter final : public IPythonConverter
+class DictConverter final : public IParentConverter
 {
 public:
 	DictConverter( IComponentContext & context,

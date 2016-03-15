@@ -16,7 +16,7 @@ namespace PythonType
 
 ListConverter::ListConverter( IComponentContext & context,
 	const Converters & typeConverters )
-	: IPythonConverter()
+	: IParentConverter()
 	, context_( context )
 	, typeConverters_( typeConverters )
 {

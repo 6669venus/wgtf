@@ -2,7 +2,7 @@
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
-#include "i_python_converter.hpp"
+#include "i_parent_type_converter.hpp"
 
 namespace PyScript
 {
@@ -19,7 +19,7 @@ namespace PythonType
  *	Attempts to convert ScriptObject<->Variant.
  *	This is for any Python type that inherits from "object".
  */
-class DefaultConverter : public IPythonConverter
+class DefaultConverter : public IParentConverter
 {
 public:
 	DefaultConverter( IComponentContext & context );

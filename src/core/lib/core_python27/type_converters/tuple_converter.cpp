@@ -16,7 +16,7 @@ namespace PythonType
 
 TupleConverter::TupleConverter( IComponentContext & context,
 	const Converters & typeConverters )
-	: IPythonConverter()
+	: IParentConverter()
 	, context_( context )
 	, typeConverters_( typeConverters )
 {

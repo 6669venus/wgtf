@@ -2,7 +2,7 @@
 #ifndef PYTHON_LIST_CONVERTER_HPP
 #define PYTHON_LIST_CONVERTER_HPP
 
-#include "i_python_converter.hpp"
+#include "i_parent_type_converter.hpp"
 
 class IComponentContext;
 
@@ -15,7 +15,7 @@ class Converters;
 /**
  *	Attempts to convert ScriptList<->Collection<->Variant.
  */
-class ListConverter final : public IPythonConverter
+class ListConverter final : public IParentConverter
 {
 public:
 	ListConverter( IComponentContext & context,

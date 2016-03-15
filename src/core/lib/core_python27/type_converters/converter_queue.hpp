@@ -43,6 +43,7 @@ private:
 	IComponentContext & context_;
 
 	BasicTypeConverters basicTypeConverters_;
+	ParentTypeConverters parentTypeConverters_;
 	DefaultConverter defaultTypeConverter_;
 	Converters allConverters_;
 

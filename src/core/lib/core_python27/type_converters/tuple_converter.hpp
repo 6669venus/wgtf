@@ -2,7 +2,7 @@
 #ifndef _PYTHON_TUPLE_CONVERTER_HPP
 #define _PYTHON_TUPLE_CONVERTER_HPP
 
-#include "i_python_converter.hpp"
+#include "i_parent_type_converter.hpp"
 
 class IComponentContext;
 
@@ -15,7 +15,7 @@ class Converters;
 /**
  *	Attempts to convert ScriptTuple<->Collection<->Variant.
  */
-class TupleConverter final : public IPythonConverter
+class TupleConverter final : public IParentConverter
 {
 public:
 	TupleConverter( IComponentContext & context,

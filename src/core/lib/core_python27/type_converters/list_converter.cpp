@@ -12,7 +12,7 @@ namespace PythonType
 {
 
 
-ListConverter::ListConverter( const PythonTypeConverters & typeConverters )
+ListConverter::ListConverter( const Converters & typeConverters )
 	: IConverter()
 	, typeConverters_( typeConverters )
 {

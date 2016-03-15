@@ -2,8 +2,9 @@
 
 #include "mapping_iterator.hpp"
 
-#include "i_type_converter.hpp"
+#include "converters.hpp"
 
+#include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_variant/variant.hpp"
 
 #include <cassert>
@@ -15,7 +16,7 @@ namespace PythonType
 
 MappingIterator::MappingIterator( const container_type & container,
 	const PyScript::ScriptList::size_type index,
-	const PythonTypeConverters & typeConverters )
+	const Converters & typeConverters )
 	: container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( index )
@@ -33,7 +34,7 @@ MappingIterator::MappingIterator( const container_type & container,
 
 MappingIterator::MappingIterator( const container_type & container,
 	const key_type & key,
-	const PythonTypeConverters & typeConverters )
+	const Converters & typeConverters )
 	: container_( container )
 	, keys_( container_.keys( PyScript::ScriptErrorPrint() ) )
 	, index_( 0 )
@@ -64,7 +65,9 @@ MappingIterator::MappingIterator( const container_type & container,
 		if (!found)
 		{
 			Variant result;
-			const bool success = typeConverters_.toVariant( key_, result );
+			PyScript::ScriptObject parent;
+			const char * childPath = "";
+			const bool success = typeConverters_.toVariant( key_, result, parent, childPath );
 			PyScript::ScriptList::size_type fakeIndex = container_.size();
 			const bool isIndex = result.tryCast( fakeIndex );
 
@@ -113,7 +116,9 @@ const TypeId& MappingIterator::valueType() const
 Variant MappingIterator::key() const /* override */
 {
 	Variant result;
-	const bool success = typeConverters_.toVariant( key_, result );
+	PyScript::ScriptObject parent;
+	const char * childPath = "";
+	const bool success = typeConverters_.toVariant( key_, result, parent, childPath );
 	assert( success );
 	return result;
 }
@@ -132,7 +137,12 @@ Variant MappingIterator::value() const /* override */
 		PyScript::ScriptErrorPrint() );
 	
 	Variant result;
-	const bool success = typeConverters_.toVariant( item, result );
+	std::string childPath;
+	// TODO NGT-1561 needs unit test
+	childPath += INDEX_OPEN;
+	childPath += key_.str( PyScript::ScriptErrorPrint() ).c_str();
+	childPath += INDEX_CLOSE;
+	const bool success = typeConverters_.toVariant( item, result, container_, childPath );
 	assert( success );
 	return result;
 }

@@ -2,11 +2,12 @@
 #ifndef _PYTHON_TYPE_CONVERTER_QUEUE_HPP
 #define _PYTHON_TYPE_CONVERTER_QUEUE_HPP
 
+#include "core_python27/type_converters/default_converter.hpp"
 #include "core_python27/type_converters/dict_converter.hpp"
 #include "core_python27/type_converters/list_converter.hpp"
 #include "core_python27/type_converters/primitive_converter.hpp"
 #include "core_python27/type_converters/tuple_converter.hpp"
-#include "core_python27/type_converters/type_converter.hpp"
+#include "core_python27/type_converters/none_converter.hpp"
 
 #include <longintrepr.h>
 
@@ -40,8 +41,11 @@ public:
 private:
 	IComponentContext & context_;
 
-	PythonTypeConverters typeConverters_;
+	BasicTypeConverters basicTypeConverters_;
+	DefaultConverter defaultTypeConverter_;
+	Converters allConverters_;
 
+	NoneConverter noneTypeConverter_;
 	PrimitiveConverter< int > intTypeConverter_;
 	PrimitiveConverter< digit > longTypeConverter_;
 	PrimitiveConverter< double > floatTypeConverter_;
@@ -50,7 +54,6 @@ private:
 	ListConverter listTypeConverter_;
 	TupleConverter tupleTypeConverter_;
 	DictConverter dictTypeConverter_;
-	TypeConverter typeTypeConverter_;
 
 	IInterface * pTypeConvertersInterface_;
 };

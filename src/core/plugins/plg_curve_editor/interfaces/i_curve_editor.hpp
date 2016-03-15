@@ -12,7 +12,7 @@
 #pragma once
 
 #include <assert.h>
-#include <interfaces/curve_types.hpp>
+#include "curve_types.hpp"
 
 #include <core_reflection/object_handle.hpp>
 #include <core_data_model/i_list_model.hpp>

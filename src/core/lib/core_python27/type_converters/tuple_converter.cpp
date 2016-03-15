@@ -12,7 +12,7 @@ namespace PythonType
 {
 
 
-TupleConverter::TupleConverter( const PythonTypeConverters & typeConverters )
+TupleConverter::TupleConverter( const Converters & typeConverters )
 	: IConverter()
 	, typeConverters_( typeConverters )
 {

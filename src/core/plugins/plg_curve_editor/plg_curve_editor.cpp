@@ -51,8 +51,6 @@ public:
 		if (definitionManager == nullptr)
 			return;
 
-		SharedControls::init();
-
 		// Setup the models for the view
 		definitionManager->registerDefinition(new TypeClassDefinition<Point>);
 		definitionManager->registerDefinition(new TypeClassDefinition<BezierPoint>);
@@ -60,38 +58,15 @@ public:
 		definitionManager->registerDefinition(new TypeClassDefinition<ICurveEditor>);
 
 		std::unique_ptr<ICurveEditor> curvesModel = std::unique_ptr<ICurveEditor>( new CurveEditor() );
-		
-		auto& curves = *curvesModel.get();
-		
-		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		auto uiFramework = contextManager.queryInterface< IUIFramework >();
-
 		types_.emplace_back( contextManager.registerInterface<ICurveEditor>(curvesModel.get(), false) );
-		
+
+        auto uiApplication = contextManager.queryInterface< IUIApplication >();
+        auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		curvePanel_ = uiFramework->createView("plg_curve_editor/CurveEditor.qml", IUIFramework::ResourceType::Url, std::move(curvesModel));
 		uiApplication->addView(*curvePanel_);
 
-		// Example code for using the curve editor
-		//auto curveEditor = contextManager.queryInterface<ICurveEditor>();
-		//auto curve = curveEditor->createCurve();
-		//curve->add({{0.0f,	0.00f}, {-0.2f, 0.00f}, {0.2f, 0.0f}});
-		//curve->add({{0.25f, 0.25f}, {-0.2f, 0.00f}, {0.2f, 0.0f}});
-		//curve->add({{0.5f,	0.50f}, {-0.1f, -0.2f}, {0.1f, 0.2f}});
-		//curve->add({{1.0f,	1.00f}, {-0.2f, 0.00f}, {0.2f, 0.0f}});
-		//
-		//curve = curveEditor->createCurve();
-		//curve->add({{0.0f, 0.0f}, {-0.1f, 0.00f}, {0.1f, 0.1f}});
-		//curve->add({{1.0f, 0.5f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//
-		//curve = curveEditor->createCurve();
-		//curve->add({{0.0f, 0.0f}, {-0.1f, 0.00f}, {0.1f, 0.1f}});
-		//curve->add({{0.8f, 0.1f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//curve->add({{0.9f, 0.9f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//curve->add({{1.0f, 0.1f}, {-0.1f, -0.1f}, {0.1f, 0.1f}});
-		//
-		//curve = curveEditor->createCurve();
-		//curve->add({{0.0f, 0.75f}, {0.00f, 0.00f}, {0.1f, 0.1f}});
-		//curve->add({{1.0f, 0.25f}, {-0.1f, -0.1f}, {0.0f, 0.0f}});
+        
+
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

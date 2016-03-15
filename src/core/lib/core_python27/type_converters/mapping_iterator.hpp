@@ -5,20 +5,10 @@
 
 #include "core_variant/collection.hpp"
 
-#include "core_script/type_converter_queue.hpp"
+#include "converters.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 #include <type_traits>
-
-
-namespace PythonType
-{
-class IConverter;
-} // namespace PythonType
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 namespace PythonType
@@ -39,10 +29,10 @@ public:
 
 	MappingIterator( const container_type & container,
 		const PyScript::ScriptList::size_type index,
-		const PythonTypeConverters & typeConverters );
+		const Converters & typeConverters );
 	MappingIterator( const container_type & container,
 		const key_type & key,
-		const PythonTypeConverters & typeConverters );
+		const Converters & typeConverters );
 
 	const container_type & container() const;
 	key_type rawKey() const;
@@ -67,7 +57,7 @@ private:
 	PyScript::ScriptList::size_type index_;
 
 	key_type key_;
-	const PythonTypeConverters & typeConverters_;
+	const Converters & typeConverters_;
 };
 
 

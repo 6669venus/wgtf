@@ -3,11 +3,7 @@
 #define PYTHON_LIST_CONVERTER_HPP
 
 #include "i_type_converter.hpp"
-#include "core_script/type_converter_queue.hpp"
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
+#include "converters.hpp"
 
 
 namespace PythonType
@@ -20,14 +16,14 @@ namespace PythonType
 class ListConverter final : public IConverter
 {
 public:
-	ListConverter( const PythonTypeConverters & typeConverters );
+	ListConverter( const Converters & typeConverters );
 
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant ) override;
 	virtual bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) override;
 private:
-	const PythonTypeConverters & typeConverters_;
+	const Converters & typeConverters_;
 };
 
 

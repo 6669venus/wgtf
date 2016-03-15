@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="9aa203be-54e6-4c74-8b85-0f06c75a3aac"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		Closing_generic_app_Fail_Pass
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="Closing_generic_app_Fail_Pass"
+	namespace="NGTTestAutomation"/>
+	<variables/>
+	<recorditems>
+		<userrecorditem
+		enabled="True"
+		optional="False"
+		methodname="Close_Application_MainWindow"
+		varname="">
+			<comment/>
+			<bindings/>
+			<arguments
+			id="64b413a4-cbd0-454c-8f04-6c89897b349a"/>
+		</userrecorditem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		Closing_generic_app_Fail_Pass.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

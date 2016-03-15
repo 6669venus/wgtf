@@ -117,6 +117,18 @@
       <UserCode>true</UserCode>
       <id>e6a86afc-1b9e-45b2-8a91-3e59737cf51f</id>
     </Compile>
+    <Compile Include="Closing_generic_app_Fail_Pass.cs">
+      <BoundTo>cb8eba8d-ed82-417f-87a4-f80682b11a41</BoundTo>
+      <DependentUpon>Closing_generic_app_Fail_Pass.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>803ff2a6-c5b1-4e3b-912c-7c4eab996c23</id>
+    </Compile>
+    <Compile Include="Closing_generic_app_Fail_Pass.UserCode.cs">
+      <BoundTo>cb8eba8d-ed82-417f-87a4-f80682b11a41</BoundTo>
+      <DependentUpon>Closing_generic_app_Fail_Pass.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>a7ffa1d1-6945-483c-a3db-23c189c9c173</id>
+    </Compile>
     <Compile Include="File_Exit_MC.cs">
       <BoundTo>67f08f57-2188-4074-b843-9525d794a184</BoundTo>
       <DependentUpon>File_Exit_MC.rxrec</DependentUpon>
@@ -333,6 +345,11 @@
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>ae2747b9-fb98-4fd9-b0d2-c53305d45781</id>
       <recordtableid>d99ac968-d85e-4092-9b1a-5a85aa8e9780</recordtableid>
+    </None>
+    <None Include="Closing_generic_app_Fail_Pass.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>cb8eba8d-ed82-417f-87a4-f80682b11a41</id>
+      <recordtableid>9aa203be-54e6-4c74-8b85-0f06c75a3aac</recordtableid>
     </None>
     <None Include="File_Exit_MC.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

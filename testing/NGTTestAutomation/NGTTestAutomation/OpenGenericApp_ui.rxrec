@@ -7,6 +7,9 @@ mode="Global">
 	<name>
 		OpenGenericApp_ui
 	</name>
+	<description>
+		The OpenGenericApp_ui recording.
+	</description>
 	<repeatcount>
 		1
 	</repeatcount>

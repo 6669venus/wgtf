@@ -164,7 +164,7 @@ namespace NGTTestAutomation
             /// Creates a new MainWindow  folder.
             /// </summary>
             public MainWindowAppFolder(RepoGenBaseFolder parentFolder) :
-                    base("MainWindow", "/form[@objectname='MainWindow']", parentFolder, 30000, null, true, "cd35dc4e-e230-4536-a27e-ebaa15eecd9e", "")
+                    base("MainWindow", "/form[@objectname='MainWindow']", parentFolder, 60000, null, true, "cd35dc4e-e230-4536-a27e-ebaa15eecd9e", "")
             {
                 _wglistview = new NGTTestAutomationRepositoryFolders.WGListViewFolder(this);
                 _list = new NGTTestAutomationRepositoryFolders.ListFolder(this);

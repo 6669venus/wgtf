@@ -15,7 +15,7 @@ rxversion="5.4.5.19886">
 		<appfolder
 		name="MainWindow"
 		id="cd35dc4e-e230-4536-a27e-ebaa15eecd9e"
-		searchtimeout="30000ms"
+		searchtimeout="60000ms"
 		capname="form"
 		addcaps="form,qtelement,qtwindow,nativewindow"
 		isrooted="True"

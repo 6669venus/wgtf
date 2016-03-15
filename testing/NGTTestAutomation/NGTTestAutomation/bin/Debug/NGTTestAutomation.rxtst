@@ -124,6 +124,15 @@ reportlevel="Info;20">
 					id="77066a4a-ad31-4bc3-a6d6-caffdb95d2c7"
 					ref="8b524829-458f-4520-a23b-b87b47e200ae"
 					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="6b15f8a7-4a10-401d-85c0-b946a44c2309">
+						<testmodule
+						name="CloseGenericApp"
+						id="fb08f035-a0b7-4de3-ba7b-0918d218ab5e"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
 				</testcase>
 				<testcase
 				name="ShowMod"
@@ -283,6 +292,15 @@ properties, not selected items</P>]]>
 						</databinding>
 					</testmodule>
 				</setup>
+				<teardown
+				name="teardown"
+				id="95397143-9c34-4d41-a714-fc61f67b355d">
+					<testmodule
+					name="CloseGenericApp"
+					id="321fd73c-f307-4dad-bd5c-123815322944"
+					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+					type="Recording"/>
+				</teardown>
 			</testcase>
 			<testcase
 			name="New_Object"

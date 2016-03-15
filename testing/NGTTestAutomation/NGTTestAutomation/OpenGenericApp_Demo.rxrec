@@ -35,6 +35,7 @@ mode="Global">
 		<runapprecorditem
 		enabled="True"
 		optional="False"
+		duration="30000ms"
 		maximized="False">
 			<comment/>
 			<bindings>

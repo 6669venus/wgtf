@@ -94,7 +94,7 @@ namespace NGTTestAutomation
 
             Report.Log(ReportLevel.Info, "Application", "Run application 'generic_app.exe' with arguments '--config plugins_demo.txt' in normal mode.", new RecordItemIndex(0));
             Host.Local.RunApplication("generic_app.exe", "--config plugins_demo.txt", path, false);
-            Delay.Milliseconds(0);
+            Delay.Milliseconds(30000);
             
         }
 

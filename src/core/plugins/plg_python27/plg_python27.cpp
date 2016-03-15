@@ -66,7 +66,7 @@ public:
 private:
 	std::stack<IInterface*> interfaces_;
 	Python27ScriptingEngine interpreter_;
-	ScriptObjectDefinitionRegistry definitionRegistry_;
+	ReflectedPython::ScriptObjectDefinitionRegistry definitionRegistry_;
 	PythonType::ConverterQueue typeConverterQueue_;
 };
 

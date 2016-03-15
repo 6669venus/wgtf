@@ -17,7 +17,7 @@ namespace Detail
  Mapping::result_type insert( Mapping::container_type & container_,
 	const Mapping::key_type key,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters_ )
 {
 	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
 
@@ -44,7 +44,7 @@ namespace Detail
 
 
 Mapping::Mapping( const Mapping::container_type & container,
-	const PythonTypeConverters & typeConverters )
+	const Converters & typeConverters )
 	: CollectionImplBase()
 	, container_( container )
 	, typeConverters_( typeConverters )

@@ -53,7 +53,7 @@ public:
 
 	Python27ScriptingEngine scriptingEngine_;
 
-	ScriptObjectDefinitionRegistry definitionRegistry_;
+	ReflectedPython::ScriptObjectDefinitionRegistry definitionRegistry_;
 	IInterface * pDefinitionRegistryInterface_;
 
 	PythonType::ConverterQueue typeConverterQueue_;

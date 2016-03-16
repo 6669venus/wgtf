@@ -14,13 +14,15 @@ WGExpandingRowLayout {
         minimumValue: 0
         maximumValue: 100
 
-        b_Target: perfBar3
-        b_Property: "value_"
-        b_Value: value
+        Binding {
+            target: perfBar
+            property: "value"
+            value: value
+        }
     }
 
     WGPerformanceBar {
-        id: perfBar3
+        id: perfBar
     }
 }
 \endcode

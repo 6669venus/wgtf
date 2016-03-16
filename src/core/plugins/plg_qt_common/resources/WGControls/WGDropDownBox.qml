@@ -51,6 +51,7 @@ ComboBox {
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
+
     //find the widest text in model
     Repeater {
         id: textMetricsCreator
@@ -59,9 +60,11 @@ ComboBox {
 
         Item {
             id:itemWrapper
+            property var lineText: text
+
             TextMetrics {
                 id: fakeText
-                text: model.text
+                text: lineText
                 onTextChanged: {
                     textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
                 }

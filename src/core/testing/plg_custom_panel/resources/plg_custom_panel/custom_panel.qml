@@ -259,8 +259,7 @@ WGPanel {
 
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
-                                                Rectangle {
-                                                    color: "transparent"
+                                                Item {
                                                     Layout.preferredWidth: 60
                                                 }
                                                 WGPushButton {
@@ -395,25 +394,25 @@ WGPanel {
 
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
-                                                Rectangle {
-                                                    color: "transparent"
+                                                Item {
                                                     Layout.preferredWidth: 60
                                                 }
                                                 WGNumberBox {
+                                                    id: perfBarNumBox
                                                     Layout.preferredWidth: 80
                                                     value: 25
                                                     minimumValue: 0
                                                     maximumValue: 100
 
-                                                    b_Target: perfBar
-                                                    b_Property: "value_"
-                                                    b_Value: value
+                                                    Binding {
+                                                        target: perfBar
+                                                        property: "value"
+                                                        value: perfBarNumBox.value
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-
-
 
                                     WGControlChunk {
                                         tags: "radio boolean feature on off"
@@ -977,19 +976,23 @@ WGPanel {
 
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
-                                                Rectangle {
-                                                    color: "transparent"
+                                                Item {
                                                     Layout.preferredWidth: 60
                                                 }
                                                 WGNumberBox {
+                                                    id: perBarCloneNumBox
                                                     Layout.preferredWidth: 80
                                                     value: 25
                                                     minimumValue: 0
                                                     maximumValue: 100
 
-                                                    b_Target: perfBarClone
-                                                    b_Property: "value_"
-                                                    b_Value: value
+                                                    Binding {
+                                                        target: perfBarClone
+                                                        property: "value"
+                                                        value: perBarCloneNumBox.value
+                                                    }
+
+
                                                 }
                                             }
                                         }

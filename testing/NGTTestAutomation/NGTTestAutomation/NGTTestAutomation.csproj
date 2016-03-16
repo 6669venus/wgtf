@@ -69,6 +69,18 @@
       <DependentUpon>AjustingObjectProperties.rxrec</DependentUpon>
       <BoundTo>5114b90a-dab0-4a75-83a0-f4656f9f2a81</BoundTo>
     </Compile>
+    <Compile Include="Generic_app_demo\file_exit.cs">
+      <BoundTo>a0d07c89-d530-4215-ac4f-547b0b084b2f</BoundTo>
+      <DependentUpon>file_exit.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>e3bccf17-236d-4ba0-a195-6d219ae18527</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\file_exit.UserCode.cs">
+      <BoundTo>a0d07c89-d530-4215-ac4f-547b0b084b2f</BoundTo>
+      <DependentUpon>file_exit.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>c1d02800-abb6-4cb0-a0f2-433ea0580f1f</id>
+    </Compile>
     <Compile Include="Generic_app_demo\File_Exit_MC.cs">
       <id>ba44e63c-7cba-47c8-bbfa-b251273dce0b</id>
       <RecorderCode>true</RecorderCode>
@@ -116,6 +128,66 @@
       <UserCode>true</UserCode>
       <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
       <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
+    </Compile>
+    <Compile Include="Generic_app_demo\TestDataOpen.cs">
+      <BoundTo>4912bd6a-3e96-4623-aaf4-371c75adee32</BoundTo>
+      <DependentUpon>TestDataOpen.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>4f7d48f2-dfdc-4f4f-880d-eb0e47615dd8</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\TestDataOpen.UserCode.cs">
+      <BoundTo>4912bd6a-3e96-4623-aaf4-371c75adee32</BoundTo>
+      <DependentUpon>TestDataOpen.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>08c8e131-4a1e-494e-bdda-9a05ce960b25</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\ViewMenTestDada_validation_fail.cs">
+      <BoundTo>78514889-d3d1-4baf-acbf-2300647fee38</BoundTo>
+      <DependentUpon>ViewMenTestDada_validation_fail.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>dc21bad4-9360-4a96-808a-f2e3e16b0931</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\ViewMenTestDada_validation_fail.UserCode.cs">
+      <BoundTo>78514889-d3d1-4baf-acbf-2300647fee38</BoundTo>
+      <DependentUpon>ViewMenTestDada_validation_fail.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>a202e1e7-2358-49d5-a81b-655b2e24fb2e</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\ViewMenTestData_Validation.cs">
+      <BoundTo>d2c1f03d-6170-4756-8eb4-8ec9f7da9bf0</BoundTo>
+      <DependentUpon>ViewMenTestData_Validation.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>7c9a87cc-ed31-434d-b287-5493cf8dfe0a</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\ViewMenTestData_Validation.UserCode.cs">
+      <BoundTo>d2c1f03d-6170-4756-8eb4-8ec9f7da9bf0</BoundTo>
+      <DependentUpon>ViewMenTestData_Validation.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>a6939341-cf19-48b2-b3a5-7c9c6b4f9889</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\View_Menu_selection.cs">
+      <BoundTo>416b6337-5554-4244-a0c2-8e5317f2c8d5</BoundTo>
+      <DependentUpon>View_Menu_selection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>eb9added-07df-45fc-a049-14be34ae0816</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\View_Menu_selection.UserCode.cs">
+      <BoundTo>416b6337-5554-4244-a0c2-8e5317f2c8d5</BoundTo>
+      <DependentUpon>View_Menu_selection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>e29f42be-5fc8-42c0-9d57-5ba032b5f491</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\TesDataClose.cs">
+      <BoundTo>aa3f3ab5-3d52-4296-a433-1813a330a897</BoundTo>
+      <DependentUpon>TesDataClose.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>90d34134-2970-494a-877c-5eb72a7b1ccc</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\TesDataClose.UserCode.cs">
+      <BoundTo>aa3f3ab5-3d52-4296-a433-1813a330a897</BoundTo>
+      <DependentUpon>TesDataClose.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>b7c3aab0-e699-4a96-9c91-dd92f526afc2</id>
     </Compile>
     <Compile Include="NGTTestAutomationRepository.cs">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
@@ -326,6 +398,11 @@
       <id>5114b90a-dab0-4a75-83a0-f4656f9f2a81</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
+    <None Include="Generic_app_demo\file_exit.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>a0d07c89-d530-4215-ac4f-547b0b084b2f</id>
+      <recordtableid>959610e8-dc35-4fde-93de-1e632eead6f5</recordtableid>
+    </None>
     <None Include="Generic_app_demo\File_Exit_MC.rxrec">
       <recordtableid>8b524829-458f-4520-a23b-b87b47e200ae</recordtableid>
       <id>67f08f57-2188-4074-b843-9525d794a184</id>
@@ -345,6 +422,31 @@
       <recordtableid>6c8f5dce-bc7a-41e4-843b-ad564923a087</recordtableid>
       <id>52d4aefb-51c3-48f7-9c34-9c4fb5100814</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+    </None>
+    <None Include="Generic_app_demo\TestDataOpen.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>4912bd6a-3e96-4623-aaf4-371c75adee32</id>
+      <recordtableid>91764307-6887-4c33-8600-1f11ebb6f3b7</recordtableid>
+    </None>
+    <None Include="Generic_app_demo\ViewMenTestDada_validation_fail.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>78514889-d3d1-4baf-acbf-2300647fee38</id>
+      <recordtableid>ec8f7523-c091-4e50-9425-b9b13f6d787e</recordtableid>
+    </None>
+    <None Include="Generic_app_demo\ViewMenTestData_Validation.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>d2c1f03d-6170-4756-8eb4-8ec9f7da9bf0</id>
+      <recordtableid>736f7a13-94d4-47f8-8620-42a54c1e6e0b</recordtableid>
+    </None>
+    <None Include="Generic_app_demo\View_Menu_selection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>416b6337-5554-4244-a0c2-8e5317f2c8d5</id>
+      <recordtableid>0057bfca-3540-48d9-ba3c-bbfd887e62df</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\TesDataClose.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>aa3f3ab5-3d52-4296-a433-1813a330a897</id>
+      <recordtableid>c4eaf583-d2e1-4a57-b9c3-030e98f51787</recordtableid>
     </None>
     <None Include="NGTTestAutomationRepository.rximg">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

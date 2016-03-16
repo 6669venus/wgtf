@@ -22,3 +22,4 @@ C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\bin\Debug\NGTTestAuto
 C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.csprojResolveAssemblyReference.cache
 C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.exe
 C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\obj\x86\Debug\NGTTestAutomation.pdb
+C:\Ngt-project\testing\NGTTestAutomation\NGTTestAutomation\bin\Debug\RepositoryImages\NGTTestAutomationRepository3936ed74.rximgres

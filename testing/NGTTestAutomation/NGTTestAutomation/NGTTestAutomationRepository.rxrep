@@ -215,6 +215,84 @@ rxversion="5.4.5.19886">
 				refimgid="c1429508-635a-4e29-a29a-921014bc28df">
 					/form[@objectname='MainWindow']/?/?/button[@text='ShowModalDialog']
 				</item>
+				<item
+				name="View"
+				id="d5ba6478-3c4d-475d-8516-b7394d2a1411"
+				searchtimeout="60000ms"
+				capname="menuitem"
+				refpath="/form[@objectname='MainWindow']/menubar[@objectname='defaultMenuBar']/menuitem[@text='View']"
+				addcaps="menuitem,qtelement"
+				refimgid="ff496563-62de-44fc-a795-c15ffaa9dbe3">
+					<image
+					name="Screenshot1"
+					guid="d7ace98f-9548-4575-9582-7839ccb6467d">
+						iVBORw0KGgoAAAANSUhEUgAAACEAAAAUCAYAAAADU1RxAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAECSURBVEhL7ZPBDYMwDEVZqaqEUKXuABI7gBgC
+WAJYgmyRvdzEYHCMc0PlksM/1Dj287ebFZ8vPK0EQUoQpAtEM1tYhzqIFe0Cdu6gqEZYrYG+Yt9u
+0NUJashiHmxqWc7NukLgtAs0R6yDKfh9v5SbqKE3bPLAGQ/E1oHAFixqAw1dU/KFy17qYZaDOe4i
+XlQ0cLD4hkP7mDlr8bpcKgQSmxFKdIUfImscuLCLjhff+gFcbhurdUqHoAdHAYpLCO1WqJnLPZq7
+PAYX5kchNuv8dKF9ch3K39kJbRdrmOZ9XSLXKwqxTSrt4xCUI9ahvVVrnYpD/FEJgpQgSNnrncOz
+yuEHPr23qOpojFMAAAAASUVORK5CYII=
+					</image>
+					/form[@objectname='MainWindow']/?/?/menuitem[@text='View']
+				</item>
+				<item
+				name="Undo"
+				id="f52ad4d4-bb94-4245-8ce6-b10ec340291e"
+				searchtimeout="60000ms"
+				capname="button"
+				refpath="/form[@objectname='MainWindow']/toolbar[@objectname='defaultToolBar']/button[@text='Undo']"
+				addcaps="button,qtelement"
+				refimgid="450cc5cb-11a1-4c96-b0cc-faf1811ea7a9">
+					<image
+					name="Screenshot1"
+					guid="9b688469-91c7-40e2-9619-fa3e1cf09fc5">
+						iVBORw0KGgoAAAANSUhEUgAAACAAAAAfCAYAAACGVs+MAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAGoSURBVFhH7ZRrSwJBFIb7Wd67iN0IIRHDskyx
+gsIShQjpRlnqZlaaZmWlWRYUZnb7EmJW9LPediZWNDRXSfbLfnhY9rB7zjNn5kybTNEOIREFRAHh
+BaRyFYREFGhKQKHqrBpvhoYE1JoeGEfGMGq2VMQlcmXFeyPwFuCKJ88vYbVNleIbXoZ9tliAK56+
+vsFr/g1mi43G/UwQu6EIpDL2O44GZeoKcMVvM/fIF94RjsQwqDcgEAwhGjvGmseL3OMLsrkn7Iaj
+0BuM7H/8JeoKDJvMbPJnFIqfODiMY2JyGqH9A5wmUvAx2xUcxc+oyKzDVTVXNXgJkNaTxMlUGjr9
+EHxbQbYDezXJZB9+toluyd/w2gK7w0lXXPz4wh2bfGbWAc+mn3aC4F5coSyvrlMBEovG4rymg/ch
+JBIJdgKIBFnduHWStj12dILefi0GtDqY2PFccC+BCezg/OLqfzrAUS7BjSGRIMXKD51a0wuHc57G
+Nd19pXgteAsQOInyi4hI/G61qkMN+5wLyvauing1GhLgEOwqbgWigPACEpkSQiIKiAICCyjxDZu3
+4Ad400ryAAAAAElFTkSuQmCC
+					</image>
+					/form[@objectname='MainWindow']/?/?/button[@text='Undo']
+				</item>
+				<item
+				name="TestData"
+				id="91503505-5f33-42cc-9189-b522f7670e1d"
+				searchtimeout="60000ms"
+				capname="menuitem"
+				refpath="/form[@objectname='MainWindow']/menubar[@objectname='defaultMenuBar']/menuitem[@text='TestData']"
+				addcaps="menuitem,qtelement"
+				refimgid="c9f762e7-cbd2-47d5-84e1-a32cf875510b">
+					<image
+					name="Screenshot1"
+					guid="77b00f29-fe66-413a-a155-e940112ccfad">
+						iVBORw0KGgoAAAANSUhEUgAAADYAAAAUCAYAAADGIc7gAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEySURBVFhH7ZRtDoIwDIa9kjEhxsQ7QOIdJBwC
+uQRwCXcL7lXZyj46OhA0mhF+PIFtbelL2x3OlytskV1YbOzCYmMk7N500HVjno8bsVtOAfXXY4aZ
+qJhMRECZcWfv4Ptz615gUwzrEOvy+KOwnqyCZ9fC3fhw/EqYSka3k07qBqWwLVbn0teusSpcPPSr
+c1yTMTA+/h5n58ZEFgrz9vIW56R/jj/g+88Ls7i2nJ8mfLZMGKmW88eGfXoZ+P5cElKYsyd/kImt
+9xk/1o6yQlh4JtKHUB/DCrwhzI1HYruCPb+gHWVFK05f01Icns8Jw1imDWUVRAWpfFfJa1vPL2hH
++fDy6JGtSFrDVtQMuZo/FGLt/Ng4b+pMtFA7laBxwnYuE8LiZhcWG7uw2DgcTwlsjwRe+u7gqWj1
+E1QAAAAASUVORK5CYII=
+					</image>
+					<image
+					name="Screenshot2"
+					guid="2ef28b91-4860-4a1d-b4f2-d00518253452">
+						iVBORw0KGgoAAAANSUhEUgAAADYAAAAUCAYAAADGIc7gAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAEjSURBVFhH7VTBDYMwDOw4/XcWZkHqJqzQFViB
+FVihK6S+yI4c40CJqlahWDo1NneuLyFcrvcpHBHR2G0Ih8JprDX8l7F+Dm7MUy6uwci9JD7R08Pm
+iWGQ4eE/ewdW7+WBNlLyEvbO8XNjN1rjBeklL+A7xngYCRlqeHKBYiQhtCn4VLx+0IGPdXYNlCYF
+1zyeRpWxrEZJvCcoOn9g9V4/bUxDcz2dwHu23xit9WbFgCGu24+B1XtDwFiqgaBC6gtdgSeoNla6
+Ex0ZQ8gJWP1qP9NbG850KzzBfmNcW/tMw5w83zKGPL2GSGjIDmseXriZboUnqDImzVJQYl8N2c10
+ycGh3NAWvbH7Meh3VCdh+5R4gk1jreI01hpOY60hGTsepvACWJ8pyChHsKwAAAAASUVORK5CYII=
+					</image>
+					/form[@objectname='MainWindow']/?/?/menuitem[@text='TestData']
+				</item>
 				<basepath>
 					/form[@objectname='MainWindow']
 				</basepath>
@@ -459,6 +537,687 @@ DsQBlSsOGwAAAKtJREFUOE9j+P//P0UYzrAJyP6/ZsVMojFWAxjAXMIApwEgADJkx8Hz/8va5/7P
 qJr4PzK75b9XbNl/mDwI4DUABAi5hKABIAAyZNnGff8jc5r/e8aWk+YCGMDlEqJdAMNTF64nzgUw
 DSAAos+dOwfG6ACnATANyIY0dE4iLgy6OqpBgmCA7gp0gNUAqCAYbD8IcQVJLkA2AARg3iHJBaRg
 DAPIxVgFicf/GQCdrAkiuOdOjQAAAABJRU5ErkJggg==
+			</icon>
+		</appfolder>
+		<appfolder
+		name="GenericAppTest"
+		id="f7aeb4ef-a25f-42de-a3e0-d3a1598c0b7f"
+		searchtimeout="60000ms"
+		capname="form"
+		refpath="/form[@title='Generic App Test']"
+		addcaps="form,nativewindow"
+		isrooted="True"
+		usecache="True">
+			<item
+			name="View"
+			id="59790d7a-6ea8-43e1-969b-4c1ace980e32"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/form[@title='Generic App Test']/menubar[2]/menuitem[@accessiblename='View']"
+			addcaps="menuitem,accessible"
+			refimgid="b7e4f85b-19f0-47ef-a4fd-039874c760a4">
+				<image
+				name="Screenshot1"
+				guid="af87816c-40f0-43c5-9c98-a07214f7f852">
+					iVBORw0KGgoAAAANSUhEUgAAACEAAAAUCAIAAACMMcMmAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAnSURBVEhL7c0xAQAADIOw+TfNLPD0IwZy7HV4
+HV6H1+F1eB3e/oAH9Oe0riASrA0AAAAASUVORK5CYII=
+				</image>
+				/form[@title='Generic App Test']/?/?/menuitem[@accessiblename='View']
+			</item>
+			<item
+			name="TestData"
+			id="366725d0-7994-4b02-bb24-2cf228402969"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/form[@title='Generic App Test']/menubar[2]/menuitem[@accessiblename='TestData']"
+			addcaps="menuitem,accessible"
+			refimgid="eb891b43-097e-46b1-a231-176bf91a4b55">
+				<image
+				name="Screenshot1"
+				guid="127d53ff-caad-4bda-bc8d-5b95847c3d2d">
+					iVBORw0KGgoAAAANSUhEUgAAADYAAAAUCAIAAABJQ1m3AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVEhL7c4xAQAwDASh+jf9NcGQ4VDA23kV
+hYpCRaGiUFGoKFQUKgoVhfPF7QPbU5wN8PWK/QAAAABJRU5ErkJggg==
+				</image>
+				/form[@title='Generic App Test']/?/?/menuitem[@accessiblename='TestData']
+			</item>
+			<basepath>
+				/form[@title='Generic App Test']
+			</basepath>
+			<icon>
+				iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJxSURBVDhPY8AF7O3tOTojvGpWxHluCPLx0YAK
+EwdKgjyD9yZ53v+Y4/H/c67H//OpHj/DwsJ6XVxc+KFKsIMYb2/9tXGe+19kefz/lOP+/32yI9iA
+h1G2/1NTU//Hx8e/DA4OTgUqZYLogAIfHx+R2dFe029muP8BaXgXZ/f/oZnS/5f+xmADrnqb/k9L
+SwPjnvSY/xsTvM6lBXnZQbUzMDS7WR97mur8/0Oa8/8njpr/76iJ/78NxO8THcAGbPGw/l+Vnvj/
+RFYAmP8p2/3/JW+Tf56enrpgA/LN9E636Cn/v6UlBdZ8VEf+f6urLdAbHv8/Zrj8vxxu//89NDze
+RFr9v28o//+auuR/b29vY7gB9TpK/28ANe/VU/rv7+P9vz3CG6wBhkHh8chGDe669TZG2A3YbKD2
+39fX93+9p93/e4mO/z9muv5/5q73/46GBFjzGT3F/43hweBAxWtAmrXZ/wag2CUdGbDG60AMojfa
+GoMDE68B4eHh/8rSU//VWxr+P60h9X+Tluz/fi15wgbc0pP5fz/U6v/Sypx/LfV1/7eXJP2/nO77
+f5Kt/v8ubQWwAZtsTXAbsMXD6P/bTDdwoO0Ptfl/LsIGHLWPHTThBuxys/lfXl7+PyMjA2FAnL1N
+ZpGx9geQIV1Gqv+Ph1j+3+pl8h/EP64JiVpkA6qrq/+lp6dvdHNzEwIbAALAgBNPsTGfW26g/hek
+sRmYLkD0UWB8wwy4oSbxf7aD5VVgGLlBtWGCADc34yxLoyM1uipwA0DxXu7r8bba3ioXmEtZoErx
+gwgXx0hg2Dxar6v4u9/KeGpAQIAwVAoJMDAAAClAicN9JWMMAAAAAElFTkSuQmCC
+			</icon>
+		</appfolder>
+		<appfolder
+		name="View"
+		id="73807bc9-2bae-4818-a47f-217a5cb6dae4"
+		searchtimeout="60000ms"
+		capname="contextmenu"
+		refpath="/contextmenu[@objectname='View']"
+		addcaps="contextmenu,qtelement,qtwindow,nativewindow"
+		isrooted="True"
+		usecache="True">
+			<item
+			name="Macros"
+			id="5ab208b0-2b4d-4b74-b264-d2298481f1b1"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='Macros']"
+			addcaps="menuitem,qtelement"
+			refimgid="db3f760a-af64-4d67-b644-927559b52f8e">
+				<image
+				name="Screenshot1"
+				guid="5053dfc5-f3d9-415d-83a9-8aea222de6b2">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAF5SURBVHhe7ZjRacMwEEC7S0JWKIUsEkMWickk
+TjaxvUm8iiqdLPtkK4V+lCvoHTyCdJL9c4+7+ONwPDkAiIgQn19ngOpBCAAFQgAoEAJAgRAACoQA
+UBgIcXe98zHcC7mzuzwmn5xc1+xzAH+NkRCTe02lop9lQQgwwkyIfvBSPK55rh195xgljxBggZkQ
+XRN+R3db9q+uk66R8nH/NkjLiJGNWeH8vO+jb8PeKptLz26e7hWPSMRz7+5D7RgKEYt9KcRQuNPT
+XVT+3b1UzLsOI2f0flxn70jPkG5U/h8D9WIqxCqBlmMjRCjcJdS9rLskNncL55b3SK4kFdSMrRBp
+TGpXMXbCLAWdRqrtvuYXQszr+FUr34N6MRbCM3eAfMyZ8yGXRJHiTvd+GpnUs2W9HZn2IgUp6BQQ
+sBdCilsXqc7HwpfwZ/rsU20s9hTFcSsgEqRQuWwUK3UbqBEDIQD+LwgBoEAIAAVCACgQAkCBEAAK
+hABQHI4n9w0zjhDeRQVRSwAAAABJRU5ErkJggg==
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='Macros']
+			</item>
+			<item
+			name="History"
+			id="68a217de-d357-4a97-8ee9-b311d4a5c003"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='History']"
+			addcaps="menuitem,qtelement"
+			refimgid="38d89411-d6f8-4805-9466-2edb4535c3f8">
+				<image
+				name="Screenshot1"
+				guid="37f31f04-6434-4385-88a6-2facad73a5c1">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAFWSURBVHhe7dnRbcIwEMbx7gJihapSFwGJRYiY
+BNgkyXuHIKtcc3GcXMxRlYcqrvy39BNJnFx48Idt8bbZ7uT94xMonmaBQAAjAgEYBAIwCARgEAjA
+IBCAsUIgzlJLJ5fDD9cPN7m79wB/K89ALK57XrkX+D0CARiZBsIeH+XSydTqSvtMa87h+WGZNbe6
+WtatGy3yJXX/Mff1qlaku8k+nqNoKwXiWXMCoQM2DvpFDRuqUHMa6Is9SOi7X4+hL6l3apKAoGj5
+zxDjL/80oL0awz2tnKZ+O9DT9+l5vLc/ZnaAkX8gxv79Nayb3EH+UiBCLQ1Y/IzXgX8TCDUP4LRf
+z9Mlk5kF0lra37X97OB9D5Qs/0Domn9q8yygM8DQ3E21re+/b3j+YW+C0q0QiDywmYanzEAMSyY2
+03hUWCDifxrekg0oeMkEeAgEYBAIwCAQgLHZ7uQbDPE8g5FMgwUAAAAASUVORK5CYII=
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='History']
+			</item>
+			<item
+			name="TreeExpansionTest"
+			id="00813024-dccb-4689-93db-cd877ae3bc56"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='Tree Expansion Test']"
+			addcaps="menuitem,qtelement"
+			refimgid="f57c3737-b243-4239-a303-600209f33c02">
+				<image
+				name="Screenshot1"
+				guid="9f48639c-f5ff-4941-8247-92f82ef3cbc4">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAI1SURBVHhe7ZgBbsIwDEV3FxBXmCbtIiBxjwnE
+SSg3KdyEXiWr4yR1UqdFjEFQvqUnWidx0tS/dflYLFfm8+sbgOohLUAQADggCAAEEAQAAggCAAEE
+AYAAggBA8HRB7M5GtWuzVfvfz8G0Lra3dq/1exKbk7mazhw3StsdPG8f6+KFbwhK2MclyJj/jl8K
+f73OWvbpNiCItweCeCSFCYJ97bnrX/4XsyOfLTW8Od+UP6DF35pjHzqUFfuLMd3JrH3f/RBTlh5R
+eXI+OL8b0/QxnA1jeB5vXKol64nWL8u5qbga2nX2qPuTrovGCgvXVi8FCkImQNKnT2Buy/ndeRgr
+zScF+enY/4q+Vhz9ebbel/O6MT6JSFw+Hh2Pkms8Noggmm8iroqMm/H5/ZldFyjyDRF8yVPUGt3Q
+nD/EUWJJbJIpT2XRl94Kod31Z/P90jHi3K0vFmnaHif5MN9EXNF/QGmf2bfsuoKvXt5AEMrTMeeP
+mLjRs4Lg0sK2R3OR3/dLx4znWzdcn4wSXVn/4wWR35/supS+tVG2IOy5VkPn/JLcjSY/JYv/9T4R
+TyYUiUctpdL4+nyUfBxXtvN8QZBRAt8Wd0Br5/hT+6OvCxQuiB6bLMJ8aZTzBzgppF2bn+ij2j4p
+xUc1f8yzhWSVH6LdxbS3vCGiEiuT6NH6M3HU85RMu7Y/6rrEnwajPayPFwqiJOaSDtQCBGGBIAAD
+QVggCMBAEAAIIAgABBAEAAIIAgDBYrkyvxQOoa/XELesAAAAAElFTkSuQmCC
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='Tree Expansion Test']
+			</item>
+			<item
+			name="CustomModelInterface"
+			id="77156ac7-afdf-4a17-a3b0-a25aec201867"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='Custom Model Interface']"
+			addcaps="menuitem,qtelement"
+			refimgid="c947f742-af09-4cec-b916-aec0fbd17824">
+				<image
+				name="Screenshot1"
+				guid="ae565013-a9a9-4090-ab4c-4242c88f84de">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAALKSURBVHhe7ZhrbuowEIW7l1bdwlWlbgSkbqSo
+KwF2Amyi9y9sxdfjR3I8mTi+tCVBPSN9AntsT/w4zsDD49Oz+/PySsivR7RAQRCSoCAIASgIQgAK
+ghCAgiAEoCAIAWYUxJvbXlxvl71bme2WwIc7yDMePwzfq1vtZCIXt10PfXVk3Kl+VhtYu59ct83p
+52MsjHkEsd67s1/nw6as22K5mZZD9VVijPPFipPEclNB1Oo1re00cV7FHv0CZhBEvN2+b6Gv3fD/
+IcY4HL0odm+lT27R4+kLh26q31ib1nlfuz7X9rtvbi+I8HY4uXfLF9AbgeUyzTpsxAeWU5r0BsrW
+iy+Nten94ospT7TBgcd+a/nEZ5fnyfXwzKPxS995t6/0y3HU2B1Yn77vUorjLc5D6sHM9SnjiOid
+++s+ozNYXpP3Y6oQK9JHvS+p3oyzbOYRRDUn1QcAyuE21nm81V5vCh4cbzl+ypE7EYSytXF9DDkU
+xdhhLHyG6fjZV/72wDE8/ln6Qw31HcOY3doU89D9a3HwQtD9EPRFMfT9rDaeLg62WR739YYIffXi
+q/bG+P0hroxtlo36TgQj49biQ19zXDnUaOGANzzToE3F1xxHlz1BaNmSz5hvYDSOarcwbi+Iyd8Q
+0xuTUxzzkBsb9K2CyGmSpF3d4QZ/Lb74qoIwDlbTM+k2FV9znFq/nCrqemA0zrKZQRCedNMUovAL
+GP9lUoIJbXGjIiKK/lWvNxL6FxszsemD8kh9en47vZDvtfi9b5gyNaQeZr1uM+VriaPKMucs5jCn
+7KulTFb9splHEEJYVDC8OfHVjP/gYD3cPnIDB8uv5GLsyiZPlsfq5RDg7af8o/E9MIf6j2pvoylT
+PITBwrrV51FfH29NKRPG9HtS/AUtbXsrLwMwpkyE3BcUBCEABUEIQEEQAlAQhAAUBCEABUEI8Pj0
+7P4BaI9ONaR2YR8AAAAASUVORK5CYII=
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='Custom Model Interface']
+			</item>
+			<item
+			name="AssetBrowser"
+			id="94465dc0-1c8e-432f-a714-ba187bdab562"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='Asset Browser']"
+			addcaps="menuitem,qtelement"
+			refimgid="f4b88e54-72c0-471e-96f6-df2903b9ae0d">
+				<image
+				name="Screenshot1"
+				guid="87a0cb5e-cd1b-4d04-8f0d-626dc60eeab7">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAH3SURBVHhe7Zn9jcIwDMVvFxArnE66RUBiERCT
+AJu0bEJX8cVJmthuqCjoGqS+SD+hxPnwH+/VlvharTf0/fMLwOJhL8AQAERgCAAEMAQAAhgCAAEM
+AYAAhgBAUNUQh5aI2lMx9j+cqHFPytEcS/vAUqlniN2V7t2Nmq6j864QfxkW/aM7TYxzoBsdBvvA
+UqlmiO2lo/tln35Le15jgiFG94IlUskQezr3lcFXiittVSz2M26Elqa0Fs/GNfJfeha4GIN2zBjg
+eBN7Qqxp+aFYNdT9+V1u9XKrZe7kM/7OZ3POd6i3QRXqGEKZQJiD50qkI2sFcYdKY9YHZ+SQ4gux
+XK3CXAs53ivz4Xdd/v25VPEm5yzfBrWoYgjbJvE8iSd+QZU4RtbU8HcY0SlMTIq8GNNf61QZOBYN
+fXBf9fOxn5vK51J6P2cwJxUMEb6Gw6HF503iRm5NzFpBsIEJhohtTXhjgiGS8N2ZZAS3VxilP/N+
+zmBO5jcEtxJGNFqYGVtJ9BqLqNRmjImrJPp+bs+F+1NORsw+D9MqNW3fAvV3iL0v5wzmZHZD8Ff2
+kWh8+8CGSSMKsLTGeJGKEdsu//+GmGeCIPOwBjCiVPeXYmLNziflDEN8CvNXCAA+GBgCAAEMAYAA
+hgBAAEMAIIAhABDAEAAIVusN/QFFYgJhA6g8VQAAAABJRU5ErkJggg==
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='Asset Browser']
+			</item>
+			<item
+			name="ActiveFiltersControlTest"
+			id="cf0c868b-9209-46a8-976c-ada993360d12"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text~'^Active\ Filters\ Control\ Te']"
+			addcaps="menuitem,qtelement"
+			refimgid="23d13a09-7d84-400f-a324-213f6fa346ff">
+				<image
+				name="Screenshot1"
+				guid="d3e366f8-00fd-43a4-bb0c-c3088723fe26">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAALOSURBVHhe7ZgNTuMwEIX3LiCugFbai4DERag4
+SctN0t6EXMV4/NfnybgxLUlA+yx9Iv7JeDzj57j8ubt/cI9//xHy3yNaoCAISVAQhAAUBCEABUEI
+QEEQAlAQhACbCuL16Jw7vpl9szy/uw83uv2z0fcl3tzg3cDycXhR9mXMd8zVw4vbj8kRKeO7ezLH
+rYG97pA3o4S4wbjfyHaCkA03ntww9m60pTZlj10cs6A4ggidG3Z12x7rX+YWf+fevTUWC8bySjYT
+xNNhDCdK/muNqVkqeD12ccxSfsQvQyWGb+EWf+fevTUWS8XyejYShCQ/BSJ8KfS1oL42DDsJHJRw
+zcrBNDbS7nS+aqRTN5aTey1zZFpJwfb8bPnh+8054jvDURYibXpNeZ5EsGH5B1TzoI3k38GvO5V4
+yFj+ar867DY3bKPfjEdPTpWdDdhGEBKwIgIQR6lb91EdfKiLACCgcseNSVXv+HG23bpM3209G/Uy
+R7Rb5lM+TqhiYhHtlc0aNh365Eu2L3MpYdb+Ynzn7OK7GqtfteV4mOufs78+mwhCX5OkXoIVEmKd
+lDp4WJdn2ADm1yGV7qRo+9azpzmHPQ7XXdFcd8Lobwr/kr+mX712NUZ/Kx7m+ufsr88GgpAgWCUl
+pbkxdPDquvmbpGkLaSUF21vPnm5/I0H8vpQTuWBc/RBjnp8riHbM6/XP2V+f9QUhn87Gb4YYpCuu
+TFKXRIT/WmEyZMyFUznQSgq2t55zvcffM5VokXDVUaLw64r/ZYrzlL5q41k+XfJ36n+fXY3VH+1d
+ivl5/XP212d1QcjpYwUrnBzlOhODmktOlrwbinUlSUKaXIlCgqHo/mZSsL0eU/vh28w5lN202WNp
+n6ATW3h4VH3os17DJX/1WE+3XU2j34pHY/2TWG7M+l8IQn4wFAQhAAVBCEBBEAJQEIQAFAQhAAVB
+CHB3/+A+AS9FRhoBAsPWAAAAAElFTkSuQmCC
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text~'^Active\ Filters\ Control\ Te']
+			</item>
+			<item
+			name="ListModelTest"
+			id="0fbdad94-c4f6-4d87-9874-bd8b28da4d76"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='ListModel Test']"
+			addcaps="menuitem,qtelement"
+			refimgid="24030915-2c71-4cce-978e-454bba358e8e">
+				<image
+				name="Screenshot1"
+				guid="fec09f21-21f4-4698-ac84-705e11287545">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAHxSURBVHhe7ZiBjcIwDEVvFxArnE5iEZBYhIpJ
+gE0Km7Sr5OI2oY7jlNJCm9N9S0/Q2HEayT8xfK3WG/P9swXg30NagCAAcEAQADAgCAAYEAQADAgC
+AAYEAQBjAUGcTGlqc96L8f3VVNp4Espj7XZSfFuzu9TW+Uo+T+L9AvSY441eKLbqcgjiQL7kI4in
+yHntc1VruchH9o51NJ7FDMnRx9T5YCx/XhDlzYpCnsDF3d4c9zeto/EsZuwePVPng7FkJAg+fjBn
+6niclQX5mDVtko+nz7s5PvLQXD/O1mlass7KwseHvupy7Znn1xG5IxJ+NdeQvYo84GPkKYjmhJeF
+IOd1z9S7Pwqciq6+ml0QT99FTMIX/vYQa9r3am8jMR6h+RO5Bu0VzEWegnAnadgKyXkivhEBF4fM
+x28RFsfmqnntewQW3E5+jkTxp3K58f69grnIUxBurD2tlQKP4l2bVPDiZv5JggjnRTGRj1D8yVwt
+/XsFc5G1IAgqFL1NEc/UeljrTlrup+++2CxBcYa+uGXS/jYVa0do/lSujvRewVwsJIjQoiJwxd1a
+d6o+/udX2xa6JfgJLPyNCLyJYmPr9f+otja2ZSK0XIP2KvKAj7GAIADIFwgCAAYEAQADggCAAUEA
+wIAgAGBAEAAwVuuN+QUIADHBs717UgAAAABJRU5ErkJggg==
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='ListModel Test']
+			</item>
+			<item
+			name="ListFilterTest"
+			id="f94f234c-6e40-4420-8cba-808744727a8c"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='ListFilter Test']"
+			addcaps="menuitem,qtelement"
+			refimgid="1fa4c08d-2e2b-4cf4-a108-bfc53c78ee0c">
+				<image
+				name="Screenshot1"
+				guid="08a9a0fa-e110-4c0b-a9db-d403d5ee875a">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAGWSURBVHhe7ZkBbsIwDEV3FxBXmCbtIkPiIlSc
+BHaTlpvAVbKEtuC6dhdBpWbas/Sk1HV+Gim/uOJttd6E949PgH9P8gKGAOjAEAACDAEgwBAAAgwB
+IMAQAIIFDHEIdbiG41blt9/hYuVdks4wLqed0nHWepJ90y2k4rauUQ9/j3IM8St6Xo6OrJnTHK9q
+zfksMCcY4ile1ZrzWWBOCjKEzO/C8dr1IzHqKt0T0RxUvafTj6358f6tverjHPZift2kB+hzGmdt
+Uy9nL0oHFqNMQ1Rn46DoeepgxagrXeeNjeu4Zvst0OpOfxdoLSPX62XtBUqhTEN0b9rhodTzMnTc
+cWTwNu9i8pdHYtR4ell7gVIo0xBd7uvU9hrjN79dP85748jtoFotkacrMWpcvZbpvUApFG2IRDpI
+j1ZG3s/R8cb9tdUaeboSq8bTe+DvBUphIUMMY3RIUt99j8db9/4/wGRrI/PDmuH8mNNtzistU8LS
+y9qL0oHFWMAQAOWCIQAEGAJAgCEABBgCQIAhAAQYAkCwWm/CDxzR8nLZaJwJAAAAAElFTkSuQmCC
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='ListFilter Test']
+			</item>
+			<item
+			name="TreeModelTest"
+			id="0a2013aa-3063-4b67-9c4f-2f9668a80866"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='TreeModel Test']"
+			addcaps="menuitem,qtelement"
+			refimgid="a7923473-689f-42d1-8f05-6f5de9ec5290">
+				<image
+				name="Screenshot1"
+				guid="86936504-d1fe-42a2-96d0-c2c96143a4d3">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAH6SURBVHhe7ZmNbcIwEIW7C4gVKiQWAYlFiJgE
+sklgk2SVqy92wtk5xwYCpO2z9KnifgO6Zxv6tViu6Hu9AeDfw1qAIABwQBAACCAIAAQQBAACCAIA
+AQQBgODtgjhcSF31ea/G38eRKi52OSq+DW3PjXE2dNoNfeNw3VSeHvPa9wum5oMnRM6Q3YutWTda
+XSeWNwsi35/i2XyQw58URHUxogh34OJqTo7rgz1znjUV8+z7fcXnBUJmJghr44EmutKBbbuS6nZn
+5+VsUXtXk/+K2PWeTu2pEfT0ahBVRRfv++pzOZIX9nYxAyJ+tRY/rzOZVRWcK1bkSgieZ4aCkPfr
+IMbs8taXtvPdvR9wHrqmpK2XZ3t5MRGf/90j3bu1D9D8kVrtaRYOfao+mIJZnhC9zds93eJBidll
+fi8CKY7A750iIk7kDp4rp7eoeUPxx2o5+21jiOSDyfkFgvCHdtTu5btrUmFi++EWfqVGviBSvTUU
+f7SWxZ5MipiVWDAN8xZE+1r7iXLMLvL56uHFSb+t0V2L/OH0fcMrU0bvAZo/VusG97b+VH0wBTMX
+hKEdVLG6u7VqD/P5lJA7cOD3agR9nZh4jX+pNuvRKxOj1RK95Q8J/f80us8ATM4HBQHA/IAgABBA
+EAAIIAgABBAEAAIIAgABBAGAYLFc0Q+dIklLEupPGgAAAABJRU5ErkJggg==
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='TreeModel Test']
+			</item>
+			<item
+			name="WGContextMenuTest"
+			id="20356299-ba62-47d5-9bb6-4058d84db450"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='WGContextMenu Test']"
+			addcaps="menuitem,qtelement"
+			refimgid="be565ab9-5829-4b86-9622-fa0c2400783c">
+				<image
+				name="Screenshot1"
+				guid="7a4f114d-6c88-405e-933d-92b0634b1ba9">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAALsSURBVHhe7ZhhbtwgEIV7l0S5QlWpF0mkXGRX
+OUV/7uYm6/3dS6yvQhlg8GMAu8m2drJ5SJ+yMIYBZh7Y+XZ3/+C+//hJyJdHtEBBEJKgIAgBKAhC
+AAqCEICCIASgIAgBVhfEbnDutMe2F3dyozs8Qdv+7NzwMtWfXt3FQRlf3aPaAs/uMCablMq+JbI+
+X3A9wONRJm7W/x+QfW+Vy/G5+fxXZf0bopPsGBhJklwP9jJhdsPZ7dJv7V+IzLcdCtG9lYZI/xrb
+N9YvY2u8JJYVBDFxzdqEa/t/bNYXhCQwnOCS/Kejb8sikdNeNzye/OWNgizZ38s1Qbd9Y/00gMiV
+cDicV04wCmKO9QVRJbz8lk3WUx9+h9MfbgPLkl1IN4iWSTwpsEeflKnEhJV2KCrUYhzxGcWYk1yS
+ezy73+mJUEJfTSBco4Br1/1o+ZH23lzBlhPU1i0de9NvXKOW0176Qum8Bn5mNhAEfkf4DU63xc6f
+oCFI+EolQTK3SSzpWWOviQHMIghB12RIwVVf4tcmYE4aU/fPTuKRPvp3vm/x/ZTnjs+bvoWfd861
+omXv+BU/VdIvjf+52UQQeaNhw/W7of5+0MArEJCmHWjYCzEWgcW6sYVxTCmSExJ9btwsgs48un5m
+xpy1tWjYe35Te45Hr/8NsY0gUmLs5PsBT8zBfwwXH5+tzce2eKVPyWgIAf1XgugI7y2C0NekfVx/
+vNnA3vUzN+acrUXDPrc+j97M7X27LbYRRH43tYGUUgYmBgPbTECqhPT4AMf/MsUxs60IvA0s1ls2
+e1Jqu4ynf7WtN64nzXcaC+3yu+enN6Y5FML4+KzFjqVtLb8T083d6n87bCSIlOjm/V9O7/wqgqQk
+0lIFLiQ6FBy3sPWSqq6HuUjR+Vgfw6+QiDoXXE/Z1/qRBJ4ReOVn6ZXJg/uz+F8rO1ai5bfY92nO
+1d7cEJsJgpCPCAVBCEBBEAJQEIQAFAQhAAVBCEBBEALc3T+4P3DcE7jd2kAcAAAAAElFTkSuQmCC
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='WGContextMenu Test']
+			</item>
+			<item
+			name="PythonTest1"
+			id="63ea8120-7275-4454-bf0a-4c531ea3a218"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='Python Test 1']"
+			addcaps="menuitem,qtelement"
+			refimgid="68c6b6d3-cff9-4aca-9b41-68ee5b74a62d">
+				<image
+				name="Screenshot1"
+				guid="db48f40b-2b7d-4f2b-81fa-f9a0416605a9">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAH+SURBVHhe7ZltbsIwDIZ3FyauME3aRUDiIlSc
+BLhJ6e9dgl4li520cUyadmU0lfZaegT5sJNKfhsH3jbvW/Px+QXAv4e0AEEA4IEgABBAEAAIIAgA
+BBAEAAIIAgBBAUGcTG2ktea8T83LQTHm+E3jePNbU3a/HJLzZ1M1NurrngP8nkKCCEmwu7Q2J65m
+9zBPogXwWkEEnl1nyP9gzvaxza1Z6DnAVIoLYlrSzfH5C55dZ8x/qecAU1mRINxbs67EXCop2sZ8
+c8Hi7XYKPtXV3H13VM7sQz9ZiOn9LlSqOMuXQQMJG8VvzJH7/VvfW12RrzDet4ozFB8Uo7ggopKJ
+BCASh2p5l8w6cXyySb8+Md1YLwJO3s7X+3VrRH4p9LqJPhuDRaX2npz7wNg4WJpCgpAmE5LGRGL3
+dwudOJk2CyBO8rywcgmZGFenDxsJwffHJ86M+KAoxU8IDZ0YlFTdp+vXPpn2IoIYPlX4xLOWXk8z
+Ng6WZnWC4ISz94a6lXO0T65N33XJJE6dbBxNatzFz909gpjnxAclWZ8gLPw/gKrH+/8GuF/HUG1f
+vjjLzBvdy8B4FN8a7YnvI52FEyTedxcjvoCzjf70DJaggCDGCSUOAMuyPkFwyYS3JSjDigTRlRG5
+EgaA17K+EwKAgkAQAAggCAAEEAQAgs371vwAuXzq79f2O2YAAAAASUVORK5CYII=
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='Python Test 1']
+			</item>
+			<item
+			name="PythonTest2"
+			id="3efcc1d9-2b29-4635-b158-f79c689b5ad0"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='Python Test 2']"
+			addcaps="menuitem,qtelement"
+			refimgid="dd25bfae-a07c-4fa4-a69a-52978295f3bd">
+				<image
+				name="Screenshot1"
+				guid="dbaa9f4e-3173-414f-ad21-9252cac11db9">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAICSURBVHhe7Zd9boIhDMZ3FxevsCzZRTTxIhpP
+ot5E/XuX8L0Ko3xI6bAYnUCyp8kv8wVaWNKHlrfZ+9x8fH4B8O8hLUAQAAQgCAAYEAQADAgCAAYE
+AQADggCA0UEQW3M03CazW5bWaVCMR/zuY30KRxN22a+K6x9jZXZTCGztuCmtAa3pJIiUzIu9zYrp
+YBa/1nGkAF4riMSz+yj+m0Ma35ytJM5mLdeA5nQXxH1J94jPX/DsPvf6t/p/QI2BBOFbiKx1oJtz
+Optv31V4O22Tj71lL2E4a2eWaZwsxQx+e7qRvelt0I1EzeLHm122QOTLzJ1bxIlQvGqVBC3oLois
+ZSIBsMShXt4ns0zMkGzc75qYfu4qApe80Tf4xT2qrYrctzBmYzhRibMX1xYpXASgG50EwY0nJM2x
+xL7emjKxlG8ngDzJdWFpCVuYF9XHGQkhjOcVpxY/POC16gGa0r1CSKhiUFLFv368lsjsu4kgblcV
+V/GslffLcWshhqEYThAu4ey74Thpiat902/ZMrGqo8aRlOZ9fO3tkcSsxKcWC++G4RhPEJZSG+HG
+yNy4jCG+Q/viTVlXPcuN+Sy+NTqTe49ESxUkP3eMkT/Ao+Ed0Z8OgqiTWhwA2jKeIFzLhFYC9GEg
+QcQ2QmthAHgt41UIADoCQQDAgCAAYEAQADBm73PzAwp07gri95jnAAAAAElFTkSuQmCC
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='Python Test 2']
+			</item>
+			<item
+			name="PrototypeCustomPanel"
+			id="b7cb49c6-c6a7-44c3-9e9e-2304be9cf99d"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[@text='Prototype Custom Panel']"
+			addcaps="menuitem,qtelement"
+			refimgid="afbdd53a-a0a7-46c9-8ed3-e51fdf156dc1">
+				<image
+				name="Screenshot1"
+				guid="ac7ce954-91ad-46f8-bd82-6223e1a2abb6">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAKrSURBVHhe7ZhtTsMwDIa5C2hXQEhcBCQuwsQp
++LntJttusl0lxPmq7abJukIb1DfSI5bWdRw7b5ry8Pi0Mc8vrwCsHtICBAFAAIIAgAFBAMCAIABg
+QBAAMCAIABgLCOLLHA1vV7N7z9n9Zz7M7hqmR+16MG9ZuxaYqx40Tvu1XkgQXWLe9nbl3LVgxiR4
+xmK8H8zFLqvjVl7b8f7NzBH3b9Wjxow1mMDigrg/UWOem6sY/s0gxDCJOeL+rXrUmKsG02hMEP73
+8UTnjbP5pPthx43NLzayY+305X3dZPvdX7Tbc9gVQyzbzs9l/9HZCf8hPo67n7me4HPVfXnMOm7H
+zJH5YrHTPbfjhybmkijF9Go+T+FhajGGaLO3eQutnic9TpssLgj5iqZ7PLm+n4ruEh2f1QkeYUsC
+SMX1RffPeR8pnoqP3gIj++JxIxdz6KuYhu1Lc2Sxkz/bUoyunxOrHGP4yMTtwlgxXuFb+uvypK43
+ykKC4I0XSSXNFVwWUS7eO21dnxVQCFIWLflw/lXTCzgTgyQXR+gH/1Jkyn70HEt9fp03FX8Qlm/x
++YLvwTwNjd8Wi78hivfGLIBRi8XvhLT44l9/Xduxb4KM/z61bwjtPx8XtelzrI9Vvm4R49Hcol3B
+92CeCuM0RNuCcH22wESyp9iG+9ezfTv0fSSB9HzoHTxD2FGFKKwf/18mJRhn289FJ9Ipc6z1a9ct
+FN8tx0fRp9+5PBXGaYjGBWFxhYhN3qPd0bV4dBljG6+JY48f33/U+6YXtjgO6CPTkB0/k/MjyMkK
+MsYpjibdDnv7HHXuav3adYJ96IvNo+I7m6fSOO2wgCDaoTtuRP5H0cDfsV5B0C7W+28KBLF2ViiI
+eAzILXwIYu2s9w0BQAYIAgAGBAEAIwkCAEBszA/J2xRdvjdppQAAAABJRU5ErkJggg==
+				</image>
+				/contextmenu[@objectname='View']/menuitem[@text='Prototype Custom Panel']
+			</item>
+			<item
+			name="PropertyTreeTest"
+			id="43b87ef1-907b-4d5f-be02-205781d668db"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='View']/menuitem[15]"
+			addcaps="menuitem,qtelement"
+			refimgid="188b97ee-ff7e-4b0a-83d8-c80e38e992cf">
+				<image
+				name="Screenshot1"
+				guid="9c42fae5-3556-4e5a-bf18-3cc238f81f6d">
+					iVBORw0KGgoAAAANSUhEUgAAAMQAAAAXCAYAAABUDODqAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAI3SURBVHhe7ZlbbsIwEEW7FxBbqCp1IyCxESJW
+0U9gJ0k20f7CVlw/Yntsj5PwaBzKHemoxPY82syNHfq2WK7E+8cnAC+P0gIEAUAHBAEAAYIAgABB
+AECAIAAgQBAAEAoIYi9qQe0iDhtu3XzYNV2pkZ2PW3b9rUyVB+QpJAgvgvXxIjVxEutk3RSEtQxz
+7fpbuTfPVHX+P4oLouzNuzb3VLXem6fk3/S5mZkgzOe6kbuGaMVOzW9O4mxODtrqKvKr/HxwtAj8
+ulhB/B/xbSaNNV/iIId9fEnVRrtXXLsfy9dsc/eMJ3B5JKz/Vtdtra6UL7FmH8YAvRQXRHhkMjfT
+N7a5dk2qG4KKR5r1TeZIQ8nGNjG5+OE62kDqTB8IJF7vxvpj+tzceHcdkMvD+Ec1s2vBaAoJghp9
+UkY3Ujd5+CT1TZredDcXPEk7000T+3DXNp/8nLzbpDmTsVzubE00loXJMxA3FBdXJxhD8R2id07f
+7LGCMEcHL4jQzxD7pLWoHUs1l/3pffn1Y2ruHWdh8gz4651WWu5hAcYxb0Hoa3uTJUFTmDnXtH1z
+Di4+03iXVu4OXI3MejZmLjc3zpHL0+/vRcz5gzHMXBAS3ejW4sazL7PGnHASP2nskYl890+OL3qM
+Pc5wtQ/VLM3Gyo0ncHkknL96h3DmdxDu9wLDFBDEo8g0zQPwxzLwakAQMeopXOwfhaA0EITDfp//
+N7sOeA6eWBAAPB4IAgACBAEAAYIAgLBYrsQvAfN4aOi51WMAAAAASUVORK5CYII=
+				</image>
+				/contextmenu[@objectname='View']/menuitem[15]
+			</item>
+			<basepath>
+				/contextmenu[@objectname='View']
+			</basepath>
+			<icon>
+				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
+			</icon>
+		</appfolder>
+		<appfolder
+		name="TestData"
+		id="15fdee08-62a2-4c9c-a3a3-8b63dc86c457"
+		searchtimeout="60000ms"
+		capname="contextmenu"
+		refpath="/contextmenu[@objectname='TestData']"
+		addcaps="contextmenu,qtelement,qtwindow,nativewindow"
+		isrooted="True"
+		usecache="True">
+			<item
+			name="Open"
+			id="a991d774-b697-4757-a6e6-3bc737005a74"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='TestData']/menuitem[@text='Open']"
+			addcaps="menuitem,qtelement"
+			refimgid="464f7930-8bf2-46f7-aa5c-28a9939c174e">
+				<image
+				name="Screenshot1"
+				guid="920169b8-7034-4d1b-8567-94024c5ddb87">
+					iVBORw0KGgoAAAANSUhEUgAAAKAAAAAXCAYAAACMAETgAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAHISURBVGhD7ZftbcIwFEW7C4gVqkpdBCQWIWKS
+wCYJm5BVXH8G+2HHqUzykLlPOj8S4qi+7zh2vzbbnQCACy3g988vAKsDAQErEBCwAgEBKxAQsAIB
+ASt8AjY34df9cow/BxIcRTvY8FQNV7GPPkc5i04Moj3EfkuwYK94BNQT8kMwYULCmRyu4i4T7Jrw
+Xquvc4L9U8CFe8UgoJlAEJ5Ch3oTJ/8eiJDIb+SVAi7fq/UFTP7xarIuGBtSY1a6qmDF2S+AKfcu
+O+by2C6q/KJONl9l4FV/tvcG0fXSJD0uJqDKPvLOWb0qg0fA6HnFX202SPecDoLI6SYvtwgjmh2j
+Qzf3H3JWRDI/BxXM5PJYjPR3xYSA2V6V8d5fQC+kU28nrMeT8lZ6GDwNugKS+TlyOXjXsSxljWLN
+6lUZ6wuYWj3BZGlo3phkKLngayH39cnlEMtFvTMlWq5XZTAIKHnaHlUodJvwrp/kjJ3v5gRdCTo/
+IobMKP5f8JxcUgJKsr0qg0dAhQ3RVbjKTEjm4GyKhh1sHZ+0BTtoBt5ZTR1XdL0ql8lelcEn4CSV
+ywNGICBgBQICVt5UQPApQEDACgQErEBAwMpmuxN/m89ADOjIADsAAAAASUVORK5CYII=
+				</image>
+				/contextmenu[@objectname='TestData']/menuitem[@text='Open']
+			</item>
+			<item
+			name="Close"
+			id="52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/contextmenu[@objectname='TestData']/menuitem[@text='Close']"
+			addcaps="menuitem,qtelement"
+			refimgid="bd2fefce-87ba-44cb-bdf9-25145b1be684">
+				<image
+				name="Screenshot1"
+				guid="c4420c79-dae3-48f5-92a6-95ab921ca3e6">
+					iVBORw0KGgoAAAANSUhEUgAAAKAAAAAXCAYAAACMAETgAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAH6SURBVGhD7ZeNbcMgEEa7S6usUFXqIomURRxl
+kiSb2NkkXuXKYbAPgn8olc+NPqQnGYxN/PlhyNv7x44+v74BWB12DwICNSAgUAUCAlUgIFAFAgJV
+ICBQRVHAI11aGkp7o71tP1NNLV0OcX8QMpbfHMvzrRqi+iTbEtee7kTNWfTJQ0fAw40eJrPg4Uzb
+xdYh4CxF+WXkG8vlxn1cj33b/toG9VwUBOxmbjizJBBwmtL8MvJl4cSXlWWrr6atl5J/S9m7Wl9A
+O4vuVKXOWaKA3KzzZQg+XIL69qD/1Dj/lMn8ODtRrChdnnXDYfF1KQE5y9Q9pWD+mK/3feXx79AR
+cHK/IgPi41gudy6594jCNX1KlodNkpWfr8tlMz7PjAko94HmOjduZWQefwd5bPsLmOjbB2LPhfsR
+3xaUwoA2R05+c/VUXqYMq4zBSyZk8/u+0v0fs76AbukMHjJgoYCuziH0oc2+nFcgI79FdWb8C2gz
+NV++ivd/fkxua8yfnsL9H6MgoIFnk5fGt5mHev4Xx8ei34hgw0zs+pfOys2zOL8ldWZCQCc8Pd2D
+S/lk1xGQsTKJ0u9rooCCfqLdvYSuiCDi+77aEuwZza9bJWyxz75EwGnsKhPtO+0Yf5CtnoAAGCAg
+UAUCAlUgIFAFAgJVICBQpRcQAB129ANfSEUOuReguwAAAABJRU5ErkJggg==
+				</image>
+				/contextmenu[@objectname='TestData']/menuitem[@text='Close']
+			</item>
+			<basepath>
+				/contextmenu[@objectname='TestData']
+			</basepath>
+			<icon>
+				iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGOfPtRkwAAACBjSFJN
+AACHDwAAjA8AAP1SAACBQAAAfXkAAOmLAAA85QAAGcxzPIV3AAAKOWlDQ1BQaG90b3Nob3AgSUND
+IHByb2ZpbGUAAEjHnZZ3VFTXFofPvXd6oc0wAlKG3rvAANJ7k15FYZgZYCgDDjM0sSGiAhFFRJoi
+SFDEgNFQJFZEsRAUVLAHJAgoMRhFVCxvRtaLrqy89/Ly++Osb+2z97n77L3PWhcAkqcvl5cGSwGQ
+yhPwgzyc6RGRUXTsAIABHmCAKQBMVka6X7B7CBDJy82FniFyAl8EAfB6WLwCcNPQM4BOB/+fpFnp
+fIHomAARm7M5GSwRF4g4JUuQLrbPipgalyxmGCVmvihBEcuJOWGRDT77LLKjmNmpPLaIxTmns1PZ
+Yu4V8bZMIUfEiK+ICzO5nCwR3xKxRoowlSviN+LYVA4zAwAUSWwXcFiJIjYRMYkfEuQi4uUA4EgJ
+X3HcVyzgZAvEl3JJS8/hcxMSBXQdli7d1NqaQffkZKVwBALDACYrmcln013SUtOZvBwAFu/8WTLi
+2tJFRbY0tba0NDQzMv2qUP91829K3NtFehn4uWcQrf+L7a/80hoAYMyJarPziy2uCoDOLQDI3fti
+0zgAgKSobx3Xv7oPTTwviQJBuo2xcVZWlhGXwzISF/QP/U+Hv6GvvmckPu6P8tBdOfFMYYqALq4b
+Ky0lTcinZ6QzWRy64Z+H+B8H/nUeBkGceA6fwxNFhImmjMtLELWbx+YKuGk8Opf3n5r4D8P+pMW5
+FonS+BFQY4yA1HUqQH7tBygKESDR+8Vd/6NvvvgwIH554SqTi3P/7zf9Z8Gl4iWDm/A5ziUohM4S
+8jMX98TPEqABAUgCKpAHykAd6ABDYAasgC1wBG7AG/iDEBAJVgMWSASpgA+yQB7YBApBMdgJ9oBq
+UAcaQTNoBcdBJzgFzoNL4Bq4AW6D+2AUTIBnYBa8BgsQBGEhMkSB5CEVSBPSh8wgBmQPuUG+UBAU
+CcVCCRAPEkJ50GaoGCqDqqF6qBn6HjoJnYeuQIPQXWgMmoZ+h97BCEyCqbASrAUbwwzYCfaBQ+BV
+cAK8Bs6FC+AdcCXcAB+FO+Dz8DX4NjwKP4PnEIAQERqiihgiDMQF8UeikHiEj6xHipAKpAFpRbqR
+PuQmMorMIG9RGBQFRUcZomxRnqhQFAu1BrUeVYKqRh1GdaB6UTdRY6hZ1Ec0Ga2I1kfboL3QEegE
+dBa6EF2BbkK3oy+ib6Mn0K8xGAwNo42xwnhiIjFJmLWYEsw+TBvmHGYQM46Zw2Kx8lh9rB3WH8vE
+CrCF2CrsUexZ7BB2AvsGR8Sp4Mxw7rgoHA+Xj6vAHcGdwQ3hJnELeCm8Jt4G749n43PwpfhGfDf+
+On4Cv0CQJmgT7AghhCTCJkIloZVwkfCA8JJIJKoRrYmBRC5xI7GSeIx4mThGfEuSIemRXEjRJCFp
+B+kQ6RzpLuklmUzWIjuSo8gC8g5yM/kC+RH5jQRFwkjCS4ItsUGiRqJDYkjiuSReUlPSSXK1ZK5k
+heQJyeuSM1J4KS0pFymm1HqpGqmTUiNSc9IUaVNpf+lU6RLpI9JXpKdksDJaMm4ybJkCmYMyF2TG
+KQhFneJCYVE2UxopFykTVAxVm+pFTaIWU7+jDlBnZWVkl8mGyWbL1sielh2lITQtmhcthVZKO04b
+pr1borTEaQlnyfYlrUuGlszLLZVzlOPIFcm1yd2WeydPl3eTT5bfJd8p/1ABpaCnEKiQpbBf4aLC
+zFLqUtulrKVFS48vvacIK+opBimuVTyo2K84p6Ss5KGUrlSldEFpRpmm7KicpFyufEZ5WoWiYq/C
+VSlXOavylC5Ld6Kn0CvpvfRZVUVVT1Whar3qgOqCmrZaqFq+WpvaQ3WCOkM9Xr1cvUd9VkNFw08j
+T6NF454mXpOhmai5V7NPc15LWytca6tWp9aUtpy2l3audov2Ax2yjoPOGp0GnVu6GF2GbrLuPt0b
+erCehV6iXo3edX1Y31Kfq79Pf9AAbWBtwDNoMBgxJBk6GWYathiOGdGMfI3yjTqNnhtrGEcZ7zLu
+M/5oYmGSYtJoct9UxtTbNN+02/R3Mz0zllmN2S1zsrm7+QbzLvMXy/SXcZbtX3bHgmLhZ7HVosfi
+g6WVJd+y1XLaSsMq1qrWaoRBZQQwShiXrdHWztYbrE9Zv7WxtBHYHLf5zdbQNtn2iO3Ucu3lnOWN
+y8ft1OyYdvV2o/Z0+1j7A/ajDqoOTIcGh8eO6o5sxybHSSddpySno07PnU2c+c7tzvMuNi7rXM65
+Iq4erkWuA24ybqFu1W6P3NXcE9xb3Gc9LDzWepzzRHv6eO7yHPFS8mJ5NXvNelt5r/Pu9SH5BPtU
++zz21fPl+3b7wX7efrv9HqzQXMFb0ekP/L38d/s/DNAOWBPwYyAmMCCwJvBJkGlQXlBfMCU4JvhI
+8OsQ55DSkPuhOqHC0J4wybDosOaw+XDX8LLw0QjjiHUR1yIVIrmRXVHYqLCopqi5lW4r96yciLaI
+LoweXqW9KnvVldUKq1NWn46RjGHGnIhFx4bHHol9z/RnNjDn4rziauNmWS6svaxnbEd2OXuaY8cp
+40zG28WXxU8l2CXsTphOdEisSJzhunCruS+SPJPqkuaT/ZMPJX9KCU9pS8Wlxqae5Mnwknm9acpp
+2WmD6frphemja2zW7Fkzy/fhN2VAGasyugRU0c9Uv1BHuEU4lmmfWZP5Jiss60S2dDYvuz9HL2d7
+zmSue+63a1FrWWt78lTzNuWNrXNaV78eWh+3vmeD+oaCDRMbPTYe3kTYlLzpp3yT/LL8V5vDN3cX
+KBVsLBjf4rGlpVCikF84stV2a9021DbutoHt5turtn8sYhddLTYprih+X8IqufqN6TeV33zaEb9j
+oNSydP9OzE7ezuFdDrsOl0mX5ZaN7/bb3VFOLy8qf7UnZs+VimUVdXsJe4V7Ryt9K7uqNKp2Vr2v
+Tqy+XeNc01arWLu9dn4fe9/Qfsf9rXVKdcV17w5wD9yp96jvaNBqqDiIOZh58EljWGPft4xvm5sU
+moqbPhziHRo9HHS4t9mqufmI4pHSFrhF2DJ9NProje9cv+tqNWytb6O1FR8Dx4THnn4f+/3wcZ/j
+PScYJ1p/0Pyhtp3SXtQBdeR0zHYmdo52RXYNnvQ+2dNt293+o9GPh06pnqo5LXu69AzhTMGZT2dz
+z86dSz83cz7h/HhPTM/9CxEXbvUG9g5c9Ll4+ZL7pQt9Tn1nL9tdPnXF5srJq4yrndcsr3X0W/S3
+/2TxU/uA5UDHdavrXTesb3QPLh88M+QwdP6m681Lt7xuXbu94vbgcOjwnZHokdE77DtTd1PuvriX
+eW/h/sYH6AdFD6UeVjxSfNTws+7PbaOWo6fHXMf6Hwc/vj/OGn/2S8Yv7ycKnpCfVEyqTDZPmU2d
+mnafvvF05dOJZ+nPFmYKf5X+tfa5zvMffnP8rX82YnbiBf/Fp99LXsq/PPRq2aueuYC5R69TXy/M
+F72Rf3P4LeNt37vwd5MLWe+x7ys/6H7o/ujz8cGn1E+f/gUDmPP8usTo0wAAAAlwSFlzAAAOxAAA
+DsQBlSsOGwAAAKtJREFUOE9j+P//P0UYzrAJyP6/ZsVMojFWAxjAXMIApwEgADJkx8Hz/8va5/7P
+qJr4PzK75b9XbNl/mDwI4DUABAi5hKABIAAyZNnGff8jc5r/e8aWk+YCGMDlEqJdAMNTF64nzgUw
+DSAAos+dOwfG6ACnATANyIY0dE4iLgy6OqpBgmCA7gp0gNUAqCAYbD8IcQVJLkA2AARg3iHJBaRg
+DAPIxVgFicf/GQCdrAkiuOdOjQAAAABJRU5ErkJggg==
+			</icon>
+		</appfolder>
+		<appfolder
+		name="GenericApp"
+		id="4625f38f-a7c5-4439-85f5-7175bd248529"
+		searchtimeout="60000ms"
+		capname="form"
+		refpath="/form[@title='generic_app']"
+		addcaps="form,nativewindow"
+		isrooted="True"
+		usecache="True">
+			<item
+			name="CloseCtrlPlusW"
+			id="fa06751b-e569-40f1-a4f5-52fcd9a17e0b"
+			searchtimeout="60000ms"
+			capname="menuitem"
+			refpath="/form[@title='generic_app']/contextmenu/menuitem[@accessiblename='Close Ctrl+W']"
+			addcaps="menuitem,accessible"
+			refimgid="7c717611-609d-4be2-a927-2148b3539f28">
+				<image
+				name="Screenshot1"
+				guid="eb025baa-1885-466d-89cd-0ed4b1e78f89">
+					iVBORw0KGgoAAAANSUhEUgAAAKAAAAAXCAIAAAADYtO3AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAHOSURBVGhD7ZftjYMwDIZvl6u6wumkW6RIXQTE
+JDSbAJvAKpydTxcCaX6kRZaj94cJacrrx8Tt1/fl+vP7J2IpgCuAOUsAM5cAZi4BzFwCmLkEMHMV
+BXzv5sWOWd1wpu2XuavoGk7a+t1TIg/1sPSNv3xe3IzL0LpbaRUDXKlpIU9ZqQ5jvoDz/KbyQCnq
+nafH3VzeHrOPX1EhwFjLpAa9uALO9ZvKA0B1ZwAQ7R9qsrzhi/ISWAYwFt1YryZRxJguTDNcasIR
+Z2fCmuhup1HcL5h1A/Gg934Ah7ByBRiMrz7uQZoA1psFPnhVxQDHm5A3BgGlqCfX3YVkoRmzzqV3
+K+3XxP6kpfOgLWDfhtte71wP0RSl9aE3+HmBNYOTodmYyzAyjb1VSb978coj7eKGpSNqWm9uAwaV
+AawP2/CsQYeAdQwerM/drJ1QKb9HMSjyBqP9WdXQgM22cDmo3AYMKgRYFyCtx/WvSgjc3Q1IV6e4
+JrdgP6aE34MYFAOsiwb+b5GPwMiu+GKAQUjODduiiLFw183oHOnhbNAdznxEG0X84uGEAx/+AHBc
+eJiR1o5b5SehJGDRCSSAmUsAM5cAZi4BzFwCmLksYBFbXa7//TXyjScX3GIAAAAASUVORK5CYII=
+				</image>
+				/form[@title='generic_app']/?/?/menuitem[@accessiblename='Close Ctrl+W']
+			</item>
+			<item
+			name="OpenCtrlPlusO"
+			id="392472d6-45ce-45b3-b9b0-4d9ae973a6da"
+			searchtimeout="30000ms"
+			capname="menuitem"
+			refpath="/form[@title='generic_app']/contextmenu/menuitem[@accessiblename='Open Ctrl+O']"
+			addcaps="menuitem,accessible"
+			refimgid="543990ae-a747-46f7-95d4-ebe178dfc5d5">
+				<image
+				name="Screenshot1"
+				guid="e40007e1-705c-40d5-8175-9ba90985157c">
+					iVBORw0KGgoAAAANSUhEUgAAAKAAAAAXCAIAAAADYtO3AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAGlSURBVGhD7ZdtjoIwEIb3LhqvsNlkL7ImXkTi
+SdCbADeRq+DMlMLQr2wNVZxM8/xAKEnfefqBX7v9QREMCv7++VVEooKFo4KFo4KFo4KFo4KFU1Jw
+1Q223a8n96lATnU/5h3625/7lHNphr4+Ojc91ihgMcE4uCkDJhfu+Hi7D0NTzT9rvI6J/IfglQpY
+SDAOaE4LYP7uPP2Uhpd35GnBqxWwjODAaGDEJhJlq3C+L3YeWgHUzIvU7TruUVtf/eHqQwTb2otJ
+1LSwiUNPRzAUZ/l6qoB5FBPsHkLTlKTY5inGYNbN6KuOdFI3rIvZrPzybYlAXgMXiYnsTOX3gZDg
+aAHzeNMKttnOLQ0a+7Nm5zsrDS/H9gjkNcRS2Gsn+HSKpwqYRxnB/nSbR8xz2m6BPLHSbJPY8oql
+cBLB677OWAHzKCTY2VchD9+d7PXCunPQJsqxSegvzawk8BWdSOQLThQwj2KCAcpsGpuMmI2+NZb3
+UbZtH7dFG3gEe4LCGYTtuUThAuZRUnCYD7ElBRUsHBUsnNcLVl6KChaOChaOChbObn94ALr77YsN
+uSZFAAAAAElFTkSuQmCC
+				</image>
+				/form[@title='generic_app']/?/?/menuitem[@accessiblename='Open Ctrl+O']
+			</item>
+			<basepath>
+				/form[@title='generic_app']
+			</basepath>
+			<icon>
+				iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJxSURBVDhPY8AF7O3tOTojvGpWxHluCPLx0YAK
+EwdKgjyD9yZ53v+Y4/H/c67H//OpHj/DwsJ6XVxc+KFKsIMYb2/9tXGe+19kefz/lOP+/32yI9iA
+h1G2/1NTU//Hx8e/DA4OTgUqZYLogAIfHx+R2dFe029muP8BaXgXZ/f/oZnS/5f+xmADrnqb/k9L
+SwPjnvSY/xsTvM6lBXnZQbUzMDS7WR97mur8/0Oa8/8njpr/76iJ/78NxO8THcAGbPGw/l+Vnvj/
+RFYAmP8p2/3/JW+Tf56enrpgA/LN9E636Cn/v6UlBdZ8VEf+f6urLdAbHv8/Zrj8vxxu//89NDze
+RFr9v28o//+auuR/b29vY7gB9TpK/28ANe/VU/rv7+P9vz3CG6wBhkHh8chGDe669TZG2A3YbKD2
+39fX93+9p93/e4mO/z9muv5/5q73/46GBFjzGT3F/43hweBAxWtAmrXZ/wag2CUdGbDG60AMojfa
+GoMDE68B4eHh/8rSU//VWxr+P60h9X+Tluz/fi15wgbc0pP5fz/U6v/Sypx/LfV1/7eXJP2/nO77
+f5Kt/v8ubQWwAZtsTXAbsMXD6P/bTDdwoO0Ptfl/LsIGHLWPHTThBuxys/lfXl7+PyMjA2FAnL1N
+ZpGx9geQIV1Gqv+Ph1j+3+pl8h/EP64JiVpkA6qrq/+lp6dvdHNzEwIbAALAgBNPsTGfW26g/hek
+sRmYLkD0UWB8wwy4oSbxf7aD5VVgGLlBtWGCADc34yxLoyM1uipwA0DxXu7r8bba3ioXmEtZoErx
+gwgXx0hg2Dxar6v4u9/KeGpAQIAwVAoJMDAAAClAicN9JWMMAAAAAElFTkSuQmCC
 			</icon>
 		</appfolder>
 		<basepath/>

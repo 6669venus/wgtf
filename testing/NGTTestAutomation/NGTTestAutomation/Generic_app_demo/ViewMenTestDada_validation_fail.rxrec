@@ -1,0 +1,526 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="ec8f7523-c091-4e50-9425-b9b13f6d787e"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		ViewMenTestDada_validation_fail
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="ViewMenTestDada_validation_fail"
+	namespace="NGTTestAutomation.Generic_app_demo"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		screenshotname="Screenshot1"
+		screenshotguid="d7ace98f-9548-4575-9582-7839ccb6467d"
+		codegenpropertyname="View_Screenshot1"
+		searchpropertyid="879bb2da-8cb9-4e53-8303-b81ff2bf43cd"
+		imagerect="12,4,17,10"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="23"
+		sy="30"
+		loc="5;4">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="d5ba6478-3c4d-475d-8516-b7394d2a1411">
+				<element
+				role="menuitem"
+				prefcap="menuitem"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="6,22,33,20"
+				snapElem="">
+					<attribute
+					name="checked"
+					type="System.Boolean">
+						False
+					</attribute>
+					<attribute
+					name="text"
+					type="System.String">
+						View
+					</attribute>
+					<attribute
+					name="basetype"
+					type="System.String">
+						QAction
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						190
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QAction
+					</attribute>
+					<dynamicattribute
+					name="AutoRepeat"
+					type="System.Boolean"
+					description="The Qt QAction.autoRepeat property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Checkable"
+					type="System.Boolean"
+					description="The Qt QAction.checkable property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QAction.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Font"
+					type="System.String"
+					description="The Qt QAction.font property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Icon"
+					type="System.String"
+					description="The Qt QAction.icon property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconText"
+					type="System.String"
+					description="The Qt QAction.iconText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconVisibleInMenu"
+					type="System.Boolean"
+					description="The Qt QAction.iconVisibleInMenu property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="MenuRole"
+					type="System.Object"
+					description="The Qt QAction.menuRole property of type Object."/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QAction.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Priority"
+					type="System.Object"
+					description="The Qt QAction.priority property of type Object."/>
+					<dynamicattribute
+					name="Shortcut"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QAction.shortcut property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ShortcutContext"
+					type="System.String"
+					description="The Qt QAction.shortcutContext property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="StatusTip"
+					type="System.String"
+					description="The Qt QAction.statusTip property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QAction.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="WhatsThis"
+					type="System.String"
+					description="The Qt QAction.whatsThis property of type String."
+					readonly="False"/>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QAction.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Hover"
+					description="The Qt QAction.hover() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetChecked"
+					description="The Qt QAction.setChecked(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetDisabled"
+					description="The Qt QAction.setDisabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetEnabled"
+					description="The Qt QAction.setEnabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetVisible"
+					description="The Qt QAction.setVisible(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Toggle"
+					description="The Qt QAction.toggle() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Trigger"
+					description="The Qt QAction.trigger() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@objectname='MainWindow']/?/?/menuitem[@text='View']
+				</path>
+			</info>
+			<helperscreenshot
+			guid="7dd157be-08e7-4458-93bc-523e9150ba26">
+				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
+imbj60UAf//Z
+			</helperscreenshot>
+		</mouseitem>
+		<validationitem
+		enabled="True"
+		optional="True"
+		screenshotname="Screenshot1"
+		screenshotguid="9c42fae5-3556-4e5a-bf18-3cc238f81f6d"
+		codegenpropertyname="PropertyTreeTest_Screenshot1"
+		searchpropertyid="871b4716-624d-42a8-b4be-2b897d8060d9"
+		imagerect="0,0,196,23"
+		imageoptions="1;EdgesSobel;0,0,196,23;True;10000000;0ms"
+		action="ContainsImage"
+		reportlevelonsuccess="Failure;120"
+		reportlevelonfailure="Success;110">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="43b87ef1-907b-4d5f-be02-205781d668db">
+				<element
+				role="menuitem"
+				prefcap="menuitem"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="False"
+				valid="False"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="14"
+				rect="0,0,0,0"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						QAction
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						507
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QAction
+					</attribute>
+					<dynamicattribute
+					name="AutoRepeat"
+					type="System.Boolean"
+					description="The Qt QAction.autoRepeat property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Checkable"
+					type="System.Boolean"
+					description="The Qt QAction.checkable property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QAction.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Font"
+					type="System.String"
+					description="The Qt QAction.font property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Icon"
+					type="System.String"
+					description="The Qt QAction.icon property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconText"
+					type="System.String"
+					description="The Qt QAction.iconText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconVisibleInMenu"
+					type="System.Boolean"
+					description="The Qt QAction.iconVisibleInMenu property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="MenuRole"
+					type="System.Object"
+					description="The Qt QAction.menuRole property of type Object."/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QAction.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Priority"
+					type="System.Object"
+					description="The Qt QAction.priority property of type Object."/>
+					<dynamicattribute
+					name="Shortcut"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QAction.shortcut property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ShortcutContext"
+					type="System.String"
+					description="The Qt QAction.shortcutContext property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="StatusTip"
+					type="System.String"
+					description="The Qt QAction.statusTip property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QAction.visible property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="WhatsThis"
+					type="System.String"
+					description="The Qt QAction.whatsThis property of type String."
+					readonly="False"/>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QAction.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Hover"
+					description="The Qt QAction.hover() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetChecked"
+					description="The Qt QAction.setChecked(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetDisabled"
+					description="The Qt QAction.setDisabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetEnabled"
+					description="The Qt QAction.setEnabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetVisible"
+					description="The Qt QAction.setVisible(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Toggle"
+					description="The Qt QAction.toggle() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Trigger"
+					description="The Qt QAction.trigger() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/contextmenu[@objectname='View']/menuitem[15]
+				</path>
+			</info>
+			<matchname>
+				Text
+			</matchname>
+			<matchvalue>
+				yourtext
+			</matchvalue>
+		</validationitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		ViewMenTestDada_validation_fail.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

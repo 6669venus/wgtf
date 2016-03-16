@@ -119,6 +119,11 @@ reportlevel="Info;20">
 							</databinding>
 						</testmodule>
 					</setup>
+					<testmodule
+					name="File_exit"
+					id="276394c9-8bc8-41c9-a7b8-8282df9e166e"
+					ref="959610e8-dc35-4fde-93de-1e632eead6f5"
+					type="Recording"/>
 					<teardown
 					name="teardown"
 					id="6b15f8a7-4a10-401d-85c0-b946a44c2309">
@@ -184,6 +189,23 @@ reportlevel="Info;20">
 							</databinding>
 						</testmodule>
 					</setup>
+					<testmodule
+					name="View_Menu_selection"
+					id="04033e97-1937-4a0c-ac51-ed77d99ae4ce"
+					ref="0057bfca-3540-48d9-ba3c-bbfd887e62df"
+					type="Recording"/>
+					<modulegroup
+					name="Test__Data_menu"
+					id="ad92a68d-61e5-4e17-aed8-ef8dbd132600"
+					ref="fb901b06-1c7f-454d-a275-c328118dc79d">
+						<databinding>
+							<var
+							variablename="ModuleGrouppath"
+							variableid="0336eaaf-811a-429f-aa1f-e71a0de19064"
+							dataname="path"
+							datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+						</databinding>
+					</modulegroup>
 					<teardown
 					name="teardown"
 					id="c9c0ba38-35e7-4dff-941b-d9c1eeb5e711">

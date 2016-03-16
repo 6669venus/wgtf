@@ -1,0 +1,712 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="91764307-6887-4c33-8600-1f11ebb6f3b7"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		TestDataOpen
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="TestDataOpen"
+	namespace="NGTTestAutomation.Generic_app_demo"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		screenshotname="Screenshot1"
+		screenshotguid="77b00f29-fe66-413a-a155-e940112ccfad"
+		codegenpropertyname="TestData_Screenshot1"
+		searchpropertyid="6120eecf-7e3d-4c13-9c96-ff8e6777accb"
+		imagerect="7,5,10,9"
+		action="DoubleClick"
+		button="Left"
+		movetime="300ms"
+		sx="89"
+		sy="31"
+		loc="5;4">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="91503505-5f33-42cc-9189-b522f7670e1d">
+				<element
+				role="menuitem"
+				prefcap="menuitem"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="3"
+				rect="77,22,54,20"
+				snapElem="">
+					<attribute
+					name="checked"
+					type="System.Boolean">
+						False
+					</attribute>
+					<attribute
+					name="text"
+					type="System.String">
+						TestData
+					</attribute>
+					<attribute
+					name="basetype"
+					type="System.String">
+						QAction
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						192
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QAction
+					</attribute>
+					<dynamicattribute
+					name="AutoRepeat"
+					type="System.Boolean"
+					description="The Qt QAction.autoRepeat property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Checkable"
+					type="System.Boolean"
+					description="The Qt QAction.checkable property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QAction.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Font"
+					type="System.String"
+					description="The Qt QAction.font property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Icon"
+					type="System.String"
+					description="The Qt QAction.icon property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconText"
+					type="System.String"
+					description="The Qt QAction.iconText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconVisibleInMenu"
+					type="System.Boolean"
+					description="The Qt QAction.iconVisibleInMenu property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="MenuRole"
+					type="System.Object"
+					description="The Qt QAction.menuRole property of type Object."/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QAction.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Priority"
+					type="System.Object"
+					description="The Qt QAction.priority property of type Object."/>
+					<dynamicattribute
+					name="Shortcut"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QAction.shortcut property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ShortcutContext"
+					type="System.String"
+					description="The Qt QAction.shortcutContext property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="StatusTip"
+					type="System.String"
+					description="The Qt QAction.statusTip property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QAction.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="WhatsThis"
+					type="System.String"
+					description="The Qt QAction.whatsThis property of type String."
+					readonly="False"/>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QAction.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Hover"
+					description="The Qt QAction.hover() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetChecked"
+					description="The Qt QAction.setChecked(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetDisabled"
+					description="The Qt QAction.setDisabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetEnabled"
+					description="The Qt QAction.setEnabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetVisible"
+					description="The Qt QAction.setVisible(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Toggle"
+					description="The Qt QAction.toggle() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Trigger"
+					description="The Qt QAction.trigger() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@objectname='MainWindow']/?/?/menuitem[@text='TestData']
+				</path>
+			</info>
+			<helperscreenshot
+			guid="3a8c1fee-12c9-4c4f-a975-cf3bae4a4349">
+				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
+			</helperscreenshot>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		screenshotname="Screenshot1"
+		screenshotguid="920169b8-7034-4d1b-8567-94024c5ddb87"
+		codegenpropertyname="Open_Screenshot1"
+		searchpropertyid="89a7d7fc-522f-423b-b065-8051c5127872"
+		imagerect="12,2,124,18"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="102"
+		sy="53"
+		loc="4;4">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="a991d774-b697-4757-a6e6-3bc737005a74">
+				<element
+				role="menuitem"
+				prefcap="menuitem"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="77,42,160,23"
+				snapElem="">
+					<attribute
+					name="checked"
+					type="System.Boolean">
+						False
+					</attribute>
+					<attribute
+					name="text"
+					type="System.String">
+						Open
+					</attribute>
+					<attribute
+					name="basetype"
+					type="System.String">
+						QAction
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						327
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QAction
+					</attribute>
+					<dynamicattribute
+					name="AutoRepeat"
+					type="System.Boolean"
+					description="The Qt QAction.autoRepeat property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Checkable"
+					type="System.Boolean"
+					description="The Qt QAction.checkable property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QAction.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Font"
+					type="System.String"
+					description="The Qt QAction.font property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Icon"
+					type="System.String"
+					description="The Qt QAction.icon property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconText"
+					type="System.String"
+					description="The Qt QAction.iconText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="IconVisibleInMenu"
+					type="System.Boolean"
+					description="The Qt QAction.iconVisibleInMenu property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="MenuRole"
+					type="System.Object"
+					description="The Qt QAction.menuRole property of type Object."/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QAction.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Priority"
+					type="System.Object"
+					description="The Qt QAction.priority property of type Object."/>
+					<dynamicattribute
+					name="Shortcut"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QAction.shortcut property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ShortcutContext"
+					type="System.String"
+					description="The Qt QAction.shortcutContext property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="StatusTip"
+					type="System.String"
+					description="The Qt QAction.statusTip property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QAction.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="WhatsThis"
+					type="System.String"
+					description="The Qt QAction.whatsThis property of type String."
+					readonly="False"/>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QAction.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Hover"
+					description="The Qt QAction.hover() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetChecked"
+					description="The Qt QAction.setChecked(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetDisabled"
+					description="The Qt QAction.setDisabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetEnabled"
+					description="The Qt QAction.setEnabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetVisible"
+					description="The Qt QAction.setVisible(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Toggle"
+					description="The Qt QAction.toggle() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Trigger"
+					description="The Qt QAction.trigger() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/contextmenu[@objectname='TestData']/menuitem[@text='Open']
+				</path>
+			</info>
+			<helperscreenshot
+			guid="4fdd3157-fa4f-4bc6-bc6c-301fe14c2ef4">
+				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
+/9k=
+			</helperscreenshot>
+		</mouseitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		TestDataOpen.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

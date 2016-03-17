@@ -340,14 +340,7 @@ Control {
                 updateHandlePosition(mouse, Settings.hasTouchScreen)
             }
 
-            if ( __grabbedValue === value )
-            {
-                abortUndoFrame();
-            }
-            else
-            {
-                endUndoFrame();
-            }
+            endUndoFrame();
 
             clickOffset = 0
             preventStealing = false

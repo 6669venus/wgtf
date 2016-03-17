@@ -79,7 +79,7 @@ void FileSystem::enumerate(const char* dir, EnumerateCallback callback) const
 	{
 		do
 		{
-			FileInfo info(
+			auto  info = std::make_shared<FileInfo>(
 				uint64_t(findData.nFileSizeHigh) << 32 | findData.nFileSizeLow,
 				uint64_t(findData.ftCreationTime.dwHighDateTime) << 32 | findData.ftCreationTime.dwLowDateTime,
 				uint64_t(findData.ftLastWriteTime.dwHighDateTime) << 32 | findData.ftLastWriteTime.dwLowDateTime,
@@ -112,7 +112,7 @@ IFileSystem::FileType FileSystem::getFileType(const char* path) const
 	}
 	return fileType;
 }
-FileInfo FileSystem::getFileInfo(const char* path) const
+IFileInfoPtr FileSystem::getFileInfo(const char* path) const
 {
 	// GetFileAttributes doesn't work for all files (i.e. c:\hyberfil.sys)
 	// https://msdn.microsoft.com/en-us/library/windows/desktop/aa364944(v=vs.85).aspx
@@ -120,7 +120,7 @@ FileInfo FileSystem::getFileInfo(const char* path) const
 	auto handle = FindFirstFileExAHelper(path, findData);
 	if (handle != INVALID_HANDLE_VALUE)
 	{
-		FileInfo info (
+		auto info = std::make_shared<FileInfo>(
 			uint64_t(findData.nFileSizeHigh) << 32 | findData.nFileSizeLow,
 			uint64_t(findData.ftCreationTime.dwHighDateTime) << 32 | findData.ftCreationTime.dwLowDateTime,
 			uint64_t(findData.ftLastWriteTime.dwHighDateTime) << 32 | findData.ftLastWriteTime.dwLowDateTime,
@@ -131,16 +131,15 @@ FileInfo FileSystem::getFileInfo(const char* path) const
 		FindClose(handle);
 		return info;
 	}
-	FileInfo info( 0, 0, 0, 0, std::string(), None );
-	return info;
+	return std::make_shared<FileInfo>( 0, 0, 0, 0, std::string(), None );
 }
 bool FileSystem::move(const char* path, const char* new_path)
 {
 	return MoveFileA(path, new_path) != FALSE;
 }
-IFileSystem::istream_uptr FileSystem::readFile(const char* path, std::ios::openmode mode) const
+IFileSystem::IStreamPtr FileSystem::readFile(const char* path, std::ios::openmode mode) const
 {
-	return istream_uptr(new FileDataStream(path, mode));
+	return IStreamPtr(new FileDataStream(path, mode));
 }
 bool FileSystem::writeFile(const char* path, const void* data, size_t len, std::ios::openmode mode)
 {

@@ -20,7 +20,7 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_logging/logging.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_reflection/type_class_definition.hpp"
 
 #include <list>
@@ -47,7 +47,7 @@ struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
 	{
 	}
 
-	void addFolderItem(const FileInfo& fileInfo)
+	void addFolderItem(const IFileInfoPtr& fileInfo)
 	{
 		if (self_.fileHasFilteredExtension(fileInfo))
 		{
@@ -156,15 +156,15 @@ void FileSystemAssetBrowserModel::populateFolderContents( const IItem* item )
 		if ( folderItem )
 		{
 			std::vector< std::string > paths;
-			const FileInfo& fileInfo = folderItem->getFileInfo();
-			paths.push_back( fileInfo.fullPath );
+			auto fileInfo = folderItem->getFileInfo();
+			paths.push_back( fileInfo->fullPath() );
 			addFolderItems( paths );
 		}
 	}
 }
 
 
-bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& fileInfo )
+bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const IFileInfoPtr& fileInfo )
 {
 	std::string fileExtensionFilter;
 	getSelectedCustomFilterText( fileExtensionFilter );
@@ -177,7 +177,7 @@ bool FileSystemAssetBrowserModel::fileHasFilteredExtension( const FileInfo& file
 		return true;
 	}
 
-	return ( std::strcmp( fileInfo.extension(), fileExtensionFilter.c_str() ) == 0 );
+	return ( std::strcmp( fileInfo->extension(), fileExtensionFilter.c_str() ) == 0 );
 }
 
 IAssetObjectItem* FileSystemAssetBrowserModel::getFolderContentsAtIndex( const int & index ) const
@@ -277,8 +277,8 @@ void FileSystemAssetBrowserModel::addFolderItems( const AssetPaths& paths )
 	{
 		const std::string& dir = directories.front();
 
-		fs.enumerate(dir.c_str(), [&](FileInfo&& info) {
-			if (!info.isDirectory())
+		fs.enumerate(dir.c_str(), [&](IFileInfoPtr&& info) {
+			if (!info->isDirectory())
 			{
 				impl_->addFolderItem(info);
 			}

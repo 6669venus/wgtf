@@ -10,6 +10,8 @@ SET( ALL_SRCS
 	i_component.hpp
 	i_component_provider.hpp
 	i_menu.hpp
+	i_menu_handler.cpp
+	i_menu_handler.hpp
 	i_region.hpp
 	i_status_bar.hpp
 	i_ui_application.hpp

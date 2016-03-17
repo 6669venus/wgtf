@@ -10,6 +10,7 @@ RowLayout {
     id: toolbar
 
     property bool editEnabled : true
+	property bool timeScaleEnabled : true
     property real time: 0
     property real value: 0
     property string title: ""
@@ -56,6 +57,7 @@ RowLayout {
 	}
 	WGNumberBox {
         id: editTimeScale
+		enabled: toolbar.timeScaleEnabled
 		maximumValue: 4294967295
 		minimumValue: 0
 		stepSize: 0.01

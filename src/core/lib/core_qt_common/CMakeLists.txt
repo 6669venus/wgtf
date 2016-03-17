@@ -148,6 +148,7 @@ SET( ALL_SRCS
 	qt_tool_bar.hpp
 	qt_context_menu.cpp
 	qt_context_menu.hpp
+	qt_qlist_memory_fix.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

@@ -27,7 +27,7 @@
 #include "core_common/wg_condition_variable.hpp"
 #include "core_common/thread_local_value.hpp"
 #include "i_env_system.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
 
 // TODO: Remove to platform string header
@@ -1038,7 +1038,7 @@ void CommandManagerImpl::onAddEnv( IEnvState* state )
 	{
 		IDefinitionManager& defManager = pCommandManager_->getDefManager();
 
-		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+		IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
 		HistorySerializer serializer( *fileStream, defManager );
 		std::string version;
 		serializer.deserialize( version );
@@ -1530,7 +1530,7 @@ void CommandManagerImpl::loadMacroList()
 	{
 		IDefinitionManager& defManager = pCommandManager_->getDefManager();
 
-		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+		IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
 		XMLSerializer serializer( *fileStream, defManager );
 		std::string version;
 		serializer.deserialize( version );

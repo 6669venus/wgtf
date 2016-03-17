@@ -13,7 +13,7 @@
 #include "core_variant/variant.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include <fstream>
 #include "core_common/ngt_windows.hpp"
 #include "core_command_system/env_system.hpp"

@@ -27,6 +27,13 @@ SET( SERIALIZER_SRCS
 )
 SOURCE_GROUP( "Serializer" FILES ${SERIALIZER_SRCS} )
 
+SET( INTERFACE_SRCS
+	../../interfaces/${PROJECT_NAME}/i_file_system.hpp
+	../../interfaces/${PROJECT_NAME}/i_file_info.hpp
+	../../interfaces/${PROJECT_NAME}/i_file_utilities.hpp
+)
+SOURCE_GROUP( "Interfaces" FILES ${INTERFACE_SRCS} )
+
 SET( ALL_SRCS
 	basic_stream.cpp
 	basic_stream.hpp
@@ -63,6 +70,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${SERIALIZER_DETAILS_SRCS}
 	${SERIALIZER_SRCS}
 	${BLOB_SRCS}
+	${INTERFACE_SRCS}
 )
 
 BW_ADD_LIBRARY( core_serialization ${BLOB_SRCS} )

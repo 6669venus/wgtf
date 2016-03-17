@@ -79,8 +79,8 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.View' at 5;4.", repo.Generic_app.MainWindow.ViewInfo, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.View.Click(new Location(View_Screenshot1, "5;4", View_Screenshot1_Options));
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.View' at Center.", repo.Generic_app.MainWindow.ViewInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.View.Click();
             Delay.Milliseconds(200);
             
             try {
@@ -92,12 +92,6 @@ namespace NGTTestAutomation.Generic_app_demo
         }
 
 #region Image Feature Data
-        CompressedImage View_Screenshot1
-        { get { return repo.Generic_app.MainWindow.ViewInfo.GetScreenshot1(new Rectangle(12, 4, 17, 10)); } }
-
-        Imaging.FindOptions View_Screenshot1_Options
-        { get { return Imaging.FindOptions.Default; } }
-
         CompressedImage PropertyTreeTest_Screenshot1
         { get { return repo.View.PropertyTreeTestInfo.GetScreenshot1(new Rectangle(0, 0, 196, 23)); } }
 

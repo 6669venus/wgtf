@@ -79,29 +79,17 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left DoubleClick item 'Generic_app.MainWindow.TestData' at 5;4.", repo.Generic_app.MainWindow.TestDataInfo, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.TestData.DoubleClick(new Location(TestData_Screenshot1, "5;4", TestData_Screenshot1_Options));
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left DoubleClick item 'Generic_app.MainWindow.TestData' at Center.", repo.Generic_app.MainWindow.TestDataInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.TestData.DoubleClick();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'TestData.Open' at 4;4.", repo.TestData.OpenInfo, new RecordItemIndex(1));
-            repo.TestData.Open.Click(new Location(Open_Screenshot1, "4;4", Open_Screenshot1_Options));
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'TestData.Open' at Center.", repo.TestData.OpenInfo, new RecordItemIndex(1));
+            repo.TestData.Open.Click();
             Delay.Milliseconds(200);
             
         }
 
 #region Image Feature Data
-        CompressedImage TestData_Screenshot1
-        { get { return repo.Generic_app.MainWindow.TestDataInfo.GetScreenshot1(new Rectangle(7, 5, 10, 9)); } }
-
-        Imaging.FindOptions TestData_Screenshot1_Options
-        { get { return Imaging.FindOptions.Default; } }
-
-        CompressedImage Open_Screenshot1
-        { get { return repo.TestData.OpenInfo.GetScreenshot1(new Rectangle(12, 2, 124, 18)); } }
-
-        Imaging.FindOptions Open_Screenshot1_Options
-        { get { return Imaging.FindOptions.Default; } }
-
 #endregion
     }
 #pragma warning restore 0436

@@ -79,91 +79,65 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.View' at 4;4.", repo.Generic_app.MainWindow.ViewInfo, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.View.Click(new Location(View_Screenshot1, "4;4", View_Screenshot1_Options));
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.View' at Center.", repo.Generic_app.MainWindow.ViewInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.View.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'View.Macros' at 5;4.", repo.View.MacrosInfo, new RecordItemIndex(1));
-            repo.View.Macros.Click(new Location(Macros_Screenshot1, "5;4", Macros_Screenshot1_Options));
-            Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.View' at 4;4.", repo.Generic_app.MainWindow.ViewInfo, new RecordItemIndex(2));
-            repo.Generic_app.MainWindow.View.Click(new Location(View_Screenshot1_2, "4;4", View_Screenshot1_2_Options));
-            Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.Macros'.", repo.View.MacrosInfo, new RecordItemIndex(3));
-            Validate.ContainsImage(repo.View.MacrosInfo, Macros_Screenshot1_2, Macros_Screenshot1_2_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.Macros'.", repo.View.MacrosInfo, new RecordItemIndex(1));
+            Validate.ContainsImage(repo.View.MacrosInfo, Macros_Screenshot1, Macros_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.History'.", repo.View.HistoryInfo, new RecordItemIndex(4));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.History'.", repo.View.HistoryInfo, new RecordItemIndex(2));
             Validate.ContainsImage(repo.View.HistoryInfo, History_Screenshot1, History_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.TreeExpansionTest'.", repo.View.TreeExpansionTestInfo, new RecordItemIndex(5));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.TreeExpansionTest'.", repo.View.TreeExpansionTestInfo, new RecordItemIndex(3));
             Validate.ContainsImage(repo.View.TreeExpansionTestInfo, TreeExpansionTest_Screenshot1, TreeExpansionTest_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.CustomModelInterface'.", repo.View.CustomModelInterfaceInfo, new RecordItemIndex(6));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.CustomModelInterface'.", repo.View.CustomModelInterfaceInfo, new RecordItemIndex(4));
             Validate.ContainsImage(repo.View.CustomModelInterfaceInfo, CustomModelInterface_Screenshot1, CustomModelInterface_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.ActiveFiltersControlTest'.", repo.View.ActiveFiltersControlTestInfo, new RecordItemIndex(7));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.ActiveFiltersControlTest'.", repo.View.ActiveFiltersControlTestInfo, new RecordItemIndex(5));
             Validate.ContainsImage(repo.View.ActiveFiltersControlTestInfo, ActiveFiltersControlTest_Screenshot1, ActiveFiltersControlTest_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.ListModelTest'.", repo.View.ListModelTestInfo, new RecordItemIndex(8));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.ListModelTest'.", repo.View.ListModelTestInfo, new RecordItemIndex(6));
             Validate.ContainsImage(repo.View.ListModelTestInfo, ListModelTest_Screenshot1, ListModelTest_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.ListFilterTest'.", repo.View.ListFilterTestInfo, new RecordItemIndex(9));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.ListFilterTest'.", repo.View.ListFilterTestInfo, new RecordItemIndex(7));
             Validate.ContainsImage(repo.View.ListFilterTestInfo, ListFilterTest_Screenshot1, ListFilterTest_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.TreeModelTest'.", repo.View.TreeModelTestInfo, new RecordItemIndex(10));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.TreeModelTest'.", repo.View.TreeModelTestInfo, new RecordItemIndex(8));
             Validate.ContainsImage(repo.View.TreeModelTestInfo, TreeModelTest_Screenshot1, TreeModelTest_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.WGContextMenuTest'.", repo.View.WGContextMenuTestInfo, new RecordItemIndex(11));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.WGContextMenuTest'.", repo.View.WGContextMenuTestInfo, new RecordItemIndex(9));
             Validate.ContainsImage(repo.View.WGContextMenuTestInfo, WGContextMenuTest_Screenshot1, WGContextMenuTest_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PythonTest1'.", repo.View.PythonTest1Info, new RecordItemIndex(12));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PythonTest1'.", repo.View.PythonTest1Info, new RecordItemIndex(10));
             Validate.ContainsImage(repo.View.PythonTest1Info, PythonTest1_Screenshot1, PythonTest1_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PythonTest2'.", repo.View.PythonTest2Info, new RecordItemIndex(13));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PythonTest2'.", repo.View.PythonTest2Info, new RecordItemIndex(11));
             Validate.ContainsImage(repo.View.PythonTest2Info, PythonTest2_Screenshot1, PythonTest2_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PrototypeCustomPanel'.", repo.View.PrototypeCustomPanelInfo, new RecordItemIndex(14));
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PrototypeCustomPanel'.", repo.View.PrototypeCustomPanelInfo, new RecordItemIndex(12));
             Validate.ContainsImage(repo.View.PrototypeCustomPanelInfo, PrototypeCustomPanel_Screenshot1, PrototypeCustomPanel_Screenshot1_Options);
             Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
-        CompressedImage View_Screenshot1
-        { get { return repo.Generic_app.MainWindow.ViewInfo.GetScreenshot1(new Rectangle(15, 6, 14, 8)); } }
-
-        Imaging.FindOptions View_Screenshot1_Options
-        { get { return Imaging.FindOptions.Default; } }
-
         CompressedImage Macros_Screenshot1
-        { get { return repo.View.MacrosInfo.GetScreenshot1(new Rectangle(28, 4, 9, 12)); } }
-
-        Imaging.FindOptions Macros_Screenshot1_Options
-        { get { return Imaging.FindOptions.Default; } }
-
-        CompressedImage View_Screenshot1_2
-        { get { return repo.Generic_app.MainWindow.ViewInfo.GetScreenshot1(new Rectangle(15, 6, 14, 8)); } }
-
-        Imaging.FindOptions View_Screenshot1_2_Options
-        { get { return Imaging.FindOptions.Default; } }
-
-        CompressedImage Macros_Screenshot1_2
         { get { return repo.View.MacrosInfo.GetScreenshot1(new Rectangle(0, 0, 196, 23)); } }
 
-        Imaging.FindOptions Macros_Screenshot1_2_Options
+        Imaging.FindOptions Macros_Screenshot1_Options
         { get { return Imaging.FindOptions.Default; } }
 
         CompressedImage History_Screenshot1

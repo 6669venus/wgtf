@@ -114,7 +114,7 @@ Variant Property::Implementation::getValue( const ObjectHandle & handle )
 	assert( pTypeConverters != nullptr );
 
 	Variant value;
-	const bool success = pTypeConverters->toVariant( attribute, value, pythonObject_, key_ );
+	const bool success = pTypeConverters->toVariant( attribute, value, handle, key_ );
 	assert( success );
 	return value;
 }
@@ -265,7 +265,7 @@ Variant Property::invoke( const ObjectHandle& object,
 	{
 		const bool success = pTypeConverters->toVariant( returnValue,
 			result,
-			impl_->pythonObject_,
+			object,
 			impl_->key_ );
 		assert( success );
 	}

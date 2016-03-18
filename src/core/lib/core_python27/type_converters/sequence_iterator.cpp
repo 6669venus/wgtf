@@ -5,6 +5,7 @@
 #include "converters.hpp"
 
 #include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
 #include <cassert>
@@ -59,10 +60,12 @@ bool setItem< PyScript::ScriptSequence >(
 
 
 template< typename T >
-SequenceIterator< T >::SequenceIterator( const container_type & container,
+SequenceIterator< T >::SequenceIterator( const ObjectHandle & containerHandle,
+	const container_type & container,
 	typename SequenceIterator< T >::key_type index,
 	const Converters & typeConverters )
-	: container_( container )
+	: containerHandle_( containerHandle )
+	, container_( container )
 	, index_( index )
 	, typeConverters_( typeConverters )
 {
@@ -121,11 +124,10 @@ Variant SequenceIterator< T >::value() const /* override */
 	
 	Variant result;
 	std::string childPath;
-	// TODO NGT-1561 needs unit test
 	childPath += INDEX_OPEN;
 	childPath += std::to_string( index_ );
 	childPath += INDEX_CLOSE;
-	const bool success = typeConverters_.toVariant( item, result, container_, childPath );
+	const bool success = typeConverters_.toVariant( item, result, containerHandle_, childPath );
 	return result;
 }
 

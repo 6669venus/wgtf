@@ -70,10 +70,21 @@ public:
 		args->setPath( key.second.c_str() );
 		args->setValue( data );
 		
-		// TODO: assert access is only on the main thread
-		commands_.insert( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
-			getClassIdentifier<SetReflectedPropertyCommand>(), ObjectHandle( 
-				std::move( args ), pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >() ) ) ) );
+		// Access is only on the main thread
+		assert( std::this_thread::get_id() == commandManager_.ownerThreadId() );
+
+		const auto commandId = getClassIdentifier< SetReflectedPropertyCommand >();
+		const auto pArgsDefinition =
+			pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >();
+		ObjectHandle commandArgs( std::move( args ), pArgsDefinition );
+		auto command = commandManager_.queueCommand( commandId, commandArgs );
+
+		// Queuing may cause it to execute straight away
+		// Based on the thread affinity of SetReflectedPropertyCommand
+		if (!command->isComplete())
+		{
+			commands_.insert( std::pair< Key, CommandInstancePtr >( key, command ) );
+		}
 	}
 
 	Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters )
@@ -100,6 +111,23 @@ public:
 		Variant* returnValuePointer = returnValueObject.getBase<Variant>();
 		assert( returnValuePointer != nullptr );
 		return *returnValuePointer;
+	}
+
+	void flush( const CommandInstancePtr & job )
+	{
+		assert( job->isCompleted() );
+		assert( strcmp( job->getCommandId(),
+			getClassIdentifier< SetReflectedPropertyCommand >() ) == 0 );
+
+		// Unfortunately don't have key for map lookup
+		for (auto itr = commands_.cbegin(); itr != commands_.cend(); ++itr)
+		{
+			if (job == itr->second)
+			{
+				commands_.erase( itr );
+				break;
+			}
+		}
 	}
 
 private:
@@ -166,4 +194,9 @@ Variant ReflectionController::invoke( const PropertyAccessor & pa, const Reflect
 {
 	assert( impl_ != nullptr );
 	return impl_->invoke( pa, parameters );
+}
+
+void ReflectionController::flush( const CommandInstancePtr & job ) /* override */
+{
+	impl_->flush( job );
 }

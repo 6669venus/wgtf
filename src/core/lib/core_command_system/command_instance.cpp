@@ -289,11 +289,12 @@ const Command * CommandInstance::getCommand() const
 //==============================================================================
 /*virtual */void CommandInstance::setStatus( ExecutionStatus status )
 {
-	std::unique_lock<std::mutex> lock( mutex_ );
-
-	status_ = status;
+	{
+		std::unique_lock<std::mutex> lock( mutex_ );
+		status_ = status;
+	}
 	getCommand()->fireCommandStatusChanged( *this );
-	if (status_ == Complete)
+	if (status == Complete)
 	{
 		completeStatus_.notify_all();
 	}
@@ -341,6 +342,23 @@ void CommandInstance::execute()
 		errorCode_ = *errorCode;
 	}
 }
+
+
+bool CommandInstance::isComplete() const
+{
+	// setStatus() may be called on a background thread
+	std::lock_guard< std::mutex > lock( mutex_ );
+	return status_ == Complete;
+}
+
+
+ExecutionStatus CommandInstance::getExecutionStatus() const
+{
+	// setStatus() may be called on a background thread
+	std::lock_guard< std::mutex > lock( mutex_ );
+	return status_;
+}
+
 
 //==============================================================================
 void CommandInstance::connectEvent()

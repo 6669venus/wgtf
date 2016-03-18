@@ -13,15 +13,16 @@
 #include "core_data_model/variant_list.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_types/hashed_string_ref.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "core_serialization/serializer/i_serializer.hpp"
 #include "core_logging/logging.hpp"
 #include "batch_command.hpp"
 #include <atomic>
 #include <deque>
-#include <thread>
 #include <map>
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
@@ -91,8 +92,14 @@ class CommandManagerImpl : public IEnvEventListener
 {
 public:
 
-	CommandManagerImpl( CommandManager* pCommandManager )
-		: workerMutex_()
+	CommandManagerImpl( CommandManager* pCommandManager,
+		IReflectionController * controller )
+		: controller_( controller )
+		, historyState_( &nullHistoryState_ )
+		, currentIndex_( NO_SELECTION )
+		, ownerThreadId_( std::this_thread::get_id() )
+		, workerThreadId_()
+		, workerMutex_()
 		, workerWakeUp_()
 		, ownerWakeUp_( false )
 		, commands_()
@@ -101,16 +108,12 @@ public:
 		, globalEventListener_()
 		, exiting_( false )
 		, enableWorker_( true )
-		, ownerThreadId_( std::this_thread::get_id() )
-		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
 		, workerThread_()
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
 		, envManager_( nullptr )
-		, historyState_( &nullHistoryState_ )
-		, currentIndex_( NO_SELECTION )
 	{
 	}
 
@@ -188,12 +191,17 @@ public:
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
 
+	IReflectionController * controller_;
+
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
 	ValueChangeNotifier< int > currentIndex_;
 	ConnectionHolder indexConnections_;
 	ConnectionHolder historyConnections_;
 	Connection updateConnection_;
+
+	std::thread::id ownerThreadId_;
+	std::thread::id workerThreadId_;
 
 private:
 	void bindIndexCallbacks();
@@ -229,8 +237,6 @@ private:
 
 	bool									exiting_;
 	bool									enableWorker_;
-	std::thread::id							ownerThreadId_;
-	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
 	std::thread								workerThread_;
 	BatchCommand							batchCommand_;
@@ -951,6 +957,13 @@ void CommandManagerImpl::processCommands()
 			// Pop the command frame
 			THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
 			popFrame();
+
+			if ((controller_ != nullptr) &&
+				(strcmp( job->getCommandId(),
+					getClassIdentifier< SetReflectedPropertyCommand >() ) == 0))
+			{
+				controller_->flush( job );
+			}
 		}
 	}
 
@@ -1147,10 +1160,9 @@ void CommandManager::init( IApplication & application, IEnvManager & envManager,
 													IFileSystem * fileSystem, IReflectionController * controller )
 {
 	fileSystem_ = fileSystem;
-	controller_ = controller;
 	if (pImpl_ == nullptr)
 	{
-		pImpl_ = new CommandManagerImpl( this );
+		pImpl_ = new CommandManagerImpl( this, controller );
 	}
 	pImpl_->init( application, envManager );
 }
@@ -1296,7 +1308,7 @@ IFileSystem * CommandManager::getFileSystem() const
 //==============================================================================
 IReflectionController * CommandManager::getReflectionController() const
 {
-	return controller_;
+	return pImpl_->controller_;
 }
 
 //==============================================================================
@@ -1317,6 +1329,12 @@ bool CommandManager::LoadHistory( ISerializer & serializer )
 ISelectionContext& CommandManager::selectionContext()
 {
 	return selectionContext_;
+}
+
+
+std::thread::id CommandManager::ownerThreadId() /* override */
+{
+	return pImpl_->ownerThreadId_;
 }
 
 //==============================================================================

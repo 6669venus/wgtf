@@ -75,6 +75,7 @@ public:
 	bool SaveHistory( ISerializer & serializer ) override;
 	bool LoadHistory( ISerializer & serializer ) override;
 	ISelectionContext& selectionContext() override;
+	virtual std::thread::id ownerThreadId() override;
 	//From ICommandManager end
 
 	IDefinitionManager & getDefManager() const;
@@ -88,7 +89,6 @@ private:
 	class CommandManagerImpl * pImpl_;
 	IDefinitionManager & defManager_;
 	IFileSystem * fileSystem_;
-	IReflectionController * controller_;
 	SelectionContext selectionContext_;
 };
 

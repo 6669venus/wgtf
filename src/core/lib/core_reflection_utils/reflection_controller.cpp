@@ -115,7 +115,7 @@ public:
 
 	void flush( const CommandInstancePtr & job )
 	{
-		assert( job->isCompleted() );
+		assert( job->isComplete() );
 		assert( strcmp( job->getCommandId(),
 			getClassIdentifier< SetReflectedPropertyCommand >() ) == 0 );
 

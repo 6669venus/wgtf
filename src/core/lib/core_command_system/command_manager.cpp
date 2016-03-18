@@ -668,6 +668,9 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		assert( instance->parent_ == nullptr );
 		if (parentInstance != nullptr)
 		{
+			// This code creates a circular reference causing a memory leak
+			// Not sure of the intention of this code or responsibility of ownership of the CommandInstance
+			// @m_martin
 			instance->parent_ = parentInstance;
 			parentInstance->children_.push_back( instance );
 		}

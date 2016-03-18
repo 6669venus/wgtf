@@ -99,36 +99,6 @@ private:
 	ConnectionHolder & operator=(ConnectionHolder && other);
 };
 
-// Force use of a custom allocator to ensure signals are allocated/deallocated from the same heap
-//	This is necessary as the IApplication interface has Signal members.
-//	Without this allocator any connections made could potentially cause the entries_ vector to resize
-//	depending on where Signal::connect was called would determine which heap was used.
-template <class T>
-struct SignalAllocator
-{
-	typedef T value_type;
-	SignalAllocator(){}
-	template <class U> SignalAllocator(const SignalAllocator<U>& other){}
-	T* allocate(std::size_t n)
-	{
-		return reinterpret_cast<T*>(::malloc(sizeof(T)*n));
-	}
-	void deallocate(T* p, std::size_t /*n*/)
-	{
-		::free(p);
-	}
-};
-template <class T, class U>
-bool operator==( const SignalAllocator<T>& allocator1, const SignalAllocator<U>& allocator2)
-{
-	return true;
-}
-template <class T, class U>
-bool operator!=( const SignalAllocator<T>& allocator1, const SignalAllocator<U>& allocator2)
-{
-	return false;
-}
-
 // Maintains a list of callback functions to call when an event occurs.
 // It is thread safe and does not own the callback functions so they
 // can be disconnected at any time.
@@ -142,7 +112,7 @@ private:
 	typedef internal::TemplateSignalHolder<Signature> SignatureHolder;
 	typedef std::shared_ptr<SignatureHolder> SignalHolderPtr;
 
-	typedef std::vector<SignalHolderPtr, SignalAllocator<SignalHolderPtr>> HolderList;
+	typedef std::vector<SignalHolderPtr> HolderList;
 
 	HolderList entries_;
 

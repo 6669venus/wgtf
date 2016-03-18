@@ -8,6 +8,7 @@
 
 #include "core_common/ngt_windows.hpp"
 #include "core_serialization/file_system.hpp"
+#include "core_serialization/file_info.hpp"
 #include "core_serialization/file_data_stream.hpp"
 
 using namespace FileAttributes;

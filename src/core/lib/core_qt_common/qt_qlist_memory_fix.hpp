@@ -70,7 +70,3 @@ Q_INLINE_TEMPLATE void QList<TNode>::node_destruct(Node *from, Node *to) \
 		::free(to->v); \
 	} \
 }
-
-// Currently the only use case is SelectionExtension's QList<QVariant> selection_
-SPECIALIZE_QLIST( QVariant )
-// Add additional specializations here

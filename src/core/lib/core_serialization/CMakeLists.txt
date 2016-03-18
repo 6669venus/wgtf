@@ -42,6 +42,7 @@ SET( ALL_SRCS
 	datastreambuf.hpp
 	file_data_stream.cpp
 	file_data_stream.hpp
+	file_info.hpp
 	file_system.hpp
 	fixed_memory_stream.hpp
 	fixed_memory_stream.cpp

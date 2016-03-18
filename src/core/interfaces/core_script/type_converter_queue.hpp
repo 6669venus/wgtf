@@ -3,9 +3,11 @@
 #define TYPE_CONVERTER_QUEUE_HPP
 
 
+#include <string>
 #include <vector>
 
 
+class ObjectHandle;
 class Variant;
 
 
@@ -67,6 +69,27 @@ public:
 	bool toVariant( const ScriptType & inObject,
 		Variant & outVariant ) const;
 
+
+	/**
+	 *	Convert the given ScriptType into a Variant by searching through the
+	 *	type converters.
+	 *	
+	 *	Search is performed from most-recently-added to first-added.
+	 *	
+	 *	@param inObject the ScriptType to be converted.
+	 *	@param outVariant storage for the resulting object.
+	 *		Should not be modified if conversion fails.
+	 *	@param parentHandle holds a reference to the parent of inObject.
+	 *	@param childPath the reflected property path from parentHandle
+	 *		to the child object.
+	 *		e.g. parentHandle has the path "root.child1.child2" and
+	 *			inObject is "child3".
+	 *	@return true on success.
+	 */
+	bool toVariantWithParent( const ScriptType & inObject,
+		Variant & outVariant,
+		const ObjectHandle & parentHandle,
+		const std::string & childPath ) const;
 
 private:
 	TypeConverterQueue( const TypeConverterQueue & other );
@@ -152,6 +175,29 @@ bool TypeConverterQueue< ITypeConverter, ScriptType >::toVariant(
 		const auto& pTypeConverter = (*itr);
 		assert( pTypeConverter != nullptr );
 		if (pTypeConverter->toVariant( inObject, outVariant ))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+template< typename ITypeConverter, typename ScriptType >
+bool TypeConverterQueue< ITypeConverter, ScriptType >::toVariantWithParent(
+	const ScriptType & inObject,
+	Variant & outVariant,
+	const ObjectHandle & parentHandle,
+	const std::string & childPath ) const
+{
+	for (auto itr = typeConverters_.crbegin();
+		itr != typeConverters_.crend();
+		++itr)
+	{
+		const auto& pTypeConverter = (*itr);
+		assert( pTypeConverter != nullptr );
+		if (pTypeConverter->toVariant( inObject, outVariant, parentHandle, childPath ))
 		{
 			return true;
 		}

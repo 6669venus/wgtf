@@ -2,8 +2,10 @@
 
 #include "tuple_converter.hpp"
 
+#include "converters.hpp"
 #include "sequence_collection.hpp"
 
+#include "core_python27/defined_instance.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
@@ -12,15 +14,19 @@ namespace PythonType
 {
 
 
-TupleConverter::TupleConverter( const Converters & typeConverters )
-	: IConverter()
+TupleConverter::TupleConverter( IComponentContext & context,
+	const Converters & typeConverters )
+	: IParentConverter()
+	, context_( context )
 	, typeConverters_( typeConverters )
 {
 }
 
 
 bool TupleConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) /* override */
+	Variant & outVariant,
+	const ObjectHandle & parentHandle,
+	const std::string & childPath ) /* override */
 {
 	if (!PyScript::ScriptTuple::check( inObject ))
 	{
@@ -28,9 +34,15 @@ bool TupleConverter::toVariant( const PyScript::ScriptObject & inObject,
 	}
 	PyScript::ScriptTuple scriptTuple( inObject.get(),
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	auto tupleHandle = ReflectedPython::DefinedInstance::findOrCreate( context_,
+		scriptTuple,
+		parentHandle,
+		childPath );
+	assert( tupleHandle.isValid() );
 
 	auto collectionHolder = std::make_shared< Sequence< PyScript::ScriptTuple > >(
 		scriptTuple,
+		tupleHandle,
 		typeConverters_ );
 	Collection collection( collectionHolder );
 	outVariant = Variant( collection );

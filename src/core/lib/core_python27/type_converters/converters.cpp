@@ -7,9 +7,9 @@ namespace PythonType
 
 
 Converters::Converters( const BasicTypeConverters & basicTypeConverters,
-	const DefaultConverter & defaultConverter )
+	const ParentTypeConverters & parentTypeConverters )
 	: basicTypeConverters_( basicTypeConverters )
-	, defaultConverter_( defaultConverter )
+	, parentTypeConverters_( parentTypeConverters )
 {
 }
 
@@ -22,13 +22,13 @@ bool Converters::toScriptType( const Variant & inVariant,
 	{
 		return true;
 	}
-	return defaultConverter_.toScriptType( inVariant, outObject );
+	return parentTypeConverters_.toScriptType( inVariant, outObject );
 }
 
 
 bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 	Variant & outVariant,
-	const PyScript::ScriptObject & parentObject,
+	const ObjectHandle & parentHandle,
 	const std::string & childPath ) const
 {
 	const bool success = basicTypeConverters_.toVariant( inObject, outVariant );
@@ -36,9 +36,9 @@ bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 	{
 		return true;
 	}
-	return defaultConverter_.toVariant( inObject,
+	return parentTypeConverters_.toVariantWithParent( inObject,
 		outVariant,
-		parentObject,
+		parentHandle,
 		childPath );
 }
 

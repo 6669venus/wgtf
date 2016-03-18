@@ -241,12 +241,12 @@ ObjectHandle DefinitionDetails::create( const IClassDefinition & classDefinition
 		return nullptr;
 	}
 
-	PyScript::ScriptObject parent;
+	ObjectHandle parentHandle;
 	const char * childPath = "";
 	return DefinedInstance::findOrCreate( context_,
 		PyScript::ScriptObject( newPyObject,
 			PyScript::ScriptObject::FROM_NEW_REFERENCE ),
-		parent,
+		parentHandle,
 		childPath );
 }
 

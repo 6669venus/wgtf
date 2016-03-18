@@ -20,33 +20,33 @@ using Ranorex.Core;
 using Ranorex.Core.Testing;
 using Ranorex.Core.Repository;
 
-namespace NGTTestAutomation.Generic_app_demo
+namespace NGTTestAutomation.Generic_app_UI
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The file_exit recording.
+    ///The Expand_SimpleCases recording.
     /// </summary>
-    [TestModule("959610e8-dc35-4fde-93de-1e632eead6f5", ModuleType.Recording, 1)]
-    public partial class File_exit : ITestModule
+    [TestModule("8655191f-3431-42ca-a488-31ddeee306a4", ModuleType.Recording, 1)]
+    public partial class Expand_SimpleCases : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static File_exit instance = new File_exit();
+        static Expand_SimpleCases instance = new Expand_SimpleCases();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public File_exit()
+        public Expand_SimpleCases()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static File_exit Instance
+        public static Expand_SimpleCases Instance
         {
             get { return instance; }
         }
@@ -79,17 +79,22 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.File1' at 12;12.", repo.Generic_app.MainWindow.File1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.File1.Click("12;12");
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.Column' at 19;28.", repo.Generic_app.MainWindow.ColumnInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.Column.Click(new Location(Column_Screenshot1, "19;28", Column_Screenshot1_Options));
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.File.Exit' at 55;15.", repo.Menu.File.ExitInfo, new RecordItemIndex(1));
-            repo.Menu.File.Exit.Click("55;15");
-            Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(1));
+            Delay.Duration(10000, false);
             
         }
 
 #region Image Feature Data
+        CompressedImage Column_Screenshot1
+        { get { return repo.Generic_app.MainWindow.ColumnInfo.GetScreenshot1(new Rectangle(4, 4, 179, 702)); } }
+
+        Imaging.FindOptions Column_Screenshot1_Options
+        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
+
 #endregion
     }
 #pragma warning restore 0436

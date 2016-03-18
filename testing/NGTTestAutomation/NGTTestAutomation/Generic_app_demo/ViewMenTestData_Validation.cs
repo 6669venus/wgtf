@@ -83,18 +83,18 @@ namespace NGTTestAutomation.Generic_app_demo
             repo.Generic_app.MainWindow.View.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PropertyTreeTest'.", repo.View.PropertyTreeTestInfo, new RecordItemIndex(1));
-            Validate.ContainsImage(repo.View.PropertyTreeTestInfo, PropertyTreeTest_Screenshot1, PropertyTreeTest_Screenshot1_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'Menu.View.PropertyTreeTest'.", repo.Menu.View.PropertyTreeTestInfo, new RecordItemIndex(1));
+            Validate.ContainsImage(repo.Menu.View.PropertyTreeTestInfo, PropertyTreeTest_Screenshot1, PropertyTreeTest_Screenshot1_Options);
             Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
         CompressedImage PropertyTreeTest_Screenshot1
-        { get { return repo.View.PropertyTreeTestInfo.GetScreenshot1(new Rectangle(0, 0, 196, 23)); } }
+        { get { return repo.Menu.View.PropertyTreeTestInfo.GetScreenshot1(new Rectangle(0, 0, 196, 23)); } }
 
         Imaging.FindOptions PropertyTreeTest_Screenshot1_Options
-        { get { return Imaging.FindOptions.Default; } }
+        { get { return Imaging.FindOptions.Parse("0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
 
 #endregion
     }

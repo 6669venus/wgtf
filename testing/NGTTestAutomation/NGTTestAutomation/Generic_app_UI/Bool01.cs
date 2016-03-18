@@ -20,33 +20,33 @@ using Ranorex.Core;
 using Ranorex.Core.Testing;
 using Ranorex.Core.Repository;
 
-namespace NGTTestAutomation.Generic_app_demo
+namespace NGTTestAutomation.Generic_app_UI
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The file_exit recording.
+    ///The Bool01 recording.
     /// </summary>
-    [TestModule("959610e8-dc35-4fde-93de-1e632eead6f5", ModuleType.Recording, 1)]
-    public partial class File_exit : ITestModule
+    [TestModule("261344bd-8e8a-4165-871c-98bafbf75f2d", ModuleType.Recording, 1)]
+    public partial class Bool01 : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static File_exit instance = new File_exit();
+        static Bool01 instance = new Bool01();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public File_exit()
+        public Bool01()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static File_exit Instance
+        public static Bool01 Instance
         {
             get { return instance; }
         }
@@ -79,17 +79,26 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.File1' at 12;12.", repo.Generic_app.MainWindow.File1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.File1.Click("12;12");
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGListView.WGTextBoxFrame' at Center.", repo.Generic_app.MainWindow.WGListView.WGTextBoxFrameInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.WGListView.WGTextBoxFrame.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.File.Exit' at 55;15.", repo.Menu.File.ExitInfo, new RecordItemIndex(1));
-            repo.Menu.File.Exit.Click("55;15");
-            Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Delay", "Waiting for 100ms.", new RecordItemIndex(1));
+            Delay.Duration(100, false);
+            
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot1' with region {X=0,Y=4,Width=18,Height=16}) on item 'Generic_app.MainWindow.WGListView.Bool'.", repo.Generic_app.MainWindow.WGListView.BoolInfo, new RecordItemIndex(2));
+            Validate.CompareImage(repo.Generic_app.MainWindow.WGListView.BoolInfo, Bool_Screenshot1, Bool_Screenshot1_Options);
+            Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
+        CompressedImage Bool_Screenshot1
+        { get { return repo.Generic_app.MainWindow.WGListView.BoolInfo.GetScreenshot1(new Rectangle(0, 4, 18, 16)); } }
+
+        Imaging.FindOptions Bool_Screenshot1_Options
+        { get { return Imaging.FindOptions.Parse("0.95;EdgesSobel;0,4,18,16;True;10000000;0ms"); } }
+
 #endregion
     }
 #pragma warning restore 0436

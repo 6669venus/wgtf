@@ -79,12 +79,12 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow1.File1' at 17;7.", repo.Generic_app.MainWindow1.File1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow1.File1.Click("17;7");
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.File1' at 17;7.", repo.Generic_app.MainWindow.File1Info, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.File1.Click("17;7");
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'File.Exit' at 24;6.", repo.File.ExitInfo, new RecordItemIndex(1));
-            repo.File.Exit.Click("24;6");
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.File.Exit' at 24;6.", repo.Menu.File.ExitInfo, new RecordItemIndex(1));
+            repo.Menu.File.Exit.Click("24;6");
             Delay.Milliseconds(200);
             
         }

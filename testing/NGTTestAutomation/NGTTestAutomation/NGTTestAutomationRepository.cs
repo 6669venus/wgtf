@@ -28,13 +28,8 @@ namespace NGTTestAutomation
     {
         static NGTTestAutomationRepository instance = new NGTTestAutomationRepository();
         NGTTestAutomationRepositoryFolders.Generic_appFolder _generic_app;
-        NGTTestAutomationRepositoryFolders.NewObjectAppFolder _newobject;
-        NGTTestAutomationRepositoryFolders.CustomQmlWindowAppFolder _customqmlwindow;
-        NGTTestAutomationRepositoryFolders.FileAppFolder _file;
-        NGTTestAutomationRepositoryFolders.GenericAppTestAppFolder _genericapptest;
-        NGTTestAutomationRepositoryFolders.ViewAppFolder _view;
-        NGTTestAutomationRepositoryFolders.TestDataAppFolder _testdata;
-        NGTTestAutomationRepositoryFolders.GenericAppAppFolder _genericapp;
+        NGTTestAutomationRepositoryFolders.MenuFolder _menu;
+        NGTTestAutomationRepositoryFolders.Floating_WindowsFolder _floating_windows;
 
         /// <summary>
         /// Gets the singleton class instance representing the NGTTestAutomationRepository element repository.
@@ -52,13 +47,8 @@ namespace NGTTestAutomation
             : base("NGTTestAutomationRepository", "/", null, 0, false, "3936ed74-78e9-40c3-8819-a806f6a02759", ".\\RepositoryImages\\NGTTestAutomationRepository3936ed74.rximgres")
         {
             _generic_app = new NGTTestAutomationRepositoryFolders.Generic_appFolder(this);
-            _newobject = new NGTTestAutomationRepositoryFolders.NewObjectAppFolder(this);
-            _customqmlwindow = new NGTTestAutomationRepositoryFolders.CustomQmlWindowAppFolder(this);
-            _file = new NGTTestAutomationRepositoryFolders.FileAppFolder(this);
-            _genericapptest = new NGTTestAutomationRepositoryFolders.GenericAppTestAppFolder(this);
-            _view = new NGTTestAutomationRepositoryFolders.ViewAppFolder(this);
-            _testdata = new NGTTestAutomationRepositoryFolders.TestDataAppFolder(this);
-            _genericapp = new NGTTestAutomationRepositoryFolders.GenericAppAppFolder(this);
+            _menu = new NGTTestAutomationRepositoryFolders.MenuFolder(this);
+            _floating_windows = new NGTTestAutomationRepositoryFolders.Floating_WindowsFolder(this);
         }
 
 #region Variables
@@ -87,66 +77,21 @@ namespace NGTTestAutomation
         }
 
         /// <summary>
-        /// The NewObject folder.
+        /// The Menu folder.
         /// </summary>
-        [RepositoryFolder("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
-        public virtual NGTTestAutomationRepositoryFolders.NewObjectAppFolder NewObject
+        [RepositoryFolder("636e12d4-538c-4963-aad1-a1ac8832705d")]
+        public virtual NGTTestAutomationRepositoryFolders.MenuFolder Menu
         {
-            get { return _newobject; }
+            get { return _menu; }
         }
 
         /// <summary>
-        /// The CustomQmlWindow folder.
+        /// The Floating_Windows folder.
         /// </summary>
-        [RepositoryFolder("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
-        public virtual NGTTestAutomationRepositoryFolders.CustomQmlWindowAppFolder CustomQmlWindow
+        [RepositoryFolder("12841276-a415-4c4b-b1c8-31f76af51aa3")]
+        public virtual NGTTestAutomationRepositoryFolders.Floating_WindowsFolder Floating_Windows
         {
-            get { return _customqmlwindow; }
-        }
-
-        /// <summary>
-        /// The File folder.
-        /// </summary>
-        [RepositoryFolder("19d79684-b65e-461c-9325-b4a1a589be43")]
-        public virtual NGTTestAutomationRepositoryFolders.FileAppFolder File
-        {
-            get { return _file; }
-        }
-
-        /// <summary>
-        /// The GenericAppTest folder.
-        /// </summary>
-        [RepositoryFolder("f7aeb4ef-a25f-42de-a3e0-d3a1598c0b7f")]
-        public virtual NGTTestAutomationRepositoryFolders.GenericAppTestAppFolder GenericAppTest
-        {
-            get { return _genericapptest; }
-        }
-
-        /// <summary>
-        /// The View folder.
-        /// </summary>
-        [RepositoryFolder("73807bc9-2bae-4818-a47f-217a5cb6dae4")]
-        public virtual NGTTestAutomationRepositoryFolders.ViewAppFolder View
-        {
-            get { return _view; }
-        }
-
-        /// <summary>
-        /// The TestData folder.
-        /// </summary>
-        [RepositoryFolder("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
-        public virtual NGTTestAutomationRepositoryFolders.TestDataAppFolder TestData
-        {
-            get { return _testdata; }
-        }
-
-        /// <summary>
-        /// The GenericApp folder.
-        /// </summary>
-        [RepositoryFolder("4625f38f-a7c5-4439-85f5-7175bd248529")]
-        public virtual NGTTestAutomationRepositoryFolders.GenericAppAppFolder GenericApp
-        {
-            get { return _genericapp; }
+            get { return _floating_windows; }
         }
     }
 
@@ -163,7 +108,6 @@ namespace NGTTestAutomation
         public partial class Generic_appFolder : RepoGenBaseFolder
         {
             NGTTestAutomationRepositoryFolders.MainWindowAppFolder _mainwindow;
-            NGTTestAutomationRepositoryFolders.MainWindow1AppFolder _mainwindow1;
 
             /// <summary>
             /// Creates a new Generic_app  folder.
@@ -172,7 +116,6 @@ namespace NGTTestAutomation
                     base("Generic_app", "", parentFolder, 0, null, false, "93361d51-0696-4bc6-ad9c-da0b2fce19b3", "")
             {
                 _mainwindow = new NGTTestAutomationRepositoryFolders.MainWindowAppFolder(this);
-                _mainwindow1 = new NGTTestAutomationRepositoryFolders.MainWindow1AppFolder(this);
             }
 
             /// <summary>
@@ -195,15 +138,6 @@ namespace NGTTestAutomation
             {
                 get { return _mainwindow; }
             }
-
-            /// <summary>
-            /// The MainWindow1 folder.
-            /// </summary>
-            [RepositoryFolder("4a398a01-4bb3-49f5-9d5f-2edfcbaf04dd")]
-            public virtual NGTTestAutomationRepositoryFolders.MainWindow1AppFolder MainWindow1
-            {
-                get { return _mainwindow1; }
-            }
         }
 
         /// <summary>
@@ -215,8 +149,8 @@ namespace NGTTestAutomation
             NGTTestAutomationRepositoryFolders.WGListViewFolder _wglistview;
             NGTTestAutomationRepositoryFolders.ListFolder _list;
             NGTTestAutomationRepositoryFolders.WGVector31Folder _wgvector31;
+            RepoItemInfo _file1Info;
             RepoItemInfo _expandiconarea1Info;
-            RepoItemInfo _wgtextboxframeInfo;
             RepoItemInfo _wgbuttonframeInfo;
             RepoItemInfo _propertytreetest1Info;
             RepoItemInfo _minimizeInfo;
@@ -224,9 +158,32 @@ namespace NGTTestAutomation
             RepoItemInfo _newobjectInfo;
             RepoItemInfo _scenebrowserInfo;
             RepoItemInfo _showmodaldialogInfo;
-            ViewInfoClass _viewInfo;
-            UndoInfoClass _undoInfo;
-            TestDataInfoClass _testdataInfo;
+            RepoItemInfo _viewInfo;
+            RepoItemInfo _testdataInfo;
+            RepoItemInfo _treeexpansiontestInfo;
+            RepoItemInfo _custommodelinterfaceInfo;
+            RepoItemInfo _activefilterscontroltestInfo;
+            RepoItemInfo _listmodeltestInfo;
+            RepoItemInfo _listfiltertestInfo;
+            RepoItemInfo _treemodeltestInfo;
+            RepoItemInfo _wgcontextmenutestInfo;
+            RepoItemInfo _pythontest1Info;
+            RepoItemInfo _pythontest2Info;
+            RepoItemInfo _prototypecustompanelInfo;
+            RepoItemInfo _propertytreetestInfo;
+            RepoItemInfo _propertytreetest2Info;
+            RepoItemInfo _scrollleftInfo;
+            RepoItemInfo _scrollrightInfo;
+            RepoItemInfo _qtabbarInfo;
+            RepoItemInfo _qttoolbarextbuttonInfo;
+            RepoItemInfo _undoInfo;
+            RepoItemInfo _redoInfo;
+            RepoItemInfo _togglecopycontrolsInfo;
+            RepoItemInfo _defaulttoolbarInfo;
+            RepoItemInfo _expandiconareaInfo;
+            RepoItemInfo _wglistviewrowdelegateInfo;
+            RepoItemInfo _expandbuttonInfo;
+            ColumnInfoClass _columnInfo;
 
             /// <summary>
             /// Creates a new MainWindow  folder.
@@ -237,8 +194,8 @@ namespace NGTTestAutomation
                 _wglistview = new NGTTestAutomationRepositoryFolders.WGListViewFolder(this);
                 _list = new NGTTestAutomationRepositoryFolders.ListFolder(this);
                 _wgvector31 = new NGTTestAutomationRepositoryFolders.WGVector31Folder(this);
+                _file1Info = new RepoItemInfo(this, "File1", "?/?/menuitem[@text='File']", 30000, null, "70f9d447-fc59-4164-a97c-9d2685f7401a");
                 _expandiconarea1Info = new RepoItemInfo(this, "ExpandIconArea1", "container[3]//list/list[@name='WGListView']/list[2]/container[1]", 30000, null, "c7ee06dd-9931-47d1-b632-57957e3b6489");
-                _wgtextboxframeInfo = new RepoItemInfo(this, "WGTextBoxFrame", "container[3]//list[@name='WGListView']/list[@name='WGListView']/list[1]/list[2]//container[@name='WGTextBoxFrame']", 30000, null, "a91fe9bb-237b-4692-a2f1-09a2d5b02802");
                 _wgbuttonframeInfo = new RepoItemInfo(this, "WGButtonFrame", "container[3]//list/list[@name='WGListView']/list[1]/list[8]//element[@name='WGSpinBox']/container[1]", 30000, null, "c2060909-7a9a-4143-afb9-4f258e97afc5");
                 _propertytreetest1Info = new RepoItemInfo(this, "PropertyTreeTest1", "?/?/tabpage[@index='7']", 30000, null, "5e855b1d-a287-4e18-bc92-c3af076fbe62");
                 _minimizeInfo = new RepoItemInfo(this, "Minimize", "?/?/button[@accessiblename='Minimize']", 30000, null, "4359380c-0e8b-46e6-ac19-de0bd6ea5308");
@@ -246,32 +203,55 @@ namespace NGTTestAutomation
                 _newobjectInfo = new RepoItemInfo(this, "NewObject", "?/?/menuitem[@text='New Object']", 30000, null, "2cd6e6bc-c107-4870-a47b-25b966cbf1f0");
                 _scenebrowserInfo = new RepoItemInfo(this, "SceneBrowser", "?/?/tabpage[@title='SceneBrowser']", 30000, null, "1dcfe234-8cac-4921-988a-61e928a4d82a");
                 _showmodaldialogInfo = new RepoItemInfo(this, "ShowModalDialog", "?/?/button[@text='ShowModalDialog']", 30000, null, "47c07d18-dc0c-4e81-9adf-5b49c4c133a2");
-                _viewInfo = new ViewInfoClass(this);
-                _undoInfo = new UndoInfoClass(this);
-                _testdataInfo = new TestDataInfoClass(this);
+                _viewInfo = new RepoItemInfo(this, "View", "?/?/menuitem[@text='View']", 60000, null, "d5ba6478-3c4d-475d-8516-b7394d2a1411");
+                _testdataInfo = new RepoItemInfo(this, "TestData", "?/?/menuitem[@text='TestData']", 60000, null, "91503505-5f33-42cc-9189-b522f7670e1d");
+                _treeexpansiontestInfo = new RepoItemInfo(this, "TreeExpansionTest", "?/?/tabpage[@title='Tree Expansion Test']", 30000, null, "5ff5a6fe-ff31-4e3f-8c34-23064103a4f2");
+                _custommodelinterfaceInfo = new RepoItemInfo(this, "CustomModelInterface", "?/?/tabpage[@title='Custom Model Interface']", 30000, null, "26f9a9ff-aad6-476b-b024-60f0581789eb");
+                _activefilterscontroltestInfo = new RepoItemInfo(this, "ActiveFiltersControlTest", "?/?/tabpage[@title~'^Active\\ Filters\\ Control\\ Te']", 30000, null, "2775437f-2500-4b6f-a1bc-97ee14190e43");
+                _listmodeltestInfo = new RepoItemInfo(this, "ListModelTest", "?/?/tabpage[@title='ListModel Test']", 30000, null, "3dfe57af-c71c-42dd-9b9b-43fc302a77bb");
+                _listfiltertestInfo = new RepoItemInfo(this, "ListFilterTest", "?/?/tabpage[@title='ListFilter Test']", 30000, null, "7ba95674-75dd-4d3f-95ec-b29eb4f9a9a4");
+                _treemodeltestInfo = new RepoItemInfo(this, "TreeModelTest", "?/?/tabpage[@title='TreeModel Test']", 30000, null, "97c996ba-b8c9-485a-829f-6c97b197f2b3");
+                _wgcontextmenutestInfo = new RepoItemInfo(this, "WGContextMenuTest", "?/?/tabpage[@title='WGContextMenu Test']", 30000, null, "f7e94c0a-9bda-4d56-925c-24f3172564fa");
+                _pythontest1Info = new RepoItemInfo(this, "PythonTest1", "?/?/tabpage[@title='Python Test 1']", 30000, null, "40662ff1-7960-428c-8ab2-b94ea43829c6");
+                _pythontest2Info = new RepoItemInfo(this, "PythonTest2", "?/?/tabpage[@title='Python Test 2']", 30000, null, "1e1817b5-8a2c-4723-a942-27782e91ef2d");
+                _prototypecustompanelInfo = new RepoItemInfo(this, "PrototypeCustomPanel", "?/?/tabpage[@title='Prototype Custom Panel']", 30000, null, "f74fb908-4cbf-42de-a752-256fa3adfb86");
+                _propertytreetestInfo = new RepoItemInfo(this, "PropertyTreeTest", "?/?/tabpage[@index='10']", 30000, null, "1b73b804-aadb-46b7-87af-bf044fcd46f9");
+                _propertytreetest2Info = new RepoItemInfo(this, "PropertyTreeTest2", "?/?/tabpage[@index='11']", 30000, null, "10455757-0e7b-4139-8e9f-1ed3a17519f2");
+                _scrollleftInfo = new RepoItemInfo(this, "ScrollLeft", "tabpagelist[3]/button[@accessiblename='Scroll Left']", 30000, null, "af98bd43-3dab-4b7e-80bf-e309be01a6f9");
+                _scrollrightInfo = new RepoItemInfo(this, "ScrollRight", "tabpagelist[3]/button[@accessiblename='Scroll Right']", 30000, null, "bcb821ce-c331-41a9-a677-fb290d257543");
+                _qtabbarInfo = new RepoItemInfo(this, "QTabBar", "tabpagelist[3]", 30000, null, "1d021b07-2cf7-414a-9afe-77b3891bb2a6");
+                _qttoolbarextbuttonInfo = new RepoItemInfo(this, "QtToolbarExtButton", "?/?/button[@objectname='qt_toolbar_ext_button']", 30000, null, "2d4470e1-a425-4701-a8bb-38a737100000");
+                _undoInfo = new RepoItemInfo(this, "Undo", "?/?/button[@text='Undo']", 30000, null, "74f987ad-ca64-4c89-a8e4-9b79e7d4341c");
+                _redoInfo = new RepoItemInfo(this, "Redo", "?/?/button[@text='Redo']", 30000, null, "26f45516-0e5d-43f5-be5a-69d1c5704bf4");
+                _togglecopycontrolsInfo = new RepoItemInfo(this, "ToggleCopyControls", "?/?/button[@text='ToggleCopyControls']", 30000, null, "c20d2409-f756-4c3c-b8ef-b39ccc80d79a");
+                _defaulttoolbarInfo = new RepoItemInfo(this, "DefaultToolBar", "toolbar[@objectname='defaultToolBar']", 30000, null, "a598ddad-484c-461b-8105-9ec0052e1118");
+                _expandiconareaInfo = new RepoItemInfo(this, "ExpandIconArea", "container[2]//list[@objectname='WGListView']/list[@objectname='WGListView']/list[@name='columns']/container[1]", 30000, null, "92d2c361-2280-4937-b22c-b6a5c785d0e0");
+                _wglistviewrowdelegateInfo = new RepoItemInfo(this, "WGListViewRowDelegate", "container[2]//list[@objectname='WGListView']/list[@objectname='WGListView']/element[@objectname='WGListViewRowDelegate']", 30000, null, "67dce5a2-bfa2-4757-a66b-ee39d82adaab");
+                _expandbuttonInfo = new RepoItemInfo(this, "ExpandButton", "container[2]//list[@objectname='WGListView']/list[@objectname='WGListView']/list[@name='columns']/?/?/text[@name='expandButton']", 30000, null, "91a7e8da-4319-4ec5-87ec-0b9f1d804304");
+                _columnInfo = new ColumnInfoClass(this);
             }
 
             /// <summary>
-            /// The ViewInfoClass folder.
+            /// The ColumnInfoClass folder.
             /// </summary>
-            [RepositoryItemInfo("d5ba6478-3c4d-475d-8516-b7394d2a1411")]
-            public class ViewInfoClass : RepoItemInfo
+            [RepositoryItemInfo("1975c3dd-bb8e-4930-816a-9a531dc0f132")]
+            public class ColumnInfoClass : RepoItemInfo
             {
                 /// <summary>
-                /// ViewInfoClass class constructor.
+                /// ColumnInfoClass class constructor.
                 /// </summary>
-                public ViewInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "View", "?/?/menuitem[@text='View']", 60000, null, "d5ba6478-3c4d-475d-8516-b7394d2a1411")
+                public ColumnInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "Column", "container[3]//element[@objectname='WGTreeView']/element[@objectname='WGColumnsFrame']/container[1]", 30000, null, "1975c3dd-bb8e-4930-816a-9a531dc0f132")
                 { }
 
                 /// <summary>
                 /// Gets the Screenshot1 item image.
                 /// </summary>
                 /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("d7ace98f-9548-4575-9582-7839ccb6467d")]
+                [RepositoryImage("40ec68a3-6ba7-473b-bbc5-f0de81cf580b")]
                 public CompressedImage GetScreenshot1()
                 {
-                    return GetImage("d7ace98f-9548-4575-9582-7839ccb6467d");
+                    return GetImage("40ec68a3-6ba7-473b-bbc5-f0de81cf580b");
                 }
 
                 /// <summary>
@@ -279,90 +259,20 @@ namespace NGTTestAutomation
                 /// </summary>
                 /// <param name="cropRect">The bounds of the sub-image to return.</param>
                 /// <returns>The cropped image.</returns>
-                [RepositoryImage("d7ace98f-9548-4575-9582-7839ccb6467d")]
+                [RepositoryImage("40ec68a3-6ba7-473b-bbc5-f0de81cf580b")]
                 public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
                 {
-                    return GetImage("d7ace98f-9548-4575-9582-7839ccb6467d", cropRect);
-                }
-            }
-
-            /// <summary>
-            /// The UndoInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("f52ad4d4-bb94-4245-8ce6-b10ec340291e")]
-            public class UndoInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// UndoInfoClass class constructor.
-                /// </summary>
-                public UndoInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "Undo", "?/?/button[@text='Undo']", 60000, null, "f52ad4d4-bb94-4245-8ce6-b10ec340291e")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("9b688469-91c7-40e2-9619-fa3e1cf09fc5")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("9b688469-91c7-40e2-9619-fa3e1cf09fc5");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("9b688469-91c7-40e2-9619-fa3e1cf09fc5")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("9b688469-91c7-40e2-9619-fa3e1cf09fc5", cropRect);
-                }
-            }
-
-            /// <summary>
-            /// The TestDataInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("91503505-5f33-42cc-9189-b522f7670e1d")]
-            public class TestDataInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// TestDataInfoClass class constructor.
-                /// </summary>
-                public TestDataInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "TestData", "?/?/menuitem[@text='TestData']", 60000, null, "91503505-5f33-42cc-9189-b522f7670e1d")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("77b00f29-fe66-413a-a155-e940112ccfad")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("77b00f29-fe66-413a-a155-e940112ccfad");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("77b00f29-fe66-413a-a155-e940112ccfad")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("77b00f29-fe66-413a-a155-e940112ccfad", cropRect);
+                    return GetImage("40ec68a3-6ba7-473b-bbc5-f0de81cf580b", cropRect);
                 }
 
                 /// <summary>
                 /// Gets the Screenshot2 item image.
                 /// </summary>
                 /// <returns>The Screenshot2 image.</returns>
-                [RepositoryImage("2ef28b91-4860-4a1d-b4f2-d00518253452")]
+                [RepositoryImage("2758fb69-eaca-4c02-8c30-32db29ad2f76")]
                 public CompressedImage GetScreenshot2()
                 {
-                    return GetImage("2ef28b91-4860-4a1d-b4f2-d00518253452");
+                    return GetImage("2758fb69-eaca-4c02-8c30-32db29ad2f76");
                 }
 
                 /// <summary>
@@ -370,10 +280,10 @@ namespace NGTTestAutomation
                 /// </summary>
                 /// <param name="cropRect">The bounds of the sub-image to return.</param>
                 /// <returns>The cropped image.</returns>
-                [RepositoryImage("2ef28b91-4860-4a1d-b4f2-d00518253452")]
+                [RepositoryImage("2758fb69-eaca-4c02-8c30-32db29ad2f76")]
                 public CompressedImage GetScreenshot2(System.Drawing.Rectangle cropRect)
                 {
-                    return GetImage("2ef28b91-4860-4a1d-b4f2-d00518253452", cropRect);
+                    return GetImage("2758fb69-eaca-4c02-8c30-32db29ad2f76", cropRect);
                 }
             }
 
@@ -402,6 +312,30 @@ namespace NGTTestAutomation
             }
 
             /// <summary>
+            /// The File1 item.
+            /// </summary>
+            [RepositoryItem("70f9d447-fc59-4164-a97c-9d2685f7401a")]
+            public virtual Ranorex.MenuItem File1
+            {
+                get
+                {
+                    return _file1Info.CreateAdapter<Ranorex.MenuItem>(true);
+                }
+            }
+
+            /// <summary>
+            /// The File1 item info.
+            /// </summary>
+            [RepositoryItemInfo("70f9d447-fc59-4164-a97c-9d2685f7401a")]
+            public virtual RepoItemInfo File1Info
+            {
+                get
+                {
+                    return _file1Info;
+                }
+            }
+
+            /// <summary>
             /// The ExpandIconArea1 item.
             /// </summary>
             [RepositoryItem("c7ee06dd-9931-47d1-b632-57957e3b6489")]
@@ -422,30 +356,6 @@ namespace NGTTestAutomation
                 get
                 {
                     return _expandiconarea1Info;
-                }
-            }
-
-            /// <summary>
-            /// The WGTextBoxFrame item.
-            /// </summary>
-            [RepositoryItem("a91fe9bb-237b-4692-a2f1-09a2d5b02802")]
-            public virtual Ranorex.Container WGTextBoxFrame
-            {
-                get
-                {
-                    return _wgtextboxframeInfo.CreateAdapter<Ranorex.Container>(true);
-                }
-            }
-
-            /// <summary>
-            /// The WGTextBoxFrame item info.
-            /// </summary>
-            [RepositoryItemInfo("a91fe9bb-237b-4692-a2f1-09a2d5b02802")]
-            public virtual RepoItemInfo WGTextBoxFrameInfo
-            {
-                get
-                {
-                    return _wgtextboxframeInfo;
                 }
             }
 
@@ -633,35 +543,11 @@ namespace NGTTestAutomation
             /// The View item info.
             /// </summary>
             [RepositoryItemInfo("d5ba6478-3c4d-475d-8516-b7394d2a1411")]
-            public virtual ViewInfoClass ViewInfo
+            public virtual RepoItemInfo ViewInfo
             {
                 get
                 {
                     return _viewInfo;
-                }
-            }
-
-            /// <summary>
-            /// The Undo item.
-            /// </summary>
-            [RepositoryItem("f52ad4d4-bb94-4245-8ce6-b10ec340291e")]
-            public virtual Ranorex.Button Undo
-            {
-                get
-                {
-                    return _undoInfo.CreateAdapter<Ranorex.Button>(true);
-                }
-            }
-
-            /// <summary>
-            /// The Undo item info.
-            /// </summary>
-            [RepositoryItemInfo("f52ad4d4-bb94-4245-8ce6-b10ec340291e")]
-            public virtual UndoInfoClass UndoInfo
-            {
-                get
-                {
-                    return _undoInfo;
                 }
             }
 
@@ -681,11 +567,587 @@ namespace NGTTestAutomation
             /// The TestData item info.
             /// </summary>
             [RepositoryItemInfo("91503505-5f33-42cc-9189-b522f7670e1d")]
-            public virtual TestDataInfoClass TestDataInfo
+            public virtual RepoItemInfo TestDataInfo
             {
                 get
                 {
                     return _testdataInfo;
+                }
+            }
+
+            /// <summary>
+            /// The TreeExpansionTest item.
+            /// </summary>
+            [RepositoryItem("5ff5a6fe-ff31-4e3f-8c34-23064103a4f2")]
+            public virtual Ranorex.TabPage TreeExpansionTest
+            {
+                get
+                {
+                    return _treeexpansiontestInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The TreeExpansionTest item info.
+            /// </summary>
+            [RepositoryItemInfo("5ff5a6fe-ff31-4e3f-8c34-23064103a4f2")]
+            public virtual RepoItemInfo TreeExpansionTestInfo
+            {
+                get
+                {
+                    return _treeexpansiontestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The CustomModelInterface item.
+            /// </summary>
+            [RepositoryItem("26f9a9ff-aad6-476b-b024-60f0581789eb")]
+            public virtual Ranorex.TabPage CustomModelInterface
+            {
+                get
+                {
+                    return _custommodelinterfaceInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The CustomModelInterface item info.
+            /// </summary>
+            [RepositoryItemInfo("26f9a9ff-aad6-476b-b024-60f0581789eb")]
+            public virtual RepoItemInfo CustomModelInterfaceInfo
+            {
+                get
+                {
+                    return _custommodelinterfaceInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ActiveFiltersControlTest item.
+            /// </summary>
+            [RepositoryItem("2775437f-2500-4b6f-a1bc-97ee14190e43")]
+            public virtual Ranorex.TabPage ActiveFiltersControlTest
+            {
+                get
+                {
+                    return _activefilterscontroltestInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ActiveFiltersControlTest item info.
+            /// </summary>
+            [RepositoryItemInfo("2775437f-2500-4b6f-a1bc-97ee14190e43")]
+            public virtual RepoItemInfo ActiveFiltersControlTestInfo
+            {
+                get
+                {
+                    return _activefilterscontroltestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ListModelTest item.
+            /// </summary>
+            [RepositoryItem("3dfe57af-c71c-42dd-9b9b-43fc302a77bb")]
+            public virtual Ranorex.TabPage ListModelTest
+            {
+                get
+                {
+                    return _listmodeltestInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ListModelTest item info.
+            /// </summary>
+            [RepositoryItemInfo("3dfe57af-c71c-42dd-9b9b-43fc302a77bb")]
+            public virtual RepoItemInfo ListModelTestInfo
+            {
+                get
+                {
+                    return _listmodeltestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ListFilterTest item.
+            /// </summary>
+            [RepositoryItem("7ba95674-75dd-4d3f-95ec-b29eb4f9a9a4")]
+            public virtual Ranorex.TabPage ListFilterTest
+            {
+                get
+                {
+                    return _listfiltertestInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ListFilterTest item info.
+            /// </summary>
+            [RepositoryItemInfo("7ba95674-75dd-4d3f-95ec-b29eb4f9a9a4")]
+            public virtual RepoItemInfo ListFilterTestInfo
+            {
+                get
+                {
+                    return _listfiltertestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The TreeModelTest item.
+            /// </summary>
+            [RepositoryItem("97c996ba-b8c9-485a-829f-6c97b197f2b3")]
+            public virtual Ranorex.TabPage TreeModelTest
+            {
+                get
+                {
+                    return _treemodeltestInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The TreeModelTest item info.
+            /// </summary>
+            [RepositoryItemInfo("97c996ba-b8c9-485a-829f-6c97b197f2b3")]
+            public virtual RepoItemInfo TreeModelTestInfo
+            {
+                get
+                {
+                    return _treemodeltestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The WGContextMenuTest item.
+            /// </summary>
+            [RepositoryItem("f7e94c0a-9bda-4d56-925c-24f3172564fa")]
+            public virtual Ranorex.TabPage WGContextMenuTest
+            {
+                get
+                {
+                    return _wgcontextmenutestInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The WGContextMenuTest item info.
+            /// </summary>
+            [RepositoryItemInfo("f7e94c0a-9bda-4d56-925c-24f3172564fa")]
+            public virtual RepoItemInfo WGContextMenuTestInfo
+            {
+                get
+                {
+                    return _wgcontextmenutestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The PythonTest1 item.
+            /// </summary>
+            [RepositoryItem("40662ff1-7960-428c-8ab2-b94ea43829c6")]
+            public virtual Ranorex.TabPage PythonTest1
+            {
+                get
+                {
+                    return _pythontest1Info.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The PythonTest1 item info.
+            /// </summary>
+            [RepositoryItemInfo("40662ff1-7960-428c-8ab2-b94ea43829c6")]
+            public virtual RepoItemInfo PythonTest1Info
+            {
+                get
+                {
+                    return _pythontest1Info;
+                }
+            }
+
+            /// <summary>
+            /// The PythonTest2 item.
+            /// </summary>
+            [RepositoryItem("1e1817b5-8a2c-4723-a942-27782e91ef2d")]
+            public virtual Ranorex.TabPage PythonTest2
+            {
+                get
+                {
+                    return _pythontest2Info.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The PythonTest2 item info.
+            /// </summary>
+            [RepositoryItemInfo("1e1817b5-8a2c-4723-a942-27782e91ef2d")]
+            public virtual RepoItemInfo PythonTest2Info
+            {
+                get
+                {
+                    return _pythontest2Info;
+                }
+            }
+
+            /// <summary>
+            /// The PrototypeCustomPanel item.
+            /// </summary>
+            [RepositoryItem("f74fb908-4cbf-42de-a752-256fa3adfb86")]
+            public virtual Ranorex.TabPage PrototypeCustomPanel
+            {
+                get
+                {
+                    return _prototypecustompanelInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The PrototypeCustomPanel item info.
+            /// </summary>
+            [RepositoryItemInfo("f74fb908-4cbf-42de-a752-256fa3adfb86")]
+            public virtual RepoItemInfo PrototypeCustomPanelInfo
+            {
+                get
+                {
+                    return _prototypecustompanelInfo;
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest item.
+            /// </summary>
+            [RepositoryItem("1b73b804-aadb-46b7-87af-bf044fcd46f9")]
+            public virtual Ranorex.TabPage PropertyTreeTest
+            {
+                get
+                {
+                    return _propertytreetestInfo.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest item info.
+            /// </summary>
+            [RepositoryItemInfo("1b73b804-aadb-46b7-87af-bf044fcd46f9")]
+            public virtual RepoItemInfo PropertyTreeTestInfo
+            {
+                get
+                {
+                    return _propertytreetestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest2 item.
+            /// </summary>
+            [RepositoryItem("10455757-0e7b-4139-8e9f-1ed3a17519f2")]
+            public virtual Ranorex.TabPage PropertyTreeTest2
+            {
+                get
+                {
+                    return _propertytreetest2Info.CreateAdapter<Ranorex.TabPage>(true);
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest2 item info.
+            /// </summary>
+            [RepositoryItemInfo("10455757-0e7b-4139-8e9f-1ed3a17519f2")]
+            public virtual RepoItemInfo PropertyTreeTest2Info
+            {
+                get
+                {
+                    return _propertytreetest2Info;
+                }
+            }
+
+            /// <summary>
+            /// The ScrollLeft item.
+            /// </summary>
+            [RepositoryItem("af98bd43-3dab-4b7e-80bf-e309be01a6f9")]
+            public virtual Ranorex.Button ScrollLeft
+            {
+                get
+                {
+                    return _scrollleftInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ScrollLeft item info.
+            /// </summary>
+            [RepositoryItemInfo("af98bd43-3dab-4b7e-80bf-e309be01a6f9")]
+            public virtual RepoItemInfo ScrollLeftInfo
+            {
+                get
+                {
+                    return _scrollleftInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ScrollRight item.
+            /// </summary>
+            [RepositoryItem("bcb821ce-c331-41a9-a677-fb290d257543")]
+            public virtual Ranorex.Button ScrollRight
+            {
+                get
+                {
+                    return _scrollrightInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ScrollRight item info.
+            /// </summary>
+            [RepositoryItemInfo("bcb821ce-c331-41a9-a677-fb290d257543")]
+            public virtual RepoItemInfo ScrollRightInfo
+            {
+                get
+                {
+                    return _scrollrightInfo;
+                }
+            }
+
+            /// <summary>
+            /// The QTabBar item.
+            /// </summary>
+            [RepositoryItem("1d021b07-2cf7-414a-9afe-77b3891bb2a6")]
+            public virtual Ranorex.TabPageList QTabBar
+            {
+                get
+                {
+                    return _qtabbarInfo.CreateAdapter<Ranorex.TabPageList>(true);
+                }
+            }
+
+            /// <summary>
+            /// The QTabBar item info.
+            /// </summary>
+            [RepositoryItemInfo("1d021b07-2cf7-414a-9afe-77b3891bb2a6")]
+            public virtual RepoItemInfo QTabBarInfo
+            {
+                get
+                {
+                    return _qtabbarInfo;
+                }
+            }
+
+            /// <summary>
+            /// The QtToolbarExtButton item.
+            /// </summary>
+            [RepositoryItem("2d4470e1-a425-4701-a8bb-38a737100000")]
+            public virtual Ranorex.Button QtToolbarExtButton
+            {
+                get
+                {
+                    return _qttoolbarextbuttonInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The QtToolbarExtButton item info.
+            /// </summary>
+            [RepositoryItemInfo("2d4470e1-a425-4701-a8bb-38a737100000")]
+            public virtual RepoItemInfo QtToolbarExtButtonInfo
+            {
+                get
+                {
+                    return _qttoolbarextbuttonInfo;
+                }
+            }
+
+            /// <summary>
+            /// The Undo item.
+            /// </summary>
+            [RepositoryItem("74f987ad-ca64-4c89-a8e4-9b79e7d4341c")]
+            public virtual Ranorex.Button Undo
+            {
+                get
+                {
+                    return _undoInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Undo item info.
+            /// </summary>
+            [RepositoryItemInfo("74f987ad-ca64-4c89-a8e4-9b79e7d4341c")]
+            public virtual RepoItemInfo UndoInfo
+            {
+                get
+                {
+                    return _undoInfo;
+                }
+            }
+
+            /// <summary>
+            /// The Redo item.
+            /// </summary>
+            [RepositoryItem("26f45516-0e5d-43f5-be5a-69d1c5704bf4")]
+            public virtual Ranorex.Button Redo
+            {
+                get
+                {
+                    return _redoInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Redo item info.
+            /// </summary>
+            [RepositoryItemInfo("26f45516-0e5d-43f5-be5a-69d1c5704bf4")]
+            public virtual RepoItemInfo RedoInfo
+            {
+                get
+                {
+                    return _redoInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ToggleCopyControls item.
+            /// </summary>
+            [RepositoryItem("c20d2409-f756-4c3c-b8ef-b39ccc80d79a")]
+            public virtual Ranorex.Button ToggleCopyControls
+            {
+                get
+                {
+                    return _togglecopycontrolsInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ToggleCopyControls item info.
+            /// </summary>
+            [RepositoryItemInfo("c20d2409-f756-4c3c-b8ef-b39ccc80d79a")]
+            public virtual RepoItemInfo ToggleCopyControlsInfo
+            {
+                get
+                {
+                    return _togglecopycontrolsInfo;
+                }
+            }
+
+            /// <summary>
+            /// The DefaultToolBar item.
+            /// </summary>
+            [RepositoryItem("a598ddad-484c-461b-8105-9ec0052e1118")]
+            public virtual Ranorex.ToolBar DefaultToolBar
+            {
+                get
+                {
+                    return _defaulttoolbarInfo.CreateAdapter<Ranorex.ToolBar>(true);
+                }
+            }
+
+            /// <summary>
+            /// The DefaultToolBar item info.
+            /// </summary>
+            [RepositoryItemInfo("a598ddad-484c-461b-8105-9ec0052e1118")]
+            public virtual RepoItemInfo DefaultToolBarInfo
+            {
+                get
+                {
+                    return _defaulttoolbarInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ExpandIconArea item.
+            /// </summary>
+            [RepositoryItem("92d2c361-2280-4937-b22c-b6a5c785d0e0")]
+            public virtual Ranorex.Container ExpandIconArea
+            {
+                get
+                {
+                    return _expandiconareaInfo.CreateAdapter<Ranorex.Container>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ExpandIconArea item info.
+            /// </summary>
+            [RepositoryItemInfo("92d2c361-2280-4937-b22c-b6a5c785d0e0")]
+            public virtual RepoItemInfo ExpandIconAreaInfo
+            {
+                get
+                {
+                    return _expandiconareaInfo;
+                }
+            }
+
+            /// <summary>
+            /// The WGListViewRowDelegate item.
+            /// </summary>
+            [RepositoryItem("67dce5a2-bfa2-4757-a66b-ee39d82adaab")]
+            public virtual Ranorex.Unknown WGListViewRowDelegate
+            {
+                get
+                {
+                    return _wglistviewrowdelegateInfo.CreateAdapter<Ranorex.Unknown>(true);
+                }
+            }
+
+            /// <summary>
+            /// The WGListViewRowDelegate item info.
+            /// </summary>
+            [RepositoryItemInfo("67dce5a2-bfa2-4757-a66b-ee39d82adaab")]
+            public virtual RepoItemInfo WGListViewRowDelegateInfo
+            {
+                get
+                {
+                    return _wglistviewrowdelegateInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ExpandButton item.
+            /// </summary>
+            [RepositoryItem("91a7e8da-4319-4ec5-87ec-0b9f1d804304")]
+            public virtual Ranorex.Text ExpandButton
+            {
+                get
+                {
+                    return _expandbuttonInfo.CreateAdapter<Ranorex.Text>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ExpandButton item info.
+            /// </summary>
+            [RepositoryItemInfo("91a7e8da-4319-4ec5-87ec-0b9f1d804304")]
+            public virtual RepoItemInfo ExpandButtonInfo
+            {
+                get
+                {
+                    return _expandbuttonInfo;
+                }
+            }
+
+            /// <summary>
+            /// The Column item.
+            /// </summary>
+            [RepositoryItem("1975c3dd-bb8e-4930-816a-9a531dc0f132")]
+            public virtual Ranorex.Container Column
+            {
+                get
+                {
+                    return _columnInfo.CreateAdapter<Ranorex.Container>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Column item info.
+            /// </summary>
+            [RepositoryItemInfo("1975c3dd-bb8e-4930-816a-9a531dc0f132")]
+            public virtual ColumnInfoClass ColumnInfo
+            {
+                get
+                {
+                    return _columnInfo;
                 }
             }
 
@@ -726,6 +1188,8 @@ namespace NGTTestAutomation
             RepoItemInfo _wglistviewrowdelegateInfo;
             RepoItemInfo _wglistviewrowdelegate1Info;
             RepoItemInfo _wglistviewrowdelegate2Info;
+            BoolInfoClass _boolInfo;
+            WGTextBoxFrameInfoClass _wgtextboxframeInfo;
 
             /// <summary>
             /// Creates a new WGListView  folder.
@@ -736,6 +1200,99 @@ namespace NGTTestAutomation
                 _wglistviewrowdelegateInfo = new RepoItemInfo(this, "WGListViewRowDelegate", "element[4]", 30000, null, "e2057148-67c4-4cd1-9d01-23343e367e28");
                 _wglistviewrowdelegate1Info = new RepoItemInfo(this, "WGListViewRowDelegate1", "element[6]", 30000, null, "8ab11a00-59a9-48bf-8c22-418d0f8102ba");
                 _wglistviewrowdelegate2Info = new RepoItemInfo(this, "WGListViewRowDelegate2", "element[7]", 30000, null, "404f5671-874a-4d0c-a3a0-d9c6dca0e8d6");
+                _boolInfo = new BoolInfoClass(this);
+                _wgtextboxframeInfo = new WGTextBoxFrameInfoClass(this);
+            }
+
+            /// <summary>
+            /// The BoolInfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("42cfc3e7-1fc1-4350-911e-76b0b4860a3c")]
+            public class BoolInfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// BoolInfoClass class constructor.
+                /// </summary>
+                public BoolInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "Bool", "list[2]/element[@objectname='Bool']", 30000, null, "42cfc3e7-1fc1-4350-911e-76b0b4860a3c")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("4772519f-c25e-48ac-bbb0-62590844920d")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("4772519f-c25e-48ac-bbb0-62590844920d");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("4772519f-c25e-48ac-bbb0-62590844920d")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("4772519f-c25e-48ac-bbb0-62590844920d", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The WGTextBoxFrameInfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("fd5cd430-e465-455b-957c-090c02a4c8eb")]
+            public class WGTextBoxFrameInfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// WGTextBoxFrameInfoClass class constructor.
+                /// </summary>
+                public WGTextBoxFrameInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "WGTextBoxFrame", "list[2]//container[@objectname='WGTextBoxFrame']", 30000, null, "fd5cd430-e465-455b-957c-090c02a4c8eb")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("4de642c0-0188-4584-998f-935ca2d145ca")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("4de642c0-0188-4584-998f-935ca2d145ca");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("4de642c0-0188-4584-998f-935ca2d145ca")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("4de642c0-0188-4584-998f-935ca2d145ca", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <returns>The Screenshot2 image.</returns>
+                [RepositoryImage("3e9a7fb7-84d8-48ce-848a-cd2046455368")]
+                public CompressedImage GetScreenshot2()
+                {
+                    return GetImage("3e9a7fb7-84d8-48ce-848a-cd2046455368");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("3e9a7fb7-84d8-48ce-848a-cd2046455368")]
+                public CompressedImage GetScreenshot2(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("3e9a7fb7-84d8-48ce-848a-cd2046455368", cropRect);
+                }
             }
 
             /// <summary>
@@ -831,6 +1388,54 @@ namespace NGTTestAutomation
                 get
                 {
                     return _wglistviewrowdelegate2Info;
+                }
+            }
+
+            /// <summary>
+            /// The Bool item.
+            /// </summary>
+            [RepositoryItem("42cfc3e7-1fc1-4350-911e-76b0b4860a3c")]
+            public virtual Ranorex.Unknown Bool
+            {
+                get
+                {
+                    return _boolInfo.CreateAdapter<Ranorex.Unknown>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Bool item info.
+            /// </summary>
+            [RepositoryItemInfo("42cfc3e7-1fc1-4350-911e-76b0b4860a3c")]
+            public virtual BoolInfoClass BoolInfo
+            {
+                get
+                {
+                    return _boolInfo;
+                }
+            }
+
+            /// <summary>
+            /// The WGTextBoxFrame item.
+            /// </summary>
+            [RepositoryItem("fd5cd430-e465-455b-957c-090c02a4c8eb")]
+            public virtual Ranorex.Container WGTextBoxFrame
+            {
+                get
+                {
+                    return _wgtextboxframeInfo.CreateAdapter<Ranorex.Container>(true);
+                }
+            }
+
+            /// <summary>
+            /// The WGTextBoxFrame item info.
+            /// </summary>
+            [RepositoryItemInfo("fd5cd430-e465-455b-957c-090c02a4c8eb")]
+            public virtual WGTextBoxFrameInfoClass WGTextBoxFrameInfo
+            {
+                get
+                {
+                    return _wgtextboxframeInfo;
                 }
             }
         }
@@ -1046,38 +1651,32 @@ namespace NGTTestAutomation
         }
 
         /// <summary>
-        /// The MainWindow1AppFolder folder.
+        /// The MenuFolder folder.
         /// </summary>
-        [RepositoryFolder("4a398a01-4bb3-49f5-9d5f-2edfcbaf04dd")]
-        public partial class MainWindow1AppFolder : RepoGenBaseFolder
+        [RepositoryFolder("636e12d4-538c-4963-aad1-a1ac8832705d")]
+        public partial class MenuFolder : RepoGenBaseFolder
         {
-            RepoItemInfo _file1Info;
+            NGTTestAutomationRepositoryFolders.TestDataAppFolder _testdata;
+            NGTTestAutomationRepositoryFolders.ViewAppFolder _view;
+            NGTTestAutomationRepositoryFolders.FileAppFolder _file;
+            NGTTestAutomationRepositoryFolders.NewObjectAppFolder _newobject;
 
             /// <summary>
-            /// Creates a new MainWindow1  folder.
+            /// Creates a new Menu  folder.
             /// </summary>
-            public MainWindow1AppFolder(RepoGenBaseFolder parentFolder) :
-                    base("MainWindow1", "/form[@objectname='MainWindow']", parentFolder, 30000, null, true, "4a398a01-4bb3-49f5-9d5f-2edfcbaf04dd", "")
+            public MenuFolder(RepoGenBaseFolder parentFolder) :
+                    base("Menu", "", parentFolder, 0, null, false, "636e12d4-538c-4963-aad1-a1ac8832705d", "")
             {
-                _file1Info = new RepoItemInfo(this, "File1", "?/?/menuitem[@text='File']", 30000, null, "70f9d447-fc59-4164-a97c-9d2685f7401a");
-            }
-
-            /// <summary>
-            /// The Self item.
-            /// </summary>
-            [RepositoryItem("4a398a01-4bb3-49f5-9d5f-2edfcbaf04dd")]
-            public virtual Ranorex.Form Self
-            {
-                get
-                {
-                    return _selfInfo.CreateAdapter<Ranorex.Form>(true);
-                }
+                _testdata = new NGTTestAutomationRepositoryFolders.TestDataAppFolder(this);
+                _view = new NGTTestAutomationRepositoryFolders.ViewAppFolder(this);
+                _file = new NGTTestAutomationRepositoryFolders.FileAppFolder(this);
+                _newobject = new NGTTestAutomationRepositoryFolders.NewObjectAppFolder(this);
             }
 
             /// <summary>
             /// The Self item info.
             /// </summary>
-            [RepositoryItemInfo("4a398a01-4bb3-49f5-9d5f-2edfcbaf04dd")]
+            [RepositoryItemInfo("636e12d4-538c-4963-aad1-a1ac8832705d")]
             public virtual RepoItemInfo SelfInfo
             {
                 get
@@ -1087,51 +1686,65 @@ namespace NGTTestAutomation
             }
 
             /// <summary>
-            /// The File1 item.
+            /// The TestData folder.
             /// </summary>
-            [RepositoryItem("70f9d447-fc59-4164-a97c-9d2685f7401a")]
-            public virtual Ranorex.MenuItem File1
+            [RepositoryFolder("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
+            public virtual NGTTestAutomationRepositoryFolders.TestDataAppFolder TestData
             {
-                get
-                {
-                    return _file1Info.CreateAdapter<Ranorex.MenuItem>(true);
-                }
+                get { return _testdata; }
             }
 
             /// <summary>
-            /// The File1 item info.
+            /// The View folder.
             /// </summary>
-            [RepositoryItemInfo("70f9d447-fc59-4164-a97c-9d2685f7401a")]
-            public virtual RepoItemInfo File1Info
+            [RepositoryFolder("73807bc9-2bae-4818-a47f-217a5cb6dae4")]
+            public virtual NGTTestAutomationRepositoryFolders.ViewAppFolder View
             {
-                get
-                {
-                    return _file1Info;
-                }
+                get { return _view; }
+            }
+
+            /// <summary>
+            /// The File folder.
+            /// </summary>
+            [RepositoryFolder("19d79684-b65e-461c-9325-b4a1a589be43")]
+            public virtual NGTTestAutomationRepositoryFolders.FileAppFolder File
+            {
+                get { return _file; }
+            }
+
+            /// <summary>
+            /// The NewObject folder.
+            /// </summary>
+            [RepositoryFolder("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
+            public virtual NGTTestAutomationRepositoryFolders.NewObjectAppFolder NewObject
+            {
+                get { return _newobject; }
             }
         }
 
         /// <summary>
-        /// The NewObjectAppFolder folder.
+        /// The TestDataAppFolder folder.
         /// </summary>
-        [RepositoryFolder("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
-        public partial class NewObjectAppFolder : RepoGenBaseFolder
+        [RepositoryFolder("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
+        public partial class TestDataAppFolder : RepoGenBaseFolder
         {
-            RepoItemInfo _newobjectInfo;
+            RepoItemInfo _openInfo;
+            RepoItemInfo _closeInfo;
 
             /// <summary>
-            /// Creates a new NewObject  folder.
+            /// Creates a new TestData  folder.
             /// </summary>
-            public NewObjectAppFolder(RepoGenBaseFolder parentFolder) :
-                    base("NewObject", "/contextmenu[@objectname='New Object']", parentFolder, 30000, null, true, "aa5aa6d5-a618-42d7-8544-fea132a24ccb", "")
+            public TestDataAppFolder(RepoGenBaseFolder parentFolder) :
+                    base("TestData", "/contextmenu[@objectname='TestData']", parentFolder, 60000, null, true, "15fdee08-62a2-4c9c-a3a3-8b63dc86c457", "")
             {
-                _newobjectInfo = new RepoItemInfo(this, "NewObject", "menuitem[2]", 30000, null, "3dd3fb65-4efa-4ca8-ac8c-1f5e4fb50d51");
+                _openInfo = new RepoItemInfo(this, "Open", "menuitem[@text='Open']", 60000, null, "a991d774-b697-4757-a6e6-3bc737005a74");
+                _closeInfo = new RepoItemInfo(this, "Close", "menuitem[@text='Close']", 30000, null, "52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e");
             }
 
             /// <summary>
             /// The Self item.
             /// </summary>
-            [RepositoryItem("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
+            [RepositoryItem("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
             public virtual Ranorex.ContextMenu Self
             {
                 get
@@ -1143,7 +1756,7 @@ namespace NGTTestAutomation
             /// <summary>
             /// The Self item info.
             /// </summary>
-            [RepositoryItemInfo("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
+            [RepositoryItemInfo("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
             public virtual RepoItemInfo SelfInfo
             {
                 get
@@ -1153,320 +1766,50 @@ namespace NGTTestAutomation
             }
 
             /// <summary>
-            /// The NewObject item.
+            /// The Open item.
             /// </summary>
-            [RepositoryItem("3dd3fb65-4efa-4ca8-ac8c-1f5e4fb50d51")]
-            public virtual Ranorex.MenuItem NewObject
+            [RepositoryItem("a991d774-b697-4757-a6e6-3bc737005a74")]
+            public virtual Ranorex.MenuItem Open
             {
                 get
                 {
-                    return _newobjectInfo.CreateAdapter<Ranorex.MenuItem>(true);
+                    return _openInfo.CreateAdapter<Ranorex.MenuItem>(true);
                 }
             }
 
             /// <summary>
-            /// The NewObject item info.
+            /// The Open item info.
             /// </summary>
-            [RepositoryItemInfo("3dd3fb65-4efa-4ca8-ac8c-1f5e4fb50d51")]
-            public virtual RepoItemInfo NewObjectInfo
+            [RepositoryItemInfo("a991d774-b697-4757-a6e6-3bc737005a74")]
+            public virtual RepoItemInfo OpenInfo
             {
                 get
                 {
-                    return _newobjectInfo;
+                    return _openInfo;
                 }
             }
-        }
-
-        /// <summary>
-        /// The CustomQmlWindowAppFolder folder.
-        /// </summary>
-        [RepositoryFolder("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
-        public partial class CustomQmlWindowAppFolder : RepoGenBaseFolder
-        {
-            RepoItemInfo _buttonokInfo;
 
             /// <summary>
-            /// Creates a new CustomQmlWindow  folder.
+            /// The Close item.
             /// </summary>
-            public CustomQmlWindowAppFolder(RepoGenBaseFolder parentFolder) :
-                    base("CustomQmlWindow", "/form[@title='Custom Qml Window']", parentFolder, 30000, null, true, "cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0", "")
-            {
-                _buttonokInfo = new RepoItemInfo(this, "ButtonOk", "element[@type='QQuickItem']//container[@objectname='WGExpandingRowLayout']/button[@text='Ok']", 30000, null, "759aad40-286c-40ca-99c9-dadb09239706");
-            }
-
-            /// <summary>
-            /// The Self item.
-            /// </summary>
-            [RepositoryItem("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
-            public virtual Ranorex.Form Self
+            [RepositoryItem("52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e")]
+            public virtual Ranorex.MenuItem Close
             {
                 get
                 {
-                    return _selfInfo.CreateAdapter<Ranorex.Form>(true);
+                    return _closeInfo.CreateAdapter<Ranorex.MenuItem>(true);
                 }
             }
 
             /// <summary>
-            /// The Self item info.
+            /// The Close item info.
             /// </summary>
-            [RepositoryItemInfo("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
-            public virtual RepoItemInfo SelfInfo
+            [RepositoryItemInfo("52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e")]
+            public virtual RepoItemInfo CloseInfo
             {
                 get
                 {
-                    return _selfInfo;
-                }
-            }
-
-            /// <summary>
-            /// The ButtonOk item.
-            /// </summary>
-            [RepositoryItem("759aad40-286c-40ca-99c9-dadb09239706")]
-            public virtual Ranorex.Button ButtonOk
-            {
-                get
-                {
-                    return _buttonokInfo.CreateAdapter<Ranorex.Button>(true);
-                }
-            }
-
-            /// <summary>
-            /// The ButtonOk item info.
-            /// </summary>
-            [RepositoryItemInfo("759aad40-286c-40ca-99c9-dadb09239706")]
-            public virtual RepoItemInfo ButtonOkInfo
-            {
-                get
-                {
-                    return _buttonokInfo;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The FileAppFolder folder.
-        /// </summary>
-        [RepositoryFolder("19d79684-b65e-461c-9325-b4a1a589be43")]
-        public partial class FileAppFolder : RepoGenBaseFolder
-        {
-            RepoItemInfo _exitInfo;
-
-            /// <summary>
-            /// Creates a new File  folder.
-            /// </summary>
-            public FileAppFolder(RepoGenBaseFolder parentFolder) :
-                    base("File", "/contextmenu[@objectname='File']", parentFolder, 30000, null, true, "19d79684-b65e-461c-9325-b4a1a589be43", "")
-            {
-                _exitInfo = new RepoItemInfo(this, "Exit", "menuitem[@text='E&xit']", 30000, null, "8e9b3663-82f0-4113-ac93-6e1535ffa1a3");
-            }
-
-            /// <summary>
-            /// The Self item.
-            /// </summary>
-            [RepositoryItem("19d79684-b65e-461c-9325-b4a1a589be43")]
-            public virtual Ranorex.ContextMenu Self
-            {
-                get
-                {
-                    return _selfInfo.CreateAdapter<Ranorex.ContextMenu>(true);
-                }
-            }
-
-            /// <summary>
-            /// The Self item info.
-            /// </summary>
-            [RepositoryItemInfo("19d79684-b65e-461c-9325-b4a1a589be43")]
-            public virtual RepoItemInfo SelfInfo
-            {
-                get
-                {
-                    return _selfInfo;
-                }
-            }
-
-            /// <summary>
-            /// The Exit item.
-            /// </summary>
-            [RepositoryItem("8e9b3663-82f0-4113-ac93-6e1535ffa1a3")]
-            public virtual Ranorex.MenuItem Exit
-            {
-                get
-                {
-                    return _exitInfo.CreateAdapter<Ranorex.MenuItem>(true);
-                }
-            }
-
-            /// <summary>
-            /// The Exit item info.
-            /// </summary>
-            [RepositoryItemInfo("8e9b3663-82f0-4113-ac93-6e1535ffa1a3")]
-            public virtual RepoItemInfo ExitInfo
-            {
-                get
-                {
-                    return _exitInfo;
-                }
-            }
-        }
-
-        /// <summary>
-        /// The GenericAppTestAppFolder folder.
-        /// </summary>
-        [RepositoryFolder("f7aeb4ef-a25f-42de-a3e0-d3a1598c0b7f")]
-        public partial class GenericAppTestAppFolder : RepoGenBaseFolder
-        {
-            ViewInfoClass _viewInfo;
-            TestDataInfoClass _testdataInfo;
-
-            /// <summary>
-            /// Creates a new GenericAppTest  folder.
-            /// </summary>
-            public GenericAppTestAppFolder(RepoGenBaseFolder parentFolder) :
-                    base("GenericAppTest", "/form[@title='Generic App Test']", parentFolder, 60000, null, true, "f7aeb4ef-a25f-42de-a3e0-d3a1598c0b7f", "")
-            {
-                _viewInfo = new ViewInfoClass(this);
-                _testdataInfo = new TestDataInfoClass(this);
-            }
-
-            /// <summary>
-            /// The ViewInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("59790d7a-6ea8-43e1-969b-4c1ace980e32")]
-            public class ViewInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// ViewInfoClass class constructor.
-                /// </summary>
-                public ViewInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "View", "?/?/menuitem[@accessiblename='View']", 60000, null, "59790d7a-6ea8-43e1-969b-4c1ace980e32")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("af87816c-40f0-43c5-9c98-a07214f7f852")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("af87816c-40f0-43c5-9c98-a07214f7f852");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("af87816c-40f0-43c5-9c98-a07214f7f852")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("af87816c-40f0-43c5-9c98-a07214f7f852", cropRect);
-                }
-            }
-
-            /// <summary>
-            /// The TestDataInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("366725d0-7994-4b02-bb24-2cf228402969")]
-            public class TestDataInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// TestDataInfoClass class constructor.
-                /// </summary>
-                public TestDataInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "TestData", "?/?/menuitem[@accessiblename='TestData']", 60000, null, "366725d0-7994-4b02-bb24-2cf228402969")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("127d53ff-caad-4bda-bc8d-5b95847c3d2d")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("127d53ff-caad-4bda-bc8d-5b95847c3d2d");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("127d53ff-caad-4bda-bc8d-5b95847c3d2d")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("127d53ff-caad-4bda-bc8d-5b95847c3d2d", cropRect);
-                }
-            }
-
-            /// <summary>
-            /// The Self item.
-            /// </summary>
-            [RepositoryItem("f7aeb4ef-a25f-42de-a3e0-d3a1598c0b7f")]
-            public virtual Ranorex.Form Self
-            {
-                get
-                {
-                    return _selfInfo.CreateAdapter<Ranorex.Form>(true);
-                }
-            }
-
-            /// <summary>
-            /// The Self item info.
-            /// </summary>
-            [RepositoryItemInfo("f7aeb4ef-a25f-42de-a3e0-d3a1598c0b7f")]
-            public virtual RepoItemInfo SelfInfo
-            {
-                get
-                {
-                    return _selfInfo;
-                }
-            }
-
-            /// <summary>
-            /// The View item.
-            /// </summary>
-            [RepositoryItem("59790d7a-6ea8-43e1-969b-4c1ace980e32")]
-            public virtual Ranorex.MenuItem View
-            {
-                get
-                {
-                    return _viewInfo.CreateAdapter<Ranorex.MenuItem>(true);
-                }
-            }
-
-            /// <summary>
-            /// The View item info.
-            /// </summary>
-            [RepositoryItemInfo("59790d7a-6ea8-43e1-969b-4c1ace980e32")]
-            public virtual ViewInfoClass ViewInfo
-            {
-                get
-                {
-                    return _viewInfo;
-                }
-            }
-
-            /// <summary>
-            /// The TestData item.
-            /// </summary>
-            [RepositoryItem("366725d0-7994-4b02-bb24-2cf228402969")]
-            public virtual Ranorex.MenuItem TestData
-            {
-                get
-                {
-                    return _testdataInfo.CreateAdapter<Ranorex.MenuItem>(true);
-                }
-            }
-
-            /// <summary>
-            /// The TestData item info.
-            /// </summary>
-            [RepositoryItemInfo("366725d0-7994-4b02-bb24-2cf228402969")]
-            public virtual TestDataInfoClass TestDataInfo
-            {
-                get
-                {
-                    return _testdataInfo;
+                    return _closeInfo;
                 }
             }
         }
@@ -1481,7 +1824,6 @@ namespace NGTTestAutomation
             HistoryInfoClass _historyInfo;
             TreeExpansionTestInfoClass _treeexpansiontestInfo;
             CustomModelInterfaceInfoClass _custommodelinterfaceInfo;
-            AssetBrowserInfoClass _assetbrowserInfo;
             ActiveFiltersControlTestInfoClass _activefilterscontroltestInfo;
             ListModelTestInfoClass _listmodeltestInfo;
             ListFilterTestInfoClass _listfiltertestInfo;
@@ -1502,7 +1844,6 @@ namespace NGTTestAutomation
                 _historyInfo = new HistoryInfoClass(this);
                 _treeexpansiontestInfo = new TreeExpansionTestInfoClass(this);
                 _custommodelinterfaceInfo = new CustomModelInterfaceInfoClass(this);
-                _assetbrowserInfo = new AssetBrowserInfoClass(this);
                 _activefilterscontroltestInfo = new ActiveFiltersControlTestInfoClass(this);
                 _listmodeltestInfo = new ListModelTestInfoClass(this);
                 _listfiltertestInfo = new ListFilterTestInfoClass(this);
@@ -1651,41 +1992,6 @@ namespace NGTTestAutomation
                 public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
                 {
                     return GetImage("ae565013-a9a9-4090-ab4c-4242c88f84de", cropRect);
-                }
-            }
-
-            /// <summary>
-            /// The AssetBrowserInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("94465dc0-1c8e-432f-a714-ba187bdab562")]
-            public class AssetBrowserInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// AssetBrowserInfoClass class constructor.
-                /// </summary>
-                public AssetBrowserInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "AssetBrowser", "menuitem[@text='Asset Browser']", 60000, null, "94465dc0-1c8e-432f-a714-ba187bdab562")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("87a0cb5e-cd1b-4d04-8f0d-626dc60eeab7")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("87a0cb5e-cd1b-4d04-8f0d-626dc60eeab7");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("87a0cb5e-cd1b-4d04-8f0d-626dc60eeab7")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("87a0cb5e-cd1b-4d04-8f0d-626dc60eeab7", cropRect);
                 }
             }
 
@@ -2125,30 +2431,6 @@ namespace NGTTestAutomation
             }
 
             /// <summary>
-            /// The AssetBrowser item.
-            /// </summary>
-            [RepositoryItem("94465dc0-1c8e-432f-a714-ba187bdab562")]
-            public virtual Ranorex.MenuItem AssetBrowser
-            {
-                get
-                {
-                    return _assetbrowserInfo.CreateAdapter<Ranorex.MenuItem>(true);
-                }
-            }
-
-            /// <summary>
-            /// The AssetBrowser item info.
-            /// </summary>
-            [RepositoryItemInfo("94465dc0-1c8e-432f-a714-ba187bdab562")]
-            public virtual AssetBrowserInfoClass AssetBrowserInfo
-            {
-                get
-                {
-                    return _assetbrowserInfo;
-                }
-            }
-
-            /// <summary>
             /// The ActiveFiltersControlTest item.
             /// </summary>
             [RepositoryItem("cf0c868b-9209-46a8-976c-ada993360d12")]
@@ -2366,98 +2648,26 @@ namespace NGTTestAutomation
         }
 
         /// <summary>
-        /// The TestDataAppFolder folder.
+        /// The FileAppFolder folder.
         /// </summary>
-        [RepositoryFolder("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
-        public partial class TestDataAppFolder : RepoGenBaseFolder
+        [RepositoryFolder("19d79684-b65e-461c-9325-b4a1a589be43")]
+        public partial class FileAppFolder : RepoGenBaseFolder
         {
-            OpenInfoClass _openInfo;
-            CloseInfoClass _closeInfo;
+            RepoItemInfo _exitInfo;
 
             /// <summary>
-            /// Creates a new TestData  folder.
+            /// Creates a new File  folder.
             /// </summary>
-            public TestDataAppFolder(RepoGenBaseFolder parentFolder) :
-                    base("TestData", "/contextmenu[@objectname='TestData']", parentFolder, 60000, null, true, "15fdee08-62a2-4c9c-a3a3-8b63dc86c457", "")
+            public FileAppFolder(RepoGenBaseFolder parentFolder) :
+                    base("File", "/contextmenu[@objectname='File']", parentFolder, 30000, null, true, "19d79684-b65e-461c-9325-b4a1a589be43", "")
             {
-                _openInfo = new OpenInfoClass(this);
-                _closeInfo = new CloseInfoClass(this);
-            }
-
-            /// <summary>
-            /// The OpenInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("a991d774-b697-4757-a6e6-3bc737005a74")]
-            public class OpenInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// OpenInfoClass class constructor.
-                /// </summary>
-                public OpenInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "Open", "menuitem[@text='Open']", 60000, null, "a991d774-b697-4757-a6e6-3bc737005a74")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("920169b8-7034-4d1b-8567-94024c5ddb87")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("920169b8-7034-4d1b-8567-94024c5ddb87");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("920169b8-7034-4d1b-8567-94024c5ddb87")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("920169b8-7034-4d1b-8567-94024c5ddb87", cropRect);
-                }
-            }
-
-            /// <summary>
-            /// The CloseInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e")]
-            public class CloseInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// CloseInfoClass class constructor.
-                /// </summary>
-                public CloseInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "Close", "menuitem[@text='Close']", 30000, null, "52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("c4420c79-dae3-48f5-92a6-95ab921ca3e6")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("c4420c79-dae3-48f5-92a6-95ab921ca3e6");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("c4420c79-dae3-48f5-92a6-95ab921ca3e6")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("c4420c79-dae3-48f5-92a6-95ab921ca3e6", cropRect);
-                }
+                _exitInfo = new RepoItemInfo(this, "Exit", "menuitem[@text='E&xit']", 30000, null, "8e9b3663-82f0-4113-ac93-6e1535ffa1a3");
             }
 
             /// <summary>
             /// The Self item.
             /// </summary>
-            [RepositoryItem("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
+            [RepositoryItem("19d79684-b65e-461c-9325-b4a1a589be43")]
             public virtual Ranorex.ContextMenu Self
             {
                 get
@@ -2469,7 +2679,7 @@ namespace NGTTestAutomation
             /// <summary>
             /// The Self item info.
             /// </summary>
-            [RepositoryItemInfo("15fdee08-62a2-4c9c-a3a3-8b63dc86c457")]
+            [RepositoryItemInfo("19d79684-b65e-461c-9325-b4a1a589be43")]
             public virtual RepoItemInfo SelfInfo
             {
                 get
@@ -2479,147 +2689,156 @@ namespace NGTTestAutomation
             }
 
             /// <summary>
-            /// The Open item.
+            /// The Exit item.
             /// </summary>
-            [RepositoryItem("a991d774-b697-4757-a6e6-3bc737005a74")]
-            public virtual Ranorex.MenuItem Open
+            [RepositoryItem("8e9b3663-82f0-4113-ac93-6e1535ffa1a3")]
+            public virtual Ranorex.MenuItem Exit
             {
                 get
                 {
-                    return _openInfo.CreateAdapter<Ranorex.MenuItem>(true);
+                    return _exitInfo.CreateAdapter<Ranorex.MenuItem>(true);
                 }
             }
 
             /// <summary>
-            /// The Open item info.
+            /// The Exit item info.
             /// </summary>
-            [RepositoryItemInfo("a991d774-b697-4757-a6e6-3bc737005a74")]
-            public virtual OpenInfoClass OpenInfo
+            [RepositoryItemInfo("8e9b3663-82f0-4113-ac93-6e1535ffa1a3")]
+            public virtual RepoItemInfo ExitInfo
             {
                 get
                 {
-                    return _openInfo;
-                }
-            }
-
-            /// <summary>
-            /// The Close item.
-            /// </summary>
-            [RepositoryItem("52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e")]
-            public virtual Ranorex.MenuItem Close
-            {
-                get
-                {
-                    return _closeInfo.CreateAdapter<Ranorex.MenuItem>(true);
-                }
-            }
-
-            /// <summary>
-            /// The Close item info.
-            /// </summary>
-            [RepositoryItemInfo("52e4ddf1-1a1c-4f53-bd55-4fc0b751ce6e")]
-            public virtual CloseInfoClass CloseInfo
-            {
-                get
-                {
-                    return _closeInfo;
+                    return _exitInfo;
                 }
             }
         }
 
         /// <summary>
-        /// The GenericAppAppFolder folder.
+        /// The NewObjectAppFolder folder.
         /// </summary>
-        [RepositoryFolder("4625f38f-a7c5-4439-85f5-7175bd248529")]
-        public partial class GenericAppAppFolder : RepoGenBaseFolder
+        [RepositoryFolder("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
+        public partial class NewObjectAppFolder : RepoGenBaseFolder
         {
-            CloseCtrlPlusWInfoClass _closectrlpluswInfo;
-            OpenCtrlPlusOInfoClass _openctrlplusoInfo;
+            RepoItemInfo _newobjectInfo;
 
             /// <summary>
-            /// Creates a new GenericApp  folder.
+            /// Creates a new NewObject  folder.
             /// </summary>
-            public GenericAppAppFolder(RepoGenBaseFolder parentFolder) :
-                    base("GenericApp", "/form[@title='generic_app']", parentFolder, 60000, null, true, "4625f38f-a7c5-4439-85f5-7175bd248529", "")
+            public NewObjectAppFolder(RepoGenBaseFolder parentFolder) :
+                    base("NewObject", "/contextmenu[@objectname='New Object']", parentFolder, 30000, null, true, "aa5aa6d5-a618-42d7-8544-fea132a24ccb", "")
             {
-                _closectrlpluswInfo = new CloseCtrlPlusWInfoClass(this);
-                _openctrlplusoInfo = new OpenCtrlPlusOInfoClass(this);
-            }
-
-            /// <summary>
-            /// The CloseCtrlPlusWInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("fa06751b-e569-40f1-a4f5-52fcd9a17e0b")]
-            public class CloseCtrlPlusWInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// CloseCtrlPlusWInfoClass class constructor.
-                /// </summary>
-                public CloseCtrlPlusWInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "CloseCtrlPlusW", "?/?/menuitem[@accessiblename='Close Ctrl+W']", 60000, null, "fa06751b-e569-40f1-a4f5-52fcd9a17e0b")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("eb025baa-1885-466d-89cd-0ed4b1e78f89")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("eb025baa-1885-466d-89cd-0ed4b1e78f89");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("eb025baa-1885-466d-89cd-0ed4b1e78f89")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("eb025baa-1885-466d-89cd-0ed4b1e78f89", cropRect);
-                }
-            }
-
-            /// <summary>
-            /// The OpenCtrlPlusOInfoClass folder.
-            /// </summary>
-            [RepositoryItemInfo("392472d6-45ce-45b3-b9b0-4d9ae973a6da")]
-            public class OpenCtrlPlusOInfoClass : RepoItemInfo
-            {
-                /// <summary>
-                /// OpenCtrlPlusOInfoClass class constructor.
-                /// </summary>
-                public OpenCtrlPlusOInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "OpenCtrlPlusO", "?/?/menuitem[@accessiblename='Open Ctrl+O']", 30000, null, "392472d6-45ce-45b3-b9b0-4d9ae973a6da")
-                { }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <returns>The Screenshot1 image.</returns>
-                [RepositoryImage("e40007e1-705c-40d5-8175-9ba90985157c")]
-                public CompressedImage GetScreenshot1()
-                {
-                    return GetImage("e40007e1-705c-40d5-8175-9ba90985157c");
-                }
-
-                /// <summary>
-                /// Gets the Screenshot1 item image.
-                /// </summary>
-                /// <param name="cropRect">The bounds of the sub-image to return.</param>
-                /// <returns>The cropped image.</returns>
-                [RepositoryImage("e40007e1-705c-40d5-8175-9ba90985157c")]
-                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
-                {
-                    return GetImage("e40007e1-705c-40d5-8175-9ba90985157c", cropRect);
-                }
+                _newobjectInfo = new RepoItemInfo(this, "NewObject", "menuitem[2]", 30000, null, "3dd3fb65-4efa-4ca8-ac8c-1f5e4fb50d51");
             }
 
             /// <summary>
             /// The Self item.
             /// </summary>
-            [RepositoryItem("4625f38f-a7c5-4439-85f5-7175bd248529")]
+            [RepositoryItem("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
+            public virtual Ranorex.ContextMenu Self
+            {
+                get
+                {
+                    return _selfInfo.CreateAdapter<Ranorex.ContextMenu>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Self item info.
+            /// </summary>
+            [RepositoryItemInfo("aa5aa6d5-a618-42d7-8544-fea132a24ccb")]
+            public virtual RepoItemInfo SelfInfo
+            {
+                get
+                {
+                    return _selfInfo;
+                }
+            }
+
+            /// <summary>
+            /// The NewObject item.
+            /// </summary>
+            [RepositoryItem("3dd3fb65-4efa-4ca8-ac8c-1f5e4fb50d51")]
+            public virtual Ranorex.MenuItem NewObject
+            {
+                get
+                {
+                    return _newobjectInfo.CreateAdapter<Ranorex.MenuItem>(true);
+                }
+            }
+
+            /// <summary>
+            /// The NewObject item info.
+            /// </summary>
+            [RepositoryItemInfo("3dd3fb65-4efa-4ca8-ac8c-1f5e4fb50d51")]
+            public virtual RepoItemInfo NewObjectInfo
+            {
+                get
+                {
+                    return _newobjectInfo;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The Floating_WindowsFolder folder.
+        /// </summary>
+        [RepositoryFolder("12841276-a415-4c4b-b1c8-31f76af51aa3")]
+        public partial class Floating_WindowsFolder : RepoGenBaseFolder
+        {
+            NGTTestAutomationRepositoryFolders.CustomQmlWindowAppFolder _customqmlwindow;
+
+            /// <summary>
+            /// Creates a new Floating_Windows  folder.
+            /// </summary>
+            public Floating_WindowsFolder(RepoGenBaseFolder parentFolder) :
+                    base("Floating_Windows", "", parentFolder, 0, null, false, "12841276-a415-4c4b-b1c8-31f76af51aa3", "")
+            {
+                _customqmlwindow = new NGTTestAutomationRepositoryFolders.CustomQmlWindowAppFolder(this);
+            }
+
+            /// <summary>
+            /// The Self item info.
+            /// </summary>
+            [RepositoryItemInfo("12841276-a415-4c4b-b1c8-31f76af51aa3")]
+            public virtual RepoItemInfo SelfInfo
+            {
+                get
+                {
+                    return _selfInfo;
+                }
+            }
+
+            /// <summary>
+            /// The CustomQmlWindow folder.
+            /// </summary>
+            [RepositoryFolder("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
+            public virtual NGTTestAutomationRepositoryFolders.CustomQmlWindowAppFolder CustomQmlWindow
+            {
+                get { return _customqmlwindow; }
+            }
+        }
+
+        /// <summary>
+        /// The CustomQmlWindowAppFolder folder.
+        /// </summary>
+        [RepositoryFolder("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
+        public partial class CustomQmlWindowAppFolder : RepoGenBaseFolder
+        {
+            RepoItemInfo _buttonokInfo;
+
+            /// <summary>
+            /// Creates a new CustomQmlWindow  folder.
+            /// </summary>
+            public CustomQmlWindowAppFolder(RepoGenBaseFolder parentFolder) :
+                    base("CustomQmlWindow", "/form[@title='Custom Qml Window']", parentFolder, 30000, null, true, "cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0", "")
+            {
+                _buttonokInfo = new RepoItemInfo(this, "ButtonOk", "element[@type='QQuickItem']//container[@objectname='WGExpandingRowLayout']/button[@text='Ok']", 30000, null, "759aad40-286c-40ca-99c9-dadb09239706");
+            }
+
+            /// <summary>
+            /// The Self item.
+            /// </summary>
+            [RepositoryItem("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
             public virtual Ranorex.Form Self
             {
                 get
@@ -2631,7 +2850,7 @@ namespace NGTTestAutomation
             /// <summary>
             /// The Self item info.
             /// </summary>
-            [RepositoryItemInfo("4625f38f-a7c5-4439-85f5-7175bd248529")]
+            [RepositoryItemInfo("cd6e7fa1-8b47-4ac9-a60a-ec7976a68ae0")]
             public virtual RepoItemInfo SelfInfo
             {
                 get
@@ -2641,50 +2860,26 @@ namespace NGTTestAutomation
             }
 
             /// <summary>
-            /// The CloseCtrlPlusW item.
+            /// The ButtonOk item.
             /// </summary>
-            [RepositoryItem("fa06751b-e569-40f1-a4f5-52fcd9a17e0b")]
-            public virtual Ranorex.MenuItem CloseCtrlPlusW
+            [RepositoryItem("759aad40-286c-40ca-99c9-dadb09239706")]
+            public virtual Ranorex.Button ButtonOk
             {
                 get
                 {
-                    return _closectrlpluswInfo.CreateAdapter<Ranorex.MenuItem>(true);
+                    return _buttonokInfo.CreateAdapter<Ranorex.Button>(true);
                 }
             }
 
             /// <summary>
-            /// The CloseCtrlPlusW item info.
+            /// The ButtonOk item info.
             /// </summary>
-            [RepositoryItemInfo("fa06751b-e569-40f1-a4f5-52fcd9a17e0b")]
-            public virtual CloseCtrlPlusWInfoClass CloseCtrlPlusWInfo
+            [RepositoryItemInfo("759aad40-286c-40ca-99c9-dadb09239706")]
+            public virtual RepoItemInfo ButtonOkInfo
             {
                 get
                 {
-                    return _closectrlpluswInfo;
-                }
-            }
-
-            /// <summary>
-            /// The OpenCtrlPlusO item.
-            /// </summary>
-            [RepositoryItem("392472d6-45ce-45b3-b9b0-4d9ae973a6da")]
-            public virtual Ranorex.MenuItem OpenCtrlPlusO
-            {
-                get
-                {
-                    return _openctrlplusoInfo.CreateAdapter<Ranorex.MenuItem>(true);
-                }
-            }
-
-            /// <summary>
-            /// The OpenCtrlPlusO item info.
-            /// </summary>
-            [RepositoryItemInfo("392472d6-45ce-45b3-b9b0-4d9ae973a6da")]
-            public virtual OpenCtrlPlusOInfoClass OpenCtrlPlusOInfo
-            {
-                get
-                {
-                    return _openctrlplusoInfo;
+                    return _buttonokInfo;
                 }
             }
         }

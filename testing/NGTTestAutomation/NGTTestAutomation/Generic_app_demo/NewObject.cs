@@ -83,8 +83,8 @@ namespace NGTTestAutomation.Generic_app_demo
             repo.Generic_app.MainWindow.NewObject.Click("26;9");
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'NewObject.NewObject' at 43;13.", repo.NewObject.NewObjectInfo, new RecordItemIndex(1));
-            repo.NewObject.NewObject.Click("43;13");
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.NewObject.NewObject' at 43;13.", repo.Menu.NewObject.NewObjectInfo, new RecordItemIndex(1));
+            repo.Menu.NewObject.NewObject.Click("43;13");
             Delay.Milliseconds(200);
             
         }

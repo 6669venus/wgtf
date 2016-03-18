@@ -53,9 +53,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="5053dfc5-f3d9-415d-83a9-8aea222de6b2"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="Macros_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -275,9 +276,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="37f31f04-6434-4385-88a6-2facad73a5c1"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="History_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -497,9 +499,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="9f48639c-f5ff-4941-8247-92f82ef3cbc4"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="TreeExpansionTest_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -719,9 +722,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="ae565013-a9a9-4090-ab4c-4242c88f84de"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="CustomModelInterface_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -941,9 +945,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="d3e366f8-00fd-43a4-bb0c-c3088723fe26"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="ActiveFiltersControlTest_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -1163,9 +1168,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="fec09f21-21f4-4698-ac84-705e11287545"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="ListModelTest_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -1379,15 +1385,19 @@ mode="Global">
 			<matchvalue>
 				yourValue
 			</matchvalue>
+			<message>
+				0.98
+			</message>
 		</validationitem>
 		<validationitem
 		enabled="True"
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="08a9a0fa-e110-4c0b-a9db-d403d5ee875a"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="ListFilterTest_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -1607,9 +1617,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="86936504-d1fe-42a2-96d0-c2c96143a4d3"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="TreeModelTest_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -1829,9 +1840,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="7a4f114d-6c88-405e-933d-92b0634b1ba9"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="WGContextMenuTest_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -2051,9 +2063,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="db48f40b-2b7d-4f2b-81fa-f9a0416605a9"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="PythonTest1_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -2273,9 +2286,10 @@ mode="Global">
 		optional="False"
 		screenshotname="Screenshot1"
 		screenshotguid="dbaa9f4e-3173-414f-ad21-9252cac11db9"
-		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
+		codegenpropertyname="PythonTest2_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>
@@ -2498,6 +2512,7 @@ mode="Global">
 		codegenpropertyname="PrototypeCustomPanel_Screenshot1"
 		searchpropertyid="fedf9501-8bc8-415f-8f13-1dde66ca724a"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>

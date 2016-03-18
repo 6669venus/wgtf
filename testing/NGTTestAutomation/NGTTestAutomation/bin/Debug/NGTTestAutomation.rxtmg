@@ -11,7 +11,7 @@ rxversion="5.4.5.19886">
 			id="0336eaaf-811a-429f-aa1f-e71a0de19064"/>
 		</groupvariables>
 		<testmodule
-		name="TestDataOpen"
+		name="TestDataOpen_doubleclick"
 		id="14989fd2-9117-463b-b4c2-e86d57b3f3cb"
 		ref="91764307-6887-4c33-8600-1f11ebb6f3b7"
 		type="Recording"/>
@@ -21,7 +21,7 @@ rxversion="5.4.5.19886">
 		ref="736f7a13-94d4-47f8-8620-42a54c1e6e0b"
 		type="Recording"/>
 		<testmodule
-		name="TesDataClose"
+		name="TestDataClose_doubleclick"
 		id="a0e2f44a-5200-4200-a64c-60892ad0a866"
 		ref="c4eaf583-d2e1-4a57-b9c3-030e98f51787"
 		type="Recording"/>

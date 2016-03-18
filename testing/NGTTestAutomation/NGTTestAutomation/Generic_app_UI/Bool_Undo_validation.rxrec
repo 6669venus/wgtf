@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="557f6b4c-4aea-480e-986e-bc0acef4b971"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		Bool_Undo_validation
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="Bool_Undo_validation"
+	namespace="NGTTestAutomation.Generic_app_UI"/>
+	<variables/>
+	<recorditems>
+		<validationitem
+		enabled="True"
+		optional="False"
+		screenshotname="Screenshot2"
+		screenshotguid="3e9a7fb7-84d8-48ce-848a-cd2046455368"
+		codegenpropertyname="WGTextBoxFrame_Screenshot2"
+		searchpropertyid="732b25f6-4652-466d-8586-a29750bed9b1"
+		imagerect="0,0,14,14"
+		imageoptions="0.95;EdgesSobel;0,0,14,14;True;10000000;0ms"
+		action="CompareImage">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="fd5cd430-e465-455b-957c-090c02a4c8eb">
+				<path>
+					/form[@objectname='MainWindow']/container[3]//list/list[@name='WGListView']/list[1]/list[2]//container[@objectname='WGTextBoxFrame']
+				</path>
+			</info>
+			<matchname>
+				(Choose)
+			</matchname>
+			<matchvalue>
+				yourValue
+			</matchvalue>
+		</validationitem>
+		<explicitdelayitem
+		enabled="True"
+		optional="False"
+		duration="100ms">
+			<comment/>
+			<bindings/>
+		</explicitdelayitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		Bool_Undo_validation.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

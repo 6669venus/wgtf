@@ -20,33 +20,33 @@ using Ranorex.Core;
 using Ranorex.Core.Testing;
 using Ranorex.Core.Repository;
 
-namespace NGTTestAutomation.Generic_app_demo
+namespace NGTTestAutomation.Generic_app_UI
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The file_exit recording.
+    ///The TestDataOpen_doubleclick recording.
     /// </summary>
-    [TestModule("959610e8-dc35-4fde-93de-1e632eead6f5", ModuleType.Recording, 1)]
-    public partial class File_exit : ITestModule
+    [TestModule("91764307-6887-4c33-8600-1f11ebb6f3b7", ModuleType.Recording, 1)]
+    public partial class TestDataOpen_doubleclick : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static File_exit instance = new File_exit();
+        static TestDataOpen_doubleclick instance = new TestDataOpen_doubleclick();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public File_exit()
+        public TestDataOpen_doubleclick()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static File_exit Instance
+        public static TestDataOpen_doubleclick Instance
         {
             get { return instance; }
         }
@@ -79,12 +79,12 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.File1' at 12;12.", repo.Generic_app.MainWindow.File1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.File1.Click("12;12");
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left DoubleClick item 'Generic_app.MainWindow.TestData' at Center.", repo.Generic_app.MainWindow.TestDataInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.TestData.DoubleClick();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.File.Exit' at 55;15.", repo.Menu.File.ExitInfo, new RecordItemIndex(1));
-            repo.Menu.File.Exit.Click("55;15");
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.TestData.Open' at Center.", repo.Menu.TestData.OpenInfo, new RecordItemIndex(1));
+            repo.Menu.TestData.Open.Click();
             Delay.Milliseconds(200);
             
         }

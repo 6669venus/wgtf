@@ -84,8 +84,8 @@ namespace NGTTestAutomation.Generic_app_demo
             Delay.Milliseconds(200);
             
             try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'View.PropertyTreeTest'.", repo.View.PropertyTreeTestInfo, new RecordItemIndex(1));
-                Validate.ContainsImage(repo.View.PropertyTreeTestInfo, PropertyTreeTest_Screenshot1, PropertyTreeTest_Screenshot1_Options, Validate.DefaultMessage, new Validate.Options(){ReportLevelOnFailure=ReportLevel.Success, ReportLevelOnSuccess=ReportLevel.Failure});
+                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'Menu.View.PropertyTreeTest'.", repo.Menu.View.PropertyTreeTestInfo, new RecordItemIndex(1));
+                Validate.ContainsImage(repo.Menu.View.PropertyTreeTestInfo, PropertyTreeTest_Screenshot1, PropertyTreeTest_Screenshot1_Options, Validate.DefaultMessage, new Validate.Options(){ReportLevelOnFailure=ReportLevel.Success, ReportLevelOnSuccess=ReportLevel.Failure});
                 Delay.Milliseconds(0);
             } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(1)); }
             
@@ -93,10 +93,10 @@ namespace NGTTestAutomation.Generic_app_demo
 
 #region Image Feature Data
         CompressedImage PropertyTreeTest_Screenshot1
-        { get { return repo.View.PropertyTreeTestInfo.GetScreenshot1(new Rectangle(0, 0, 196, 23)); } }
+        { get { return repo.Menu.View.PropertyTreeTestInfo.GetScreenshot1(new Rectangle(0, 0, 196, 23)); } }
 
         Imaging.FindOptions PropertyTreeTest_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("1;EdgesSobel;0,0,196,23;True;10000000;0ms"); } }
+        { get { return Imaging.FindOptions.Parse("0.95;EdgesSobel;0,0,196,23;True;10000000;0ms"); } }
 
 #endregion
     }

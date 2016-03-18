@@ -56,6 +56,7 @@ mode="Global">
 		codegenpropertyname="PropertyTreeTest_Screenshot1"
 		searchpropertyid="6e4abbc6-dc41-4771-b197-e88cc4ddd18e"
 		imagerect="0,0,196,23"
+		imageoptions="0.95;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
 			<bindings/>

@@ -83,8 +83,8 @@ namespace NGTTestAutomation.Generic_app_UI
             repo.Generic_app.MainWindow.ShowModalDialog.Press();
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Press() on item 'CustomQmlWindow.ButtonOk'.", repo.CustomQmlWindow.ButtonOkInfo, new RecordItemIndex(1));
-            repo.CustomQmlWindow.ButtonOk.Press();
+            Report.Log(ReportLevel.Info, "Invoke Action", "Invoking Press() on item 'Floating_Windows.CustomQmlWindow.ButtonOk'.", repo.Floating_Windows.CustomQmlWindow.ButtonOkInfo, new RecordItemIndex(1));
+            repo.Floating_Windows.CustomQmlWindow.ButtonOk.Press();
             Delay.Milliseconds(0);
             
         }

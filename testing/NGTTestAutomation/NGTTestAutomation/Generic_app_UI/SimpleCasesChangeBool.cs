@@ -79,10 +79,6 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGTextBoxFrame' at Center.", repo.Generic_app.MainWindow.WGTextBoxFrameInfo, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.WGTextBoxFrame.Click();
-            Delay.Milliseconds(200);
-            
         }
 
 #region Image Feature Data

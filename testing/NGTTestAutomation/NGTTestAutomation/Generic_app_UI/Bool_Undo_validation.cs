@@ -20,33 +20,33 @@ using Ranorex.Core;
 using Ranorex.Core.Testing;
 using Ranorex.Core.Repository;
 
-namespace NGTTestAutomation.Generic_app_demo
+namespace NGTTestAutomation.Generic_app_UI
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The file_exit recording.
+    ///The Bool_Undo_validation recording.
     /// </summary>
-    [TestModule("959610e8-dc35-4fde-93de-1e632eead6f5", ModuleType.Recording, 1)]
-    public partial class File_exit : ITestModule
+    [TestModule("557f6b4c-4aea-480e-986e-bc0acef4b971", ModuleType.Recording, 1)]
+    public partial class Bool_Undo_validation : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static File_exit instance = new File_exit();
+        static Bool_Undo_validation instance = new Bool_Undo_validation();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public File_exit()
+        public Bool_Undo_validation()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static File_exit Instance
+        public static Bool_Undo_validation Instance
         {
             get { return instance; }
         }
@@ -79,17 +79,22 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.File1' at 12;12.", repo.Generic_app.MainWindow.File1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.File1.Click("12;12");
-            Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot2' with region {X=0,Y=0,Width=14,Height=14}) on item 'Generic_app.MainWindow.WGListView.WGTextBoxFrame'.", repo.Generic_app.MainWindow.WGListView.WGTextBoxFrameInfo, new RecordItemIndex(0));
+            Validate.CompareImage(repo.Generic_app.MainWindow.WGListView.WGTextBoxFrameInfo, WGTextBoxFrame_Screenshot2, WGTextBoxFrame_Screenshot2_Options);
+            Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.File.Exit' at 55;15.", repo.Menu.File.ExitInfo, new RecordItemIndex(1));
-            repo.Menu.File.Exit.Click("55;15");
-            Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Delay", "Waiting for 100ms.", new RecordItemIndex(1));
+            Delay.Duration(100, false);
             
         }
 
 #region Image Feature Data
+        CompressedImage WGTextBoxFrame_Screenshot2
+        { get { return repo.Generic_app.MainWindow.WGListView.WGTextBoxFrameInfo.GetScreenshot2(new Rectangle(0, 0, 14, 14)); } }
+
+        Imaging.FindOptions WGTextBoxFrame_Screenshot2_Options
+        { get { return Imaging.FindOptions.Parse("0.95;EdgesSobel;0,0,14,14;True;10000000;0ms"); } }
+
 #endregion
     }
 #pragma warning restore 0436

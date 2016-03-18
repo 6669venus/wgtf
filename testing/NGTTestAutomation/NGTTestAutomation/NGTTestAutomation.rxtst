@@ -218,6 +218,70 @@ reportlevel="Info;20">
 				</testcase>
 			</folder>
 			<folder
+			name="Toolbar"
+			id="a003f6b1-712e-4dbd-87eb-8767afc6a4a0">
+				<testcase
+				name="Redo/Undo"
+				id="e7887b5b-96bd-4a84-8045-6709650d5080">
+					<setup
+					name="setup"
+					id="6ca22885-74ca-4177-87f1-f7eacdd2a28f">
+						<testmodule
+						name="Open_GenericApp_ui"
+						id="681bcd0d-1c34-4670-a225-ab0de30690ee"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="TestDataOpen_singleclick"
+					id="2023f0b1-d57b-4a39-9da5-4f7679c54032"
+					ref="cbab2a39-b971-4c26-8f5b-56b2aa78aab9"
+					type="Recording"/>
+					<testmodule
+					name="Open_Panel_PropertyTreeTest"
+					id="87c4608b-a0d8-4550-8364-38b8de0802df"
+					ref="f634cc0d-fb4d-4fc5-842c-7344eeaf3d06"
+					type="Recording"/>
+					<testmodule
+					name="Expand_SimpleCases"
+					id="bb23baa0-d5a7-462a-8589-697d60829cbf"
+					ref="8655191f-3431-42ca-a488-31ddeee306a4"
+					type="Recording"/>
+					<testmodule
+					name="Bool01"
+					id="c586874c-9840-4fd5-b775-1ef2c96dcace"
+					ref="261344bd-8e8a-4165-871c-98bafbf75f2d"
+					type="Recording"/>
+					<testmodule
+					name="Undo"
+					id="9c06f354-8b04-4f22-aded-006b2c8134e2"
+					ref="e5cdaf2c-e7d2-43d3-8c9f-a77b4c48c257"
+					type="Recording"/>
+					<testmodule
+					name="Bool_Undo_validation"
+					id="4a59d522-d562-4f23-b0f9-b03936d1fa63"
+					ref="557f6b4c-4aea-480e-986e-bc0acef4b971"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="7be148d0-8e11-4080-a2bf-edc3141443a8">
+						<testmodule
+						name="Close_GenericApp_ui"
+						id="22b38f65-07b1-4826-94a1-cc0e22821f9a"
+						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
+			<folder
 			name="Miscellaneous"
 			id="65c6b675-1d26-4ea9-95df-8bc930b9a642">
 				<testcase
@@ -354,46 +418,6 @@ properties, not selected items</P>]]>
 					type="Recording"/>
 				</teardown>
 			</testcase>
-			<testcase
-			name="Ajusting_Object"
-			id="d53e1411-1111-4727-9ae5-91dc74e9663e">
-				<setup
-				name="setup"
-				id="4ce48f89-a550-4859-a665-bc93a606bfcd">
-					<testmodule
-					name="Open_GenericApp_Demo"
-					id="d1a8b172-bd84-4647-90c3-5ce02a579dfc"
-					ref="2f3308b4-e6e0-484d-b0f1-f27a12cb0e74"
-					type="Recording">
-						<databinding>
-							<var
-							variablename="path"
-							variableid="adfd36f9-addf-4be4-80ca-f6a02ac8f5ce"
-							dataname="path"
-							datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
-						</databinding>
-					</testmodule>
-				</setup>
-				<testmodule
-				name="SelectSceneBrowser"
-				id="9d3248da-e246-4ac7-a0d2-62d40f5ca20d"
-				ref="4cfc2b4a-88a2-405f-82c0-1f261aa975d3"
-				type="Recording"/>
-				<testmodule
-				name="Object_selection"
-				id="899ad7b6-8092-4730-9a3c-b6f3f57cee85"
-				ref="2c6cfd0f-2386-4a41-adb1-0c6987082d25"
-				type="Recording"/>
-				<teardown
-				name="teardown"
-				id="28aaa9c7-fcf6-4370-850d-fea84080d5b1">
-					<testmodule
-					name="Close_GenericApp_ui"
-					id="49351d4c-50dc-408c-a844-6be793a5b00e"
-					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
-					type="Recording"/>
-				</teardown>
-			</testcase>
 		</folder>
 	</content>
 	<testconfigurations
@@ -405,9 +429,35 @@ properties, not selected items</P>]]>
 			<testcase
 			id="033e65d6-e4cb-4780-a7cb-16900dbb6277"/>
 			<testcase
+			id="0432b46d-4642-401b-bc53-9a065f5c269a"/>
+			<testcase
+			id="4cb23d72-9dd2-4de1-8a95-afc8c438644f"/>
+			<testcase
+			id="4d36ff13-1412-4a18-af20-e8d4909351e8"/>
+			<testcase
+			id="5fa41ae9-508f-4ceb-87c8-20f644bff555"/>
+			<testcase
+			id="65c6b675-1d26-4ea9-95df-8bc930b9a642"/>
+			<testcase
 			id="6ae71e00-ea11-46d1-aa1c-a2d0882e06fb"/>
 			<testcase
+			id="71c1a0bf-4222-44d0-bc10-6d5caa643052"/>
+			<testcase
+			id="8919c9a0-abc7-492f-ad70-8c647ef85378"/>
+			<testcase
+			id="8f507aea-7a61-4a13-abcb-6364b8cbd62e"/>
+			<testcase
+			id="a003f6b1-712e-4dbd-87eb-8767afc6a4a0"/>
+			<testcase
+			id="a98b06bb-2a5a-481e-8bea-ebab59d7fad0"/>
+			<testcase
+			id="aa4ac9ce-6fcb-4e8c-9457-e5e525227aef"/>
+			<testcase
+			id="b7308b9a-1454-4734-8cb6-c72173fe524a"/>
+			<testcase
 			id="b946ca30-95c6-42e4-b8ed-2c5e938dd9e7"/>
+			<testcase
+			id="e7887b5b-96bd-4a84-8045-6709650d5080"/>
 		</testconfiguration>
 	</testconfigurations>
 	<references/>

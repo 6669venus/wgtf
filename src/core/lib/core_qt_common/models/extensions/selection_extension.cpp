@@ -314,12 +314,15 @@ void SelectionExtension::Implementation::fireDataChangedEvent(
 QModelIndex SelectionExtension::Implementation::firstColumnIndex(
 	const QModelIndex& index )
 {
+	if (!index.isValid())
+	{
+		return QModelIndex();
+	}
+
 	auto model = index.model();
 	assert( model != nullptr );
 
-	return
-		!index.isValid() ? QModelIndex() :
-		index.row() == 0 ? index :
+	return index.row() == 0 ? index :
 		model->sibling( index.row(), 0, index );
 }
 

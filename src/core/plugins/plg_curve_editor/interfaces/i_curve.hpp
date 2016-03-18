@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "models/bezier_point_data.hpp"
+#include "../models/bezier_point_data.hpp"
 
 #include <assert.h>
 #include <core_reflection/reflected_object.hpp>

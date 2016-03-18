@@ -63,7 +63,7 @@ mode="Global">
 		codegenpropertyname="Bool_Screenshot1"
 		searchpropertyid="71579534-288a-4be4-aec3-85b6fe294397"
 		imagerect="0,4,18,16"
-		imageoptions="0.95;EdgesSobel;0,4,18,16;True;10000000;0ms"
+		imageoptions="0.8;EdgesSobel;0,4,18,16;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>

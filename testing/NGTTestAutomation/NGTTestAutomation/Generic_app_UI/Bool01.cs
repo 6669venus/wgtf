@@ -97,7 +97,7 @@ namespace NGTTestAutomation.Generic_app_UI
         { get { return repo.Generic_app.MainWindow.WGListView.BoolInfo.GetScreenshot1(new Rectangle(0, 4, 18, 16)); } }
 
         Imaging.FindOptions Bool_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("0.95;EdgesSobel;0,4,18,16;True;10000000;0ms"); } }
+        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,4,18,16;True;10000000;0ms"); } }
 
 #endregion
     }

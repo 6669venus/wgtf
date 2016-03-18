@@ -93,7 +93,7 @@ namespace NGTTestAutomation.Generic_app_UI
         { get { return repo.Generic_app.MainWindow.WGListView.WGTextBoxFrameInfo.GetScreenshot2(new Rectangle(0, 0, 14, 14)); } }
 
         Imaging.FindOptions WGTextBoxFrame_Screenshot2_Options
-        { get { return Imaging.FindOptions.Parse("0.95;EdgesSobel;0,0,14,14;True;10000000;0ms"); } }
+        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,14,14;True;10000000;0ms"); } }
 
 #endregion
     }

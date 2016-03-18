@@ -30,7 +30,7 @@ RowLayout {
     /*! This property defines the row height.
         The default value is defined by defaultSpacing.minimumRowHeight
     */
-    property int rowHeight_: defaultSpacing.minimumRowHeight
+    property int rowHeight: defaultSpacing.minimumRowHeight
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
@@ -39,5 +39,9 @@ RowLayout {
 
     spacing: defaultSpacing.rowSpacing
 
+	/*! Deprecated */
     property alias label_: expandingrowlayout.label
+	
+	/*! Deprecated */
+	property alias rowHeight_: expandingrowlayout.rowHeight
 }

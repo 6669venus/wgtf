@@ -9,7 +9,7 @@ import QtQuick.Controls 1.2
 
 \code{.js}
 WGScrollPanel{
-    childObject_:
+    childObject:
         WGColumnLayout {
             WGInternalPanel{
                 text: "SubPanel"
@@ -32,7 +32,7 @@ Item {
     id: scrollableFrame
     objectName: "WGScrollPanel"
 
-    property Component childObject_
+    property Component childObject
 
     //TODO: This breaks the UI. Either fix or hide from user
     /*! \internal */
@@ -65,7 +65,7 @@ Item {
             width: scrollableFrame.vertical ? scrollableFrame.width - defaultSpacing.leftMargin - barMargin : undefined
             height: !scrollableFrame.vertical ? scrollableFrame.height : undefined
 
-            sourceComponent: childObject_
+            sourceComponent: childObject
         }
     }
 
@@ -84,4 +84,7 @@ Item {
 
          visible: scrollableFrame.vertical ? scrollContent.height > scrollPanel.height : scrollContent.width > scrollPanel.width
      }
+
+    /*! Deprecated */
+    property alias childObject_: scrollableFrame.childObject
 }

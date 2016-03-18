@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.1
 
 \code{.js}
 WGSeparator {
-    vertical_: true
+    vertical: true
 }
 \endcode
 */

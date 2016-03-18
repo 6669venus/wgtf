@@ -7,24 +7,24 @@ import QtQuick.Layouts 1.1
     These will match WGSubPanel
 
     If at lvl 0 recommend:
-    dark_: false
-    shade_: false
+    dark: false
+    shade: false
 
     If at lvl 1 recommend:
-    dark_: true
-    shade_: false
+    dark: true
+    shade: false
 
     Use shade_: true sparingly for a subtle darker or lighter frame to group objects
 
 Example:
 \code{.js}
 WGFrame {
-    dark_: false
-    shade_: true
+    dark: false
+    shade: true
 
-    label_: "File Options:"
+    label: "File Options:"
 
-    childObject_:
+    childObject:
     WGColumnLayout {
 
         WGCheckBox {

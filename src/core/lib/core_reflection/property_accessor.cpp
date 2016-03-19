@@ -255,6 +255,8 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
 		auto listener = itr->lock();
+		// What does this assertion mean? Isn't this to be expected sometimes?
+		// I encountered this assertion during shutdown. @m_martin
 		assert( listener != nullptr );
 		listener->preInvoke( *this, parameters, undo );
 	}

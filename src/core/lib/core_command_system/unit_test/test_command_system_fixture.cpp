@@ -45,9 +45,10 @@ TestCommandSystemFixture::~TestCommandSystemFixture()
 	commandManager_->fini();
 
 	setReflectedPropertyCmd_.reset();
-	commandManager_.reset();
 	objectManager_.reset(); 
 	definitionManager_.reset();
+	reflectionController_.reset();
+	commandManager_.reset();
 }
 
 

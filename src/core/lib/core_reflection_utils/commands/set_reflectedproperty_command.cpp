@@ -177,7 +177,10 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		return CommandErrorCode::INVALID_VALUE;
 	}
 
-	return object;
+	// Do not return the object
+	// CommandInstance will hold a reference to the return value
+	// and the CommandInstance is stored in the undo/redo history forever
+	return nullptr;
 }
 
 

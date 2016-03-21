@@ -8,6 +8,7 @@ import WGColorPicker 1.0
 
 WGFileDialog {
     id: mainDialog
+    objectName: "WGColorPickerDialog"
 
     property bool showAlphaChannel: true
 
@@ -37,6 +38,7 @@ WGFileDialog {
 
             WGColorPicker {
                 id: colorPicker
+                objectName: "colorPicker"
                 anchors.fill: parent
 
                 showAlphaChannel: mainDialog.showAlphaChannel

@@ -163,7 +163,6 @@ private:
 
 	// commands_ must be mutable to satisfy ICommandEventListener
 	mutable std::multimap< Key, CommandInstancePtr > commands_;
-	bool registered_;
 };
 
 ReflectionController::ReflectionController()

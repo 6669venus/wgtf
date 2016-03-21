@@ -107,7 +107,7 @@ private:
 	void connectEvent();
 	void disconnectEvent();
 
-	std::mutex			mutex_;
+	std::mutex					mutex_;
 	IDefinitionManager *		defManager_;
 	std::atomic< ExecutionStatus > status_;
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete

@@ -6,7 +6,7 @@ import WGControls 1.0
 
 WGPanel {
     id: rootFrame
-    objectName: test_contextmenu_panel
+    objectName: "test_contextmenu_panel"
     title: "WGContextMenu Test"
     layoutHints: { 'test': 0.1 }
     property var sourceModel: source

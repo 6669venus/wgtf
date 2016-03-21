@@ -15,7 +15,7 @@ Example:
 \code{.js}
 WGScrollPanel {
 
-    childObject_ :
+    childObject :
     WGDraggableColumn {
 
         WGSubPanel {
@@ -64,11 +64,11 @@ WGColumnLayout {
     property QtObject lastSpacer
 
     /*! This property indicates when a has a dragged object has been dragged over a space */
-    property bool hovering_: false
+    property bool hovering: false
 
     /*! This property toggles the lock settings of the draggable state.
         When locked you cannot drag the column */
-    property bool unLocked_: !globalSettings.dragLocked
+    property bool unlocked: !globalSettings.dragLocked
 
     //if something is being dragged, give the fake object a size
     onDragItemIndexChanged: dragItemIndex > -1 ? lastSpacer.lineSpaces_ = 5 : lastSpacer.lineSpaces_ = 0
@@ -109,4 +109,10 @@ WGColumnLayout {
     }
 
     flow: GridLayout.TopToBottom
+
+    /*! Deprecated */
+    property alias hovering_: mainColumn.hovering
+
+    /*! Deprecated */
+    property alias unLocked_: mainColumn.unlocked
 }

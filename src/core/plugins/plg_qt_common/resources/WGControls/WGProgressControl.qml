@@ -12,7 +12,7 @@ Example:
 WGProgressControl {
     Layout.fillWidth: true
     text: "File Importing..."
-    units_: "%"
+    units: "%"
 }
 \endcode
 */

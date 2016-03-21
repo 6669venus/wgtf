@@ -13,11 +13,9 @@
 #include "core_data_model/variant_list.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_types/hashed_string_ref.hpp"
-#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_reflection/i_definition_manager.hpp"
-#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "core_serialization/serializer/i_serializer.hpp"
 #include "core_logging/logging.hpp"
 #include "batch_command.hpp"
@@ -92,10 +90,8 @@ class CommandManagerImpl : public IEnvEventListener
 {
 public:
 
-	CommandManagerImpl( CommandManager* pCommandManager,
-		IReflectionController * controller )
-		: controller_( controller )
-		, historyState_( &nullHistoryState_ )
+	CommandManagerImpl( CommandManager* pCommandManager )
+		: historyState_( &nullHistoryState_ )
 		, currentIndex_( NO_SELECTION )
 		, ownerThreadId_( std::this_thread::get_id() )
 		, workerThreadId_()
@@ -119,23 +115,6 @@ public:
 
 	~CommandManagerImpl()
 	{
-		{
-			// mutex lock is needed here to ensure new exiting_ value
-			// is visible in other thread (due to memory barrier introduced by lock/unlock)
-			std::unique_lock<std::mutex> lock( workerMutex_ );
-			exiting_ = true;
-			workerWakeUp_.notify_all();
-		}
-
-		if (enableWorker_)
-		{
-			workerThread_.join();
-		}
-
-		unbindIndexCallbacks();
-		unbindHistoryCallbacks();
-
-		pCommandManager_ = nullptr;
 	}
 
 	void init( IApplication & application, IEnvManager & envManager );
@@ -190,8 +169,6 @@ public:
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
-
-	IReflectionController * controller_;
 
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
@@ -300,6 +277,22 @@ void CommandManagerImpl::fini()
 	envManager_->deregisterListener( this );
 
 	updateConnection_.disconnect();
+
+	{
+		// mutex lock is needed here to ensure new exiting_ value
+		// is visible in other thread (due to memory barrier introduced by lock/unlock)
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		exiting_ = true;
+		workerWakeUp_.notify_all();
+	}
+
+	if (enableWorker_)
+	{
+		workerThread_.join();
+	}
+
+	unbindIndexCallbacks();
+	unbindHistoryCallbacks();
 }
 
 //==============================================================================
@@ -957,13 +950,6 @@ void CommandManagerImpl::processCommands()
 			// Pop the command frame
 			THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
 			popFrame();
-
-			if ((controller_ != nullptr) &&
-				(strcmp( job->getCommandId(),
-					getClassIdentifier< SetReflectedPropertyCommand >() ) == 0))
-			{
-				controller_->flush( job );
-			}
 		}
 	}
 
@@ -1139,7 +1125,7 @@ void CommandManagerImpl::unbindHistoryCallbacks()
 
 //==============================================================================
 CommandManager::CommandManager( IDefinitionManager & defManager )
-	: pImpl_( nullptr )
+	: pImpl_( new CommandManagerImpl( this ) )
 	, defManager_( defManager )
 	, fileSystem_( nullptr )
 {
@@ -1149,10 +1135,6 @@ CommandManager::CommandManager( IDefinitionManager & defManager )
 //==============================================================================
 CommandManager::~CommandManager()
 {
-	if(pImpl_ != nullptr)
-	{
-		fini();
-	}
 }
 
 //==============================================================================
@@ -1160,10 +1142,7 @@ void CommandManager::init( IApplication & application, IEnvManager & envManager,
 													IFileSystem * fileSystem, IReflectionController * controller )
 {
 	fileSystem_ = fileSystem;
-	if (pImpl_ == nullptr)
-	{
-		pImpl_ = new CommandManagerImpl( this, controller );
-	}
+	controller_ = controller;
 	pImpl_->init( application, envManager );
 }
 
@@ -1171,12 +1150,7 @@ void CommandManager::init( IApplication & application, IEnvManager & envManager,
 //==============================================================================
 void CommandManager::fini()
 {
-	if (pImpl_ != nullptr)
-	{
-		pImpl_->fini();
-	}
-	delete pImpl_;
-	pImpl_ = nullptr;
+	pImpl_->fini();
 }
 
 
@@ -1308,7 +1282,7 @@ IFileSystem * CommandManager::getFileSystem() const
 //==============================================================================
 IReflectionController * CommandManager::getReflectionController() const
 {
-	return pImpl_->controller_;
+	return controller_;
 }
 
 //==============================================================================

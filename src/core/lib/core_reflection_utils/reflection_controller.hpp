@@ -18,7 +18,6 @@ public:
 	Variant getValue( const PropertyAccessor & pa ) override;
 	void setValue( const PropertyAccessor & pa, const Variant & data ) override;
 	Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters ) override;
-	virtual void flush( const CommandInstancePtr & job ) override;
 
 private:
 	class Impl;

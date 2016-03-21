@@ -287,7 +287,7 @@ const Command * CommandInstance::getCommand() const
 }
 
 //==============================================================================
-/*virtual */void CommandInstance::setStatus( ExecutionStatus status )
+void CommandInstance::setStatus( ExecutionStatus status )
 {
 	{
 		std::unique_lock<std::mutex> lock( mutex_ );
@@ -346,16 +346,12 @@ void CommandInstance::execute()
 
 bool CommandInstance::isComplete() const
 {
-	// setStatus() may be called on a background thread
-	std::lock_guard< std::mutex > lock( mutex_ );
 	return status_ == Complete;
 }
 
 
 ExecutionStatus CommandInstance::getExecutionStatus() const
 {
-	// setStatus() may be called on a background thread
-	std::lock_guard< std::mutex > lock( mutex_ );
 	return status_;
 }
 

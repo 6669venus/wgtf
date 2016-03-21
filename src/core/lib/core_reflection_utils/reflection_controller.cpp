@@ -6,18 +6,21 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 
+#include <map>
+
 class ReflectionController::Impl
+	: public ICommandEventListener
 {
 public:
 	Impl( ICommandManager & commandManager )
 		: commandManager_( commandManager )
 	{
-
+		commandManager_.registerCommandStatusListener( this );
 	}
 
 	~Impl()
 	{
-
+		commandManager_.deregisterCommandStatusListener( this );
 	}
 
 	Variant getValue( const PropertyAccessor & pa )
@@ -40,18 +43,13 @@ public:
 		}
 
 		// TODO: assert access is only on the main thread
-		auto it = commands_.find( key );
-		if (it != commands_.end())
+		auto range = commands_.equal_range( key );
+		for (auto it = range.first; it != range.second; ++it)
 		{
 			auto instance = it->second;
 			commandManager_.waitForInstance(instance);
-
-			it = commands_.find(key);
-			if (it != commands_.end())
-			{
-				commands_.erase(it);
-			}
 		}
+		commands_.erase( range.first, range.second );
 
 		return pa.getValue();
 	}
@@ -83,7 +81,7 @@ public:
 		// Based on the thread affinity of SetReflectedPropertyCommand
 		if (!command->isComplete())
 		{
-			commands_.insert( std::pair< Key, CommandInstancePtr >( key, command ) );
+			commands_.emplace( std::pair< Key, CommandInstancePtr >( key, command ) );
 		}
 	}
 
@@ -101,28 +99,35 @@ public:
 		commandParameters->setPath( key.second.c_str() );
 		commandParameters->setParameters( parameters );
 
-		commands_.insert( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
+		const auto itr = commands_.emplace( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
 			getClassIdentifier<InvokeReflectedMethodCommand>(), ObjectHandle( std::move( commandParameters ),
 			pa.getDefinitionManager()->getDefinition<ReflectedMethodCommandParameters>() ) ) ) );
 
-		commandManager_.waitForInstance( commands_[key] );
-		ObjectHandle returnValueObject = commands_[key].get()->getReturnValue();
-		commands_.erase( commands_.find( key ) );
+		commandManager_.waitForInstance( itr->second );
+		ObjectHandle returnValueObject = itr->second.get()->getReturnValue();
+		commands_.erase( itr );
 		Variant* returnValuePointer = returnValueObject.getBase<Variant>();
 		assert( returnValuePointer != nullptr );
 		return *returnValuePointer;
 	}
 
-	void flush( const CommandInstancePtr & job )
+	virtual void statusChanged(
+		const CommandInstance & commandInstance ) const override
 	{
-		assert( job->isComplete() );
-		assert( strcmp( job->getCommandId(),
-			getClassIdentifier< SetReflectedPropertyCommand >() ) == 0 );
+		if (!commandInstance.isComplete())
+		{
+			return;
+		}
+		if (strcmp( commandInstance.getCommandId(),
+			getClassIdentifier< SetReflectedPropertyCommand >() ) != 0)
+		{
+			return;
+		}
 
 		// Unfortunately don't have key for map lookup
 		for (auto itr = commands_.cbegin(); itr != commands_.cend(); ++itr)
 		{
-			if (job == itr->second)
+			if (&commandInstance == itr->second.get())
 			{
 				commands_.erase( itr );
 				break;
@@ -155,7 +160,10 @@ private:
 	}
 
 	ICommandManager & commandManager_;
-	std::map< Key, CommandInstancePtr > commands_;
+
+	// commands_ must be mutable to satisfy ICommandEventListener
+	mutable std::multimap< Key, CommandInstancePtr > commands_;
+	bool registered_;
 };
 
 ReflectionController::ReflectionController()
@@ -196,7 +204,3 @@ Variant ReflectionController::invoke( const PropertyAccessor & pa, const Reflect
 	return impl_->invoke( pa, parameters );
 }
 
-void ReflectionController::flush( const CommandInstancePtr & job ) /* override */
-{
-	impl_->flush( job );
-}

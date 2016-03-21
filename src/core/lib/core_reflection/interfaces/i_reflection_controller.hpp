@@ -41,13 +41,6 @@ public:
 	 *	@return the result of the function.
 	 */
 	virtual Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters ) = 0;
-	/**
-	 *	Remove a completed setValue() job from the queue of running jobs.
-	 *	@pre job must be completed.
-	 *	@pre job must be a SetReflectedPropertyCommand.
-	 *	@param job the completed job to be removed.
-	 */
-	virtual void flush( const CommandInstancePtr & job ) = 0;
 };
 
 #endif//I_REFLECTION_CONTROLLER_HPP

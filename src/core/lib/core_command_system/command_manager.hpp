@@ -86,9 +86,10 @@ private:
 	friend UndoRedoCommand;
 	void addToHistory( const CommandInstancePtr & instance );
 	bool undoRedo( const int & desiredIndex );
-	class CommandManagerImpl * pImpl_;
+	std::unique_ptr< class CommandManagerImpl > pImpl_;
 	IDefinitionManager & defManager_;
 	IFileSystem * fileSystem_;
+	IReflectionController * controller_;
 	SelectionContext selectionContext_;
 };
 

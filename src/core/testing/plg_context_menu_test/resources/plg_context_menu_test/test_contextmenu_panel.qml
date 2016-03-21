@@ -39,7 +39,7 @@ WGPanel {
 
         WGContextMenu {
             id: testContextMenu
-            objectName: testContextMenu
+            objectName: "testContextMenu"
             path: "ContextMenu"
         }
     }

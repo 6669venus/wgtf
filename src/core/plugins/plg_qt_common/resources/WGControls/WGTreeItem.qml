@@ -338,6 +338,7 @@ ListView {
 
                         Rectangle {
                             id: expandIconArea
+                            objectName: "expandIconArea"
                             color: "transparent"
                             width: firstColumn ? expandButton.x + expandButton.width + expandIconMargin : 0
                             height: Math.max(minimumRowHeight, treeView.expandIconSize)
@@ -346,7 +347,7 @@ ListView {
 
                             Text {
                                 id: expandButton
-
+                                objectName: "expandButton"
                                 color:
                                     !showExpandIcon ? "transparent" :
                                     expandMouseArea.containsMouse ? palette.highlightColor :
@@ -366,6 +367,7 @@ ListView {
 
                             MouseArea {
                                 id: expandMouseArea
+                                objectName: "expandMouseArea"
                                 anchors.left: parent.left
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom

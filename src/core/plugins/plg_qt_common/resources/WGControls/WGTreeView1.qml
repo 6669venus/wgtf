@@ -198,6 +198,7 @@ Item {
 
         Text {
             id: textBox
+            objectName: headerText
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -219,6 +220,7 @@ Item {
 
         Text {
             id: textBoxFooter
+            objectName: footerText
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom

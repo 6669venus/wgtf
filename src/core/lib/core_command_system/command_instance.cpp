@@ -289,6 +289,7 @@ const Command * CommandInstance::getCommand() const
 //==============================================================================
 void CommandInstance::setStatus( ExecutionStatus status )
 {
+	// Lock is required for CommandInstance::waitForCompletion()
 	{
 		std::unique_lock<std::mutex> lock( mutex_ );
 		status_ = status;

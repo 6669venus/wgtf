@@ -162,6 +162,7 @@ private:
 	ICommandManager & commandManager_;
 
 	// commands_ must be mutable to satisfy ICommandEventListener
+	// Use a multimap in case multiple commands for the same key get queued
 	mutable std::multimap< Key, CommandInstancePtr > commands_;
 };
 
@@ -202,4 +203,3 @@ Variant ReflectionController::invoke( const PropertyAccessor & pa, const Reflect
 	assert( impl_ != nullptr );
 	return impl_->invoke( pa, parameters );
 }
-

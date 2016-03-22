@@ -454,6 +454,7 @@ Rectangle {
         // the split two column panel underneath it.
 
         id: mainColumn
+        objectName: "mainColumn"
 
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardMargin
@@ -925,11 +926,10 @@ Rectangle {
 
         SplitView {
             id: assetSplitter
+            objectName: "assetSplitter"
             Layout.fillHeight: true
             Layout.fillWidth: true
             orientation: Qt.Horizontal
-
-
 
             Component.onDestruction: {
                 //TODO: directly use Preference when supporting dynamically add property for GeneircObject
@@ -973,6 +973,7 @@ Rectangle {
                 // some reason if the first level in a SplitView is a layout,
                 // it behaves weirdly with minimumWidths
                 id: leftFrame
+                objectName: "leftFrame"
 
                 Layout.minimumHeight: 0;
                 Layout.minimumWidth: 0;
@@ -1171,6 +1172,7 @@ Rectangle {
                 // weirdly with minimumWidths
 
                 id: rightFrame
+                objectName: "rightFrame"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
@@ -1178,6 +1180,7 @@ Rectangle {
                     // Right Column: Filters, Files + Assets, Saved Filters & View Options
 
                     id: fileColumn
+                    objectName: "fileColumn"
                     anchors.fill: parent
 
                     Rectangle {
@@ -1252,6 +1255,7 @@ Rectangle {
                                 height: assetGrid.cellHeight
 
                                 ColumnLayout {
+                                    objectName: typeof(iconLabel.text) != "undefined" ? iconLabel.text : "assetArea"
                                     spacing: 0
                                     anchors.fill: parent
 
@@ -1325,7 +1329,6 @@ Rectangle {
 
                                 MouseArea {
                                     id: assetMouseArea
-                                    objectName: "assetEntry"
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
 

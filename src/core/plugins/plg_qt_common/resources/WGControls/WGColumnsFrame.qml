@@ -41,8 +41,8 @@ Item {
     visible: columnCount > 0
 
     Item {
-        objectName: "columns"
         id: columns
+        objectName: "columns"
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -114,6 +114,7 @@ Item {
 
                 Rectangle {
                     id: handle
+                    objectName: "columnFrameHandle"
                     property real initialWidth: initialColumnWidths.length > index ? initialColumnWidths[index] : defaultInitialColumnWidth
                     x: initialWidth
                     width: handleWidth

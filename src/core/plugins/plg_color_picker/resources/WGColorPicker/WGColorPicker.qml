@@ -497,6 +497,7 @@ Rectangle {
                                         }
 
                                         MouseArea {
+                                            objectName: "paletteSwatchButton"
                                             anchors.fill: parent
                                             cursorShape: containsColor ? Qt.PointingHandCursor : Qt.ArrowCursor
                                             enabled: containsColor
@@ -529,6 +530,7 @@ Rectangle {
                                 Layout.preferredHeight: width
 
                                 WGPushButton {
+                                    objectName: "addColorToPaletteButton"
                                     anchors.centerIn: parent
                                     height: parent.height - defaultSpacing.standardRadius
                                     width: height
@@ -607,6 +609,7 @@ Rectangle {
                                     color: initialColor
 
                                     MouseArea {
+                                        objectName: "resetColorSquare"
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
@@ -657,6 +660,7 @@ Rectangle {
 
                         WGPushButton {
                             id: pickButton
+                            objectName: "pickFromScreenButton"
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             text: "Pick from screen"
@@ -882,6 +886,7 @@ Rectangle {
 
                     WGColorSlider {
                         id: aSlider
+                        objectName: "alphaColorSlider"
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         minimumValue: 0
@@ -902,6 +907,7 @@ Rectangle {
 
                     WGNumberBox {
                         id: aBox
+                        objectName: "alphaColorValue"
                         Layout.preferredWidth: rgbSlider.numBoxWidth
                         minimumValue: 0
                         maximumValue: 1.0

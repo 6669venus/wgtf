@@ -179,6 +179,7 @@ Rectangle {
 
             MouseArea {
                 id: ringDrag
+                objectName: "hueRingDragWheel"
                 anchors.fill: parent
 
                 property real initOffset: 0
@@ -300,6 +301,7 @@ Rectangle {
 
                 MouseArea {
                     id: triangleArea
+                    objectName: "colorTriangleDragArea"
                     anchors.top: map.top
                     anchors.bottom: map.bottom
                     anchors.left: map.left

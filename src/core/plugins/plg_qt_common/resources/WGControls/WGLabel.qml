@@ -76,7 +76,7 @@ Text {
 
     color: enabled ? palette.textColor : palette.disabledTextColor
 
-    renderType: Text.NativeRendering
+    renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
     smooth: true
 

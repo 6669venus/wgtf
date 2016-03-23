@@ -19,7 +19,7 @@ WGCheckBoxStyle {
     label: Text {
         text: control.text
         color: __textColor
-        renderType: Text.NativeRendering
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
         //coloured border around the label when the control has focus
         Rectangle {
@@ -100,7 +100,7 @@ WGCheckBoxStyle {
                 color : palette.highlightTextColor
                 font.family : "Marlett"
                 font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "\uF061"
                 visible : false
                 anchors.fill: parent

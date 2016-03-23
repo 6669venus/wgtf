@@ -357,7 +357,7 @@ ListView {
                                 width: firstColumn ? paintedWidth : 0
                                 font.family : "Marlett"
                                 font.pixelSize: treeView.expandIconSize
-                                renderType: Text.NativeRendering
+                                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                                 text : Expanded ? "\uF036" : "\uF034"
                                 x: expandIconMargin
                                 anchors.verticalCenter: parent.verticalCenter

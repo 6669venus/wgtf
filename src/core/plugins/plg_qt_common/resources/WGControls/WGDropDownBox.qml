@@ -112,7 +112,7 @@ ComboBox {
     style: ComboBoxStyle {
         id: comboBox
         objectName: "comboBox"
-        renderType: Text.NativeRendering
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         background: WGButtonFrame {
             id: buttonFrame
 
@@ -155,7 +155,7 @@ ComboBox {
 
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "\uF075"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
@@ -167,7 +167,7 @@ ComboBox {
             horizontalAlignment: Text.AlignLeft
             color : box.__textColor
             text: control.currentText
-            renderType: Text.NativeRendering
+            renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         }
 
         // drop-down customization here
@@ -187,7 +187,7 @@ ComboBox {
                 horizontalAlignment: Text.AlignHCenter
                 color: styleData.selected ? palette.textColor : palette.highlightTextColor
                 text: styleData.text
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
             }
 
             itemDelegate.background: WGHighlightFrame {  // selection of an item

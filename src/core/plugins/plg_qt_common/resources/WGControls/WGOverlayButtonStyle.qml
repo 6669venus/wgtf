@@ -113,7 +113,7 @@ ButtonStyle {
                 //horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
 
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 color: __textColor
                 font.bold: true
 

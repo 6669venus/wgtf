@@ -276,7 +276,7 @@ Rectangle {
             id: expandIcon
             font.family : "Marlett"
             font.pixelSize: 12
-            renderType: Text.NativeRendering
+            renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
             color: palette.textColor
             text : {
                 if(expanded_ == 2)
@@ -384,7 +384,7 @@ Rectangle {
                 id: headerLabel
                 font.bold: boldHeader_
                 font.pointSize: 9
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 text: mainPanel.subText != "" ? mainPanel.text + ": " : mainPanel.text
@@ -406,7 +406,7 @@ Rectangle {
                 font.bold: boldSubHeader_
                 font.italic: italicSubHeader_
                 font.pointSize: 9
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: headerIcon.right

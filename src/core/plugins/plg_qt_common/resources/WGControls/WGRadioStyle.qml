@@ -18,7 +18,7 @@ RadioButtonStyle {
         text: control.text
         color: __textColor
 
-        renderType: Text.NativeRendering
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
         //coloured border around the label when the control has focus
         Rectangle {

@@ -57,6 +57,42 @@
     <Compile Include="AssemblyInfo.cs">
       <id>6814585f-9fea-40df-b530-e4a39bd39c4d</id>
     </Compile>
+    <Compile Include="Generic_app_demo\AB_expand.cs">
+      <BoundTo>cc8eef84-3b75-49a8-937a-24df20d40907</BoundTo>
+      <DependentUpon>AB_expand.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>2faf7016-ef15-45a1-9230-7c04ac6bf51e</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\AB_expand.UserCode.cs">
+      <BoundTo>cc8eef84-3b75-49a8-937a-24df20d40907</BoundTo>
+      <DependentUpon>AB_expand.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>cb126d51-36b4-4c53-8a76-d56200f3dd43</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\AB_selectItems.cs">
+      <BoundTo>e462d373-7336-4549-b3e9-070f8d09f631</BoundTo>
+      <DependentUpon>AB_selectItems.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>9971a628-9408-45cd-9698-b69f0f1e85b4</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\AB_selectItems.UserCode.cs">
+      <BoundTo>e462d373-7336-4549-b3e9-070f8d09f631</BoundTo>
+      <DependentUpon>AB_selectItems.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>744a9396-6712-4e1b-a8f1-b41be5501722</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\AB_shorcut.cs">
+      <BoundTo>6720ac2c-3f3f-4b11-890b-548fd447b526</BoundTo>
+      <DependentUpon>AB_shorcut.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>aca4765c-78b7-4bfb-8974-9cd5c563214a</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\AB_shorcut.UserCode.cs">
+      <BoundTo>6720ac2c-3f3f-4b11-890b-548fd447b526</BoundTo>
+      <DependentUpon>AB_shorcut.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>611f6a79-cf7d-4b8f-a7aa-089f8a1636bc</id>
+    </Compile>
     <Compile Include="Generic_app_demo\AjustingObjectProperties.cs">
       <id>57464aa9-88fb-437c-acdf-10986f975744</id>
       <RecorderCode>true</RecorderCode>
@@ -165,6 +201,30 @@
       <UserCode>true</UserCode>
       <id>e29f42be-5fc8-42c0-9d57-5ba032b5f491</id>
     </Compile>
+    <Compile Include="Generic_app_UI\AB_Select_folder.cs">
+      <BoundTo>13e0023d-88dc-4145-b4bb-d0e39a4842ee</BoundTo>
+      <DependentUpon>AB_Select_folder.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>259e7755-2b78-4eeb-aea7-1ebfbbfbec0f</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_Select_folder.UserCode.cs">
+      <BoundTo>13e0023d-88dc-4145-b4bb-d0e39a4842ee</BoundTo>
+      <DependentUpon>AB_Select_folder.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>f248926b-e006-48fe-b5af-101ceaa465c1</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_shortcut_crash.cs">
+      <BoundTo>d6a29548-77f4-4bb8-8cf7-035a79c0c5b4</BoundTo>
+      <DependentUpon>AB_shortcut_crash.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>2495b167-47a2-4bef-ac42-6169fe775bca</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_shortcut_crash.UserCode.cs">
+      <BoundTo>d6a29548-77f4-4bb8-8cf7-035a79c0c5b4</BoundTo>
+      <DependentUpon>AB_shortcut_crash.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>a2e2fad9-0c16-42e1-a409-4c96424b0246</id>
+    </Compile>
     <Compile Include="Generic_app_UI\Bool01.cs">
       <BoundTo>1f3550ca-9436-42c1-bb65-925361c1fa3e</BoundTo>
       <DependentUpon>Bool01.rxrec</DependentUpon>
@@ -261,22 +321,25 @@
       <UserCode>true</UserCode>
       <id>97c092fa-8ecd-4725-a0aa-1927ff065ef5</id>
     </Compile>
+    <Compile Include="Generic_app_UI\UserCodeModule1.cs">
+      <id>75f76eb3-37ac-4531-a201-61dce195a044</id>
+    </Compile>
     <Compile Include="NGTTestAutomationRepository.cs">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <DependentUpon>NGTTestAutomationRepository.rxrep</DependentUpon>
       <RepositoryCode>true</RepositoryCode>
       <id>11c15068-68ed-42b9-bfa9-10c9722e6427</id>
     </Compile>
-    <Compile Include="Open Close\Close_GenericApp_ui.cs">
+    <Compile Include="Open Close\Close_GenericApp_ui_usercode.cs">
       <id>0a294dd3-6b65-4e3b-9d34-9608ba70675d</id>
       <RecorderCode>true</RecorderCode>
-      <DependentUpon>Close_GenericApp_ui.rxrec</DependentUpon>
+      <DependentUpon>Close_GenericApp_ui_usercode.rxrec</DependentUpon>
       <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
     </Compile>
-    <Compile Include="Open Close\Close_GenericApp_ui.UserCode.cs">
+    <Compile Include="Open Close\Close_GenericApp_ui_usercode.UserCode.cs">
       <id>3cac6b1c-f196-444e-899a-9e359a39256e</id>
       <UserCode>true</UserCode>
-      <DependentUpon>Close_GenericApp_ui.rxrec</DependentUpon>
+      <DependentUpon>Close_GenericApp_ui_usercode.rxrec</DependentUpon>
       <BoundTo>6d194385-fa00-43d3-a362-3bea03ccb16d</BoundTo>
     </Compile>
     <Compile Include="Open Close\Close_GenericApp_demo.cs">
@@ -405,6 +468,21 @@
     <None Include="app.config">
       <id>6893a9a8-ba4c-443a-b852-decf187e1c46</id>
     </None>
+    <None Include="Generic_app_demo\AB_expand.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>cc8eef84-3b75-49a8-937a-24df20d40907</id>
+      <recordtableid>ce93ef25-0a18-46cd-98e1-00ebde4952a3</recordtableid>
+    </None>
+    <None Include="Generic_app_demo\AB_selectItems.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>e462d373-7336-4549-b3e9-070f8d09f631</id>
+      <recordtableid>e72b5edd-e4d5-4155-ac74-5cb6a754403c</recordtableid>
+    </None>
+    <None Include="Generic_app_demo\AB_shorcut.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>6720ac2c-3f3f-4b11-890b-548fd447b526</id>
+      <recordtableid>7e5abe31-c3fb-454c-951a-e73d1e187c6d</recordtableid>
+    </None>
     <None Include="Generic_app_demo\AjustingObjectProperties.rxrec">
       <recordtableid>e7f3ca85-eb71-4e5d-aaf5-397ea5b4ba45</recordtableid>
       <id>5114b90a-dab0-4a75-83a0-f4656f9f2a81</id>
@@ -449,6 +527,16 @@
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>416b6337-5554-4244-a0c2-8e5317f2c8d5</id>
       <recordtableid>0057bfca-3540-48d9-ba3c-bbfd887e62df</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_Select_folder.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>13e0023d-88dc-4145-b4bb-d0e39a4842ee</id>
+      <recordtableid>31a9081e-b797-4f3f-aea9-a3455e315dab</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_shortcut_crash.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>d6a29548-77f4-4bb8-8cf7-035a79c0c5b4</id>
+      <recordtableid>de2ea3a7-64d1-4a33-81c2-4bc2e7b0ccbc</recordtableid>
     </None>
     <None Include="Generic_app_UI\Bool01.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
@@ -531,7 +619,7 @@
       <id>d6319c40-efbb-488b-be2e-24566e759ef5</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
-    <None Include="Open Close\Close_GenericApp_ui.rxrec">
+    <None Include="Open Close\Close_GenericApp_ui_usercode.rxrec">
       <recordtableid>2c6bd3a2-29ad-40a3-a561-be9010850cb0</recordtableid>
       <id>6d194385-fa00-43d3-a362-3bea03ccb16d</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

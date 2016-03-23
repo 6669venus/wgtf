@@ -18,7 +18,10 @@ using Ranorex;
 using Ranorex.Core;
 using Ranorex.Core.Reporting;
 using Ranorex.Core.Testing;
+//using Ranorex.PopupWatcher;
 
+
+	
 namespace NGTTestAutomation
 {
     class Program
@@ -26,6 +29,7 @@ namespace NGTTestAutomation
         [STAThread]
         public static int Main(string[] args)
         {
+        	 
             // Uncomment the following 2 lines if you want to automate Windows apps
             // by starting the test executable directly
             //if (Util.IsRestartRequiredForWinAppAccess)
@@ -33,6 +37,19 @@ namespace NGTTestAutomation
 
             Keyboard.AbortKey = System.Windows.Forms.Keys.Pause;
             int error = 0;
+            
+           /* Report.Info("Start simulating pop ups by pressing the 'Start' button.");
+			repo.AppDialogSimulator.ButtonStart.Click();
+
+            Thread dialogWatcher = new Thread(ClosePopUpDialogs);
+            dialogWatcher.IsBackground = true;
+			dialogWatcher.SetApartmentState(ApartmentState.STA);
+			dialogWatcher.Start();*/
+
+            /*Thread dialogWatcher = new Thread(ClosePopUpDialogs);
+            dialogWatcher.IsBackground = true;
+			dialogWatcher.SetApartmentState(ApartmentState.STA);
+			dialogWatcher.Start();*/
 
             try
             {
@@ -43,7 +60,28 @@ namespace NGTTestAutomation
                 Report.Error("Unexpected exception occurred: " + e.ToString());
                 error = -1;
             }
-            return error;
+            return error;         
+            
         }
+       /* public static void ClosePopUpDialogs()
+		{
+        	NGTTestAutomationRepository repo = NGTTestAutomationRepository.Instance;
+			while (true)
+			{
+				if (repo.crash_hasstoppedworking.Visible)
+				//if (repo.Dialog_Unknown.SelfInfo.Exists() )
+				{
+					Report.Info("Unknown Exception occurred");
+					//Report.Screenshot(repo.Dialog_Unknown.Self);
+					// Stop the running test with exit code “-1”
+					Environment.Exit(-1);
+				}
+			}
+		}*/
+        
+       
+        
+       
+        
     }
 }

@@ -20,33 +20,33 @@ using Ranorex.Core;
 using Ranorex.Core.Testing;
 using Ranorex.Core.Repository;
 
-namespace NGTTestAutomation.Open_Close
+namespace NGTTestAutomation.Generic_app_demo
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The Close_GenericApp_ui recording.
+    ///The AB_expand recording.
     /// </summary>
-    [TestModule("2c6bd3a2-29ad-40a3-a561-be9010850cb0", ModuleType.Recording, 1)]
-    public partial class Close_GenericApp_ui : ITestModule
+    [TestModule("ce93ef25-0a18-46cd-98e1-00ebde4952a3", ModuleType.Recording, 1)]
+    public partial class AB_expand : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static Close_GenericApp_ui instance = new Close_GenericApp_ui();
+        static AB_expand instance = new AB_expand();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public Close_GenericApp_ui()
+        public AB_expand()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static Close_GenericApp_ui Instance
+        public static AB_expand Instance
         {
             get { return instance; }
         }
@@ -79,9 +79,13 @@ namespace NGTTestAutomation.Open_Close
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Application", "Closing application containing item 'Generic_app.MainWindow'.", repo.Generic_app.MainWindow.SelfInfo, new RecordItemIndex(0));
-            Host.Local.CloseApplication(repo.Generic_app.MainWindow.Self, 30000);
-            Delay.Milliseconds(0);
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ExpandButton2' at Center.", repo.Generic_app.MainWindow.ExpandButton2Info, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.ExpandButton2.Click();
+            Delay.Milliseconds(200);
+            
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ExpandButton3' at Center.", repo.Generic_app.MainWindow.ExpandButton3Info, new RecordItemIndex(1));
+            repo.Generic_app.MainWindow.ExpandButton3.Click();
+            Delay.Milliseconds(200);
             
         }
 

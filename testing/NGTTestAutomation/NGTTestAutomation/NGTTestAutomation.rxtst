@@ -49,9 +49,9 @@ reportlevel="Info;20">
 					name="teardown"
 					id="dc3ba085-f62d-4ced-a612-c5e38b8ef08d">
 						<testmodule
-						name="Close_GenericApp_ui"
-						id="15443d67-7746-49d3-b400-c94540abc237"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						name="Close_GenericApp_demo"
+						id="3bcdcc33-5ffe-456d-8847-cab4ee0aecdf"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
 				</testcase>
@@ -89,9 +89,9 @@ reportlevel="Info;20">
 					name="teardown"
 					id="beb37bbe-e788-48d9-9c71-33389b14ef37">
 						<testmodule
-						name="Close_GenericApp_ui"
-						id="9890b8d4-b8e6-4f30-ae14-8bd174f61e66"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						name="Close_GenericApp_demo"
+						id="22ffaffe-ceb8-446e-b99a-ec3906891856"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
 				</testcase>
@@ -163,9 +163,9 @@ reportlevel="Info;20">
 					name="teardown"
 					id="b5876c05-3b70-4af7-9b27-d1e13bedcdf4">
 						<testmodule
-						name="Close_GenericApp_ui"
-						id="c46000e4-e05e-4efb-b344-95fe8afbcdcf"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						name="Close_GenericApp_demo"
+						id="6dafba48-94d4-47ed-af02-0e52e60e74f3"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
 				</testcase>
@@ -210,9 +210,9 @@ reportlevel="Info;20">
 					name="teardown"
 					id="c9c0ba38-35e7-4dff-941b-d9c1eeb5e711">
 						<testmodule
-						name="Close_GenericApp_ui"
-						id="290bca09-7bb4-4dd2-9779-9f182b34e86f"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						name="Close_GenericApp_demo"
+						id="ad1f1067-bcb3-4a25-9fd0-138c9d7a8011"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
 				</testcase>
@@ -274,9 +274,75 @@ reportlevel="Info;20">
 					name="teardown"
 					id="7be148d0-8e11-4080-a2bf-edc3141443a8">
 						<testmodule
-						name="Close_GenericApp_ui"
+						name="Close_GenericApp_ui_usercode"
 						id="22b38f65-07b1-4826-94a1-cc0e22821f9a"
 						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
+			<folder
+			name="Asset_Browser"
+			id="24ee083c-2eaa-48ba-b407-f2e3f802c1ea">
+				<testcase
+				name="Expand_&amp;_Navigation"
+				id="37538fc7-1001-4549-82ed-e10cb0a9b7d7">
+					<setup
+					name="setup"
+					id="0020a5eb-e7aa-4896-91ba-e8e14eecad68">
+						<testmodule
+						name="Open_GenericApp_ui"
+						id="f6fd1965-fa72-4db4-a7ac-62697fb83146"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="AB_expand"
+					id="0d03fbcf-7241-426a-843a-7645246b41c1"
+					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
+					type="Recording"/>
+					<testmodule
+					name="AB_Select_folder"
+					id="21ad144d-e94c-41ef-9ac4-c9343c8024cf"
+					ref="31a9081e-b797-4f3f-aea9-a3455e315dab"
+					type="Recording"/>
+					<testmodule
+					name="AB_shorcut"
+					id="dd874e7e-af88-4ddf-973b-c9d98454ed5d"
+					ref="7e5abe31-c3fb-454c-951a-e73d1e187c6d"
+					type="Recording"/>
+					<testmodule
+					name="AB_shortcut_crash"
+					id="3d493375-146b-4a28-98ee-1f3c731b0d71"
+					ref="de2ea3a7-64d1-4a33-81c2-4bc2e7b0ccbc"
+					type="Recording"
+					enabled="False"/>
+					<testmodule
+					name="AB_selectItems"
+					id="a36e9579-706d-428c-872b-1a896ae46060"
+					ref="e72b5edd-e4d5-4155-ac74-5cb6a754403c"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="2f7c006b-3a13-4293-80a9-381ff1efb461">
+						<testmodule
+						name="UserCodeModule1"
+						id="54fc6bdd-6907-4535-a17d-ab9e26ae412e"
+						ref="92f24632-328e-48ac-a791-ee0cf26bbc68"
+						type="UserCode"
+						enabled="False"/>
+						<testmodule
+						name="Close_GenericApp_demo"
+						id="14248165-bec2-4f8e-b27e-8ad87a76740c"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
 				</testcase>
@@ -342,9 +408,9 @@ properties, not selected items</P>]]>
 					name="teardown"
 					id="45e64aa3-b47c-4ada-abc0-164f34d0decf">
 						<testmodule
-						name="Close_GenericApp_ui"
-						id="fb1a684f-d3e2-4509-b545-824fd81379b3"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						name="Close_GenericApp_demo"
+						id="12736ff9-fc1d-43a4-914c-d88abb57533c"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
 				</testcase>
@@ -377,9 +443,9 @@ properties, not selected items</P>]]>
 				name="teardown"
 				id="95397143-9c34-4d41-a714-fc61f67b355d">
 					<testmodule
-					name="Close_GenericApp_ui"
-					id="321fd73c-f307-4dad-bd5c-123815322944"
-					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+					name="Close_GenericApp_demo"
+					id="1a09d229-20f7-486e-a276-971d260cfa65"
+					ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 					type="Recording"/>
 				</teardown>
 			</testcase>
@@ -412,9 +478,9 @@ properties, not selected items</P>]]>
 				name="teardown"
 				id="8a0d3dc1-3e0d-4472-b35c-3bfd9d892d65">
 					<testmodule
-					name="Close_GenericApp_ui"
-					id="ddba87f2-da84-4421-808e-238fe02bbc9a"
-					ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+					name="Close_GenericApp_demo"
+					id="a509c2bb-89a0-430e-b2a6-54348e183bd1"
+					ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 					type="Recording"/>
 				</teardown>
 			</testcase>
@@ -430,6 +496,10 @@ properties, not selected items</P>]]>
 			id="033e65d6-e4cb-4780-a7cb-16900dbb6277"/>
 			<testcase
 			id="0432b46d-4642-401b-bc53-9a065f5c269a"/>
+			<testcase
+			id="24ee083c-2eaa-48ba-b407-f2e3f802c1ea"/>
+			<testcase
+			id="37538fc7-1001-4549-82ed-e10cb0a9b7d7"/>
 			<testcase
 			id="4cb23d72-9dd2-4de1-8a95-afc8c438644f"/>
 			<testcase

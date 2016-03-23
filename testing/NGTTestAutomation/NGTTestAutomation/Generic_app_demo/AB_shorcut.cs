@@ -20,33 +20,33 @@ using Ranorex.Core;
 using Ranorex.Core.Testing;
 using Ranorex.Core.Repository;
 
-namespace NGTTestAutomation.Generic_app_UI
+namespace NGTTestAutomation.Generic_app_demo
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The Expand_SimpleCases recording.
+    ///The AB_shorcut recording.
     /// </summary>
-    [TestModule("8655191f-3431-42ca-a488-31ddeee306a4", ModuleType.Recording, 1)]
-    public partial class Expand_SimpleCases : ITestModule
+    [TestModule("7e5abe31-c3fb-454c-951a-e73d1e187c6d", ModuleType.Recording, 1)]
+    public partial class AB_shorcut : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static Expand_SimpleCases instance = new Expand_SimpleCases();
+        static AB_shorcut instance = new AB_shorcut();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public Expand_SimpleCases()
+        public AB_shorcut()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static Expand_SimpleCases Instance
+        public static AB_shorcut Instance
         {
             get { return instance; }
         }
@@ -79,25 +79,30 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ExpandButton1' at Center.", repo.Generic_app.MainWindow.ExpandButton1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.ExpandButton1.Click();
-            Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Keyboard", "Key 'Up' Press.", new RecordItemIndex(0));
+            Keyboard.Press(System.Windows.Forms.Keys.Up, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
+            Delay.Milliseconds(0);
             
-            //Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.Column' at 19;28.", repo.Generic_app.MainWindow.ColumnInfo, new RecordItemIndex(1));
-            //repo.Generic_app.MainWindow.Column.Click(new Location(Column_Screenshot1, "19;28", Column_Screenshot1_Options));
-            //Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Keyboard", "Key 'Up' Press.", new RecordItemIndex(1));
+            Keyboard.Press(System.Windows.Forms.Keys.Up, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
+            Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(2));
-            Delay.Duration(10000, false);
+            Report.Log(ReportLevel.Info, "Keyboard", "Key 'Left' Press.", new RecordItemIndex(2));
+            Keyboard.Press(System.Windows.Forms.Keys.Left, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
+            Delay.Milliseconds(0);
+            
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=241,Height=168}) on item 'Generic_app.MainWindow.Column1'.", repo.Generic_app.MainWindow.Column1Info, new RecordItemIndex(3));
+            Validate.CompareImage(repo.Generic_app.MainWindow.Column1Info, Column1_Screenshot1, Column1_Screenshot1_Options);
+            Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
-        CompressedImage Column_Screenshot1
-        { get { return repo.Generic_app.MainWindow.ColumnInfo.GetScreenshot1(new Rectangle(4, 4, 179, 702)); } }
+        CompressedImage Column1_Screenshot1
+        { get { return repo.Generic_app.MainWindow.Column1Info.GetScreenshot1(new Rectangle(0, 0, 241, 168)); } }
 
-        Imaging.FindOptions Column_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
+        Imaging.FindOptions Column1_Screenshot1_Options
+        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,241,168;True;10000000;0ms"); } }
 
 #endregion
     }

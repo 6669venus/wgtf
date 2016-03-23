@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <recordtable
 rxversion="5.4.5.19886"
-id="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+id="31a9081e-b797-4f3f-aea9-a3455e315dab"
 embeddedrepository="false"
 mode="Global">
 	<name>
-		Close_GenericApp_ui
+		AB_Select_folder
 	</name>
 	<repeatcount>
 		1
@@ -23,26 +23,31 @@ mode="Global">
 		True
 	</useDefaultItemLogging>
 	<codegen
-	classname="Close_GenericApp_ui"
-	namespace="NGTTestAutomation.Open_Close"/>
+	classname="AB_Select_folder"
+	namespace="NGTTestAutomation.Generic_app_UI"/>
 	<variables/>
 	<recorditems>
-		<closeapprecorditem
+		<mouseitem
 		enabled="True"
 		optional="False"
-		searchpropertyid="6db7ed07-47e7-47b3-a340-878a1c5e1d6c"
-		method="CloseWindow"
-		graceperiod="30000ms">
+		duration="500ms"
+		searchpropertyid="0fd67379-093a-4882-8a10-ae17592dc5c3"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="0"
+		sy="0"
+		loc="Center">
 			<comment/>
 			<bindings/>
 			<info
 			sourcename="RepositoryEditor"
-			id="cd35dc4e-e230-4536-a27e-ebaa15eecd9e">
+			id="21854ac8-5661-4d6b-9beb-7ed33133c81b">
 				<path>
-					/form[@name='MainWindow']
+					/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']//element[@name='assetSplitter']/container[@name='leftFrame']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[3]/element[2]
 				</path>
 			</info>
-		</closeapprecorditem>
+		</mouseitem>
 	</recorditems>
 	<repository
 	name="NGTTestAutomationRepository"
@@ -58,7 +63,7 @@ mode="Global">
 	</repository>
 	<usercodefile
 	lang="CSharp">
-		Close_GenericApp_ui.UserCode.cs
+		AB_Select_folder.UserCode.cs
 	</usercodefile>
 	<references/>
 </recordtable>

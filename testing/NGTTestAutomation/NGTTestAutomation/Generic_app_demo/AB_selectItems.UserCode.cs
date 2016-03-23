@@ -19,9 +19,9 @@ using Ranorex;
 using Ranorex.Core;
 using Ranorex.Core.Testing;
 
-namespace NGTTestAutomation.Open_Close
+namespace NGTTestAutomation.Generic_app_demo
 {
-    public partial class Close_GenericApp_ui
+    public partial class AB_selectItems
     {
         /// <summary>
         /// This method gets called right after the recording has been started.

@@ -24,29 +24,29 @@ namespace NGTTestAutomation.Generic_app_UI
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The Expand_SimpleCases recording.
+    ///The AB_Select_folder recording.
     /// </summary>
-    [TestModule("8655191f-3431-42ca-a488-31ddeee306a4", ModuleType.Recording, 1)]
-    public partial class Expand_SimpleCases : ITestModule
+    [TestModule("31a9081e-b797-4f3f-aea9-a3455e315dab", ModuleType.Recording, 1)]
+    public partial class AB_Select_folder : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static Expand_SimpleCases instance = new Expand_SimpleCases();
+        static AB_Select_folder instance = new AB_Select_folder();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public Expand_SimpleCases()
+        public AB_Select_folder()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static Expand_SimpleCases Instance
+        public static AB_Select_folder Instance
         {
             get { return instance; }
         }
@@ -79,26 +79,13 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ExpandButton1' at Center.", repo.Generic_app.MainWindow.ExpandButton1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.ExpandButton1.Click();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGListViewRowDelegate1' at Center.", repo.Generic_app.MainWindow.WGListViewRowDelegate1Info, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.WGListViewRowDelegate1.Click();
             Delay.Milliseconds(200);
-            
-            //Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.Column' at 19;28.", repo.Generic_app.MainWindow.ColumnInfo, new RecordItemIndex(1));
-            //repo.Generic_app.MainWindow.Column.Click(new Location(Column_Screenshot1, "19;28", Column_Screenshot1_Options));
-            //Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(2));
-            Delay.Duration(10000, false);
             
         }
 
 #region Image Feature Data
-        CompressedImage Column_Screenshot1
-        { get { return repo.Generic_app.MainWindow.ColumnInfo.GetScreenshot1(new Rectangle(4, 4, 179, 702)); } }
-
-        Imaging.FindOptions Column_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
-
 #endregion
     }
 #pragma warning restore 0436

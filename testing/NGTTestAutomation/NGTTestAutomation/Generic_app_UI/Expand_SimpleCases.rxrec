@@ -31,6 +31,27 @@ mode="Global">
 		enabled="True"
 		optional="False"
 		duration="500ms"
+		searchpropertyid="ace21221-f1c2-409a-af9d-556fb9af276c"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="0"
+		sy="0"
+		loc="Center">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="8e4dd91a-1fc8-4019-aa7b-07e6fad51873">
+				<path>
+					/form[@objectname='MainWindow']/container[3]//list[@objectname='WGListView']/list[@objectname='WGListView']/list[2]/?/?/text[@name='expandButton']
+				</path>
+			</info>
+		</mouseitem>
+		<mouseitem
+		enabled="False"
+		optional="False"
+		duration="500ms"
 		screenshotname="Screenshot1"
 		screenshotguid="40ec68a3-6ba7-473b-bbc5-f0de81cf580b"
 		codegenpropertyname="Column_Screenshot1"

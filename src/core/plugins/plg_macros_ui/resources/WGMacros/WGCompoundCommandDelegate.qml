@@ -30,6 +30,7 @@ Item {
         //Current item column & arrow
         Item {
             id: expandArrow
+            objectName: "expandArrow"
 
             Layout.minimumWidth: expandArrowImage.width
             Layout.minimumHeight: expandArrowImage.height
@@ -67,6 +68,7 @@ Item {
         }
 
         WGToolButton {
+            objectName: "editMacroButton"
             iconSource: "icons/edit_16x16.png"
             onClicked: {
                 macroWindow.sourceData = itemData.Value.DisplayObject.TreeSource
@@ -77,6 +79,7 @@ Item {
         }
 
         WGToolButton {
+            objectName: "dialogToggleButton"
             iconSource: checked ? "icons/dialogue_on_16x16.png" : "icons/dialogue_off_16x16.png"
             checkable: true
             checked: false
@@ -101,10 +104,12 @@ Item {
 
         WGDropDownBox {
             id: contextObject
+            objectName: "selectContextObject"
             Layout.fillWidth: true
 
             WGListModel {
                 id: contextObjects
+                objectName: "contextObjects"
                 source: itemData.Value.DisplayObject.ContextObjects
 
                 ValueExtension {}

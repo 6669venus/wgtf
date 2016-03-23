@@ -91,7 +91,7 @@ Item {
             {
                 maxSize -= (handleWidth + columnWidths[i]);
             }
-        
+
             return maxSize;
         }
 
@@ -112,6 +112,7 @@ Item {
 
                 Rectangle {
                     id: handle
+                    objectName: "handle"
                     property real initialWidth: initialColumnWidths.length > index ? initialColumnWidths[index] : defaultInitialColumnWidth
                     x: initialWidth
                     width: handleWidth
@@ -157,10 +158,10 @@ Item {
                         anchors.leftMargin: 1
                         anchors.rightMargin: 1
                     }
-                    
+
                     Rectangle {
                         id: rightSideShade
-                    	color: drawHandles ? palette.MidLightColor : "transparent"
+                        color: drawHandles ? palette.MidLightColor : "transparent"
                         visible: drawHandles && handleWidth > 1
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom

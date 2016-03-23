@@ -6,6 +6,7 @@ import WGControls 1.0
 // This component is for displaying the macro panel
 WGPanel {
     title: "Macros"
+    objectName: "WGMacroView"
 
     layoutHints: { 'macros': 1.0 }
 
@@ -122,6 +123,7 @@ WGPanel {
 
                 WGPushButton {
                     id: stopButton
+                    objectName: "stopButton"
                     iconSource: "icons/stop_16x16.png"
                     enabled: false
                     onClicked:{
@@ -134,6 +136,7 @@ WGPanel {
 
                 WGPushButton {
                     id: playButton
+                    objectName: "playButton"
                     iconSource: "icons/play_16x16.png"
                     onClicked:{
                         if(!playing){
@@ -159,6 +162,7 @@ WGPanel {
 
                 WGPushButton {
                     id: recordButton
+                    objectName: "recordButton"
                     iconSource: "icons/record_off_16x16.png"
 
                     onClicked:{
@@ -176,6 +180,7 @@ WGPanel {
 
                 WGLabel {
                     id: macroStatus
+                    objectName: "macroStatus"
                     text: "Idle"
                     color: palette.DisabledTextColor
                 }
@@ -185,6 +190,7 @@ WGPanel {
                 }
 
                 WGPushButton {
+                    objectName: "newFolder"
                     iconSource: "icons/new_folder_16x16.png"
                     onClicked: {
                         //create a new folder
@@ -193,6 +199,7 @@ WGPanel {
                 }
 
                 WGPushButton {
+                    objectName: "closeButton"
                     iconSource: "icons/close_16x16.png"
 
                     onClicked: {
@@ -214,6 +221,7 @@ WGPanel {
                 // Macro list
                 WGListView {
                     id: macros
+                    objectName: "macroList"
                     anchors.fill: parent
                     anchors.margins: defaultSpacing.standardMargin
                     selectionExtension: root.macroSelectionExtension

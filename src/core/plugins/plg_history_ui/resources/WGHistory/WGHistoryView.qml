@@ -7,6 +7,7 @@ import WGControls 1.0
 // This component is for displaying the history panel
 WGPanel {
     id: root
+    objectName: "WGHistoryView"
     color: palette.MainWindowColor
 
     title: "History"
@@ -51,6 +52,7 @@ WGPanel {
 
     WGFrame {
         id: mainFrame
+        objectName: "historyMainFrame"
         anchors.fill: parent
 
         WGColumnLayout {
@@ -99,6 +101,7 @@ WGPanel {
                 // History list
                 WGListView {
                     id: history
+                    objectName: "historyList"
                     model: historyModel
                     anchors.fill: parent
                     anchors.margins: defaultSpacing.standardMargin

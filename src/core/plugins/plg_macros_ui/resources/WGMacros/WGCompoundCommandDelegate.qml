@@ -109,7 +109,6 @@ Item {
 
             WGListModel {
                 id: contextObjects
-                objectName: "contextObjects"
                 source: itemData.Value.DisplayObject.ContextObjects
 
                 ValueExtension {}

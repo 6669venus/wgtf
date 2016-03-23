@@ -10,7 +10,7 @@ Rectangle
     property var nodeContextMenu
     opacity: 1.0
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     radius: defaultSpacing.standardRadius
 
@@ -18,7 +18,7 @@ Rectangle
     height : mainLayout.height + defaultSpacing.doubleBorderSize + defaultSpacing.doubleMargin
 
     Rectangle {
-        color: palette.DarkestShade
+        color: palette.darkestShade
 
         height: parent.height
         width: parent.width
@@ -76,14 +76,14 @@ Rectangle
             Layout.fillHeight : true
             Layout.alignment : Qt.AlignHCenter | Qt.AlignVCenter
             text : node.title
-            color: palette.TextColor
+            color: palette.textColor
         }
 
         WGSeparator
         {
             Layout.fillWidth : true
             Layout.preferredHeight : defaultSpacing.separatorWidth
-            vertical_: false
+            vertical: false
         }
 
         WGExpandingRowLayout

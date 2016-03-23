@@ -7,7 +7,8 @@ import WGControls 1.0
 // This component is for displaying the history panel
 WGPanel {
     id: root
-    color: palette.MainWindowColor
+    objectName: "WGHistoryView"
+    color: palette.mainWindowColor
 
     title: "History"
     layoutHints: { 'history': 1.0 }
@@ -66,6 +67,7 @@ WGPanel {
 
                 WGPushButton {
                     id: clearButton
+                    objectName: "clearButton"
                     text: "Clear"
                     onClicked: {
                         console.assert( historyModel.canClear(),
@@ -82,6 +84,7 @@ WGPanel {
 
                 WGPushButton {
                     id: macroButton
+                    objectName: macroButton
                     text: "Make Macro..."
                     tooltip: "Select a history to make a macro."
                     onClicked: {

@@ -6,7 +6,7 @@ import BWControls 1.0
 Rectangle {
 	property variant source_ : source
 
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 
 	BWTreeModel {
 		id : model
@@ -24,13 +24,13 @@ Rectangle {
 		property Component textPropertyDelegate : Text {
 			clip : true
 			text : itemData_.Value
-			color: palette.TextColor
+			color: palette.textColor
 		}
 		property Component booleanPropertyDelegate : BWCheckBox {
 		}
 		property Component sizePropertyDelegate : Text {
 			text : itemData_.Value
-			color: palette.TextColor
+			color: palette.textColor
 		}
 
 		model_ : model

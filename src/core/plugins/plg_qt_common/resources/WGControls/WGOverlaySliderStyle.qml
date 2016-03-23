@@ -80,8 +80,8 @@ WGSliderStyle {
         WGTextBoxFrame {
             radius: defaultSpacing.standardRadius
             anchors.fill: parent
-            color: control.enabled ? palette.OverlayLightShade : palette.LightShade
-            border.color: control.enabled ? palette.OverlayDarkerShade : palette.DarkestShade
+            color: control.enabled ? palette.overlayLightShade : palette.lightShade
+            border.color: control.enabled ? palette.overlayDarkerShade : palette.darkestShade
         }
     }
 
@@ -93,9 +93,9 @@ WGSliderStyle {
             clip: true
             anchors.fill: parent
             anchors.margins: defaultSpacing.standardBorderSize
-            border.color: control.enabled ? Qt.darker(fillColor, 1.2) : palette.LighterShade
+            border.color: control.enabled ? Qt.darker(fillColor, 1.2) : palette.lighterShade
             radius: defaultSpacing.halfRadius
-            color: control.enabled ? fillColor : palette.LightShade
+            color: control.enabled ? fillColor : palette.lightShade
         }
     }
 }

@@ -9,7 +9,7 @@ WGPanel {
 	layoutHints: { 'test': 0.1 }
 
 	property var sourceModel: source
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	
     property var useModel: 1
     property var topControlsHeight: 20
@@ -88,7 +88,7 @@ WGPanel {
                     verticalAlignment: Text.AlignVCenter
                     visible: typeof itemData.Value === "string"
                     text: typeof itemData.Value === "string" ? itemData.Value : ""
-                    color: palette.TextColor
+                    color: palette.textColor
                 }
             }
         }

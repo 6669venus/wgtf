@@ -29,7 +29,7 @@ WGAssetBrowser {
 Rectangle {
     id: rootFrame
     objectName: "WGAssetBrowser"
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     //Public properties
     /*! This property holds the viewModel containing the assets to be displayed*/
@@ -53,6 +53,20 @@ Rectangle {
         The default value is \c 10 */
     property int maxHistoryItems: 10
 
+    /*! Property determines if history items should be stored or not. For example, if you are
+        selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
+        want to re-track items as you move forward or backward through the history. You do however want to track
+        new selections or child breadcrumb selections. */
+    property bool shouldTrackFolderHistory: true
+
+    //--------------------------------------
+    // Custom Content Filters
+    //--------------------------------------
+    // Note: This will be replaced with a more robust filtering system in the near future.
+
+    /*! This property exposes the active filters control to any outside resources that may need it. */
+    property var activeFilters_: activeFilters
+
     /*! \internal */
     property QtObject contentDisplayType: ListModel {
         // Start with 'List View'
@@ -67,58 +81,17 @@ Rectangle {
         }
     }
 
-    /*! Property determines if history items should be stored or not. For example, if you are
-        selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
-        want to re-track items as you move forward or backward through the history. You do however want to track
-        new selections or child breadcrumb selections. */
-    property bool shouldTrackFolderHistory: true
-
     // Local Variables to Keep track of folder TreeModel selection indices history
     /*! \internal */
-    property var folderHistoryIndices: new Array()
+    property var __folderHistoryIndices: new Array()
+
     /*! \internal */
-    property int currentFolderHistoryIndex: 0
+    property int __currentFolderHistoryIndex: 0
+
     /*! \internal */
-    property int maxFolderHistoryIndices: 0
-    ListModel { id: folderHistoryNames }
-
-    /*! This property exposes the active filters control to any outside resources that may need it. */
-    property var activeFilters_: activeFilters
-
-    //--------------------------------------
-    // Custom Content Filters
-    //--------------------------------------
-    // Note: This will be replaced with a more robust filtering system in the near future.
-
+    property int __maxFolderHistoryIndices: 0
 
     onWidthChanged: checkAssetBrowserWidth()
-
-    WGListModel {
-        id: customContentFiltersModel
-        source: rootFrame.viewModel.data.customContentFilters
-        ValueExtension {}
-    }
-
-    ListModel {
-        id: customContentFiltersList
-
-        Component.onCompleted: {
-            var filterItr = iterator( rootFrame.viewModel.data.customContentFilters )
-            while (filterItr.moveNext()) {
-                customContentFiltersList.append({
-                    text: filterItr.current
-                });
-            }
-        }
-    }
-
-    BWDataChangeNotifier {
-        id: customContentFilterIndexNotifier
-        source: rootFrame.viewModel.data.customContentFilterIndexNotifier
-        onDataChanged: {
-            rootFrame.viewModel.refreshData;
-        }
-    }
 
     Component.onCompleted: {
         var value = preference.assetViewOrientation;
@@ -219,16 +192,16 @@ Rectangle {
         rootFrame.shouldTrackFolderHistory = false;
 
         if (isForward) {
-            if (folderHistoryIndices.length > currentFolderHistoryIndex + 1) {
-                currentFolderHistoryIndex += 1;
-                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            if (folderHistoryIndices.length > __currentFolderHistoryIndex + 1) {
+                __currentFolderHistoryIndex += 1;
+                selector.selectedIndex = __folderHistoryIndices[__currentFolderHistoryIndex];
             }
 
         }
         else {
-            if (currentFolderHistoryIndex > -1) {
-                currentFolderHistoryIndex -= 1;
-                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            if (__currentFolderHistoryIndex > -1) {
+                __currentFolderHistoryIndex -= 1;
+                selector.selectedIndex = __folderHistoryIndices[__currentFolderHistoryIndex];
             }
         }
     }
@@ -248,8 +221,8 @@ Rectangle {
         // Don't track the folder history while navigating said history
         rootFrame.shouldTrackFolderHistory = false;
 
-        currentFolderHistoryIndex = index;
-        selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+        __currentFolderHistoryIndex = index;
+        selector.selectedIndex = __folderHistoryIndices[__currentFolderHistoryIndex];
     }
 
     // Handles breadcrumb selection
@@ -274,6 +247,34 @@ Rectangle {
         selector.selectedIndex = qModelIndex;
     }
 
+    ListModel { id: folderHistoryNames }
+
+    WGListModel {
+        id: customContentFiltersModel
+        source: rootFrame.viewModel.data.customContentFilters
+        ValueExtension {}
+    }
+
+    ListModel {
+        id: customContentFiltersList
+
+        Component.onCompleted: {
+            var filterItr = iterator( rootFrame.viewModel.data.customContentFilters )
+            while (filterItr.moveNext()) {
+                customContentFiltersList.append({
+                    text: filterItr.current
+                });
+            }
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: customContentFilterIndexNotifier
+        source: rootFrame.viewModel.data.customContentFilterIndexNotifier
+        onDataChanged: {
+            rootFrame.viewModel.refreshData;
+        }
+    }
 
     //--------------------------------------
     // Folder Tree Model
@@ -310,15 +311,15 @@ Rectangle {
                     {
                         // Prune history as needed based on maximum length allowed
                         if (folderHistoryIndices.length >= maxHistoryItems) {
-                            folderHistoryIndices.splice(0, 1);
+                            __folderHistoryIndices.splice(0, 1);
                             folderHistoryNames.remove(0);
                         }
 
                         // Track the folder selection indices history
-                        folderHistoryIndices.push(selector.selectedIndex);
+                        __folderHistoryIndices.push(selector.selectedIndex);
                         folderHistoryNames.append({"name" : rootFrame.viewModel.getSelectedTreeItemName()});
-                        currentFolderHistoryIndex = folderHistoryIndices.length - 1;
-                        maxFolderHistoryIndices = folderHistoryIndices.length - 1;
+                        __currentFolderHistoryIndex = __folderHistoryIndices.length - 1;
+                        __maxFolderHistoryIndices = __folderHistoryIndices.length - 1;
                     }
 
                     // Reset the flag to track the folder history
@@ -417,10 +418,10 @@ Rectangle {
 
         // Update the current item index when we get this data change notify
         onDataChanged: {
-            currentFolderHistoryIndex = data;
+            __currentFolderHistoryIndex = data;
 
             // Update the folder TreeModel selectedIndex
-            selector.selectedIndex = folderHistoryIndices[data];
+            selector.selectedIndex = __folderHistoryIndices[data];
         }
     }
 
@@ -453,6 +454,7 @@ Rectangle {
         // the split two column panel underneath it.
 
         id: mainColumn
+        objectName: "mainColumn"
 
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardMargin
@@ -482,7 +484,7 @@ Rectangle {
                             objectName: "backButton"
                             iconSource: "icons/back_16x16.png"
                             tooltip: "Back"
-                            enabled: (currentFolderHistoryIndex != 0)
+                            enabled: (__currentFolderHistoryIndex != 0)
 
                             onClicked: {
                                 onNavigate( false );
@@ -493,7 +495,7 @@ Rectangle {
                             objectName: "backButton"
                             iconSource: "icons/fwd_16x16.png"
                             tooltip: "Forward"
-                            enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
+                            enabled: (__currentFolderHistoryIndex < __folderHistoryIndices.length - 1)
 
 
                             onClicked: {
@@ -597,9 +599,9 @@ Rectangle {
                             width: 140
 
 
-                            color: palette.MainWindowColor
+                            color: palette.mainWindowColor
                             border.width: defaultSpacing.standardBorderSize
-                            border.color: palette.DarkColor
+                            border.color: palette.darkColor
 
                             MouseArea {
                                 // prevents items being selected behind drop down
@@ -873,7 +875,6 @@ Rectangle {
 
         WGExpandingRowLayout {
             //Filter Box
-
             id: assetFilter
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
@@ -891,7 +892,7 @@ Rectangle {
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: childrenRect.height
                     inlineTags: true
-                    splitterChar: ","
+                    __splitterChar: ","
                     dataModel: rootFrame.viewModel.data.activeFilters
                 }
             }
@@ -925,11 +926,10 @@ Rectangle {
 
         SplitView {
             id: assetSplitter
+            objectName: "assetSplitter"
             Layout.fillHeight: true
             Layout.fillWidth: true
             orientation: Qt.Horizontal
-
-
 
             Component.onDestruction: {
                 //TODO: directly use Preference when supporting dynamically add property for GeneircObject
@@ -959,12 +959,12 @@ Rectangle {
                 height: vertical ? assetSplitter.height : defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
                 WGSeparator {
-                    vertical_: parent.vertical
+                    vertical: parent.vertical
 
                     anchors.centerIn: parent
 
-                    width: vertical_ ? defaultSpacing.separatorWidth : parent.width
-                    height: vertical_ ? parent.height : defaultSpacing.separatorWidth
+                    width: vertical ? defaultSpacing.separatorWidth : parent.width
+                    height: vertical ? parent.height : defaultSpacing.separatorWidth
                 }
             }
 
@@ -973,6 +973,7 @@ Rectangle {
                 // some reason if the first level in a SplitView is a layout,
                 // it behaves weirdly with minimumWidths
                 id: leftFrame
+                objectName: "leftFrame"
 
                 Layout.minimumHeight: 0;
                 Layout.minimumWidth: 0;
@@ -1085,7 +1086,7 @@ Rectangle {
                                 }
                                 Text {
                                     anchors.left: folderFileIcon.right
-                                    color: palette.TextColor
+                                    color: palette.textColor
                                     clip: itemData != null && itemData.Component != null
                                     text: itemData != null ? (itemData.Value != null ? itemData.Value : "") : ""
                                     anchors.leftMargin: folderView.expandIconMargin // TODO no defined error
@@ -1171,6 +1172,7 @@ Rectangle {
                 // weirdly with minimumWidths
 
                 id: rightFrame
+                objectName: "rightFrame"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
@@ -1178,13 +1180,14 @@ Rectangle {
                     // Right Column: Filters, Files + Assets, Saved Filters & View Options
 
                     id: fileColumn
+                    objectName: "fileColumn"
                     anchors.fill: parent
 
                     Rectangle {
                         //Assets/Files Frame
                         id: folderContentsRect
 
-                        color: palette.LightPanelColor
+                        color: palette.lightPanelColor
 
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -1252,6 +1255,7 @@ Rectangle {
                                 height: assetGrid.cellHeight
 
                                 ColumnLayout {
+                                    objectName: typeof(iconLabel.text) != "undefined" ? iconLabel.text : "assetArea"
                                     spacing: 0
                                     anchors.fill: parent
 
@@ -1325,7 +1329,6 @@ Rectangle {
 
                                 MouseArea {
                                     id: assetMouseArea
-                                    objectName: "assetEntry"
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
 
@@ -1384,8 +1387,8 @@ Rectangle {
                             id: columnDelegate
 
                             Item {
-                                visible: !showIcons
                                 objectName: "showIcons"
+                                visible: !showIcons
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
                                 Item {
@@ -1428,4 +1431,13 @@ Rectangle {
             } //RightFrame
         } //SplitView
     }
+
+    /*! Deprecated */
+    property alias folderHistoryIndices: rootFrame.__folderHistoryIndices
+
+    /*! Deprecated */
+    property alias currentFolderHistoryIndex: rootFrame.__currentFolderHistoryIndex
+
+    /*! Deprecated */
+    property alias maxFolderHistoryIndices: rootFrame.__maxFolderHistoryIndices
 }

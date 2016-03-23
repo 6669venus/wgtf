@@ -8,6 +8,46 @@ class QtPalette : public QQuickItem
 	Q_OBJECT
 
 public:
+	Q_PROPERTY(QColor mainWindowColor MEMBER mainWindowColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor highlightColor MEMBER highlightColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor toolTipColor MEMBER toolTipColor_ NOTIFY colorChanged)
+
+	Q_PROPERTY(QColor textColor MEMBER textColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor highlightTextColor MEMBER highlightTextColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor textBoxColor MEMBER textBoxColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor placeholderTextColor MEMBER placeholderTextColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor toolTipTextColor MEMBER toolTipTextColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor brightTextColor MEMBER brightTextColor_ NOTIFY colorChanged)
+
+	Q_PROPERTY(QColor darkHeaderColor MEMBER darkHeaderColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor lightPanelColor MEMBER lightPanelColor_ NOTIFY colorChanged)
+
+	Q_PROPERTY(QColor midDarkColor MEMBER midDarkColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor midLightColor MEMBER midLightColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor darkColor MEMBER darkColor_ NOTIFY colorChanged)
+
+	Q_PROPERTY(QColor neutralTextColor MEMBER neutralTextColor_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor disabledTextColor MEMBER disabledTextColor_ NOTIFY colorChanged)
+
+	Q_PROPERTY(QColor lightShade MEMBER lightShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor lighterShade MEMBER lighterShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor lightestShade MEMBER lightestShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor darkShade MEMBER darkShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor darkerShade MEMBER darkerShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor darkestShade MEMBER darkestShade_ NOTIFY colorChanged)
+
+	Q_PROPERTY(QColor overlayDarkShade MEMBER overlayDarkShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor overlayLightShade MEMBER overlayLightShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor overlayDarkerShade MEMBER overlayDarkerShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor overlayLighterShade MEMBER overlayLighterShade_ NOTIFY colorChanged)
+	Q_PROPERTY(QColor overlayTextColor MEMBER overlayTextColor_ NOTIFY colorChanged)
+
+	Q_PROPERTY(QColor highlightShade MEMBER highlightShade_ NOTIFY colorChanged)
+
+	Q_PROPERTY(bool glowStyle MEMBER glowStyle_ NOTIFY glowChanged)
+
+	// \/\/\/\/ DEPRECATED \/\/\/\/
+
 	Q_PROPERTY( QColor MainWindowColor MEMBER mainWindowColor_ NOTIFY colorChanged )
 	Q_PROPERTY( QColor HighlightColor MEMBER highlightColor_ NOTIFY colorChanged )
 	Q_PROPERTY( QColor ToolTipColor MEMBER toolTipColor_ NOTIFY colorChanged )
@@ -45,6 +85,8 @@ public:
 	Q_PROPERTY( QColor HighlightShade MEMBER highlightShade_ NOTIFY colorChanged )
 
 	Q_PROPERTY( bool GlowStyle MEMBER glowStyle_ NOTIFY glowChanged )
+
+	// /\/\/\/\ DEPRECATED /\/\/\/\
 
 	Q_PROPERTY( Theme theme READ theme WRITE setTheme NOTIFY themeChanged )
 

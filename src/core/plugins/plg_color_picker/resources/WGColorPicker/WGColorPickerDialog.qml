@@ -8,6 +8,7 @@ import WGColorPicker 1.0
 
 WGFileDialog {
     id: mainDialog
+    objectName: "WGColorPickerDialog"
 
     property bool showAlphaChannel: true
 
@@ -32,11 +33,12 @@ WGFileDialog {
         property color currentColor: initialColor
 
         contentItem: Rectangle {
-            color: palette.MainWindowColor
+            color: palette.mainWindowColor
             anchors.margins: defaultSpacing.standardMargin
 
             WGColorPicker {
                 id: colorPicker
+                objectName: "colorPicker"
                 anchors.fill: parent
 
                 showAlphaChannel: mainDialog.showAlphaChannel

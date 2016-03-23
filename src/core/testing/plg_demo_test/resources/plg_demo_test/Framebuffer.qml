@@ -10,7 +10,7 @@ import "js/gl-matrix.js" as GLMatrix
 
 Rectangle {
 	id: viewport
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	property var title: "Viewport"
 	property var layoutHints: { 'viewport': 0.1 }
 

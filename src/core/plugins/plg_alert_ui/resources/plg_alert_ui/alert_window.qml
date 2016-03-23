@@ -9,7 +9,7 @@ Rectangle {
 
     id: main
 
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 
     /// Remove the alert message at the index passed in
     /// See alert_models.cpp ( AlertPageModel::removeAlert )

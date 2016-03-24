@@ -14,12 +14,12 @@ WGCheckBoxStyle {
 
     /*! \internal */
     // helper property for text color so states can all be in the indicator object
-    property color __textColor: palette.NeutralTextColor
+    property color __textColor: palette.neutralTextColor
 
     label: Text {
         text: control.text
         color: __textColor
-        renderType: Text.NativeRendering
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
         //coloured border around the label when the control has focus
         Rectangle {
@@ -30,7 +30,7 @@ WGCheckBoxStyle {
             color: "transparent"
             radius: defaultSpacing.halfRadius
             border.width: defaultSpacing.standardBorderSize
-            border.color: palette.LighterShade
+            border.color: palette.lighterShade
         }
     }
 
@@ -39,17 +39,17 @@ WGCheckBoxStyle {
         implicitWidth: 14
         implicitHeight: 14
 
-        color: palette.TextBoxColor
+        color: palette.textBoxColor
 
-        border.color: palette.DarkestShade
+        border.color: palette.darkestShade
 
         states: [
             State {
                 name: "UNCHECKED DISABLED"
                 when: control.checkedState == Qt.Unchecked && !control.enabled
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
                 PropertyChanges {target: checkboxFrame; color: "transparent"}
-                PropertyChanges {target: checkboxFrame; border.color: palette.DarkerShade}
+                PropertyChanges {target: checkboxFrame; border.color: palette.darkerShade}
             },
             State {
                 name: "CHECKED"
@@ -60,12 +60,12 @@ WGCheckBoxStyle {
             State {
                 name: "CHECKED DISABLED"
                 when: control.checkedState == Qt.Checked && !control.enabled
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
                 PropertyChanges {target: checkboxFrame; color: "transparent"}
-                PropertyChanges {target: checkboxFrame; border.color: palette.DarkerShade}
-                PropertyChanges {target: checkContainer; color: palette.LightShade}
+                PropertyChanges {target: checkboxFrame; border.color: palette.darkerShade}
+                PropertyChanges {target: checkContainer; color: palette.lightShade}
                 PropertyChanges {target: checkContainer; visible: true}
-                PropertyChanges {target: tickMark; color: palette.LightestShade}
+                PropertyChanges {target: tickMark; color: palette.lightestShade}
                 PropertyChanges {target: tickMark; visible: true}
             },
             State {
@@ -73,34 +73,34 @@ WGCheckBoxStyle {
                 when: control.checkedState == Qt.PartiallyChecked && control.enabled
                 PropertyChanges {target: checkContainer; visible: true}
                 PropertyChanges {target: checkContainer; anchors.margins: 2}
-                PropertyChanges {target: checkContainer; color: palette.HighlightShade}
+                PropertyChanges {target: checkContainer; color: palette.highlightShade}
             },
             State {
                 name: "PART CHECKED DISABLED"
                 when: control.checkedState == Qt.PartiallyChecked && !control.enabled
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
                 PropertyChanges {target: checkboxFrame; color: "transparent"}
-                PropertyChanges {target: checkboxFrame; border.color: palette.DarkerShade}
+                PropertyChanges {target: checkboxFrame; border.color: palette.darkerShade}
                 PropertyChanges {target: checkContainer; visible: true}
                 PropertyChanges {target: checkContainer; anchors.margins: 2}
-                PropertyChanges {target: checkContainer; color: palette.LightShade}
+                PropertyChanges {target: checkContainer; color: palette.lightShade}
             }
         ]
 
         Rectangle {
             id: checkContainer
             visible: false
-            color: palette.HighlightColor
+            color: palette.highlightColor
             radius: defaultSpacing.halfRadius
             anchors.fill: parent
             anchors.margins: 1
 
             Text {
                 id : tickMark
-                color : palette.HighlightTextColor
+                color : palette.highlightTextColor
                 font.family : "Marlett"
                 font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "\uF061"
                 visible : false
                 anchors.fill: parent

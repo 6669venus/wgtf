@@ -12,14 +12,14 @@ Example:
 
 WGSubPanel {
     text: "Form Layout"
-    childObject_ :
+    childObject :
         WGFormLayout {
             id: topForm
-            localForm_: true
+            localForm: true
 
             WGPushButton {
                 text: "Button"
-                label_: "Buttons Label: "
+                label: "Buttons Label: "
             }
         }
     }
@@ -30,5 +30,5 @@ WGSubPanel {
 
 WGColumnLayout {
     objectName: "WGFormLayout"
-    formLayout_: true
+    formLayout: true
 }

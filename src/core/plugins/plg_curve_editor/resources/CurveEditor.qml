@@ -14,7 +14,7 @@ Rectangle {
 	property var selection: [];
 
 	Layout.fillHeight: true
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 
 	QtObject
 	{
@@ -30,6 +30,7 @@ Rectangle {
 		pos.x = Math.max(pos.x, 0)
 		pos.x = Math.min(pos.x, 1)
 		
+
 		beginUndoFrame();
 		var curveIt = iterator(curves)
 		while(curveIt.moveNext()){
@@ -454,6 +455,7 @@ Rectangle {
 				id: curveRepeater
 				model: curvesModel
 				delegate: Curve{
+                    objectName: index
 					points: Value.points
 					curveModel: Value
 					viewTransform: timeline.viewTransform;

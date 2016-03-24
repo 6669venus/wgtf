@@ -9,7 +9,7 @@ WGPanel {
 	layoutHints: { 'test': 0.1 }
 
 	property var sourceModel: source
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	
 	Label {
 		id: searchBoxLabel
@@ -76,7 +76,7 @@ WGPanel {
 					anchors.margins: 4
 					verticalAlignment: Text.AlignVCenter
 					text: itemData.Value
-					color: palette.TextColor
+					color: palette.textColor
 				}
 			}
 		}

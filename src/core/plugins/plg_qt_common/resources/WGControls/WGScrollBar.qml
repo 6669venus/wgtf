@@ -7,8 +7,8 @@ import QtQuick 2.3
 */
 
 Item {
-    objectName: "WGScrollBar"
     id: scrollBar
+    objectName: "WGScrollBar"
 
     /*! The properties that define the scrollbar's state.
         position and pageSize are in the range 0.0 - 1.0.  They are relative to the
@@ -29,20 +29,20 @@ Item {
 
     // Is the scrollbar in the flickable indicator state or conventional scrollbar state
     /*! \internal */
-    property bool expanded: false
+    property bool __expanded: false
 
     property QtObject scrollFlickable
 
     property QtObject scrollBarStyle: WGScrollBarStyle{}
 
     /*! \internal */
-    property int scrollBarWidth: expanded ? expandedWidth : collapsedWidth
+    property int __scrollBarWidth: __expanded ? __expandedWidth : __collapsedWidth
 
     /*! \internal */
-    property int expandedWidth: defaultSpacing.scrollBarSize * 3
+    property int __expandedWidth: defaultSpacing.scrollBarSize * 3
 
     /*! \internal */
-    property int collapsedWidth: defaultSpacing.scrollBarSize
+    property int __collapsedWidth: defaultSpacing.scrollBarSize
 
     //keep the draghandle within the proper bounds
     function resetBounds(){
@@ -87,7 +87,7 @@ Item {
     }
 
     //short grow/shrink animation for scrollbar
-    Behavior on scrollBarWidth{
+    Behavior on __scrollBarWidth{
         id: barAnimation
         NumberAnimation {
             duration: 40
@@ -113,11 +113,9 @@ Item {
         anchors.rightMargin: orientation == Qt.Vertical ? defaultSpacing.standardBorderSize : 0
         anchors.bottomMargin: orientation == Qt.Vertical ? 0 : defaultSpacing.standardBorderSize
 
-        width: orientation == Qt.Vertical ? scrollBarWidth : undefined
-        height: orientation == Qt.Vertical ? undefined : scrollBarWidth
+        width: orientation == Qt.Vertical ? __scrollBarWidth : undefined
+        height: orientation == Qt.Vertical ? undefined : __scrollBarWidth
     }
-
-
 
     // Size the bar to the required size, depending upon the orientation.
     Loader {
@@ -138,18 +136,17 @@ Item {
         anchors.bottom: orientation == Qt.Vertical ? undefined : background.bottom
     }
 
-
     //mouse area for clicking above/below handle and dragging the handle itself.
      MouseArea {
          id: scrollBarArea
          anchors.fill: parent
-         anchors.leftMargin: orientation == Qt.Vertical && !expanded ? -5 : 0
-         anchors.topMargin: orientation != Qt.Vertical && !expanded ? -5 : 0
+         anchors.leftMargin: orientation == Qt.Vertical && !__expanded ? -5 : 0
+         anchors.topMargin: orientation != Qt.Vertical && !__expanded ? -5 : 0
 
          hoverEnabled: true
 
          onEntered: {
-            expanded = true
+            __expanded = true
          }
 
          onExited: {
@@ -166,7 +163,7 @@ Item {
              onTriggered: {
                  if (!scrollBarArea.drag.active && !scrollBarArea.containsMouse)
                  {
-                     expanded = false
+                     __expanded = false
                  }
              }
          }
@@ -261,9 +258,8 @@ Item {
 
     //Fake drag handle as the actual handle needs to get its position from the flickable which causes binding issues.
     Rectangle {
-
-        objectName: "dragHandle"
         id: dragHandle
+        objectName: "dragHandle"
         color: "transparent"
         anchors.verticalCenter: handle.verticalCenter
         anchors.horizontalCenter: handle.horizontalCenter
@@ -312,4 +308,16 @@ Item {
             }
         }
     }
+
+    /*! Deprecated */
+    property alias expanded: scrollBar.__expanded
+
+    /*! Deprecated */
+    property alias expandedWidth: scrollBar.__expandedWidth
+
+    /*! Deprecated */
+    property alias scrollBarWidth: scrollBar.__scrollBarWidth
+
+    /*! Deprecated */
+    property alias collapsedWidth: scrollBar.__collapsedWidth
 }

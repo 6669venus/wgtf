@@ -187,6 +187,6 @@ WGSliderStyle {
             }
         }
     }
-
+    // There is no expanding bar that follows the handles in a ColorSlider
     bar: null
 }

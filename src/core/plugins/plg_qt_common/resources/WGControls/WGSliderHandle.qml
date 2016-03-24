@@ -38,8 +38,14 @@ Item {
 
     property alias range: range
 
-    property color handleColor: palette.LightPanelColor
+    /*!
+        The internal color of the handle
+    */
+    property color handleColor: palette.lightPanelColor
 
+    /*!
+        The color of the bar attached to the handle
+    */
     property color barColor: parentSlider.barColor
 
     /*!
@@ -50,7 +56,7 @@ Item {
     property bool showBar: true
 
     /*!
-        A paired handle that handles the max value in a range slider.
+        A paired handle that handles the max or min value in a range slider.
     */
 
     property QtObject rangePartnerHandle: sliderHandle
@@ -92,10 +98,10 @@ Item {
         This can be any Item based component.
     */
     property Component handleStyle: WGButtonFrame{
-        color: parentSlider.enabled ? handleColor : palette.MainWindowColor
-        borderColor: parentSlider.enabled ? palette.DarkerShade : palette.DarkShade
-        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.LighterShade : "transparent"
-        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.HighlightShade : "transparent"
+        color: parentSlider.enabled ? handleColor : palette.mainWindowColor
+        borderColor: parentSlider.enabled ? palette.darkerShade : palette.darkShade
+        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
+        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
         implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
         implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
     }
@@ -136,6 +142,9 @@ Item {
     width: parentSlider.__handleWidth
 
     height: parentSlider.__handleHeight
+
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.minimumRowHeight
 
     anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
     anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined

@@ -46,6 +46,7 @@ import BWControls 1.0
 
 /*!
  \brief A reimplementation of Spinbox with the following properties:
+ Not intended for direct use. Use WGNumberBox instead.
  Single clicked increment/decrement  via stepSize property
  Click and drag increment/decrement based on vertical linear mouse distance moved
  Multiplier on speed of number change via keyboard toggle (Ctrl) whilst dragging
@@ -59,7 +60,7 @@ import BWControls 1.0
 
 Example:
 \code{.js}
-WGSpinBox {
+WGNumberBox {
     width: 120
     value: 25
     minimumValue: 0
@@ -109,10 +110,7 @@ Control {
     id: spinbox
     objectName: "WGSpinBox"
 
-    /*!
-        This property determines the height of the control
-    */
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    //property declarations
 
     /*!
         This property determines the width of the spinner boxes
@@ -217,51 +215,27 @@ Control {
     */
     readonly property alias hovered: mouseArea.containsMouse
 
-    property bool dragging_: mouseArea.drag.active
-
-    /*!
-        \qmlsignal SpinBox::editingFinished()
-        \since QtQuick.Controls 1.1
-
-        This signal is emitted when the Return or Enter key is pressed or
-        the control loses focus. Note that if there is a validator
-        set on the control and enter/return is pressed, this signal will
-        only be emitted if the validator returns an acceptable state.
-
-        The corresponding handler is \c onEditingFinished.
-    */
-    signal editingFinished()
-
-    //style: Qt.createComponent(Settings.style + "/SpinBoxStyle.qml", spinbox)
+    /*! \internal */
+    property bool __dragging: mouseArea.drag.active
 
     /*! \internal */
     property alias __text: input.text
+
 
     /*! This property determines if the control is read only
         The default value defined by TextBox base control and is \c false
     */
     property alias readOnly: input.readOnly
-    enabled: !readOnly
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*! This property determines if the control will show up and down spinners.
         The default value is an \c true
     */
     property bool hasArrows: true
-
-    /*! This property holds the target control's id to be bound to this controls b_Value */
-    property alias b_Target: dataBinding.target
-
-    /*! This property determines b_Target's property which is to be bound to this controls b_Value */
-    property alias b_Property: dataBinding.property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
 
     /*! This property determines the colour of the text displayed in the control
         The default value is determined by the base TextField control
@@ -269,21 +243,23 @@ Control {
     property alias textColor: input.textColor
 
     /*! \internal */
-    property real originalValue_: 0 //the value before dragging
+    property real __originalValue: 0 //the value before dragging
 
     /*! \internal */
-    property real tempValueAdd_: 0 //the amount to add to the original value
+    property real __tempValueAdd: 0 //the amount to add to the original value
 
     /*! \internal */
-    property bool fastDrag_: false //if ctrl held down increment is much faster
+    property bool __fastDrag: false //if ctrl held down increment is much faster
 
     /*! \internal */
-    property real fakeZero_: 0  //a fake zero after ctrl is held or released
+    property real __fakeZero: 0  //a fake zero after ctrl is held or released
 
     /*! \internal */
     property bool useValidatorOnInputText: true // Let the validator update the input.text
 
     property Component textBoxStyle: WGTextBoxStyle{}
+
+    property int numDigits: Math.max(Math.round(Math.abs(minimumValue)).toString().length, Math.round(Math.abs(maximumValue)).toString().length)
 
     property Component buttonFrame: WGButtonFrame{
         objectName: "button"
@@ -295,7 +271,7 @@ Control {
 
         Text {
             id: arrowText
-            color : palette.NeutralTextColor
+            color : palette.neutralTextColor
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -313,25 +289,42 @@ Control {
             State {
                 name: "PRESSED"
                 when: button.pressed && spinbox.enabled
-                PropertyChanges {target: button; color: palette.DarkShade}
+                PropertyChanges {target: button; color: palette.darkShade}
                 PropertyChanges {target: button; innerBorderColor: "transparent"}
             },
             State {
                 name: "HOVERED"
                 when: button.hovered && spinbox.enabled
-                PropertyChanges {target: button; highlightColor: palette.LighterShade}
-                PropertyChanges {target: arrowText; color: palette.TextColor}
+                PropertyChanges {target: button; highlightColor: palette.lighterShade}
+                PropertyChanges {target: arrowText; color: palette.textColor}
             },
             State {
                 name: "DISABLED"
                 when: !spinbox.enabled
                 PropertyChanges {target: button; color: "transparent"}
-                PropertyChanges {target: button; borderColor: palette.DarkShade}
+                PropertyChanges {target: button; borderColor: palette.darkShade}
                 PropertyChanges {target: button; innerBorderColor: "transparent"}
-                PropertyChanges {target: arrowText; color: palette.DisabledTextColor}
+                PropertyChanges {target: arrowText; color: palette.disabledTextColor}
             }
         ]
     }
+
+    //signal declarations
+
+    /*!
+        \qmlsignal SpinBox::editingFinished()
+        \since QtQuick.Controls 1.1
+
+        This signal is emitted when the Return or Enter key is pressed or
+        the control loses focus. Note that if there is a validator
+        set on the control and enter/return is pressed, this signal will
+        only be emitted if the validator returns an acceptable state.
+
+        The corresponding handler is \c onEditingFinished.
+    */
+    signal editingFinished()
+
+    //functions
 
     /*! \internal */
     //increments the value
@@ -340,6 +333,73 @@ Control {
         if (activeFocus)
             input.selectValue()
     }
+
+    Keys.onUpPressed: {
+        if (!input.readOnly)
+        {
+            tickValue(stepSize)
+        }
+    }
+    Keys.onDownPressed: {
+        if (!input.readOnly)
+        {
+            tickValue(-stepSize)
+        }
+    }
+
+    //toggle __fastDrag with Ctrl. Also set a new zero point so current value can be changed instead of the original value.
+    Keys.onPressed: {
+        if (event.key == Qt.Key_Control)
+        {
+            __fastDrag = true
+            if (dragBar.Drag.active)
+            {
+                validator.value = __originalValue + __tempValueAdd
+                __originalValue = validator.value
+                __tempValueAdd = 0
+                __fakeZero = dragBar.y
+            }
+        }
+    }
+
+    Keys.onReleased: {
+        if (event.key == Qt.Key_Control)
+        {
+            __fastDrag = false
+            if (dragBar.Drag.active)
+            {
+                validator.value = __originalValue + __tempValueAdd
+                __originalValue = validator.value
+                __tempValueAdd = 0
+                __fakeZero = dragBar.y
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        copyableControl.disableChildrenCopyable( spinbox );
+    }
+
+    //object properties
+
+    /*!
+        This property determines the height of the control
+    */
+    implicitHeight: defaultSpacing.minimumRowHeight
+
+    /*!
+        This property determines the width of the control
+    */
+    implicitWidth: numDigits * textMetricsCreator.maxWidth + decimals * textMetricsCreator.maxWidth
+                   + decimalWidthCalculator.width + suffixPrefixWidthCalculator.width
+                    + (hasArrows ? spinBoxSpinnerSize : 0)
+
+    activeFocusOnTab: true
+
+    Accessible.name: input.text
+    Accessible.role: Accessible.SpinBox
+
+    enabled: !readOnly
 
     Binding {
         id: dataBinding
@@ -363,8 +423,6 @@ Control {
         }
     }
 
-    property int numDigits: Math.max(Math.round(Math.abs(minimumValue)).toString().length, Math.round(Math.abs(maximumValue)).toString().length)
-
     TextMetrics {
         id: minusWidthCalculator
         text: Math.min(minimumValue, maximumValue) < 0 ? "-" : ""
@@ -380,22 +438,9 @@ Control {
         text: prefix + suffix
     }
 
-    implicitWidth: numDigits * textMetricsCreator.maxWidth + decimals * textMetricsCreator.maxWidth
-                   + decimalWidthCalculator.width + suffixPrefixWidthCalculator.width
-                    + (hasArrows ? spinBoxSpinnerSize : 0)
-
-    activeFocusOnTab: true
-
-    Accessible.name: input.text
-    Accessible.role: Accessible.SpinBox
-
-    Component.onCompleted: {
-        copyableControl.disableChildrenCopyable( spinbox );
-    }
-
     WGTextBox {
-        objectName: "TextBox"
         id: input
+        objectName: "input"
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -492,8 +537,8 @@ Control {
 
     // Spinbox arrow buttons
     Item {
-        objectName: "SpinboxArrowButtons"
         id: arrowBox
+        objectName: "spinboxArrowButtons"
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         height: parent.height
@@ -591,7 +636,7 @@ Control {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
 
-        property int modifier: fastDrag_ ? 1 : 10
+        property int modifier: __fastDrag ? 1 : 10
 
         Drag.active: mouseArea.drag.active && !input.readOnly
 
@@ -610,11 +655,11 @@ Control {
         onYChanged:{
             if (Drag.active){
                 if ( stepSize !== 0 ) {
-                    tempValueAdd_ = Math.round((fakeZero_ - y) / modifier) * stepSize
+                    __tempValueAdd = Math.round((__fakeZero - y) / modifier) * stepSize
                 } else {
-                    tempValueAdd_ = (fakeZero_ - y) / modifier;
+                    __tempValueAdd = (__fakeZero - y) / modifier;
                 }
-                validator.value = originalValue_ + tempValueAdd_
+                validator.value = __originalValue + __tempValueAdd
             }
         }
     }
@@ -643,12 +688,12 @@ Control {
         // reset the value before and after drag
         drag.onActiveChanged: {
             if (mouseArea.drag.active) {
-                originalValue_ = validator.value
+                __originalValue = validator.value
                 pressAndHoldTimer.stop()
             } else {
-                tempValueAdd_ = 0
-                originalValue_ = 0
-                fakeZero_ = 0
+                __tempValueAdd = 0
+                __originalValue = 0
+                __fakeZero = 0
                 input.focus = false
             }
         }
@@ -761,51 +806,28 @@ Control {
             arrowUpButtonFrame.pressed = false
             arrowDownButtonFrame.pressed = false
             editingFinished()
-            //prevents fastDrag_ getting stuck if mouse is released before key event
-            fastDrag_ = false
+            //prevents __fastDrag getting stuck if mouse is released before key event
+            __fastDrag = false
             pressAndHoldTimer.stop()
             endUndoFrame();
         }
     }
 
-    Keys.onUpPressed: {
-        if (!input.readOnly)
-        {
-            tickValue(stepSize)
-        }
-    }
-    Keys.onDownPressed: {
-        if (!input.readOnly)
-        {
-            tickValue(-stepSize)
-        }
-    }
+    /*! Deprecated */
+    property alias dragging_ : spinbox.__dragging
 
-    //toggle fastDrag_ with Ctrl. Also set a new zero point so current value can be changed instead of the original value.
-    Keys.onPressed: {
-        if (event.key == Qt.Key_Control)
-        {
-            fastDrag_ = true
-            if (dragBar.Drag.active)
-            {
-                validator.value = originalValue_ + tempValueAdd_
-                originalValue_ = validator.value
-                tempValueAdd_ = 0
-                fakeZero_ = dragBar.y
-            }
-        }
-    }
-    Keys.onReleased: {
-        if (event.key == Qt.Key_Control)
-        {
-            fastDrag_ = false
-            if (dragBar.Drag.active)
-            {
-                validator.value = originalValue_ + tempValueAdd_
-                originalValue_ = validator.value
-                tempValueAdd_ = 0
-                fakeZero_ = dragBar.y
-            }
-        }
-    }
+    /*! Deprecated */
+    property alias label_: spinbox.label
+
+    /*! Deprecated */
+    property alias originalValue_: spinbox.__originalValue
+
+    /*! Deprecated */
+    property alias tempValueAdd_: spinbox.__tempValueAdd
+
+    /*! Deprecated */
+    property alias fastDrag_: spinbox.__fastDrag
+
+    /*! Deprecated */
+    property alias fakeZero_: spinbox.__fakeZero
 }

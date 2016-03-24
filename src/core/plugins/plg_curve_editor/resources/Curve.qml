@@ -13,10 +13,10 @@ Canvas {
     // }
     property alias pointRepeater: pointRepeater;
     property var points;
-	property var curveModel;
+    property var curveModel;
     property color color;
     property bool enabled: true;
-	property bool showControlPoints: enabled && curveModel.showControlPoints
+    property bool showControlPoints: enabled && curveModel.showControlPoints
     property var _scaleX: viewTransform.xScale;
     property var _scaleY: viewTransform.yScale;
     property var _originX: viewTransform.origin.x;
@@ -25,12 +25,12 @@ Canvas {
         container: curve
     }
 
-	signal pointSelectionChanged(Point point)
+    signal pointSelectionChanged(Point point)
     signal pointPositionChanged(Point point, real xDelta, real yDelta)
-	signal pointPressed(Point point, var mouse)
-	signal pointClicked(Point point, var mouse)
-	signal pointAdded(int index, var point)
-	signal pointRemoved(int index, var point)
+    signal pointPressed(Point point, var mouse)
+    signal pointClicked(Point point, var mouse)
+    signal pointAdded(int index, var point)
+    signal pointRemoved(int index, var point)
 
     on_OriginXChanged: { requestPaint() }
     on_OriginYChanged: { requestPaint() }
@@ -46,65 +46,65 @@ Canvas {
         }
     }
 
-	function addPoint(index, point)
-	{
-		if(index > 0)
-		{
+    function addPoint(index, point)
+    {
+        if(index > 0)
+        {
             var prevPoint = curve.pointRepeater.itemAt(index - 1);
-			prevPoint.nextPoint = point.point;
-			point.prevPoint = prevPoint.point;
-			prevPoint.updateHandlePositions();
-		}
+            prevPoint.nextPoint = point.point;
+            point.prevPoint = prevPoint.point;
+            prevPoint.updateHandlePositions();
+        }
 
-		if(index + 1 < curve.pointRepeater.count)
-		{
+        if(index + 1 < curve.pointRepeater.count)
+        {
             var nextPoint = curve.pointRepeater.itemAt(index + 1);
-			if(nextPoint)
-			{
-				point.nextPoint = nextPoint.point;
-				nextPoint.prevPoint = point.point;
-				nextPoint.updateHandlePositions();
-			}
+            if(nextPoint)
+            {
+                point.nextPoint = nextPoint.point;
+                nextPoint.prevPoint = point.point;
+                nextPoint.updateHandlePositions();
+            }
         }
         point.updateHandlePositions();
 
-		curve.pointAdded(index, point)
+        curve.pointAdded(index, point)
 
         curve.requestPaint()
-	}
+    }
 
-	function removePoint(index, point)
-	{
-		if(index > 0)
-		{
-			var prevPoint = curve.pointRepeater.itemAt(index - 1);
+    function removePoint(index, point)
+    {
+        if(index > 0)
+        {
+            var prevPoint = curve.pointRepeater.itemAt(index - 1);
             prevPoint.nextPoint = point.nextPoint;
-			prevPoint.updateHandlePositions();
-		}
-
-		if(index < curve.pointRepeater.count)
-		{
-			var nextPoint = curve.pointRepeater.itemAt(index);
-            nextPoint.prevPoint = point.prevPoint;
-			nextPoint.updateHandlePositions();
+            prevPoint.updateHandlePositions();
         }
-		
-		curve.pointRemoved(index, point)
-        curve.requestPaint()
-	}
 
-	function numPoints()
-	{
-		var pointIt = iterator(curve.points)
+        if(index < curve.pointRepeater.count)
+        {
+            var nextPoint = curve.pointRepeater.itemAt(index);
+            nextPoint.prevPoint = point.prevPoint;
+            nextPoint.updateHandlePositions();
+        }
+
+        curve.pointRemoved(index, point)
+        curve.requestPaint()
+    }
+
+    function numPoints()
+    {
+        var pointIt = iterator(curve.points)
         var count = 0;
-		while(pointIt.moveNext()){++count;}
-		return count;
-	}
+        while(pointIt.moveNext()){++count;}
+        return count;
+    }
 
     function getPoint(index)
     {
-		if(index === -1)
-			return null;
+        if(index === -1)
+            return null;
         var pointIt = iterator(curve.points)
         var count = 0;
         while(pointIt.moveNext()){
@@ -115,62 +115,63 @@ Canvas {
         return null;
     }
 
-	function constrainHandles()
-	{
-		for(var i = 0; i < pointRepeater.count; ++i){
-			var point = pointRepeater.itemAt(i);
-			point.constrainHandles();
-		}
-	}
+    function constrainHandles()
+    {
+        for(var i = 0; i < pointRepeater.count; ++i){
+            var point = pointRepeater.itemAt(i);
+            point.constrainHandles();
+        }
+    }
 
     WGListModel
     {
-    	id: pointModel
-    	source: points
-    
-    	ValueExtension {}
+        id: pointModel
+        source: points
+
+        ValueExtension {}
     }
-    
+
     Repeater
     {
-		id: pointRepeater
+        id: pointRepeater
         model: pointModel
         delegate: Point{
+            objectName: index
             point: Value;
-			parentCurve: curve;
+            parentCurve: curve;
             baseColor: curve.color;
             enabled: curve.enabled;
             viewTransform: curve.viewTransform;
-			onSelectedChanged:{
-				pointSelectionChanged(this)
-			}
+            onSelectedChanged:{
+                pointSelectionChanged(this)
+            }
             onPositionChanged: pointPositionChanged(point, xDelta, yDelta)
-			onPressed: pointPressed(point, mouse)
-			onClicked: pointClicked(point, mouse)
+            onPressed: pointPressed(point, mouse)
+            onClicked: pointClicked(point, mouse)
         }
-		onItemAdded:
-		{
-			curve.addPoint(index, item)
-		}
-		onItemRemoved:
-		{
+        onItemAdded:
+        {
+            curve.addPoint(index, item)
+        }
+        onItemRemoved:
+        {
             item.selected = false;
             curve.removePoint(index, item)
-		}
+        }
     }
-    
+
     onPaint: {
         var ctx = getContext('2d');
         ctx.clearRect(0, 0, width, height);
 
-    	var curveIt = iterator(curve.points)
+        var curveIt = iterator(curve.points)
         if(curveIt.moveNext()){
             // -- Glow line
             ctx.lineWidth = 4.0;
             ctx.strokeStyle = Qt.rgba(color.r, color.g, color.b, 0.3)
             //ctx.strokeStyle = enabled ? color : Qt.darker(strokeStyle);
             ctx.clearRect(0,0,width,height)
-    
+
             ctx.beginPath();
             var point = curveIt.current;
             var c1 = Qt.point(point.pos.x + point.cp2.x, point.pos.y + point.cp2.y)
@@ -178,29 +179,29 @@ Canvas {
             var pos = viewTransform.transform(point.pos);
             ctx.moveTo(viewTransform.transformX(0), pos.y);
             ctx.lineTo(pos.x, pos.y);
-			var c2;
+            var c2;
             do{
                 point = curveIt.current;
                 pos = viewTransform.transform(point.pos);
                 c2 = Qt.point(point.pos.x + point.cp1.x, point.pos.y + point.cp1.y);
                 c2 = viewTransform.transform(c2);
-    
+
                 ctx.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, pos.x, pos.y);
-    
+
                 c1 = Qt.point(point.pos.x + point.cp2.x, point.pos.y + point.cp2.y)
                 c1 = viewTransform.transform(c1);
             } while(curveIt.moveNext())
-			ctx.lineTo(viewTransform.transformX(1), pos.y);
+            ctx.lineTo(viewTransform.transformX(1), pos.y);
             ctx.stroke();
-    	}
-    	var curveIt = iterator(curve.points)
-    	// Until we can get the length property we iterate the collection to count
-    	var count = 0;
+        }
+        var curveIt = iterator(curve.points)
+        // Until we can get the length property we iterate the collection to count
+        var count = 0;
         if(curveIt.moveNext()){
             // -- Solid line
             ctx.lineWidth = 1.0;
             ctx.strokeStyle = enabled ? color : Qt.darker(color);
-    
+
             ctx.beginPath();
             var point = curveIt.current;
             var c1 = Qt.point(point.pos.x + point.cp2.x, point.pos.y + point.cp2.y)
@@ -208,30 +209,30 @@ Canvas {
             var pos = viewTransform.transform(point.pos);
             ctx.moveTo(viewTransform.transformX(0), pos.y);
             ctx.lineTo(pos.x, pos.y);
-			do{
+            do{
                 point = curveIt.current;
                 pos = viewTransform.transform(point.pos);
                 var c2 = Qt.point(point.pos.x + point.cp1.x, point.pos.y + point.cp1.y);
                 c2 = viewTransform.transform(c2);
-    
+
                 ctx.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, pos.x, pos.y);
-    
+
                 c1 = Qt.point(point.pos.x + point.cp2.x, point.pos.y + point.cp2.y)
                 c1 = viewTransform.transform(c1);
-    			++count;
+                ++count;
             } while(curveIt.moveNext())
             ctx.lineTo(viewTransform.transformX(1), pos.y);
             ctx.stroke();
-    	}
-    }	
+        }
+    }
 
-	BWDataChangeNotifier 
-	{
-		source: curveModel.notifyDirty
-		onDataChanged: 
-		{
-			// HACK: force the points to re-evaluate their positions by emitting the viewTransform changed signal
-			viewTransformChanged();
-		}
-	}
+    BWDataChangeNotifier
+    {
+        source: curveModel.notifyDirty
+        onDataChanged:
+        {
+            // HACK: force the points to re-evaluate their positions by emitting the viewTransform changed signal
+            viewTransformChanged();
+        }
+    }
 }

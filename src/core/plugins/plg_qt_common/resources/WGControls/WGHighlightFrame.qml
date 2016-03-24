@@ -43,7 +43,7 @@ GridView {
 
 Rectangle {
     objectName: "WGHighlightFrame"
-    color: palette.HighlightShade
+    color: palette.highlightShade
     border.width: defaultSpacing.standardBorderSize
-    border.color: palette.HighlightColor
+    border.color: palette.highlightColor
 }

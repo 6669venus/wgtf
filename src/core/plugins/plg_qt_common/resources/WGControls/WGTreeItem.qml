@@ -20,15 +20,10 @@ Example:
     }
 \endcode
 */
+
 ListView {
-    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
     id: treeItem
-    model: ChildModel
-    height: visible ? contentHeight + topMargin + bottomMargin : 0
-    leftMargin: 0
-    rightMargin: 0
-    topMargin: treeView.childListMargin
-    bottomMargin: treeView.childListMargin
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
 
     property real columnSpacing: treeView.columnSpacing
     property real selectionMargin: treeView.selectionMargin
@@ -84,16 +79,23 @@ ListView {
             forceActiveFocus()
         }
     }
-    
-	Component.onCompleted: {
-	    treeView.addDepthLevel(depth);
-	}
 
-	Component.onDestruction: {
-		treeView.removeDepthLevel(depth);
-	}
-    
-	//The rectangle for the entire row
+    Component.onCompleted: {
+        treeView.addDepthLevel(depth);
+    }
+
+    Component.onDestruction: {
+        treeView.removeDepthLevel(depth);
+    }
+
+    model: ChildModel
+    height: visible ? contentHeight + topMargin + bottomMargin : 0
+    leftMargin: 0
+    rightMargin: 0
+    topMargin: treeView.childListMargin
+    bottomMargin: treeView.childListMargin
+
+    //The rectangle for the entire row
     delegate: Item {
         id: itemDelegate
 
@@ -102,7 +104,7 @@ ListView {
         readonly property bool oddDepth: depth % 2 !== 0
         readonly property bool oddIndex: treeItem.parentListIndex % 2 !== 0
         readonly property bool switchRowColours: oddDepth !== oddIndex
-		
+
         height: content.height + treeView.footerSpacing + verticalMargins
         width: treeItem.marginedWidth
 
@@ -121,7 +123,7 @@ ListView {
             anchors.top: parent.top
             anchors.horizontalCenterOffset: -(content.height + treeView.footerSpacing)
             height: 1
-            color: Qt.darker(palette.MidLightColor,1.2)
+            color: Qt.darker(palette.midLightColor,1.2)
             visible: treeView.lineSeparator && depth !== 0
         }
 
@@ -132,7 +134,7 @@ ListView {
             y: HasChildren ? treeView.headerRowMargin : treeView.childRowMargin
             anchors.left: parent.left
             anchors.right: parent.right
-			
+
             property bool hasActiveFocus: false
 
             Component.onCompleted: {
@@ -336,6 +338,7 @@ ListView {
 
                         Rectangle {
                             id: expandIconArea
+                            objectName: "expandIconArea"
                             color: "transparent"
                             width: firstColumn ? expandButton.x + expandButton.width + expandIconMargin : 0
                             height: Math.max(minimumRowHeight, treeView.expandIconSize)
@@ -344,17 +347,17 @@ ListView {
 
                             Text {
                                 id: expandButton
-
+                                objectName: "expandButton"
                                 color:
                                     !showExpandIcon ? "transparent" :
-                                    expandMouseArea.containsMouse ? palette.HighlightColor :
-                                    Expanded ? palette.TextColor :
-                                    palette.NeutralTextColor
+                                    expandMouseArea.containsMouse ? palette.highlightColor :
+                                    Expanded ? palette.textColor :
+                                    palette.neutralTextColor
 
                                 width: firstColumn ? paintedWidth : 0
                                 font.family : "Marlett"
                                 font.pixelSize: treeView.expandIconSize
-                                renderType: Text.NativeRendering
+                                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                                 text : Expanded ? "\uF036" : "\uF034"
                                 x: expandIconMargin
                                 anchors.verticalCenter: parent.verticalCenter
@@ -364,6 +367,7 @@ ListView {
 
                             MouseArea {
                                 id: expandMouseArea
+                                objectName: "expandMouseArea"
                                 anchors.left: parent.left
                                 anchors.top: parent.top
                                 anchors.bottom: parent.bottom
@@ -401,19 +405,19 @@ ListView {
                     if (!selected) {
                         return;
                     }
-					
+
                     var listView = treeItem;
-                    while (listView != null && 
+                    while (listView != null &&
                     (typeof listView.enableVerticalScrollBar == 'undefined' || listView.enableVerticalScrollBar == false)) {
                         listView = listView.parent;
                     }
                     if (listView == null) {
                         return;
                     }
-				
+
                     var scrollBar = listView.verticalScrollBar.scrollFlickable;
                     var scrollHeight = Math.floor(scrollBar.contentHeight * scrollBar.visibleArea.heightRatio);
-				
+
                     var item = rowDelegate;
                     var itemY = scrollBar.contentY;
                     var itemHeight = item.height;
@@ -424,7 +428,7 @@ ListView {
                     if (item == null) {
                         return;
                     }
-				
+
                     if (itemY < scrollBar.contentY) {
                         scrollBar.contentY = itemY;
                     }

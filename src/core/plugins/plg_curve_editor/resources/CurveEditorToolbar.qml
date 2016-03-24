@@ -30,6 +30,7 @@ RowLayout {
 	}
 	WGNumberBox {
         id: editTime
+        objectName: "editTime"
         enabled: toolbar.editEnabled
 		maximumValue: 4294967295
 		minimumValue: 0
@@ -43,6 +44,7 @@ RowLayout {
 	}
 	WGNumberBox {
         id: editValue
+        objectName: "editValue"
         enabled: toolbar.editEnabled
 		// Removing the upper limit for the max value that is editable. 
 		maximumValue: 2147483647
@@ -57,6 +59,7 @@ RowLayout {
 	}
 	WGNumberBox {
         id: editTimeScale
+        objectName: "editTimeScale"
 		enabled: toolbar.timeScaleEnabled
 		maximumValue: 4294967295
 		minimumValue: 0
@@ -68,6 +71,7 @@ RowLayout {
 	}
 	WGNumberBox {
         id: editValueScale
+        objectName: "editValueScale"
 		maximumValue: 4294967295
 		minimumValue: 0
 		stepSize: 0.01
@@ -75,6 +79,7 @@ RowLayout {
 	}
 
     WGToolButton {
+        objectName: "X"
         iconSource: "images/x.png"
 		visible: curveRepeater.count > 0
 		checkable: true
@@ -84,6 +89,7 @@ RowLayout {
         }
     }
     WGToolButton {
+        objectName: "Y"
         iconSource: "images/y.png"
 		visible: curveRepeater.count > 1
 		checkable: true
@@ -93,6 +99,7 @@ RowLayout {
         }
     }
     WGToolButton {
+        objectName: "Z"
         iconSource: "images/z.png"
 		visible: curveRepeater.count > 2
 		checkable: true
@@ -102,6 +109,7 @@ RowLayout {
         }
     }
     WGToolButton {
+        objectName: "W"
         iconSource: "images/w.png"
 		visible: curveRepeater.count > 3
 		checkable: true
@@ -113,7 +121,7 @@ RowLayout {
     // Parent our sub-title with a rectangle filling up the remaining space, otherwise our text doesn't show
     Rectangle{
         id: toolbarTitleWrapper
-        color: palette.MainWindowColor
+        color: palette.mainWindowColor
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         Layout.fillWidth: true

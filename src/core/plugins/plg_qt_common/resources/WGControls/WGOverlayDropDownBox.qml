@@ -75,7 +75,7 @@ WGDropDownBox {
 
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "u"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
@@ -87,7 +87,7 @@ WGDropDownBox {
             horizontalAlignment: Text.AlignLeft
             color : box.__textColor
             text: control.currentText
-            renderType: Text.NativeRendering
+            renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         }
 
         // drop-down customization here

@@ -100,7 +100,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.top: parent.top
 
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
                 color: palette.textColor
             }
@@ -112,7 +112,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.leftMargin: defaultSpacing.standardMargin
 
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
                 text: __percentage
 
@@ -126,7 +126,7 @@ Rectangle {
                 anchors.left: valueText.right
                 anchors.top: parent.top
 
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
                 text: units
 

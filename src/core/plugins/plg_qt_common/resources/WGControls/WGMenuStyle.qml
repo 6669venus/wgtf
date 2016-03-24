@@ -48,7 +48,7 @@ MenuStyle {
         text: styleData.scrollerDirection ==  Qt.DownArrow ? "\uF036" : "\uF035"
         font.family : "Marlett"
         color: palette.textColor
-        renderType: Text.NativeRendering
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }
@@ -70,7 +70,7 @@ MenuStyle {
                 palette.disabledTextColor
             }
         }
-        renderType: Text.NativeRendering
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         verticalAlignment: Text.AlignVCenter
         y: 3
     }
@@ -109,7 +109,7 @@ MenuStyle {
                 color : styleData.enabled ? palette.highlightTextColor : palette.lightestShade
                 font.family : "Marlett"
                 font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "\uF061"
                 visible : styleData.checked //invisible if partially checked
                 anchors.fill: parent

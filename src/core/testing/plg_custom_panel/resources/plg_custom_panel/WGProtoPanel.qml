@@ -423,7 +423,7 @@ Rectangle {
             Text {
                 id: headerLabel
                 font.bold: boldHeader_
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 text: mainPanel.text
@@ -434,7 +434,7 @@ Rectangle {
                 id: headerSubLabel
                 font.bold: boldSubHeader_
                 font.italic: italicSubHeader_
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: headerLabel.right

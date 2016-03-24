@@ -18,7 +18,7 @@ TextFieldStyle {
 
     placeholderTextColor: palette.placeholderTextColor
 
-    renderType: Text.NativeRendering
+    renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
     background: WGTextBoxFrame {
         id: textFrame

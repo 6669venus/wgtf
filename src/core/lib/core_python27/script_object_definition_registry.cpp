@@ -29,6 +29,40 @@ struct ScriptObjectDefinitionDeleter
 };
 
 
+template< typename PAIR_T >
+class PairMatch
+{
+public:
+	PairMatch( const PyScript::ScriptObject & match );
+	bool operator()( const PAIR_T & entry ) const;
+private:
+	const PyScript::ScriptObject & match_;
+};
+
+
+template< typename PAIR_T >
+PairMatch< PAIR_T >::PairMatch( const PyScript::ScriptObject & match )
+	: match_( match )
+{
+}
+
+
+template< typename PAIR_T >
+bool PairMatch< PAIR_T >::operator()( const PAIR_T & entry ) const
+{
+	const auto & a = entry.first;
+	const auto & b = match_;
+	const auto result = a.compareTo( b, PyScript::ScriptErrorRetain() ) == 0;
+	if (PyScript::Script::hasError())
+	{
+		// Error comparing objects, just compare pointer addresses
+		PyScript::Script::clearError();
+		return (a.get() == b.get());
+	}
+	return result;
+}
+
+
 ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContext& context )
 	: context_( context )
 	, definitionManager_( context )
@@ -83,7 +117,9 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
 	// Find uses a ScriptObject comparator which may raise script errors
-	auto itr = definitions_.find( object );
+	auto itr = std::find_if( definitions_.cbegin(),
+		definitions_.cend(),
+		PairMatch< DefinitionPair >( object ) );
 
 	if (itr != definitions_.end())
 	{
@@ -107,8 +143,8 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 	assert( definition != nullptr );
 
 	std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
-	definitions_[object] = pointer;
-	idMap_[ object ] = RefObjectId::generate();
+	definitions_.emplace_back( DefinitionPair( object, pointer ) );
+	ids_.emplace_back( IdPair( object, RefObjectId::generate() ) );
 
 	return pointer;
 }
@@ -121,7 +157,9 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findDefiniti
 
 	std::lock_guard< std::mutex > lock( definitionsMutex_ );
 	// Find uses a ScriptObject comparator which may raise script errors
-	const auto itr = definitions_.find( object );
+	auto itr = std::find_if( definitions_.cbegin(),
+		definitions_.cend(),
+		PairMatch< DefinitionPair >( object ) );
 
 	if (itr != definitions_.cend())
 	{
@@ -138,17 +176,21 @@ void ScriptObjectDefinitionRegistry::removeDefinition(
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
 	assert( definition != nullptr );
 
-	auto itr = definitions_.find( object );
+	auto itr = std::find_if( definitions_.cbegin(),
+		definitions_.cend(),
+		PairMatch< DefinitionPair >( object ) );
 
-	if (itr == definitions_.end() || itr->second.use_count() > 0)
+	if (itr == definitions_.cend() || itr->second.use_count() > 0)
 	{
 		return;
 	}
 
 	definitions_.erase( itr );
-	auto idItr = idMap_.find( object );
-	assert( idItr != idMap_.cend() );
-	idMap_.erase( idItr );
+	auto idItr = std::find_if( ids_.cbegin(),
+		ids_.cend(),
+		PairMatch< IdPair >( object ) );
+	assert( idItr != ids_.cend() );
+	ids_.erase( idItr );
 
 	assert( definitionManager_ != nullptr );
 	const bool success = definitionManager_->deregisterDefinition( definition );
@@ -163,10 +205,12 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 
 	std::lock_guard< std::mutex > lock( definitionsMutex_ );
 
-	const auto itr = idMap_.find( object );
+	auto itr = std::find_if( ids_.cbegin(),
+		ids_.cend(),
+		PairMatch< IdPair >( object ) );
 
 	// Object must have been registered with getDefinition()
-	assert( itr != idMap_.end() );
+	assert( itr != ids_.cend() );
 
 	return itr->second;
 }

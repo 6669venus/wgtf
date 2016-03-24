@@ -61,22 +61,22 @@ private:
 
 	friend struct ScriptObjectDefinitionDeleter;
 
-	//typedef std::unordered_map< PyScript::ScriptObject,
-	//	std::weak_ptr< IClassDefinition >,
-	//	ScriptObjectHash
-	//	ScriptObjectEqualTo > DefinitionMap;
-	typedef std::map< PyScript::ScriptObject,
-		std::weak_ptr< IClassDefinition >,
-		ScriptObjectCompare > DefinitionMap;
-	DefinitionMap definitions_;
+	template< typename PAIR_T >
+	friend class PairMatch;
+	typedef std::pair< PyScript::ScriptObject, std::weak_ptr< IClassDefinition > >
+		DefinitionPair;
+	typedef std::vector< DefinitionPair > DefinitionLookup;
+	DefinitionLookup definitions_;
 	std::mutex definitionsMutex_;
+
 	IComponentContext& context_;
 	DIRef< IDefinitionManager > definitionManager_;
 	std::unique_ptr< IDefinitionHelper > definitionHelper_;
-	typedef std::map< PyScript::ScriptObject,
-		RefObjectId,
-		ScriptObjectCompare > IDMap;
-	IDMap idMap_;
+
+	typedef std::pair< PyScript::ScriptObject, RefObjectId > IdPair;
+	typedef std::vector< IdPair > IdLookup;
+	IdLookup ids_;
+
 	HookLookup hookLookup_;
 	std::shared_ptr< HookListener > hookListener_;
 };

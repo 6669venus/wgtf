@@ -37,11 +37,6 @@ Item {
 
             Image {
                 id: currentArrow
-				anchors.centerIn: parent
-				source: "icons/16/marker_right_16x16.png"
-				visible: isCurrentItem || arrowButton.containsMouse
-				opacity: arrowButton.containsMouse && !isCurrentItem ? 0.3 : 1
-			}
                 objectName: "arrowImage"
                 anchors.centerIn: parent
                 source: "icons/16/marker_right_16x16.png"
@@ -64,11 +59,6 @@ Item {
 
         WGSeparator {
             id: timelineSeparator
-			vertical_: true
-			anchors.top: parent.top
-			anchors.bottom: parent.bottom
-		}
-	}
             vertical: true
             anchors.top: parent.top
             anchors.bottom: parent.bottom

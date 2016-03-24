@@ -52,6 +52,7 @@ WGPanel {
 
     WGFrame {
         id: mainFrame
+        objectName: "historyMainFrame"
         anchors.fill: parent
 
         WGColumnLayout {
@@ -102,6 +103,7 @@ WGPanel {
                 // History list
                 WGListView {
                     id: history
+                    objectName: "historyList"
                     model: historyModel
                     anchors.fill: parent
                     anchors.margins: defaultSpacing.standardMargin

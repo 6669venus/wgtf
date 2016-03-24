@@ -6,7 +6,7 @@ WGPanel {
 	title: "Custom Model Interface"
 	layoutHints: { 'test': 0.1 }
 
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 
 	Column {
 		id: original

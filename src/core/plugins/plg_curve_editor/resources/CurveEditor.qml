@@ -13,8 +13,8 @@ Rectangle {
 
     property var selection: [];
 
-    Layout.fillHeight: true
-    color: palette.MainWindowColor
+	Layout.fillHeight: true
+	color: palette.mainWindowColor
 
     QtObject
     {
@@ -29,6 +29,7 @@ Rectangle {
         var pos = timeline.viewTransform.inverseTransform(Qt.point(mouse.x, mouse.y))
         pos.x = Math.max(pos.x, 0)
         pos.x = Math.min(pos.x, 1)
+	
 
         beginUndoFrame();
         var curveIt = iterator(curves)

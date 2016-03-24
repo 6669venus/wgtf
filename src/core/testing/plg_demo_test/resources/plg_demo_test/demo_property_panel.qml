@@ -6,7 +6,7 @@ import WGControls 1.0
 
 Rectangle {
     id: root
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     property var title: "Demo"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: treeSource

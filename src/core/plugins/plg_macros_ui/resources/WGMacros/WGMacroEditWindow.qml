@@ -10,7 +10,7 @@ Window {
 	minimumWidth: defaultSpacing.minimumPanelWidth
 
 	flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	modality: Qt.ApplicationModal
 	property bool accepted: false
 	property variant sourceData;

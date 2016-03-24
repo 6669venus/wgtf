@@ -38,12 +38,12 @@ WGSliderControl {
         property bool up: parent.up
         property bool pressed: parent.pressed
 
-        color: palette.OverlayLightShade
-        border.color: palette.OverlayDarkerShade
+        color: palette.overlayLightShade
+        border.color: palette.overlayDarkerShade
 
         Text {
             id: arrowText
-            color : palette.OverlayDarkerShade
+            color : palette.overlayDarkerShade
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -59,19 +59,19 @@ WGSliderControl {
             State {
                 name: "PRESSED"
                 when: button.pressed && sliderFrame.enabled
-                PropertyChanges {target: button; color: palette.DarkestShade}
+                PropertyChanges {target: button; color: palette.darkestShade}
             },
             State {
                 name: "HOVERED"
                 when: button.hovered && sliderFrame.enabled
-                PropertyChanges {target: button; color: palette.OverlayLighterShade}
-                PropertyChanges {target: arrowText; color: palette.OverlayTextColor}
+                PropertyChanges {target: button; color: palette.overlayLighterShade}
+                PropertyChanges {target: arrowText; color: palette.overlayTextColor}
             },
             State {
                 name: "DISABLED"
                 when: !sliderFrame.enabled
                 PropertyChanges {target: button; color: LightestShade}
-                PropertyChanges {target: arrowText; color: palette.DarkestShade}
+                PropertyChanges {target: arrowText; color: palette.darkestShade}
             }
         ]
 

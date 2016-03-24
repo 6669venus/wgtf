@@ -2,9 +2,11 @@ import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import BWControls 1.0
 
+//ToDo brief
+
 WGExpandingRowLayout {
-    objectName: "WGFileSelectBox"
     id: fileComponent
+    objectName: "WGFileSelectBox"
 
     /*! Determines whether text in the url is readOnly and can only be copied.
       Setting readOnly to true also allows the dialog box to be opened on double click.
@@ -50,7 +52,6 @@ WGExpandingRowLayout {
         modal with respect to the whole application, or non-modal.
         The default value is Qt.WindowModal
     */
-
     property var modality: Qt.WindowModal
 
     /*! This array contains a list of filename Filters in the format:
@@ -93,6 +94,10 @@ WGExpandingRowLayout {
     /*! internal */
     property var __dialogInstance
 
+    // Signals
+    signal fileChosen(var selectedFile)
+    signal fileRejected()
+
     /*! This function opens the desired dialog box.
     */
     function openDialog() {
@@ -105,8 +110,16 @@ WGExpandingRowLayout {
         __dialogInstance.close()
     }
 
-    signal fileChosen(var selectedFile)
-    signal fileRejected()
+    Component.onCompleted: {
+        __dialogInstance = dialog.createObject(fileComponent,{
+                                                   "folder": fileComponent.folder,
+                                                   "modality": fileComponent.modality,
+                                                   "nameFilters": fileComponent.nameFilters,
+                                                   "selectedNameFilter": fileComponent.selectedNameFilter,
+                                                   "title": fileComponent.title
+                                               });
+        openButton.enabled = true
+    }
 
     Connections {
         target: __dialogInstance
@@ -122,8 +135,8 @@ WGExpandingRowLayout {
     }
 
     WGTextBox {
-        objectName: "textField"
         id: textField
+        objectName: "textField"
         Layout.fillWidth: true
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
@@ -156,8 +169,8 @@ WGExpandingRowLayout {
     }
 
     WGPushButton {
-        objectName: "openButton"
         id: openButton
+        objectName: "openButton"
         iconSource: "icons/open_16x16.png"
         Layout.preferredHeight: defaultSpacing.minimumRowHeight
         Layout.preferredWidth: defaultSpacing.minimumRowHeight
@@ -167,17 +180,6 @@ WGExpandingRowLayout {
         onClicked: {
             openDialog()
         }
-    }
-
-    Component.onCompleted: {
-        __dialogInstance = dialog.createObject(fileComponent,{
-                                                   "folder": fileComponent.folder,
-                                                   "modality": fileComponent.modality,
-                                                   "nameFilters": fileComponent.nameFilters,
-                                                   "selectedNameFilter": fileComponent.selectedNameFilter,
-                                                   "title": fileComponent.title
-                                               });
-        openButton.enabled = true
     }
 }
 

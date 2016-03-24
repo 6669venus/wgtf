@@ -10,7 +10,7 @@ Rectangle{
 	id: root
 	property var title: "Change Root Object Test"
 	property var layoutHints: { 'test': 0.1 }
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	Layout.fillWidth: true
 	Layout.fillHeight: true
 	property var testListModel: listSource
@@ -54,7 +54,7 @@ Rectangle{
 			color: "transparent"
 			width: defaultSpacing.doubleMargin
 			WGSeparator {
-				vertical_: true
+				vertical: true
 				width: 2
 				anchors.horizontalCenter: parent.horizontalCenter
 				anchors.top: parent.top
@@ -88,7 +88,7 @@ Rectangle{
 						verticalAlignment: Text.AlignVCenter
 						visible: true
 						text: itemData != null ? itemData.display : ""
-						color: palette.TextColor
+						color: palette.textColor
 					}
 
 					Connections {
@@ -134,7 +134,7 @@ Rectangle{
 						verticalAlignment: Text.AlignVCenter
 						visible: true
 						text: itemData != null ? itemData.display : ""
-						color: palette.TextColor
+						color: palette.textColor
 					}
 
 					Connections

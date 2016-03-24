@@ -11,7 +11,7 @@ WGPanel {
     title: qsTr("Prototype Color Picker Panel")
     layoutHints: { 'test': 0.1 }
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     width: 640
     height: 480

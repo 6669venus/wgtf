@@ -6,44 +6,50 @@ import QtQuick.Layouts 1.1
 
 \code{.js}
 WGSeparator {
-    vertical_: true
+    vertical: true
 }
 \endcode
 */
 
 Rectangle {
+    id: separatorFrame
     objectName: "WGSeparator"
 
     /*! This property toggles between a vertical and horizontal control
         The default value is \c false
     */
-    //TODO: This should be renamed, it does not require "_"
-    property bool vertical_: false
+    property bool vertical: false
 
-    width: vertical_ ? defaultSpacing.separatorWidth : undefined
-    height: vertical_ ? undefined : defaultSpacing.separatorWidth
+    implicitHeight: vertical ? defaultSpacing.standardMargin : defaultSpacing.separatorWidth
+    implicitWidth: vertical ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
 
-    Layout.fillWidth: vertical_ ? false : true
-    Layout.fillHeight: vertical_ ? true : false
+    width: vertical ? defaultSpacing.separatorWidth : undefined
+    height: vertical ? undefined : defaultSpacing.separatorWidth
 
-    Layout.maximumWidth: vertical_ ? defaultSpacing.separatorWidth : Number.POSITIVE_INFINITY
-    Layout.maximumHeight: vertical_ ? Number.POSITIVE_INFINITY : defaultSpacing.separatorWidth
+    Layout.fillWidth: vertical ? false : true
+    Layout.fillHeight: vertical ? true : false
+
+    Layout.maximumWidth: vertical ? defaultSpacing.separatorWidth : Number.POSITIVE_INFINITY
+    Layout.maximumHeight: vertical ? Number.POSITIVE_INFINITY : defaultSpacing.separatorWidth
 
     color: "transparent"
 
     Rectangle {
-        width: vertical_ ? defaultSpacing.separatorWidth / 2 : parent.width
-        height: vertical_ ? parent.height : defaultSpacing.separatorWidth / 2
-        color: palette.DarkerShade
+        width: vertical ? defaultSpacing.separatorWidth / 2 : parent.width
+        height: vertical ? parent.height : defaultSpacing.separatorWidth / 2
+        color: palette.darkerShade
         anchors.left: parent.left
         anchors.top: parent.top
     }
 
     Rectangle {
-        width: vertical_ ? defaultSpacing.separatorWidth / 2 : parent.width
-        height: vertical_ ? parent.height : defaultSpacing.separatorWidth / 2
-        color: palette.LighterShade
+        width: vertical ? defaultSpacing.separatorWidth / 2 : parent.width
+        height: vertical ? parent.height : defaultSpacing.separatorWidth / 2
+        color: palette.lighterShade
         anchors.right: parent.right
         anchors.bottom: parent.bottom
     }
+
+    /*! Deprecated */
+    property alias vertical_: separatorFrame.vertical
 }

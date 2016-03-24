@@ -21,7 +21,7 @@ Item {
     // Keep timeline arrow a fixed size
     Row {
         id: fixedTimelineRow
-        objectName: "fixedTimelineRow"
+        objectName: "timelineArrow"
 
         anchors.left: parent.left
         anchors.top: expandingTimelineRow.top
@@ -37,7 +37,12 @@ Item {
 
             Image {
                 id: currentArrow
-                objectName: "currentArrow"
+				anchors.centerIn: parent
+				source: "icons/16/marker_right_16x16.png"
+				visible: isCurrentItem || arrowButton.containsMouse
+				opacity: arrowButton.containsMouse && !isCurrentItem ? 0.3 : 1
+			}
+                objectName: "arrowImage"
                 anchors.centerIn: parent
                 source: "icons/16/marker_right_16x16.png"
                 visible: isCurrentItem || arrowButton.containsMouse
@@ -46,6 +51,7 @@ Item {
 
             MouseArea {
                 id: arrowButton
+                objectName: "arrowButton"
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
@@ -58,7 +64,12 @@ Item {
 
         WGSeparator {
             id: timelineSeparator
-            vertical_: true
+			vertical_: true
+			anchors.top: parent.top
+			anchors.bottom: parent.bottom
+		}
+	}
+            vertical: true
             anchors.top: parent.top
             anchors.bottom: parent.bottom
         }

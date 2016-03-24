@@ -12,7 +12,7 @@ RadioButtonStyle {
 
     /*! \internal */
     // helper property for text color so states can all be in the indicator object
-    property color __textColor: palette.NeutralTextColor
+    property color __textColor: palette.neutralTextColor
 
     label: Text {
         text: control.text
@@ -29,7 +29,7 @@ RadioButtonStyle {
             color: "transparent"
             radius: defaultSpacing.halfRadius
             border.width: defaultSpacing.standardBorderSize
-            border.color: palette.LighterShade
+            border.color: palette.lighterShade
         }
     }
     indicator: WGTextBoxFrame {
@@ -38,17 +38,17 @@ RadioButtonStyle {
         implicitHeight: 13
         radius: 7
 
-        color: palette.TextBoxColor
+        color: palette.textBoxColor
 
-        border.color: palette.DarkestShade
+        border.color: palette.darkestShade
 
         states: [
             State {
                 name: "UNCHECKED DISABLED"
                 when: !control.checked && !control.enabled
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
                 PropertyChanges {target: radioFrame; color: "transparent"}
-                PropertyChanges {target: radioFrame; border.color: palette.DarkerShade}
+                PropertyChanges {target: radioFrame; border.color: palette.darkerShade}
             },
             State {
                 name: "CHECKED"
@@ -58,10 +58,10 @@ RadioButtonStyle {
             State {
                 name: "CHECKED DISABLED"
                 when: control.checked && !control.enabled
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
                 PropertyChanges {target: radioFrame; color: "transparent"}
-                PropertyChanges {target: radioFrame; border.color: palette.DarkerShade}
-                PropertyChanges {target: dotContainer; color: palette.LightShade}
+                PropertyChanges {target: radioFrame; border.color: palette.darkerShade}
+                PropertyChanges {target: dotContainer; color: palette.lightShade}
                 PropertyChanges {target: dotContainer; visible: true}
             }
         ]
@@ -69,12 +69,12 @@ RadioButtonStyle {
         Rectangle {
             id: dotContainer
             visible: false
-            color: palette.HighlightColor
+            color: palette.highlightColor
             radius: 7
             anchors.fill: parent
             anchors.margins:2
             border.width: defaultSpacing.standardBorderSize
-            border.color: palette.DarkerShade
+            border.color: palette.darkerShade
         }
     }
 }

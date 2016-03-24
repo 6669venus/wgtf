@@ -12,7 +12,7 @@ Example:
 WGProgressControl {
     Layout.fillWidth: true
     text: "File Importing..."
-    units_: "%"
+    units: "%"
 }
 \endcode
 */
@@ -21,63 +21,67 @@ Rectangle {
     id: progControl
     objectName: "WGProgressControl"
 
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    /*! \internal */
-    property int percentage_: 0
-
     /*!
         This property toggles the display of the percentage complete indicator
         The default value is \c false
     */
-    property bool indeterminate_: false
+    property bool indeterminate: false
 
     /*!
         This property defines the suffix string used to indicate the units used
         The default value is an empty string
     */
-    property string units_: ""
+    property string units: ""
 
     /*!
         This property will cause the progress bar to progress for demonstration purposes and testing.
         The default value is \c false
     */
-    property bool fakeProgress_: false
+    property bool fakeProgress: false
 
     /*!
         This property determines how long progress takes when fakeProgress_ is true.
         The default value is \c false
     */
-    property int fakeDuration_: 1000
+    property int fakeDuration: 1000
 
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    /*! \internal */
-    property real endValue_: 1
+    /*!
+        This final valule of the progress control
+        The default value is \c 1
+    */
+    property real endValue: 1
 
     /*! This property holds the string to be displayed above the progress bar.
         The default value is an empty string
     */
     property alias text: descriptionText.text
 
-    //TODO: This should be renamed and marked as internal by "__" prefix
-    /*! \internal */
+    /*!
+        The current value of the progress control
+    */
     property alias value: progBar.value
 
-    /*  TODO: Should this be marked internal?
-        It appears to be a magic number that has no affect on the control
-        If so, this should be renamed and marked as internal by "__" prefix
-    /*! \internal */
     property alias maximumValue: progBar.maximumValue
 
+    /*! \internal */
+    property int __percentage: 0
+
+    /*!
+        Fires when the progress is stopped.
+        completed is true if the bar reached the end and finished properly.
+    */
     signal progressEnded (bool completed)
+
+    color: "transparent"
+
+    implicitHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
+    implicitWidth: defaultSpacing.standardMargin
 
     PropertyAnimation {
         target: progBar; property: "value"
-        duration: fakeDuration_; from: 0; to: maximumValue
-        easing.type: Easing.InOutQuad ; running: fakeProgress_
+        duration: fakeDuration; from: 0; to: maximumValue
+        easing.type: Easing.InOutQuad ; running: fakeProgress
     }
-    color: "transparent"
-
-    implicitHeight: 36
 
     ColumnLayout {
         anchors.fill: parent
@@ -98,7 +102,7 @@ Rectangle {
 
                 renderType: Text.NativeRendering
 
-                color: palette.TextColor
+                color: palette.textColor
             }
 
             Text {
@@ -110,10 +114,10 @@ Rectangle {
 
                 renderType: Text.NativeRendering
 
-                text: percentage_
+                text: __percentage
 
-                visible: !indeterminate_
-                color: palette.TextColor
+                visible: !indeterminate
+                color: palette.textColor
                 horizontalAlignment: Text.AlignRight
             }
 
@@ -124,10 +128,10 @@ Rectangle {
 
                 renderType: Text.NativeRendering
 
-                text: units_
+                text: units
 
-                visible: !indeterminate_ && units_ != ""
-                color: palette.TextColor
+                visible: !indeterminate && units != ""
+                color: palette.textColor
                 horizontalAlignment: Text.AlignRight
             }
 
@@ -144,15 +148,15 @@ Rectangle {
         ProgressBar {
             id: progBar
 
-            value: progControl.indeterminate_ ? maximumValue : 0
+            value: progControl.indeterminate ? maximumValue : 0
 
             Layout.fillWidth: true
             Layout.maximumHeight: 8
             Layout.minimumHeight: 8
 
             onValueChanged: {
-                percentage_ = progBar.value/maximumValue * 100
-                if (!indeterminate_ && progBar.value == endValue_)
+                __percentage = progBar.value/maximumValue * 100
+                if (!indeterminate && progBar.value == endValue)
                 {
                     progControl.progressEnded(true)
                 }
@@ -163,17 +167,17 @@ Rectangle {
                 background: WGTextBoxFrame {}
 
                 progress: Rectangle {
-                    color: palette.HighlightColor
+                    color: palette.highlightColor
                     radius: defaultSpacing.halfRadius
                     Item {
                             anchors.fill: parent
                             anchors.margins: 1
-                            visible: progControl.indeterminate_
+                            visible: progControl.indeterminate
                             clip: true
                             Row {
                                 Repeater {
                                     Rectangle {
-                                        color: index % 2 ? "transparent" : palette.DarkShade
+                                        color: index % 2 ? "transparent" : palette.darkShade
                                         width: 10 ; height: control.height
                                     }
                                     model: control.width / 10 + 2
@@ -181,7 +185,7 @@ Rectangle {
                                 XAnimator on x {
                                     from: -20 ; to: 0
                                     loops: Animation.Infinite
-                                    running: progControl.indeterminate_
+                                    running: progControl.indeterminate
                                 }
                             }
                     }
@@ -189,4 +193,22 @@ Rectangle {
             }
         }
     }
+
+    /*! Deprecated */
+    property alias percentage_: progControl.__percentage
+
+    /*! Deprecated */
+    property alias indeterminate_: progControl.indeterminate
+
+    /*! Deprecated */
+    property alias units_: progControl.units
+
+    /*! Deprecated */
+    property alias fakeProgress_: progControl.fakeProgress
+
+    /*! Deprecated */
+    property alias fakeDuration_: progControl.fakeDuration
+
+    /*! Deprecated */
+    property alias endValue_: progControl.endValue
 }

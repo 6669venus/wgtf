@@ -12,6 +12,7 @@ WGVerticalSpacer{
 */
 
 Rectangle {
+    id: spacerFrame
     objectName: "WGVerticalSpacer"
 
     anchors {left: parent.left; right: parent.right}
@@ -21,14 +22,18 @@ Rectangle {
         This property defines how high the spacer should be in line spaces
         The default value is an empty 1
     */
-    //TODO: This should be renamed, it does not require "_"
-    property int lineSpaces_: 1
+    property int lineSpaces: 1
 
-    implicitHeight: defaultSpacing.minimumRowHeight * lineSpaces_
+    implicitHeight: defaultSpacing.minimumRowHeight * lineSpaces
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
+
+    /*! Deprecated */
+    property alias lineSpaces_: spacerFrame.lineSpaces
+
+    /*! Deprecated */
+    property alias label_: spacerFrame.label
 }

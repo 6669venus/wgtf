@@ -163,6 +163,9 @@ void newPropertyTest( ReflectedPython::DefinedInstance & instance,
 void pathTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void compareTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 
 
 /**
@@ -227,6 +230,7 @@ static PyObject * commonConversionTest(
 	methodConversionTest( instance, m_name, result_ );
 	newPropertyTest( instance, m_name, result_ );
 	pathTest( instance, m_name, result_ );
+	compareTest( instance, m_name, result_ );
 
 	// Return none to pass the test
 	Py_RETURN_NONE;
@@ -2847,6 +2851,23 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 	// Access "childTest.dictTest"
 	getCollectionPath2( instance, collection, "dictTest", m_name, result_ );
 	checkMappingPaths( instance, collection, "dictTest", m_name, result_ );
+}
+
+
+void compareTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Access object that cannot be compared to other objects
+	{
+		ObjectHandle result;
+		const bool getSuccess = instance.get< ObjectHandle >(
+			"badComparison", result );
+
+		CHECK( getSuccess );
+		CHECK( result.isValid() );
+		CHECK( result.getBase< ReflectedPython::DefinedInstance >() != nullptr );
+	}
 }
 
 

@@ -61,6 +61,10 @@ private:
 
 	friend struct ScriptObjectDefinitionDeleter;
 
+	//typedef std::unordered_map< PyScript::ScriptObject,
+	//	std::weak_ptr< IClassDefinition >,
+	//	ScriptObjectHash
+	//	ScriptObjectEqualTo > DefinitionMap;
 	typedef std::map< PyScript::ScriptObject,
 		std::weak_ptr< IClassDefinition >,
 		ScriptObjectCompare > DefinitionMap;

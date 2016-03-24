@@ -82,6 +82,7 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 	assert( definitionManager_ != nullptr );
 
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
+	// Find uses a ScriptObject comparator which may raise script errors
 	auto itr = definitions_.find( object );
 
 	if (itr != definitions_.end())
@@ -119,6 +120,7 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findDefiniti
 	assert( object.exists() );
 
 	std::lock_guard< std::mutex > lock( definitionsMutex_ );
+	// Find uses a ScriptObject comparator which may raise script errors
 	const auto itr = definitions_.find( object );
 
 	if (itr != definitions_.cend())

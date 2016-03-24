@@ -192,8 +192,35 @@ namespace ReflectedPython
 bool ScriptObjectCompare::operator()( const PyScript::ScriptObject & a,
 	const PyScript::ScriptObject & b ) const
 {
-	return a.compareTo( b, PyScript::ScriptErrorPrint() ) < 0;
+	// Not safe to use ScriptErrorPrint() during comparison because it might
+	// cause recursion into
+	// ScriptObjectDefinitionRegistry::findOrCreateDefinition() or
+	// ScriptObjectDefinitionRegistry::findDefinition().
+
+	// Be careful using this as a comparator, if it gets an error comparing
+	// 2 objects, then it does not guarantee correct ordering
+	const auto result = a.compareTo( b, PyScript::ScriptErrorRetain() ) < 0;
+	if (PyScript::Script::hasError())
+	{
+		// Error comparing objects, just compare pointer addresses
+		PyScript::Script::clearError();
+		return (a.get() < b.get());
+	}
+	return result;
 }
+
+
+//bool ScriptObjectEqualTo::operator()( const PyScript::ScriptObject & a,
+//	const PyScript::ScriptObject & b ) const
+//{
+//	return a.compareTo( b, PyScript::ScriptErrorClear() ) == 0;
+//}
+
+
+//size_t ScriptObjectHash::operator()( const PyScript::ScriptObject & a ) const
+//{
+//	return (size_t)a.get();
+//}
 
 
 HookListener::HookListener()

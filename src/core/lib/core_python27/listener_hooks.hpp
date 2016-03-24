@@ -30,6 +30,21 @@ public:
 };
 
 
+//class ScriptObjectEqualTo
+//{
+//public:
+//	bool operator()( const PyScript::ScriptObject & a,
+//		const PyScript::ScriptObject & b ) const;
+//};
+
+
+//class ScriptObjectHash
+//{
+//public:
+//	size_t operator()( const PyScript::ScriptObject & a ) const;
+//};
+
+
 /**
  *	Structure for tracking the number of reflected Python objects that are using
  *	a given Python type.

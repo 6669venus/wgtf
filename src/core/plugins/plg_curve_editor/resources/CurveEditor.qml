@@ -244,6 +244,7 @@ Rectangle {
 			timeScale: xScale
 			valueScale: yScale
 			editEnabled: selection.length > 0
+			timeScaleEnabled: timeScaleEditEnabled
 
 			onToggleX: toggleCurve(0)
 			onToggleY: toggleCurve(1)

@@ -87,7 +87,7 @@ public:
 	 *	@param name name of the property to lookup.
 	 *	@return the found property or nullptr.
 	 */
-	virtual IBasePropertyPtr directLookupProperty( const char * name ) const
+	virtual IBasePropertyPtr directLookupProperty( const char * /*name*/ ) const
 	{
 		return nullptr;
 	}

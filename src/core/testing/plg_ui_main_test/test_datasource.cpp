@@ -1,7 +1,7 @@
 #include "test_datasource.hpp"
 #include "pages/test_page.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "wg_types/binary_block.hpp"
 #include "core_command_system/i_command_manager.hpp"
@@ -52,7 +52,7 @@ void TestDataSource::init( IComponentContext & contextManager, int id )
 	{
 		if (fileSystem->exists( objectFile.c_str() ))
 		{
-			IFileSystem::istream_uptr fileStream = 
+			IFileSystem::IStreamPtr fileStream = 
 				fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
 			XMLSerializer serializer( *fileStream, *defManager );
 
@@ -236,7 +236,7 @@ void TestDataSourceManager::init(IComponentContext & contextManager)
 	{
 		if (fileSystem->exists( objectFile.c_str() ))
 		{
-			IFileSystem::istream_uptr fileStream = 
+			IFileSystem::IStreamPtr fileStream = 
 				fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
 			XMLSerializer serializer( *fileStream, *defManager );
 

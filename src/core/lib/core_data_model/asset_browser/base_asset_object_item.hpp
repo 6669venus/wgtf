@@ -2,12 +2,12 @@
 #define BASE_ASSET_OBJECT_ITEM_HPP
 
 #include "i_asset_object_item.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 
 class BaseAssetObjectItem : public IAssetObjectItem
 {
 public:
-	BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, 
+	BaseAssetObjectItem( const IFileInfoPtr & fileInfo, const IItem * parent, 
 		IFileSystem * fileSystem, IAssetPresentationProvider * presentationProvider );
 	BaseAssetObjectItem( const BaseAssetObjectItem & rhs );
 	virtual ~BaseAssetObjectItem();
@@ -17,8 +17,7 @@ public:
 	// File Information
 	// TODO: Remove dependency on the file system on low level models in the asset browser.
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-1248
-	void init( const FileInfo& fileInfo );
-	const FileInfo& getFileInfo() const;
+	IFileInfoPtr getFileInfo() const;
 
 	// IItem Implementation
 	virtual const char* getDisplayText( int column ) const override;

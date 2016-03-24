@@ -85,14 +85,14 @@ struct QtScriptingEngine::Implementation
 
 	struct PropertyListener: public PropertyAccessorListener
 	{
-		PropertyListener( std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> > >& scriptObjects )
+		PropertyListener( const std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> > >& scriptObjects )
 			: scriptObjects_( scriptObjects )
 		{}
 
 		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
 		void postInvoke( const PropertyAccessor & accessor, Variant result, bool undo ) override;
 
-		std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> > > scriptObjects_;
+		const std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> > >& scriptObjects_;
 	};
 
 	std::shared_ptr<PropertyAccessorListener> propListener_;
@@ -141,7 +141,9 @@ void QtScriptingEngine::Implementation::PropertyListener::postSetValue(
 	{
 		return;
 	}
-    auto& scriptObjects = itr->second;
+
+	// Copy collection to accommodate re-entry
+    auto scriptObjects = itr->second;
     for( auto scriptObject : scriptObjects )
     {
         assert( !scriptObject.isNull() );

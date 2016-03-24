@@ -158,7 +158,7 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		arguments.getBase< ReflectedPropertyCommandArgument >();
 	auto objManager = definitionManager_.getObjectManager();
 	assert( objManager != nullptr );
-	const ObjectHandle & object = objManager->getObject( commandArgs->getContextId() );
+	ObjectHandle object = objManager->getObject( commandArgs->getContextId() );
 	if (!object.isValid())
 	{
 		return CommandErrorCode::INVALID_ARGUMENTS;
@@ -177,7 +177,11 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		return CommandErrorCode::INVALID_VALUE;
 	}
 
-	return object;
+	// Do not return the object
+	// CommandInstance will hold a reference to the return value
+	// and the CommandInstance is stored in the undo/redo history forever
+	// This is due to a circular reference in CommandManagerImpl::pushFrame
+	return nullptr;
 }
 
 

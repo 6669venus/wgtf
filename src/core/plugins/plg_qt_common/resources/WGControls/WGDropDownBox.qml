@@ -75,7 +75,7 @@ ComboBox {
             id:itemWrapper
             TextMetrics {
                 id: fakeText
-                text: model.text
+                text: model.display
                 onTextChanged: {
                     textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
                 }

@@ -49,7 +49,7 @@ public:
 		return type_;
 	}
 
-	bool getId(RefObjectId & id) const
+	bool getId(RefObjectId & /*id*/) const
 	{
 		return false;
 	}

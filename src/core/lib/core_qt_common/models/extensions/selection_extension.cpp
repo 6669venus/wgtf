@@ -2,6 +2,10 @@
 #include <cassert>
 #include <set>
 
+#include "qt_qlist_memory_fix.hpp"
+
+SPECIALIZE_QLIST(QVariant)
+
 struct SelectionExtension::Implementation
 {
 	Implementation( SelectionExtension& self );

@@ -28,6 +28,8 @@ Also use when working with reflection containers or reflected objects.
 Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
+#include "reflection_dll.hpp"
+
 #include "object_handle_storage.hpp"
 #include "core_logging/logging.hpp"
 #include "core_variant/type_id.hpp"
@@ -45,7 +47,10 @@ class BinaryStream;
 class Variant;
 
 //==============================================================================
-class ObjectHandle
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class REFLECTION_DLL ObjectHandle
 {
 public:
 	ObjectHandle();
@@ -146,6 +151,7 @@ private:
 	std::shared_ptr< IObjectHandleStorage > storage_;
 };
 
+#pragma warning (pop)
 
 
 //==============================================================================
@@ -330,7 +336,7 @@ ObjectHandleT< T > reflectedCast( const ObjectHandle & other, const IDefinitionM
 	return reinterpretCast< T >( storage );
 }
 
-ObjectHandle reflectedCast( const ObjectHandle & other, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
+REFLECTION_DLL ObjectHandle reflectedCast( const ObjectHandle & other, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
 
 template< typename T >
 T * reflectedCast(void * source, const TypeId & typeIdSource, const IDefinitionManager & definitionManager)
@@ -338,9 +344,9 @@ T * reflectedCast(void * source, const TypeId & typeIdSource, const IDefinitionM
 	return reinterpret_cast< T * >(reflectedCast(source, typeIdSource, TypeId::getType< T >(), definitionManager));
 }
 
-void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
+REFLECTION_DLL void * reflectedCast( void * source, const TypeId & typeIdSource, const TypeId & typeIdDest, const IDefinitionManager & definitionManager );
 
-ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager );
+REFLECTION_DLL ObjectHandle reflectedRoot( const ObjectHandle & source, const IDefinitionManager & defintionManager );
 
 
 template< typename T >
@@ -364,11 +370,11 @@ ObjectHandleT< T1 >::ObjectHandleT( const ObjectHandleT< T2 > & other )
 }
 
 
-TextStream& operator<<( TextStream& stream, const ObjectHandle& value );
-TextStream& operator>>( TextStream& stream, ObjectHandle& value );
+REFLECTION_DLL TextStream& operator<<( TextStream& stream, const ObjectHandle& value );
+REFLECTION_DLL TextStream& operator>>( TextStream& stream, ObjectHandle& value );
 
-BinaryStream& operator<<( BinaryStream& stream, const ObjectHandle& value );
-BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value );
+REFLECTION_DLL BinaryStream& operator<<( BinaryStream& stream, const ObjectHandle& value );
+REFLECTION_DLL BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value );
 
 
 template< typename T >

@@ -36,9 +36,6 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		Variant::setMetaTypeManager(
-			contextManager.queryInterface< IMetaTypeManager >() );
-
 		interpreter_.init();
 		definitionRegistry_.init();
 		typeConverterQueue_.init();

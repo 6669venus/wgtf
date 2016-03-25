@@ -13,8 +13,7 @@ class QtPreferences : public Implements< IPreferences >
 public:
 	QtPreferences( IDefinitionManager & definitionManger, 
 				   ISerializationManager & serializationManager, 
-				   IFileSystem & fileSystem,
-				   IMetaTypeManager & metaTypeManager );
+				   IFileSystem & fileSystem );
 	~QtPreferences();
 	GenericObjectPtr & getPreference( const char * key ) override;
 
@@ -25,7 +24,6 @@ private:
 	IDefinitionManager & definitionManager_;
 	ISerializationManager & serializationManager_;
 	IFileSystem & fileSystem_;
-	IMetaTypeManager & metaTypeManager_;
 	std::unordered_map< std::string, GenericObjectPtr > preferences_;
 };
 

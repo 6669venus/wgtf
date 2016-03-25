@@ -9,10 +9,14 @@
 #include "reflected_object.hpp"
 #include "ref_object_id.hpp"
 #include "core_serialization/serializer/i_serializer.hpp"
+#include "reflection_dll.hpp"
 
 struct ObjectMetaData;
 
 typedef std::unordered_set< ObjectMetaData * > ObjIdSet;
+
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
 
 /**
  *	Default implementation of IObjectManager.
@@ -20,7 +24,7 @@ typedef std::unordered_set< ObjectMetaData * > ObjIdSet;
  *	Note that ObjectManager holds strong references to "unmanaged" objects.
  *	So the owner must unregister the object with ObjectManager before deletion.
  */
-class ObjectManager 
+class REFLECTION_DLL ObjectManager 
 	: public Implements< IObjectManager >
 {
 public:
@@ -94,5 +98,7 @@ private:
 	std::unordered_map< const RefObjectId, LinkPair > objLink_;
 	mutable std::mutex objLinkLock_;
 };
+
+#pragma warning (pop)
 
 #endif // OBJECT_MANAGER_HPP

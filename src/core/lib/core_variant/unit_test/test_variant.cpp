@@ -8,7 +8,6 @@
 #include <cmath>
 
 #include "core_variant/variant.hpp"
-#include "core_variant/interfaces/i_meta_type_manager.hpp"
 
 #include "core_serialization/fixed_memory_stream.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"

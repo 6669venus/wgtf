@@ -1,5 +1,5 @@
 #include "variant.hpp"
-#include "interfaces/i_meta_type_manager.hpp"
+#include "default_meta_type_manager.hpp"
 #include "core_string_utils/string_utils.hpp"
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/fixed_memory_stream.hpp"
@@ -19,7 +19,7 @@
 namespace
 {
 
-	static IMetaTypeManager * s_metaTypeManager = nullptr;
+	static DefaultMetaTypeManager s_metaTypeManager;
 
 	bool wtoutf8( const wchar_t * wsrc, std::string& output )
 	{
@@ -393,28 +393,27 @@ void Variant::typeInitError()
 }
 
 
-void Variant::setMetaTypeManager( IMetaTypeManager* metaTypeManager)
-{
-	s_metaTypeManager = metaTypeManager;
-}
-
-
-IMetaTypeManager * Variant::getMetaTypeManager()
-{
-	return s_metaTypeManager;
-}
-
-
 bool Variant::registerType(const MetaType* type)
 {
-	if(s_metaTypeManager)
-	{
-		return s_metaTypeManager->registerType(type);
-	}
-	else
-	{
-		return false;
-	}
+	return s_metaTypeManager.registerType(type);
+}
+
+
+const MetaType* Variant::findType( const TypeId& typeId )
+{
+	return s_metaTypeManager.findType( typeId );
+}
+
+
+const MetaType* Variant::findType( const std::type_info& typeInfo )
+{
+	return s_metaTypeManager.findType( TypeId( typeInfo.name() ) );
+}
+
+
+const MetaType* Variant::findType( const char* name )
+{
+	return s_metaTypeManager.findType( name );
 }
 
 

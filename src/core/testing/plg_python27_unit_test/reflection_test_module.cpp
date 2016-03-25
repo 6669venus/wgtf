@@ -2691,7 +2691,7 @@ void getCollectionPath2( const ReflectedPython::DefinedInstance & instance,
 	TestResult & result_ )
 {
 	std::string pathName = "childTest";
-	pathName += DOT_OPERATOR;
+	pathName += IClassDefinition::DOT_OPERATOR;
 	pathName += collectionName;
 	const bool getCollectionSuccess = instance.get< Collection >(
 		pathName.c_str(), outCollection );
@@ -2737,11 +2737,11 @@ void checkSequencePaths( const ReflectedPython::DefinedInstance & instance,
 		const auto & valueFullPath = valueInstance.fullPath();
 
 		std::string expectedValueFullPath = "childTest";
-		expectedValueFullPath += DOT_OPERATOR;
+		expectedValueFullPath += IClassDefinition::DOT_OPERATOR;
 		expectedValueFullPath += collectionName;
-		expectedValueFullPath += INDEX_OPEN;
+		expectedValueFullPath += IClassDefinition::INDEX_OPEN;
 		expectedValueFullPath += std::to_string( expectedKey );
-		expectedValueFullPath += INDEX_CLOSE;
+		expectedValueFullPath += IClassDefinition::INDEX_CLOSE;
 		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
 
 		int valueValue = -1;
@@ -2798,11 +2798,11 @@ void checkMappingPaths( const ReflectedPython::DefinedInstance & instance,
 		const auto & valueFullPath = valueInstance.fullPath();
 
 		std::string expectedValueFullPath = "childTest";
-		expectedValueFullPath += DOT_OPERATOR;
+		expectedValueFullPath += IClassDefinition::DOT_OPERATOR;
 		expectedValueFullPath += collectionName;
-		expectedValueFullPath += INDEX_OPEN;
+		expectedValueFullPath += IClassDefinition::INDEX_OPEN;
 		expectedValueFullPath += expectedKeyFullPath;
-		expectedValueFullPath += INDEX_CLOSE;
+		expectedValueFullPath += IClassDefinition::INDEX_CLOSE;
 		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
 	}
 }

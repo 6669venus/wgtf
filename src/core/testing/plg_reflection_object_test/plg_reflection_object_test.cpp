@@ -25,9 +25,6 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
-		Variant::setMetaTypeManager( 
-			contextManager.queryInterface< IMetaTypeManager >() );
-
 		// register reflected type definition
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();

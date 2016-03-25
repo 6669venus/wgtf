@@ -40,12 +40,6 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
-		assert(metaTypeMgr);
-		if (metaTypeMgr == nullptr)
-			return;
-		Variant::setMetaTypeManager(metaTypeMgr);
-
 		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
 		assert(definitionManager != nullptr);
 		if (definitionManager == nullptr)

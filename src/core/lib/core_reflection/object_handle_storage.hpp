@@ -9,11 +9,12 @@
 #include <type_traits>
 #include <typeinfo>
 
+#include "reflection_dll.hpp"
 
 class RefObjectId;
 class IParticleEffectTreeModel;
 	 
-class IObjectHandleStorage
+class REFLECTION_DLL IObjectHandleStorage
 {
 public:
 	virtual ~IObjectHandleStorage() {}
@@ -27,7 +28,10 @@ public:
 
 
 //==============================================================================
-class ObjectHandleStorageVoid : public IObjectHandleStorage
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class REFLECTION_DLL ObjectHandleStorageVoid : public IObjectHandleStorage
 {
 public:
 	ObjectHandleStorageVoid(std::shared_ptr<void> data, TypeId type, DataGetter getter)
@@ -65,6 +69,7 @@ private:
 	DataGetter getter_;
 };
 
+#pragma warning (pop)
 
 //==============================================================================
 template< typename T >
@@ -243,7 +248,10 @@ private:
 
 
 //==============================================================================
-class ObjectHandleStorageReflectedCast
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class REFLECTION_DLL ObjectHandleStorageReflectedCast
 	: public IObjectHandleStorage
 {
 public:
@@ -264,5 +272,7 @@ private:
 	TypeId typeId_;
 	const IDefinitionManager & definitionManager_;
 };
+
+#pragma warning (pop)
 
 #endif // OBJECT_HANDLE_STORAGE_HPP

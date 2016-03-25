@@ -11,7 +11,12 @@
 #include <uuid/uuid.h>
 #endif
 
-RefObjectId RefObjectId::s_zero_( 0, 0, 0, 0 );
+namespace
+{
+
+	RefObjectId s_zeroRefObjectId( 0, 0, 0, 0 );
+
+}
 
 //==============================================================================
 RefObjectId::RefObjectId() :
@@ -122,6 +127,13 @@ RefObjectId RefObjectId::generate()
 #endif
 	
 	return n;
+}
+
+
+//==============================================================================
+const RefObjectId & RefObjectId::zero()
+{
+	return s_zeroRefObjectId;
 }
 
 

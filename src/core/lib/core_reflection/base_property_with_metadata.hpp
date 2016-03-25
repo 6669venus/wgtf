@@ -6,7 +6,12 @@
 
 #include <memory>
 
-class BasePropertyWithMetaData : public IBaseProperty
+#include "reflection_dll.hpp"
+
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class REFLECTION_DLL BasePropertyWithMetaData : public IBaseProperty
 {
 public:
 	BasePropertyWithMetaData( const IBasePropertyPtr & property, MetaHandle metaData );
@@ -43,5 +48,7 @@ private:
 	IBasePropertyPtr property_;
 	MetaHandle metaData_;
 };
+
+#pragma warning (pop)
 
 #endif // BASE_REFLECTED_PROPERTY_HPP

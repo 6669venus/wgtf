@@ -88,13 +88,12 @@ TEST_F( TestMethodsFixture, methods )
 	CHECK( testResult == "test5" );
 	CHECK( parameterString == "test5" );
 
-	auto metaTypeManager = Variant::getMetaTypeManager();
 	MetaType* stringMetaType = nullptr;
 
-	if (metaTypeManager->findType<std::string*>() == nullptr)
+	if (Variant::findType<std::string*>() == nullptr)
 	{
 		stringMetaType = new MetaTypeImpl<std::string*>();
-		metaTypeManager->registerType( stringMetaType );
+		Variant::registerType( stringMetaType );
 	}
 
 	pa = klass_->bindProperty( "TestMethod6", object );

@@ -198,8 +198,7 @@ namespace Reflection
 		const Variant * variant )
 	{
 		std::pair< std::string, std::string > debugData;
-		if(	variant == nullptr||
-			Variant::getMetaTypeManager() == nullptr)
+		if(	variant == nullptr )
 		{
 			return std::make_pair( "Empty variant", "Empty variant" );
 		}
@@ -272,12 +271,8 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		auto metaTypeMgr = contextManager.queryInterface<IMetaTypeManager>();
-		if(metaTypeMgr)
-		{
-			Variant::setMetaTypeManager( metaTypeMgr );
-			metaTypeMgr->registerType( baseProviderMetaType_.get() );
-		}
+		Variant::registerType( baseProviderMetaType_.get() );
+
 		auto uiFramework = contextManager.queryInterface<IUIFramework>();
 		if (uiFramework)
 		{

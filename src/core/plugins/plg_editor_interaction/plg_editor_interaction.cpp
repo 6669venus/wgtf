@@ -32,10 +32,6 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		auto metaTypeMgr = contextManager.queryInterface<IMetaTypeManager>();
-		assert( metaTypeMgr != nullptr );
-		Variant::setMetaTypeManager( metaTypeMgr );
-
 		auto defManager = contextManager.queryInterface< IDefinitionManager >();
 		if (defManager == nullptr)
 		{

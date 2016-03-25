@@ -80,10 +80,7 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
-		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
-		assert( metaTypeMgr != nullptr );
-		Variant::setMetaTypeManager( metaTypeMgr );
-		metaTypeMgr->registerType( customDataMetaType_.get() );
+		Variant::registerType( customDataMetaType_.get() );
 		testCase1(contextManager);
 #if USE_VARIANT_STREAM_OPERATOR 
 		testCase2(contextManager);
@@ -103,9 +100,8 @@ public:
 	// store custom data into custom defined xml format, and using CustomXmlSerializer
 	void testCase1( IComponentContext & contextManager )
 	{
-		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
 		auto fileSystem = contextManager.queryInterface<IFileSystem>();
-		if (metaTypeMgr && fileSystem)
+		if (fileSystem)
 		{
 			std::string objectFile = "test_serialization1.xml";
 			CustomXmlData data;
@@ -134,7 +130,7 @@ public:
 						fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
 					CustomXmlSerializer serializer( *fileStream );
 					const MetaType * metaType = 
-						metaTypeMgr->findType( "CustomXmlData" );
+						Variant::findType( "CustomXmlData" );
 					Variant value( metaType );
 					serializer.deserialize( value );
 					CustomXmlData newData;
@@ -154,10 +150,9 @@ public:
 	// store custom data as NGT internal xml format, and using XmlSerializer which lives in NGT core_serialization lib
 	void testCase2(IComponentContext & contextManager)
 	{
-		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
 		auto fileSystem = contextManager.queryInterface<IFileSystem>();
 		auto defManager = contextManager.queryInterface< IDefinitionManager >();
-		if (metaTypeMgr && fileSystem && defManager)
+		if (fileSystem && defManager)
 		{
 			std::string objectFile = "test_serialization2.xml";
 			CustomXmlData data;
@@ -185,7 +180,7 @@ public:
 					//XMLSerializer serializer( *fileStream, *defManager );
 					CustomXmlSerializer serializer( *fileStream );
 					const MetaType * metaType = 
-						metaTypeMgr->findType( "CustomXmlData" );
+						Variant::findType( "CustomXmlData" );
 					Variant value( metaType );
 					serializer.deserialize( value );
 					CustomXmlData newData;

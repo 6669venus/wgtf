@@ -4,13 +4,15 @@
 #include <vector>
 #include <memory>
 
+#include "reflection_dll.hpp"
+
 class IClassDefinition;
 class IBaseProperty;
 typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
 class PropertyIteratorImplBase;
 typedef std::shared_ptr< PropertyIteratorImplBase > PropertyIteratorImplPtr;
 
-class PropertyIteratorImplBase
+class REFLECTION_DLL PropertyIteratorImplBase
 {
 public:
 	virtual ~PropertyIteratorImplBase() {}
@@ -19,7 +21,10 @@ public:
 	virtual bool next() = 0;
 };
 
-class PropertyIterator
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class REFLECTION_DLL PropertyIterator
 {
 public:
 	enum IterateStrategy
@@ -49,10 +54,11 @@ private:
 	PropertyIteratorImplPtr						currentIterator_;
 };
 
+#pragma warning (pop)
 
 // Helper class for use with range-based-for loops and STL algorithms
 // Allows std::begin() and std::end() to work for PropertyIterators.
-class PropertyIteratorRange
+class REFLECTION_DLL PropertyIteratorRange
 {
 public:
 	PropertyIteratorRange( PropertyIterator::IterateStrategy strategy, const IClassDefinition & definition );

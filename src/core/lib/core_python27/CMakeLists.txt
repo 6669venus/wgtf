@@ -77,6 +77,7 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_dependency_system
 	core_reflection
 	libpython-shared
+	wg_types
 	wg_pyscript
 )
 

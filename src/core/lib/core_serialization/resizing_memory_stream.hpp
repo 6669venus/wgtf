@@ -4,7 +4,12 @@
 #include "i_datastream.hpp"
 #include <string>
 
-class ResizingMemoryStream
+#include "serialization_dll.hpp"
+
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class SERIALIZATION_DLL ResizingMemoryStream
 	: public IDataStream
 {
 public:
@@ -31,6 +36,8 @@ private:
 	std::streamoff pos_;
 
 };
+
+#pragma warning (pop)
 
 #endif //RESIZING_MEMORY_STREAM_HPP
 

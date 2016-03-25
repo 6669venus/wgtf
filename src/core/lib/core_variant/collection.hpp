@@ -9,13 +9,15 @@
 #include "core_variant/type_id.hpp"
 #include "core_variant/variant.hpp"
 
+#include "variant_dll.hpp"
+
 
 // collection and iterator implementations base
 
 class CollectionIteratorImplBase;
 typedef std::shared_ptr<CollectionIteratorImplBase> CollectionIteratorImplPtr;
 
-class CollectionIteratorImplBase
+class VARIANT_DLL CollectionIteratorImplBase
 {
 public:
 	typedef std::forward_iterator_tag iterator_category;
@@ -76,7 +78,7 @@ public:
 };
 
 
-class CollectionImplBase
+class VARIANT_DLL CollectionImplBase
 {
 public:
 	// not just bool createNew for future support of multimaps
@@ -265,13 +267,16 @@ typename std::enable_if<
 /**
 Wrapper for generic container.
 */
-class Collection
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class VARIANT_DLL Collection
 {
 public:
 	/**
 	Proxy value that provides transparent read-write access to element value.
 	*/
-	class ValueRef
+	class VARIANT_DLL ValueRef
 	{
 	public:
 		ValueRef(const CollectionIteratorImplPtr& impl):
@@ -347,7 +352,7 @@ public:
 	@warning operator*() could be slow because it returns a copy rather than
 	a reference.
 	*/
-	class ConstIterator
+	class VARIANT_DLL ConstIterator
 	{
 	public:
 		typedef CollectionIteratorImplBase::iterator_category iterator_category;
@@ -436,7 +441,7 @@ public:
 	Note that this iterator implementation doesn't conform fully to standard
 	iterator requirements.
 	*/
-	class Iterator:
+	class VARIANT_DLL Iterator:
 		public ConstIterator
 	{
 	public:
@@ -720,6 +725,7 @@ private:
 
 };
 
+#pragma warning (pop)
 
 namespace std
 {

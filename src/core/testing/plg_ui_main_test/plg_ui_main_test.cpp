@@ -4,7 +4,6 @@
 #include "test_ui/test_ui.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "test_datasource.hpp"
-#include "core_variant/variant.hpp"
 
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
@@ -46,8 +45,6 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
-		Variant::setMetaTypeManager( 
-			contextManager.queryInterface< IMetaTypeManager >() );
 		// register reflected type definition
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();

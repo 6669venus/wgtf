@@ -95,9 +95,6 @@ public:
 
 	void Initialise( IComponentContext& contextManager ) override
 	{
-		Variant::setMetaTypeManager(
-			contextManager.queryInterface< IMetaTypeManager >() );
-
 		auto pDefinitionManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		if (pDefinitionManager == nullptr)

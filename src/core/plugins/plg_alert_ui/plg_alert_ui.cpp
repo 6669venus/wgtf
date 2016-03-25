@@ -46,9 +46,6 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
- 		Variant::setMetaTypeManager( 
- 			contextManager.queryInterface< IMetaTypeManager >() );
-			
 		ILoggingSystem* loggingSystem = 
 			contextManager.queryInterface< ILoggingSystem >();
 		if (loggingSystem != nullptr)

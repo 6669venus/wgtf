@@ -1605,7 +1605,7 @@ if8PlhbdgPkLacoAAAAASUVORK5CYII=
 				capname="unknown"
 				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']/container[@objectname='WGPanel']/container[@objectname='WGAssetBrowser']/container[@name='mainColumn']/element[@name='assetSplitter']/container[@name='leftFrame']/container[@name='parentColumnLayout']/element[@objectname='folderView']/list[@objectname='WGListView']/list[@objectname='WGListView']/list[3]/element[2]"
 				addcaps="unknown,qtelement"
-				refimgid="34d67855-8551-4a06-b5ed-111aa8e1966b">
+				refimgid="fc3adebc-8c6a-49c4-85a1-160afca9c736">
 					/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']//element[@name='assetSplitter']/container[@name='leftFrame']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[3]/element[2]
 				</item>
 				<item
@@ -2019,6 +2019,26 @@ iAmROIqYEEnTx/8D5gnY2KaVf38AAAAASUVORK5CYII=
 				addcaps="text,qtelement"
 				refimgid="c8c6f5b1-1ea4-4c3a-b6c4-67d8f9c5fed0">
 					/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[3]/text[@objectname='WGMultiLineText']
+				</item>
+				<item
+				name="FolderDivide"
+				id="67e60213-6349-43e4-9541-86faaf30cdb6"
+				searchtimeout="30000ms"
+				capname="button"
+				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']/container[@objectname='WGPanel']/container[@objectname='WGAssetBrowser']/container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']/container[@name='breadcrumbLayout']/container[@objectname='breadcrumbRowLayout']/container[2]/button[@objectname='folderDivide']"
+				addcaps="button,qtelement"
+				refimgid="f623ae84-5494-4b29-b84e-74129081313c">
+					/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']/?/?/container[@objectname='breadcrumbRowLayout']/container[2]/button[@objectname='folderDivide']
+				</item>
+				<item
+				name="WGLabel"
+				id="27d51736-ef59-4623-b330-53de4d018567"
+				searchtimeout="30000ms"
+				capname="text"
+				refpath="/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']/container[@objectname='WGPanel']/container[@objectname='WGAssetBrowser']/container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']/container[@name='breadcrumbLayout']/container[@objectname='breadcrumbRowLayout']/container[1]/text[@objectname='WGLabel']"
+				addcaps="text,qtelement"
+				refimgid="c5b8acef-abfa-48f3-b1e1-e43cde17639c">
+					/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']//text[@objectname='WGLabel']
 				</item>
 				<basepath>
 					/form[@objectname='MainWindow']

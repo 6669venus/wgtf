@@ -258,6 +258,8 @@ namespace NGTTestAutomation
             RepoItemInfo _wgmultilinetextInfo;
             RepoItemInfo _wgmultilinetext1Info;
             RepoItemInfo _wgmultilinetext2Info;
+            RepoItemInfo _folderdivideInfo;
+            RepoItemInfo _wglabelInfo;
 
             /// <summary>
             /// Creates a new MainWindow  folder.
@@ -314,6 +316,8 @@ namespace NGTTestAutomation
                 _wgmultilinetextInfo = new RepoItemInfo(this, "WGMultiLineText", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[1]/text[@objectname='WGMultiLineText']", 30000, null, "c8866cb4-c563-4152-ad2a-7ad234f0f5e6");
                 _wgmultilinetext1Info = new RepoItemInfo(this, "WGMultiLineText1", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[2]/text[@objectname='WGMultiLineText']", 30000, null, "f52a8513-46aa-4ae6-835c-00649bb4f4ea");
                 _wgmultilinetext2Info = new RepoItemInfo(this, "WGMultiLineText2", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[3]/text[@objectname='WGMultiLineText']", 30000, null, "0bab1ea8-9027-4271-b9fa-5f171c3a1692");
+                _folderdivideInfo = new RepoItemInfo(this, "FolderDivide", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']/?/?/container[@objectname='breadcrumbRowLayout']/container[2]/button[@objectname='folderDivide']", 30000, null, "67e60213-6349-43e4-9541-86faaf30cdb6");
+                _wglabelInfo = new RepoItemInfo(this, "WGLabel", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']//text[@objectname='WGLabel']", 30000, null, "27d51736-ef59-4623-b330-53de4d018567");
             }
 
             /// <summary>
@@ -1574,6 +1578,54 @@ namespace NGTTestAutomation
                 get
                 {
                     return _wgmultilinetext2Info;
+                }
+            }
+
+            /// <summary>
+            /// The FolderDivide item.
+            /// </summary>
+            [RepositoryItem("67e60213-6349-43e4-9541-86faaf30cdb6")]
+            public virtual Ranorex.Button FolderDivide
+            {
+                get
+                {
+                    return _folderdivideInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The FolderDivide item info.
+            /// </summary>
+            [RepositoryItemInfo("67e60213-6349-43e4-9541-86faaf30cdb6")]
+            public virtual RepoItemInfo FolderDivideInfo
+            {
+                get
+                {
+                    return _folderdivideInfo;
+                }
+            }
+
+            /// <summary>
+            /// The WGLabel item.
+            /// </summary>
+            [RepositoryItem("27d51736-ef59-4623-b330-53de4d018567")]
+            public virtual Ranorex.Text WGLabel
+            {
+                get
+                {
+                    return _wglabelInfo.CreateAdapter<Ranorex.Text>(true);
+                }
+            }
+
+            /// <summary>
+            /// The WGLabel item info.
+            /// </summary>
+            [RepositoryItemInfo("27d51736-ef59-4623-b330-53de4d018567")]
+            public virtual RepoItemInfo WGLabelInfo
+            {
+                get
+                {
+                    return _wglabelInfo;
                 }
             }
 

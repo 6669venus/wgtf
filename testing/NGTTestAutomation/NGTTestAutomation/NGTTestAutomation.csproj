@@ -201,6 +201,18 @@
       <UserCode>true</UserCode>
       <id>e29f42be-5fc8-42c0-9d57-5ba032b5f491</id>
     </Compile>
+    <Compile Include="Generic_app_UI\AB_Breadcrum_change_path.cs">
+      <BoundTo>abae39f1-4543-46a7-94da-c353a0043969</BoundTo>
+      <DependentUpon>AB_Breadcrum_change_path.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>1347a059-3cc4-459a-9e63-67b193516aa6</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_Breadcrum_change_path.UserCode.cs">
+      <BoundTo>abae39f1-4543-46a7-94da-c353a0043969</BoundTo>
+      <DependentUpon>AB_Breadcrum_change_path.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>8a20a061-623b-44ee-89a6-b7f3311dcbef</id>
+    </Compile>
     <Compile Include="Generic_app_UI\AB_Select_folder.cs">
       <BoundTo>13e0023d-88dc-4145-b4bb-d0e39a4842ee</BoundTo>
       <DependentUpon>AB_Select_folder.rxrec</DependentUpon>
@@ -527,6 +539,11 @@
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>416b6337-5554-4244-a0c2-8e5317f2c8d5</id>
       <recordtableid>0057bfca-3540-48d9-ba3c-bbfd887e62df</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_Breadcrum_change_path.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>abae39f1-4543-46a7-94da-c353a0043969</id>
+      <recordtableid>16086a88-67c3-4d2c-a3c1-5d5cf167973d</recordtableid>
     </None>
     <None Include="Generic_app_UI\AB_Select_folder.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

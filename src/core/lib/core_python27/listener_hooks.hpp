@@ -18,43 +18,15 @@ namespace ReflectedPython
 
 
 /**
- *	Key compare less-than functor.
- *	Need to do a deep compare on PyScript::ScriptObject to prevent getting
- *	copies of the same object added to the map.
- */
-class ScriptObjectCompare
-{
-public:
-	bool operator()( const PyScript::ScriptObject & a,
-		const PyScript::ScriptObject & b ) const;
-};
-
-
-//class ScriptObjectEqualTo
-//{
-//public:
-//	bool operator()( const PyScript::ScriptObject & a,
-//		const PyScript::ScriptObject & b ) const;
-//};
-
-
-//class ScriptObjectHash
-//{
-//public:
-//	size_t operator()( const PyScript::ScriptObject & a ) const;
-//};
-
-
-/**
  *	Structure for tracking the number of reflected Python objects that are using
  *	a given Python type.
  */
 struct HookInfo
 {
 	size_t hookCount_;
-	setattrofunc defaultHook_;
+	wrapperbase wrapper_;
 };
-typedef std::map< PyScript::ScriptType, HookInfo, ScriptObjectCompare > HookLookup;
+typedef std::map< PyScript::ScriptType, HookInfo/*, ScriptObjectCompare*/ > HookLookup;
 
 
 /**

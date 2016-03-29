@@ -7,8 +7,8 @@
 #include "i_script_object_definition_registry.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
-#include <map>
 #include <mutex>
+#include <vector>
 
 
 class IClassDefinition;

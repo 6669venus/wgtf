@@ -67,6 +67,8 @@ private:
 		DefinitionPair;
 	typedef std::vector< DefinitionPair > DefinitionLookup;
 	DefinitionLookup definitions_;
+	// TODO replace mutex with a check that it's the main thread
+	// because Python scripts should only be run from a single thread
 	std::mutex definitionsMutex_;
 
 	IComponentContext& context_;

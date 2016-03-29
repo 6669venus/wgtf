@@ -5,6 +5,80 @@
 #include "definition_details.hpp"
 #include "definition_helper.hpp"
 
+#include "structmember.h"
+
+typedef struct {
+	PyObject_HEAD
+	std::weak_ptr< IClassDefinition > definition_;
+	RefObjectId id_;
+} DefinitionType;
+
+static PyTypeObject DefinitionTypeType = {
+	PyObject_HEAD_INIT(NULL)
+	0,                         /*ob_size*/
+	"Reflection.DefinitionType",             /*tp_name*/
+	sizeof(DefinitionType),             /*tp_basicsize*/
+	0,                         /*tp_itemsize*/
+	0, /*tp_dealloc*/
+	0,                         /*tp_print*/
+	0,                         /*tp_getattr*/
+	0,                         /*tp_setattr*/
+	0,                         /*tp_compare*/
+	0,                         /*tp_repr*/
+	0,                         /*tp_as_number*/
+	0,                         /*tp_as_sequence*/
+	0,                         /*tp_as_mapping*/
+	0,                         /*tp_hash */
+	0,                         /*tp_call*/
+	0,                         /*tp_str*/
+	0,                         /*tp_getattro*/
+	0,                         /*tp_setattro*/
+	0,                         /*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT, /*tp_flags*/
+	"DefinitionType objects",           /* tp_doc */
+	0,   /* tp_traverse */
+	0,           /* tp_clear */
+	0,		               /* tp_richcompare */
+	0,		               /* tp_weaklistoffset */
+	0,		               /* tp_iter */
+	0,		               /* tp_iternext */
+	0,             /* tp_methods */
+	0,             /* tp_members */
+	0,                         /* tp_getset */
+	0,                         /* tp_base */
+	0,                         /* tp_dict */
+	0,                         /* tp_descr_get */
+	0,                         /* tp_descr_set */
+	0,                         /* tp_dictoffset */
+	0,      /* tp_init */
+	0,                         /* tp_alloc */
+	0,                 /* tp_new */
+};
+
+static PyMethodDef module_methods[] = {
+	{NULL}  /* Sentinel */
+};
+
+#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
+#define PyMODINIT_FUNC void
+#endif
+PyMODINIT_FUNC
+initDefinitionType4(void) 
+{
+	PyObject* m;
+
+	if (PyType_Ready(&DefinitionTypeType) < 0)
+		return;
+
+	m = Py_InitModule3("Reflection", module_methods,
+					   "Reflection system module.");
+
+	if (m == NULL)
+	  return;
+
+	Py_INCREF(&DefinitionTypeType);
+	PyModule_AddObject(m, "DefinitionType", (PyObject *)&DefinitionTypeType);
+}
 
 namespace ReflectedPython
 {
@@ -94,6 +168,7 @@ void ScriptObjectDefinitionRegistry::init()
 
 	definitionManager_->registerPropertyAccessorListener(
 		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
+	initDefinitionType4();
 }
 
 
@@ -115,6 +190,80 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 	assert( object.exists() );
 	assert( definitionManager_ != nullptr );
 
+	// Check if definition is attached to object
+	// Rather than searching through list
+	{
+		PyScript::ScriptType definitionTypeType( &DefinitionTypeType,
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+		auto definitionObject = object.getAttribute( "__reflectionDefinition",
+			PyScript::ScriptErrorClear() );
+		if (definitionObject.exists())
+		{
+			const auto typeMatches = definitionTypeType.isObjectOfType( definitionObject );
+			//assert( typeMatches );
+			if (typeMatches)
+			{
+				auto definitionType = (DefinitionType*) definitionObject.get();
+				auto pointer = definitionType->definition_.lock();
+				if (pointer != nullptr)
+				{
+					return pointer;
+				}
+				else
+				{
+					std::string definitionName = ReflectedPython::DefinitionDetails::generateName( object );
+					assert( !definitionName.empty() );
+
+					auto definition = definitionManager_->getDefinition( definitionName.c_str() );
+					//assert( definition != nullptr );
+					if (definition != nullptr)
+					{
+						definitionManager_->deregisterDefinition( definition );
+					}
+				}
+			}
+		}
+
+		// Check if object can be modified
+		const auto canSet = definitionObject.exists() ||
+			object.setAttribute( "__reflectionDefinition",
+				PyScript::ScriptObject::none(),
+				PyScript::ScriptErrorClear() );
+		// Do not attach to type objects
+		// because getAttribute will find the Class.__reflectionDefinition
+		// before the instance.__reflectionDefinition
+		const auto isType = PyScript::ScriptType::check( object );
+		const auto isClass = PyScript::ScriptClass::check( object );
+		if (canSet && !isType && !isClass)
+		{
+			auto definition = definitionManager_->registerDefinition(
+				new ReflectedPython::DefinitionDetails( context_, object, hookLookup_ ) );
+			assert( definition != nullptr );
+
+			std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
+
+			definitionObject = PyScript::ScriptObject(
+				definitionTypeType.genericAlloc( PyScript::ScriptErrorPrint() ),
+				PyScript::ScriptObject::FROM_NEW_REFERENCE );
+			auto definitionType = (DefinitionType*) definitionObject.get();
+			definitionType->definition_ = pointer;
+			definitionType->id_ = RefObjectId::generate();
+
+			const auto success = object.setAttribute( "__reflectionDefinition",
+				definitionObject,
+				PyScript::ScriptErrorClear() );
+			assert( success );
+			return pointer;
+		}
+		else
+		{
+			object.delAttribute( "__reflectionDefinition",
+				PyScript::ScriptErrorClear() );
+		}
+	}
+
+	// Some Python objects cannot be modified, so fall back to storing separately
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
 	// Find uses a ScriptObject comparator which may raise script errors
 	auto itr = std::find_if( definitions_.cbegin(),
@@ -155,6 +304,23 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findDefiniti
 {
 	assert( object.exists() );
 
+
+	PyScript::ScriptType definitionTypeType( &DefinitionTypeType,
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+	auto definitionObject = object.getAttribute( "__reflectionDefinition",
+		PyScript::ScriptErrorClear() );
+	if (definitionObject.exists())
+	{
+		const auto typeMatches = definitionTypeType.isObjectOfType( definitionObject );
+		//assert( typeMatches );
+		if (typeMatches)
+		{
+			auto definitionType = (DefinitionType*) definitionObject.get();
+			return definitionType->definition_.lock();
+		}
+	}
+
 	std::lock_guard< std::mutex > lock( definitionsMutex_ );
 	// Find uses a ScriptObject comparator which may raise script errors
 	auto itr = std::find_if( definitions_.cbegin(),
@@ -173,6 +339,29 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findDefiniti
 void ScriptObjectDefinitionRegistry::removeDefinition(
 	const PyScript::ScriptObject& object, const IClassDefinition* definition )
 {
+	{
+		auto definitionObject = object.getAttribute( "__reflectionDefinition",
+			PyScript::ScriptErrorClear() );
+		const auto deleted = object.delAttribute( "__reflectionDefinition",
+			PyScript::ScriptErrorClear() );
+		if (definitionObject.exists() && deleted)
+		{
+			assert( definitionManager_ != nullptr );
+			const bool deregistered = definitionManager_->deregisterDefinition( definition );
+			assert( deregistered );
+
+			//assert( deleted );
+			//if (!deleted)
+			//{
+			//	const auto nullified = object.setAttribute( "__reflectionDefinition",
+			//		PyScript::ScriptObject::none(),
+			//		PyScript::ScriptErrorClear() );
+			//	assert( nullified );
+			//}
+			return;
+		}
+	}
+
 	std::lock_guard<std::mutex> lock( definitionsMutex_ );
 	assert( definition != nullptr );
 
@@ -202,6 +391,24 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 	const PyScript::ScriptObject & object ) /* override */
 {
 	assert( object.exists() );
+
+	{
+		PyScript::ScriptType definitionTypeType( &DefinitionTypeType,
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+		auto definitionObject = object.getAttribute( "__reflectionDefinition",
+			PyScript::ScriptErrorClear() );
+		if (definitionObject.exists())
+		{
+			const auto typeMatches = definitionTypeType.isObjectOfType( definitionObject );
+			//assert( typeMatches );
+			if (typeMatches)
+			{
+				auto definitionType = (DefinitionType*) definitionObject.get();
+				return definitionType->id_;
+			}
+		}
+	}
 
 	std::lock_guard< std::mutex > lock( definitionsMutex_ );
 

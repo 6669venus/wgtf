@@ -372,6 +372,24 @@ public:
 	}
 
 
+	/**
+	 *	This method removes an attribute on the ScriptObject
+	 *
+	 *	@param key			The key to set the value of on the ScriptObject
+	 *	@param errorHandler The type of error handling to use if this method
+	 *		fails
+	 *	@return				True on success, false otherwise
+	 */
+	template <class ERROR_HANDLER>
+	bool delAttribute( const char * key,
+			const ERROR_HANDLER & errorHandler ) const
+	{
+		int result = PyObject_DelAttrString( this->get(), key );
+		errorHandler.checkMinusOne( result );
+		return result != -1;
+	}
+
+
 	template <class ERROR_HANDLER>
 	ScriptObject callMethod( const char * methodName,
 			const ERROR_HANDLER & errorHandler,

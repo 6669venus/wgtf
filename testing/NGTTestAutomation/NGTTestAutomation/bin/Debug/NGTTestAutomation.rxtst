@@ -274,9 +274,9 @@ reportlevel="Info;20">
 					name="teardown"
 					id="7be148d0-8e11-4080-a2bf-edc3141443a8">
 						<testmodule
-						name="Close_GenericApp_ui_usercode"
-						id="22b38f65-07b1-4826-94a1-cc0e22821f9a"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
+						name="Close_GenericApp_demo"
+						id="d1e27a2f-51e7-42f0-8437-be127e820b7d"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
 				</testcase>
@@ -303,6 +303,12 @@ reportlevel="Info;20">
 								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
 							</databinding>
 						</testmodule>
+						<testmodule
+						name="UserCodeModule1"
+						id="54fc6bdd-6907-4535-a17d-ab9e26ae412e"
+						ref="92f24632-328e-48ac-a791-ee0cf26bbc68"
+						type="UserCode"
+						enabled="False"/>
 					</setup>
 					<testmodule
 					name="AB_expand"
@@ -310,7 +316,7 @@ reportlevel="Info;20">
 					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
 					type="Recording"/>
 					<testmodule
-					name="AB_Select_folder"
+					name="AB_Select_folder_win64"
 					id="21ad144d-e94c-41ef-9ac4-c9343c8024cf"
 					ref="31a9081e-b797-4f3f-aea9-a3455e315dab"
 					type="Recording"/>
@@ -324,7 +330,11 @@ reportlevel="Info;20">
 					id="3d493375-146b-4a28-98ee-1f3c731b0d71"
 					ref="de2ea3a7-64d1-4a33-81c2-4bc2e7b0ccbc"
 					type="Recording"
-					enabled="False"/>
+					enabled="False">
+						<description>
+							known crash to test if the automation test run can continue
+						</description>
+					</testmodule>
 					<testmodule
 					name="AB_selectItems"
 					id="a36e9579-706d-428c-872b-1a896ae46060"
@@ -333,12 +343,6 @@ reportlevel="Info;20">
 					<teardown
 					name="teardown"
 					id="2f7c006b-3a13-4293-80a9-381ff1efb461">
-						<testmodule
-						name="UserCodeModule1"
-						id="54fc6bdd-6907-4535-a17d-ab9e26ae412e"
-						ref="92f24632-328e-48ac-a791-ee0cf26bbc68"
-						type="UserCode"
-						enabled="False"/>
 						<testmodule
 						name="Close_GenericApp_demo"
 						id="14248165-bec2-4f8e-b27e-8ad87a76740c"
@@ -372,7 +376,7 @@ reportlevel="Info;20">
 					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
 					type="Recording"/>
 					<testmodule
-					name="AB_Select_folder"
+					name="AB_Select_folder_win64"
 					id="0d584ccc-3787-4319-8e13-6b98e8593228"
 					ref="31a9081e-b797-4f3f-aea9-a3455e315dab"
 					type="Recording"/>
@@ -381,15 +385,119 @@ reportlevel="Info;20">
 					id="b6f405b9-8edb-417f-91b4-92fc22d06a53"
 					ref="16086a88-67c3-4d2c-a3c1-5d5cf167973d"
 					type="Recording"/>
+					<testmodule
+					name="AB_reset_ab_to_default"
+					id="b0d3f026-d4a7-42f4-8b21-676510808d48"
+					ref="c60eb1b1-40ad-4e4a-839b-e4a887f8e7ea"
+					type="Recording"/>
 					<teardown
 					name="teardown"
 					id="277df740-67c2-4430-907f-725416a040a3">
 						<testmodule
-						name="Close_GenericApp_ui_usercode"
-						id="01d22e5b-e1d2-410d-996c-068eb9e78821"
-						ref="2c6bd3a2-29ad-40a3-a561-be9010850cb0"
-						type="Recording"
-						enabled="False"/>
+						name="Close_GenericApp_demo"
+						id="f4d333f8-9f7d-4871-b148-c04d878c22cc"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+				<testcase
+				name="Asset_Browser_UI_layout"
+				id="4f8d0db5-0cb2-401e-880a-b827e7d5fd02">
+					<setup
+					name="setup"
+					id="145fe7bb-5591-423d-a80d-3a33411e3953">
+						<testmodule
+						name="Open_GenericApp_ui"
+						id="6de8cde1-43c3-4c19-ba28-843bae53e301"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="AB_expand"
+					id="f3fd9423-d162-4894-ae53-b1742be8e312"
+					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
+					type="Recording"/>
+					<testmodule
+					name="AB_Select_folder_win64"
+					id="f8e88f05-56db-472c-96b4-c3eb339c0f21"
+					ref="31a9081e-b797-4f3f-aea9-a3455e315dab"
+					type="Recording"/>
+					<testmodule
+					name="AB_Horizontal_Vertical_toggle"
+					id="8db20e52-5e83-403a-91f9-bcaf458e8801"
+					ref="a0032775-d7f5-4c8d-96ef-43d4899a6384"
+					type="Recording"/>
+					<testmodule
+					name="AB_IconSize"
+					id="fec4e414-47ba-400c-8b35-a5913ef022e2"
+					ref="11a7a3c6-d73b-46e0-903d-fc6f4f79513d"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="6e12d9df-6982-4829-a6d4-bbec48c0da63">
+						<testmodule
+						name="Close_GenericApp_demo"
+						id="39a16add-8376-4add-95e9-5302f853658a"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+				<testcase
+				name="Search_Filter"
+				id="4dfd118b-76f3-48c3-bedf-6269e623f070">
+					<setup
+					name="setup"
+					id="2f9b5caf-a014-42a1-b435-83d810d56836">
+						<testmodule
+						name="Open_GenericApp_ui"
+						id="1f4c61bb-b57d-4367-b067-2366403dd274"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="AB_expand"
+					id="a114ecd9-f138-4638-b207-dcfefde9d300"
+					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
+					type="Recording"/>
+					<testmodule
+					name="AB_Select_folder_win64"
+					id="f5910275-07e9-4e0a-b028-601e1268ca64"
+					ref="31a9081e-b797-4f3f-aea9-a3455e315dab"
+					type="Recording"/>
+					<testmodule
+					name="AB_searchFilter"
+					id="06b31956-afa9-493b-963a-d59dc3775524"
+					ref="6e148f37-0147-4956-a96a-6875f8657779"
+					type="Recording"/>
+					<testmodule
+					name="AB_Multipl_filter"
+					id="a2f841d2-7467-455c-ae90-d6df744d5b96"
+					ref="5bcbbc42-77df-426f-be47-484a6257eaf3"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="e9b1efda-6590-4556-87de-5725b69664c0">
+						<testmodule
+						name="Close_GenericApp_demo"
+						id="ba629551-9f05-4ccb-83cb-4103b537babb"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
+						type="Recording"/>
 					</teardown>
 				</testcase>
 			</folder>
@@ -545,11 +653,11 @@ properties, not selected items</P>]]>
 			<testcase
 			id="37538fc7-1001-4549-82ed-e10cb0a9b7d7"/>
 			<testcase
-			id="4cb23d72-9dd2-4de1-8a95-afc8c438644f"/>
+			id="4dfd118b-76f3-48c3-bedf-6269e623f070"/>
 			<testcase
-			id="8f507aea-7a61-4a13-abcb-6364b8cbd62e"/>
+			id="4f8d0db5-0cb2-401e-880a-b827e7d5fd02"/>
 			<testcase
-			id="a98b06bb-2a5a-481e-8bea-ebab59d7fad0"/>
+			id="7488b862-8d43-48e2-b26c-d57659ab9c49"/>
 		</testconfiguration>
 	</testconfigurations>
 	<references/>

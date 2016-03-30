@@ -213,15 +213,75 @@
       <UserCode>true</UserCode>
       <id>8a20a061-623b-44ee-89a6-b7f3311dcbef</id>
     </Compile>
-    <Compile Include="Generic_app_UI\AB_Select_folder.cs">
+    <Compile Include="Generic_app_UI\AB_Horizontal_Vertical_toggle.cs">
+      <BoundTo>bae71b9f-ef28-4cce-a68a-dd9946f1e08e</BoundTo>
+      <DependentUpon>AB_Horizontal_Vertical_toggle.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>7bf6a56c-c55f-4c7f-b16e-17fee952249d</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_Horizontal_Vertical_toggle.UserCode.cs">
+      <BoundTo>bae71b9f-ef28-4cce-a68a-dd9946f1e08e</BoundTo>
+      <DependentUpon>AB_Horizontal_Vertical_toggle.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>3cd4a0a8-f8ba-42f9-9d48-a3eb06551c48</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_IconSize.cs">
+      <BoundTo>b020767a-363e-4add-a2ed-6e10ebbeae03</BoundTo>
+      <DependentUpon>AB_IconSize.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>6cf4dbba-eee5-4714-9a11-7b7de5ac9505</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_IconSize.UserCode.cs">
+      <BoundTo>b020767a-363e-4add-a2ed-6e10ebbeae03</BoundTo>
+      <DependentUpon>AB_IconSize.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>2e65c5ca-f29a-4990-954e-534d6b0f535b</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_Multipl_filter.cs">
+      <BoundTo>cf6c9c88-f3bd-462d-bbae-bfdf57a29b0d</BoundTo>
+      <DependentUpon>AB_Multipl_filter.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>fc3b5954-80c7-4841-842d-77f0a61b3ed0</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_Multipl_filter.UserCode.cs">
+      <BoundTo>cf6c9c88-f3bd-462d-bbae-bfdf57a29b0d</BoundTo>
+      <DependentUpon>AB_Multipl_filter.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>74319172-6ad9-4215-8b98-31ce1d493ad8</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_reset_ab_to_default.cs">
+      <BoundTo>31a824ed-27fa-4f4b-af08-eb9c82007a38</BoundTo>
+      <DependentUpon>AB_reset_ab_to_default.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>85956128-452e-4dd7-a067-aeda99f07322</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_reset_ab_to_default.UserCode.cs">
+      <BoundTo>31a824ed-27fa-4f4b-af08-eb9c82007a38</BoundTo>
+      <DependentUpon>AB_reset_ab_to_default.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>f07736fa-3a6c-4cc6-9f75-9a48b77776bb</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_searchFilter.cs">
+      <BoundTo>054ac6ef-d7b5-4d3b-815a-cfff49be68ce</BoundTo>
+      <DependentUpon>AB_searchFilter.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>18fd4588-7664-493c-8527-84ef896ac4aa</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_searchFilter.UserCode.cs">
+      <BoundTo>054ac6ef-d7b5-4d3b-815a-cfff49be68ce</BoundTo>
+      <DependentUpon>AB_searchFilter.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>b7dee806-ba91-4bf8-86f9-4ae9176544ff</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_Select_folder_win64.cs">
       <BoundTo>13e0023d-88dc-4145-b4bb-d0e39a4842ee</BoundTo>
-      <DependentUpon>AB_Select_folder.rxrec</DependentUpon>
+      <DependentUpon>AB_Select_folder_win64.rxrec</DependentUpon>
       <RecorderCode>true</RecorderCode>
       <id>259e7755-2b78-4eeb-aea7-1ebfbbfbec0f</id>
     </Compile>
-    <Compile Include="Generic_app_UI\AB_Select_folder.UserCode.cs">
+    <Compile Include="Generic_app_UI\AB_Select_folder_win64.UserCode.cs">
       <BoundTo>13e0023d-88dc-4145-b4bb-d0e39a4842ee</BoundTo>
-      <DependentUpon>AB_Select_folder.rxrec</DependentUpon>
+      <DependentUpon>AB_Select_folder_win64.rxrec</DependentUpon>
       <UserCode>true</UserCode>
       <id>f248926b-e006-48fe-b5af-101ceaa465c1</id>
     </Compile>
@@ -545,7 +605,32 @@
       <id>abae39f1-4543-46a7-94da-c353a0043969</id>
       <recordtableid>16086a88-67c3-4d2c-a3c1-5d5cf167973d</recordtableid>
     </None>
-    <None Include="Generic_app_UI\AB_Select_folder.rxrec">
+    <None Include="Generic_app_UI\AB_Horizontal_Vertical_toggle.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>bae71b9f-ef28-4cce-a68a-dd9946f1e08e</id>
+      <recordtableid>a0032775-d7f5-4c8d-96ef-43d4899a6384</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_IconSize.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>b020767a-363e-4add-a2ed-6e10ebbeae03</id>
+      <recordtableid>11a7a3c6-d73b-46e0-903d-fc6f4f79513d</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_Multipl_filter.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>cf6c9c88-f3bd-462d-bbae-bfdf57a29b0d</id>
+      <recordtableid>5bcbbc42-77df-426f-be47-484a6257eaf3</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_reset_ab_to_default.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>31a824ed-27fa-4f4b-af08-eb9c82007a38</id>
+      <recordtableid>c60eb1b1-40ad-4e4a-839b-e4a887f8e7ea</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_searchFilter.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>054ac6ef-d7b5-4d3b-815a-cfff49be68ce</id>
+      <recordtableid>6e148f37-0147-4956-a96a-6875f8657779</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_Select_folder_win64.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>13e0023d-88dc-4145-b4bb-d0e39a4842ee</id>
       <recordtableid>31a9081e-b797-4f3f-aea9-a3455e315dab</recordtableid>

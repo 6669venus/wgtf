@@ -44,11 +44,12 @@ namespace NGTTestAutomation.Generic_app_UI
         {
         			  
 		 // Create PopupWatcher  
-		 PopupWatcher myPopupWatcher = new PopupWatcher();  
+		 //PopupWatcher myPopupWatcher = new PopupWatcher();  
 		   
 		 // Add a Watch using a RanoreXPath and triggering the Method CloseUpdateCheckDialog  
 		// myPopupWatcher.Watch("/form[@controlname='UpdateCheckForm']/button[@controlname='m_btnClose']", CloseUpdateCheckDialog);  
 		 Report.Info("???---Start---"); 
+//		 Delay.Seconds(5);
 		myPopupWatcher.Watch("/form[@title='generic_app.exe']", CloseUpdateCheckDialog);  
 		  
 		/*Thread dialogWatcher = new Thread(ClosePopUpDialogs);
@@ -65,12 +66,15 @@ namespace NGTTestAutomation.Generic_app_UI
 		 // myPopupWatcher.WatchAndClick(repo.UpdateCheckDialog, repo.UpdateCheckDialog.btCloseInfo);  
 		  
 		 // Start PopupWatcher  
-		 myPopupWatcher.Start();  
+		 myPopupWatcher.Start();
+		 Delay.Seconds(5);
 	 
           //  Mouse.DefaultMoveTime = 300;
           //  Keyboard.DefaultKeyPressTime = 100;
           //  Delay.SpeedFactor = 1.0;
         }
+        
+        private PopupWatcher myPopupWatcher = new PopupWatcher();
         
         public static void CloseUpdateCheckDialog(Ranorex.Core.Repository.RepoItemInfo myInfo, Ranorex.Core.Element myElement)  
 		{  

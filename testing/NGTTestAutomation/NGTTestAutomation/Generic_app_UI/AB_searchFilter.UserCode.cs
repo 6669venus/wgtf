@@ -21,7 +21,7 @@ using Ranorex.Core.Testing;
 
 namespace NGTTestAutomation.Generic_app_UI
 {
-    public partial class AB_Select_folder
+    public partial class AB_searchFilter
     {
         /// <summary>
         /// This method gets called right after the recording has been started.

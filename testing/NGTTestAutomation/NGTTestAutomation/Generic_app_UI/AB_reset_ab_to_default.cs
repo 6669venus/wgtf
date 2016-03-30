@@ -24,29 +24,29 @@ namespace NGTTestAutomation.Generic_app_UI
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The AB_Select_folder recording.
+    ///The AB_reset_ab_to_default recording.
     /// </summary>
-    [TestModule("31a9081e-b797-4f3f-aea9-a3455e315dab", ModuleType.Recording, 1)]
-    public partial class AB_Select_folder : ITestModule
+    [TestModule("c60eb1b1-40ad-4e4a-839b-e4a887f8e7ea", ModuleType.Recording, 1)]
+    public partial class AB_reset_ab_to_default : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static AB_Select_folder instance = new AB_Select_folder();
+        static AB_reset_ab_to_default instance = new AB_reset_ab_to_default();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public AB_Select_folder()
+        public AB_reset_ab_to_default()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static AB_Select_folder Instance
+        public static AB_reset_ab_to_default Instance
         {
             get { return instance; }
         }
@@ -79,8 +79,8 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGListViewRowDelegate1' at Center.", repo.Generic_app.MainWindow.WGListViewRowDelegate1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.WGListViewRowDelegate1.Click();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ExpandButton2' at Center.", repo.Generic_app.MainWindow.ExpandButton2Info, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.ExpandButton2.Click();
             Delay.Milliseconds(200);
             
         }

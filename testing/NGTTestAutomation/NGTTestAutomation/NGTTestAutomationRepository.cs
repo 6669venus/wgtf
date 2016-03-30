@@ -260,6 +260,19 @@ namespace NGTTestAutomation
             RepoItemInfo _wgmultilinetext2Info;
             RepoItemInfo _folderdivideInfo;
             RepoItemInfo _wglabelInfo;
+            RepoItemInfo _btnassetbrowserhidefoldersInfo;
+            RepoItemInfo _btnassetbrowserorientationInfo;
+            Button64pxIconsInfoClass _button64pxiconsInfo;
+            RepoItemInfo _wgexpandingrowlayoutInfo;
+            FilterText_Search_filterInfoClass _filtertext_search_filterInfo;
+            RepoItemInfo _buttondllInfo;
+            RepoItemInfo _closebuttonInfo;
+            AssetGridInfoClass _assetgridInfo;
+            QQuickWidget_ABInfoClass _qquickwidget_abInfo;
+            Column2InfoClass _column2Info;
+            IconFileInfoClass _iconfileInfo;
+            IconFile1InfoClass _iconfile1Info;
+            IconFile2InfoClass _iconfile2Info;
 
             /// <summary>
             /// Creates a new MainWindow  folder.
@@ -312,12 +325,25 @@ namespace NGTTestAutomation
                 _wglistviewrowdelegate1Info = new RepoItemInfo(this, "WGListViewRowDelegate1", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']//element[@name='assetSplitter']/container[@name='leftFrame']//list[@objectname='WGListView']/list[@objectname='WGListView']/list[3]/element[2]", 30000, null, "21854ac8-5661-4d6b-9beb-7ed33133c81b");
                 _wglistviewrowdelegate2Info = new RepoItemInfo(this, "WGListViewRowDelegate2", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='leftFrame']//list[@objectname='WGListView']/element[@objectname='WGListViewRowDelegate']", 30000, null, "a5908bb3-a941-48cd-af59-32a4be5de923");
                 _column1Info = new Column1InfoClass(this);
-                _wglistviewrowdelegate3Info = new RepoItemInfo(this, "WGListViewRowDelegate3", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']//element[@name='assetSplitter']/container[@name='leftFrame']//list[@objectname='WGListView']/list[@objectname='WGListView']/element[3]", 30000, null, "181b8c31-23c4-45c9-8c3c-69329c5dc720");
+                _wglistviewrowdelegate3Info = new RepoItemInfo(this, "WGListViewRowDelegate3", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']//element[@name='assetSplitter']/container[@name='leftFrame']//list[@objectname='WGListView']/list[@objectname='WGListView']/element[3]", 10000, null, "181b8c31-23c4-45c9-8c3c-69329c5dc720");
                 _wgmultilinetextInfo = new RepoItemInfo(this, "WGMultiLineText", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[1]/text[@objectname='WGMultiLineText']", 30000, null, "c8866cb4-c563-4152-ad2a-7ad234f0f5e6");
                 _wgmultilinetext1Info = new RepoItemInfo(this, "WGMultiLineText1", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[2]/text[@objectname='WGMultiLineText']", 30000, null, "f52a8513-46aa-4ae6-835c-00649bb4f4ea");
                 _wgmultilinetext2Info = new RepoItemInfo(this, "WGMultiLineText2", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[3]/text[@objectname='WGMultiLineText']", 30000, null, "0bab1ea8-9027-4271-b9fa-5f171c3a1692");
                 _folderdivideInfo = new RepoItemInfo(this, "FolderDivide", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']/?/?/container[@objectname='breadcrumbRowLayout']/container[2]/button[@objectname='folderDivide']", 30000, null, "67e60213-6349-43e4-9541-86faaf30cdb6");
                 _wglabelInfo = new RepoItemInfo(this, "WGLabel", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='breadCrumbs']//text[@objectname='WGLabel']", 30000, null, "27d51736-ef59-4623-b330-53de4d018567");
+                _btnassetbrowserhidefoldersInfo = new RepoItemInfo(this, "BtnAssetBrowserHideFolders", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='WGExpandingRowLayout']/button[@objectname='btnAssetBrowserHideFolders']", 30000, null, "81b5ce53-63ee-4951-a7d6-8d700d7b0a8c");
+                _btnassetbrowserorientationInfo = new RepoItemInfo(this, "BtnAssetBrowserOrientation", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='WGExpandingRowLayout']/button[@objectname='btnAssetBrowserOrientation']", 30000, null, "cf119ebf-317c-4baf-922f-b1f70609c3c0");
+                _button64pxiconsInfo = new Button64pxIconsInfoClass(this);
+                _wgexpandingrowlayoutInfo = new RepoItemInfo(this, "WGExpandingRowLayout", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='WGExpandingRowLayout']", 30000, null, "3b106057-6724-4189-96ba-8c72fe5c3ae5");
+                _filtertext_search_filterInfo = new FilterText_Search_filterInfoClass(this);
+                _buttondllInfo = new RepoItemInfo(this, "ButtonDll", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[2]/container[@name='activeFiltersRect']//container[@objectname='WGTextBoxFrame']/?/?/element[@name='activeFiltersLayout']/?/?/list[@type='QQuickRow']/container[3]/button[@objectname='filterStringButton']", 30000, null, "84aad9f6-13d8-499a-9044-85bc8541adef");
+                _closebuttonInfo = new RepoItemInfo(this, "CloseButton", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[2]/container[@name='activeFiltersRect']//container[@objectname='WGTextBoxFrame']/?/?/element[@name='activeFiltersLayout']/?/?/list[@type='QQuickRow']/container[2]/button[@objectname='closeButton']", 30000, null, "a88a26e8-cf13-4247-8c10-86f902e60d57");
+                _assetgridInfo = new AssetGridInfoClass(this);
+                _qquickwidget_abInfo = new QQuickWidget_ABInfoClass(this);
+                _column2Info = new Column2InfoClass(this);
+                _iconfileInfo = new IconFileInfoClass(this);
+                _iconfile1Info = new IconFile1InfoClass(this);
+                _iconfile2Info = new IconFile2InfoClass(this);
             }
 
             /// <summary>
@@ -450,6 +476,475 @@ namespace NGTTestAutomation
                 public CompressedImage GetScreenshot3(System.Drawing.Rectangle cropRect)
                 {
                     return GetImage("0c8b94a8-1503-412a-b0b8-2fb13c6f7174", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The Button64pxIconsInfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("1aa9fc10-56bd-4ac2-b299-87ef410e3f22")]
+            public class Button64pxIconsInfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// Button64pxIconsInfoClass class constructor.
+                /// </summary>
+                public Button64pxIconsInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "Button64pxIcons", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']//container[@name='mainColumn']/container[1]/container[3]/container[@objectname='WGExpandingRowLayout']/button[@objectname='displayButton']", 30000, null, "1aa9fc10-56bd-4ac2-b299-87ef410e3f22")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("ad94bfeb-af6a-4a19-ae89-718587f8386c")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("ad94bfeb-af6a-4a19-ae89-718587f8386c");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("ad94bfeb-af6a-4a19-ae89-718587f8386c")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("ad94bfeb-af6a-4a19-ae89-718587f8386c", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <returns>The Screenshot2 image.</returns>
+                [RepositoryImage("4ada7dd5-1368-41e7-a61c-12087983664b")]
+                public CompressedImage GetScreenshot2()
+                {
+                    return GetImage("4ada7dd5-1368-41e7-a61c-12087983664b");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("4ada7dd5-1368-41e7-a61c-12087983664b")]
+                public CompressedImage GetScreenshot2(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("4ada7dd5-1368-41e7-a61c-12087983664b", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The FilterText_Search_filterInfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("3835c9a7-ad26-45ea-8142-7741e0c64fea")]
+            public class FilterText_Search_filterInfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// FilterText_Search_filterInfoClass class constructor.
+                /// </summary>
+                public FilterText_Search_filterInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "FilterText_Search_filter", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//container[@name='mainColumn']/container[2]/container[@name='activeFiltersRect']//container[@objectname='WGExpandingRowLayout']/container[@objectname='WGTextBoxFrame']/?/?/text[@objectname='filterText']", 30000, null, "3835c9a7-ad26-45ea-8142-7741e0c64fea")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("b782a0f5-78f9-4be4-bcf1-e033357768c2")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("b782a0f5-78f9-4be4-bcf1-e033357768c2");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("b782a0f5-78f9-4be4-bcf1-e033357768c2")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("b782a0f5-78f9-4be4-bcf1-e033357768c2", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The AssetGridInfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("26fea737-595b-41a4-887a-0978c5178492")]
+            public class AssetGridInfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// AssetGridInfoClass class constructor.
+                /// </summary>
+                public AssetGridInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "AssetGrid", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']", 30000, null, "26fea737-595b-41a4-887a-0978c5178492")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("99b0a047-e57b-42a8-a297-eb7365a0ca90")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("99b0a047-e57b-42a8-a297-eb7365a0ca90");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("99b0a047-e57b-42a8-a297-eb7365a0ca90")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("99b0a047-e57b-42a8-a297-eb7365a0ca90", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <returns>The Screenshot2 image.</returns>
+                [RepositoryImage("27203252-d73b-451d-af8e-948bf80a50d6")]
+                public CompressedImage GetScreenshot2()
+                {
+                    return GetImage("27203252-d73b-451d-af8e-948bf80a50d6");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("27203252-d73b-451d-af8e-948bf80a50d6")]
+                public CompressedImage GetScreenshot2(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("27203252-d73b-451d-af8e-948bf80a50d6", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The QQuickWidget_ABInfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("1014c855-fe44-4aea-923f-5fbd3004903a")]
+            public class QQuickWidget_ABInfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// QQuickWidget_ABInfoClass class constructor.
+                /// </summary>
+                public QQuickWidget_ABInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "QQuickWidget_AB", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']", 30000, null, "1014c855-fe44-4aea-923f-5fbd3004903a")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("8a82c1ce-2123-4953-bf98-e85e1d68c254")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("8a82c1ce-2123-4953-bf98-e85e1d68c254");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("8a82c1ce-2123-4953-bf98-e85e1d68c254")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("8a82c1ce-2123-4953-bf98-e85e1d68c254", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <returns>The Screenshot2 image.</returns>
+                [RepositoryImage("0bd28c09-7b0c-4486-9b91-7c9cc82c5c5d")]
+                public CompressedImage GetScreenshot2()
+                {
+                    return GetImage("0bd28c09-7b0c-4486-9b91-7c9cc82c5c5d");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("0bd28c09-7b0c-4486-9b91-7c9cc82c5c5d")]
+                public CompressedImage GetScreenshot2(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("0bd28c09-7b0c-4486-9b91-7c9cc82c5c5d", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot3 item image.
+                /// </summary>
+                /// <returns>The Screenshot3 image.</returns>
+                [RepositoryImage("96c594c1-3937-45b1-8b3a-f6a1e169aca8")]
+                public CompressedImage GetScreenshot3()
+                {
+                    return GetImage("96c594c1-3937-45b1-8b3a-f6a1e169aca8");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot3 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("96c594c1-3937-45b1-8b3a-f6a1e169aca8")]
+                public CompressedImage GetScreenshot3(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("96c594c1-3937-45b1-8b3a-f6a1e169aca8", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot4 item image.
+                /// </summary>
+                /// <returns>The Screenshot4 image.</returns>
+                [RepositoryImage("ff3b4fff-34ed-4168-a661-f35217676295")]
+                public CompressedImage GetScreenshot4()
+                {
+                    return GetImage("ff3b4fff-34ed-4168-a661-f35217676295");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot4 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("ff3b4fff-34ed-4168-a661-f35217676295")]
+                public CompressedImage GetScreenshot4(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("ff3b4fff-34ed-4168-a661-f35217676295", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot5 item image.
+                /// </summary>
+                /// <returns>The Screenshot5 image.</returns>
+                [RepositoryImage("09b6666a-9057-4e0e-84d6-1898ff22a9f2")]
+                public CompressedImage GetScreenshot5()
+                {
+                    return GetImage("09b6666a-9057-4e0e-84d6-1898ff22a9f2");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot5 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("09b6666a-9057-4e0e-84d6-1898ff22a9f2")]
+                public CompressedImage GetScreenshot5(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("09b6666a-9057-4e0e-84d6-1898ff22a9f2", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot6 item image.
+                /// </summary>
+                /// <returns>The Screenshot6 image.</returns>
+                [RepositoryImage("1b979b24-7adf-40b7-9867-9cbbae407ea8")]
+                public CompressedImage GetScreenshot6()
+                {
+                    return GetImage("1b979b24-7adf-40b7-9867-9cbbae407ea8");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot6 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("1b979b24-7adf-40b7-9867-9cbbae407ea8")]
+                public CompressedImage GetScreenshot6(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("1b979b24-7adf-40b7-9867-9cbbae407ea8", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot7 item image.
+                /// </summary>
+                /// <returns>The Screenshot7 image.</returns>
+                [RepositoryImage("9d074af6-016b-4ec0-b75e-cc874fde4251")]
+                public CompressedImage GetScreenshot7()
+                {
+                    return GetImage("9d074af6-016b-4ec0-b75e-cc874fde4251");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot7 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("9d074af6-016b-4ec0-b75e-cc874fde4251")]
+                public CompressedImage GetScreenshot7(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("9d074af6-016b-4ec0-b75e-cc874fde4251", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The Column2InfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("187b62b3-2077-4009-a630-7c6816c8ccdc")]
+            public class Column2InfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// Column2InfoClass class constructor.
+                /// </summary>
+                public Column2InfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "Column2", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']//element[@objectname='WGColumnsFrame']/container[@name='column']", 30000, null, "187b62b3-2077-4009-a630-7c6816c8ccdc")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("f08e43fe-117a-49f6-910c-47d593c3da87")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("f08e43fe-117a-49f6-910c-47d593c3da87");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("f08e43fe-117a-49f6-910c-47d593c3da87")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("f08e43fe-117a-49f6-910c-47d593c3da87", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The IconFileInfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("82498092-5a4e-4b84-96c6-d863ac91c1f4")]
+            public class IconFileInfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// IconFileInfoClass class constructor.
+                /// </summary>
+                public IconFileInfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "IconFile", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[16]/picture[@name='icon_file']", 30000, null, "82498092-5a4e-4b84-96c6-d863ac91c1f4")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("4ac6c4cc-d291-49fd-a613-12afa28fc256")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("4ac6c4cc-d291-49fd-a613-12afa28fc256");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("4ac6c4cc-d291-49fd-a613-12afa28fc256")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("4ac6c4cc-d291-49fd-a613-12afa28fc256", cropRect);
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <returns>The Screenshot2 image.</returns>
+                [RepositoryImage("dda62d53-4976-4cb5-bac1-712d709012d1")]
+                public CompressedImage GetScreenshot2()
+                {
+                    return GetImage("dda62d53-4976-4cb5-bac1-712d709012d1");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot2 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("dda62d53-4976-4cb5-bac1-712d709012d1")]
+                public CompressedImage GetScreenshot2(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("dda62d53-4976-4cb5-bac1-712d709012d1", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The IconFile1InfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("17635906-a005-40e1-91a0-b735a80b578f")]
+            public class IconFile1InfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// IconFile1InfoClass class constructor.
+                /// </summary>
+                public IconFile1InfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "IconFile1", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[12]/picture[@name='icon_file']", 30000, null, "17635906-a005-40e1-91a0-b735a80b578f")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("c2e8a22d-bd68-4dd3-b4e1-36e596098aaa")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("c2e8a22d-bd68-4dd3-b4e1-36e596098aaa");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("c2e8a22d-bd68-4dd3-b4e1-36e596098aaa")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("c2e8a22d-bd68-4dd3-b4e1-36e596098aaa", cropRect);
+                }
+            }
+
+            /// <summary>
+            /// The IconFile2InfoClass folder.
+            /// </summary>
+            [RepositoryItemInfo("fa89f7ae-e51b-4545-88b3-413a7cfaec8b")]
+            public class IconFile2InfoClass : RepoItemInfo
+            {
+                /// <summary>
+                /// IconFile2InfoClass class constructor.
+                /// </summary>
+                public IconFile2InfoClass(RepoGenBaseFolder parentFolder)
+                    : base(parentFolder, "IconFile2", "container[@objectname='plg_panel_manager/asset_browser_panel.qml']/element[@type='QQuickWidget']//element[@name='assetSplitter']/container[@name='fileColumn']/?/?/element[@objectname='assetGrid']/container[6]/picture[@name='icon_file']", 30000, null, "fa89f7ae-e51b-4545-88b3-413a7cfaec8b")
+                { }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <returns>The Screenshot1 image.</returns>
+                [RepositoryImage("ec137908-4ba6-4eb0-b93b-e5414df38203")]
+                public CompressedImage GetScreenshot1()
+                {
+                    return GetImage("ec137908-4ba6-4eb0-b93b-e5414df38203");
+                }
+
+                /// <summary>
+                /// Gets the Screenshot1 item image.
+                /// </summary>
+                /// <param name="cropRect">The bounds of the sub-image to return.</param>
+                /// <returns>The cropped image.</returns>
+                [RepositoryImage("ec137908-4ba6-4eb0-b93b-e5414df38203")]
+                public CompressedImage GetScreenshot1(System.Drawing.Rectangle cropRect)
+                {
+                    return GetImage("ec137908-4ba6-4eb0-b93b-e5414df38203", cropRect);
                 }
             }
 
@@ -1626,6 +2121,318 @@ namespace NGTTestAutomation
                 get
                 {
                     return _wglabelInfo;
+                }
+            }
+
+            /// <summary>
+            /// The BtnAssetBrowserHideFolders item.
+            /// </summary>
+            [RepositoryItem("81b5ce53-63ee-4951-a7d6-8d700d7b0a8c")]
+            public virtual Ranorex.Button BtnAssetBrowserHideFolders
+            {
+                get
+                {
+                    return _btnassetbrowserhidefoldersInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The BtnAssetBrowserHideFolders item info.
+            /// </summary>
+            [RepositoryItemInfo("81b5ce53-63ee-4951-a7d6-8d700d7b0a8c")]
+            public virtual RepoItemInfo BtnAssetBrowserHideFoldersInfo
+            {
+                get
+                {
+                    return _btnassetbrowserhidefoldersInfo;
+                }
+            }
+
+            /// <summary>
+            /// The BtnAssetBrowserOrientation item.
+            /// </summary>
+            [RepositoryItem("cf119ebf-317c-4baf-922f-b1f70609c3c0")]
+            public virtual Ranorex.Button BtnAssetBrowserOrientation
+            {
+                get
+                {
+                    return _btnassetbrowserorientationInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The BtnAssetBrowserOrientation item info.
+            /// </summary>
+            [RepositoryItemInfo("cf119ebf-317c-4baf-922f-b1f70609c3c0")]
+            public virtual RepoItemInfo BtnAssetBrowserOrientationInfo
+            {
+                get
+                {
+                    return _btnassetbrowserorientationInfo;
+                }
+            }
+
+            /// <summary>
+            /// The Button64pxIcons item.
+            /// </summary>
+            [RepositoryItem("1aa9fc10-56bd-4ac2-b299-87ef410e3f22")]
+            public virtual Ranorex.Button Button64pxIcons
+            {
+                get
+                {
+                    return _button64pxiconsInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Button64pxIcons item info.
+            /// </summary>
+            [RepositoryItemInfo("1aa9fc10-56bd-4ac2-b299-87ef410e3f22")]
+            public virtual Button64pxIconsInfoClass Button64pxIconsInfo
+            {
+                get
+                {
+                    return _button64pxiconsInfo;
+                }
+            }
+
+            /// <summary>
+            /// The WGExpandingRowLayout item.
+            /// </summary>
+            [RepositoryItem("3b106057-6724-4189-96ba-8c72fe5c3ae5")]
+            public virtual Ranorex.Container WGExpandingRowLayout
+            {
+                get
+                {
+                    return _wgexpandingrowlayoutInfo.CreateAdapter<Ranorex.Container>(true);
+                }
+            }
+
+            /// <summary>
+            /// The WGExpandingRowLayout item info.
+            /// </summary>
+            [RepositoryItemInfo("3b106057-6724-4189-96ba-8c72fe5c3ae5")]
+            public virtual RepoItemInfo WGExpandingRowLayoutInfo
+            {
+                get
+                {
+                    return _wgexpandingrowlayoutInfo;
+                }
+            }
+
+            /// <summary>
+            /// The FilterText_Search_filter item.
+            /// </summary>
+            [RepositoryItem("3835c9a7-ad26-45ea-8142-7741e0c64fea")]
+            public virtual Ranorex.Text FilterText_Search_filter
+            {
+                get
+                {
+                    return _filtertext_search_filterInfo.CreateAdapter<Ranorex.Text>(true);
+                }
+            }
+
+            /// <summary>
+            /// The FilterText_Search_filter item info.
+            /// </summary>
+            [RepositoryItemInfo("3835c9a7-ad26-45ea-8142-7741e0c64fea")]
+            public virtual FilterText_Search_filterInfoClass FilterText_Search_filterInfo
+            {
+                get
+                {
+                    return _filtertext_search_filterInfo;
+                }
+            }
+
+            /// <summary>
+            /// The ButtonDll item.
+            /// </summary>
+            [RepositoryItem("84aad9f6-13d8-499a-9044-85bc8541adef")]
+            public virtual Ranorex.Button ButtonDll
+            {
+                get
+                {
+                    return _buttondllInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The ButtonDll item info.
+            /// </summary>
+            [RepositoryItemInfo("84aad9f6-13d8-499a-9044-85bc8541adef")]
+            public virtual RepoItemInfo ButtonDllInfo
+            {
+                get
+                {
+                    return _buttondllInfo;
+                }
+            }
+
+            /// <summary>
+            /// The CloseButton item.
+            /// </summary>
+            [RepositoryItem("a88a26e8-cf13-4247-8c10-86f902e60d57")]
+            public virtual Ranorex.Button CloseButton
+            {
+                get
+                {
+                    return _closebuttonInfo.CreateAdapter<Ranorex.Button>(true);
+                }
+            }
+
+            /// <summary>
+            /// The CloseButton item info.
+            /// </summary>
+            [RepositoryItemInfo("a88a26e8-cf13-4247-8c10-86f902e60d57")]
+            public virtual RepoItemInfo CloseButtonInfo
+            {
+                get
+                {
+                    return _closebuttonInfo;
+                }
+            }
+
+            /// <summary>
+            /// The AssetGrid item.
+            /// </summary>
+            [RepositoryItem("26fea737-595b-41a4-887a-0978c5178492")]
+            public virtual Ranorex.Unknown AssetGrid
+            {
+                get
+                {
+                    return _assetgridInfo.CreateAdapter<Ranorex.Unknown>(true);
+                }
+            }
+
+            /// <summary>
+            /// The AssetGrid item info.
+            /// </summary>
+            [RepositoryItemInfo("26fea737-595b-41a4-887a-0978c5178492")]
+            public virtual AssetGridInfoClass AssetGridInfo
+            {
+                get
+                {
+                    return _assetgridInfo;
+                }
+            }
+
+            /// <summary>
+            /// The QQuickWidget_AB item.
+            /// </summary>
+            [RepositoryItem("1014c855-fe44-4aea-923f-5fbd3004903a")]
+            public virtual Ranorex.Unknown QQuickWidget_AB
+            {
+                get
+                {
+                    return _qquickwidget_abInfo.CreateAdapter<Ranorex.Unknown>(true);
+                }
+            }
+
+            /// <summary>
+            /// The QQuickWidget_AB item info.
+            /// </summary>
+            [RepositoryItemInfo("1014c855-fe44-4aea-923f-5fbd3004903a")]
+            public virtual QQuickWidget_ABInfoClass QQuickWidget_ABInfo
+            {
+                get
+                {
+                    return _qquickwidget_abInfo;
+                }
+            }
+
+            /// <summary>
+            /// The Column2 item.
+            /// </summary>
+            [RepositoryItem("187b62b3-2077-4009-a630-7c6816c8ccdc")]
+            public virtual Ranorex.Container Column2
+            {
+                get
+                {
+                    return _column2Info.CreateAdapter<Ranorex.Container>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Column2 item info.
+            /// </summary>
+            [RepositoryItemInfo("187b62b3-2077-4009-a630-7c6816c8ccdc")]
+            public virtual Column2InfoClass Column2Info
+            {
+                get
+                {
+                    return _column2Info;
+                }
+            }
+
+            /// <summary>
+            /// The IconFile item.
+            /// </summary>
+            [RepositoryItem("82498092-5a4e-4b84-96c6-d863ac91c1f4")]
+            public virtual Ranorex.Picture IconFile
+            {
+                get
+                {
+                    return _iconfileInfo.CreateAdapter<Ranorex.Picture>(true);
+                }
+            }
+
+            /// <summary>
+            /// The IconFile item info.
+            /// </summary>
+            [RepositoryItemInfo("82498092-5a4e-4b84-96c6-d863ac91c1f4")]
+            public virtual IconFileInfoClass IconFileInfo
+            {
+                get
+                {
+                    return _iconfileInfo;
+                }
+            }
+
+            /// <summary>
+            /// The IconFile1 item.
+            /// </summary>
+            [RepositoryItem("17635906-a005-40e1-91a0-b735a80b578f")]
+            public virtual Ranorex.Picture IconFile1
+            {
+                get
+                {
+                    return _iconfile1Info.CreateAdapter<Ranorex.Picture>(true);
+                }
+            }
+
+            /// <summary>
+            /// The IconFile1 item info.
+            /// </summary>
+            [RepositoryItemInfo("17635906-a005-40e1-91a0-b735a80b578f")]
+            public virtual IconFile1InfoClass IconFile1Info
+            {
+                get
+                {
+                    return _iconfile1Info;
+                }
+            }
+
+            /// <summary>
+            /// The IconFile2 item.
+            /// </summary>
+            [RepositoryItem("fa89f7ae-e51b-4545-88b3-413a7cfaec8b")]
+            public virtual Ranorex.Picture IconFile2
+            {
+                get
+                {
+                    return _iconfile2Info.CreateAdapter<Ranorex.Picture>(true);
+                }
+            }
+
+            /// <summary>
+            /// The IconFile2 item info.
+            /// </summary>
+            [RepositoryItemInfo("fa89f7ae-e51b-4545-88b3-413a7cfaec8b")]
+            public virtual IconFile2InfoClass IconFile2Info
+            {
+                get
+                {
+                    return _iconfile2Info;
                 }
             }
 

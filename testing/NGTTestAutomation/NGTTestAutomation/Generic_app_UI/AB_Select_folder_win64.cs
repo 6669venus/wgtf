@@ -24,29 +24,29 @@ namespace NGTTestAutomation.Generic_app_UI
 {
 #pragma warning disable 0436 //(CS0436) The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly'. Using the type defined in 'assembly'.
     /// <summary>
-    ///The AB_shortcut_crash recording.
+    ///The AB_Select_folder_win64 recording.
     /// </summary>
-    [TestModule("de2ea3a7-64d1-4a33-81c2-4bc2e7b0ccbc", ModuleType.Recording, 1)]
-    public partial class AB_shortcut_crash : ITestModule
+    [TestModule("31a9081e-b797-4f3f-aea9-a3455e315dab", ModuleType.Recording, 1)]
+    public partial class AB_Select_folder_win64 : ITestModule
     {
         /// <summary>
         /// Holds an instance of the NGTTestAutomation.NGTTestAutomationRepository repository.
         /// </summary>
         public static NGTTestAutomation.NGTTestAutomationRepository repo = NGTTestAutomation.NGTTestAutomationRepository.Instance;
 
-        static AB_shortcut_crash instance = new AB_shortcut_crash();
+        static AB_Select_folder_win64 instance = new AB_Select_folder_win64();
 
         /// <summary>
         /// Constructs a new instance.
         /// </summary>
-        public AB_shortcut_crash()
+        public AB_Select_folder_win64()
         {
         }
 
         /// <summary>
         /// Gets a static instance of this recording.
         /// </summary>
-        public static AB_shortcut_crash Instance
+        public static AB_Select_folder_win64 Instance
         {
             get { return instance; }
         }
@@ -79,31 +79,9 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            test_crash();
-            Delay.Milliseconds(0);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGListViewRowDelegate3' at Center.", repo.Generic_app.MainWindow.WGListViewRowDelegate3Info, new RecordItemIndex(1));
-            repo.Generic_app.MainWindow.WGListViewRowDelegate3.Click();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGListViewRowDelegate1' at Center.", repo.Generic_app.MainWindow.WGListViewRowDelegate1Info, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.WGListViewRowDelegate1.Click();
             Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Keyboard", "Key 'Down' Press.", new RecordItemIndex(2));
-            Keyboard.Press(System.Windows.Forms.Keys.Down, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
-            Delay.Milliseconds(0);
-            
-            Report.Log(ReportLevel.Info, "Keyboard", "Key 'Down' Press.", new RecordItemIndex(3));
-            Keyboard.Press(System.Windows.Forms.Keys.Down, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
-            Delay.Milliseconds(0);
-            
-            Report.Log(ReportLevel.Info, "Keyboard", "Key 'Down' Press.", new RecordItemIndex(4));
-            Keyboard.Press(System.Windows.Forms.Keys.Down, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
-            Delay.Milliseconds(0);
-            
-            Report.Log(ReportLevel.Info, "Keyboard", "Key 'Down' Press.", new RecordItemIndex(5));
-            Keyboard.Press(System.Windows.Forms.Keys.Down, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
-            Delay.Milliseconds(0);
-            
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(6));
-            Delay.Duration(10000, false);
             
         }
 

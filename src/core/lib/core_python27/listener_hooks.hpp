@@ -57,4 +57,4 @@ private:
 // Needed to pass state to Python functions below
 class IComponentContext;
 extern IComponentContext * g_pHookContext;
-extern std::weak_ptr< ReflectedPython::HookListener > g_listener_;
+extern std::weak_ptr< ReflectedPython::HookListener > g_listener;

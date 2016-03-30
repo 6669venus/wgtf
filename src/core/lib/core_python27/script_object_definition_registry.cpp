@@ -142,16 +142,11 @@ ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContex
 	, definitionManager_( context )
 	, hookListener_( new HookListener() )
 {
-	g_pHookContext = &context_;
-	g_listener_ = hookListener_;
 }
 
 
 ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
 {
-	// All reflected Python objects should have been removed by this point
-	g_listener_.reset();
-	g_pHookContext = nullptr;
 }
 
 
@@ -165,11 +160,18 @@ void ScriptObjectDefinitionRegistry::init()
 	definitionManager_->registerPropertyAccessorListener(
 		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
 	initDefinitionType4();
+
+	g_pHookContext = &context_;
+	g_listener = hookListener_;
 }
 
 
 void ScriptObjectDefinitionRegistry::fini()
 {
+	// All reflected Python objects should have been removed by this point
+	g_listener.reset();
+	g_pHookContext = nullptr;
+
 	assert( definitionManager_ != nullptr );
 
 	definitionManager_->deregisterPropertyAccessorListener(

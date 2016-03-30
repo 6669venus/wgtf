@@ -13,7 +13,7 @@
 
 
 IComponentContext * g_pHookContext = nullptr;
-std::weak_ptr< ReflectedPython::HookListener > g_listener_;
+std::weak_ptr< ReflectedPython::HookListener > g_listener;
 
 
 namespace ReflectedPython
@@ -53,8 +53,8 @@ wrap_setattr(PyObject *self, PyObject *args, void *wrapped)
 	// notification.
 	// If it has not been entered, then this property must have been set by
 	// a script.
-	assert( !g_listener_.expired() );
-	auto listener = g_listener_.lock();
+	assert( !g_listener.expired() );
+	auto listener = g_listener.lock();
 	if (listener->entered())
 	{
 		// -- Set attribute using default hook
@@ -378,10 +378,6 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	}
 
 	// Attach hook
-	void * pFunctionToBeWrapped = &::PyObject_GenericSetAttr;
-	auto pyWrapper = PyDescr_NewWrapper( pyType, &wrapper, pFunctionToBeWrapped );
-	assert( pyWrapper != nullptr );
-
 	auto pyOriginalEntry = PyDict_GetItem( pyType->tp_dict, wrapper.name_strobj );
 	if (pyOriginalEntry != nullptr)
 	{
@@ -392,6 +388,9 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 		assert( setResult2 == 0 );
 	}
 
+	void * pFunctionToBeWrapped = &::PyObject_GenericSetAttr;
+	auto pyWrapper = PyDescr_NewWrapper( pyType, &wrapper, pFunctionToBeWrapped );
+	assert( pyWrapper != nullptr );
 	assert( wrapper.name_strobj != nullptr );
 	const auto setResult3 =
 		PyDict_SetItem( pyType->tp_dict, wrapper.name_strobj, pyWrapper );
@@ -409,6 +408,13 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 {
 #if ENABLE_PYTHON_LISTENER_HOOKS
+	if (g_pHookContext == nullptr)
+	{
+		// Some other system is keeping a Python object after Python has
+		// shut down
+		return;
+	}
+
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects

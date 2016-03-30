@@ -377,6 +377,9 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 		return;
 	}
 
+	const auto removed = PyDict_DelItem( pyType->tp_dict, hookInfo.wrapper_.name_strobj ) < 0;
+	//assert( removed );
+
 	// Restore old setattr
 	//pyType->tp_setattro = (setattrofunc)hookInfo.wrapper_.function;
 	PyType_Modified( pyType );
@@ -400,9 +403,13 @@ void cleanupListenerHooks( HookLookup & hookLookup )
 			continue;
 		}
 
+		const auto removed = PyDict_DelItem( pyType->tp_dict, itr->second.wrapper_.name_strobj ) < 0;
+		//assert( removed );
+
 		//pyType->tp_setattro = itr->second.defaultHook_;
 		PyType_Modified( pyType );
 	}
+	hookLookup.clear();
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 

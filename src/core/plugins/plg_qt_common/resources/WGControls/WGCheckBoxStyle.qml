@@ -100,7 +100,7 @@ Style {
             text: StyleHelpers.stylizeMnemonics(control.text)
             anchors.centerIn: parent
             color: SystemPaletteSingleton.text(control.enabled)
-            renderType: Settings.isMobile ? Text.QtRendering : Text.NativeRendering
+            renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         }
     }
     /*! The background under indicator and label. */

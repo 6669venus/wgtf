@@ -20,5 +20,4 @@ WGBusyIndicator {
 
 BusyIndicator {
     objectName: "WGBusyIndicator"
-    //style: WGBusyIndicatorStyle
 }

@@ -20,7 +20,8 @@ DefinedInstance::DefinedInstance()
 	, pythonObject_( nullptr )
 	, pDefinition_( nullptr )
 	, context_( nullptr )
-	, parentObject_( nullptr )
+	, parentHandle_( nullptr )
+	, pRoot_( this )
 {
 	assert( false && "Always construct with a Python object" );
 }
@@ -30,27 +31,39 @@ DefinedInstance::DefinedInstance(
 	IComponentContext & context,
 	const PyScript::ScriptObject & pythonObject,
 	std::shared_ptr< IClassDefinition > & definition,
-	const PyScript::ScriptObject & parentObject,
+	const ObjectHandle & parentHandle,
 	const std::string & childPath )
 	: BaseGenericObject()
 	, pythonObject_( pythonObject )
 	, pDefinition_( definition )
 	, context_( &context )
-	, parentObject_( parentObject )
+	, parentHandle_( parentHandle )
+	, pRoot_( this )
 {
-	if (parentObject_.exists())
+	auto pParentInstance = parentHandle_.getBase< DefinedInstance >();
+
+	// parentHandle_ must be null or contain a DefinedInstance
+	assert( !parentHandle_.isValid() || (pParentInstance != nullptr) );
+	if (pParentInstance != nullptr)
 	{
-		auto parentHandle = find( (*context_), parentObject_ );
-		auto pParent = parentHandle.getBase< DefinedInstance >();
-		if (pParent != nullptr)
+		// Detect cycles
+		assert( pParentInstance->pythonObject() != pythonObject_ );
+
+		// Update root object
+		pRoot_ = &pParentInstance->root();
+
+		// Add parent path
+		fullPath_ = pParentInstance->fullPath();
+		if (!fullPath_.empty() && !childPath.empty())
 		{
-			fullPath_ = pParent->fullPath();
-			if (!fullPath_.empty())
+			if (childPath[0] != INDEX_OPEN)
 			{
 				fullPath_ += DOT_OPERATOR;
 			}
 		}
 	}
+
+	// Add child path after parent path
 	fullPath_ += childPath;
 
 	setDefinition( pDefinition_.get() );
@@ -64,7 +77,7 @@ DefinedInstance::~DefinedInstance()
 
 /* static */ ObjectHandle DefinedInstance::findOrCreate( IComponentContext & context,
 	const PyScript::ScriptObject & pythonObject,
-	const PyScript::ScriptObject & parentObject,
+	const ObjectHandle & parentHandle,
 	const std::string & childPath )
 {
 	assert( pythonObject.exists() );
@@ -92,7 +105,7 @@ DefinedInstance::~DefinedInstance()
 
 	// Existing object handle not found, construct a new instance
 	auto pInstance = std::unique_ptr< ReflectedPython::DefinedInstance >(
-		new DefinedInstance( context, pythonObject, pDefinition, parentObject, childPath ) );
+		new DefinedInstance( context, pythonObject, pDefinition, parentHandle, childPath ) );
 	ObjectHandleT< ReflectedPython::DefinedInstance > handleT(
 		std::move( pInstance ),
 		&definition );
@@ -143,22 +156,8 @@ const PyScript::ScriptObject & DefinedInstance::pythonObject() const
 
 const DefinedInstance & DefinedInstance::root() const
 {
-	assert( context_ != nullptr );
-
-	// TODO NGT-1561 perhaps it can store root instead of parent
-	const DefinedInstance * pParent = this;
-	while (pParent->parentObject_.exists())
-	{
-		auto parentHandle = find( (*context_), parentObject_ );
-		auto pOtherParent = parentHandle.getBase< DefinedInstance >();
-		if (pParent == nullptr)
-		{
-			break;
-		}
-		pParent = pOtherParent;
-	}
-	assert( pParent != nullptr );
-	return (*pParent);
+	assert( pRoot_ != nullptr );
+	return (*pRoot_);
 }
 
 

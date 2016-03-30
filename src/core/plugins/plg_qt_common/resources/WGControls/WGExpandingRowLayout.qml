@@ -12,34 +12,36 @@ WGExpandingRowLayout {
         value: 25
         minimumValue: 0
         maximumValue: 100
-
-        b_Target: perfBar3
-        b_Property: "value_"
-        b_Value: value
     }
 
     WGPerformanceBar {
         id: perfBar3
-        showValue_: true
-        ranges_:[10,25,100]
+        showValue: true
+        ranges:[10,25,100]
     }
 }
 \endcode
 */
 
 RowLayout {
+    id: expandingrowlayout
     objectName: "WGExpandingRowLayout"
 
     /*! This property defines the row height.
         The default value is defined by defaultSpacing.minimumRowHeight
     */
-    property int rowHeight_: defaultSpacing.minimumRowHeight
+    property int rowHeight: defaultSpacing.minimumRowHeight
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     spacing: defaultSpacing.rowSpacing
+
+	/*! Deprecated */
+    property alias label_: expandingrowlayout.label
+	
+	/*! Deprecated */
+	property alias rowHeight_: expandingrowlayout.rowHeight
 }

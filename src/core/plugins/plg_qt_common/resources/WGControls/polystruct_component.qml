@@ -9,20 +9,20 @@ WGDropDownBox {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    WGListModel {
-        id: polyModel
-        source: itemData.DefinitionModel
-
-        ValueExtension {}
+    Component.onCompleted: {
+        currentIndex = Qt.binding( function() {
+            var modelIndex = polyModel.find( itemData.Definition, "Value" );
+            return polyModel.indexRow( modelIndex ); } )
     }
 
     model: polyModel
     textRole: "display"
 
-    Component.onCompleted: {
-        currentIndex = Qt.binding( function() {
-            var modelIndex = polyModel.find( itemData.Definition, "Value" );
-            return polyModel.indexRow( modelIndex ); } )
+    WGListModel {
+        id: polyModel
+        source: itemData.DefinitionModel
+
+        ValueExtension {}
     }
 
     Connections {

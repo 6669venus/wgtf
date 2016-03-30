@@ -5,7 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 
 Rectangle {
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     property var title: "PropertyTree Test"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: source

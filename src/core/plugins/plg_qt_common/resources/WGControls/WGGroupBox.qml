@@ -10,8 +10,8 @@ Example:
 \code{.js}
 WGGroupBox {
     text: "Group Box"
-    toggleable_ : true
-    childObject_ :
+    toggleable : true
+    childObject :
     WGBoolGridLayout {
         ExclusiveGroup { id: radioPanelGroup }
         WGRadioButton {
@@ -34,11 +34,11 @@ WGGroupBox {
 
 WGSubPanel{
     objectName: "WGGroupBox"
-    collapsible_: false
-    transparentPanel_: true
-    contentLeftMargin_: 0
-    contentRightMargin_: 0
-    boldHeader_: false
-    hasIcon_: false
-    hasSeparators_: true
+    collapsible: false
+    transparentPanel: true
+    contentLeftMargin: 0
+    contentRightMargin: 0
+    boldHeader: false
+    hasIcon: false
+    hasSeparators: true
 }

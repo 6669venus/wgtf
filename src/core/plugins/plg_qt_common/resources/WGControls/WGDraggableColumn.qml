@@ -2,8 +2,6 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 
-//TODO: Requires more polishing to improve drag distance NGT-278
-
 /*!
     \brief A Column layout where every child has a draggable handle on the left hand side.
     Non invasive drag handles only visible when unlocked and mouse over.
@@ -17,22 +15,22 @@ Example:
 \code{.js}
 WGScrollPanel {
 
-    childObject_ :
+    childObject :
     WGDraggableColumn {
 
         WGSubPanel {
             text: "Form Layout"
-            childObject_ :
+            childObject :
                 WGFormLayout {
                     id: topForm
-                    localForm_: true
+                    localForm: true
 
                     WGLabel {
                         text: "Import Files"
                     }
 
                     WGPushButton {
-                        label_: "Import"
+                        label: "Import"
                         text: "..."
                     }
                 }
@@ -44,7 +42,7 @@ WGScrollPanel {
 
 WGColumnLayout {
     id: mainColumn
-    objectName: "WGDraggablecolumn"
+    objectName: "WGDraggableColumn"
     rows: children.length + 1
     columns: 1
 
@@ -52,30 +50,25 @@ WGColumnLayout {
     property QtObject draggedObject
 
     /*! This property contains the row index of the panel being dragged
-        The default value is \c -1
-    */
+        The default value is \c -1 */
     property int dragItemIndex: -1
-
 
     /*! This property contains the dragHandle underneath the dragged panel */
     property QtObject targetObject
+
     /*! This property contains the drop target index of dragged panel
         The default value is \c -1 */
     property int dropTarget: -1
-
 
     /*! This property contains the fake object at the end of the column so panels can be dragged to the bottom */
     property QtObject lastSpacer
 
     /*! This property indicates when a has a dragged object has been dragged over a space */
-    property bool hovering_: false
+    property bool hovering: false
 
     /*! This property toggles the lock settings of the draggable state.
-        When locked you cannot drag the column
-    */
-    property bool unLocked_: !globalSettings.dragLocked
-
-    flow: GridLayout.TopToBottom
+        When locked you cannot drag the column */
+    property bool unlocked: !globalSettings.dragLocked
 
     //if something is being dragged, give the fake object a size
     onDragItemIndexChanged: dragItemIndex > -1 ? lastSpacer.lineSpaces_ = 5 : lastSpacer.lineSpaces_ = 0
@@ -114,4 +107,12 @@ WGColumnLayout {
         columns = 2
         rows = children.length - 1
     }
+
+    flow: GridLayout.TopToBottom
+
+    /*! Deprecated */
+    property alias hovering_: mainColumn.hovering
+
+    /*! Deprecated */
+    property alias unLocked_: mainColumn.unlocked
 }

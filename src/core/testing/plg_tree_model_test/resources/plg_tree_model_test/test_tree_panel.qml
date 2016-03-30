@@ -5,7 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 
 WGPanel {
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     title: "TreeModel Test"
     layoutHints: { 'test': 0.1 }
     property var sourceModel: source

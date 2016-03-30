@@ -5,7 +5,7 @@ import QtQuick.Controls 1.2
 
 /*!
  \brief Text entry intended for numbers.
- Single clicked increment/decrement  via stepSize property.
+ Single clicked increment/decrement via stepSize property.
  Click and drag increment/decrement based on vertical linear mouse distance moved.
  Multiplier on speed of number change via keyboard toggle (Ctrl) whilst dragging.
  Releasing Ctrl drops number change rate back to default.
@@ -29,10 +29,8 @@ WGNumberBox {
 */
 
 WGSpinBox {
-    objectName: "WGNumberBox"
     id: spinBox
-
-    activeFocusOnTab: enabled
+    objectName: "WGNumberBox"
 
     /*!
         This property contains the value represented by the control
@@ -47,6 +45,4 @@ WGSpinBox {
     onNumberChanged: {
         value = number;
     }
-
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 }

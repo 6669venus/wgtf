@@ -7,52 +7,50 @@ TextFieldStyle {
     id: baseStyle
     objectName: "WGTexBoxStyle"
 
-    textColor: palette.TextColor
+    textColor: palette.textColor
 
     /*! An undocumented (Qt) Style property required to centre the edit text properly */
     padding { top: 2 ; left: 4 ; right: 2 ; bottom: 2 }
 
-    selectedTextColor: palette.HighlightTextColor
+    selectedTextColor: palette.highlightTextColor
 
-    selectionColor: palette.HighlightColor
+    selectionColor: palette.highlightColor
 
-    placeholderTextColor: palette.PlaceholderTextColor
+    placeholderTextColor: palette.placeholderTextColor
 
-    renderType: Text.NativeRendering
+    renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
     background: WGTextBoxFrame {
         id: textFrame
+        color: palette.textBoxColor
+        border.color: palette.darkestShade
+
         states: [
             State {
                 name: "ACTIVE FOCUS"
                 when: control.activeFocus && control.enabled && !control.readOnly
-                PropertyChanges {target: textFrame; border.color: palette.LighterShade}
+                PropertyChanges {target: textFrame; border.color: palette.lighterShade}
             },
             State {
                 name: "ACTIVE FOCUS READ ONLY"
                 when: control.activeFocus && control.enabled && control.readOnly
                 PropertyChanges {target: textFrame; color: "transparent"}
-                PropertyChanges {target: textFrame; border.color: palette.LighterShade}
-                PropertyChanges {target: baseStyle; textColor: palette.NeutralTextColor}
+                PropertyChanges {target: textFrame; border.color: palette.lighterShade}
+                PropertyChanges {target: baseStyle; textColor: palette.neutralTextColor}
             },
             State {
                 name: "READ ONLY"
                 when: control.enabled && control.readOnly && !control.activeFocus
                 PropertyChanges {target: textFrame; color: "transparent"}
-                PropertyChanges {target: textFrame; border.color: palette.DarkestShade}
-                PropertyChanges {target: baseStyle; textColor: palette.NeutralTextColor}
+                PropertyChanges {target: textFrame; border.color: palette.darkestShade}
+                PropertyChanges {target: baseStyle; textColor: palette.neutralTextColor}
             },
             State {
                 name: "DISABLED"
                 when: !control.enabled
-                PropertyChanges {target: textFrame; border.color: palette.DarkestShade}
-                PropertyChanges {target: baseStyle; textColor: palette.DisabledTextColor}
+                PropertyChanges {target: textFrame; border.color: palette.darkestShade}
+                PropertyChanges {target: baseStyle; textColor: palette.disabledTextColor}
             }
         ]
-
-
-        color: palette.TextBoxColor
-
-        border.color: palette.DarkestShade
     }
 }

@@ -7,9 +7,9 @@ MenuStyle {
     objectName: "WGMenuStyle"
 
     frame: Rectangle {
-        color: palette.DarkHeaderColor
+        color: palette.darkHeaderColor
         WGSeparator {
-            vertical_: true
+            vertical: true
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: defaultSpacing.minimumRowHeight
@@ -31,15 +31,15 @@ MenuStyle {
         color: {
             if (styleData.enabled && styleData.selected)
             {
-                palette.HighlightTextColor
+                palette.highlightTextColor
             }
             else if (styleData.enabled && !styleData.selected)
             {
-                palette.TextColor
+                palette.textColor
             }
             else if (!styleData.enabled)
             {
-                palette.DisabledTextColor
+                palette.disabledTextColor
             }
         }
     }
@@ -47,8 +47,8 @@ MenuStyle {
     scrollIndicator: Text {
         text: styleData.scrollerDirection ==  Qt.DownArrow ? "\uF036" : "\uF035"
         font.family : "Marlett"
-        color: palette.TextColor
-        renderType: Text.NativeRendering
+        color: palette.textColor
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }
@@ -59,18 +59,18 @@ MenuStyle {
         color: {
             if (styleData.enabled && styleData.selected)
             {
-                palette.HighlightTextColor
+                palette.highlightTextColor
             }
             else if (styleData.enabled && !styleData.selected)
             {
-                palette.TextColor
+                palette.textColor
             }
             else if (!styleData.enabled)
             {
-                palette.DisabledTextColor
+                palette.disabledTextColor
             }
         }
-        renderType: Text.NativeRendering
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         verticalAlignment: Text.AlignVCenter
         y: 3
     }
@@ -80,24 +80,24 @@ MenuStyle {
         implicitWidth: 14
         implicitHeight: 14
 
-        color: styleData.enabled ? palette.TextBoxColor : "transparent"
+        color: styleData.enabled ? palette.textBoxColor : "transparent"
 
-        border.color: styleData.enabled ? palette.DarkestShade : palette.DarkerShade
+        border.color: styleData.enabled ? palette.darkestShade : palette.darkerShade
 
         Rectangle {
             visible: styleData.checked
             color: {
                 if (styleData.enabled && styleData.checked)
                 {
-                    palette.HighlightColor
+                    palette.highlightColor
                 }
                 else if (styleData.enabled && !styleData.checked)
                 {
-                    palette.HighlightShade
+                    palette.highlightShade
                 }
                 else if (!styleData.enabled)
                 {
-                    palette.LightShade
+                    palette.lightShade
                 }
             }
             radius: defaultSpacing.halfRadius
@@ -106,10 +106,10 @@ MenuStyle {
 
             Text {
                 id : tickMark
-                color : styleData.enabled ? palette.HighlightTextColor : palette.LightestShade
+                color : styleData.enabled ? palette.highlightTextColor : palette.lightestShade
                 font.family : "Marlett"
                 font.pixelSize: checkboxFrame.height + defaultSpacing.standardRadius
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "\uF061"
                 visible : styleData.checked //invisible if partially checked
                 anchors.fill: parent
@@ -120,12 +120,11 @@ MenuStyle {
         }
     }
 
-    separator: Rectangle {
-        color: "transparent"
+    separator: Item {
         height: defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
         WGSeparator {
-            vertical_: false
+            vertical: false
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.left: parent.left

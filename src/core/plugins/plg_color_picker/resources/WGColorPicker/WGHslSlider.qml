@@ -71,6 +71,7 @@ ColumnLayout {
 
         WGColorSlider {
             id: hSlider
+            objectName: "hueColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
@@ -91,6 +92,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: hBox
+            objectName: "hueColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: 1.0
@@ -118,6 +120,7 @@ ColumnLayout {
 
         WGColorSlider {
             id: sSlider
+            objectName: "satColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
@@ -138,6 +141,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: sBox
+            objectName: "satColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: 1.0
@@ -165,6 +169,7 @@ ColumnLayout {
 
         WGColorSlider {
             id: lSlider
+            objectName: "lightColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
@@ -185,6 +190,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: lBox
+            objectName: "lightColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: 1.0

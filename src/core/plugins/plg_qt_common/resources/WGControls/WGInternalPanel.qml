@@ -7,19 +7,19 @@ import QtQuick 2.3
 \code{.js}
 WGSubPanel {
     text: "Sub Panel"
-    childObject_ :
+    childObject :
         WGColumnLayout {
 
             WGInternalPanel {
                 text: "Scrolling Panel of Buttons"
-                clipContents_: true
-                expanded_: false
-                childObject_ :
+                clipContents: true
+                expanded: false
+                childObject :
                     WGSubScrollPanel {
                         implicitHeight: 100
-                        childObject_:
+                        childObject:
                             WGFormLayout {
-                            localForm_: true
+                            localForm: true
                                 WGLabel{
                                     text: "Internal scrollbars possible, but not recommended"
                                 }
@@ -28,7 +28,7 @@ WGSubPanel {
                                     model: 10
                                     WGPushButton {
                                         text: "Button"
-                                        label_: "Repeated Label: "
+                                        label: "Repeated Label: "
                                     }
                                 }
                             }
@@ -41,6 +41,6 @@ WGSubPanel {
 
 WGSubPanel{
     objectName: "WGInternalPanel"
-    colorHeader_: palette.MainWindowColor
-    colorBody_: palette.MainWindowColor
+    colorHeader: palette.mainWindowColor
+    colorBody: palette.mainWindowColor
 }

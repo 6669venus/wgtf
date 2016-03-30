@@ -2645,10 +2645,174 @@ void newPropertyTest( ReflectedPython::DefinedInstance & instance,
 }
 
 
+/**
+ *	Access "childTest", then "collectionName" in two steps.
+ */
+void getCollectionPath1( const ReflectedPython::DefinedInstance & instance,
+	Collection & outCollection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	ObjectHandle childHandle;
+	const bool getChildSuccess = instance.get< ObjectHandle >(
+		"childTest", childHandle );
+
+	CHECK( getChildSuccess );
+	CHECK( childHandle.isValid() );
+	if (!childHandle.isValid())
+	{
+		return;
+	}
+
+	const auto pInstance = childHandle.getBase< ReflectedPython::DefinedInstance >();
+	CHECK( pInstance != nullptr );
+	if (pInstance == nullptr)
+	{
+		return;
+	}
+	const auto & child = (*pInstance);
+
+	const bool getCollectionSuccess = child.get< Collection >(
+		collectionName, outCollection );
+
+	CHECK( getCollectionSuccess );
+	CHECK( outCollection.isValid() );
+}
+
+
+/**
+ *	Access "childTest.collectionName" in one step.
+ */
+void getCollectionPath2( const ReflectedPython::DefinedInstance & instance,
+	Collection & outCollection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	std::string pathName = "childTest";
+	pathName += DOT_OPERATOR;
+	pathName += collectionName;
+	const bool getCollectionSuccess = instance.get< Collection >(
+		pathName.c_str(), outCollection );
+
+	CHECK( getCollectionSuccess );
+	CHECK( outCollection.isValid() );
+}
+
+
+/**
+ *	Test if items in a sequence have the correct paths.
+ */
+void checkSequencePaths( const ReflectedPython::DefinedInstance & instance,
+	const Collection & collection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	auto expectedKey = 0;
+	for (auto itr = collection.cbegin();
+		itr != collection.cend();
+		++itr, ++expectedKey)
+	{
+		int key = -1;
+		const auto keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+		CHECK_EQUAL( expectedKey, key );
+
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest";
+		expectedValueFullPath += DOT_OPERATOR;
+		expectedValueFullPath += collectionName;
+		expectedValueFullPath += INDEX_OPEN;
+		expectedValueFullPath += std::to_string( expectedKey );
+		expectedValueFullPath += INDEX_CLOSE;
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+
+		int valueValue = -1;
+		valueInstance.get< int >( "value", valueValue );
+		CHECK_EQUAL( valueValue, expectedKey );
+	}
+}
+
+
+/**
+ *	Test if items in a dictionary have the correct paths.
+ */
+void checkMappingPaths( const ReflectedPython::DefinedInstance & instance,
+	const Collection & collection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	for (auto itr = collection.cbegin(); itr != collection.cend(); ++itr)
+	{
+		ObjectHandle key;
+		const auto keySuccess = itr.key().tryCast( key );
+
+		const auto pKeyInstance = key.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pKeyInstance != nullptr );
+		if (pKeyInstance == nullptr)
+		{
+			return;
+		}
+		const auto & keyInstance = (*pKeyInstance);
+
+		const auto & keyRoot = keyInstance.root();
+		CHECK_EQUAL( &keyInstance, &keyRoot );
+
+		const auto & keyFullPath = keyInstance.fullPath();
+		const std::string expectedKeyFullPath =
+			keyInstance.pythonObject().str( PyScript::ScriptErrorPrint() ).c_str();
+		CHECK_EQUAL( expectedKeyFullPath, keyFullPath );
+
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest";
+		expectedValueFullPath += DOT_OPERATOR;
+		expectedValueFullPath += collectionName;
+		expectedValueFullPath += INDEX_OPEN;
+		expectedValueFullPath += expectedKeyFullPath;
+		expectedValueFullPath += INDEX_CLOSE;
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+	}
+}
+
+
 void pathTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ )
 {
+	// Access root (no path)
 	{
 		const auto & root = instance.root();
 		CHECK_EQUAL( &instance, &root );
@@ -2657,33 +2821,32 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 		const char * expectedFullPath = "";
 		CHECK_EQUAL( expectedFullPath, fullPath );
 	}
-	{
-		ObjectHandle handleResult;
-		const bool getSuccess = instance.get< ObjectHandle >(
-			"childTest", handleResult );
 
-		CHECK( getSuccess );
-		CHECK( handleResult.isValid() );
-		if (!handleResult.isValid())
-		{
-			return;
-		}
+	Collection collection;
 
-		const auto pInstance = handleResult.getBase< ReflectedPython::DefinedInstance >();
-		CHECK( pInstance != nullptr );
-		if (pInstance == nullptr)
-		{
-			return;
-		}
-		const auto & childInstance = (*pInstance);
+	// Access "childTest", then "listTest"
+	getCollectionPath1( instance, collection, "listTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "listTest", m_name, result_ );
 
-		const auto & root = childInstance.root();
-		CHECK_EQUAL( &instance, &root );
+	// Access "childTest.listTest"
+	getCollectionPath2( instance, collection, "listTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "listTest", m_name, result_ );
+	
+	// Access "childTest", then "tupleTest"
+	getCollectionPath1( instance, collection, "tupleTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "tupleTest", m_name, result_ );
 
-		const auto & fullPath = childInstance.fullPath();
-		const char * expectedFullPath = "childTest";
-		CHECK_EQUAL( expectedFullPath, fullPath );
-	}
+	// Access "childTest.tupleTest"
+	getCollectionPath2( instance, collection, "tupleTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "tupleTest", m_name, result_ );
+	
+	// Access "childTest", then "dictTest"
+	getCollectionPath1( instance, collection, "dictTest", m_name, result_ );
+	checkMappingPaths( instance, collection, "dictTest", m_name, result_ );
+
+	// Access "childTest.dictTest"
+	getCollectionPath2( instance, collection, "dictTest", m_name, result_ );
+	checkMappingPaths( instance, collection, "dictTest", m_name, result_ );
 }
 
 
@@ -2722,12 +2885,12 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 
-	PyScript::ScriptObject parent;
+	ObjectHandle parentHandle;
 	const char * childPath = "";
 	ObjectHandle handle = ReflectedPython::DefinedInstance::findOrCreate(
 		g_module->context_,
 		scriptObject,
-		parent,
+		parentHandle,
 		childPath );
 	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
@@ -2775,7 +2938,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PyScript::ScriptObject parent;
+		ObjectHandle parent;
 		const char * childPath = "";
 		bool success = typeConverters->toVariant( scriptObject, intType, parent, childPath );
 		CHECK( success );
@@ -2826,12 +2989,12 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 
-	PyScript::ScriptObject parent;
+	ObjectHandle parentHandle;
 	const char * childPath = "";
 	ObjectHandle handle = ReflectedPython::DefinedInstance::findOrCreate(
 		g_module->context_,
 		scriptObject,
-		parent,
+		parentHandle,
 		childPath );
 	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
@@ -2879,7 +3042,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		PyScript::ScriptObject parent;
+		ObjectHandle parent;
 		const char * childPath = "";
 		bool success = typeConverters->toVariant( scriptObject, intType, parent, childPath );
 		CHECK( success );

@@ -30,38 +30,38 @@ WGDropDownBox {
     id: box
     objectName: "WGOverlayDropDownBox"
 
-    __textColor: palette.OverlayDarkerShade
+    __textColor: palette.overlayDarkerShade
 
     style: ComboBoxStyle {
         id: comboBox
         background: WGButtonFrame {
             id: buttonFrame
 
-            border.color: palette.OverlayDarkerShade
-            color: palette.OverlayLightShade
+            border.color: palette.overlayDarkerShade
+            color: palette.overlayLightShade
 
             states: [
                 State {
                     name: "PRESSED"
                     when: control.pressed && control.enabled
-                    PropertyChanges {target: buttonFrame; color: palette.DarkestShade}
+                    PropertyChanges {target: buttonFrame; color: palette.darkestShade}
                 },
                 State {
                     name: "HOVERED"
                     when: control.hovered && control.enabled
-                    PropertyChanges {target: buttonFrame; color: palette.OverlayLighterShade}
-                    PropertyChanges {target: box; __textColor: palette.OverlayTextColor}
+                    PropertyChanges {target: buttonFrame; color: palette.overlayLighterShade}
+                    PropertyChanges {target: box; __textColor: palette.overlayTextColor}
                 },
                 State {
                     name: "DISABLED"
                     when: !control.enabled
-                    PropertyChanges {target: buttonFrame; color: palette.LightestShade }
-                    PropertyChanges {target: box; __textColor: palette.DarkestShade}
+                    PropertyChanges {target: buttonFrame; color: palette.lightestShade }
+                    PropertyChanges {target: box; __textColor: palette.darkestShade}
                 },
                 State {
                     name: "ACTIVE FOCUS"
                     when: control.enabled && control.activeFocus
-                    PropertyChanges {target: buttonFrame; innerBorderColor: palette.HighlightShade}
+                    PropertyChanges {target: buttonFrame; innerBorderColor: palette.highlightShade}
                 }
 
             ]
@@ -75,7 +75,7 @@ WGDropDownBox {
 
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "u"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
@@ -87,7 +87,7 @@ WGDropDownBox {
             horizontalAlignment: Text.AlignLeft
             color : box.__textColor
             text: control.currentText
-            renderType: Text.NativeRendering
+            renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         }
 
         // drop-down customization here
@@ -96,16 +96,16 @@ WGDropDownBox {
             __menuItemType: "comboboxitem"
 
             frame: Rectangle {              // background
-                color: palette.MainWindowColor
+                color: palette.mainWindowColor
                 border.width: defaultSpacing.standardBorderSize
-                border.color: palette.DarkColor
+                border.color: palette.darkColor
             }
 
             itemDelegate.label:             // an item text
                 Text {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                color: styleData.selected ? palette.TextColor : palette.HighlightTextColor
+                color: styleData.selected ? palette.textColor : palette.highlightTextColor
                 text: styleData.text
             }
 

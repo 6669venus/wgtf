@@ -43,6 +43,7 @@ public:
 	typedef SequenceIterator< T > iterator_impl_type;
 
 	Sequence( const container_type & container,
+		const ObjectHandle & containerHandle,
 		const Converters & typeConverters );
 
 	virtual size_t size() const override;
@@ -69,6 +70,7 @@ public:
 
 private:
 	container_type container_;
+	const ObjectHandle containerHandle_;
 	const Converters & typeConverters_;
 };
 

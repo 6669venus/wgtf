@@ -38,7 +38,7 @@ MouseArea
     {
         id: draggedArea
         border.width: 1
-        border.color: palette.HighlightColor
-        color: palette.HighlightShade
+        border.color: palette.highlightColor
+        color: palette.highlightShade
     }
 }

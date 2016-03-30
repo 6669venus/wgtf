@@ -71,7 +71,7 @@ int main(int argc, char **argv, char **envp, char **apple)
 		_set_error_mode(_OUT_TO_STDERR);
 		_set_abort_behavior( 0, _WRITE_ABORT_MSG);
 	}
-	if (clp->getFlag( "--debug-asserts" ))
+	if (clp->getFlag( "--log-asserts" ))
 	{
 		_CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );
 	}

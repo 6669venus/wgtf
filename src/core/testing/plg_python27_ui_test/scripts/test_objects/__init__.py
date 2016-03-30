@@ -184,13 +184,14 @@ class NewClassTest( object ):
 	#	'''
 	#	print "setattr", self, name
 	#	super( NewClassTest, self ).__setattr__( name, value )
-	#	# TODO NGT-1561 notify GUI
+
 	# Enable for testing
 	#def __delattr__( self, name ):
 	#	'''
 	#	Hook for notifying the GUI
 	#	Note: descriptors will not be caught by this hook.
 	#	'''
+	#	print "delattr", self, name
 	#	del object.name
 
 	classIntTest = 1

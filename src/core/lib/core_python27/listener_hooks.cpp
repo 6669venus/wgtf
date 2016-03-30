@@ -261,7 +261,7 @@ static wrapperbase g_wrappers[] =
 		0, // flags
 		nullptr // name_strobj
 	},
-	{ nullptr } // sentinel
+	{ nullptr } // Sentinel
 };
 
 

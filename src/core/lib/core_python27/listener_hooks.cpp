@@ -13,11 +13,16 @@
 
 
 IComponentContext * g_pHookContext = nullptr;
-ReflectedPython::HookLookup * g_pHookLookup_ = nullptr;
 std::weak_ptr< ReflectedPython::HookListener > g_listener_;
 
 
+namespace ReflectedPython
+{
+
+
 #if ENABLE_PYTHON_LISTENER_HOOKS
+
+
 /**
  *	Hook for listening to property changes.
  *
@@ -178,39 +183,16 @@ wrap_setattr(PyObject *self, PyObject *args, void *wrapped)
 	}
 	Py_RETURN_NONE;
 }
-#endif // ENABLE_PYTHON_LISTENER_HOOKS
 
 
-namespace ReflectedPython
-{
-
-
-HookListener::HookListener()
-	: entered_( 0 )
-{
-}
-
-
-void HookListener::preSetValue( const PropertyAccessor & accessor,
-	const Variant & value ) /*override*/
-{
-	++entered_;
-}
-
-
-void HookListener::postSetValue( const PropertyAccessor & accessor,
-	const Variant & value ) /*override*/
-{
-	--entered_;
-}
-
-
-bool HookListener::entered() const
-{
-	return (entered_ > 0);
-}
-
-
+/**
+ *	Copied from typeobject.c.
+ *	Calls a method on a *class/type*, but binds to the *instance*.
+ *	E.g. looks up a method like Class.method()
+ *	but then it binds to the instance:
+ *	instance = Class()
+ *	instance.method()
+ */
 static PyObject *
 call_method(PyObject *o, char *name, PyObject **nameobj, char *format, ...)
 {
@@ -246,6 +228,9 @@ call_method(PyObject *o, char *name, PyObject **nameobj, char *format, ...)
 }
 
 
+/**
+ *	Copied from typeobject.c.
+ */
 static int
 slot_tp_setattro(PyObject *self, PyObject *name, PyObject *value)
 {
@@ -265,8 +250,56 @@ slot_tp_setattro(PyObject *self, PyObject *name, PyObject *value)
 }
 
 
-void attachListenerHooks( PyScript::ScriptObject & pythonObject,
-	HookLookup & hookLookup )
+static wrapperbase g_wrappers[] =
+{
+	{
+		"__setattr__", // name of wrapper
+		offsetof( PyTypeObject, tp_setattro ), // offset to tp_setattro slot
+		ReflectedPython::slot_tp_setattro, // function
+		ReflectedPython::wrap_setattr, // wrapper for function
+		PyDoc_STR( "x.__setattr__('name', value) <==> x.name = value" ), // doc for wrapper
+		0, // flags
+		nullptr // name_strobj
+	},
+	{ nullptr } // sentinel
+};
+
+
+const char * g_hookCountName = "__setattrHookCount";
+PyObject * g_pyHookCountName = nullptr;
+
+const char * g_originalSetattrName = "__originalSetattr";
+PyObject * g_pyOriginalSetattrName = nullptr;
+#endif // ENABLE_PYTHON_LISTENER_HOOKS
+
+
+HookListener::HookListener()
+	: entered_( 0 )
+{
+}
+
+
+void HookListener::preSetValue( const PropertyAccessor & accessor,
+	const Variant & value ) /*override*/
+{
+	++entered_;
+}
+
+
+void HookListener::postSetValue( const PropertyAccessor & accessor,
+	const Variant & value ) /*override*/
+{
+	--entered_;
+}
+
+
+bool HookListener::entered() const
+{
+	return (entered_ > 0);
+}
+
+
+void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 {
 #if ENABLE_PYTHON_LISTENER_HOOKS
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
@@ -275,36 +308,69 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 	// Ignore errors if the attribute does not exist - first time hook is added
 	auto pyType = pythonObject.get()->ob_type;
 
+	// Do this first time
+	if (g_pyHookCountName == nullptr)
+	{
+		g_pyHookCountName = PyString_InternFromString( g_hookCountName );
+		if (g_pyHookCountName == nullptr)
+		{
+			Py_FatalError( "Out of memory interning listener hook names" );
+			return;
+		}
+	}
+	// Do this first time
+	if (g_pyOriginalSetattrName == nullptr)
+	{
+		g_pyOriginalSetattrName = PyString_InternFromString( g_originalSetattrName );
+		if (g_pyOriginalSetattrName == nullptr)
+		{
+			Py_FatalError( "Out of memory interning listener hook names" );
+			return;
+		}
+	}
+
 	auto typeObject = PyScript::ScriptType::getType( pythonObject );
 	assert( typeObject.exists() );
-	auto foundIt = hookLookup.find( typeObject );
-	if (foundIt != hookLookup.end())
+	auto hookCountObject = typeObject.getAttribute( g_hookCountName,
+		PyScript::ScriptErrorClear() );
+	if (hookCountObject.exists())
 	{
-		// Already hooked
-		HookInfo & hookInfo = (*foundIt).second;
-		++hookInfo.hookCount_;
-		return;
+		// Already hooked, increment count
+		auto hookCountLong = PyScript::ScriptLong::create( hookCountObject );
+		assert( hookCountLong.exists() );
+		if (!hookCountLong.exists())
+		{
+			auto hookCount = hookCountLong.asLong();
+			++hookCount;
+
+			hookCountLong = PyScript::ScriptLong::create( hookCount );
+			assert( hookCountLong.exists() );
+			assert( hookCountLong.asLong() > 0 );
+			const auto setResult =
+				PyDict_SetItem( pyType->tp_dict, g_pyHookCountName, hookCountLong.get() );
+			PyScript::Script::printError();
+			assert( setResult == 0 );
+
+			return;
+		}
 	}
 
 	// Add counter
-	auto emplaced = hookLookup.emplace( typeObject, HookInfo() );
-	HookInfo & hookInfo = emplaced.first->second;
-
-	// Save old setattr
-	hookInfo.hookCount_ = 1;
+	const long hookCount = 1;
+	auto hookCountLong = PyScript::ScriptLong::create( hookCount );
+	assert( hookCountLong.exists() );
+	assert( hookCountLong.asLong() > 0 );
+	const auto setResult1 =
+		PyDict_SetItem( pyType->tp_dict, g_pyHookCountName, hookCountLong.get() );
+	PyScript::Script::printError();
+	assert( setResult1 == 0 );
 
 	// -- From typeobject.c add_operators
-	hookInfo.wrapper_.name = "__setattr__"; // name of wrapper
-	hookInfo.wrapper_.offset = offsetof( PyTypeObject, tp_setattro ); // offset to tp_setattro slot
-	hookInfo.wrapper_.function = slot_tp_setattro;//pyType->tp_setattro; // default function ??
-	hookInfo.wrapper_.wrapper = wrap_setattr; // wrapper for function
-	hookInfo.wrapper_.doc = PyDoc_STR( "x.__setattr__('name', value) <==> x.name = value" ); // doc for wrapper
-	hookInfo.wrapper_.flags = 0; // flags
-	hookInfo.wrapper_.name_strobj = nullptr; // name_strobj
-	if (hookInfo.wrapper_.name_strobj == nullptr)
+	auto & wrapper = g_wrappers[ 0 ];
+	if (wrapper.name_strobj == nullptr)
 	{
-		hookInfo.wrapper_.name_strobj = PyString_InternFromString( hookInfo.wrapper_.name );
-		if (!hookInfo.wrapper_.name_strobj)
+		wrapper.name_strobj = PyString_InternFromString( wrapper.name );
+		if (!wrapper.name_strobj)
 		{
 			Py_FatalError( "Out of memory interning listener hook names" );
 			return;
@@ -312,43 +378,35 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject,
 	}
 
 	// Attach hook
-	//auto pyOriginalEntry = PyDict_GetItem( pyType->tp_dict, hookInfo.wrapper_.name_strobj );
-
-
-	char * ptr = (char *)pyType;
-	if (ptr != NULL)
-	{
-		ptr += hookInfo.wrapper_.offset;
-	}
-	void * pFunctionToBeWrapped = &PyObject_GenericSetAttr;
-	//void ** pFunctionToBeWrapped = (void**)ptr;
-	auto pyWrapper = PyDescr_NewWrapper( pyType, &hookInfo.wrapper_, pFunctionToBeWrapped );
-	auto pyDescr = (PyWrapperDescrObject *)pyWrapper;
+	void * pFunctionToBeWrapped = &::PyObject_GenericSetAttr;
+	auto pyWrapper = PyDescr_NewWrapper( pyType, &wrapper, pFunctionToBeWrapped );
 	assert( pyWrapper != nullptr );
 
-	if (PyDict_SetItem( pyType->tp_dict, hookInfo.wrapper_.name_strobj, pyWrapper ) < 0)
+	auto pyOriginalEntry = PyDict_GetItem( pyType->tp_dict, wrapper.name_strobj );
+	if (pyOriginalEntry != nullptr)
 	{
-		return;
+		assert( g_pyOriginalSetattrName != nullptr );
+		const auto setResult2 =
+			PyDict_SetItem( pyType->tp_dict, g_pyOriginalSetattrName, pyOriginalEntry );
+		PyScript::Script::printError();
+		assert( setResult2 == 0 );
 	}
 
-	//assert( pyType->tp_setattro != pySetattrHook );
+	assert( wrapper.name_strobj != nullptr );
+	const auto setResult3 =
+		PyDict_SetItem( pyType->tp_dict, wrapper.name_strobj, pyWrapper );
+	PyScript::Script::printError();
+	assert( setResult3 == 0 );
+
 	Py_DECREF( pyWrapper );
 
-	//auto pyNewEntry = PyDict_GetItem( pyType->tp_dict, hookInfo.wrapper_.name_strobj );
-
-	// -- From typeobject.c update_one_slot
-	//pyType->tp_setattro = (setattrofunc)hookInfo.wrapper_.function;
-
-	//assert( pyType->tp_setattro != pySetattrHook );
-	//pyType->tp_setattro = pySetattrHook;
 	PyType_Modified( pyType );
 
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 
 
-void detachListenerHooks( PyScript::ScriptObject & pythonObject,
-	HookLookup & hookLookup )
+void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 {
 #if ENABLE_PYTHON_LISTENER_HOOKS
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
@@ -357,8 +415,9 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 	auto typeObject = PyScript::ScriptType::getType( pythonObject );
 	auto pyType = pythonObject.get()->ob_type;
 
-	auto foundIt = hookLookup.find( typeObject );
-	if (foundIt == hookLookup.end())
+	auto hookCountObject = typeObject.getAttribute( g_hookCountName,
+		PyScript::ScriptErrorClear() );
+	if (!hookCountObject.exists())
 	{
 		// Not hooked
 		// An error must have occured in attachListenerHooks()
@@ -366,50 +425,63 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject,
 	}
 
 	// Decrement count
-	HookInfo & hookInfo = (*foundIt).second;
-	auto & hookCount = hookInfo.hookCount_;
+	auto hookCountLong = PyScript::ScriptLong::create( hookCountObject );
+	assert( hookCountLong.exists() );
+	if (!hookCountLong.exists())
+	{
+		return;
+	}
+
+	auto hookCount = hookCountLong.asLong();
 	assert( hookCount > 0 );
 	--hookCount;
 
 	if (hookCount > 0)
 	{
 		// Still other reflected Python objects using this type
+		// Update new count
+		hookCountLong = PyScript::ScriptLong::create( hookCount );
+		assert( hookCountLong.exists() );
+		assert( hookCountLong.asLong() > 0 );
+		const auto setResult =
+			PyDict_SetItem( pyType->tp_dict, g_pyHookCountName, hookCountLong.get() );
+		PyScript::Script::printError();
+		assert( setResult == 0 );
+
 		return;
 	}
 
-	const auto removed = PyDict_DelItem( pyType->tp_dict, hookInfo.wrapper_.name_strobj ) < 0;
-	//assert( removed );
+	auto & wrapper = g_wrappers[ 0 ];
+	assert( wrapper.name_strobj != nullptr );
+	//const auto removed1 = PyDict_DelItem( pyType->tp_dict, wrapper.name_strobj ) < 0;
+	const auto pyOriginalEntry = PyDict_GetItem( pyType->tp_dict, g_pyOriginalSetattrName );
+	if (pyOriginalEntry != nullptr)
+	{
+		const auto setResult =
+			PyDict_SetItem( pyType->tp_dict, wrapper.name_strobj, pyOriginalEntry );
+		PyScript::Script::printError();
+		assert( setResult == 0 );
+
+		assert( g_pyOriginalSetattrName != nullptr );
+		const auto removeResult = PyDict_DelItem( pyType->tp_dict, g_pyOriginalSetattrName );
+		PyScript::Script::printError();
+		assert( removeResult == 0 );
+	}
+	else
+	{
+		const auto removeResult =
+			PyDict_DelItem( pyType->tp_dict, wrapper.name_strobj );
+		PyScript::Script::printError();
+		assert( removeResult == 0 );
+	}
+
+	assert( g_pyHookCountName != nullptr );
+	const auto removeResult = PyDict_DelItem( pyType->tp_dict, g_pyHookCountName );
+	PyScript::Script::printError();
+	assert( removeResult == 0 );
 
 	// Restore old setattr
-	//pyType->tp_setattro = (setattrofunc)hookInfo.wrapper_.function;
 	PyType_Modified( pyType );
-
-	// Remove from map
-	hookLookup.erase( foundIt );
-#endif // ENABLE_PYTHON_LISTENER_HOOKS
-}
-
-
-void cleanupListenerHooks( HookLookup & hookLookup )
-{
-#if ENABLE_PYTHON_LISTENER_HOOKS
-	// Remove reflection system hooks for any leaks
-	for (auto itr = std::begin( hookLookup ); itr != std::end( hookLookup ); ++itr)
-	{
-		auto & type = itr->first;
-		auto pyType = reinterpret_cast< PyTypeObject * >( type.get() );
-		if (pyType == nullptr)
-		{
-			continue;
-		}
-
-		const auto removed = PyDict_DelItem( pyType->tp_dict, itr->second.wrapper_.name_strobj ) < 0;
-		//assert( removed );
-
-		//pyType->tp_setattro = itr->second.defaultHook_;
-		PyType_Modified( pyType );
-	}
-	hookLookup.clear();
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 

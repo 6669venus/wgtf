@@ -169,13 +169,11 @@ private:
 
 
 DefinitionDetails::DefinitionDetails( IComponentContext & context,
-	const PyScript::ScriptObject & pythonObject,
-	HookLookup & hookLookup )
+	const PyScript::ScriptObject & pythonObject )
 	: context_( context )
 	, name_( DefinitionDetails::generateName( pythonObject ) )
 	, pythonObject_( pythonObject )
 	, metaData_( MetaNone() )
-	, hookLookup_( hookLookup )
 {
 	assert( !name_.empty() );
 
@@ -185,13 +183,13 @@ DefinitionDetails::DefinitionDetails( IComponentContext & context,
 		PyScript::ScriptErrorClear() );
 	metaDataDict_ = PyScript::ScriptDict::create( metaDataAttribute );
 
-	attachListenerHooks( pythonObject_, hookLookup_ );
+	attachListenerHooks( pythonObject_ );
 }
 
 
 DefinitionDetails::~DefinitionDetails()
 {
-	detachListenerHooks( pythonObject_, hookLookup_ );
+	detachListenerHooks( pythonObject_ );
 }
 
 

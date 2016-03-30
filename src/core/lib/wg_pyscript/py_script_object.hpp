@@ -1276,6 +1276,18 @@ public:
 	}
 
 	/**
+	 *	This method creates a new ScriptLong from a long.
+	 *	@param value	The value to create the ScriptLong from
+	 *	@return			A new ScriptLong with the value of value
+	 */
+	static ScriptLong create( long value )
+	{
+		PyObject * pLong = PyLong_FromLong( value );
+		assert( pLong );
+		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+	/**
 	 *	This method creates a new ScriptLong from a unsigned int
 	 *	@param value	The value to create the ScriptLong from
 	 *	@return			A new ScriptLong with the value of value

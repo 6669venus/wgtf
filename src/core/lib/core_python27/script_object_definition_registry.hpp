@@ -79,7 +79,6 @@ private:
 	typedef std::vector< IdPair > IdLookup;
 	IdLookup ids_;
 
-	HookLookup hookLookup_;
 	std::shared_ptr< HookListener > hookListener_;
 };
 

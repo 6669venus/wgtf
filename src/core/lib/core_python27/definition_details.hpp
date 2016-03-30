@@ -27,8 +27,7 @@ class DefinitionDetails
 {
 public:
 	DefinitionDetails( IComponentContext & context,
-		const PyScript::ScriptObject & pythonObject,
-		HookLookup & hookLookup );
+		const PyScript::ScriptObject & pythonObject );
 	~DefinitionDetails();
 
 	bool isAbstract() const override;
@@ -56,8 +55,6 @@ private:
 
 	MetaHandle metaData_;
 	PyScript::ScriptDict metaDataDict_;
-
-	HookLookup & hookLookup_;
 };
 
 

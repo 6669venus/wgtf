@@ -143,7 +143,6 @@ ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContex
 	, hookListener_( new HookListener() )
 {
 	g_pHookContext = &context_;
-	g_pHookLookup_ = &hookLookup_;
 	g_listener_ = hookListener_;
 }
 
@@ -151,10 +150,7 @@ ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContex
 ScriptObjectDefinitionRegistry::~ScriptObjectDefinitionRegistry()
 {
 	// All reflected Python objects should have been removed by this point
-	assert( hookLookup_.empty() );
-	cleanupListenerHooks( hookLookup_ );
 	g_listener_.reset();
-	g_pHookLookup_ = nullptr;
 	g_pHookContext = nullptr;
 }
 
@@ -238,7 +234,7 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 		if (canSet && !isType && !isClass)
 		{
 			auto definition = definitionManager_->registerDefinition(
-				new ReflectedPython::DefinitionDetails( context_, object, hookLookup_ ) );
+				new ReflectedPython::DefinitionDetails( context_, object ) );
 			assert( definition != nullptr );
 
 			std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
@@ -288,7 +284,7 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 	}
 
 	auto definition = definitionManager_->registerDefinition(
-		new ReflectedPython::DefinitionDetails( context_, object, hookLookup_ ) );
+		new ReflectedPython::DefinitionDetails( context_, object ) );
 	assert( definition != nullptr );
 
 	std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );

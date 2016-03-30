@@ -23,7 +23,7 @@ class ObjectHandleStorage< std::shared_ptr< ObjectMetaData > >
 public:
 	//--------------------------------------------------------------------------
 	ObjectHandleStorage(
-		std::shared_ptr< ObjectMetaData > & metaData,
+		const std::shared_ptr< ObjectMetaData > & metaData,
 		const IClassDefinition * definition = nullptr )
 		: metaData_( metaData )
 	{

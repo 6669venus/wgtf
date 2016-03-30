@@ -18,7 +18,7 @@
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/selection_handler.hpp"
 #include "core_reflection/i_definition_manager.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 
 #include <sstream>
 #include <stdio.h>

@@ -6,7 +6,7 @@ struct BaseAssetObjectItem::Implementation
 {
 	typedef std::vector< BaseAssetObjectItem > BaseAssetObjectItems;
 
-	Implementation( BaseAssetObjectItem & self,  const FileInfo & fileInfo, const IItem * parent, 
+	Implementation( BaseAssetObjectItem & self,  const IFileInfoPtr& fileInfo, const IItem * parent, 
 		IFileSystem * fileSystem, IAssetPresentationProvider * presentationProvider )
 		: self_( self )
 		, fileInfo_( fileInfo )
@@ -20,11 +20,11 @@ struct BaseAssetObjectItem::Implementation
 	BaseAssetObjectItems & getChildren() const
 	{
 		// Not currently thread safe, only one thread can initialize the children
-		if (fileSystem_ != nullptr && fileInfo_.isDirectory() && children_.empty())
+		if (fileSystem_ != nullptr && fileInfo_->isDirectory() && children_.empty())
 		{
-			fileSystem_->enumerate( fileInfo_.fullPath.c_str(), [&]( FileInfo && info )
+			fileSystem_->enumerate( fileInfo_->fullPath(), [&]( IFileInfoPtr && info )
 			{
-				if (!info.isDots() && !(info.attributes & FileAttributes::Hidden))
+				if (!info->isDots() && !(info->attributes() & FileAttributes::Hidden))
 					children_.emplace_back( info, &self_, fileSystem_, presentationProvider_ );
 				return true;
 			});
@@ -33,7 +33,7 @@ struct BaseAssetObjectItem::Implementation
 	}
 	
 	BaseAssetObjectItem & self_;
-	FileInfo fileInfo_;
+	IFileInfoPtr fileInfo_;
 	const IItem * parent_;
 	IFileSystem * fileSystem_;
 	IAssetPresentationProvider * presentationProvider_;
@@ -50,7 +50,7 @@ BaseAssetObjectItem::BaseAssetObjectItem( const BaseAssetObjectItem & rhs )
 {
 }
 
-BaseAssetObjectItem::BaseAssetObjectItem( const FileInfo & fileInfo, const IItem * parent, 
+BaseAssetObjectItem::BaseAssetObjectItem( const IFileInfoPtr & fileInfo, const IItem * parent, 
 	IFileSystem * fileSystem, IAssetPresentationProvider * assetPresentationProvider )
 	: impl_( new Implementation( *this, fileInfo, parent, fileSystem, assetPresentationProvider ) )
 {
@@ -109,7 +109,7 @@ const char * BaseAssetObjectItem::getDisplayText( int column ) const
 		return getAssetName();
 	}
 
-	impl_->displayText_ = impl_->fileInfo_.fullPath;
+	impl_->displayText_ = impl_->fileInfo_->fullPath();
 	auto lastSeparator = impl_->displayText_.find_last_of("/\\");
 	if (impl_->displayText_.length() > 1 && lastSeparator != std::string::npos)
 	{
@@ -213,14 +213,14 @@ bool BaseAssetObjectItem::setData( int column, size_t roleId, const Variant & da
 	return false;
 }
 
-const FileInfo& BaseAssetObjectItem::getFileInfo() const
+IFileInfoPtr BaseAssetObjectItem::getFileInfo() const
 {
 	return impl_->fileInfo_;
 }
 
 const char* BaseAssetObjectItem::getAssetName() const
 {
-	return impl_->fileInfo_.name();
+	return impl_->fileInfo_->name();
 }
 
 uint16_t BaseAssetObjectItem::getAssetType() const
@@ -235,40 +235,40 @@ uint16_t BaseAssetObjectItem::getAssetType() const
 
 const char* BaseAssetObjectItem::getFullPath() const
 {
-	return impl_->fileInfo_.fullPath.c_str();
+	return impl_->fileInfo_->fullPath();
 }
 
 uint64_t BaseAssetObjectItem::getSize() const
 {
-	return impl_->fileInfo_.size;
+	return impl_->fileInfo_->size();
 }
 
 uint64_t BaseAssetObjectItem::getCreatedTime() const
 {
-	return impl_->fileInfo_.created;
+	return impl_->fileInfo_->created();
 }
 
 uint64_t BaseAssetObjectItem::getModifiedTime() const
 {
-	return impl_->fileInfo_.modified;
+	return impl_->fileInfo_->modified();
 }
 
 uint64_t BaseAssetObjectItem::getAccessedTime() const
 {
-	return impl_->fileInfo_.accessed;
+	return impl_->fileInfo_->accessed();
 }
 
 bool BaseAssetObjectItem::isDirectory() const
 {
-	return impl_->fileInfo_.isDirectory();
+	return impl_->fileInfo_->isDirectory();
 }
 
 bool BaseAssetObjectItem::isReadOnly() const
 {
-	return impl_->fileInfo_.isReadOnly();
+	return impl_->fileInfo_->isReadOnly();
 }
 
 bool BaseAssetObjectItem::isCompressed() const
 {
-	return (impl_->fileInfo_.attributes & FileAttributes::Compressed) == FileAttributes::Compressed;
+	return (impl_->fileInfo_->attributes() & FileAttributes::Compressed) == FileAttributes::Compressed;
 }

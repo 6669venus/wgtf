@@ -1,6 +1,6 @@
 #include "folder_tree_model.hpp"
 #include "base_asset_object_item.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_logging/logging.hpp"
 #include "core_data_model/i_item_role.hpp"
 
@@ -36,7 +36,7 @@ FolderTreeModel::Implementation::~Implementation()
 void FolderTreeModel::Implementation::generateData( const IAssetObjectItem* parent, const std::string& path )
 {
 	auto info = fileSystem_.getFileInfo(path.c_str());
-	if ((info.attributes != FileAttributes::None) && !info.isDots() && !info.isHidden())
+	if ((info->attributes() != FileAttributes::None) && !info->isDots() && !info->isHidden())
 	{
 		roots_.emplace_back(new BaseAssetObjectItem(info, nullptr, &fileSystem_, nullptr));
 	}

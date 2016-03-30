@@ -520,8 +520,10 @@ void WGTreeModel::onPreItemDataChanged( const IItem * item, int column, size_t r
 	}
 
 	auto index = Impl::calculateModelIndex( *this, item, column );
-	auto value = QtHelpers::toQVariant( data );
-	this->beginChangeData( index, role, value );
+	// NGT-1619 Temporary workaround from @s_yuan
+	//auto value = QtHelpers::toQVariant( data );
+	//this->beginChangeData( index, role, value );
+	this->beginChangeData( index, role, QVariant() );
 }
 
 void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
@@ -540,8 +542,10 @@ void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t 
 	}
 
 	auto index = Impl::calculateModelIndex( *this, item, column );
-	auto value = QtHelpers::toQVariant( data );
-	this->endChangeData( index, role, value );
+	// NGT-1619 Temporary workaround from @s_yuan
+	//auto value = QtHelpers::toQVariant( data );
+	//this->endChangeData( index, role, value );
+	this->endChangeData( index, role, QVariant() );
 }
 
 void WGTreeModel::onPreItemsInserted( const IItem * parent, size_t index, size_t count )

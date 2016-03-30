@@ -70,10 +70,21 @@ public:
 		args->setPath( key.second.c_str() );
 		args->setValue( data );
 		
-		// TODO: assert access is only on the main thread
-		commands_.insert( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
-			getClassIdentifier<SetReflectedPropertyCommand>(), ObjectHandle( 
-				std::move( args ), pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >() ) ) ) );
+		// Access is only on the main thread
+		//assert(std::this_thread::get_id() == commandManager_.ownerThreadId());
+
+		const auto commandId = getClassIdentifier< SetReflectedPropertyCommand >();
+		const auto pArgsDefinition =
+			pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >();
+		ObjectHandle commandArgs(std::move(args), pArgsDefinition);
+		auto command = commandManager_.queueCommand(commandId, commandArgs);
+
+		// Queuing may cause it to execute straight away
+		// Based on the thread affinity of SetReflectedPropertyCommand
+		if ( !command->isComplete() )
+		{
+			commands_.insert(std::pair< Key, CommandInstancePtr >(key, command));
+		}
 	}
 
 	Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters )

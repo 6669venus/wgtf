@@ -60,7 +60,7 @@ ComboBox {
 
         Item {
             id:itemWrapper
-            property var lineText: text
+            property var lineText: display
 
             TextMetrics {
                 id: fakeText

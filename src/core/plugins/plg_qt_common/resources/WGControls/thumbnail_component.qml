@@ -5,7 +5,7 @@ Item {
     objectName:  itemData != null ? itemData.IndexPath : "thumbnail_component"
     WGThumbnail {
         objectName: "thumbnail"
-        source_: itemData.Thumbnail
+        source: itemData.Thumbnail
         anchors.left: parent.left
         height: defaultSpacing.minimumRowHeight
         width: defaultSpacing.minimumRowHeight

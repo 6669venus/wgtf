@@ -8,7 +8,7 @@ import WGControls 1.0
 Rectangle {
 	id: root
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     width: 500
     height: 100
 
@@ -33,9 +33,9 @@ Rectangle {
 
 					WGProgressControl {
 						Layout.fillWidth: true
-						fakeProgress_: false
+						fakeProgress: false
 						text: commandId
-						units_: "%"
+						units: "%"
 						value: progValue
 						maximumValue: 100
 

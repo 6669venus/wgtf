@@ -8,43 +8,85 @@ class QtPalette : public QQuickItem
 	Q_OBJECT
 
 public:
-	Q_PROPERTY( QColor MainWindowColor MEMBER mainWindowColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor HighlightColor MEMBER highlightColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor ToolTipColor MEMBER toolTipColor_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor mainWindowColor MEMBER mainWindowColor_ CONSTANT )
+	Q_PROPERTY( QColor highlightColor MEMBER highlightColor_ CONSTANT )
+	Q_PROPERTY( QColor toolTipColor MEMBER toolTipColor_ CONSTANT )
 
-	Q_PROPERTY( QColor TextColor MEMBER textColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor HighlightTextColor MEMBER highlightTextColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor TextBoxColor MEMBER textBoxColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor PlaceholderTextColor MEMBER placeholderTextColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor ToolTipTextColor MEMBER toolTipTextColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor BrightTextColor MEMBER brightTextColor_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor textColor MEMBER textColor_ CONSTANT )
+	Q_PROPERTY( QColor highlightTextColor MEMBER highlightTextColor_ CONSTANT )
+	Q_PROPERTY( QColor textBoxColor MEMBER textBoxColor_ CONSTANT )
+	Q_PROPERTY( QColor placeholderTextColor MEMBER placeholderTextColor_ CONSTANT )
+	Q_PROPERTY( QColor toolTipTextColor MEMBER toolTipTextColor_ CONSTANT )
+	Q_PROPERTY( QColor brightTextColor MEMBER brightTextColor_ CONSTANT )
 
-	Q_PROPERTY( QColor DarkHeaderColor MEMBER darkHeaderColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor LightPanelColor MEMBER lightPanelColor_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor darkHeaderColor MEMBER darkHeaderColor_ CONSTANT )
+	Q_PROPERTY( QColor lightPanelColor MEMBER lightPanelColor_ CONSTANT )
 
-	Q_PROPERTY( QColor MidDarkColor MEMBER midDarkColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor MidLightColor MEMBER midLightColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor DarkColor MEMBER darkColor_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor midDarkColor MEMBER midDarkColor_ CONSTANT )
+	Q_PROPERTY( QColor midLightColor MEMBER midLightColor_ CONSTANT )
+	Q_PROPERTY( QColor darkColor MEMBER darkColor_ CONSTANT )
 
-	Q_PROPERTY( QColor NeutralTextColor MEMBER neutralTextColor_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor DisabledTextColor MEMBER disabledTextColor_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor neutralTextColor MEMBER neutralTextColor_ CONSTANT )
+	Q_PROPERTY( QColor disabledTextColor MEMBER disabledTextColor_ CONSTANT )
 
-	Q_PROPERTY( QColor LightShade MEMBER lightShade_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor LighterShade MEMBER lighterShade_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor LightestShade MEMBER lightestShade_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor DarkShade MEMBER darkShade_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor DarkerShade MEMBER darkerShade_ NOTIFY colorChanged )
-	Q_PROPERTY( QColor DarkestShade MEMBER darkestShade_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor lightShade MEMBER lightShade_ CONSTANT )
+	Q_PROPERTY( QColor lighterShade MEMBER lighterShade_ CONSTANT )
+	Q_PROPERTY( QColor lightestShade MEMBER lightestShade_ CONSTANT )
+	Q_PROPERTY( QColor darkShade MEMBER darkShade_ CONSTANT )
+	Q_PROPERTY( QColor darkerShade MEMBER darkerShade_ CONSTANT )
+	Q_PROPERTY( QColor darkestShade MEMBER darkestShade_ CONSTANT )
 
-    Q_PROPERTY( QColor OverlayDarkShade MEMBER overlayDarkShade_ NOTIFY colorChanged )
-    Q_PROPERTY( QColor OverlayLightShade MEMBER overlayLightShade_ NOTIFY colorChanged )
-    Q_PROPERTY( QColor OverlayDarkerShade MEMBER overlayDarkerShade_ NOTIFY colorChanged )
-    Q_PROPERTY( QColor OverlayLighterShade MEMBER overlayLighterShade_ NOTIFY colorChanged )
-    Q_PROPERTY( QColor OverlayTextColor MEMBER overlayTextColor_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor overlayDarkShade MEMBER overlayDarkShade_ CONSTANT )
+	Q_PROPERTY( QColor overlayLightShade MEMBER overlayLightShade_ CONSTANT )
+	Q_PROPERTY( QColor overlayDarkerShade MEMBER overlayDarkerShade_ CONSTANT )
+	Q_PROPERTY( QColor overlayLighterShade MEMBER overlayLighterShade_ CONSTANT )
+	Q_PROPERTY( QColor overlayTextColor MEMBER overlayTextColor_ CONSTANT )
 
-	Q_PROPERTY( QColor HighlightShade MEMBER highlightShade_ NOTIFY colorChanged )
+	Q_PROPERTY( QColor highlightShade MEMBER highlightShade_ CONSTANT )
 
-	Q_PROPERTY( bool GlowStyle MEMBER glowStyle_ NOTIFY glowChanged )
+	Q_PROPERTY( bool glowStyle MEMBER glowStyle_ NOTIFY glowChanged )
+
+	// \/\/\/\/ DEPRECATED \/\/\/\/
+
+	Q_PROPERTY( QColor MainWindowColor MEMBER mainWindowColor_ CONSTANT )
+	Q_PROPERTY( QColor HighlightColor MEMBER highlightColor_ CONSTANT )
+	Q_PROPERTY( QColor ToolTipColor MEMBER toolTipColor_ CONSTANT )
+
+	Q_PROPERTY( QColor TextColor MEMBER textColor_ CONSTANT )
+	Q_PROPERTY( QColor HighlightTextColor MEMBER highlightTextColor_ CONSTANT )
+	Q_PROPERTY( QColor TextBoxColor MEMBER textBoxColor_ CONSTANT )
+	Q_PROPERTY( QColor PlaceholderTextColor MEMBER placeholderTextColor_ CONSTANT )
+	Q_PROPERTY( QColor ToolTipTextColor MEMBER toolTipTextColor_ CONSTANT )
+	Q_PROPERTY( QColor BrightTextColor MEMBER brightTextColor_ CONSTANT )
+
+	Q_PROPERTY( QColor DarkHeaderColor MEMBER darkHeaderColor_ CONSTANT )
+	Q_PROPERTY( QColor LightPanelColor MEMBER lightPanelColor_ CONSTANT )
+
+	Q_PROPERTY( QColor MidDarkColor MEMBER midDarkColor_ CONSTANT )
+	Q_PROPERTY( QColor MidLightColor MEMBER midLightColor_ CONSTANT )
+	Q_PROPERTY( QColor DarkColor MEMBER darkColor_ CONSTANT )
+
+	Q_PROPERTY( QColor NeutralTextColor MEMBER neutralTextColor_ CONSTANT )
+	Q_PROPERTY( QColor DisabledTextColor MEMBER disabledTextColor_ CONSTANT )
+
+	Q_PROPERTY( QColor LightShade MEMBER lightShade_ CONSTANT )
+	Q_PROPERTY( QColor LighterShade MEMBER lighterShade_ CONSTANT )
+	Q_PROPERTY( QColor LightestShade MEMBER lightestShade_ CONSTANT )
+	Q_PROPERTY( QColor DarkShade MEMBER darkShade_ CONSTANT )
+	Q_PROPERTY( QColor DarkerShade MEMBER darkerShade_ CONSTANT )
+	Q_PROPERTY( QColor DarkestShade MEMBER darkestShade_ CONSTANT )
+
+	Q_PROPERTY( QColor OverlayDarkShade MEMBER overlayDarkShade_ CONSTANT )
+	Q_PROPERTY( QColor OverlayLightShade MEMBER overlayLightShade_ CONSTANT )
+	Q_PROPERTY( QColor OverlayDarkerShade MEMBER overlayDarkerShade_ CONSTANT )
+	Q_PROPERTY( QColor OverlayLighterShade MEMBER overlayLighterShade_ CONSTANT )
+	Q_PROPERTY( QColor OverlayTextColor MEMBER overlayTextColor_ CONSTANT )
+
+	Q_PROPERTY( QColor HighlightShade MEMBER highlightShade_ CONSTANT )
+
+	Q_PROPERTY( bool GlowStyle MEMBER glowStyle_  NOTIFY glowChanged )
+
+	// /\/\/\/\ DEPRECATED /\/\/\/\
 
 	Q_PROPERTY( Theme theme READ theme WRITE setTheme NOTIFY themeChanged )
 
@@ -69,13 +111,11 @@ public:
 	void setTheme(Theme theme);
 
 signals:
-	void colorChanged();
 	void glowChanged();
 	void themeChanged(Theme theme);
 
 private slots:
 	void onPaletteChanged();
-	void onColorChanged();
 
 public slots:
 

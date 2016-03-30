@@ -3,9 +3,13 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
+/*!
+ \brief A WG specific file dialog
+*/
+
 WGFileDialog {
-    objectName: "WGNativeFileDialog"
     id: mainDialog
+    objectName: "WGNativeFileDialog"
 
     onOpen: {
         fileDialogInstance.folder = curValue

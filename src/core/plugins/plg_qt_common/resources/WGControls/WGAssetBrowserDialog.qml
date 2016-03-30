@@ -3,6 +3,11 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
+
+/*!
+ \brief An AssetBrowser specific file dialog
+*/
+
 WGFileDialog {
     id: mainDialog
     objectName: "WGAssetBrowserDialog"
@@ -30,7 +35,7 @@ WGFileDialog {
         contentItem: Rectangle {
             width: parent.width
             height: parent.height
-            color: palette.MainWindowColor
+            color: palette.mainWindowColor
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: defaultSpacing.standardMargin

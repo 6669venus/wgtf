@@ -55,9 +55,9 @@ WGSliderHandle {
         id: defaultHandleFrame
         implicitHeight: parentSlider.__horizontal ? parentSlider.height - 2 : 8
         implicitWidth: parentSlider.__horizontal ? 8 : parentSlider.width - 2
-        color: parentSlider.__hoveredHandle == handleIndex ? "white" : palette.OverlayLighterShade
-        borderColor: palette.OverlayDarkerShade
-        innerBorderColor: parentSlider.__activeHandle == handleIndex && parentSlider.activeFocus ? palette.HighlightShade : "transparent"
+        color: parentSlider.__hoveredHandle == handleIndex ? "white" : palette.overlayLighterShade
+        borderColor: palette.overlayDarkerShade
+        innerBorderColor: parentSlider.__activeHandle == handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
 
         radius: defaultSpacing.halfRadius
     }

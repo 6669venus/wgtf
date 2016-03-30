@@ -7,8 +7,9 @@ import BWControls 1.0
 */
 
 WGVectorN {
-    objectName: "WGVector3"
     id: vector3
+    objectName: "WGVector3"
+
     property vector3d value
 
     vectorData: [value.x, value.y, value.z]

@@ -138,10 +138,10 @@ Control {
     /*!
         This property determines the color of the bar that 'fills' the slider if is enabled
 
-        The default value is \c palette.HighlightColor
+        The default value is \c palette.highlightColor
     */
 
-    property color barColor: palette.HighlightColor
+    property color barColor: palette.highlightColor
 
     /*! This property indicates the slider step size.
 
@@ -247,8 +247,12 @@ Control {
     */
     signal handleCtrlClicked(int index)
 
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
+
     MouseArea {
         id: mouseArea
+        objectName: "sliderDragArea"
 
         z:-1
 

@@ -101,16 +101,16 @@ Rectangle {
 	}
 
 	Rectangle {
-		color: palette.HighlightShade
+		color: palette.highlightShade
 		anchors{left: parent.left; right: parent.right; bottom: parent.top}
 		height: 5
-		visible: draggedObject != null && chunkBorder.border.color == palette.HighlightShade && dropAreaTop.containsDrag
+		visible: draggedObject != null && chunkBorder.border.color == palette.highlightShade && dropAreaTop.containsDrag
 	}
 	Rectangle {
-		color: palette.HighlightShade
+		color: palette.highlightShade
 		anchors{left: parent.left; right: parent.right; top: parent.bottom}
 		height: 5
-		visible: draggedObject != null && chunkBorder.border.color == palette.HighlightShade && dropAreaBottom.containsDrag
+		visible: draggedObject != null && chunkBorder.border.color == palette.highlightShade && dropAreaBottom.containsDrag
 	}
 
 	DropArea {
@@ -120,10 +120,10 @@ Rectangle {
 		enabled: draggedPanelDepth == panelDepth
 
 		onEntered: {
-			chunkBorder.border.color = palette.HighlightShade
+			chunkBorder.border.color = palette.highlightShade
 		}
 		onExited: {
-			chunkBorder.border.color = palette.LighterShade
+			chunkBorder.border.color = palette.lighterShade
 		}
 		onDropped: {
 
@@ -182,10 +182,10 @@ Rectangle {
 		enabled: draggedPanelDepth == panelDepth
 
 		onEntered: {
-			chunkBorder.border.color = palette.HighlightShade
+			chunkBorder.border.color = palette.highlightShade
 		}
 		onExited: {
-			chunkBorder.border.color = palette.LighterShade
+			chunkBorder.border.color = palette.lighterShade
 		}
 		onDropped: {
 
@@ -276,12 +276,12 @@ Rectangle {
 			State {
 				name: "PIN_NORMAL"
 				when: rootPanel.choosePinned && !mouseArea.containsMouse
-				PropertyChanges{ target: chunkBorder; border.color: palette.LighterShade}
+				PropertyChanges{ target: chunkBorder; border.color: palette.lighterShade}
 			},
 			State {
 				name: "PIN_OVER"
 				when: rootPanel.choosePinned && mouseArea.containsMouse
-				PropertyChanges{ target: chunkBorder; border.color: palette.HighlightShade}
+				PropertyChanges{ target: chunkBorder; border.color: palette.highlightShade}
 			},
 			State {
 				name: "DRAG_NULL"
@@ -291,17 +291,17 @@ Rectangle {
 			State {
 				name: "DRAG_NORMAL"
 				when: rootPanel.chunkDragEnabled && !mouseArea.containsMouse
-				PropertyChanges{ target: chunkBorder; border.color: palette.LighterShade}
+				PropertyChanges{ target: chunkBorder; border.color: palette.lighterShade}
 			},
 			State {
 				name: "DRAG_OVER"
 				when: rootPanel.chunkDragEnabled && mouseArea.containsMouse
-				PropertyChanges{ target: chunkBorder; border.color: palette.HighlightShade}
+				PropertyChanges{ target: chunkBorder; border.color: palette.highlightShade}
 			},
 			State {
 				name: "FILTERED"
 				when: filtered
-				PropertyChanges{ target: chunkBorder; border.color: palette.BrightTextColor}
+				PropertyChanges{ target: chunkBorder; border.color: palette.brightTextColor}
 			},
 			State {
 				name: "NEW_ITEM"
@@ -440,7 +440,7 @@ Rectangle {
 				return false
 			}
 		}
-		color: mouseArea.containsMouse ? palette.HighlightShade : palette.LighterShade
+		color: mouseArea.containsMouse ? palette.highlightShade : palette.lighterShade
 		radius: defaultSpacing.minimumRowHeight
 
 		Image {

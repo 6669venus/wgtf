@@ -8,72 +8,72 @@ import WGControls 1.0
  *	Used for control testing
  */
 Rectangle {
-	id: mainWindow
+    id: mainWindow
 
     visible: true
     property var title: qsTr("QML Controls Test Window")
 
-    color: palette.MainWindowColor
-	function getColor(vectorColor) {
+    color: palette.mainWindowColor
+    function getColor(vectorColor) {
         return Qt.rgba(vectorColor.x / 255, vectorColor.y / 255, vectorColor.z / 255, vectorColor.w / 255);
     }
-	property var colorArray: []
-	property var positionArray: []
-	
-	WGListModel {
+    property var colorArray: []
+    property var positionArray: []
+
+    WGListModel {
         id : colorModel
         source : colorSource
         ValueExtension {}
-		ColumnExtension {}
+        ColumnExtension {}
     }
-	WGListModel {
+    WGListModel {
         id : positionModel
         source : positionSource
         ValueExtension {}
-		ColumnExtension {}
+        ColumnExtension {}
     }
 
     signal colorsUpdated()
 
-	Component.onCompleted: {
-		var colorCount = colorModel.rowCount(null);
-		console.log("===color count===" + colorCount )
-		if(colorCount == 0)
-			colorArray = [Qt.rgba(0.5,0,0,1), Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1)]
-		else
-		{
-			var colors = [];
-			for(var i = 0; i < colorCount; ++i)
-			{
-				var modelIndex = colorModel.index( i );
-				console.log("===modelIndex ===" + modelIndex )
-				var vec4 = colorModel.data( modelIndex, "Value" );
-				console.log("===vec4 ===" + vec4 )
-				var color = getColor(vec4);
-				
-				
-				console.log("===color===" + color )
-				colors[i] = color;
-			}
-			colorArray = colors;
-		}
+    Component.onCompleted: {
+        var colorCount = colorModel.rowCount(null);
+        console.log("===color count===" + colorCount )
+        if(colorCount == 0)
+            colorArray = [Qt.rgba(0.5,0,0,1), Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1)]
+        else
+        {
+            var colors = [];
+            for(var i = 0; i < colorCount; ++i)
+            {
+                var modelIndex = colorModel.index( i );
+                console.log("===modelIndex ===" + modelIndex )
+                var vec4 = colorModel.data( modelIndex, "Value" );
+                console.log("===vec4 ===" + vec4 )
+                var color = getColor(vec4);
 
-		var positionCount = positionModel.rowCount(null);
-		if(positionCount == 0)
-			positionArray = [20, 40, 60]
-		else
-		{
-			var positions = [];
-			for(var i = 0; i < positionCount; ++i)
-			{
-				var modelIndex = positionModel.index( i );
-				var position = positionModel.data( modelIndex, "Value" );
-				positions[i] = position;
-			}
-			positionArray = positions;
-		}
+
+                console.log("===color===" + color )
+                colors[i] = color;
+            }
+            colorArray = colors;
+        }
+
+        var positionCount = positionModel.rowCount(null);
+        if(positionCount == 0)
+            positionArray = [20, 40, 60]
+        else
+        {
+            var positions = [];
+            for(var i = 0; i < positionCount; ++i)
+            {
+                var modelIndex = positionModel.index( i );
+                var position = positionModel.data( modelIndex, "Value" );
+                positions[i] = position;
+            }
+            positionArray = positions;
+        }
         mainWindow.colorsUpdated()
-	}
+    }
 
     WGBusyIndicator {
         id: busyIndicator1
@@ -84,12 +84,12 @@ Rectangle {
 
     WGScrollPanel {
 
-        childObject_ :
+        childObject :
         WGDraggableColumn {
 
             WGSubPanel {
                 text: "Form Layout"
-                headerObject_ :
+                headerObject :
                     WGExpandingRowLayout {
                         Rectangle {
                             color: "transparent"
@@ -105,10 +105,10 @@ Rectangle {
                             }
                         }
                     }
-                childObject_ :
+                childObject :
                     WGFormLayout {
                         id: topForm
-                        localForm_: true
+                        localForm: true
 
                         WGColumnLayout {
                             Layout.fillWidth: true
@@ -127,7 +127,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                         WGExpandingRowLayout {
                             Layout.fillWidth: true
-                            label_: "Filename:"
+                            label: "Filename:"
 
                             Column {
                                 Layout.fillWidth: true
@@ -175,12 +175,12 @@ It is recommended to look at the generic_app_test to view other controls such as
                         }
 
                         WGFrame {
-                            dark_: false
-                            shade_: true
+                            dark: false
+                            shade: true
 
-                            label_: "File Options:"
+                            label: "File Options:"
 
-                            childObject_:
+                            childObject:
                             WGColumnLayout {
 
                                 WGCheckBox {
@@ -198,7 +198,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                         WGProgressControl {
                             Layout.fillWidth: true
-                            indeterminate_: true
+                            indeterminate: true
                             text: "File Importing..."
                         }
 
@@ -232,8 +232,8 @@ It is recommended to look at the generic_app_test to view other controls such as
 
             WGGroupBox {
                 text: "Group Box"
-                toggleable_ : true
-                childObject_ :
+                toggleable : true
+                childObject :
                 WGBoolGridLayout {
                     ExclusiveGroup { id: radioPanelGroup }
                     WGRadioButton {
@@ -253,7 +253,7 @@ It is recommended to look at the generic_app_test to view other controls such as
             }
             WGSubPanel {
                 text: "Color Sliders"
-                childObject_ :
+                childObject :
                     WGColumnLayout {
 
                     WGColorSlider {
@@ -290,7 +290,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     }
 
                     WGSeparator {
-                        vertical_: false
+                        vertical: false
 
                     }
 
@@ -311,8 +311,8 @@ It is recommended to look at the generic_app_test to view other controls such as
                         minimumValue: 0
                         maximumValue: 100
                         stepSize: 0.1
-						colorData: mainWindow.colorArray
-						positionData: mainWindow.positionArray
+                        colorData: mainWindow.colorArray
+                        positionData: mainWindow.positionArray
                         linkColorsToHandles: true
                         handleStyle: WGColorSliderArrowHandle{}
                         Item {
@@ -331,7 +331,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
             WGSubPanel {
                 text: "Sub Panel"
-                childObject_ :
+                childObject :
                     WGColumnLayout {
 
                         WGExpandingRowLayout {
@@ -365,7 +365,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                                 iconSource: "icons/play_16x16.png"
                             }
                             WGSeparator {
-                                vertical_: true
+                                vertical: true
                             }
 
                             WGToolButton {
@@ -376,14 +376,14 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                         WGInternalPanel {
                             text: "Scrolling Panel of Buttons"
-                            clipContents_: true
-                            expanded_: false
-                            childObject_ :
+                            clipContents: true
+                            expanded: false
+                            childObject :
                                 WGSubScrollPanel {
                                     implicitHeight: 100
-                                    childObject_:
+                                    childObject:
                                         WGFormLayout {
-                                        localForm_: true
+                                        localForm: true
                                             WGLabel{
                                                 text: "Internal scrollbars possible, but not recommended"
                                             }
@@ -392,7 +392,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                                                 model: 10
                                                 WGPushButton {
                                                     text: "Button"
-                                                    label_: "Repeated Label: "
+                                                    label: "Repeated Label: "
                                                 }
                                             }
                                         }
@@ -400,14 +400,14 @@ It is recommended to look at the generic_app_test to view other controls such as
                         }
 
                         WGFrame {
-                            childObject_ :
+                            childObject :
                             WGColumnLayout {
                                 WGProgressControl {
                                     Layout.fillWidth: true
                                     maximumValue: 100
-                                    fakeProgress_: true
+                                    fakeProgress: true
                                     text: "Progress Bar Complete..."
-                                    units_: "%"
+                                    units: "%"
                                 }
                             }
                         }
@@ -424,13 +424,13 @@ It is recommended to look at the generic_app_test to view other controls such as
                 Tab {
                     title: "Test one"
                     WGScrollPanel{
-                    childObject_:
+                    childObject:
                         WGColumnLayout {
                             WGInternalPanel{
                                 text: "Panel within a tab"
-                                clipContents_: true
-                                expanded_: true
-                                childObject_ :
+                                clipContents: true
+                                expanded: true
+                                childObject :
                                 WGColumnLayout{
                                     WGMultiLineText {
                                         Layout.fillWidth: true
@@ -438,25 +438,29 @@ It is recommended to look at the generic_app_test to view other controls such as
                                     }
 
                                     WGTextBox {
-                                        width: 150
+                                        Layout.preferredWidth: 150
                                         placeholderText: "Text Field"
                                         text: "Im in a tab"
                                     }
 
                                     WGExpandingRowLayout {
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+
                                         WGNumberBox {
+                                            id: perfValue
                                             width: 120
                                             value: 25
                                             minimumValue: 0
                                             maximumValue: 100
-
-                                            b_Target: perfBar3
-                                            b_Property: "value_"
-                                            b_Value: value
                                         }
 
                                         WGPerformanceBar {
-                                            id: perfBar3
+                                            id: perfBar
+                                            Layout.fillWidth: true
+                                            minimumValue: perfValue.minimumValue
+                                            maximumValue: perfValue.maximumValue
+                                            value: perfValue.value
                                         }
                                     }
 
@@ -478,7 +482,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     WGSubScrollPanel{
                         anchors.rightMargin: defaultSpacing.rightMargin
 
-                        childObject_ :
+                        childObject :
                         WGColumnLayout {
                             anchors.left: parent.left
                             anchors.right: parent.right
@@ -541,43 +545,44 @@ It is recommended to look at the generic_app_test to view other controls such as
                     WGSubScrollPanel{
                         anchors.rightMargin: defaultSpacing.rightMargin
 
-                        childObject_ :
+                        childObject :
                         WGColumnLayout {
                             anchors.left: parent.left
                             anchors.right: parent.right
 
                             WGNumberBox {
-                            width: 120
-                            value: 25
-                            minimumValue: 0
-                            maximumValue: 100
-
-                            b_Target: perfBar2
-                            b_Property: "value_"
-                            b_Value: value
+                                id: perfValue2
+                                Layout.preferredWidth: 120
+                                value: 25
+                                minimumValue: 0
+                                maximumValue: 100
                             }
 
                             WGPerformanceBar {
+                                Layout.fillWidth: true
                                 id: perfBar2
+                                minimumValue: perfValue2.minimumValue
+                                maximumValue: perfValue2.maximumValue
+                                value: perfValue2.value
                             }
 
                             WGCheckBox {
-                                width: 200
+                                Layout.preferredWidth: 200
                                 text: "Tri-State Checkbox 1"
                                 partiallyCheckedEnabled: true
                             }
                             WGCheckBox {
-                                width: 200
+                                Layout.preferredWidth: 200
                                 text: "Tri-State Checkbox 2"
                                 partiallyCheckedEnabled: true
                             }
                             WGCheckBox {
-                                width: 200
+                                Layout.preferredWidth: 200
                                 text: "Tri-State Checkbox 3"
                                 partiallyCheckedEnabled: true
                             }
                             WGCheckBox {
-                                width: 200
+                                Layout.preferredWidth: 200
                                 text: "Tri-State Checkbox 4"
                                 partiallyCheckedEnabled: true
                             }
@@ -594,41 +599,45 @@ It is recommended to look at the generic_app_test to view other controls such as
             WGColumnLayout {
 
                 WGExpandingRowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: defaultSpacing.minimumRowHeight
                     WGTextBox {
-                        width: 150
+                        Layout.preferredWidth: 150
                         placeholderText: "Text Field"
                         text: "Text Value"
                     }
                     WGTextBox {
-                        width: 150
+                        Layout.preferredWidth: 150
                         text: "Read Only Text Box"
                         readOnly: true
                         Layout.fillWidth: true
                     }
                     WGTextBox {
-                        width: 150
+                        Layout.preferredWidth: 150
                         text: "Disabled Text Box"
                         enabled: false
                     }
                 }
 
                 WGNumberBox {
-                    width: 120
+                    id: perfValue3
+                    Layout.preferredWidth: 120
                     value: 25
                     minimumValue: 0
                     maximumValue: 100
-
-                    b_Target: perfBar
-                    b_Property: "value_"
-                    b_Value: value
                 }
 
                 WGPerformanceBar {
-                    id: perfBar
+                    id: perfBar3
+                    Layout.fillWidth: true
+
+                    minimumValue: perfValue3.minimumValue
+                    maximumValue: perfValue3.maximumValue
+                    value: perfValue3.value
                 }
 
                 WGCheckBox {
-                    width: 200
+                    Layout.preferredWidth: 200
                     text: "Tri-State Checkbox"
                     partiallyCheckedEnabled: true
                 }
@@ -680,7 +689,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     decimalSeparator: true
                     height: 24
                     Layout.preferredWidth: 130
-                    label_: "IP Address:"
+                    label: "IP Address:"
                 }
                 WGSplitTextFrame {
                     boxList: [
@@ -702,7 +711,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     ]
                     height: 24
                     Layout.preferredWidth: 130
-                    label_: "RGB:"
+                    label: "RGB:"
                 }
 
                 WGSplitTextFrame {
@@ -724,7 +733,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     ]
                     evenBoxes: false
                     height: 24
-                    label_: "Address:"
+                    label: "Address:"
                 }
 
                 WGSliderControl {
@@ -733,7 +742,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     maximumValue: 100
                     stepSize: 1
                     value: 40
-                    label_: "Single Slider:"
+                    label: "Single Slider:"
                 }
 
                 WGRangeSlider {
@@ -744,7 +753,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     upperValue: 25
                     stepSize: 1
                     enabled: true
-                    label_: "Range Slider:"
+                    label: "Range Slider:"
                 }
 
                 WGSlider {
@@ -754,7 +763,7 @@ It is recommended to look at the generic_app_test to view other controls such as
                     maximumValue: 100
                     stepSize: 1
                     enabled: true
-                    property string label_: "Multi Handle Slider:"
+                    property string label: "Multi Handle Slider:"
 
                     WGSliderHandle {
                         minimumValue: 0
@@ -792,7 +801,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
             WGSubPanel {
                 text: "LOD Control"
-                childObject_ :
+                childObject :
                     WGColumnLayout {
                         WGLodSlider {
                             Layout.fillWidth: true
@@ -937,7 +946,7 @@ It is recommended to look at the generic_app_test to view other controls such as
 
                 WGSeparator {
                     Layout.fillWidth: true
-                    vertical_: false
+                    vertical: false
                 }
             }
         }

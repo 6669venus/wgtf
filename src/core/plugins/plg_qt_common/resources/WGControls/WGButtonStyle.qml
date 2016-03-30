@@ -12,7 +12,7 @@ ButtonStyle {
 
     /*! \internal */
     // helper property for text color so states can all be in the background object
-    property color __textColor: palette.NeutralTextColor
+    property color __textColor: palette.neutralTextColor
 
     /*! \internal */
     // Ideally a button should not have a menu and no icon, a WGDropDownBox is preferrable in that instance
@@ -107,7 +107,7 @@ ButtonStyle {
                 //horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
 
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
 
                 //icon only buttons are offcentre without this
                 visible: control.text
@@ -136,55 +136,55 @@ ButtonStyle {
             State {
                 name: "PRESSED"
                 when: control.pressed && control.enabled
-                PropertyChanges {target: buttonFrame; color: palette.DarkShade}
+                PropertyChanges {target: buttonFrame; color: palette.darkShade}
                 PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
             },
             State {
                 name: "CHECKED"
                 when: control.checked && !control.pressed && !control.hovered && control.enabled && !control.activeFocus
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
+                PropertyChanges {target: buttonFrame; color: palette.highlightColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
             },
             State {
                 name: "HOVERED"
                 when: control.hovered && control.enabled && !control.checked
-                PropertyChanges {target: buttonFrame; highlightColor: palette.LighterShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
+                PropertyChanges {target: buttonFrame; highlightColor: palette.lighterShade}
+                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
             },
             State {
                 name: "HOVERED CHECKED"
                 when: control.hovered && control.enabled && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
-                PropertyChanges {target: buttonFrame; highlightColor: palette.LighterShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
+                PropertyChanges {target: buttonFrame; color: palette.highlightColor}
+                PropertyChanges {target: buttonFrame; highlightColor: palette.lighterShade}
+                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
             },
             State {
                 name: "DISABLED"
                 when: !control.enabled && !control.checked
                 PropertyChanges {target: buttonFrame; color: "transparent"}
-                PropertyChanges {target: buttonFrame; borderColor: palette.DarkShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: buttonFrame; borderColor: palette.darkShade}
+                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
                 PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
             },
             State {
                 name: "DISABLED CHECKED"
                 when: !control.enabled && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.HighlightShade}
-                PropertyChanges {target: buttonFrame; borderColor: palette.DarkShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.DisabledTextColor}
+                PropertyChanges {target: buttonFrame; color: palette.highlightShade}
+                PropertyChanges {target: buttonFrame; borderColor: palette.darkShade}
+                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
                 PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
             },
             State {
                 name: "ACTIVE FOCUS"
                 when: control.enabled && control.activeFocus && !control.checked
-                PropertyChanges {target: buttonFrame; innerBorderColor: palette.LightestShade}
+                PropertyChanges {target: buttonFrame; innerBorderColor: palette.lightestShade}
             },
             State {
                 name: "ACTIVE FOCUS CHECKED"
                 when: control.enabled && control.activeFocus && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.HighlightColor}
-                PropertyChanges {target: baseStyle; __textColor: palette.TextColor}
-                PropertyChanges {target: buttonFrame; innerBorderColor: palette.DarkerShade}
+                PropertyChanges {target: buttonFrame; color: palette.highlightColor}
+                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
+                PropertyChanges {target: buttonFrame; innerBorderColor: palette.darkerShade}
             }
 
         ]

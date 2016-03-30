@@ -2,8 +2,8 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 
 Row {
-    objectName: "WGDataModelHeaderRow"
     id: columns
+    objectName: "WGDataModelHeaderRow"
 
     height: minimumRowHeight + topMargin + bottomMargin
 

@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.0
 import WGControls 1.0
 
 WGPanel {
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     property var title: panelName
     property var layoutHints: { 'test': 0.1 }
     property var topControlsHeight: 20

@@ -95,7 +95,7 @@ Style {
         WGTextBoxFrame {
             radius: defaultSpacing.standardRadius
             anchors.fill: parent
-            color: control.enabled ? palette.TextBoxColor : "transparent"
+            color: control.enabled ? palette.textBoxColor : "transparent"
         }
     }
 
@@ -108,9 +108,9 @@ Style {
             clip: true
             anchors.fill: parent
             anchors.margins: defaultSpacing.standardBorderSize
-            border.color: control.enabled ? Qt.darker(fillColor, 1.2) : palette.LighterShade
+            border.color: control.enabled ? Qt.darker(fillColor, 1.2) : palette.lighterShade
             radius: defaultSpacing.halfRadius
-            color: control.enabled ? fillColor : palette.LightShade
+            color: control.enabled ? fillColor : palette.lightShade
         }
     }
 
@@ -121,7 +121,7 @@ Style {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
         WGSeparator {
-            vertical_: __horizontal
+            vertical: __horizontal
             width: __horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
             height: !__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
 
@@ -256,6 +256,7 @@ Style {
                     }
 
                     MouseArea {
+                        objectName: "sliderHandleArea"
                         hoverEnabled: true
                         anchors.fill: parent
 

@@ -16,10 +16,6 @@ IComponentContext * g_pHookContext = nullptr;
 std::weak_ptr< ReflectedPython::HookListener > g_listener;
 
 
-namespace ReflectedPython
-{
-
-
 #if ENABLE_PYTHON_LISTENER_HOOKS
 
 
@@ -255,8 +251,8 @@ static wrapperbase g_wrappers[] =
 	{
 		"__setattr__", // name of wrapper
 		offsetof( PyTypeObject, tp_setattro ), // offset to tp_setattro slot
-		ReflectedPython::slot_tp_setattro, // function
-		ReflectedPython::wrap_setattr, // wrapper for function
+		slot_tp_setattro, // function
+		wrap_setattr, // wrapper for function
 		PyDoc_STR( "x.__setattr__('name', value) <==> x.name = value" ), // doc for wrapper
 		0, // flags
 		nullptr // name_strobj
@@ -271,6 +267,10 @@ PyObject * g_pyHookCountName = nullptr;
 const char * g_originalSetattrName = "__originalSetattr";
 PyObject * g_pyOriginalSetattrName = nullptr;
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
+
+
+namespace ReflectedPython
+{
 
 
 HookListener::HookListener()

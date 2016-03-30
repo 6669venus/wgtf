@@ -1,6 +1,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
+import WGControls 1.0
 
 /*!
  \A Slider handle intended for the WGSlider Control
@@ -27,13 +28,13 @@ WGSlider {
 */
 
 Item {
+    objectName: "WGSliderHandle"
     id: sliderHandle
-    objectName: "SliderHandle"
 
     /*!
         The parent slider object
     */
-    property QtObject parentSlider
+    property QtObject parentSlider: parent.parent
 
     property alias range: range
 
@@ -138,6 +139,37 @@ Item {
         }
     }
 
+    width: parentSlider.__handleWidth
+
+    height: parentSlider.__handleHeight
+
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.minimumRowHeight
+
+    anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
+    anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
+
+    onXChanged: updatePos();
+    onYChanged: updatePos();
+
+    //Update handle position if the parent slider is changed in size.
+
+    Connections {
+        target: parentSlider
+        onWidthChanged: {
+            if(__horizontal)
+            {
+                sliderHandle.x = range.position
+            }
+        }
+        onHeightChanged: {
+            if(!__horizontal)
+            {
+                sliderHandle.y = range.position
+            }
+        }
+    }
+
     activeFocusOnTab: true
 
     RangeModel {
@@ -150,6 +182,17 @@ Item {
         maximumValue: parentSlider.maximumValue
 
         inverted: __horizontal ? false : true
+
+        onValueChanged: {
+            if(__horizontal)
+            {
+                sliderHandle.x = range.positionForValue(value)
+            }
+            else
+            {
+                sliderHandle.y = range.positionForValue(value)
+            }
+        }
 
         property int sliderLength: __horizontal ? parentSlider.internalWidth : parentSlider.internalHeight
 

@@ -2,7 +2,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
     A slider style that contains a color gradient as the background

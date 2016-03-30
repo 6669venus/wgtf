@@ -71,10 +71,13 @@ WGScrollBar 1.0 WGScrollBar.qml
 WGScrollBarStyle 1.0 WGScrollBarStyle.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
 WGSeparator 1.0 WGSeparator.qml
-WGSlider 1.0 WGSlider.qml
+WGSlider 1.0 WGSlider1.qml
+WGSlider 2.0 WGSlider.qml
 WGSliderControl 1.0 WGSliderControl.qml
-WGSliderHandle 1.0 WGSliderHandle.qml
-WGSliderStyle 1.0 WGSliderStyle.qml
+WGSliderHandle 1.0 WGSliderHandle1.qml
+WGSliderHandle 2.0 WGSliderHandle.qml
+WGSliderStyle 1.0 WGSliderStyle1.qml
+WGSliderStyle 2.0 WGSliderStyle.qml
 WGSpinBox 1.0 WGSpinBox.qml
 WGSplitTextFrame 1.0 WGSplitTextFrame.qml
 WGSubPanel 1.0 WGSubPanel.qml

@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
-import BWControls 1.0
+import WGControls 1.0
 
 //TODO: Test orientation = vertical. Create vertical slider. Remove option here
 

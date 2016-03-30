@@ -40,7 +40,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
-import WGControls 1.0 as WGOne
+import WGControls 1.0
 
 /*!
     A re-write of the default Slider style.
@@ -74,6 +74,16 @@ Style {
 
     padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
+    /*! This property loads the slider handle style found in WGSliderHande.qml or descendent.
+    */
+    property Component handle:
+
+    Loader {
+        id: handleFrame
+        sourceComponent: control.__handlePosList.children[buttonid].handleStyle
+    }
+    /*! This property holds the background groove of the slider.
+    */
     property Component groove: Item {
 
         anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
@@ -82,7 +92,7 @@ Style {
         implicitWidth: Math.round(defaultSpacing.minimumRowHeight / 4)
         implicitHeight: Math.round(defaultSpacing.minimumRowHeight / 4)
 
-        WGOne.WGTextBoxFrame {
+        WGTextBoxFrame {
             radius: defaultSpacing.standardRadius
             anchors.fill: parent
             color: control.enabled ? palette.textBoxColor : "transparent"
@@ -92,7 +102,7 @@ Style {
     /*! This property holds the coloured bar of the slider.
     */
     property Component bar: Item {
-        property color fillColor: control.__handlePosList[barid].barColor
+        property color fillColor: control.__handlePosList.children[barid].barColor
         clip: true
         Rectangle {
             clip: true
@@ -110,7 +120,7 @@ Style {
     property Component tickmarks: Repeater {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
-        WGOne.WGSeparator {
+        WGSeparator {
             vertical: __horizontal
             width: __horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
             height: !__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
@@ -168,21 +178,21 @@ Style {
                 }
 
                 Repeater {
-                model: control.__handleCount
+                model: control.__handlePosList.children
                     Loader {
                         id: barLoader
                         sourceComponent: bar
                         property int barid: index
-                        visible: control.__handlePosList[index].showBar
+                        visible: control.__handlePosList.children[index].showBar
 
                         anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
                         anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
-                        height: __horizontal ? grooveLoader.height : control.height - control.__handlePosList[index].barMinPos - padding.top - padding.bottom
-                        width: !__horizontal ? grooveLoader.width : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
+                        height: __horizontal ? grooveLoader.height : control.height - control.__handlePosList.children[index].barMinPos - padding.top - padding.bottom
+                        width: !__horizontal ? grooveLoader.width : control.__handlePosList.children[index].range.position - control.__handlePosList.children[index].barMinPos - padding.left - padding.right
 
-                        y: !__horizontal ? control.__handlePosList[index].barMinPos : 0
-                        x: __horizontal ? control.__handlePosList[index].barMinPos : 0
+                        y: !__horizontal ? control.__handlePosList.children[index].barMinPos : 0
+                        x: __horizontal ? control.__handlePosList.children[index].barMinPos : 0
                         z: 1
                     }
                 }
@@ -197,23 +207,50 @@ Style {
             }
 
             Repeater {
-                model: control.__handleCount
-
+            model: control.__handlePosList.children
                 Loader {
                     id: handleLoader
-                    sourceComponent: control.__handlePosList[index].handleStyle
+                    sourceComponent: handle
+                    property int buttonid: index
 
                     anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
 
                     anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
-                    width: control.__handleWidth
-                    height: control.__handleHeight
+                    height: handleLoader.implicitHeight
 
-                    x: __horizontal ? Math.round(control.__handlePosList[index].range.position - control.__handleWidth / 2) : 0
-                    y: !__horizontal ? Math.round(control.__handlePosList[index].range.position - control.__handleHeight / 2) : 0
+                    width: handleLoader.implicitWidth
+
+                    Behavior on height{
+                        enabled: __horizontal
+                        NumberAnimation {
+                            duration: 120
+                            easing {
+                                type: Easing.OutCirc
+                                amplitude: 1.0
+                                period: 0.5
+                            }
+                        }
+                    }
+
+                    Behavior on width{
+                        enabled: !__horizontal
+                        NumberAnimation {
+                            duration: 120
+                            easing {
+                                type: Easing.OutCirc
+                                amplitude: 1.0
+                                period: 0.5
+                            }
+                        }
+                    }
+
+                    x: __horizontal ? Math.round(control.__handlePosList.children[index].range.position - control.__handleWidth / 2) : 0
+                    y: !__horizontal ? Math.round(control.__handlePosList.children[index].range.position - control.__handleHeight / 2) : 0
 
                     onLoaded: {
+                        control.__handlePosList.children[index].handleIndex = index
+
                         control.__handleHeight = handleLoader.implicitHeight
                         control.__handleWidth = handleLoader.implicitWidth
                     }
@@ -226,24 +263,24 @@ Style {
                         propagateComposedEvents: true
 
                         onEntered: {
-                            control.__hoveredHandle = index
+                            control.__hoveredHandle = handleIndex
                         }
 
                         onExited: {
-                            if (control.__hoveredHandle == index)
+                            if (control.__hoveredHandle == handleIndex)
                             {
                                control.__hoveredHandle = -1
                             }
                         }
 
                         onPressed: {
-                            control.__activeHandle = index
+                            control.__activeHandle = handleIndex
                             control.forceActiveFocus()
 
                             if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
                             {
                                 control.__draggable = false
-                                control.handleCtrlClicked(index)
+                                control.handleCtrlClicked(handleIndex)
                             }
 
                             mouse.accepted = false

@@ -41,7 +41,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
-import WGControls 2.0
+import WGControls 1.0
 
 /*!
  \brief A rewrite of the default QML Slider control that allows 'x'
@@ -136,7 +136,7 @@ Control {
     property bool handleClamp: true
 
     /*!
-        This property determines the default color of the bar that 'fills' the slider if is enabled
+        This property determines the color of the bar that 'fills' the slider if is enabled
 
         The default value is \c palette.highlightColor
     */
@@ -171,14 +171,6 @@ Control {
     */
     property bool grooveClickable: true
 
-    /*!
-        This string determines the the component for the slider handle.
-
-        The default value is WGColorSliderHandle.
-        It can be set to any Item based component.
-    */
-    property Component handleType: WGSliderHandle{}
-
     /*! \internal */
     property bool __draggable: true
 
@@ -199,17 +191,22 @@ Control {
 
     property alias pressed: mouseArea.pressed
 
-    /*!
-        This property holds the handle objects.
-    */
-    property var __handlePosList: []
 
     /*!
-        This property holds the handle objects.
+        This property holds of the handle objects.
     */
-    property int __handleCount: 0
+
+    default property alias defaultProperty: __handlePosList.children
+
+    property alias __handlePosList: __handlePosList
+
+    Item {
+        id: __handlePosList
+        anchors.fill: parent
+    }
 
     activeFocusOnTab: true
+
 
     /*! \internal */
     property bool __handleMoving: false
@@ -226,13 +223,13 @@ Control {
         __handlePosList.children[__activeHandle].range.decreaseSingleStep()
     }
 
-    style: Qt.createComponent("WGSliderStyle.qml", slider)
+    style: Qt.createComponent("WGSliderStyle1.qml", slider)
 
-    Keys.onRightPressed: if (__horizontal) __handlePosList[__activeHandle].range.increaseSingleStep()
-    Keys.onLeftPressed: if (__horizontal) __handlePosList[__activeHandle].range.decreaseSingleStep()
+    Keys.onRightPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
+    Keys.onLeftPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
-    Keys.onUpPressed: __handlePosList[__activeHandle].range.increaseSingleStep()
-    Keys.onDownPressed: __handlePosList[__activeHandle].range.decreaseSingleStep()
+    Keys.onUpPressed: __handlePosList.children[__activeHandle].range.increaseSingleStep()
+    Keys.onDownPressed: __handlePosList.children[__activeHandle].range.decreaseSingleStep()
 
     property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
     property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
@@ -252,45 +249,6 @@ Control {
 
     implicitHeight: defaultSpacing.minimumRowHeight
     implicitWidth: defaultSpacing.standardMargin
-
-    function addHandle(handle, index) {
-        handle.parentSlider = slider
-        handle.handleIndex = index
-        __handlePosList.splice(index,0,handle)
-        __handleCount = __handlePosList.length
-    }
-
-    function removeHandle(index) {
-        __handlePosList.splice(index,index)
-        __handleCount = __handlePosList.length
-        for (var i = 0; i < __handlePosList.length; i++)
-        {
-            handle.handleIndex = i
-        }
-    }
-
-    Component.onCompleted: {
-
-        //collect any child handles and put them in __handlePosList
-        for (var i = 0; i < slider.children.length; i++)
-        {
-            if (slider.children[i].objectName == "SliderHandle")
-            {
-                addHandle(slider.children[i],__handlePosList.length)
-            }
-        }
-
-        //create a handle if none were collected
-        if(__handlePosList.length == 0)
-        {
-           var newHandle = handleType.createObject(slider, {
-                                       "value": slider.value,
-                                       "parentSlider": slider
-                                   });
-
-            addHandle(newHandle,__handlePosList.length)
-        }
-    }
 
     MouseArea {
         id: mouseArea
@@ -312,7 +270,7 @@ Control {
         property bool dragStarted: false
 
         function clamp ( val ) {
-            return Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
+            return Math.max(__handlePosList.children[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList.children[__activeHandle].range.positionAtMaximum, val))
         }
 
         function updateHandlePosition(mouse, force) {
@@ -326,14 +284,14 @@ Control {
                     if (overThreshold)
                         preventStealing = true
                     if (overThreshold || force)
-                        __handlePosList[__activeHandle].range.position = pos
+                        __handlePosList.children[__activeHandle].x = pos
                 } else if (!__horizontal) {
                     pos = clamp (mouse.y + clickOffset)
                     overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
                     if (overThreshold)
                         preventStealing = true
                     if (overThreshold || force)
-                        __handlePosList[__activeHandle].range.position = pos
+                        __handlePosList.children[__activeHandle].y = pos
                 }
             }
         }
@@ -408,11 +366,11 @@ Control {
             if(slider.activeFocus){
                 if (wheel.angleDelta.y > 0)
                 {
-                    __horizontal ? __handlePosList[__activeHandle].range.increaseSingleStep() : __handlePosList[__activeHandle].range.decreaseSingleStep()
+                    __horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
                 }
                 else
                 {
-                    !__horizontal ? __handlePosList[__activeHandle].range.increaseSingleStep() : __handlePosList[__activeHandle].range.decreaseSingleStep()
+                    !__horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
                 }
             }
         }

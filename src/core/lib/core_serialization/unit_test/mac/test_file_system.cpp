@@ -22,14 +22,14 @@ TEST(file_sytem)
 	char wdir[PATH_MAX];
 	CHECK(getwd(wdir) != nullptr);
 	CHECK(fileSystem.exists(wdir) == true);
-	CHECK(fileSystem.getFileInfo(wdir).isDirectory());
+	CHECK(fileSystem.getFileInfo(wdir)->isDirectory());
 	CHECK(fileSystem.getFileType(wdir) == IFileSystem::Directory);
 
 	CHECK(fileSystem.exists(filePath) == false);
 	CHECK(fileSystem.writeFile(filePath, testData, testDataLength, std::ios::trunc | std::ios::out));
 	CHECK(fileSystem.exists(filePath) == true);
 
-	IFileSystem::istream_uptr stream = fileSystem.readFile(filePath, std::ios::in);
+	IFileSystem::IStreamPtr stream = fileSystem.readFile(filePath, std::ios::in);
 	CHECK(stream->size() == testDataLength);
 	char * readedData = (char *)malloc(stream->size());
 	size_t readedSize = stream->readRaw(readedData, stream->size());
@@ -54,13 +54,13 @@ TEST(file_sytem)
 	CHECK(fileSystem.exists(filePath) == true);
 	CHECK(fileSystem.exists(movedFilePath) == false);
 
-	FileInfo info = fileSystem.getFileInfo(filePath);
-	CHECK(fileSystem.exists(info.fullPath.c_str()) == true);
+	IFileInfoPtr info = fileSystem.getFileInfo(filePath);
+	CHECK(fileSystem.exists(info->fullPath.c_str()) == true);
 
 	int counter = 0;
-	fileSystem.enumerate(wdir, [&](FileInfo&& info) {
-			CHECK(fileSystem.exists(info.fullPath.c_str()));
-			CHECK(fileSystem.getFileInfo(info.fullPath.c_str()).size == info.size);
+	fileSystem.enumerate(wdir, [&](IFileInfoPtr&& info) {
+			CHECK(fileSystem.exists(info->fullPath.c_str()));
+			CHECK(fileSystem.getFileInfo(info->fullPath.c_str()).size == info->size);
 			++counter;
 			return true;
 		});

@@ -755,6 +755,86 @@ public:
 
 
 // -----------------------------------------------------------------------------
+// Section: ScriptDict
+// -----------------------------------------------------------------------------
+
+/**
+ *	This class provides the ability to create and modify dict objects
+ */
+class ScriptDict : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptDict, ScriptObject )
+
+	typedef Py_ssize_t size_type;
+
+	/**
+	 *	This method checks if the given object is a ScriptDict object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptDict object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyDict_Check( object.get() );
+	}
+
+	static ScriptDict create( size_type capacity = 0 );
+
+	bool next( size_type & pos, 
+		ScriptObject & key,
+		ScriptObject & value )
+	{
+		PyObject * pKey = NULL;
+		PyObject * pValue = NULL;
+
+		int result = PyDict_Next( this->get(), &pos, &pKey, &pValue );
+
+		if (result != 0)
+		{
+			key = ScriptObject( pKey, ScriptObject::FROM_BORROWED_REFERENCE );
+			value = ScriptObject( pValue,
+				ScriptObject::FROM_BORROWED_REFERENCE );
+		}
+		return result != 0;
+	}
+
+	template <class ERROR_HANDLER>
+	bool setItem( const char * key, const ScriptObject & value,
+		const ERROR_HANDLER & errorHandler ) const;
+		
+	template <class ERROR_HANDLER>
+	bool setItem( const ScriptObject & key, const ScriptObject & value,
+		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	ScriptObject getItem( const char * key, 
+		const ERROR_HANDLER & errorHandler ) const;
+		
+	template <class ERROR_HANDLER>
+	ScriptObject getItem( const ScriptObject & key, 
+		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	ScriptList keys( const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	bool delItem( const char * key, const ERROR_HANDLER & errorHandler );
+
+	template <class ERROR_HANDLER>
+	bool delItem( const ScriptObject & key,
+		const ERROR_HANDLER & errorHandler );
+
+	size_type size() const;
+
+	template <class ERROR_HANDLER>
+	bool update( const ScriptDict & other, 
+		const ERROR_HANDLER & errorHandler ) const;
+
+	void clear() const;
+};
+
+
+// -----------------------------------------------------------------------------
 // Section: ScriptModule
 // -----------------------------------------------------------------------------
 /**
@@ -880,6 +960,19 @@ public:
 	}
 
 	/**
+	 *	This method gets the dict from a type.
+	 *
+	 *	@returns		The dict for the given type.
+	 */
+	ScriptDict getDict() const
+	{
+		// From python documentation:
+		// "This function never fails."
+		return ScriptDict( reinterpret_cast< PyTypeObject * >( this->get() )->tp_dict,
+			ScriptObject::FROM_BORROWED_REFERENCE );
+	}
+
+	/**
 	 *	This method allocates a new object of this type
 	 *	@param errorHandler The type of error handling to use if this method
 	 *		fails
@@ -894,86 +987,11 @@ public:
 		errorHandler.checkPtrError( pObject );
 		return pObject;
 	}
-};
 
-
-// -----------------------------------------------------------------------------
-// Section: ScriptDict
-// -----------------------------------------------------------------------------
-
-/**
- *	This class provides the ability to create and modify dict objects
- */
-class ScriptDict : public ScriptObject
-{
-public:
-	STANDARD_SCRIPT_OBJECT_IMP( ScriptDict, ScriptObject )
-
-	typedef Py_ssize_t size_type;
-
-	/**
-	 *	This method checks if the given object is a ScriptDict object
-	 *	@param object The object to check
-	 *	@return True if object is a ScriptDict object, false otherwise
-	 */
-	static bool check( const ScriptObject & object )
+	void modified()
 	{
-		return PyDict_Check( object.get() );
+		PyType_Modified( reinterpret_cast< PyTypeObject * >( this->get() ) );
 	}
-
-	static ScriptDict create( size_type capacity = 0 );
-
-	bool next( size_type & pos, 
-		ScriptObject & key,
-		ScriptObject & value )
-	{
-		PyObject * pKey = NULL;
-		PyObject * pValue = NULL;
-
-		int result = PyDict_Next( this->get(), &pos, &pKey, &pValue );
-
-		if (result != 0)
-		{
-			key = ScriptObject( pKey, ScriptObject::FROM_BORROWED_REFERENCE );
-			value = ScriptObject( pValue,
-				ScriptObject::FROM_BORROWED_REFERENCE );
-		}
-		return result != 0;
-	}
-
-	template <class ERROR_HANDLER>
-	bool setItem( const char * key, const ScriptObject & value,
-		const ERROR_HANDLER & errorHandler ) const;
-		
-	template <class ERROR_HANDLER>
-	bool setItem( const ScriptObject & key, const ScriptObject & value,
-		const ERROR_HANDLER & errorHandler ) const;
-
-	template <class ERROR_HANDLER>
-	ScriptObject getItem( const char * key, 
-		const ERROR_HANDLER & errorHandler ) const;
-		
-	template <class ERROR_HANDLER>
-	ScriptObject getItem( const ScriptObject & key, 
-		const ERROR_HANDLER & errorHandler ) const;
-
-	template <class ERROR_HANDLER>
-	ScriptList keys( const ERROR_HANDLER & errorHandler ) const;
-
-	template <class ERROR_HANDLER>
-	bool delItem( const char * key, const ERROR_HANDLER & errorHandler );
-
-	template <class ERROR_HANDLER>
-	bool delItem( const ScriptObject & key,
-		const ERROR_HANDLER & errorHandler );
-
-	size_type size() const;
-
-	template <class ERROR_HANDLER>
-	bool update( const ScriptDict & other, 
-		const ERROR_HANDLER & errorHandler ) const;
-
-	void clear() const;
 };
 
 
@@ -1878,6 +1896,53 @@ public:
 		assert( this->exists() );
 		return ScriptFunction( PyMethod_GET_FUNCTION( this->get() ),
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptDescrWrapper
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create wrapper descriptors.
+ */
+class ScriptDescrWrapper : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptDescrWrapper, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptDescrWrapper object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptDescrWrapper object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return (object.get()->ob_type == &PyWrapperDescr_Type);
+	}
+
+	/**
+	 *	This method creates a new ScriptDescrWrapper from a type,
+	 *	wrapper definition and wrapped function.
+	 */
+	static ScriptDescrWrapper create( const ScriptType & type,
+		wrapperbase & base,
+		void * pFunctionToBeWrapped )
+	{
+		auto pyWrapper = PyDescr_NewWrapper(
+			reinterpret_cast< PyTypeObject * >( type.get() ),
+			&base,
+			pFunctionToBeWrapped );
+		return ScriptDescrWrapper( pyWrapper, FROM_NEW_REFERENCE );
+	}
+
+	ScriptString name() const
+	{
+		const PyWrapperDescrObject * pWrapperDescr =
+			reinterpret_cast< PyWrapperDescrObject * >( this->get() );
+		assert( pWrapperDescr->d_base != nullptr );
+		return ScriptString( pWrapperDescr->d_base->name_strobj,
+			FROM_BORROWED_REFERENCE );
 	}
 };
 

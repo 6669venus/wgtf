@@ -27,37 +27,41 @@ WGSliderHandle {
 
         This can be any Item based component.
     */
-    property Component handleStyle: WGButtonFrame{
-        color: parentSlider.enabled ? handleColor : palette.mainWindowColor
-        borderColor: parentSlider.enabled ? palette.darkerShade : palette.darkShade
-        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
-        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
+    property Component handleStyle: Item {
         implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
         implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
 
-        Behavior on height{
-            NumberAnimation {
-                duration: 120
-                easing {
-                    type: Easing.OutCirc
-                    amplitude: 1.0
-                    period: 0.5
+        WGButtonFrame{
+            color: parentSlider.enabled ? handleColor : palette.mainWindowColor
+            borderColor: parentSlider.enabled ? palette.darkerShade : palette.darkShade
+            highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
+            innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
+            implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+            implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+
+            Behavior on height{
+                NumberAnimation {
+                    duration: 120
+                    easing {
+                        type: Easing.OutCirc
+                        amplitude: 1.0
+                        period: 0.5
+                    }
                 }
             }
-        }
 
-        height: __overlapping ? parent.height / 2 : parent.height
+            height: __overlapping ? implicitHeight / 2 : implicitHeight
+            width: implicitWidth
 
-        width: parent.implicitWidth
-
-        Component.onCompleted: {
-            if (maxHandle)
-            {
-                anchors.bottom = parent.bottom
-            }
-            else
-            {
-                anchors.top = parent.top
+            Component.onCompleted: {
+                if (maxHandle)
+                {
+                    anchors.bottom = parent.bottom
+                }
+                else
+                {
+                    anchors.top = parent.top
+                }
             }
         }
     }

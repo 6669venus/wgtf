@@ -3,7 +3,6 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import BWControls 1.0
-import WGControls 1.0 as WGOne
 
 /*!
  \brief Slider with two handles that encompasses a range of values.
@@ -145,7 +144,7 @@ Item {
     }
 
     // support copy&paste
-    WGOne.WGCopyable {
+    WGCopyable {
         id: copyableControl
 
         BWCopyable {

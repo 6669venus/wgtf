@@ -3,7 +3,6 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import BWControls 1.0
-import WGControls 1.0 as WGOne
 
 //TODO: Test orientation = vertical. Create vertical slider. Remove option here
 //Resizing the slider could be smarter. Does not take into account content of spinner width
@@ -150,7 +149,7 @@ Item {
     }
 
     // support copy&paste
-    WGOne.WGCopyable {
+    WGCopyable {
         objectName: "copyableControl"
         id: copyableControl
 
@@ -321,7 +320,7 @@ Item {
         ]
     }
 
-    WGOne.WGNumberBox {
+    WGNumberBox {
         objectName: "NumberBox"
         id: sliderValue
         parent: __horizontal ? horizUpper : vertUpper

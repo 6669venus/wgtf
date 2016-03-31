@@ -40,7 +40,6 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
-import WGControls 1.0 as WGOne
 
 /*!
     A re-write of the default Slider style.
@@ -81,7 +80,7 @@ Style {
         implicitWidth: Math.round(defaultSpacing.minimumRowHeight / 4)
         implicitHeight: Math.round(defaultSpacing.minimumRowHeight / 4)
 
-        WGOne.WGTextBoxFrame {
+        WGTextBoxFrame {
             radius: defaultSpacing.standardRadius
             anchors.fill: parent
             color: control.enabled ? palette.textBoxColor : "transparent"
@@ -109,7 +108,7 @@ Style {
     property Component tickmarks: Repeater {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
-        WGOne.WGSeparator {
+        WGSeparator {
             vertical: true
             width: defaultSpacing.separatorWidth
             height: defaultSpacing.standardMargin
@@ -209,9 +208,6 @@ Style {
                     anchors.verticalCenter: grooveLoader.verticalCenter
 
                     property int handleIndex: index
-
-                    width: control.__handleWidth
-                    height: control.__handleHeight
 
                     x: Math.round(control.__handlePosList[index].range.position - control.__handleWidth / 2)
 

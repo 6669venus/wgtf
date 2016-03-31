@@ -192,10 +192,10 @@ Control {
     property int __hoveredHandle: -1
 
     /*! \internal */
-    property int __handleHeight
+    property int __handleHeight: defaultSpacing.minimumRowHeight
 
     /*! \internal */
-    property int __handleWidth
+    property int __handleWidth: defaultSpacing.minimumRowHeight
 
     property alias pressed: mouseArea.pressed
 

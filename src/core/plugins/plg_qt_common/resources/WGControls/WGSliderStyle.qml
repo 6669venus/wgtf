@@ -207,6 +207,8 @@ Style {
 
                     anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
+                    property int handleIndex: index
+
                     width: control.__handleWidth
                     height: control.__handleHeight
 
@@ -226,18 +228,18 @@ Style {
                         propagateComposedEvents: true
 
                         onEntered: {
-                            control.__hoveredHandle = index
+                            control.__hoveredHandle = handleIndex
                         }
 
                         onExited: {
-                            if (control.__hoveredHandle == index)
+                            if (control.__hoveredHandle == handleIndex)
                             {
                                control.__hoveredHandle = -1
                             }
                         }
 
                         onPressed: {
-                            control.__activeHandle = index
+                            control.__activeHandle = handleIndex
                             control.forceActiveFocus()
 
                             if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))

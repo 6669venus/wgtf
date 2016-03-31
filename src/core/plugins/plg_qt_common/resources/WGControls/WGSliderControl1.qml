@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import BWControls 1.0
-import WGControls 1.0 as WGOne
+import WGControls 1.0
 
 //TODO: Test orientation = vertical. Create vertical slider. Remove option here
 //Resizing the slider could be smarter. Does not take into account content of spinner width
@@ -58,17 +58,8 @@ Item {
        A separate vertical slider should probably be made */
     property alias orientation: slider.orientation
 
-    /*! This property defines what SliderStyle component will be used for the slider */
+    /*! This property defines what sliderstyle styling component to use for this control */
     property alias style: slider.style
-
-    /*! This property defines what Slider Handle component will be used for the slider handle */
-    property alias handleType: slider.handleType
-
-    /*! This property defines what frame component will be used for the numberbox text box */
-    property alias textBoxStyle: sliderValue.textBoxStyle
-
-    /*! This property defines what frame component will be used for the numberbox buttons */
-    property alias buttonFrame: sliderValue.buttonFrame
 
     /*! This property defines the value indicated by the control
         The default value is \c 0.0
@@ -138,6 +129,9 @@ Item {
     /*! \internal */
     property alias __slider: slider
 
+    property alias textBoxStyle: sliderValue.textBoxStyle
+    property alias buttonFrame: sliderValue.buttonFrame
+
     implicitHeight: defaultSpacing.minimumRowHeight
     implicitWidth: defaultSpacing.standardMargin
 
@@ -147,7 +141,7 @@ Item {
     }
 
     // support copy&paste
-    WGOne.WGCopyable {
+    WGCopyable {
         objectName: "copyableControl"
         id: copyableControl
 
@@ -185,7 +179,7 @@ Item {
         setValueHelper(sliderValue, "value", sliderFrame.value);
     }
 
-    WGOne.WGExpandingRowLayout {
+    WGExpandingRowLayout {
         id: sliderLayout
         anchors.fill: parent
 
@@ -212,26 +206,19 @@ Item {
 
             Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
 
-            value: sliderFrame.value;
+            WGSliderHandle {
+                id: sliderHandle
+                minimumValue: slider.minimumValue
+                maximumValue: slider.maximumValue
+                showBar: true
 
-            onValueChanged: {
-                if ( __handleMoving ) {
-                    setValueHelper(sliderFrame, "value", value);
-                }
-            }
+                value: sliderFrame.value;
 
-            Connections {
-                target: sliderFrame
                 onValueChanged: {
-                    if(!slider.__handleMoving)
-                    {
-                        slider.__handlePosList[0].value = sliderFrame.value
+                    if ( slider.__handleMoving) {
+                        setValueHelper(sliderFrame, "value", value);
                     }
                 }
-            }
-
-            onValueTicked: {
-                setValueHelper(sliderFrame, "value", value);
             }
 
             style : WGSliderStyle{
@@ -269,7 +256,7 @@ Item {
             ]
         }
 
-        WGOne.WGNumberBox {
+        WGNumberBox {
             objectName: "NumberBox"
             id: sliderValue
             Layout.preferredWidth: visible ? valueBoxWidth : 0
@@ -295,9 +282,11 @@ Item {
                 setValueHelper(sliderFrame, "value", value);
             }
 
+
             onValueChanged: {
-                setValueHelper(sliderFrame, "value", value);
+                setValueHelper(sliderHandle, "value", value);
             }
+
         }
     }
     /*! Deprecated */

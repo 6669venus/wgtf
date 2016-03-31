@@ -205,7 +205,7 @@ Control {
     property var __handlePosList: []
 
     /*!
-        This property holds the handle objects.
+        This property holds the number of handle objects.
     */
     property int __handleCount: 0
 
@@ -220,19 +220,35 @@ Control {
     /*! \internal */
     function accessibleIncreaseAction() {
         __handlePosList.children[__activeHandle].range.increaseSingleStep()
+        slider.valueTicked(__handlePosList[__activeHandle])
     }
     /*! \internal */
     function accessibleDecreaseAction() {
         __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+        slider.valueTicked(__handlePosList[__activeHandle])
     }
 
     style: Qt.createComponent("WGSliderStyle.qml", slider)
 
-    Keys.onRightPressed: if (__horizontal) __handlePosList[__activeHandle].range.increaseSingleStep()
-    Keys.onLeftPressed: if (__horizontal) __handlePosList[__activeHandle].range.decreaseSingleStep()
+    Keys.onRightPressed: {
+        if (__horizontal) __handlePosList[__activeHandle].range.increaseSingleStep()
+        slider.valueTicked(__handlePosList[__activeHandle])
+    }
 
-    Keys.onUpPressed: __handlePosList[__activeHandle].range.increaseSingleStep()
-    Keys.onDownPressed: __handlePosList[__activeHandle].range.decreaseSingleStep()
+    Keys.onLeftPressed: {
+        if (__horizontal) __handlePosList[__activeHandle].range.decreaseSingleStep()
+        slider.valueTicked(__handlePosList[__activeHandle])
+    }
+
+    Keys.onUpPressed: {
+        __handlePosList[__activeHandle].range.increaseSingleStep()
+        slider.valueTicked(__handlePosList[__activeHandle])
+    }
+
+    Keys.onDownPressed: {
+        __handlePosList[__activeHandle].range.decreaseSingleStep()
+        slider.valueTicked(__handlePosList[__activeHandle])
+    }
 
     property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
     property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
@@ -255,7 +271,6 @@ Control {
 
     function addHandle(handle, index) {
         handle.parentSlider = slider
-        handle.handleIndex = index
         __handlePosList.splice(index,0,handle)
         __handleCount = __handlePosList.length
     }
@@ -263,11 +278,9 @@ Control {
     function removeHandle(index) {
         __handlePosList.splice(index,index)
         __handleCount = __handlePosList.length
-        for (var i = 0; i < __handlePosList.length; i++)
-        {
-            handle.handleIndex = i
-        }
     }
+
+    signal valueTicked (var handle)
 
     Component.onCompleted: {
 
@@ -284,10 +297,10 @@ Control {
         if(__handlePosList.length == 0)
         {
            var newHandle = handleType.createObject(slider, {
-                                       "value": slider.value,
                                        "parentSlider": slider
                                    });
 
+            slider.value = Qt.binding(function() {return newHandle.value})
             addHandle(newHandle,__handlePosList.length)
         }
     }
@@ -408,13 +421,18 @@ Control {
             if(slider.activeFocus){
                 if (wheel.angleDelta.y > 0)
                 {
-                    __horizontal ? __handlePosList[__activeHandle].range.increaseSingleStep() : __handlePosList[__activeHandle].range.decreaseSingleStep()
+                    __handlePosList[__activeHandle].range.increaseSingleStep()
+                    slider.valueTicked(__handlePosList[__activeHandle])
                 }
                 else
                 {
-                    !__horizontal ? __handlePosList[__activeHandle].range.increaseSingleStep() : __handlePosList[__activeHandle].range.decreaseSingleStep()
+                    __handlePosList[__activeHandle].range.decreaseSingleStep()
+                    slider.valueTicked(__handlePosList[__activeHandle])
                 }
             }
         }
     }
+
+    /* Deprecated */
+    property alias handleStyle: slider.handleType;
 }

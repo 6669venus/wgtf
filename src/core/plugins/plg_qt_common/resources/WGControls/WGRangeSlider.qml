@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 import BWControls 1.0
+import WGControls 1.0 as WGOne
 
 /*!
  \brief Slider with two handles that encompasses a range of values.
@@ -56,6 +57,15 @@ Item {
 
     /*! This property defines what sliderstyle styling component to use for this control */
     property alias style: slider.style
+
+    /*! This property defines what Slider Handle component will be used for the slider handle */
+    property alias handleType: slider.handleType
+
+    /*! This property defines what frame component will be used for the numberbox text box */
+    property alias textBoxStyle: sliderUpperValue.textBoxStyle
+
+    /*! This property defines what frame component will be used for the numberbox buttons */
+    property alias buttonFrame: sliderUpperValue.buttonFrame
 
     /*! This property defines the lower value indicated by the control
         The default value is \c 0.0
@@ -138,7 +148,7 @@ Item {
     }
 
     // support copy&paste
-    WGCopyable {
+    WGOne.WGCopyable {
         id: copyableControl
 
         BWCopyable {
@@ -174,7 +184,7 @@ Item {
         setValueHelper(slider, "value", sliderFrame.value);
     }
 
-    WGExpandingRowLayout {
+    WGOne.WGExpandingRowLayout {
         anchors.fill: parent
 
 
@@ -196,6 +206,8 @@ Item {
             maximumValue: sliderMinHandle.maximumValue
 
             stepSize: slider.stepSize
+            buttonFrame: sliderFrame.buttonFrame
+            textBoxStyle: sliderFrame.textBoxStyle
 
             onEditingFinished: {
                 setValueHelper(sliderFrame, "value", value);
@@ -234,7 +246,8 @@ Item {
                 }
             }
 
-            WGSliderHandle {
+
+            WGRangeSliderHandle {
                 id: sliderMinHandle
                 minimumValue: slider.minimumValue
                 maximumValue: sliderMaxHandle.value
@@ -254,7 +267,7 @@ Item {
                 }
             }
 
-            WGSliderHandle {
+            WGRangeSliderHandle {
                 id: sliderMaxHandle
                 minimumValue: sliderMinHandle.value
                 maximumValue: slider.maximumValue
@@ -272,106 +285,6 @@ Item {
                     target: sliderMaxHandle
                     property: "value"
                     value: sliderFrame.upperValue
-                }
-            }
-
-            style : WGSliderStyle{
-
-                handle: Item {
-                    id: handleFrame
-                    implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-                    implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-
-                    Loader {
-                        sourceComponent: control.__handlePosList.children[buttonid].handleStyle
-
-                        anchors.top: {
-                            if(__horizontal)
-                            {
-                                !control.__handlePosList.children[buttonid].maxHandle ? parent.top : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-                        anchors.bottom: {
-                            if(__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].maxHandle ? parent.bottom : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-                        anchors.left: {
-                            if(!__horizontal)
-                            {
-                                !control.__handlePosList.children[buttonid].maxHandle ? parent.left : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-                        anchors.right: {
-                            if(!__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].maxHandle ? parent.right : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-
-                        height:{
-                            if(__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].__overlapping ? parent.height / 2 : parent.height
-                            }
-                            else
-                            {
-                                parent.implicitHeight
-                            }
-                        }
-
-                        width: {
-                            if(!__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].__overlapping ? parent.width / 2 : parent.width
-                            }
-                            else
-                            {
-                                parent.implicitWidth
-                            }
-                        }
-
-                        Behavior on height{
-                            enabled: __horizontal
-                            NumberAnimation {
-                                duration: 120
-                                easing {
-                                    type: Easing.OutCirc
-                                    amplitude: 1.0
-                                    period: 0.5
-                                }
-                            }
-                        }
-
-                        Behavior on width{
-                            enabled: !__horizontal
-                            NumberAnimation {
-                                duration: 120
-                                easing {
-                                    type: Easing.OutCirc
-                                    amplitude: 1.0
-                                    period: 0.5
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

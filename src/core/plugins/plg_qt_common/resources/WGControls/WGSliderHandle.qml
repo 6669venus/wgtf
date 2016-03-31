@@ -48,29 +48,16 @@ Item {
     property color barColor: parentSlider.barColor
 
     /*!
+        Allows a slider bar's minimum point to be attached to another position (usually another handle for range sliders).
+    */
+    property int barMinPos: __horizontal ? 0 : range.position
+
+    /*!
         This property determines whether the coloured bar will be shown or not.
         The default value is \c true
     */
 
     property bool showBar: true
-
-    /*!
-        A paired handle that handles the max or min value in a range slider.
-    */
-
-    property QtObject rangePartnerHandle: sliderHandle
-
-    /*!
-        True if the handle is the maximum value in a range slider
-    */
-
-    property bool maxHandle: false
-
-    /*!
-        Allows a slider bar to be attached to another handle for range sliders.
-    */
-
-    property int barMinPos: __horizontal ? 0 : range.position
 
     /*!
         This property holds the minimum value of the handle.
@@ -107,28 +94,6 @@ Item {
 
     /*! \internal */
     property bool __horizontal: parentSlider.__horizontal
-
-    /*! \internal */
-    property int handleIndex: -1
-
-    /*! \internal */
-    property bool __overlapping: {
-        if(rangePartnerHandle != sliderHandle)
-        {
-            if((sliderHandle.range.position >= rangePartnerHandle.range.position - (__horizontal ? parentSlider.__handleWidth/2 : parentSlider.__handleHeight/2)) && (sliderHandle.range.position <= rangePartnerHandle.range.position + (__horizontal ? parentSlider.__handleWidth/2 : parentSlider.__handleHeight/2)))
-            {
-                return true
-            }
-            else
-            {
-                return false
-            }
-        }
-        else
-        {
-            return false
-        }
-    }
 
     function updatePos() {
         if (parentSlider.__handleMoving)

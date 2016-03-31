@@ -18,9 +18,11 @@ typedef std::vector<std::string> AssetPaths;
 typedef std::vector<std::string> CustomContentFilters;
 
 class IFileSystem;
-struct FileInfo;
+class IFileInfo;
 class IDefinitionManager;
 class IAssetPresentationProvider;
+
+typedef std::shared_ptr<IFileInfo> IFileInfoPtr;
 
 class FileSystemAssetBrowserModel : public IAssetBrowserModel
 {
@@ -52,7 +54,7 @@ public:
 
 private:
 
-	virtual bool fileHasFilteredExtension( const FileInfo& fileInfo );
+	virtual bool fileHasFilteredExtension( const IFileInfoPtr& fileInfo );
 
 	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) override;
 

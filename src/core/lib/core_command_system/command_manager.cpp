@@ -21,13 +21,12 @@
 #include "batch_command.hpp"
 #include <atomic>
 #include <deque>
-#include <thread>
 #include <map>
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 #include "core_common/thread_local_value.hpp"
 #include "i_env_system.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
 
 // TODO: Remove to platform string header
@@ -92,7 +91,11 @@ class CommandManagerImpl : public IEnvEventListener
 public:
 
 	CommandManagerImpl( CommandManager* pCommandManager )
-		: workerMutex_()
+		: historyState_( &nullHistoryState_ )
+		, currentIndex_( NO_SELECTION )
+		, ownerThreadId_( std::this_thread::get_id() )
+		, workerThreadId_()
+		, workerMutex_()
 		, workerWakeUp_()
 		, ownerWakeUp_( false )
 		, commands_()
@@ -101,38 +104,17 @@ public:
 		, globalEventListener_()
 		, exiting_( false )
 		, enableWorker_( true )
-		, ownerThreadId_( std::this_thread::get_id() )
-		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
 		, workerThread_()
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
 		, envManager_( nullptr )
-		, historyState_( &nullHistoryState_ )
-		, currentIndex_( NO_SELECTION )
 	{
 	}
 
 	~CommandManagerImpl()
 	{
-		{
-			// mutex lock is needed here to ensure new exiting_ value
-			// is visible in other thread (due to memory barrier introduced by lock/unlock)
-			std::unique_lock<std::mutex> lock( workerMutex_ );
-			exiting_ = true;
-			workerWakeUp_.notify_all();
-		}
-
-		if (enableWorker_)
-		{
-			workerThread_.join();
-		}
-
-		unbindIndexCallbacks();
-		unbindHistoryCallbacks();
-
-		pCommandManager_ = nullptr;
 	}
 
 	void init( IApplication & application, IEnvManager & envManager );
@@ -195,6 +177,9 @@ public:
 	ConnectionHolder historyConnections_;
 	Connection updateConnection_;
 
+	std::thread::id ownerThreadId_;
+	std::thread::id workerThreadId_;
+
 private:
 	void bindIndexCallbacks();
 	void unbindIndexCallbacks();
@@ -229,8 +214,6 @@ private:
 
 	bool									exiting_;
 	bool									enableWorker_;
-	std::thread::id							ownerThreadId_;
-	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
 	std::thread								workerThread_;
 	BatchCommand							batchCommand_;
@@ -294,6 +277,22 @@ void CommandManagerImpl::fini()
 	envManager_->deregisterListener( this );
 
 	updateConnection_.disconnect();
+
+	{
+		// mutex lock is needed here to ensure new exiting_ value
+		// is visible in other thread (due to memory barrier introduced by lock/unlock)
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		exiting_ = true;
+		workerWakeUp_.notify_all();
+	}
+
+	if (enableWorker_)
+	{
+		workerThread_.join();
+	}
+
+	unbindIndexCallbacks();
+	unbindHistoryCallbacks();
 }
 
 //==============================================================================
@@ -668,6 +667,9 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 		assert( instance->parent_ == nullptr );
 		if (parentInstance != nullptr)
 		{
+			// This code creates a circular reference causing a memory leak
+			// Not sure of the intention of this code or responsibility of ownership of the CommandInstance
+			// @m_martin
 			instance->parent_ = parentInstance;
 			parentInstance->children_.push_back( instance );
 		}
@@ -1038,7 +1040,7 @@ void CommandManagerImpl::onAddEnv( IEnvState* state )
 	{
 		IDefinitionManager& defManager = pCommandManager_->getDefManager();
 
-		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+		IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
 		HistorySerializer serializer( *fileStream, defManager );
 		std::string version;
 		serializer.deserialize( version );
@@ -1126,7 +1128,7 @@ void CommandManagerImpl::unbindHistoryCallbacks()
 
 //==============================================================================
 CommandManager::CommandManager( IDefinitionManager & defManager )
-	: pImpl_( nullptr )
+	: pImpl_( new CommandManagerImpl( this ) )
 	, defManager_( defManager )
 	, fileSystem_( nullptr )
 {
@@ -1136,10 +1138,6 @@ CommandManager::CommandManager( IDefinitionManager & defManager )
 //==============================================================================
 CommandManager::~CommandManager()
 {
-	if(pImpl_ != nullptr)
-	{
-		fini();
-	}
 }
 
 //==============================================================================
@@ -1148,10 +1146,6 @@ void CommandManager::init( IApplication & application, IEnvManager & envManager,
 {
 	fileSystem_ = fileSystem;
 	controller_ = controller;
-	if (pImpl_ == nullptr)
-	{
-		pImpl_ = new CommandManagerImpl( this );
-	}
 	pImpl_->init( application, envManager );
 }
 
@@ -1159,12 +1153,7 @@ void CommandManager::init( IApplication & application, IEnvManager & envManager,
 //==============================================================================
 void CommandManager::fini()
 {
-	if (pImpl_ != nullptr)
-	{
-		pImpl_->fini();
-	}
-	delete pImpl_;
-	pImpl_ = nullptr;
+	pImpl_->fini();
 }
 
 
@@ -1317,6 +1306,12 @@ bool CommandManager::LoadHistory( ISerializer & serializer )
 ISelectionContext& CommandManager::selectionContext()
 {
 	return selectionContext_;
+}
+
+
+std::thread::id CommandManager::ownerThreadId() /* override */
+{
+	return pImpl_->ownerThreadId_;
 }
 
 //==============================================================================
@@ -1530,7 +1525,7 @@ void CommandManagerImpl::loadMacroList()
 	{
 		IDefinitionManager& defManager = pCommandManager_->getDefManager();
 
-		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+		IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
 		XMLSerializer serializer( *fileStream, defManager );
 		std::string version;
 		serializer.deserialize( version );

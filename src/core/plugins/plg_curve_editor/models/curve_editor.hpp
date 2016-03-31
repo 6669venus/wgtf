@@ -32,7 +32,7 @@ class CurveEditor : public Implements<ICurveEditor>
 	typedef Signal<void(ScaleChangeData)> ScaleChangeSignal;
 
 public:
-	CurveEditor() : xScale_(1.0f), yScale_(1.0f){}
+	CurveEditor() : xScale_(1.0f), yScale_(1.0f), timeScaleEditEnabled_(true) {}
 
 	virtual ICurvePtr createCurve(CurveTypes::CurveType curveType = CurveTypes::Linear, bool add = false) override;
 	virtual bool addCurve(ICurvePtr curve) override;
@@ -41,6 +41,7 @@ public:
 	virtual const std::string& getSubTitle() const override { return subTitle_; }
 	virtual const float& getXScale() const override { return xScale_; }
 	virtual const float& getYScale() const override { return yScale_; }
+	virtual const bool& getTimeScaleEditEnabled() const override { return timeScaleEditEnabled_; }
 
 	virtual void connectOnScaleChange(ScaleChangeCallback cb) override
 	{
@@ -51,6 +52,7 @@ protected:
 	virtual void putSubTitle(const std::string& subTitle) override;
 	virtual void putXScale(const float& xScale) override;
 	virtual void putYScale(const float& yScale) override;
+	virtual void putTimeScaleEditEnabled(const bool& timeScaleEditEnabled) override;
 
 	const IListModel* getCurves() const override { return &curves_; }
 
@@ -58,6 +60,7 @@ private:
 	std::string subTitle_;
 	float xScale_;
 	float yScale_;
+	bool timeScaleEditEnabled_;
 	GenericListT<ObjectHandleT<ICurve>>  curves_;
 	std::vector<std::shared_ptr<ICurve>> storage_;
 

@@ -5,6 +5,8 @@
 #include "i_command_event_listener.hpp"
 #include "core_common/signal.hpp"
 
+#include <thread>
+
 class IValueChangeNotifier;
 class VariantList;
 class IListModel;
@@ -69,6 +71,8 @@ public:
 	virtual bool LoadHistory( ISerializer & serializer ) = 0;
 
 	virtual ISelectionContext& selectionContext() = 0;
+
+	virtual std::thread::id ownerThreadId() = 0;
 
 	SignalModified signalHistoryPostInserted;
 	SignalModified signalHistoryPostRemoved;

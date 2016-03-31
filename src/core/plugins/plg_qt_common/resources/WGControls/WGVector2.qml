@@ -1,15 +1,14 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief A vector2 variation of the vectorN control
 */
 
 WGVectorN {
-    id: vector2
     objectName: "WGVector2"
-
+    id: vector2
     property vector2d value
 
     vectorData: [value.x, value.y]

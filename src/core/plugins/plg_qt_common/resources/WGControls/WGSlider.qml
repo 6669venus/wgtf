@@ -253,8 +253,10 @@ Control {
     property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
     property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
 
-    x: __horizontal ? __handleWidth / 2 : 0
-    y: !__horizontal ? __handleHeight / 2 : 0
+    //x: __horizontal ? __handleWidth / 2 : 0
+    //y: !__horizontal ? __handleHeight / 2 : 0
+
+    x: __handleWidth / 2
 
     /*!
         This signal is fired when the bar is double clicked
@@ -313,8 +315,11 @@ Control {
 
         anchors.centerIn: parent
 
-        width: parent.width
-        height: parent.height
+        height: __horizontal ? parent.height : parent.width
+        width: __horizontal ? parent.width : parent.height
+
+        rotation: __horizontal ? 0 : -90
+        transformOrigin: Item.Center
 
         hoverEnabled: true
 
@@ -333,6 +338,14 @@ Control {
             if (__draggable)
                 {
                 var pos, overThreshold
+
+                pos = clamp (mouse.x + clickOffset)
+                overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
+                if (overThreshold)
+                    preventStealing = true
+                if (overThreshold || force)
+                    __handlePosList[__activeHandle].range.position = pos
+                /*
                 if (__horizontal) {
                     pos = clamp (mouse.x + clickOffset)
                     overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
@@ -347,7 +360,7 @@ Control {
                         preventStealing = true
                     if (overThreshold || force)
                         __handlePosList[__activeHandle].range.position = pos
-                }
+                }*/
             }
         }
 

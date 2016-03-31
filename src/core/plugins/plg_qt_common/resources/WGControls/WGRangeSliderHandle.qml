@@ -36,7 +36,6 @@ WGSliderHandle {
         implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
 
         Behavior on height{
-            enabled: __horizontal
             NumberAnimation {
                 duration: 120
                 easing {
@@ -47,78 +46,18 @@ WGSliderHandle {
             }
         }
 
-        Behavior on width{
-            enabled: !__horizontal
-            NumberAnimation {
-                duration: 120
-                easing {
-                    type: Easing.OutCirc
-                    amplitude: 1.0
-                    period: 0.5
-                }
-            }
-        }
+        height: __overlapping ? parent.height / 2 : parent.height
 
-        anchors.top: {
-            if(__horizontal)
-            {
-                !maxHandle ? parent.top : undefined
-            }
-            else
-            {
-                undefined
-            }
-        }
-        anchors.bottom: {
-            if(__horizontal)
-            {
-                maxHandle ? parent.bottom : undefined
-            }
-            else
-            {
-                undefined
-            }
-        }
-        anchors.left: {
-            if(!__horizontal)
-            {
-                !maxHandle ? parent.left : undefined
-            }
-            else
-            {
-                undefined
-            }
-        }
-        anchors.right: {
-            if(!__horizontal)
-            {
-                maxHandle ? parent.right : undefined
-            }
-            else
-            {
-                undefined
-            }
-        }
+        width: parent.implicitWidth
 
-        height:{
-            if(__horizontal)
+        Component.onCompleted: {
+            if (maxHandle)
             {
-                __overlapping ? parent.height / 2 : parent.height
+                anchors.bottom = parent.bottom
             }
             else
             {
-                parent.implicitHeight
-            }
-        }
-
-        width: {
-            if(!__horizontal)
-            {
-                __overlapping ? parent.width / 2 : parent.width
-            }
-            else
-            {
-                parent.implicitWidth
+                anchors.top = parent.top
             }
         }
     }
@@ -127,13 +66,15 @@ WGSliderHandle {
     property bool __overlapping: {
         if(rangePartnerHandle != sliderHandle)
         {
-            if((sliderHandle.range.position >= rangePartnerHandle.range.position - (__horizontal ? parentSlider.__handleWidth/2 : parentSlider.__handleHeight/2)) && (sliderHandle.range.position <= rangePartnerHandle.range.position + (__horizontal ? parentSlider.__handleWidth/2 : parentSlider.__handleHeight/2)))
+            if((range.position >= rangePartnerHandle.range.position - parentSlider.__handleWidth/2) && (range.position <= rangePartnerHandle.range.position + parentSlider.__handleWidth/2))
             {
                 return true
+                console.log("true!")
             }
             else
             {
                 return false
+                console.log("false!")
             }
         }
         else

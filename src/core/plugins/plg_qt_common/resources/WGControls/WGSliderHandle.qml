@@ -50,7 +50,7 @@ Item {
     /*!
         Allows a slider bar's minimum point to be attached to another position (usually another handle for range sliders).
     */
-    property int barMinPos: __horizontal ? 0 : range.position
+    property int barMinPos: 0
 
     /*!
         This property determines whether the coloured bar will be shown or not.
@@ -98,7 +98,7 @@ Item {
     function updatePos() {
         if (parentSlider.__handleMoving)
         {
-            var newValue = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
+            var newValue = range.valueForPosition(sliderHandle.x)//range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
             setValueHelper(sliderHandle, "value", newValue);
         }
     }
@@ -114,15 +114,15 @@ Item {
         minimumValue: parentSlider.minimumValue
         maximumValue: parentSlider.maximumValue
 
-        inverted: __horizontal ? false : true
+        inverted: false //__horizontal ? false : true
 
-        property int sliderLength: __horizontal ? parentSlider.internalWidth : parentSlider.internalHeight
+        property int sliderLength: parentSlider.internalWidth//__horizontal ? parentSlider.internalWidth : parentSlider.internalHeight
 
         //The handle offset makes the handles fit inside the bar at the edges instead of overlapping the outside.
         property int handleOffset: {
             if(parentSlider.handleClamp)
             {
-                 __horizontal ? parentSlider.__handleWidth / 2 : parentSlider.__handleHeight / 2
+                 parentSlider.__handleWidth / 2//__horizontal ? parentSlider.__handleWidth / 2 : parentSlider.__handleHeight / 2
             }
             else
             {

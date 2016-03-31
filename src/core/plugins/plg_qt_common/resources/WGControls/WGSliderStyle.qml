@@ -69,15 +69,15 @@ Style {
 
     property bool __horizontal: control.__horizontal
 
-    property int vertPadding: __horizontal ? 0 : 1
-    property int horzPadding: !__horizontal ? 0 : 1
+    property int vertPadding: 0 //__horizontal ? 0 : 1
+    property int horzPadding: 1 //!__horizontal ? 0 : 1
 
     padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
     property Component groove: Item {
 
-        anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
-        anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
+        anchors.verticalCenter: parent.verticalCenter //__horizontal ? parent.verticalCenter : undefined
+        //anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
 
         implicitWidth: Math.round(defaultSpacing.minimumRowHeight / 4)
         implicitHeight: Math.round(defaultSpacing.minimumRowHeight / 4)
@@ -111,12 +111,12 @@ Style {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
         WGOne.WGSeparator {
-            vertical: __horizontal
-            width: __horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
-            height: !__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
+            vertical: true //__horizontal
+            width: defaultSpacing.separatorWidth //__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
+            height: defaultSpacing.standardMargin //!__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
 
-            x: __horizontal ? control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
-            y: !__horizontal ? control.__handleHeight / 2 + index * ((repeater.height - control.__handleHeight) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
+            x: control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) //__horizontal ? control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
+            y: defaultSpacing.doubleMargin //!__horizontal ? control.__handleHeight / 2 + index * ((repeater.height - control.__handleHeight) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
         }
     }
 
@@ -127,43 +127,49 @@ Style {
     property Component panel: Item {
         id: root
 
-        implicitWidth: __horizontal ? parent.width : grooveLoader.implicitWidth
-        implicitHeight: !__horizontal ? parent.height : grooveLoader.implicitHeight
+        implicitWidth: parent.width //__horizontal ? parent.width : grooveLoader.implicitWidth
+        implicitHeight: grooveLoader.implicitHeight //!__horizontal ? parent.height : grooveLoader.implicitHeight
+
+        anchors.centerIn: parent
 
         Item {
             objectName: "sliderFrame"
             id: sliderFrame
             anchors.centerIn: parent
-            height: control.height
-            width: control.width
+
+            height: __horizontal ? control.height : control.width
+            width: __horizontal ? control.width : control.height
+
+            rotation: __horizontal ? 0 : -90
+            transformOrigin: Item.Center
 
             Loader {
                 id: grooveLoader
                 sourceComponent: groove
 
-                width: __horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
+                width: parent.width - padding.left - padding.right //__horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
 
-                height: !__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
+                height: groove.implicitHeight //!__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
 
                 x: {
                     if(control.groovePadding)
                     {
-                        __horizontal ? padding.left : padding.left + ((__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2
+                        padding.left //__horizontal ? padding.left : padding.left + ((__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2
                     }
                     else
                     {
-                        __horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.width)/2
+                        0 //__horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.width)/2
                     }
                 }
 
                 y: {
                     if(control.groovePadding)
                     {
-                        !__horizontal ? padding.top : padding.top + ((__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2
+                        padding.top + (parent.height - grooveLoader.item.height)/2 //!__horizontal ? padding.top : padding.top + ((__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2
                     }
                     else
                     {
-                        !__horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.height)/2
+                        (parent.height - grooveLoader.item.height)/2 //!__horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.height)/2
                     }
                 }
 
@@ -175,14 +181,14 @@ Style {
                         property int barid: index
                         visible: control.__handlePosList[index].showBar
 
-                        anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
-                        anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
+                        anchors.verticalCenter: grooveLoader.verticalCenter //__horizontal ? grooveLoader.verticalCenter : undefined
+                        //anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
-                        height: __horizontal ? grooveLoader.height : control.height - control.__handlePosList[index].barMinPos - padding.top - padding.bottom
-                        width: !__horizontal ? grooveLoader.width : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
+                        height: grooveLoader.height // __horizontal ? grooveLoader.height : control.height - control.__handlePosList[index].barMinPos - padding.top - padding.bottom
+                        width: control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right //!__horizontal ? grooveLoader.width : control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
 
-                        y: !__horizontal ? control.__handlePosList[index].barMinPos : 0
-                        x: __horizontal ? control.__handlePosList[index].barMinPos : 0
+                        x: control.__handlePosList[index].barMinPos //__horizontal ? control.__handlePosList[index].barMinPos : 0
+                        y: 0 //!__horizontal ? control.__handlePosList[index].barMinPos : 0
                         z: 1
                     }
                 }
@@ -203,17 +209,17 @@ Style {
                     id: handleLoader
                     sourceComponent: control.__handlePosList[index].handleStyle
 
-                    anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
+                    anchors.verticalCenter: grooveLoader.verticalCenter //__horizontal ? grooveLoader.verticalCenter : undefined
 
-                    anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
+                    //anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
                     property int handleIndex: index
 
                     width: control.__handleWidth
                     height: control.__handleHeight
 
-                    x: __horizontal ? Math.round(control.__handlePosList[index].range.position - control.__handleWidth / 2) : 0
-                    y: !__horizontal ? Math.round(control.__handlePosList[index].range.position - control.__handleHeight / 2) : 0
+                    x: Math.round(control.__handlePosList[index].range.position - control.__handleWidth / 2) //__horizontal ? Math.round(control.__handlePosList[index].range.position - control.__handleWidth / 2) : 0
+                    //y: !__horizontal ? Math.round(control.__handlePosList[index].range.position - control.__handleHeight / 2) : 0
 
                     onLoaded: {
                         control.__handleHeight = handleLoader.implicitHeight

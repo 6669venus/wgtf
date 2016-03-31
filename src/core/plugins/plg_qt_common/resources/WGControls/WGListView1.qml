@@ -126,10 +126,10 @@ Item {
     /*! Colour mode with a sigle background colour */
     readonly property int alternatingRowBackgroundColours: 2
 
-    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color backgroundColour: palette.midDarkColor
     readonly property color alternateBackgroundColour:
         backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
-        : Qt.darker(palette.MidLightColor,1.2)
+        : Qt.darker(palette.midLightColor,1.2)
 
     property bool showColumnHeaders: false
     property bool showColumnFooters: false
@@ -137,8 +137,8 @@ Item {
     property Component columnHeaderDelegate: defaultColumnHeaderDelegate
     property Component columnFooterDelegate: defaultColumnFooterDelegate
 
-    property color headerBackgroundColour: palette.MidDarkColor
-    property color footerBackgroundColour: palette.MidDarkColor
+    property color headerBackgroundColour: palette.midDarkColor
+    property color footerBackgroundColour: palette.midDarkColor
 
     property Component defaultColumnHeaderDelegate: Item {
         signal dataChanged;
@@ -156,7 +156,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.margins: 4
             verticalAlignment: Text.AlignVCenter
-            color: palette.TextColor
+            color: palette.textColor
             text: headerText
         }
     }
@@ -171,13 +171,13 @@ Item {
         onDataChanged:footerTextVariant = getData("footerText");
 
         Text {
-            id: textBox
+            id: textBoxFooter
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.margins: 4
             verticalAlignment: Text.AlignVCenter
-            color: palette.TextColor
+            color: palette.textColor
             text: footerText
         }
     }
@@ -196,14 +196,14 @@ Item {
                 anchors.margins: 4
                 verticalAlignment: Text.AlignVCenter
                 text: typeof itemData.Value === "string" ? itemData.Value : typeof itemData.Value
-                color: palette.TextColor
+                color: palette.textColor
             }
         }
     }
 
     /*! This property contains the number of columns */
     property int columnCount: 0
-    
+
     Component.onCompleted: updateColumnCount()
 
     Connections {
@@ -454,7 +454,7 @@ Item {
         initialColumnWidths: listView.initialColumnWidths
         defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
-		
+
         onColumnsChanged: {
             listView.columnWidths = columnWidths;
         }

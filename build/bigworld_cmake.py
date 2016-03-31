@@ -227,6 +227,7 @@ def chooseQtVersion():
 		dict( label = 'Qt 5.4.2', version = '5.4.2' ),
 		dict( label = 'Qt 5.5.0', version = '5.5.0' ),
 		dict( label = 'Qt 5.5.1', version = '5.5.1' ),
+		dict( label = 'Qt 5.6.0', version = '5.6.0' ),
 	]
 	return chooseItem( "Which Qt version you want to build with ?", QT_VERSIONS )['version']
 

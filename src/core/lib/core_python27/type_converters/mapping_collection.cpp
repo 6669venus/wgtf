@@ -14,26 +14,28 @@ namespace Detail
 {
 
 
- Mapping::result_type insert( Mapping::container_type & container_,
+ Mapping::result_type insert( const ObjectHandle & containerHandle,
+	Mapping::container_type & container,
 	const Mapping::key_type key,
 	const CollectionIteratorImplPtr & end,
-	const Converters & typeConverters_ )
+	const Converters & typeConverters )
 {
 	typedef std::pair< CollectionIteratorImplPtr, bool > result_type;
 
 	auto noneType = PyScript::ScriptObject( Py_None,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	const bool success = container_.setItem( key,
+	const bool success = container.setItem( key,
 		noneType,
 		PyScript::ScriptErrorPrint() );
 	if (success)
 	{
 		return result_type(
 			std::make_shared< Mapping::iterator_impl_type >(
-				container_,
+				containerHandle,
+				container,
 				key,
-				typeConverters_ ),
+				typeConverters ),
 			true );
 	}
 	return result_type( end, false );
@@ -44,9 +46,11 @@ namespace Detail
 
 
 Mapping::Mapping( const Mapping::container_type & container,
+	const ObjectHandle & containerHandle,
 	const Converters & typeConverters )
 	: CollectionImplBase()
 	, container_( container )
+	, containerHandle_( containerHandle )
 	, typeConverters_( typeConverters )
 {
 }
@@ -62,7 +66,8 @@ CollectionIteratorImplPtr Mapping::begin() /* override */
 {
 	// Start index into dict.keys()
 	const PyScript::ScriptList::size_type startIndex = 0;
-	return std::make_shared< iterator_impl_type >( container_,
+	return std::make_shared< iterator_impl_type >( containerHandle_,
+		container_,
 		startIndex,
 		typeConverters_ );
 }
@@ -70,7 +75,8 @@ CollectionIteratorImplPtr Mapping::begin() /* override */
 
 CollectionIteratorImplPtr Mapping::end() /* override */
 {
-	return std::make_shared< iterator_impl_type >( container_,
+	return std::make_shared< iterator_impl_type >( containerHandle_,
+		container_,
 		PyScript::ScriptObject( nullptr ),
 		typeConverters_ );
 }
@@ -89,14 +95,19 @@ Mapping::result_type Mapping::get( const Variant & key,
 	if (policy == GET_EXISTING)
 	{
 		return result_type(
-			std::make_shared< iterator_impl_type >( container_,
+			std::make_shared< iterator_impl_type >( containerHandle_,
+				container_,
 				scriptKey,
 				typeConverters_ ),
 			false );
 	}
 	else if (policy == GET_NEW)
 	{
-		return Detail::insert( container_, scriptKey, this->end(), typeConverters_ );
+		return Detail::insert( containerHandle_,
+			container_,
+			scriptKey,
+			this->end(),
+			typeConverters_ );
 	}
 	else if (policy == GET_AUTO)
 	{
@@ -106,14 +117,19 @@ Mapping::result_type Mapping::get( const Variant & key,
 		{
 			// Get existing
 			return result_type(
-				std::make_shared< iterator_impl_type >( container_,
+				std::make_shared< iterator_impl_type >( containerHandle_,
+					container_,
 					scriptKey,
 					typeConverters_ ),
 				false );
 		}
 
 		// Insert new at start or end
-		return Detail::insert( container_, scriptKey, this->end(), typeConverters_ );
+		return Detail::insert( containerHandle_,
+			container_,
+			scriptKey,
+			this->end(),
+			typeConverters_ );
 	}
 	else
 	{
@@ -153,7 +169,8 @@ CollectionIteratorImplPtr Mapping::erase(
 		return this->end();
 	}
 
-	return std::make_shared< iterator_impl_type >( container_,
+	return std::make_shared< iterator_impl_type >( containerHandle_,
+		container_,
 		pItr->rawIndex(),
 		typeConverters_ );
 }
@@ -239,7 +256,8 @@ CollectionIteratorImplPtr Mapping::erase( const CollectionIteratorImplPtr & firs
 		}
 	}
 
-	return std::make_shared< iterator_impl_type >( container_,
+	return std::make_shared< iterator_impl_type >( containerHandle_,
+		container_,
 		lastIndex,
 		typeConverters_ );
 }

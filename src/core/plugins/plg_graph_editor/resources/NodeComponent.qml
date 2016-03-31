@@ -24,7 +24,7 @@ Rectangle {
     x : node.nodePosX
     y : node.nodePosY
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     radius: defaultSpacing.standardRadius
 
@@ -36,7 +36,7 @@ Rectangle {
         //graphCanvasObject.viewTransform.shift(0, 0)
     }
     Rectangle {
-        color: palette.DarkestShade
+        color: palette.darkestShade
 
         height: parent.height
         width: parent.width
@@ -157,7 +157,7 @@ Rectangle {
             Layout.preferredWidth: header.width
             Layout.alignment : Qt.AlignLeft | Qt.AlignVCenter
             text : nodeSubTitle
-            color: palette.DisabledTextColor
+            color: palette.disabledTextColor
 
             visible: nodeIsExpanded && nodeSubTitle != ""
 

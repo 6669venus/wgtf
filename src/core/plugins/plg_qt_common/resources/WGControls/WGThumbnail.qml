@@ -29,15 +29,14 @@ Rectangle {
     /*! This property holds the location of the image to be displayed as the thumbnail
         The default value is false
     */
-    //TODO: This should be renamed, it does not require "_". In WGThumbnailButton it is called iconSource.
-    property url source_: ""
+    property url source: ""
 
     /*! This property holds the default text string that will be displayed if /c source_ is not defined.
         The default value is \c "Image not found"
     */
     property string notFoundString: "Image not found"
 
-    color: palette.LightShade
+    color: palette.lightShade
 
     implicitWidth: {
         defaultSpacing.minimumRowHeight * 4
@@ -55,7 +54,7 @@ Rectangle {
             id: copyableObject
 
             onDataCopied : {
-                setValue( thumbnail.source_ )
+                setValue( thumbnail.source )
             }
 
             onDataPasted : {
@@ -83,10 +82,10 @@ Rectangle {
             id: icon
             anchors.fill: parent
             anchors.margins: defaultSpacing.standardBorderSize
-            source: thumbnail.source_
+            source: thumbnail.source
 
             Component.onCompleted: {
-                if (thumbnail.source_ == ""){
+                if (thumbnail.source == ""){
                     missingText.visible = true
                 }
             }
@@ -103,4 +102,7 @@ Rectangle {
             wrapMode: "Wrap"
         }
     }
+
+    /*! Deprecated */
+    property alias source_: thumbnail.source
 }

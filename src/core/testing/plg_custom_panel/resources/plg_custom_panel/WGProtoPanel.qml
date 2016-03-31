@@ -46,8 +46,8 @@ Rectangle {
 
     property bool transparentPanel_: false
 
-    property color colorHeader_ : palette.DarkHeaderColor
-    property color colorBody_ : palette.LightPanelColor
+    property color colorHeader_ : palette.darkHeaderColor
+    property color colorBody_ : palette.lightPanelColor
 
     //best for minor group box frames
 
@@ -55,10 +55,6 @@ Rectangle {
     property bool toggleable_ : false       //Make header a checkbox to enable/disable contents
     property alias checked_ : headerCheck.checked
     property alias exclusiveGroup: headerCheck.exclusiveGroup
-
-    property alias b_Target: headerCheck.b_Target
-    property alias b_Property: headerCheck.b_Property
-    property alias b_Value: headerCheck.b_Value
 
     //change to true if contains a ScrollPanel or similar childObject which needs to obscure content
     property bool clipContents_: false
@@ -252,9 +248,9 @@ Rectangle {
         id: expandingOuterFrame
         radius: defaultSpacing.halfRadius
 
-        color: palette.HighlightShade
+        color: palette.highlightShade
 
-        visible: collapsible_ && !palette.GlowStyle
+        visible: collapsible_ && !palette.glowStyle
 
         anchors.top: headerPanel.top
         anchors.bottom: headerPanel.bottom
@@ -289,7 +285,7 @@ Rectangle {
                             expandingOuterFrame.color = "transparent"
                          }
                      } else {
-                         expandingOuterFrame.color = palette.HighlightShade
+                         expandingOuterFrame.color = palette.highlightShade
                      }
                  }
             }
@@ -303,11 +299,11 @@ Rectangle {
 
         gradient: Gradient {
                  GradientStop { position: 0.0; color: "transparent" }
-                 GradientStop { position: 0.5; color: expanded_ ? palette.HighlightShade : palette.HighlightColor }
+                 GradientStop { position: 0.5; color: expanded_ ? palette.highlightShade : palette.highlightColor }
                  GradientStop { position: 1.0; color: "transparent" }
              }
 
-        visible: collapsible_ && palette.GlowStyle
+        visible: collapsible_ && palette.glowStyle
 
         anchors.top: mainColor.top
         anchors.bottom: mainColor.bottom
@@ -347,7 +343,7 @@ Rectangle {
             activeFocusOnTab: collapsible_
 
             border.width: defaultSpacing.standardBorderSize
-            border.color: activeFocus && collapsible_ ? palette.HighlightShade : "transparent"
+            border.color: activeFocus && collapsible_ ? palette.highlightShade : "transparent"
 
             Keys.onPressed: {
                          if (event.key == Qt.Key_Space && collapsible_){
@@ -392,7 +388,7 @@ Rectangle {
 
             onEntered: {
                 if (collapsible_ && !rootPanel.choosePinned && !rootPanel.chunkDragEnabled){
-                    mouseHighlight.color = palette.LighterShade
+                    mouseHighlight.color = palette.lighterShade
                 }
             }
 
@@ -427,8 +423,8 @@ Rectangle {
             Text {
                 id: headerLabel
                 font.bold: boldHeader_
-                renderType: Text.NativeRendering
-                color: palette.HighlightTextColor
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
+                color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 text: mainPanel.text
                 visible: toggleable_ ? false : true
@@ -438,8 +434,8 @@ Rectangle {
                 id: headerSubLabel
                 font.bold: boldSubHeader_
                 font.italic: italicSubHeader_
-                renderType: Text.NativeRendering
-                color: palette.HighlightTextColor
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
+                color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: headerLabel.right
                 text: (mainPanel.subText == "") ? "" : " - " + mainPanel.subText
@@ -458,7 +454,7 @@ Rectangle {
 
         //separators only for group boxes
         WGSeparator {
-            vertical_: false
+            vertical: false
 
             visible: hasSeparators_
 
@@ -584,7 +580,7 @@ Rectangle {
 
     //separators only for group boxes
     WGSeparator {
-        vertical_: false
+        vertical: false
 
         visible: hasSeparators_
 

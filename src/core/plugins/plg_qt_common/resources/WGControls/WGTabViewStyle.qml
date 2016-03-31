@@ -53,14 +53,14 @@ TabViewStyle {
                     anchors.bottom: (tabPosition == Qt.TopEdge)? parent.bottom : undefined
                     anchors.top: (tabPosition == Qt.BottomEdge)? parent.top : undefined
                     anchors.left: parent.left
-                    color: styleData.selected ? palette.MidLightColor : palette.MidDarkColor
+                    color: styleData.selected ? palette.midLightColor : palette.midDarkColor
                     implicitWidth: Math.max(text.width + tabTextSpacer, tabMinWidth)
                     implicitHeight: styleData.selected ? tabHeight :  tabHeight -  tabHeightDiff
 
                     Rectangle { //Bottom half of the tab for obscuring rounded bottoms of tab
                         id: tabBottomHalf
                         anchors.top: parent.verticalCenter
-                        color: styleData.selected ? palette.MidLightColor : palette.MidDarkColor
+                        color: styleData.selected ? palette.midLightColor : palette.midDarkColor
                         implicitWidth: Math.max(text.width + tabTextSpacer, tabMinWidth)
                         implicitHeight: ((tabPosition == Qt.TopEdge) ? Math.floor(parent.height / 2) : (Math.floor(parent.height / 2)-1))
                     }
@@ -68,14 +68,14 @@ TabViewStyle {
                         id: text
                         anchors.centerIn: parent
                         text: styleData.title
-                        color: styleData.selected ? palette.TextColor : palette.DisabledTextColor
+                        color: styleData.selected ? palette.textColor : palette.disabledTextColor
                     }
                     Rectangle { //highlight line at top of tab
                         id: topTabHighlight
                         anchors.top: parent.top
                         implicitHeight: 1
                         implicitWidth: Math.max(text.width + tabTextSpacer, tabMinWidth)
-                        color: (tabPosition == Qt.BottomEdge)?( "transparent") : (styleData.selected ? palette.LightestShade : palette.LighterShade)
+                        color: (tabPosition == Qt.BottomEdge)?( "transparent") : (styleData.selected ? palette.lightestShade : palette.lighterShade)
                     }
                     Rectangle { //highlight remover line at bottom of tab if not selected
                         id: bottomTabHighlight
@@ -83,7 +83,7 @@ TabViewStyle {
                         anchors.left: parent.left
                         implicitHeight: 1
                         implicitWidth: parent.width
-                        color: (tabPosition == Qt.BottomEdge)?(styleData.selected ? palette.DarkerShade: palette.DarkShade) : (styleData.selected ? "transparent" : palette.LightestShade)
+                        color: (tabPosition == Qt.BottomEdge)?(styleData.selected ? palette.darkerShade: palette.darkShade) : (styleData.selected ? "transparent" : palette.lightestShade)
                     }
                     Rectangle { //Shading on the right side of a tab
                         id: rightTabShading
@@ -91,7 +91,7 @@ TabViewStyle {
                         anchors.top: (tabPosition == Qt.TopEdge)? topTabHighlight.top : topTabHighlight.top
                         implicitHeight: styleData.selected ? parent.height -0 : ((tabPosition == Qt.TopEdge)? parent.height -1 : parent.height )
                         implicitWidth: 1
-                        color: palette.DarkShade
+                        color: palette.darkShade
                     }
                     Rectangle { //Highlight on the left side of a tab
                         id: leftTabHighlight
@@ -99,7 +99,7 @@ TabViewStyle {
                         anchors.top: (tabPosition == Qt.TopEdge)? topTabHighlight.bottom : topTabHighlight.top
                         implicitHeight: styleData.selected ? parent.height -1 : ((tabPosition == Qt.TopEdge) ? parent.height -2 : parent.height)
                         implicitWidth: 1
-                        color: styleData.selected ? palette.LightestShade : palette.LighterShade
+                        color: styleData.selected ? palette.lightestShade : palette.lighterShade
                     }
                     Rectangle { //Active focus highlight
                         anchors.bottom: parent.bottom
@@ -107,7 +107,7 @@ TabViewStyle {
                         width: parent.width - defaultSpacing.doubleBorderSize
                         color : "transparent"
                         border.width: 1
-                        border.color: styleData.activeFocus ? palette.LighterShade : "transparent"
+                        border.color: styleData.activeFocus ? palette.lighterShade : "transparent"
                     }
                 }
             }
@@ -120,13 +120,13 @@ TabViewStyle {
     }
 
     tabBar: Rectangle {
-        color: palette.MainWindowColor
+        color: palette.mainWindowColor
         Rectangle { //highlight line at bottom of tabbar
             id: bottomTabBarHighlight
             anchors.bottom: parent.bottom
             implicitHeight: 1
             implicitWidth: parent.width
-            color: (tabPosition == Qt.BottomEdge)?( "transparent") : palette.LightestShade
+            color: (tabPosition == Qt.BottomEdge)?( "transparent") : palette.lightestShade
         }
     }
 
@@ -134,6 +134,6 @@ TabViewStyle {
     //Current workflow requires every use of tabview to have its own border
     //Ideally the border would be contained within here. All attempts have failed
     frame: Rectangle {
-            color: palette.MidLightColor
+            color: palette.midLightColor
         }
 }

@@ -6,59 +6,60 @@ import WGControls 1.0
 
 // Component for dislaying batch commands
 ColumnLayout {
-	id: batchCommand
+    id: batchCommand
+    objectName: "batchCommand"
 
-	// -- Begin Interface
-	property variant displayObject: null
-	property bool isCurrentItem: false
-	property bool isApplied: false
-	property int columnIndex: 0
-	// -- End Interface
+    // -- Begin Interface
+    property variant displayObject: null
+    property bool isCurrentItem: false
+    property bool isApplied: false
+    property int columnIndex: 0
+    // -- End Interface
 
-	// Single command instance or batch title
-	WGCommandInstance {
-		id: childCommand
+    // Single command instance or batch title
+    WGCommandInstance {
+        id: childCommand
 
-		Layout.fillWidth: true
+        Layout.fillWidth: true
 
-		displayObject: parent.displayObject
-		isCurrentItem: parent.isCurrentItem
-		isApplied: parent.isApplied
-		columnIndex: parent.columnIndex
-	}
-
-
-	// Child instances
-	WGListModel {
-		id: batchModel
-
-		source: displayObject.Children
-
-		ValueExtension {}
-	}
+        displayObject: parent.displayObject
+        isCurrentItem: parent.isCurrentItem
+        isApplied: parent.isApplied
+        columnIndex: parent.columnIndex
+    }
 
 
-	Column {
-		id: batchChildColumn
+    // Child instances
+    WGListModel {
+        id: batchModel
 
-		Repeater {
-			id: batchChildList
-			model: batchModel
+        source: displayObject.Children
 
-			// TODO is displaying batches of batches possible?
-			delegate: WGCommandInstance {
-				id: batchChild
+        ValueExtension {}
+    }
 
-				property variant itemData: Value
 
-				// -- Begin Interface
-				displayObject: itemData
-				isCurrentItem: batchCommand.isCurrentItem
-				isApplied: batchCommand.isApplied
-				columnIndex: batchCommand.columnIndex
-				// -- End Interface
-			}
-		}
-	}
+    Column {
+        id: batchChildColumn
+
+        Repeater {
+            id: batchChildList
+            model: batchModel
+
+            // TODO is displaying batches of batches possible?
+            delegate: WGCommandInstance {
+                id: batchChild
+
+                property variant itemData: Value
+
+                // -- Begin Interface
+                displayObject: itemData
+                isCurrentItem: batchCommand.isCurrentItem
+                isApplied: batchCommand.isApplied
+                columnIndex: batchCommand.columnIndex
+                // -- End Interface
+            }
+        }
+    }
 }
 

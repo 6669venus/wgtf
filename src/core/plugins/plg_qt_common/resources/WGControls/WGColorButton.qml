@@ -36,7 +36,7 @@ WGPushButton {
     //Auto-sized widths
     implicitWidth: 40
 
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    implicitHeight: defaultSpacing.minimumRowHeight
 
     // support copy&paste
     WGCopyable {

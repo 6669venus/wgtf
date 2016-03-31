@@ -7,7 +7,7 @@ Rectangle {
     objectName:  itemData != null ? itemData.IndexPath : "property_tree_view"
     property variant source_ : source
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     WGTreeModel {
         id : model

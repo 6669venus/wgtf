@@ -5,7 +5,7 @@ import WGControls 1.0
 
 Rectangle {
   id: demoDoc
-  color: palette.MainWindowColor
+  color: palette.mainWindowColor
   visible: true
   property var layoutHints: { 'doc_tab': 0.1 }
 }

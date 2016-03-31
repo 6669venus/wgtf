@@ -69,7 +69,6 @@ QtPalette::QtPalette(QQuickItem* parent)
 		placeholderTextColor_ = lightestShade_;
 	}
 
-	connect(this, SIGNAL(colorChanged()), this, SLOT(onColorChanged()));
 	onPaletteChanged();
 }
 
@@ -138,7 +137,6 @@ QtPalette::QtPalette(QPalette& palette)
 		placeholderTextColor_ = lightestShade_;
 	}
 
-	connect(this, SIGNAL(colorChanged()), this, SLOT(onColorChanged()));
 	onPaletteChanged();
 }
 
@@ -370,15 +368,7 @@ void QtPalette::setTheme(Theme theme)
 	}
 
 	glowChanged();
-	colorChanged();
 	emit themeChanged(theme_);
-}
-
-void QtPalette::onColorChanged()
-{
-	// Start a timer so we update our palette on the next update
-	killTimer(timerid_);
-	timerid_ = startTimer(0);
 }
 
 void QtPalette::timerEvent(QTimerEvent* event)

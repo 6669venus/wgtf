@@ -3,9 +3,10 @@
 #define _PYTHON_MAPPING_ITERATOR_HPP
 
 
-#include "core_variant/collection.hpp"
-
 #include "converters.hpp"
+
+#include "core_reflection/object_handle.hpp"
+#include "core_variant/collection.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 #include <type_traits>
@@ -27,10 +28,12 @@ public:
 	typedef PyScript::ScriptObject value_type;
 	typedef MappingIterator this_type;
 
-	MappingIterator( const container_type & container,
+	MappingIterator( const ObjectHandle & containerHandle,
+		const container_type & container,
 		const PyScript::ScriptList::size_type index,
 		const Converters & typeConverters );
-	MappingIterator( const container_type & container,
+	MappingIterator( const ObjectHandle & containerHandle,
+		const container_type & container,
 		const key_type & key,
 		const Converters & typeConverters );
 
@@ -48,6 +51,7 @@ public:
 	virtual CollectionIteratorImplPtr clone() const override;
 
 private:
+	ObjectHandle containerHandle_;
 	container_type container_;
 
 	// List and index used for ordering iterators

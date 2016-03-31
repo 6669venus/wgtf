@@ -42,6 +42,23 @@ PropertyAccessor::PropertyAccessor()
 }
 
 //==============================================================================
+PropertyAccessor& PropertyAccessor::operator = (const PropertyAccessor & other)
+{
+	if (this == &other)
+	{
+		return *this;
+	}
+
+	object_ = other.object_;
+	property_ = other.property_;
+	rootObject_ = other.rootObject_;
+	path_ = other.path_;
+	definitionManager_ = other.definitionManager_;
+	parentAccessor_ = other.parentAccessor_;
+	return *this;
+}
+
+//==============================================================================
 PropertyAccessor& PropertyAccessor::operator = (PropertyAccessor&& other)
 {
 	object_ = other.object_;
@@ -238,6 +255,8 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
 		auto listener = itr->lock();
+		// What does this assertion mean? Isn't this to be expected sometimes?
+		// I encountered this assertion during shutdown. @m_martin
 		assert( listener != nullptr );
 		listener->preInvoke( *this, parameters, undo );
 	}

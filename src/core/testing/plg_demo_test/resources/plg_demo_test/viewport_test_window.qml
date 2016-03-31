@@ -20,7 +20,7 @@ Rectangle {
 
     property var title: "QML Controls Test Window"
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     property var viewportList: [
 		"viewports/viewport4.jpg",
@@ -156,8 +156,8 @@ Rectangle {
         WGSplitTextFrame {
             visible: showControls
 
-            color: palette.OverlayLightShade
-            border.color: palette.OverlayDarkerShade
+            color: palette.overlayLightShade
+            border.color: palette.overlayDarkerShade
 
             boxList: [
                 WGNumberBox{
@@ -166,7 +166,7 @@ Rectangle {
                     minimumValue: -100
                     maximumValue: 100
 
-                    textColor: palette.OverlayTextColor
+                    textColor: palette.overlayTextColor
 
                     onValueChanged: {
                         mainWindow.hue = value / maximumValue
@@ -185,7 +185,7 @@ Rectangle {
                     minimumValue: -100
                     maximumValue: 100
 
-                    textColor: palette.OverlayTextColor
+                    textColor: palette.overlayTextColor
 
                     onValueChanged: {
                         mainWindow.saturation = value / maximumValue
@@ -204,7 +204,7 @@ Rectangle {
                     minimumValue: -100
                     maximumValue: 100
 
-                    textColor: palette.OverlayTextColor
+                    textColor: palette.overlayTextColor
 
                     onValueChanged: {
                         mainWindow.lightness = value / maximumValue
@@ -351,7 +351,7 @@ Rectangle {
 		horizontalAlignment: Text.AlignRight
 		color: "white"
         style: Text.Raised
-        styleColor: palette.OverlayTextColor
+        styleColor: palette.overlayTextColor
         text: "This window demonstrates controls styled so they overlay a simulated 3D viewport."
 	}
 }

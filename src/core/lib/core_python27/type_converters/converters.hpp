@@ -1,8 +1,8 @@
 #pragma once
 
 #include "core_script/type_converter_queue.hpp"
-#include "default_converter.hpp"
 #include "i_type_converter.hpp"
+#include "i_parent_type_converter.hpp"
 
 #include <string>
 
@@ -11,6 +11,7 @@ namespace PyScript
 {
 class ScriptObject;
 } // namespace PyScript
+class ObjectHandle;
 class Variant;
 
 
@@ -19,6 +20,8 @@ namespace PythonType
 
 typedef TypeConverterQueue< IConverter,
 	PyScript::ScriptObject > BasicTypeConverters;
+typedef TypeConverterQueue< IParentConverter,
+	PyScript::ScriptObject > ParentTypeConverters;
 
 
 /**
@@ -31,7 +34,7 @@ class Converters
 public:
 
 	Converters( const BasicTypeConverters & basicTypeConverters,
-		const DefaultConverter & defaultConverter );
+		const ParentTypeConverters & parentTypeConverters );
 
 	/**
 	 *	Convert the given Variant into a ScriptType by searching through the
@@ -62,12 +65,12 @@ public:
 	 */
 	bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant,
-		const PyScript::ScriptObject & parentObject,
+		const ObjectHandle & parentHandle,
 		const std::string & childPath ) const;
 
 private:
 	const BasicTypeConverters & basicTypeConverters_;
-	const DefaultConverter & defaultConverter_;
+	const ParentTypeConverters & parentTypeConverters_;
 };
 
 

@@ -25,6 +25,7 @@ SET( TYPE_CONVERTER_SRCS
 	type_converters/dict_converter.cpp
 	type_converters/dict_converter.hpp
 	type_converters/i_type_converter.hpp
+	type_converters/i_parent_type_converter.hpp
 	type_converters/list_converter.cpp
 	type_converters/list_converter.hpp
 	type_converters/mapping_collection.cpp

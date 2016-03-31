@@ -9,7 +9,7 @@ Rectangle {
 	property var title: "SceneBrowser"
 	property var layoutHints: { 'scenebrowser': 0.1 }
 	property var sourceModel: listSource
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	
 	Label {
 		id: searchBoxLabel
@@ -91,7 +91,7 @@ Rectangle {
 					verticalAlignment: Text.AlignVCenter
 					visible: true
 					text: itemData != null ? itemData.Value.name : ""
-					color: palette.TextColor
+					color: palette.textColor
 				}
 			}
 		}

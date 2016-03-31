@@ -3,9 +3,10 @@
 #define _PYTHON_SEQUENCE_ITERATOR_HPP
 
 
-#include "core_variant/collection.hpp"
-
 #include "converters.hpp"
+
+#include "core_reflection/object_handle.hpp"
+#include "core_variant/collection.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 #include <type_traits>
@@ -34,7 +35,8 @@ public:
 	typedef Variant value_type;
 	typedef SequenceIterator< T > this_type;
 
-	SequenceIterator( const container_type & container,
+	SequenceIterator( const ObjectHandle & containerHandle,
+		const container_type & container,
 		key_type index,
 		const Converters & typeConverters );
 
@@ -61,6 +63,7 @@ public:
 	virtual CollectionIteratorImplPtr clone() const override;
 
 private:
+	ObjectHandle containerHandle_;
 	container_type container_;
 	key_type index_;
 	const Converters & typeConverters_;

@@ -136,7 +136,7 @@ Rectangle {
     property bool __updateRGB: false
 
     /*! \internal */
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     /*!
         This signal is fired when the Ok dialog button is clicked.
@@ -443,7 +443,7 @@ Rectangle {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: parent.height - defaultSpacing.standardRadius
                         width: parent.width
-                        color: palette.DarkColor
+                        color: palette.darkColor
 
                         GridLayout {
                             id: paletteGrid
@@ -486,7 +486,7 @@ Rectangle {
                                         width: height
                                         color: typeof swatchColor != "undefined" ? swatchColor : "transparent"
                                         border.width: containsColor ? 0 : 1
-                                        border.color: containsColor ? "transparent" : palette.MidLightColor
+                                        border.color: containsColor ? "transparent" : palette.midLightColor
 
                                         Image {
                                             source: "icons/bw_check_6x6.png"
@@ -497,6 +497,7 @@ Rectangle {
                                         }
 
                                         MouseArea {
+                                            objectName: "paletteSwatchButton"
                                             anchors.fill: parent
                                             cursorShape: containsColor ? Qt.PointingHandCursor : Qt.ArrowCursor
                                             enabled: containsColor
@@ -529,6 +530,7 @@ Rectangle {
                                 Layout.preferredHeight: width
 
                                 WGPushButton {
+                                    objectName: "addColorToPaletteButton"
                                     anchors.centerIn: parent
                                     height: parent.height - defaultSpacing.standardRadius
                                     width: height
@@ -588,7 +590,7 @@ Rectangle {
                                 id: secondSquareBorder
                                 height: Math.round(parent.height * 0.75)
                                 width: height
-                                color: palette.DarkColor
+                                color: palette.darkColor
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
                             }
@@ -596,7 +598,7 @@ Rectangle {
                             Rectangle {
                                 height: Math.round(parent.height * 0.75)
                                 width: height
-                                color: palette.DarkColor
+                                color: palette.darkColor
 
                                 // Initial square. Can be clicked to reset currentColor to initialColor
                                 Rectangle {
@@ -607,6 +609,7 @@ Rectangle {
                                     color: initialColor
 
                                     MouseArea {
+                                        objectName: "resetColorSquare"
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
@@ -657,6 +660,7 @@ Rectangle {
 
                         WGPushButton {
                             id: pickButton
+                            objectName: "pickFromScreenButton"
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             text: "Pick from screen"
@@ -882,6 +886,7 @@ Rectangle {
 
                     WGColorSlider {
                         id: aSlider
+                        objectName: "alphaColorSlider"
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         minimumValue: 0
@@ -902,6 +907,7 @@ Rectangle {
 
                     WGNumberBox {
                         id: aBox
+                        objectName: "alphaColorValue"
                         Layout.preferredWidth: rgbSlider.numBoxWidth
                         minimumValue: 0
                         maximumValue: 1.0

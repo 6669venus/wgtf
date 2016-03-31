@@ -55,8 +55,8 @@ Rectangle {
 
     property bool transparentPanel_: false
 
-    property color colorHeader_ : palette.LightPanelColor
-    property color colorBody_ : palette.DarkerShade
+    property color colorHeader_ : palette.lightPanelColor
+    property color colorBody_ : palette.darkerShade
 
     //best for minor group box frames
 
@@ -233,7 +233,7 @@ Rectangle {
         //anchors.topMargin: defaultSpacing.topBottomMargin
         //anchors.bottomMargin: defaultSpacing.topBottomMargin
         border.width: defaultSpacing.standardBorderSize
-        border.color: palette.DarkColor
+        border.color: palette.darkColor
     }
 
     Item {
@@ -256,7 +256,7 @@ Rectangle {
             activeFocusOnTab: collapsible_
 
             border.width: defaultSpacing.standardBorderSize
-            border.color: activeFocus && collapsible_ ? palette.HighlightShade : "transparent"
+            border.color: activeFocus && collapsible_ ? palette.highlightShade : "transparent"
 
             Keys.onPressed: {
                  if (event.key == Qt.Key_Space && collapsible_){
@@ -276,8 +276,8 @@ Rectangle {
             id: expandIcon
             font.family : "Marlett"
             font.pixelSize: 12
-            renderType: Text.NativeRendering
-            color: palette.TextColor
+            renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
+            color: palette.textColor
             text : {
                 if(expanded_ == 2)
                 {
@@ -384,8 +384,8 @@ Rectangle {
                 id: headerLabel
                 font.bold: boldHeader_
                 font.pointSize: 9
-                renderType: Text.NativeRendering
-                color: palette.HighlightTextColor
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
+                color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 text: mainPanel.subText != "" ? mainPanel.text + ": " : mainPanel.text
                 visible: toggleable_ ? false : true
@@ -406,8 +406,8 @@ Rectangle {
                 font.bold: boldSubHeader_
                 font.italic: italicSubHeader_
                 font.pointSize: 9
-                renderType: Text.NativeRendering
-                color: palette.HighlightTextColor
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
+                color: palette.highlightTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: headerIcon.right
                 text: mainPanel.subText

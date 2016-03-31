@@ -212,11 +212,11 @@ bool TestCommandObject::operator==( const TestCommandObject& tdo ) const
 	if (binary_->compare( *tdo.binary_ ) != 0 || binaries_.size() != tdo.binaries_.size())
 		return false;
 
-	size_t i = 0;
-	for (i = 0; i < binaries_.size() &&
-		binaries_[i]->compare( *tdo.binaries_[i] ) == 0; ++i);
-		if (i != binaries_.size())
+	for (size_t i = 0; i < binaries_.size(); ++i)
+	{
+		if (binaries_[i]->compare( *tdo.binaries_[i] ) != 0)
 			return false;
+	}
 
 	return true;
 }

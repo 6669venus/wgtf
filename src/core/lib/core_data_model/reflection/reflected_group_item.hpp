@@ -8,16 +8,17 @@ class MetaGroupObj;
 class ReflectedGroupItem : public ReflectedItem
 {
 public:
-	ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent );
+	ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath );
 	virtual ~ReflectedGroupItem() {}
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override{ return parent_->getObject(); }
-
+	const ObjectHandle & getRootObject() const override{ return parent_->getRootObject(); }
+    const ObjectHandle & getObject() const override { return parent_->getObject(); }
 	// IItem
 	const char * getDisplayText( int column ) const override;
 	Variant getData( int column, size_t roleId ) const override;
-	bool setData( int column, size_t roleId, const Variant & data ) override;
+
+	bool setData(int column, size_t roleId, const Variant & data) override;
 
 	// GenericTreeItem
 	GenericTreeItem * getChild( size_t index ) const override;
@@ -29,18 +30,13 @@ public:
 		const PropertyAccessor & accessor, const Variant & value ) override;
 	bool postSetValue(
 		const PropertyAccessor & accessor, const Variant & value ) override;
-	bool preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos, size_t count ) override;
-	bool postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos, size_t count ) override;
 
 private:
+	typedef std::vector< Variant > Variants;
+
+	void getChildValues(Variants &childValues_) const;
+	bool isSameGroup(const MetaGroupObj* group) const;
+
 	const MetaGroupObj * groupObj_;
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;

@@ -113,11 +113,13 @@ public:
 	Try convert a @a from value of @a fromType to a @a to value of this type.
 	*/
 	bool convertFrom( void* to, const MetaType* fromType, const void* from ) const;
+	bool canConvertFrom( const MetaType* toType ) const;
 
 	/**
 	Try convert a @a from value of this type to a @a to value of @a toType.
 	*/
 	bool convertTo( const MetaType* toType, void* to, const void* from ) const;
+	bool canConvertTo( const MetaType* toType ) const;
 
 	template< typename T >
 	T* castPtr( const void* value ) const

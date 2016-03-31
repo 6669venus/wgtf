@@ -50,6 +50,13 @@ public:
 	void onRowsRemoved( 
 		const QModelIndex & parent, int first, int last ) override;
 
+	virtual void onLayoutAboutToBeChanged(
+		const QList< QPersistentModelIndex > & parents, 
+		QAbstractItemModel::LayoutChangeHint hint ) override;
+	virtual void onLayoutChanged(
+		const QList< QPersistentModelIndex > & parents, 
+		QAbstractItemModel::LayoutChangeHint hint ) override;
+
 	Q_INVOKABLE void clearOnNextSelect();
 	Q_INVOKABLE void prepareRangeSelect();
 	Q_INVOKABLE QList<QVariant> getSelection() const;

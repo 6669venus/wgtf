@@ -24,10 +24,12 @@ WGAssetBrowser {
 \endcode
 */
 
+//ToDo: Better naming of ObjectName for the thumbnails and repeated elements within assetbrowser using itemData
+
 Rectangle {
     id: rootFrame
     objectName: "WGAssetBrowser"
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     //Public properties
     /*! This property holds the viewModel containing the assets to be displayed*/
@@ -51,6 +53,20 @@ Rectangle {
         The default value is \c 10 */
     property int maxHistoryItems: 10
 
+    /*! Property determines if history items should be stored or not. For example, if you are
+        selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
+        want to re-track items as you move forward or backward through the history. You do however want to track
+        new selections or child breadcrumb selections. */
+    property bool shouldTrackFolderHistory: true
+
+    //--------------------------------------
+    // Custom Content Filters
+    //--------------------------------------
+    // Note: This will be replaced with a more robust filtering system in the near future.
+
+    /*! This property exposes the active filters control to any outside resources that may need it. */
+    property var activeFilters_: activeFilters
+
     /*! \internal */
     property QtObject contentDisplayType: ListModel {
         // Start with 'List View'
@@ -65,57 +81,35 @@ Rectangle {
         }
     }
 
-    /*! Property determines if history items should be stored or not. For example, if you are
-        selecting a top-level breadcrumb, you don't want to re-track that as a history item. You also wouldn't
-        want to re-track items as you move forward or backward through the history. You do however want to track
-        new selections or child breadcrumb selections. */
-    property bool shouldTrackFolderHistory: true
-
     // Local Variables to Keep track of folder TreeModel selection indices history
     /*! \internal */
-    property var folderHistoryIndices: new Array()
+    property var __folderHistoryIndices: new Array()
+
     /*! \internal */
-    property int currentFolderHistoryIndex: 0
+    property int __currentFolderHistoryIndex: 0
+
     /*! \internal */
-    property int maxFolderHistoryIndices: 0
-    ListModel { id: folderHistoryNames }
+    property int __maxFolderHistoryIndices: 0
 
-    /*! This property exposes the active filters control to any outside resources that may need it. */
-    property var activeFilters_: activeFilters
+    onWidthChanged: checkAssetBrowserWidth()
 
-    //--------------------------------------
-    // Custom Content Filters
-    //--------------------------------------
-    // Note: This will be replaced with a more robust filtering system in the near future.
-
-
-    onHeightChanged: changeAlignment()
-    onWidthChanged: changeAlignment(), checkAssetBrowserWidth()
-
-    WGListModel {
-        id: customContentFiltersModel
-        source: rootFrame.viewModel.data.customContentFilters
-        ValueExtension {}
-    }
-
-    ListModel {
-        id: customContentFiltersList
-
-        Component.onCompleted: {
-            var filterItr = iterator( rootFrame.viewModel.data.customContentFilters )
-            while (filterItr.moveNext()) {
-                customContentFiltersList.append({
-                    text: filterItr.current
-                });
-            }
+    Component.onCompleted: {
+        var value = preference.assetViewOrientation;
+        if (typeof value != "undefined")
+        {
+            assetSplitter.state = value;
+            btnAssetBrowserOrientation.checked = assetSplitter.orientation ==  Qt.Vertical;
         }
-    }
 
-    BWDataChangeNotifier {
-        id: customContentFilterIndexNotifier
-        source: rootFrame.viewModel.data.customContentFilterIndexNotifier
-        onDataChanged: {
-            rootFrame.viewModel.refreshData;
+        var vVisible = preference.leftFrameVisible;
+        var vWidth = preference.leftFrameWidth;
+        var vHeight = preference.leftFrameHeight;
+        if ((typeof vWidth != "undefined") && (typeof vHeight != "undefined")&& (typeof vVisible != "undefined"))
+        {
+            leftFrame.visible = (vVisible == "true");
+            btnAssetBrowserHideFolders.checked = !(vVisible == "true");
+            leftFrame.width = vWidth;
+            leftFrame.height = vHeight;
         }
     }
 
@@ -169,26 +163,6 @@ Rectangle {
         }
     }
 
-    /*! \internal */
-    function changeAlignment() {
-        if (assetSplitter.orientation == Qt.Vertical)
-        {
-            if (height / width < 0.3)
-            {
-                btnAssetBrowserOrientation.checked = false
-                assetSplitter.state = "HORIZONTAL"
-            }
-        }
-        else // Qt.Horizontal
-        {
-            if (width / height < 0.35)  //The asset browser is less usable in Qt.Horizontal and must switch earlier
-            {
-                btnAssetBrowserOrientation.checked = true
-                assetSplitter.state = "VERTICAL"
-            }
-        }
-    }
-
     // Selects an asset from the folder contents view
     /*! \internal */
     function selectAsset( index ){
@@ -218,16 +192,16 @@ Rectangle {
         rootFrame.shouldTrackFolderHistory = false;
 
         if (isForward) {
-            if (folderHistoryIndices.length > currentFolderHistoryIndex + 1) {
-                currentFolderHistoryIndex += 1;
-                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            if (folderHistoryIndices.length > __currentFolderHistoryIndex + 1) {
+                __currentFolderHistoryIndex += 1;
+                selector.selectedIndex = __folderHistoryIndices[__currentFolderHistoryIndex];
             }
 
         }
         else {
-            if (currentFolderHistoryIndex > -1) {
-                currentFolderHistoryIndex -= 1;
-                selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+            if (__currentFolderHistoryIndex > -1) {
+                __currentFolderHistoryIndex -= 1;
+                selector.selectedIndex = __folderHistoryIndices[__currentFolderHistoryIndex];
             }
         }
     }
@@ -247,8 +221,8 @@ Rectangle {
         // Don't track the folder history while navigating said history
         rootFrame.shouldTrackFolderHistory = false;
 
-        currentFolderHistoryIndex = index;
-        selector.selectedIndex = folderHistoryIndices[currentFolderHistoryIndex];
+        __currentFolderHistoryIndex = index;
+        selector.selectedIndex = __folderHistoryIndices[__currentFolderHistoryIndex];
     }
 
     // Handles breadcrumb selection
@@ -273,6 +247,34 @@ Rectangle {
         selector.selectedIndex = qModelIndex;
     }
 
+    ListModel { id: folderHistoryNames }
+
+    WGListModel {
+        id: customContentFiltersModel
+        source: rootFrame.viewModel.data.customContentFilters
+        ValueExtension {}
+    }
+
+    ListModel {
+        id: customContentFiltersList
+
+        Component.onCompleted: {
+            var filterItr = iterator( rootFrame.viewModel.data.customContentFilters )
+            while (filterItr.moveNext()) {
+                customContentFiltersList.append({
+                    text: filterItr.current
+                });
+            }
+        }
+    }
+
+    BWDataChangeNotifier {
+        id: customContentFilterIndexNotifier
+        source: rootFrame.viewModel.data.customContentFilterIndexNotifier
+        onDataChanged: {
+            rootFrame.viewModel.refreshData;
+        }
+    }
 
     //--------------------------------------
     // Folder Tree Model
@@ -309,15 +311,15 @@ Rectangle {
                     {
                         // Prune history as needed based on maximum length allowed
                         if (folderHistoryIndices.length >= maxHistoryItems) {
-                            folderHistoryIndices.splice(0, 1);
+                            __folderHistoryIndices.splice(0, 1);
                             folderHistoryNames.remove(0);
                         }
 
                         // Track the folder selection indices history
-                        folderHistoryIndices.push(selector.selectedIndex);
+                        __folderHistoryIndices.push(selector.selectedIndex);
                         folderHistoryNames.append({"name" : rootFrame.viewModel.getSelectedTreeItemName()});
-                        currentFolderHistoryIndex = folderHistoryIndices.length - 1;
-                        maxFolderHistoryIndices = folderHistoryIndices.length - 1;
+                        __currentFolderHistoryIndex = __folderHistoryIndices.length - 1;
+                        __maxFolderHistoryIndices = __folderHistoryIndices.length - 1;
                     }
 
                     // Reset the flag to track the folder history
@@ -371,6 +373,11 @@ Rectangle {
             multiSelect: true
             onSelectionChanged: {
                 fileModelSelectionHelper.select(getSelection());
+
+                // Prepare the context menu by passing the selected asset from the
+                // list model and telling the menu to show, which will update
+                // the actions data with the selected asset for processing.
+                contextMenu.contextObject = listModelSelection.selectedItem;
             }
 
             onCurrentIndexChanged: {
@@ -411,10 +418,10 @@ Rectangle {
 
         // Update the current item index when we get this data change notify
         onDataChanged: {
-            currentFolderHistoryIndex = data;
+            __currentFolderHistoryIndex = data;
 
             // Update the folder TreeModel selectedIndex
-            selector.selectedIndex = folderHistoryIndices[data];
+            selector.selectedIndex = __folderHistoryIndices[data];
         }
     }
 
@@ -424,6 +431,7 @@ Rectangle {
     //--------------------------------------
     WGContextArea {
         id: fileContextMenu
+        objectName: "fileContextMenu"
         onAboutToShow: {
             // Prepare the context menu by passing the selected asset from the
             // list model and telling the menu to show, which will update
@@ -431,6 +439,7 @@ Rectangle {
             contextMenu.contextObject = listModelSelection.selectedItem;
         }
         WGContextMenu {
+            id: contextMenu
             path: "WGAssetBrowserAssetMenu"
         }
     }
@@ -445,6 +454,7 @@ Rectangle {
         // the split two column panel underneath it.
 
         id: mainColumn
+        objectName: "mainColumn"
 
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardMargin
@@ -471,9 +481,10 @@ Rectangle {
                         // Breadcrumbs and back/forward
                         WGToolButton {
                             id: btnAssetBrowserBack
+                            objectName: "backButton"
                             iconSource: "icons/back_16x16.png"
                             tooltip: "Back"
-                            enabled: (currentFolderHistoryIndex != 0)
+                            enabled: (__currentFolderHistoryIndex != 0)
 
                             onClicked: {
                                 onNavigate( false );
@@ -481,9 +492,11 @@ Rectangle {
                         },
                         WGToolButton {
                             id: btnAssetBrowserForward
+                            objectName: "backButton"
                             iconSource: "icons/fwd_16x16.png"
                             tooltip: "Forward"
-                            enabled: (currentFolderHistoryIndex < folderHistoryIndices.length - 1)
+                            enabled: (__currentFolderHistoryIndex < __folderHistoryIndices.length - 1)
+
 
                             onClicked: {
                                 onNavigate( true );
@@ -491,6 +504,7 @@ Rectangle {
                         },
                         WGToolButton {
                             id: btnAssetBrowserHistory
+                            objectName: "historyButton"
                             iconSource: "icons/arrow_down_small_16x16.png"
                             tooltip: "History"
                             width: 16
@@ -518,6 +532,7 @@ Rectangle {
 
                 WGBreadcrumbs {
                     id: breadcrumbControl
+                    objectName: "breadCrumbs"
                     dataModel: rootFrame.viewModel.breadcrumbsModel
 
                     onBreadcrumbClicked: {
@@ -551,6 +566,7 @@ Rectangle {
 
                     WGPushButton {
                         id: displayButton
+                        objectName: "displayButton"
                         Layout.preferredWidth: 100
                         checkable: true
 
@@ -573,85 +589,195 @@ Rectangle {
                             }
                         }
 
+                        // IconSize control pulldown
                         Rectangle {
                             id: sizeMenu
                             anchors.left: displayButton.left
                             anchors.top: displayButton.bottom
                             visible: displayButton.checked
                             height: 120
-                            width: 100
+                            width: 140
 
-                            color: palette.MainWindowColor
+
+                            color: palette.mainWindowColor
                             border.width: defaultSpacing.standardBorderSize
-                            border.color: palette.DarkColor
+                            border.color: palette.darkColor
 
-
-                            WGExpandingRowLayout {
+                            MouseArea {
+                                // prevents items being selected behind drop down
+                                id: catchMouseArea
                                 anchors.fill: parent
-                                anchors.margins:{left: 2; right: 2; top: 5; bottom: 5}
+                                propagateComposedEvents: false
 
-                                WGSlider {
-                                    id: slider
-                                    stepSize: 32
-                                    minimumValue: 0
-                                    maximumValue: 256
-                                    Layout.preferredWidth: 16
-                                    Layout.fillHeight: true
-                                    orientation: Qt.Vertical
+                                hoverEnabled: true
 
-                                    rotation: 180
-
-                                    WGSliderHandle {
-                                        id: sliderHandle
-                                        minimumValue: slider.minimumValue
-                                        maximumValue: slider.maximumValue
-                                        showBar: true
-
-                                        value: iconSize
-
-                                        onValueChanged: {
-                                            rootFrame.iconSize = value
-                                        }
-
-                                        Binding {
-                                            target: sliderHandle
-                                            property: "value"
-                                            value: rootFrame.iconSize
-                                        }
-                                    }
+                                onEntered: {
+                                    fadeTimer.stop()
                                 }
 
-                                ColumnLayout {
-                                    id: menuItems
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
+                                onExited: {
+                                        fadeTimer.restart()
+                                }
+                            }
 
-                                    WGLabel {
-                                        text: "List View"
-                                    }
-                                    WGLabel {
-                                        text: "Small Icons"
-                                    }
-                                    Rectangle {
-                                        color: "transparent"
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
+                            WGSlider {
+                                id: slider
+                                objectName: "slider"
+                                stepSize: 32
+                                minimumValue: 0
+                                maximumValue: 256
+                                width: 16
+                                height: menuItems.childrenRect.height
+                                orientation: Qt.Vertical
+                                anchors.top: sizeMenu.top
+                                anchors.left: sizeMenu.left
+                                anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
+                                rotation: 180
+
+                                WGSliderHandle {
+                                    id: sliderHandle
+                                    objectName: "sliderHandle"
+                                    minimumValue: slider.minimumValue
+                                    maximumValue: slider.maximumValue
+                                    showBar: true
+
+                                    onValueChanged: {
+                                        rootFrame.iconSize = value
                                     }
 
-                                    WGLabel {
-                                        text: "Large Icons"
+                                    Binding {
+                                        target: sliderHandle
+                                        property: "value"
+                                        value: rootFrame.iconSize
+                                    }
+                                }
+                            }
+
+                            // Iconsize Pulldown Buttons
+                            Item {
+                                id: menuItems
+                                height: childrenRect.height
+                                width: 110
+                                anchors.top: sizeMenu.top
+                                anchors.left: slider.right
+                                anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
+
+                                WGPushButton {
+                                    id: listViewButton
+                                    objectName: "listViewButton"
+                                    anchors.top: menuItems.top
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "List View"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 0
+                                    }
+                                }
+                                WGPushButton {
+                                    id: smallIconsButton
+                                    objectName: "smallIconsButton"
+                                    anchors.top: listViewButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Small Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 48
+                                    }
+                                }
+                                WGPushButton {
+                                    id: mediumIconsButton
+                                    objectName: "mediumIconsButton"
+                                    anchors.top: smallIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Medium Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 96
+                                    }
+                                }
+                                WGPushButton {
+                                    id: largeIconsButton
+                                    objectName: "largeIconsButton"
+                                    anchors.top: mediumIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Large Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 128
+                                    }
+                                }
+                                WGPushButton {
+                                    id: extraLargeIconsButton
+                                    objectName: "extraLargeIconsButton"
+                                    anchors.top: largeIconsButton.bottom
+                                    anchors.left: menuItems.left
+                                    width: menuItems.width
+                                    text: "Extra Large Icons"
+
+                                    onHoveredChanged: {
+                                        if (hovered) {
+                                            fadeTimer.stop()
+                                        }
+                                        else {
+                                            fadeTimer.restart()
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        iconSize = 256
                                     }
                                 }
                             }
                         }
 
-
                         MouseArea {
-                            id: mainMouseArea
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: displayButton.top
+                            id: sliderCoverMouseArea
+                            objectName: "sliderCoverMouseArea"
+
+                            anchors.top: parent.top
+                            anchors.left: sizeMenu.left
                             anchors.bottom: sizeMenu.bottom
+                            width: sizeMenu.width - menuItems.width
                             propagateComposedEvents: true
 
                             hoverEnabled: displayButton.checked
@@ -681,6 +807,7 @@ Rectangle {
                     // Asset Browser View Options
                     WGPushButton {
                         id: btnAssetBrowserOrientation
+                        objectName: "btnAssetBrowserOrientation"
                         iconSource: checked ? "icons/rows_16x16.png" : "icons/columns_16x16.png"
                         checkable: true
                         checked: false
@@ -700,6 +827,7 @@ Rectangle {
 
                     WGPushButton {
                         id: btnAssetBrowserHideFolders
+                        objectName: "btnAssetBrowserHideFolders"
                         iconSource: checked ? "icons/folder_tree_off_16x16.png" : "icons/folder_tree_16x16.png"
                         checkable: true
                         checked: false
@@ -717,6 +845,8 @@ Rectangle {
                     /*
                     WGToolButton {
                         id: btnUseSelectedAsset
+                        objectName: "btnUseSelectedAsset"
+
                         iconSource: "icons/list_plus_16x16.png"
 
                         tooltip: "Apply Asset"
@@ -745,7 +875,6 @@ Rectangle {
 
         WGExpandingRowLayout {
             //Filter Box
-
             id: assetFilter
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
@@ -759,10 +888,11 @@ Rectangle {
 
                 WGActiveFilters {
                     id: activeFilters
+                    objectName: "activeFilters"
                     anchors {left: parent.left; top: parent.top; right: parent.right}
                     height: childrenRect.height
                     inlineTags: true
-                    splitterChar: ","
+                    __splitterChar: ","
                     dataModel: rootFrame.viewModel.data.activeFilters
                 }
             }
@@ -796,9 +926,15 @@ Rectangle {
 
         SplitView {
             id: assetSplitter
+            objectName: "assetSplitter"
             Layout.fillHeight: true
             Layout.fillWidth: true
             orientation: Qt.Horizontal
+
+            Component.onDestruction: {
+                //TODO: directly use Preference when supporting dynamically add property for GeneircObject
+                addPreference(viewId, "assetViewOrientation", assetSplitter.state );
+            }
 
             states: [
                 State {
@@ -823,12 +959,12 @@ Rectangle {
                 height: vertical ? assetSplitter.height : defaultSpacing.separatorWidth + defaultSpacing.doubleBorderSize
 
                 WGSeparator {
-                    vertical_: parent.vertical
+                    vertical: parent.vertical
 
                     anchors.centerIn: parent
 
-                    width: vertical_ ? defaultSpacing.separatorWidth : parent.width
-                    height: vertical_ ? parent.height : defaultSpacing.separatorWidth
+                    width: vertical ? defaultSpacing.separatorWidth : parent.width
+                    height: vertical ? parent.height : defaultSpacing.separatorWidth
                 }
             }
 
@@ -837,6 +973,7 @@ Rectangle {
                 // some reason if the first level in a SplitView is a layout,
                 // it behaves weirdly with minimumWidths
                 id: leftFrame
+                objectName: "leftFrame"
 
                 Layout.minimumHeight: 0;
                 Layout.minimumWidth: 0;
@@ -844,6 +981,13 @@ Rectangle {
                 width: Math.min(250, Math.round(assetSplitter.width/3));
 
                 color: "transparent"
+
+                Component.onDestruction: {
+                    //TODO: directly use Preference when supporting dynamically add property for GeneircObject
+                    addPreference(viewId, "leftFrameVisible", leftFrame.visible ? "true" : "false" );
+                    addPreference(viewId, "leftFrameWidth", leftFrame.width );
+                    addPreference(viewId, "leftFrameHeight", leftFrame.height );
+                }
 
                 // Left Column: Search bar and folder tree
                 ColumnLayout {
@@ -917,6 +1061,7 @@ Rectangle {
 
                     WGTreeView {
                         id: folderView
+                        objectName: "folderView"
                         model : folderModel
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -941,7 +1086,7 @@ Rectangle {
                                 }
                                 Text {
                                     anchors.left: folderFileIcon.right
-                                    color: palette.TextColor
+                                    color: palette.textColor
                                     clip: itemData != null && itemData.Component != null
                                     text: itemData != null ? (itemData.Value != null ? itemData.Value : "") : ""
                                     anchors.leftMargin: folderView.expandIconMargin // TODO no defined error
@@ -1027,6 +1172,7 @@ Rectangle {
                 // weirdly with minimumWidths
 
                 id: rightFrame
+                objectName: "rightFrame"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
@@ -1034,13 +1180,14 @@ Rectangle {
                     // Right Column: Filters, Files + Assets, Saved Filters & View Options
 
                     id: fileColumn
+                    objectName: "fileColumn"
                     anchors.fill: parent
 
                     Rectangle {
                         //Assets/Files Frame
                         id: folderContentsRect
 
-                        color: palette.LightPanelColor
+                        color: palette.lightPanelColor
 
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -1056,6 +1203,7 @@ Rectangle {
 
                         GridView {
                             id: assetGrid
+                            objectName: "assetGrid"
                             visible: showIcons
 
                             height: folderContentsRect.height
@@ -1078,6 +1226,7 @@ Rectangle {
 
                             WGScrollBar {
                                  id: verticalScrollBar
+                                 objectName: "verticalScrollBar"
                                  width: defaultSpacing.rightMargin
                                  anchors.top: assetGrid.top
                                  anchors.right: assetGrid.right
@@ -1106,6 +1255,7 @@ Rectangle {
                                 height: assetGrid.cellHeight
 
                                 ColumnLayout {
+                                    objectName: typeof(iconLabel.text) != "undefined" ? iconLabel.text : "assetArea"
                                     spacing: 0
                                     anchors.fill: parent
 
@@ -1138,6 +1288,7 @@ Rectangle {
 
                                     WGMultiLineText {
                                         id: iconLabel
+
                                         text: Value
                                         horizontalAlignment: Text.AlignHCenter
 
@@ -1236,6 +1387,7 @@ Rectangle {
                             id: columnDelegate
 
                             Item {
+                                objectName: "showIcons"
                                 visible: !showIcons
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: defaultSpacing.minimumRowHeight
@@ -1279,4 +1431,13 @@ Rectangle {
             } //RightFrame
         } //SplitView
     }
+
+    /*! Deprecated */
+    property alias folderHistoryIndices: rootFrame.__folderHistoryIndices
+
+    /*! Deprecated */
+    property alias currentFolderHistoryIndex: rootFrame.__currentFolderHistoryIndex
+
+    /*! Deprecated */
+    property alias maxFolderHistoryIndices: rootFrame.__maxFolderHistoryIndices
 }

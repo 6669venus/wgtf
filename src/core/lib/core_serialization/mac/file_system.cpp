@@ -8,6 +8,7 @@
 
 #include "core_common/ngt_windows.hpp"
 #include "core_serialization/file_system.hpp"
+#include "core_serialization/file_info.hpp"
 #include "core_serialization/file_data_stream.hpp"
 
 #include <stdio.h>
@@ -22,12 +23,12 @@ using namespace FileAttributes;
 namespace
 {
 
-FileInfo CreateFileInfo()
+IFileInfoPtr CreateFileInfo()
 {
-    return FileInfo(0, 0, 0, 0, std::string(), None);
+    return std::make_shared<FileInfo>(0, 0, 0, 0, std::string(), None);
 }
 
-FileInfo CreateFileInfo(struct stat & fileStat, const char* path, std::string && fullPath)
+IFileInfoPtr CreateFileInfo(struct stat & fileStat, const char* path, std::string && fullPath)
 {
     unsigned int attributes = FileAttributes::None;
 
@@ -44,7 +45,7 @@ FileInfo CreateFileInfo(struct stat & fileStat, const char* path, std::string &&
     if (separator != std::string::npos && fullPath[separator + 1] == '.')
         attributes |= FileAttribute::Hidden;
 
-    return FileInfo(fileStat.st_size, fileStat.st_mtimespec.tv_sec,
+    return std::make_shared<FileInfo>(fileStat.st_size, fileStat.st_mtimespec.tv_sec,
                     fileStat.st_mtimespec.tv_sec, fileStat.st_atimespec.tv_sec,
                     std::string(path), static_cast<FileAttribute>(attributes));
 }
@@ -103,7 +104,7 @@ IFileSystem::FileType FileSystem::getFileType(const char* path) const
 	return IFileSystem::File;
 }
 
-FileInfo FileSystem::getFileInfo(const char* path) const
+IFileInfoPtr FileSystem::getFileInfo(const char* path) const
 {
     struct stat fileStat;
     if (stat(path, &fileStat) < 0)
@@ -120,9 +121,9 @@ bool FileSystem::move(const char* path, const char* new_path)
     return ::rename(path, new_path) == 0;
 }
 
-IFileSystem::istream_uptr FileSystem::readFile(const char* path, std::ios::openmode mode) const
+IFileSystem::IStreamPtr FileSystem::readFile(const char* path, std::ios::openmode mode) const
 {
-	return istream_uptr(new FileDataStream(path, mode));
+	return IStreamPtr(new FileDataStream(path, mode));
 }
 
 bool FileSystem::writeFile(const char* path, const void* data, size_t len, std::ios::openmode mode)

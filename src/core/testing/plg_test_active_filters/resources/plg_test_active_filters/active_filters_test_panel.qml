@@ -10,7 +10,7 @@ WGPanel {
 
 	property var activeFilters_: activeFilters
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 	
 	WGFilteredTreeModel {
 		id: sampleDataTreeModel

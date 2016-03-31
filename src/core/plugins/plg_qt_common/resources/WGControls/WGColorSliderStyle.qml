@@ -11,56 +11,6 @@ WGSliderStyle {
     id: sliderStyle
     objectName: "WGColorSliderStyle"
 
-    //a large rectangle handle that fills the entire gradient groove
-    property Component defaultHandle: WGButtonFrame {
-        id: defaultHandleFrame
-        implicitHeight: __horizontal ? control.height - 2 : 8
-        implicitWidth: __horizontal ? 8 : control.width - 2
-        color: control.__hoveredHandle == buttonid ? "white" : palette.OverlayLighterShade
-        borderColor: palette.OverlayDarkerShade
-        innerBorderColor: control.__activeHandle == buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
-
-        radius: defaultSpacing.halfRadius
-    }
-
-    //a small arrow handle that is offset below the gradient groove. It also contains a color swatch.
-    //lots of magic numbers here as needed to use an icon to get the triangle shape.
-    property Component arrowHandle: Item {
-        implicitHeight: __horizontal ? control.height - 2 : 11
-        implicitWidth: __horizontal ? 11 : control.width - 2
-            Image {
-                id: arrowHandleFrame
-                source: "icons/arrow_handle.png"
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-
-                Rectangle {
-                    id: colorSquare
-                    height: parent.width - 4
-                    width: parent.width - 4
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottomMargin: 2
-
-                    color: control.colorData[buttonid]
-
-                    radius: buttonid == control.__activeHandle ? 5 : 0
-
-                    border.width: 1
-                    border.color: Qt.darker(colorSquare.color, 1.2)
-
-                    Connections {
-                        target: control
-                        onUpdateColorBars : {
-                            colorSquare.color = control.colorData[buttonid]
-                        }
-                    }
-                }
-        }
-    }
-
-    handle: control.offsetArrowHandles ? arrowHandle : defaultHandle
-
     groove: Item {
 
         anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
@@ -77,26 +27,9 @@ WGSliderStyle {
             anchors.top: __horizontal ? parent.top : undefined
             anchors.left: !__horizontal ? parent.left : undefined
 
-            width: {
-                if (control.offsetArrowHandles)
-                {
-                    __horizontal ? parent.width : parent.width - 4
-                }
-                else
-                {
-                    parent.width
-                }
-            }
-            height: {
-                if (control.offsetArrowHandles)
-                {
-                    __horizontal ? parent.height - 4 : parent.height
-                }
-                else
-                {
-                    parent.height
-                }
-            }
+            width: __horizontal ? parent.width : parent.width - control.handleVerticalOffset
+            height:  __horizontal ? parent.height - control.handleVerticalOffset : parent.height
+
             color: "transparent"
 
             //grid pattern for transparent colors
@@ -112,6 +45,7 @@ WGSliderStyle {
             //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
 
             Item {
+                objectName: "gradientFrame"
                 id: gradientFrame
                 anchors.centerIn: parent
 
@@ -148,7 +82,7 @@ WGSliderStyle {
 
                             property real minPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == 0 || !control.__barLoaded)
+                                    if (index == 0 || !control.__barLoaded || control.__handlePosList.children.length == 0)
                                     {
                                         0
                                     }
@@ -165,7 +99,7 @@ WGSliderStyle {
 
                             property real maxPos: {
                                 if(control.linkColorsToHandles) {
-                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded)
+                                    if (index == control.__colorBarModel.count - 1 || !control.__barLoaded || control.__handlePosList.children.length == 0)
                                     {
                                         gradientFrame.height
                                     }
@@ -195,6 +129,10 @@ WGSliderStyle {
                             {
                                 anchors.fill: parent
                                 propagateComposedEvents: true
+
+                                // Workaround for crash during Shift+Click, this colorBar may no longer be associated with the parent
+                                // Without this when the event is propagated an attempt to access the null window crashes the application
+                                onPressAndHold: { mouse.accepted = true}
 
                                 onPressed: {
                                     //adds handles when bar is Shift Clicked
@@ -249,6 +187,6 @@ WGSliderStyle {
             }
         }
     }
-
+    // There is no expanding bar that follows the handles in a ColorSlider
     bar: null
 }

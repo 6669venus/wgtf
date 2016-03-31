@@ -27,17 +27,16 @@ class WGFilter : public QObject
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	WGFilter() : itemRole_( std::make_pair( "", 0 ) ) {};
+	WGFilter() : roleId_( 0 ) {};
 	virtual ~WGFilter() {};
 	
 	virtual IItemFilter * getFilter() const { return nullptr; }
 	
-	QString getItemRole() const { return QString::fromStdString( itemRole_.first ); }
+	QString getItemRole() const { return roleName_; }
 	void setItemRole( const QString & itemRole ) 
-	{ 
-		std::string roleName = itemRole.toUtf8().constData(); 
-		unsigned int roleId = static_cast<unsigned int>(HashUtilities::compute( roleName.c_str() ));
-		itemRole_ = std::make_pair( roleName.c_str(), roleId );
+	{
+		roleName_ = itemRole;
+		roleId_ = ItemRole::compute( itemRole.toUtf8().constData() ); 
 		updateInternalItemRole();
 		emit itemRoleChanged();
 	}
@@ -49,7 +48,8 @@ signals:
 	void itemRoleChanged();
 
 protected:
-	ItemRole itemRole_;
+	QString roleName_;
+	unsigned int roleId_;
 };
 
 QML_DECLARE_TYPE( WGFilter )

@@ -6,6 +6,7 @@ import WGControls 1.0
 
 Item {
     id: mainDialog
+    objectName: "WGFileDialog"
 
     /*! The folder the fileDialog will open to by default.
 

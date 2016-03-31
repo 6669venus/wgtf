@@ -12,10 +12,11 @@
 #include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 
-ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent )
-	: ReflectedItem( parent, parent->getPath() )
+ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath )
+	: ReflectedItem( parent, inplacePath )
 	, groupObj_( groupObj )
 {
+	assert( groupObj_ != nullptr );
 	std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
 	if (groupObj_ == nullptr)
 	{
@@ -46,7 +47,7 @@ const char * ReflectedGroupItem::getDisplayText( int column ) const
 
 Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 {
-	auto obj = getObject();
+	auto obj = getRootObject();
 	if (obj == nullptr)
 	{
 		return Variant();
@@ -66,40 +67,63 @@ Variant ReflectedGroupItem::getData( int column, size_t roleId ) const
 		std::string parentIndexPath = parent_->getPath();
 		return parentIndexPath + displayName_;
 	}
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
 
 	if (roleId == ValueRole::roleId_)
 	{
-		typedef std::vector< Variant > Children;
-		auto collectionHolder =
-			std::make_shared< CollectionHolder< Children > >();
-		Children& childValues_ = collectionHolder->storage();
+		auto collectionHolder = std::make_shared< CollectionHolder< Variants > >();
+		Variants& childValues_ = collectionHolder->storage();
+				
+		getChildValues(childValues_);
 
-		IBasePropertyPtr property = nullptr;
-		const MetaGroupObj * groupObj = nullptr;
-		
-		auto properties = definition->allProperties();
-		auto it = properties.begin();
-		std::string childPath;
-		for (; it != properties.end(); ++it)
-		{
-			property = *it;
-			groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
-			if (groupObj == nullptr ||
-				(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
-			{
-				continue;
-			}
-			childPath = path_ + property->getName();
-			auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
-				childPath.c_str(), obj );
-			const Variant & value = propertyAccessor.getValue();
-			childValues_.emplace_back( value );
-		}
 		return std::move( Collection( collectionHolder ) );
 	}
 	return Variant();
 }
 
+void ReflectedGroupItem::getChildValues(Variants &childValues) const
+{
+	if( groupObj_ == nullptr )
+		return;
+
+	auto object = getObject();
+	if (object == nullptr)
+		return;
+
+	auto definitionManager = getDefinitionManager();
+	if( definitionManager == nullptr )
+		return;
+
+	auto definition = object.getDefinition( *getDefinitionManager() );
+	if( definition == nullptr )
+		return;
+
+	EnumerateVisibleProperties([&](IBasePropertyPtr property, const std::string & inplacePath){
+		// Check if this property is a part of this group
+		const auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *definitionManager);
+		if ( isSameGroup( groupObj ) )
+		{
+			auto path = inplacePath + property->getName();
+			auto propertyAccessor = definition->bindProperty( path.c_str(), object );
+			Variant value = controller_->getValue(propertyAccessor);
+			childValues.emplace_back(value);
+		}
+		return true;
+	});
+}
+
+bool ReflectedGroupItem::isSameGroup(const MetaGroupObj* group) const
+{
+	return groupObj_ != nullptr && group != nullptr
+		&& (group == groupObj_ || group->getGroupNameHash() == groupObj_->getGroupNameHash());
+}
 
 bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & data )
 {
@@ -109,11 +133,18 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 		return false;
 	}
 
-	auto obj = getObject();
-	if (obj == nullptr)
+	auto object = getObject();
+	if (object == nullptr)
 	{
 		return false;
 	}
+
+	auto definitionManager = getDefinitionManager();
+	if (definitionManager == nullptr)
+	{
+		return false;
+	}
+
 	auto definition = getDefinition();
 	if (definition == nullptr)
 	{
@@ -128,121 +159,83 @@ bool ReflectedGroupItem::setData( int column, size_t roleId, const Variant & dat
 	}
 	size_t value_size = collection.size();
 	
-	size_t i = 0;
+	auto iter = collection.begin();
 
-	IBasePropertyPtr property = nullptr;
-	const MetaGroupObj * groupObj = nullptr;
-
-	auto properties = definition->allProperties();
-	auto it = properties.begin();
-	std::string childPath;
-	for (; it != properties.end(); ++it)
+	EnumerateVisibleProperties([&](IBasePropertyPtr property, const std::string & inplacePath)
 	{
-		property = *it;
-		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
-		if (groupObj == nullptr ||
-			(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
+		if(iter == collection.end())
+			return false;
+
+		auto groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
+		if ( isSameGroup( groupObj ) )
 		{
-			continue;
+			const Variant & value = *iter++;
+			auto path = inplacePath + property->getName();
+			auto propertyAccessor = definition->bindProperty( path.c_str(), object );
+			controller->setValue( propertyAccessor, value );
 		}
-		if (i >= value_size)
-		{
-			i = 0;
-		}
-		const Variant & value = collection[i];
-		childPath = path_ + property->getName();
-		auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty( 
-			childPath.c_str(), obj );
-		controller->setValue( propertyAccessor, value );
-		++i;
-	}
+		return true;
+	});
 
 	return true;
 }
 
 GenericTreeItem * ReflectedGroupItem::getChild( size_t index ) const
 {
-	if (children_.size() <= index )
+	GenericTreeItem * child = nullptr;
+	if (children_.size() > index )
 	{
-		children_.reserve( index + 1 );
-		while (children_.size() <= index)
-		{
-			children_.emplace_back( nullptr );
-		}
+		child = children_[index].get();
 	}
 
-	auto child = children_[index].get();
-	if (child != NULL)
-	{
+	if(child != nullptr)
 		return child;
-	}
 
-	size_t i = 0;
-
-	IBasePropertyPtr property = nullptr;
-	const MetaGroupObj * groupObj = nullptr;
-
-	auto definition = getDefinition();
-	if (definition == nullptr)
+	auto parent = const_cast< ReflectedGroupItem * >( this );
+	int skipChildren = static_cast<int>(children_.size());
+	EnumerateVisibleProperties([this, parent, &child, &skipChildren](IBasePropertyPtr property, const std::string & inplacePath)
 	{
-		return nullptr;
-	}
-	auto properties = definition->allProperties();
-	auto it = properties.begin();
-
-	for (; i <= index && it != properties.end(); ++it)
-	{
-		property = *it;
-		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
-		if (groupObj == nullptr ||
-			(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
+		auto groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
+		if ( isSameGroup( groupObj ) && property != nullptr )
 		{
-			continue;
+			// Skip already iterated children
+			if( --skipChildren < 0 )
+			{
+				children_.emplace_back( new ReflectedPropertyItem( property, parent, inplacePath ) );
+				child = children_.back().get();
+				return false;
+			}
 		}
-		++i;
-	}
+		return true;
+	});
 
-	if (property != nullptr)
-	{
-		child = new ReflectedPropertyItem( property, 
-			const_cast< ReflectedGroupItem * >( this ) );
-		children_[index] = std::unique_ptr< ReflectedItem >( child );
-		return child;
-	}
-
-	return nullptr;
+	return child;
 }
 
 bool ReflectedGroupItem::empty() const
 {
-	return false;
+	bool isEmpty = true;
+	EnumerateVisibleProperties([this, &isEmpty](IBasePropertyPtr property, const std::string &){
+		auto groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
+		if ( isSameGroup( groupObj ) )
+		{
+			isEmpty = false;
+		}
+		return isEmpty;
+	});
+	return isEmpty;
 }
 
 size_t ReflectedGroupItem::size() const
 {
-	auto definition = getDefinition();
-	if (definition == nullptr)
-	{
-		return 1;
-	}
-
 	size_t count = 0;
-
-	auto properties = definition->allProperties();
-	for (auto it = properties.begin(); it != properties.end(); ++it)
-	{
-		auto property = *it;
+	EnumerateVisibleProperties([this, &count](IBasePropertyPtr property, const std::string &){
 		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
-		if (groupObj == nullptr ||
-			(groupObj != groupObj_ && wcscmp(groupObj->getGroupName(), groupObj_->getGroupName()) != 0))
-		{
-			continue;
-		}
-		++count;
-	}
+		count += isSameGroup( groupObj );
+		return true;
+	});
 
-	// always return at least one child
-	return count > 0 ? count : 1;
+	return count;
 }
 
 //==============================================================================
@@ -280,79 +273,6 @@ bool ReflectedGroupItem::postSetValue(
 		{
 			return true;
 	}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::preItemsInserted( const PropertyAccessor & accessor, 
-										   const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsInserted( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::postItemsInserted( const PropertyAccessor & accessor, 
-											const Collection::ConstIterator & begin,
-											const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsInserted( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::preItemsRemoved( const PropertyAccessor & accessor,
-										  const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsRemoved( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedGroupItem::postItemsRemoved( const PropertyAccessor & accessor,
-										   const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsRemoved( accessor, pos, count ))
-		{
-			return true;
-		}
 	}
 	return false;
 }

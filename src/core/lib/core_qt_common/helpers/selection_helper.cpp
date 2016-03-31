@@ -81,8 +81,8 @@ void SelectionHelper::select( const QList<QVariant>& selectionList )
 		IItem* item = reinterpret_cast< IItem* >( index.internalId() );
 		selectedItems.push_back( item );
 	}
-	source_->notifyPreSelectionChanged();
+	source_->signalPreSelectionChanged();
 	source_->setSelectedItems( selectedItems );
 	source_->setSelectedRows( selectedRows );
-	source_->notifyPostSelectionChanged();
+	source_->signalPostSelectionChanged();
 }

@@ -2,6 +2,8 @@ import QtQuick 2.0
 
 Item {
     id: columnsFrame
+    objectName: "WGColumnsFrame"
+
     property int columnCount: 0
     property real firstColumnIndentation: 0
     property real handleWidth: 2
@@ -14,7 +16,6 @@ Item {
     property real minimumColumnSize: 0
     property real maximumColumnSize: 10000
     property var idealColumnSizeFunction: null
-    visible: columnCount > 0
 
     signal columnsChanged(var columnWidths);
 
@@ -37,8 +38,11 @@ Item {
         handle.x = Math.max(minimumSize, idealColumnSizeFunction(index));
     }
 
+    visible: columnCount > 0
+
     Item {
         id: columns
+        objectName: "columns"
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -89,7 +93,7 @@ Item {
             {
                 maxSize -= (handleWidth + columnWidths[i]);
             }
-        
+
             return maxSize;
         }
 
@@ -110,12 +114,13 @@ Item {
 
                 Rectangle {
                     id: handle
+                    objectName: "columnFrameHandle"
                     property real initialWidth: initialColumnWidths.length > index ? initialColumnWidths[index] : defaultInitialColumnWidth
                     x: initialWidth
                     width: handleWidth
                     y: 0
                     height: parent.height
-                    color: drawHandles ? palette.DarkColor : "transparent"
+                    color: drawHandles ? palette.darkColor : "transparent"
 
                     MouseArea {
                         id: columnHandleMouseArea
@@ -146,7 +151,7 @@ Item {
 
                     Rectangle {
                         id: innerShade
-                        color: drawHandles ? palette.MainWindowColor : "transparent"
+                        color: drawHandles ? palette.mainWindowColor : "transparent"
                         visible: drawHandles && width > 0
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
@@ -155,10 +160,10 @@ Item {
                         anchors.leftMargin: 1
                         anchors.rightMargin: 1
                     }
-                    
+
                     Rectangle {
                         id: rightSideShade
-                    	color: drawHandles ? palette.MidLightColor : "transparent"
+                        color: drawHandles ? palette.midLightColor : "transparent"
                         visible: drawHandles && handleWidth > 1
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom

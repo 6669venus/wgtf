@@ -13,8 +13,7 @@ import BWControls 1.0
 
 WGExpandingRowLayout {
     id: colorLayout
-    anchors.left: parent.left
-    anchors.right: parent.right
+    objectName:  itemData != null ? itemData.IndexPath : "color4_component"
 
     property bool showAlpha: true
 
@@ -40,6 +39,9 @@ WGExpandingRowLayout {
         }
     }
 
+    anchors.left: parent.left
+    anchors.right: parent.right
+
     Item {
         Layout.preferredHeight: parent.height
         Layout.minimumWidth: 80
@@ -47,6 +49,7 @@ WGExpandingRowLayout {
 
         WGColorButton {
             id: colButton
+            objectName: "colorButton"
             color: getColor(itemData.Value)
             anchors.left: parent.left
             width: 40
@@ -55,15 +58,16 @@ WGExpandingRowLayout {
 
             onClicked: {
                 beginUndoFrame();
-				// moving init ColorDialog's color property here since using color: getColor(itemData.Value)
-				// in ColorDialog, the alpha channel data is always 255 which may not equals itemData.Value.w
-				reflectColorDialog.color = getColor(itemData.Value);
+                // moving init ColorDialog's color property here since using color: getColor(itemData.Value)
+                // in ColorDialog, the alpha channel data is always 255 which may not equals itemData.Value.w
+                reflectColorDialog.color = getColor(itemData.Value);
                 reflectColorDialog.visible = true
             }
 
         }
 
         WGLabel {
+            objectName: "colorButton_Label"
             anchors.left: colButton.right
             width: 40
             height: parent.height
@@ -88,9 +92,10 @@ WGExpandingRowLayout {
         */
         ColorDialog {
             id: reflectColorDialog
+            objectName: "colorDialog"
             title: "Please choose a color"
             showAlphaChannel: showAlpha
-			
+
             onAccepted: {
                 setValueHelper(colButton, "color", reflectColorDialog.color);
                 var vector = getVector(reflectColorDialog.color);
@@ -107,10 +112,9 @@ WGExpandingRowLayout {
                 setValueHelper(colButton, "color", reflectColorDialog.color);
                 abortUndoFrame();
             }
-
-
         }
     }
+
     Item {
         Layout.preferredHeight: parent.height
         Layout.minimumWidth: 160 + defaultSpacing.rowSpacing
@@ -125,6 +129,7 @@ WGExpandingRowLayout {
             boxList: [
                 WGNumberBox {
                     id: boxX
+                    objectName: "numberBox_X"
                     number: itemData.Value.x
                     minimumValue: 0
                     maximumValue: 255
@@ -135,6 +140,7 @@ WGExpandingRowLayout {
                 },
                 WGNumberBox {
                     id: boxY
+                    objectName: "numberBox_Y"
                     number: itemData.Value.y
                     minimumValue: 0
                     maximumValue: 255
@@ -145,6 +151,7 @@ WGExpandingRowLayout {
                 },
                 WGNumberBox {
                     id: boxZ
+                    objectName: "numberBox_Z"
                     number: itemData.Value.z
                     minimumValue: 0
                     maximumValue: 255
@@ -158,6 +165,7 @@ WGExpandingRowLayout {
 
         WGNumberBox {
             id: boxW
+            objectName: "numberBox_W"
 
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: splitTextFrame.right
@@ -182,8 +190,7 @@ WGExpandingRowLayout {
         }
     }
 
-    Rectangle{
-        color: "transparent"
+    Item{
         Layout.fillWidth: true
     }
 }

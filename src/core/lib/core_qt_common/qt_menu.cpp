@@ -241,7 +241,16 @@ QSharedPointer< QAction > QtMenu::createSharedQAction( IAction & action )
 		qAction->setChecked( action.checked() );
 	}
 
-	QObject::connect( qAction.data(), &QAction::triggered, [&action]() { action.execute(); } );
+	QObject::connect( qAction.data(), &QAction::triggered, 
+		[&action]() 
+		{
+			if (!action.enabled())
+			{
+				return;
+			}
+			action.execute();
+		});
+
 	return qAction;
 }
 

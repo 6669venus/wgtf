@@ -10,7 +10,7 @@ WGPanel {
 	layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
 	property var topControlsHeight: 20
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	z: 1
 
 	// Internal bool to track what view was clicked for a selection
@@ -68,6 +68,9 @@ WGPanel {
 				id: searchBox
 				Layout.fillWidth: true
 				height: topControlsHeight
+				Component.onCompleted: {
+					WGCopyableHelper.disableChildrenCopyable(searchBox);
+				}
 			}
 		}//searchRowLayout
 

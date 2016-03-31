@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
@@ -68,10 +68,6 @@ Item {
     /*! This property defines the colour of the slider */
     property alias barColor: slider.barColor
 
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias slider: slider
-
     /*! This property determines the prefix string displayed within the slider textbox.
         Typically used to display unit type.
         The default value is an empty string.
@@ -84,9 +80,6 @@ Item {
     */
     property string suffix: ""
 
-    /*! TODO: Make timeObjects work
-    */
-    property bool timeObject: false
 
     /*! This property defines the number of decimal places displayed in the textbox
         The default value is \c 1
@@ -127,28 +120,28 @@ Item {
     */
     property alias handleClamp: slider.handleClamp
 
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    /*! This property is used to define the slider's label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    property string label: ""
+
+    /*! \internal */
+    property alias __slider: slider
 
     property alias textBoxStyle: sliderValue.textBoxStyle
     property alias buttonFrame: sliderValue.buttonFrame
 
-    implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
-
-    property alias b_Target: dataBinding.target
-    property alias b_Property: dataBinding.property
-    property alias b_Value: dataBinding.value
-
-    Binding {
-        id: dataBinding
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
 
     onValueChanged: {
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
     }
 
     // support copy&paste
     WGCopyable {
+        objectName: "copyableControl"
         id: copyableControl
 
         BWCopyable {
@@ -182,6 +175,7 @@ Item {
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
     }
 
     WGExpandingRowLayout {
@@ -217,13 +211,12 @@ Item {
                 maximumValue: slider.maximumValue
                 showBar: true
 
-                value: sliderFrame.value
+                value: sliderFrame.value;
 
-
-                Binding {
-                    target: sliderFrame
-                    property: "value"
-                    value: sliderHandle.value //sliderHandle.value?
+                onValueChanged: {
+                    if ( slider.__handleMoving) {
+                        setValueHelper(sliderFrame, "value", value);
+                    }
                 }
             }
 
@@ -263,18 +256,15 @@ Item {
         }
 
         WGNumberBox {
+            objectName: "NumberBox"
             id: sliderValue
-
-            Layout.fillWidth: true
             Layout.preferredWidth: visible ? valueBoxWidth : 0
 
-            //This will ensure the last thing visible is the value
-            Layout.minimumWidth: visible ? sliderValue.contentWidth : 0
+            Layout.minimumWidth: visible ? valueBoxWidth : 0
 
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             visible: showValue
             decimals: sliderFrame.decimals
-
 
             prefix: sliderFrame.prefix
             suffix: sliderFrame.suffix
@@ -286,19 +276,21 @@ Item {
 
             stepSize: slider.stepSize
 
+            //Keyboard enter key input
             onEditingFinished: {
                 setValueHelper(sliderFrame, "value", value);
             }
 
+
             onValueChanged: {
-                sliderFrame.value = value
+                setValueHelper(sliderHandle, "value", value);
             }
 
-            Binding {
-                target: sliderValue
-                property: "value"
-                value: sliderFrame.value
-            }
         }
     }
+    /*! Deprecated */
+    property alias label_: sliderFrame.label
+
+    /*! Deprecated */
+    property bool timeObject: false
 }

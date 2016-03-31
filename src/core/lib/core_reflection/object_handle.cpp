@@ -81,6 +81,13 @@ ObjectHandle::ObjectHandle( Variant * variant, const IClassDefinition * definiti
 
 
 //------------------------------------------------------------------------------
+ObjectHandle::ObjectHandle(std::shared_ptr<void> data, TypeId type, DataGetter getter)
+	: storage_(new ObjectHandleStorageVoid(data, type, getter))
+{
+}
+
+
+//------------------------------------------------------------------------------
 void * ObjectHandle::data() const
 {
 	return storage_ != nullptr ? storage_->data() : nullptr;
@@ -217,6 +224,15 @@ bool ObjectHandle::operator<( const ObjectHandle & other ) const
 		return storage_->type() < other.storage_->type();
 	}
 	return left < right;
+}
+
+
+//------------------------------------------------------------------------------
+ObjectHandle reflectedCast( const ObjectHandle & other, const TypeId & typeIdDest, const IDefinitionManager & definitionManager )
+{
+	std::shared_ptr< IObjectHandleStorage > storage =
+		std::make_shared< ObjectHandleStorageReflectedCast >( other.storage(), typeIdDest, definitionManager );
+	return ObjectHandle( storage );
 }
 
 

@@ -16,20 +16,7 @@ public:
 	virtual void preInvoke(
 		const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) {}
 	virtual void postInvoke(
-		const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) {}
-
-	virtual void preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos, size_t count ) {}
-
-	virtual void postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) {}
-
-	virtual void preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin, const Collection::ConstIterator & end ) {}
-
-	virtual void postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos, size_t count ) {}
-
+		const PropertyAccessor & accessor, Variant result, bool undo ) {}
 };
 
 #endif // PROPERTY_ACCESSOR_LISTENER_HPP

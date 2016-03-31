@@ -103,6 +103,7 @@ ColumnLayout {
 
         WGColorSlider {
             id: rSlider
+            objectName: "redColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
@@ -133,6 +134,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: rBox
+            objectName: "redColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1
@@ -170,6 +172,7 @@ ColumnLayout {
 
         WGColorSlider {
             id: gSlider
+            objectName: "greenColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
@@ -200,6 +203,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: gBox
+            objectName: "greenColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1
@@ -237,6 +241,7 @@ ColumnLayout {
 
         WGColorSlider {
             id: bSlider
+            objectName: "blueColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
@@ -267,6 +272,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: bBox
+            objectName: "blueColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1

@@ -23,7 +23,7 @@ ColumnExtension::~ColumnExtension()
 QHash< int, QByteArray > ColumnExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	this->registerRole( ColumnModelRole::role_, roleNames );
+	this->registerRole( ColumnModelRole::roleName_, roleNames );
 	return roleNames;
 }
 

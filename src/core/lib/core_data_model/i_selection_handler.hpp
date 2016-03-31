@@ -2,7 +2,7 @@
 #define I_SELECTION_HANDLER_HPP
 
 #include <vector>
-#include "wg_types/event.hpp"
+#include "core_common/signal.hpp"
 class IItem;
 
 // TODO: http://jira.bigworldtech.com/browse/NGT-849
@@ -10,6 +10,8 @@ class IItem;
 
 class ISelectionHandler
 {
+	typedef Signal<void(void)> SignalVoid;
+
 public:
 	virtual ~ISelectionHandler() {}
 
@@ -18,8 +20,8 @@ public:
 	virtual void setSelectedRows( const std::vector< int > & selectionCollection ) = 0;
 	virtual const std::vector< int > & getSelectedRows() const = 0;
 	
-	PUBLIC_EVENT( ISelectionHandler, PreSelectionChanged )
-	PUBLIC_EVENT( ISelectionHandler, PostSelectionChanged )
+	SignalVoid signalPreSelectionChanged;
+	SignalVoid signalPostSelectionChanged;
 };
 
 

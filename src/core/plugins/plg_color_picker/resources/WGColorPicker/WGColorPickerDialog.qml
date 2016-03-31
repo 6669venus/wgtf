@@ -8,6 +8,9 @@ import WGColorPicker 1.0
 
 WGFileDialog {
     id: mainDialog
+    objectName: "WGColorPickerDialog"
+
+    property bool showAlphaChannel: true
 
     onOpen: {
         cpInstance.width = dWidth
@@ -20,6 +23,7 @@ WGFileDialog {
         cpInstance.close()
     }
 
+
     Dialog {
         id: cpInstance
         modality: mainDialog.modality
@@ -29,12 +33,15 @@ WGFileDialog {
         property color currentColor: initialColor
 
         contentItem: Rectangle {
-            color: palette.MainWindowColor
+            color: palette.mainWindowColor
             anchors.margins: defaultSpacing.standardMargin
 
             WGColorPicker {
                 id: colorPicker
+                objectName: "colorPicker"
                 anchors.fill: parent
+
+                showAlphaChannel: mainDialog.showAlphaChannel
 
                 onOkClicked: {
                     mainDialog.accepted(colorPicker.currentColor)

@@ -182,7 +182,7 @@ void DefinitionManager::deregisterDefinitionHelper( const IDefinitionHelper & he
 void DefinitionManager::registerPropertyAccessorListener(
 	std::shared_ptr< PropertyAccessorListener > & listener )
 {
-	listeners_.push_back( Connection< PropertyAccessorListener >( listener ) );
+	listeners_.push_back( listener );
 }
 
 
@@ -190,7 +190,7 @@ void DefinitionManager::registerPropertyAccessorListener(
 void DefinitionManager::deregisterPropertyAccessorListener(
 	std::shared_ptr< PropertyAccessorListener > & listener )
 {
-	listeners_.erase( Connection< PropertyAccessorListener>( listener ) );
+	listeners_.erase( listener );
 }
 
 //==============================================================================

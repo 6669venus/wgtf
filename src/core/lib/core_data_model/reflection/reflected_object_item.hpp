@@ -4,6 +4,8 @@
 #include "reflected_item.hpp"
 #include "core_reflection/object_handle.hpp"
 
+#include <set>
+
 
 /**
  *	Create an item in a ReflectedTreeModel from an ObjectHandle.
@@ -23,7 +25,8 @@ public:
 	virtual ~ReflectedObjectItem() {}
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override { return parent_ ? parent_->getObject() : object_; }
+	const ObjectHandle & getRootObject() const override { return parent_ ? parent_->getRootObject() : object_; }
+    const ObjectHandle & getObject() const override { return object_; }
 	const IClassDefinition * getDefinition() const override;
 
 	// IItem
@@ -41,24 +44,18 @@ public:
 		const PropertyAccessor & accessor, const Variant & value ) override;
 	bool postSetValue(
 		const PropertyAccessor & accessor, const Variant & value ) override;
-	bool preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos,
-		size_t count ) override;
-	bool postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos,
-		size_t count ) override;
 
 private:
+	typedef std::set< const wchar_t *, bool(*)( const wchar_t *, const wchar_t * ) > Groups;
+	typedef std::function<bool(ReflectedItem&)> ReflectedItemCallback;
+
+	void EnumerateChildren(const ReflectedItemCallback& callback) const;
+	Groups& GetGroups() const;
 
 	ObjectHandle object_;
 	mutable std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
+	mutable Groups groups_;
 };
 
 #endif //REFLECTED_OBJECT_ITEM_HPP

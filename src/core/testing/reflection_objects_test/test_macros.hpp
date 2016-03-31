@@ -25,6 +25,8 @@
 	DEFINE_DATA_TYPE( const wchar_t *, raw_wstring, prefix );\
 	DEFINE_DATA_TYPE( std::wstring, wstring, prefix );\
 	DEFINE_DATA_TYPE( ObjectHandleT< TestPolyStruct >, testPolyStruct, prefix );\
+	DEFINE_DATA_TYPE( ObjectHandleT< TestEmptyStructure >, testEmptyStructure, prefix );\
+	std::vector<int> GENERATE_COL_NAME( prefix, emptyCollection, col_std );\
 
 #define DEFINE_INHERITS_TEST_DATA_TYPES()\
 	_DEFINE_TEST_DATA_TYPES_PRE( Derived, )\
@@ -36,7 +38,7 @@
 	, prefix##signedInt64_( ( int64 ) INT_MIN - 1 )\
 	, prefix##unsignedInt64_( ( uint64 ) UINT_MAX + 1 )\
 	, prefix##float_( 22.0f / 7 )\
-	, prefix##double_( 22.0f / 7 )\
+	, prefix##double_( 22.0 / 7 )\
 	, prefix##raw_string_( "Test string" )\
 	, prefix##string_( "Test BW::string" )\
 	, prefix##raw_wstring_( L"Test wide string 你好吗？" )\
@@ -78,6 +80,8 @@
 #define DEFINE_TEST_DATA_TYPES_METADATA()\
 	_DEFINE_TEST_DATA_TYPES_METADATA( , , TestObjectCommon::s_MemberVariableGroup )\
 	_DEFINE_TEST_DATA_TYPES_METADATA( , _col_std, TestObjectCommon::s_MemberStdCollectionVariableGroup )\
+	EXPOSE( "Empty Collection", emptyCollection_col_std_, \
+		MetaGroup( TestObjectCommon::s_MemberStdCollectionVariableGroup ) )\
 	//_DEFINE_TEST_DATA_TYPES_METADATA( , _col_bw, s_MemberBWCollectionVariableGroup )
 
 #define DEFINE_TEST_INHERITED_DATA_TYPES_METADATA()\
@@ -91,13 +95,14 @@ EXPOSE( #prefix "Signed int" #postFix, prefix##signedInt##postFix##_, MetaGroup(
 EXPOSE( #prefix "Unsigned int" #postFix, prefix##unsignedInt##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "Signed int64" #postFix, prefix##signedInt64##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "Unsigned int64" #postFix, prefix##unsignedInt64##postFix##_, MetaGroup( groupName ) )\
-EXPOSE( #prefix "float" #postFix, prefix##float##postFix##_, MetaGroup( groupName ) )\
-EXPOSE( #prefix "double" #postFix, prefix##double##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "float" #postFix, prefix##float##postFix##_, MetaGroup( groupName ) + MetaDecimals(5) + MetaStepSize(0.00001) )\
+EXPOSE( #prefix "double" #postFix, prefix##double##postFix##_, MetaGroup( groupName ) + MetaDecimals(5) + MetaStepSize(0.00001) )\
 EXPOSE( #prefix "const char *" #postFix, prefix##raw_string##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "BW::string" #postFix, prefix##string##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "const wchar_t *" #postFix, prefix##raw_wstring##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "BW::wstring" #postFix, prefix##wstring##postFix##_, MetaGroup( groupName ) )\
 EXPOSE( #prefix "TestPolyStruct" #postFix, prefix##testPolyStruct##postFix##_, MetaGroup( groupName ) )\
+EXPOSE( #prefix "TestEmptyStructure" #postFix, prefix##testEmptyStructure##postFix##_, MetaGroup( groupName ) )\
 
 
 #endif //REFLECTION_TEST_MACROS_HPP

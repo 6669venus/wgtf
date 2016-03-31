@@ -10,7 +10,7 @@ TEST(file_sytem)
 	char tempPath[MAX_PATH] = { 0 };
 	::GetTempPathA(MAX_PATH, tempPath);
 	CHECK(fileSystem_.exists(tempPath));
-	CHECK(fileSystem_.getFileInfo(tempPath).isDirectory());
+	CHECK(fileSystem_.getFileInfo(tempPath)->isDirectory());
 	CHECK(fileSystem_.getFileType(tempPath) == IFileSystem::Directory);
 
 	char filename[MAX_PATH] = { 0 };
@@ -61,15 +61,15 @@ TEST(file_sytem)
 	CHECK(fileSystem_.remove(filename2));
 	CHECK(!fileSystem_.exists(filename2));
 
-	std::vector<FileInfo> infos;
-	fileSystem_.enumerate(tempPath, [&](FileInfo&& info){
+	std::vector<IFileInfoPtr> infos;
+	fileSystem_.enumerate(tempPath, [&](IFileInfoPtr&& info){
 		infos.emplace_back(std::move(info));
 		return true;
 	});
 
-	fileSystem_.enumerate(getenv("HOMEDRIVE"), [&](FileInfo&& info){
-		CHECK(fileSystem_.exists(info.fullPath.c_str()));
-		CHECK(fileSystem_.getFileInfo(info.fullPath.c_str()).size == info.size);
+	fileSystem_.enumerate(getenv("HOMEDRIVE"), [&](IFileInfoPtr&& info){
+		CHECK(fileSystem_.exists(info->fullPath()));
+		CHECK(fileSystem_.getFileInfo(info->fullPath())->size() == info->size());
 		return true;
 	});
 }

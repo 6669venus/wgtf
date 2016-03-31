@@ -36,12 +36,6 @@ private:
 	GenericObject( const GenericObject & );
 	const GenericObject & operator == ( const GenericObject & );
 
-	IBasePropertyPtr addProperty(
-		const char * name,
-		const TypeId & typeId,
-		MetaHandle metaData,
-		Variant & value ) override;
-
 	ObjectHandle getDerivedType() const override;
 	ObjectHandle getDerivedType() override;
 

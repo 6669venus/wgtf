@@ -275,6 +275,50 @@ const char * SetReflectedPropertyCommand::getId() const
 	return s_Id;
 }
 
+//==============================================================================
+bool SetReflectedPropertyCommand::validateArguments(const ObjectHandle& arguments) const
+{
+	if ( !arguments.isValid() ) 
+	{
+		return false;
+	}
+
+	auto commandArgs = arguments.getBase< ReflectedPropertyCommandArgument >();
+	
+	if ( commandArgs == nullptr ) 
+	{
+			return false;
+	}
+
+	auto objManager = definitionManager_.getObjectManager();
+	if ( objManager == nullptr ) 
+	{
+		return false;
+	}
+
+	const ObjectHandle & object = objManager->getObject( commandArgs->getContextId() );
+	if (!object.isValid())
+	{
+		return false;
+	}
+
+	const IClassDefinition* defn = object.getDefinition( definitionManager_ );
+	PropertyAccessor property = defn->bindProperty(commandArgs->getPropertyPath(), object );
+	if (property.isValid() == false)
+	{
+		return false;
+	}
+	
+	const MetaType * dataType = commandArgs->getPropertyValue().type();
+	const MetaType * propertyValueType = property.getValue().type();
+
+	if ( !dataType->canConvertTo(propertyValueType) ) 
+	{
+		return false;
+	}
+
+	return true;
+}
 
 //==============================================================================
 ObjectHandle SetReflectedPropertyCommand::execute(
@@ -284,7 +328,11 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 		arguments.getBase< ReflectedPropertyCommandArgument >();
 	auto objManager = definitionManager_.getObjectManager();
 	assert( objManager != nullptr );
-	const ObjectHandle & object = objManager->getObject( commandArgs->getContextId() );
+	ObjectHandle object = objManager->getObject( commandArgs->getContextId() );
+	if (!object.isValid())
+	{
+		return CommandErrorCode::INVALID_ARGUMENTS;
+	}
 	PropertyAccessor property = object.getDefinition( definitionManager_ )->bindProperty( 
 		commandArgs->getPropertyPath(), object );
 	if (property.isValid() == false)
@@ -298,6 +346,11 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 	{
 		return CommandErrorCode::INVALID_VALUE;
 	}
+
+	// Do not return the object
+	// CommandInstance will hold a reference to the return value
+	// and the CommandInstance is stored in the undo/redo history forever
+	// This is due to a circular reference in CommandManagerImpl::pushFrame
 	return nullptr;
 }
 

@@ -22,9 +22,9 @@ MetaHandle MetaMinMax( float min, float max )
 
 
 //==============================================================================
-MetaHandle MetaEnum( IEnumGenerator * enumGenerator )
+MetaHandle MetaEnum( IEnumGeneratorPtr enumGenerator )
 {
-	SET_UP_OBJECT( MetaEnumObj, ( enumGenerator ) )
+	SET_UP_OBJECT( MetaEnumObj, ( std::move(enumGenerator) ) )
 }
 
 //==============================================================================
@@ -58,6 +58,13 @@ MetaHandle MetaAttributeDisplayName( const char * attributePath )
 MetaHandle MetaDisplayName( const wchar_t * displayName )
 {
 	SET_UP_OBJECT( MetaDisplayNameObj, ( displayName ) )
+}
+
+
+//==============================================================================
+MetaHandle MetaDescription(const wchar_t * description)
+{
+	SET_UP_OBJECT(MetaDescriptionObj, ( description ))
 }
 
 
@@ -154,11 +161,13 @@ MetaHandle MetaOnStack()
 	SET_UP_OBJECT( MetaOnStackObj, () );
 }
 
+//==============================================================================
 MetaHandle MetaReadOnly()
 {
 	SET_UP_OBJECT( MetaReadOnlyObj, () );
 }
 
+//==============================================================================
 MetaHandle MetaUrl(bool isAssetBrowserDialog,
 				   const char * urlDlgTitle, 
 				   const char * urlDlgDefaultFolder,
@@ -169,4 +178,52 @@ MetaHandle MetaUrl(bool isAssetBrowserDialog,
 	SET_UP_OBJECT( MetaUrlObj, 
 		(isAssetBrowserDialog, urlDlgTitle, urlDlgDefaultFolder, 
 		urlDlgModality, urlDlgNameFilters, urlDlgSelectedNameFilter ) );
+}
+
+//==============================================================================
+MetaHandle MetaUnique()
+{
+	SET_UP_OBJECT( MetaUniqueObj, ( ) );
+}
+
+//==============================================================================
+MetaHandle MetaParamHelp(const char* paramName, const MetaParamTypes::MetaParamType paramType, const char* paramDesc )
+{
+	SET_UP_OBJECT( MetaParamHelpObj, ( paramName, paramType, paramDesc  ) );
+}
+
+//==============================================================================
+MetaHandle MetaReturnHelp(const char* returnName, const MetaParamTypes::MetaParamType returnType, const char* returnDesc)
+{
+	SET_UP_OBJECT( MetaReturnHelpObj, ( returnName, returnType, returnDesc ) );
+}
+
+//==============================================================================
+MetaHandle MetaConsoleHelp(const char* text)
+{
+	SET_UP_OBJECT( MetaConsoleHelpObj, ( text ) );
+}
+
+//==============================================================================
+MetaHandle MetaScriptFunctionHelp(const char* name)
+{
+	SET_UP_OBJECT( MetaScriptFunctionHelpObj, ( name ) );
+}
+
+//==============================================================================
+MetaHandle MetaTooltip(const char* tooltip)
+{
+	SET_UP_OBJECT( MetaTooltipObj, ( tooltip ) );
+}
+
+//==============================================================================
+MetaHandle MetaPassword()
+{
+	SET_UP_OBJECT(MetaPasswordObj, ( ));
+}
+
+//==============================================================================
+MetaHandle MetaMultiline()
+{
+	SET_UP_OBJECT(MetaMultilineObj, ( ));
 }

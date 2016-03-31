@@ -10,10 +10,7 @@ import BWControls 1.0
 
 WGExpandingRowLayout {
     id: mainLayout
-    Layout.fillWidth: true
-    spacing: 0
-
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    objectName: "WGVectorN"
 
     /*! This property holds each individual vectors label */
     property variant vectorLabels: []
@@ -28,12 +25,15 @@ WGExpandingRowLayout {
     property real defaultValue: minimumValue
 
     //binding changes in value back to data
-
     signal elementChanged (var value_, int index)
 
     onElementChanged: {
         vectorData[index] = value_
     }
+
+    Layout.fillWidth: true
+    spacing: 0
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     Repeater {
         id: spinBoxRepeater

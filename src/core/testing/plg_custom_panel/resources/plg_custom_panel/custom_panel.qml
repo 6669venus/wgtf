@@ -10,7 +10,7 @@ WGPanel {
     title: qsTr("Prototype Custom Panel")
     layoutHints: { 'test': 0.1 }
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     focus: true
 
@@ -40,11 +40,13 @@ WGPanel {
         }
     }
 
-    WGScrollPanel {
+    WGScrollPanel { // Entire panel
         id: baseLayout
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+
+        clip: false //does nothing
 
         childObject_ :
         WGColumnLayout {
@@ -70,77 +72,87 @@ WGPanel {
                 headerObject_ :
                 WGExpandingRowLayout {
 
-                    Rectangle {
-                        color: "transparent"
+                    Item {
                         Layout.fillWidth: true
                     }
 
-                    WGToolButton {
-                        id: pinButton
+                    Rectangle {
+                        id: toolButtonFrame
+                        Layout.preferredWidth: toolButtonLayout.width
                         Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
+                        color: mainPanel.colorHeader_
 
-                        iconSource: mainPanel.expanded_ == 1 ? "icons/pinned_16x16.png" : "icons/pin_16x16.png"
+                        WGExpandingRowLayout {
+                            id: toolButtonLayout
 
-                        checkable: true
-                        checked: mainPanel.choosePinned
+                            WGToolButton {
+                                id: pinButton
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
 
-                        onCheckedChanged: {
-                            mainPanel.choosePinned = checked
-                            if(checked)
-                            {
-                                lockButton.checked = false
+                                iconSource: mainPanel.expanded_ == 1 ? "icons/pinned_16x16.png" : "icons/pin_16x16.png"
+
+                                checkable: true
+                                checked: mainPanel.choosePinned
+
+                                onCheckedChanged: {
+                                    mainPanel.choosePinned = checked
+                                    if(checked)
+                                    {
+                                        lockButton.checked = false
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                    WGToolButton {
-                        id: lockButton
-                        Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
+                            WGToolButton {
+                                id: lockButton
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
 
-                        iconSource: checked ? "icons/unlock_16x16.png" : "icons/lock_16x16.png"
+                                iconSource: checked ? "icons/unlock_16x16.png" : "icons/lock_16x16.png"
 
-                        checkable: true
+                                checkable: true
 
-                        enabled: mainPanel.expanded_ > 0
+                                enabled: mainPanel.expanded_ > 0
 
-                        onCheckedChanged: {
-                            mainPanel.chunkDragEnabled = checked
-                            if(checked)
-                            {
-                                pinButton.checked = false
+                                onCheckedChanged: {
+                                    mainPanel.chunkDragEnabled = checked
+                                    if(checked)
+                                    {
+                                        pinButton.checked = false
+                                    }
+                                }
                             }
-                        }
-                    }
 
-                    WGToolButton {
-                        id: panelMenu
-                        Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
+                            WGToolButton {
+                                id: panelMenu
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
 
-                        iconSource: "icons/menu_16x16.png"
+                                iconSource: "icons/menu_16x16.png"
 
-                        menu: WGMenu{
-                            MenuItem {
-                                text: "Copy Panel Data"
-                                enabled: false
+                                menu: WGMenu{
+                                    MenuItem {
+                                        text: "Copy Panel Data"
+                                        enabled: false
+                                    }
+                                    MenuItem {
+                                        text: "Paste Panel Data"
+                                        enabled: false
+                                    }
+                                }
                             }
-                            MenuItem {
-                                text: "Paste Panel Data"
-                                enabled: false
+
+                            WGToolButton {
+                                Layout.preferredHeight: 18
+                                Layout.preferredWidth: 18
+
+                                iconSource: "icons/close_16x16.png"
+
+                                onClicked: {
+                                    mainPanel.destroy()
+                                }
                             }
-                        }
-                    }
-
-                    WGToolButton {
-                        Layout.preferredHeight: 18
-                        Layout.preferredWidth: 18
-
-                        iconSource: "icons/close_16x16.png"
-
-                        onClicked: {
-                            mainPanel.destroy()
                         }
                     }
                 }
@@ -247,8 +259,7 @@ WGPanel {
 
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
-                                                Rectangle {
-                                                    color: "transparent"
+                                                Item {
                                                     Layout.preferredWidth: 60
                                                 }
                                                 WGPushButton {
@@ -277,10 +288,12 @@ WGPanel {
                                                 colorData: [Qt.rgba(0.5,0,0,1),Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
                                                 positionData: [20, 40, 60, 80]
                                                 linkColorsToHandles: true
+                                                handleStyle: WGColorSliderArrowHandle{}
                                             }
 
                                             WGPushButton {
-                                                text: "Update"
+                                                text: ""
+                                                iconSource: "icons/add_16x16.png"
                                                 onClicked: {
                                                     colorBar.colorData.push(Qt.rgba(1,0,1,1))
                                                     colorBar.positionData.push(90)
@@ -381,25 +394,25 @@ WGPanel {
 
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
-                                                Rectangle {
-                                                    color: "transparent"
+                                                Item {
                                                     Layout.preferredWidth: 60
                                                 }
                                                 WGNumberBox {
+                                                    id: perfBarNumBox
                                                     Layout.preferredWidth: 80
                                                     value: 25
                                                     minimumValue: 0
                                                     maximumValue: 100
 
-                                                    b_Target: perfBar
-                                                    b_Property: "value_"
-                                                    b_Value: value
+                                                    Binding {
+                                                        target: perfBar
+                                                        property: "value"
+                                                        value: perfBarNumBox.value
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-
-
 
                                     WGControlChunk {
                                         tags: "radio boolean feature on off"
@@ -668,12 +681,12 @@ WGPanel {
                             State {
                                 name: "DRAG_NORMAL"
                                 when: draggedObject != null
-                                PropertyChanges{ target: cloneFrame; border.color: palette.LighterShade}
+                                PropertyChanges{ target: cloneFrame; border.color: palette.lighterShade}
                             },
                             State {
                                 name: "DRAG_OVER"
                                 when: draggedObject != null
-                                PropertyChanges{ target: cloneFrame; border.color: palette.HighlightShade}
+                                PropertyChanges{ target: cloneFrame; border.color: palette.highlightShade}
                             }
                         ]
 
@@ -699,7 +712,7 @@ WGPanel {
                             height: defaultSpacing.minimumRowHeight
 
                             visible: draggedObject != null
-                            color: cloneFrame.state == "DRAG_OVER" ? palette.HighlightShade : palette.LighterShade
+                            color: cloneFrame.state == "DRAG_OVER" ? palette.highlightShade : palette.lighterShade
                             radius: defaultSpacing.minimumRowHeight
 
                             Image {
@@ -823,6 +836,7 @@ WGPanel {
                                                 colorData: [Qt.rgba(0.5,0,0,1),Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(1,1,1,1)]
                                                 positionData: [20, 40, 60, 80]
                                                 linkColorsToHandles: true
+                                                handleStyle: WGColorSliderArrowHandle{}
                                             }
                                         }
                                     }
@@ -962,19 +976,23 @@ WGPanel {
 
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
-                                                Rectangle {
-                                                    color: "transparent"
+                                                Item {
                                                     Layout.preferredWidth: 60
                                                 }
                                                 WGNumberBox {
+                                                    id: perBarCloneNumBox
                                                     Layout.preferredWidth: 80
                                                     value: 25
                                                     minimumValue: 0
                                                     maximumValue: 100
 
-                                                    b_Target: perfBarClone
-                                                    b_Property: "value_"
-                                                    b_Value: value
+                                                    Binding {
+                                                        target: perfBarClone
+                                                        property: "value"
+                                                        value: perBarCloneNumBox.value
+                                                    }
+
+
                                                 }
                                             }
                                         }
@@ -1112,7 +1130,7 @@ WGPanel {
                     WGLabel {
                         text: "Prototype Documentation:"
                         font.bold: true
-                        color: palette.HighlightColor
+                        color: palette.highlightColor
                     }
 
                     WGMultiLineText{
@@ -1156,7 +1174,7 @@ WGPanel {
         implicitWidth: 360
         radius: defaultSpacing.standardRadius
         border.width: 1
-        border.color: palette.DarkestShade
+        border.color: palette.darkestShade
         color: "#DD222222"
         visible: false
 

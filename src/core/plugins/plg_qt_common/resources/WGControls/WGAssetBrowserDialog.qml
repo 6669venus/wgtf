@@ -3,8 +3,14 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 import BWControls 1.0
 
+
+/*!
+ \brief An AssetBrowser specific file dialog
+*/
+
 WGFileDialog {
     id: mainDialog
+    objectName: "WGAssetBrowserDialog"
 
     onOpen: {
         abInstance.width = dWidth
@@ -29,12 +35,13 @@ WGFileDialog {
         contentItem: Rectangle {
             width: parent.width
             height: parent.height
-            color: palette.MainWindowColor
+            color: palette.mainWindowColor
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: defaultSpacing.standardMargin
 
                 WGAssetBrowser {
+                    objectName: "assetBrowser"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
 
@@ -51,6 +58,7 @@ WGFileDialog {
                     }
 
                     WGTextBox {
+                        objectName: "fileSelectBox"
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         Layout.fillWidth: true
                         readOnly: true
@@ -58,6 +66,7 @@ WGFileDialog {
                     }
 
                     WGPushButton {
+                        objectName: "openButton"
                         text: "Open"
                         onClicked: {
                             abInstance.accepted()
@@ -65,6 +74,7 @@ WGFileDialog {
                     }
 
                     WGPushButton {
+                        objectName: "openButton"
                         text: "Cancel"
                         onClicked: {
                             abInstance.rejected()

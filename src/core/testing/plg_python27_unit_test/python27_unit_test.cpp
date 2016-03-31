@@ -53,7 +53,7 @@ public:
 
 	Python27ScriptingEngine scriptingEngine_;
 
-	ScriptObjectDefinitionRegistry definitionRegistry_;
+	ReflectedPython::ScriptObjectDefinitionRegistry definitionRegistry_;
 	IInterface * pDefinitionRegistryInterface_;
 
 	PythonType::ConverterQueue typeConverterQueue_;
@@ -86,7 +86,7 @@ TEST( Python27 )
 
 	// Import a builtin module
 	{
-		ObjectHandle module = scriptingEngine->import( "sys" );
+		ObjectHandle module = scriptingEngine->appendPathAndImport( L"", "sys" );
 		CHECK( module.isValid() );
 		// Python test failed to import sys
 		if (!module.isValid())
@@ -105,15 +105,8 @@ TEST( Python27 )
 	{
 		const wchar_t* path =
 			L"..\\..\\..\\src\\core\\testing\\plg_python27_unit_test\\scripts";
-		const bool pathAppended = scriptingEngine->appendPath( path );
-		CHECK( pathAppended );
-		// Python failed to set path to test script.
-		if (!pathAppended)
-		{
-			return;
-		}
-
-		ObjectHandle module = scriptingEngine->import( "python27_test" );
+		const char* moduleName = "python27_test";
+		auto module = scriptingEngine->appendPathAndImport( path, moduleName );
 		CHECK( module.isValid() );
 		// Python failed to import test script.
 		if (!module.isValid())

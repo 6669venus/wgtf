@@ -3,7 +3,6 @@
 
 #include "command_instance.hpp"
 #include "i_command_manager.hpp"
-#include "wg_types/event.hpp"
 
 #include <functional>
 
@@ -81,6 +80,7 @@ public:
 	bool SaveHistory( ISerializer & serializer ) override;
 	bool LoadHistory( ISerializer & serializer ) override;
 	ISelectionContext& selectionContext() override;
+	virtual std::thread::id ownerThreadId() override;
 	//From ICommandManager end
 
 	IDefinitionManager & getDefManager() const;
@@ -91,7 +91,7 @@ private:
 	friend UndoRedoCommand;
 	void addToHistory( const CommandInstancePtr & instance );
 	bool undoRedo( const int & desiredIndex );
-	class CommandManagerImpl * pImpl_;
+	std::unique_ptr< class CommandManagerImpl > pImpl_;
 	IDefinitionManager & defManager_;
 	IFileSystem * fileSystem_;
 	IReflectionController * controller_;

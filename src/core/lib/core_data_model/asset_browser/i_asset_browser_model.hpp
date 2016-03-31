@@ -58,7 +58,7 @@ public:
 	//-------------------------------------
 
 	// Initializes the data model.
-	virtual void initialise( IComponentContext& contextManager, IDefinitionManager& definitionManager ) {}
+	virtual void initialise( IComponentContext& /*contextManager*/, IDefinitionManager& /*definitionManager*/ ) {}
 
 	// Finalises the data model.
 	virtual void finalise() {};

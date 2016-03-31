@@ -66,6 +66,11 @@ public:
 		baseProviderMetaType.reset( new MetaTypeImpl<ObjectHandle>() );
 		metaTypeManager.registerType( baseProviderMetaType.get() );
 	}
+
+	~TestObjectHandleFixture()
+	{
+		commandManager.fini();
+	}
 };
 
 class Test1

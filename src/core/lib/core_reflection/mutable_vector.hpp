@@ -1,10 +1,11 @@
 #ifndef MUTABLE_VECTOR_HPP
 #define MUTABLE_VECTOR_HPP
 
+#include <cassert>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <vector>
-#include <cassert>
 
 template< typename T >
 class ConstMutableIterator;
@@ -12,14 +13,49 @@ class ConstMutableIterator;
 template< typename T >
 class MutableIterator;
 
+namespace internal
+{
+	template< typename T >
+	struct DefaultComparator : std::unary_function< const T &, bool >
+	{
+		DefaultComparator( const T & compareTo )
+			: compareTo_( compareTo )
+		{
 
+		}
+
+		bool operator()( const T & value )
+		{
+			return compareTo_ == value;
+		}
+
+		const T & compareTo_;
+	};
+
+	template< typename T >
+	struct DefaultComparator< std::weak_ptr< T > > : std::unary_function< std::weak_ptr< T >, bool >
+	{
+		DefaultComparator( std::weak_ptr< T > compareTo )
+			: compareTo_( compareTo.lock() )
+		{
+
+		}
+
+		bool operator()( std::weak_ptr< T > value )
+		{
+			return compareTo_ == value.lock();
+		}
+
+		std::shared_ptr< T > compareTo_;
+	};
+}
 /**
  *	A vector in which you can safely iterate over it, while items are
  *	inserted/removed.
  *	
  *	The iterators will update their positions as items are inserted/removed.
  */
-template< typename T >
+template< typename T, class Comparator = internal::DefaultComparator< T > >
 class MutableVector
 {
 public:
@@ -67,7 +103,7 @@ public:
 	{
 		std::lock_guard< std::mutex > guard( mutex_ );
 
-		auto it = std::find( vector_.begin(), vector_.end(), val );
+		auto it = std::find_if( vector_.begin(), vector_.end(), Comparator( val ) );
 		if (it == vector_.end())
 		{
 			return;

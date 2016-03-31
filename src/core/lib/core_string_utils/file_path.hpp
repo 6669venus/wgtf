@@ -12,6 +12,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 
 /*!
  * \class FilePath
@@ -26,12 +27,19 @@
 class FilePath
 {
 public:
-	static const char&	kNativeDirectorySeparator;
-	static const char&	kNativeAltDirectorySeparator;
-	static const char&	kAltDirectorySeparator;
-	static const char&	kDirectorySeparator;
-	static const char&	kExtensionSeparator;
-	static const char&	kVolumeSeparator;
+	// Defined in this header to allow using the FilePath class without linking
+#if defined( _WIN32 )
+	static const char kNativeDirectorySeparator = '\\';
+	static const char kNativeAltDirectorySeparator = '/';
+#else
+	static const char kNativeDirectorySeparator = '/';
+	static const char kNativeAltDirectorySeparator = '\\';
+#endif
+
+	static const char kAltDirectorySeparator = '\\';
+	static const char kDirectorySeparator = '/';
+	static const char kExtensionSeparator = '.';
+	static const char kVolumeSeparator = ':';
 
 	template<class Type>
 	FilePath(Type&& path, const char& directorySeparator = kNativeDirectorySeparator)
@@ -59,7 +67,7 @@ public:
 	std::string getExtension() const
 	{
 		auto pos = fullPath_.rfind(kExtensionSeparator);
-		return fullPath_.substr(pos + 1);
+		return std::string::npos == pos ? "" : fullPath_.substr(pos + 1);
 	}
 
 	/*! Gets the folder of the path including the final directory separator
@@ -111,10 +119,11 @@ public:
 
 		if ( fullPath.empty() )
 			return nextPart;
+		// Check for a fully qualified path with file extension
 		if ( nextPart.empty() && fullPath.rfind(".") > fullPath.rfind(directorySeparator) )
 			return fullPath;
 		if ( nextPart.empty() )
-			return combine(fullPath, &directorySeparator, directorySeparator);
+			nextPart.push_back(directorySeparator);
 		if ( fullPath.back() == directorySeparator
 			&& nextPart.front() != directorySeparator )
 			return fullPath + nextPart;

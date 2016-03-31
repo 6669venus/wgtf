@@ -2,11 +2,13 @@
 #ifndef _PYTHON_TYPE_CONVERTER_QUEUE_HPP
 #define _PYTHON_TYPE_CONVERTER_QUEUE_HPP
 
-#include "core_python27/type_converters/dict_converter.hpp"
-#include "core_python27/type_converters/list_converter.hpp"
-#include "core_python27/type_converters/primitive_converter.hpp"
-#include "core_python27/type_converters/tuple_converter.hpp"
-#include "core_python27/type_converters/type_converter.hpp"
+#include "converters.hpp"
+#include "default_converter.hpp"
+#include "dict_converter.hpp"
+#include "list_converter.hpp"
+#include "primitive_converter.hpp"
+#include "tuple_converter.hpp"
+#include "none_converter.hpp"
 
 #include <longintrepr.h>
 
@@ -23,7 +25,7 @@ namespace PythonType
  *	@param scriptObject script object from which to get the type.
  *	@return equivalent C++ type name, if supported by type converters.
  */
-TypeId scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject );
+const TypeId & scriptTypeToTypeId( const PyScript::ScriptObject & scriptObject );
 
 
 /**
@@ -40,8 +42,12 @@ public:
 private:
 	IComponentContext & context_;
 
-	PythonTypeConverters typeConverters_;
+	BasicTypeConverters basicTypeConverters_;
+	ParentTypeConverters parentTypeConverters_;
+	DefaultConverter defaultTypeConverter_;
+	Converters allConverters_;
 
+	NoneConverter noneTypeConverter_;
 	PrimitiveConverter< int > intTypeConverter_;
 	PrimitiveConverter< digit > longTypeConverter_;
 	PrimitiveConverter< double > floatTypeConverter_;
@@ -50,7 +56,6 @@ private:
 	ListConverter listTypeConverter_;
 	TupleConverter tupleTypeConverter_;
 	DictConverter dictTypeConverter_;
-	TypeConverter typeTypeConverter_;
 
 	IInterface * pTypeConvertersInterface_;
 };

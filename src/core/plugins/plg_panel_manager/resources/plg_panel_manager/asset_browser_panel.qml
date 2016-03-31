@@ -11,7 +11,7 @@ WGPanel {
 
 	layoutHints: { 'assetbrowser': 1.0, 'bottom': 0.5 }
 
-	color: palette.MainWindowColor	
+	color: palette.mainWindowColor	
 
 	Layout.fillWidth: true
 	Layout.fillHeight: true

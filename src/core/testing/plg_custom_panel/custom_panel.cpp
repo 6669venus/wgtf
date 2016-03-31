@@ -36,4 +36,5 @@ void CustomPanel::removePanel()
 	}
 
 	uiApplication->removeView( *customView_ );
+    customView_ = nullptr;
 }

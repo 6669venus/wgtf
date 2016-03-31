@@ -11,19 +11,24 @@ Example:
 WGSlider {
     Layout.fillWidth: true
     minimumValue: 0
-    maximumValue: 10
+    maximumValue: 100
     stepSize: 1.0
 
     WGSliderHandle {
-        minimumValue: 0
-        maximumValue: 100
         value: 50
+
+        handleStyle: Rectangle {
+            color: "grey"
+            implicitHeight: 20
+            implicitWidth: 20
+        }
     }
 }
 \endcode
 */
 
 Item {
+    objectName: "WGSliderHandle"
     id: sliderHandle
 
     /*!
@@ -33,8 +38,14 @@ Item {
 
     property alias range: range
 
-    property color handleColor: palette.LightPanelColor
+    /*!
+        The internal color of the handle
+    */
+    property color handleColor: palette.lightPanelColor
 
+    /*!
+        The color of the bar attached to the handle
+    */
     property color barColor: parentSlider.barColor
 
     /*!
@@ -45,7 +56,7 @@ Item {
     property bool showBar: true
 
     /*!
-        A paired handle that handles the max value in a range slider.
+        A paired handle that handles the max or min value in a range slider.
     */
 
     property QtObject rangePartnerHandle: sliderHandle
@@ -81,6 +92,19 @@ Item {
     */
     property alias value: range.value
 
+    /*!
+        This is the Component for the handle style.
+
+        This can be any Item based component.
+    */
+    property Component handleStyle: WGButtonFrame{
+        color: parentSlider.enabled ? handleColor : palette.mainWindowColor
+        borderColor: parentSlider.enabled ? palette.darkerShade : palette.darkShade
+        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
+        innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
+        implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+        implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
+    }
 
     /*! \internal */
     property bool __horizontal: parentSlider.__horizontal
@@ -110,13 +134,17 @@ Item {
     function updatePos() {
         if (parentSlider.__handleMoving)
         {
-            sliderHandle.value = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
+            var newValue = range.valueForPosition(__horizontal ? sliderHandle.x : sliderHandle.y, range.positionAtMinimum, range.positionAtMaximum)
+            setValueHelper(sliderHandle, "value", newValue);
         }
     }
 
     width: parentSlider.__handleWidth
 
     height: parentSlider.__handleHeight
+
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.minimumRowHeight
 
     anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
     anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
@@ -145,11 +173,13 @@ Item {
     activeFocusOnTab: true
 
     RangeModel {
+        objectName: "SliderRange"
         id: range
         stepSize: parentSlider.stepSize
         value: parentSlider.value
-        minimumValue: 0
-        maximumValue: 10
+
+        minimumValue: parentSlider.minimumValue
+        maximumValue: parentSlider.maximumValue
 
         inverted: __horizontal ? false : true
 
@@ -201,3 +231,4 @@ Item {
         }
     }
 }
+

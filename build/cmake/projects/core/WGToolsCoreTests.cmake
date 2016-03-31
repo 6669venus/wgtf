@@ -22,6 +22,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		core_common_unit_test 			    core/lib/core_common/unit_test
 		reflection_unit_test 				core/lib/core_reflection/unit_test
 		data_model_unit_test				core/lib/core_data_model/unit_test
+		string_utils_unit_test				core/lib/core_string_utils/unit_test
 		)
 
 	IF(MSVC)
@@ -61,6 +62,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_python27_interface_test		core/testing/plg_python27_interface_test
 	plg_python27_ui_test			core/testing/plg_python27_ui_test
 	plg_python27_unit_test			core/testing/plg_python27_unit_test
+	plg_curve_editor_test			core/testing/plg_curve_editor_test
 	plg_ui_main_test			    core/testing/plg_ui_main_test
     plg_tree_expansion_status_test  core/testing/plg_tree_expansion_status_test
     plg_list_model_test  			core/testing/plg_list_model_test
@@ -76,6 +78,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_controls_test				core/testing/plg_controls_test
 	plg_custom_panel				core/testing/plg_custom_panel
 	plg_tree_to_list_test			core/testing/plg_tree_to_list_test
+	plg_custom_xml_serialization_test core/testing/plg_custom_xml_serialization_test
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

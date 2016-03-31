@@ -9,7 +9,7 @@ WGPanel {
 	layoutHints: { 'test': 0.1 }
 
 	property var sourceModel: source
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	
     property var useModel: 1
     property var topControlsHeight: 20
@@ -31,7 +31,8 @@ WGPanel {
 		id: listModel
 		source: useModel ? sourceModel : null
 
-		ValueExtension {}
+        HeaderFooterTextExtension {}
+        ValueExtension {}
 		ColumnExtension {}
 		SelectionExtension {
 			id: listModelSelection
@@ -47,6 +48,8 @@ WGPanel {
         anchors.bottom: parent.bottom
         spacing: 1
         showColumnsFrame: true
+        showColumnHeaders: true
+        showColumnFooters: true
         model: listModel
         selectionExtension: listModelSelection
         columnDelegates: [defaultColumnDelegate, columnDelegate]
@@ -85,7 +88,7 @@ WGPanel {
                     verticalAlignment: Text.AlignVCenter
                     visible: typeof itemData.Value === "string"
                     text: typeof itemData.Value === "string" ? itemData.Value : ""
-                    color: palette.TextColor
+                    color: palette.textColor
                 }
             }
         }

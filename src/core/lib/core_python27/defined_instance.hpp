@@ -39,7 +39,7 @@ class DefinedInstance : public BaseGenericObject
 public:
 
 	/**
-	 *	Do not use this function. Use DefinedInstance::create().
+	 *	Do not use this function. Use DefinedInstance::findOrCreate().
 	 *	It is required to be implemented by the .mpp implementation.
 	 *	But the lifetime of Python objects cannot managed by ObjectManager, so
 	 *	always create this object with the other constructor provided.
@@ -47,10 +47,17 @@ public:
 	DefinedInstance();
 	~DefinedInstance();
 
-	static ObjectHandle create( IComponentContext & context,
+	static ObjectHandle findOrCreate( IComponentContext & context,
+		const PyScript::ScriptObject & pythonObject,
+		const ObjectHandle & parentHandle,
+		const std::string & childPath );
+
+	static ObjectHandle find( IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject );
 
 	const PyScript::ScriptObject & pythonObject() const;
+	const DefinedInstance & root() const;
+	const std::string & fullPath() const;
 
 private:
 	/**
@@ -59,12 +66,17 @@ private:
 	DefinedInstance(
 		IComponentContext & context,
 		const PyScript::ScriptObject & pythonObject,
-		std::shared_ptr< IClassDefinition > & definition );
+		std::shared_ptr< IClassDefinition > & definition,
+		const ObjectHandle & parentHandle,
+		const std::string & childPath );
 
-	IBasePropertyPtr addProperty( const char * name,
-		const TypeId & typeId,
-		MetaHandle metaData,
-		Variant & value ) override;
+	// Prevent copy and move
+	// There should only be one DefinedInstance per PyScript::ScriptObject
+	// Existing DefinedInstances can be found using DefinedInstance::find()
+	DefinedInstance( const DefinedInstance & other );
+	DefinedInstance( DefinedInstance && other );
+	DefinedInstance & operator=( const DefinedInstance & other );
+	DefinedInstance & operator=( DefinedInstance && other );
 
 	ObjectHandle getDerivedType() const override;
 	ObjectHandle getDerivedType() override;
@@ -81,6 +93,15 @@ private:
 	std::shared_ptr<IClassDefinition> pDefinition_;
 
 	IComponentContext * context_;
+
+	// Track parent object so that the reflection system can get the full
+	// property path to this object
+	// Need to keep a strong reference to the parent DefinedInstance
+	// in the case of accessing properties like "parent.child1.child2",
+	// then the only thing holding a reference alive to "child1" will be "child2"
+	ObjectHandle parentHandle_;
+	const DefinedInstance * pRoot_;
+	std::string fullPath_;
 };
 
 

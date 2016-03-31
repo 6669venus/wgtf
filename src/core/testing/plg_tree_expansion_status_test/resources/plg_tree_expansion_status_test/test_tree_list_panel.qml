@@ -8,10 +8,9 @@ import WGControls 1.0
 
 WGPanel{
 	id: root
-	property var viewId: ViewId
 	title: "Tree Expansion Test"
 	layoutHints: { 'test': 0.1 }
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	Layout.fillWidth: true
 	Layout.fillHeight: true
 	property var testListModel: listSource
@@ -56,7 +55,7 @@ WGPanel{
 			color: "transparent"
 			width: defaultSpacing.doubleMargin
 			WGSeparator {
-				vertical_: true
+				vertical: true
 				width: 2
 				anchors.horizontalCenter: parent.horizontalCenter
 				anchors.top: parent.top
@@ -74,7 +73,7 @@ WGPanel{
 			columnDelegates: [columnDelegate]
 			Component.onCompleted: {
 				listModelSelection.selectedIndex = model.index(0, 0);
-				var value = Preference.width;
+				var value = preference.width;
 				if(typeof value != "undefined")
 				{
 					testListView.width = value;
@@ -82,7 +81,7 @@ WGPanel{
 			}
 			Component.onDestruction: {
 				//TODO: directly use Preference when supporting dynamically add property for GeneircObject
-				addPreference(ViewId, "width", testListView.width );
+				addPreference(viewId, "width", testListView.width );
 			}
 			Component {
 				id: columnDelegate
@@ -100,7 +99,7 @@ WGPanel{
 						verticalAlignment: Text.AlignVCenter
 						visible: true
 						text: itemData != null ? itemData.ValueType : ""
-						color: palette.TextColor
+						color: palette.textColor
 					}
 
 					Connections {

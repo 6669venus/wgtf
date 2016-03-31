@@ -21,6 +21,7 @@ public:
 	PropertyAccessor( const PropertyAccessor & other );
 	PropertyAccessor( PropertyAccessor && other );
 	
+	PropertyAccessor& operator = ( const PropertyAccessor & other );
 	PropertyAccessor& operator = ( PropertyAccessor && other );
 
 	bool isValid() const;
@@ -42,7 +43,8 @@ public:
 	bool setValueWithoutNotification( const Variant & value ) const;
 
 	bool canInvoke() const;
-	Variant invoke( const ReflectedMethodParameters & parameters, bool undo = false ) const;
+	Variant invoke( const ReflectedMethodParameters & parameters ) const;
+	void invokeUndoRedo( const ReflectedMethodParameters & parameters, Variant result, bool undo ) const;
 
 	IBasePropertyPtr getProperty() const { return property_; }
 	const ObjectHandle & getObject() const { return object_; }
@@ -52,6 +54,7 @@ public:
 
 	const IDefinitionManager * getDefinitionManager() const;
 private:
+	std::shared_ptr<PropertyAccessor> parentAccessor_;
 	ObjectHandle			object_;
 	IBasePropertyPtr		property_;
 
@@ -66,6 +69,7 @@ private:
 		const ObjectHandle & rootObject, const char * path );
 	void setObject( const ObjectHandle & object );
 	void setBaseProperty( const IBasePropertyPtr & property );
+	void setParent( const PropertyAccessor& parent );
 };
 
 #endif // PROPERTY_ACCESSOR_HPP

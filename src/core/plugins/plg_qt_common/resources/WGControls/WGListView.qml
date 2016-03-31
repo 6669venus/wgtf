@@ -37,33 +37,70 @@ WGListView {
 \endcode
 */
 
-ListView {
+WGItemView {
     id: listView
     objectName: "WGListView"
-    boundsBehavior: Flickable.StopAtBounds
-    currentIndex: -1
-    clip: true
-    leftMargin: 2
-    rightMargin: 2
-    topMargin: 2
-    bottomMargin: 2
-    spacing: 0
 
-    //TODO: Document this. Should this be internal?
-    /*! This property holds multi select state information */
-    property var selectionExtension: null
-
-    /*! This property holds a lits of items to be passed to the WGListViewRowDelegate
-        The default value is an empty list
+    /*! This property holds the dataModel information that will be displayed in the tree view
     */
-    property var columnDelegates: []
+    property var model
 
-    property var treeExtension: null
+    /*! This property determines the gap between the left edge of the entire control and the list contents.
+        The default value is \c 2
+    */
+    property real leftMargin: 2
+
+    /*! This property determines the gap between the right edge of the entire control and the list contents.
+        The default value of \c 8 is given to allow for enough room for the vertical scrollbar
+        The default value is \c 8
+    */
+    property real rightMargin: 2
+
+    /*! This property determines the gap between the top edge of the entire control and the list contents.
+        The default value is \c 2
+    */
+    property real topMargin: 2
+
+    /*! This property determines the gap between the bottom edge of the entire control and the list contents.
+        The default value is \c 2
+    */
+    property real bottomMargin: 2
+
+    /*! This property adds vertical spacing under each sibling object in the list.
+        This will not add spacing between a child and its parent.
+        See the childListMargin: for spacing between parents and children.
+        The default value is \c 0
+    */
+    property real spacing: 0
+
+    /*! This property holds the spacing between column items
+        The default value is \c 1
+    */
+    property real columnSpacing: 2
 
     /*! This property holds the spacing between rows
         The default value is set by defaultSpacing.minimumRowHeight
     */
     property real minimumRowHeight: defaultSpacing.minimumRowHeight
+
+    property alias currentIndex: list.currentIndex
+
+    /*! This property holds multi select state information */
+    property var selectionExtension: null
+    property var treeExtension: null
+
+    /*! This property holds a list of items to be passed to the WGListViewRowDelegate
+        The default value is an empty list
+    */
+    property var columnDelegates: []
+
+    /*! This property holds a list of indexes to adapt from the model's columns
+        to the view's columns.
+        e.g. if the input model has 1 column, but columnSequence is [0,0,0]
+             then the view can have 3 columns that lookup column 0 in the model.
+        The default value is an empty list
+    */
+    property var columnSequence: []
 
     /*! This property defines the anchors.margins used by the selection highlight
         The default value is \c 0
@@ -88,56 +125,62 @@ ListView {
     /*! Colour mode with a sigle background colour */
     readonly property int alternatingRowBackgroundColours: 2
 
-    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color backgroundColour: palette.midDarkColor
     readonly property color alternateBackgroundColour:
         backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
-        : Qt.darker(palette.MidLightColor,1.2)
+        : Qt.darker(palette.midLightColor,1.2)
 
-    /*! This property holds the spacing between column items
-        The default value is \c 1
-    */
-    property real columnSpacing: 2
+    property bool showColumnHeaders: false
+    property bool showColumnFooters: false
 
-	/*! This property contains the number of columns */
-    property int columnCount: 0
-    
-    Component.onCompleted: updateColumnCount()
+    property Component columnHeaderDelegate: defaultColumnHeaderDelegate
+    property Component columnFooterDelegate: defaultColumnFooterDelegate
 
-    Connections {
-        target: typeof(model) === "undefined" ? null : model
+    property color headerBackgroundColour: palette.midDarkColor
+    property color footerBackgroundColour: palette.midDarkColor
 
-        onModelReset: {
-            updateColumnCount();
+    property Component defaultColumnHeaderDelegate: Item {
+        signal dataChanged;
 
-            if (showColumnsFrame)
-            {
-                columnsFrame.initialColumnWidths = listView.columnWidths;
-            }
+        property var headerTextVariant: getData("headerText");
+        property string headerText:
+            headerTextVariant !== null && typeof(headerTextVariant) === "string" ? headerTextVariant : ""
+
+        onDataChanged:headerTextVariant = getData("headerText");
+
+        Text {
+            id: textBox
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.textColor
+            text: headerText
         }
     }
 
-    /*! This property contains the column widths */
-	property var columnWidths: []
+    property Component defaultColumnFooterDelegate: Item {
+        signal dataChanged;
 
-	/*! This property contains the initial column widths */
-	property var initialColumnWidths: []
+        property var footerTextVariant: getData("footerText");
+        property string footerText:
+            footerTextVariant !== null && typeof(footerTextVariant) === "string" ? footerTextVariant : ""
 
-	/*! This property determines if the column sizing handles are shown */
-	property bool showColumnsFrame: false
+        onDataChanged:footerTextVariant = getData("footerText");
 
-    readonly property real minimumScrollbarWidth:
-        enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
+        Text {
+            id: textBoxFooter
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.textColor
+            text: footerText
+        }
+    }
 
-    readonly property real maximumScrollbarWidth:
-        enableVerticalScrollBar ? verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
-
-    readonly property real minimumRowWidth: width - leftMargin - rightMargin - minimumScrollbarWidth
-
-    readonly property real initialColumnsFrameWidth:
-        minimumRowWidth + (showColumnsFrame ? minimumScrollbarWidth - maximumScrollbarWidth : 0)
-
-    //TODO: document this
-    /*! This property holds a default list component. */
     property var defaultColumnDelegate: Component {
         Item {
             Layout.fillWidth: true
@@ -152,17 +195,63 @@ ListView {
                 anchors.margins: 4
                 verticalAlignment: Text.AlignVCenter
                 text: typeof itemData.Value === "string" ? itemData.Value : typeof itemData.Value
-                color: palette.TextColor
+                color: palette.textColor
             }
         }
     }
 
+    /*! This property contains the number of columns */
+    property int columnCount: 0
+
+    Component.onCompleted: updateColumnCount()
+
+    Connections {
+        target: typeof(model) === "undefined" ? null : model
+
+        onModelReset: {
+            updateColumnCount();
+
+            if (showColumnsFrame)
+            {
+                columnsFrame.initialColumnWidths = listView.columnWidths;
+            }
+        }
+
+        onHeaderDataChanged: headerDataChanged(first, last);
+    }
+
+    /*! This property contains the column widths */
+    property var columnWidths: []
+
+    /*! This property contains the initial column widths */
+    property var initialColumnWidths: []
+
+    /*! This property determines if the column sizing handles are shown */
+    property bool showColumnsFrame: false
+
+    readonly property real minimumScrollbarWidth:
+        enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
+
+    readonly property real maximumScrollbarWidth:
+        enableVerticalScrollBar ? verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
+
+    readonly property real minimumRowWidth: width - leftMargin - rightMargin - minimumScrollbarWidth
+
+    readonly property real initialColumnsFrameWidth:
+        minimumRowWidth + (showColumnsFrame ? minimumScrollbarWidth - maximumScrollbarWidth : 0)
+
     function updateColumnCount()
     {
-        if (showColumnsFrame)
+        if (typeof(model) === "undefined" || model === null)
         {
-            columnCount = model === null ? 0 : model.columnCount();
+            columnCount = 0;
         }
+        else
+        {
+            columnCount = model.columnCount();
+        }
+
+        headerDataChanged(0, columnCount - 1);
     }
 
     function calculateMaxTextWidth(index)
@@ -189,6 +278,37 @@ ListView {
 
         var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
         listView.positionViewAtIndex( currentRow, ListView.Contain );
+    }
+
+    function columnWidthFunction(index)
+    {
+        var columnWidths = listView.columnWidths;
+        var columnWidth = 0;
+
+        if (columnWidths.length === 0)
+        {
+            var listWidth = listView.width - listView.leftMargin - listView.rightMargin;
+            columnWidth = Math.ceil(listWidth / columnCount - listView.columnSpacing);
+        }
+        else if (index < columnWidths.length)
+        {
+            columnWidth = columnWidths[index];
+        }
+
+        return Math.max(0, columnWidth);
+    }
+
+    function headerDataChanged(fromColumn, toColumn)
+    {
+        if (headerItemLoader.status === Loader.Ready)
+        {
+            headerItem.dataChanged(fromColumn, toColumn)
+        }
+
+        if (footerItemLoader.status === Loader.Ready)
+        {
+            footerItem.dataChanged(fromColumn, toColumn)
+        }
     }
 
     Keys.onUpPressed: {
@@ -221,40 +341,108 @@ ListView {
     */
     signal returnPressed()
 
-    delegate: WGListViewRowDelegate {
-        anchors.left: parent.left
-        width: Math.max(columnsFrame.width, minimumRowWidth)
-        defaultColumnDelegate: listView.defaultColumnDelegate
-    	columnDelegates: listView.columnDelegates
-        columnWidths: listView.columnWidths
-        columnSpacing: listView.columnSpacing
-        selectionExtension: listView.selectionExtension
-        modelIndex: listView.model.index(rowIndex, 0)
-        showBackgroundColour: backgroundColourMode !== noBackgroundColour
-        backgroundColour: listView.backgroundColour
-        alternateBackgroundColour: listView.alternateBackgroundColour
-        hasActiveFocusDelegate: listView.activeFocus
+    ListView {
+        id: list
+        model: listView.model
+        clip: true
+        spacing: listView.spacing
+        x: listView.leftMargin
+        y: listView.topMargin + headerHeight
+        width: listView.width - x - listView.rightMargin
+        height: listView.height - y - listView.bottomMargin - footerHeight
 
-        onClicked: {
-            var modelIndex = listView.model.index(rowIndex, 0);
-            listView.rowClicked(mouse, modelIndex);
+        property real headerHeight: headerItemLoader.status === Loader.Ready ? listView.headerItem.height : 0
+        property real footerHeight: footerItemLoader.status === Loader.Ready ? listView.footerItem.height : 0
+        property bool scrollable: contentHeight > height
 
-            // Update the selectionExtension's currentIndex
-            setCurrentIndex( modelIndex )
+        delegate: WGItemRow {
+            anchors.left: parent.left
+            width: Math.max(columnsFrame.width, minimumRowWidth)
+            defaultColumnDelegate: listView.defaultColumnDelegate
+            columnDelegates: listView.columnDelegates
+            columnSequence: listView.columnSequence
+            columnWidths: listView.columnWidths
+            columnSpacing: listView.columnSpacing
+            selectionExtension: listView.selectionExtension
+            modelIndex: listView.model.index(rowIndex, 0)
+            showBackgroundColour: backgroundColourMode !== noBackgroundColour
+            backgroundColour: listView.backgroundColour
+            alternateBackgroundColour: listView.alternateBackgroundColour
+            hasActiveFocusDelegate: listView.activeFocus
+
+            onClicked: {
+                var modelIndex = listView.model.index(rowIndex, 0);
+                listView.rowClicked(mouse, modelIndex);
+
+                // Update the selectionExtension's currentIndex
+                setCurrentIndex( modelIndex )
+            }
+
+            onDoubleClicked: {
+                var modelIndex = listView.model.index(rowIndex, 0);
+                listView.rowDoubleClicked(mouse, modelIndex);
+
+                // Update the selectionExtension's currentIndex
+                setCurrentIndex( modelIndex )
+            }
         }
+    }
 
-        onDoubleClicked: {
-            var modelIndex = listView.model.index(rowIndex, 0);
-            listView.rowDoubleClicked(mouse, modelIndex);
+    property alias headerItem: headerItemLoader.item
 
-            // Update the selectionExtension's currentIndex
-            setCurrentIndex( modelIndex )
-        }
+    Loader {
+        id: headerItemLoader
+        x: leftMargin
+        anchors.top: listView.top
+        width: listView.width
+        active: showColumnHeaders
+        sourceComponent: header
+    }
+
+    property Component header: !showColumnHeaders ? null : headerComponent
+
+    property Component headerComponent: WGHeaderRow {
+        topMargin: listView.topMargin
+        columnCount: listView.columnCount
+        columnWidthFunction: listView.columnWidthFunction
+        backgroundColour: headerBackgroundColour
+        columnDelegate: columnHeaderDelegate
+        model: listView.model
+        minimumRowHeight: listView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnHeaders
+        width: listView.width - listView.rightMargin - listView.leftMargin
+    }
+
+    property alias footerItem: footerItemLoader.item
+
+    Loader {
+        id: footerItemLoader
+        x: leftMargin
+        anchors.bottom: listView.bottom
+        width: listView.width
+        active: showColumnFooters
+        sourceComponent: footer
+    }
+
+    property Component footer: !showColumnFooters ? null : footerComponent
+
+    property Component footerComponent: WGHeaderRow {
+        bottomMargin: listView.bottomMargin
+        columnCount: listView.columnCount
+        columnWidthFunction: listView.columnWidthFunction
+        backgroundColour: footerBackgroundColour
+        columnDelegate: columnFooterDelegate
+        model: listView.model
+        minimumRowHeight: listView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnFooters
+        width: listView.width - listView.rightMargin - listView.leftMargin
     }
 
     WGColumnsFrame {
         id: columnsFrame
-    	columnCount: listView.columnCount
+        columnCount: listView.columnCount
         y: listView.topMargin
         x: listView.leftMargin
         height: listView.height - listView.topMargin - listView.bottomMargin
@@ -265,13 +453,14 @@ ListView {
         initialColumnWidths: listView.initialColumnWidths
         defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
-		
+
         onColumnsChanged: {
-    	    listView.columnWidths = columnWidths;
-    	}
+            listView.columnWidths = columnWidths;
+        }
     }
 
     WGScrollBar {
+        objectName: "verticalScrollBar"
         id: verticalScrollBar
         width: defaultSpacing.rightMargin
         anchors.top: listView.top
@@ -281,10 +470,10 @@ ListView {
         anchors.bottomMargin: listView.bottomMargin
         anchors.rightMargin: listView.rightMargin
         orientation: Qt.Vertical
-        position: listView.visibleArea.yPosition
-        pageSize: listView.visibleArea.heightRatio
-        scrollFlickable: listView
-        visible: listView.contentHeight > listView.height && enableVerticalScrollBar
+        position: list.visibleArea.yPosition
+        pageSize: list.visibleArea.heightRatio
+        scrollFlickable: list
+        visible: list.scrollable && enableVerticalScrollBar
     }
     property alias verticalScrollBar : verticalScrollBar
 }

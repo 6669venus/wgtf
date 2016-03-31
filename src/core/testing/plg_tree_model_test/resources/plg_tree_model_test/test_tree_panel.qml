@@ -5,7 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 
 WGPanel {
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     title: "TreeModel Test"
     layoutHints: { 'test': 0.1 }
     property var sourceModel: source
@@ -38,6 +38,9 @@ WGPanel {
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
 		height: topControlsHeight
+		Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
 	}
 
     WGFilteredTreeModel {
@@ -50,6 +53,7 @@ WGPanel {
 			splitterChar: " "
 		}
 
+		HeaderFooterTextExtension {}
         ValueExtension {}
         ColumnExtension {}
         ComponentExtension {}
@@ -71,12 +75,13 @@ WGPanel {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         model: testModel
-        columnDelegates: [defaultColumnDelegate]
         selectionExtension: treeModelSelection
         treeExtension: treeModelExtension
         childRowMargin: 2
         lineSeparator: false
         showColumnsFrame: true
-    	backgroundColourMode: incrementalGroupBackgroundColours
+        showColumnHeaders: true
+        showColumnFooters: true
+        backgroundColourMode: incrementalGroupBackgroundColours
     }
 }

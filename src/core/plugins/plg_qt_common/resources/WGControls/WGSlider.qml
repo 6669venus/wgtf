@@ -51,17 +51,21 @@ import BWControls 1.0
  would use WGSliderControl or WGRangeSlider which includes the required
  number boxes.
 
+ The WGSliderHandle range will default to the WGSlider range unless explicitely
+ assigned
+
+
 Example:
 \code{.js}
 WGSlider {
     Layout.fillWidth: true
     minimumValue: 0
-    maximumValue: 10
+    maximumValue: 100
     stepSize: 1.0
 
     WGSliderHandle {
-        minimumValue: 0
-        maximumValue: 100
+        minimumValue: 20
+        maximumValue: 80
         value: 50
     }
 }
@@ -69,6 +73,7 @@ WGSlider {
 */
 
 Control {
+    objectName: "WGSlider"
     id: slider
 
     /*!
@@ -133,10 +138,10 @@ Control {
     /*!
         This property determines the color of the bar that 'fills' the slider if is enabled
 
-        The default value is \c palette.HighlightColor
+        The default value is \c palette.highlightColor
     */
 
-    property color barColor: palette.HighlightColor
+    property color barColor: palette.highlightColor
 
     /*! This property indicates the slider step size.
 
@@ -206,6 +211,8 @@ Control {
     /*! \internal */
     property bool __handleMoving: false
 
+    property real __grabbedValue: 0
+
     //Accessible.role: Accessible.Slider
     /*! \internal */
     function accessibleIncreaseAction() {
@@ -240,8 +247,12 @@ Control {
     */
     signal handleCtrlClicked(int index)
 
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
+
     MouseArea {
         id: mouseArea
+        objectName: "sliderDragArea"
 
         z:-1
 
@@ -292,8 +303,10 @@ Control {
 
         onPressed: {
             if (__draggable)
-                {
+            {
+                beginUndoFrame();
                 __handleMoving = true
+                __grabbedValue = value;
                 if (slider.activeFocusOnPress)
                     slider.forceActiveFocus();
 
@@ -331,6 +344,7 @@ Control {
                 updateHandlePosition(mouse, Settings.hasTouchScreen)
             }
 
+            endUndoFrame();
 
             clickOffset = 0
             preventStealing = false

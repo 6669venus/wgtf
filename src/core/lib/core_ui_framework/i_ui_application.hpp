@@ -19,10 +19,6 @@ typedef std::map< std::string, IWindow * > Windows;
 class IUIApplication : public Implements< IApplication >
 {
 public:
-
-	typedef std::function<void(void)> VoidCallback;
-
-public:
 	virtual ~IUIApplication() {}
 
 	virtual void addWindow( IWindow & window ) = 0;
@@ -35,10 +31,6 @@ public:
 	virtual void removeAction( IAction & action ) = 0;
 	virtual void setWindowIcon(const char* path, const char* windowId = "") = 0;
 	virtual const Windows & windows() const = 0;
-
-	//! \brief use to register a callback for application update.  this function uses
-	//	   internal application update callback to forward an update as often as it needs.
-	virtual void connectOnUpdate(VoidCallback callback) = 0;
 };
 
 #endif//I_UI_APPLICATION_HPP

@@ -97,6 +97,8 @@ This is to tell the view to update its data.
 */
 
 #include "filtered_tree_model.hpp"
+#include "core_variant/variant.hpp"
+
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
@@ -104,6 +106,7 @@ This is to tell the view to update its data.
 #include <thread>
 #include <functional>
 #include <atomic>
+#include <cassert>
 
 struct FilteredTreeModel::Implementation
 {
@@ -174,20 +177,13 @@ struct FilteredTreeModel::Implementation
 	void remapIndices();
 	void copyIndices( IndexMap& target ) const;
 
-	void preDataChanged( const ITreeModel* sender, 
-		const ITreeModel::PreDataChangedArgs& args );
-	void postDataChanged( const ITreeModel* sender, 
-		const ITreeModel::PostDataChangedArgs& args );
-	void preItemsInserted( const ITreeModel* sender,
-		const ITreeModel::PreItemsInsertedArgs& args );
-	void postItemsInserted( const ITreeModel* sender,
-		const ITreeModel::PostItemsInsertedArgs& args );
-	void preItemsRemoved( const ITreeModel* sender,
-		const ITreeModel::PreItemsRemovedArgs& args );
-	void postItemsRemoved( const ITreeModel* sender,
-		const ITreeModel::PostItemsRemovedArgs& args );
-	void onDestructing( const ITreeModel* sender,
-		const ITreeModel::DestructingArgs& args );
+	void preItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data ); 
+	void postItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data );
+	void preItemsInserted( const IItem * parent, size_t index, size_t count );
+	void postItemsInserted( const IItem * parent, size_t index, size_t count );
+	void preItemsRemoved( const IItem * parent, size_t index, size_t count );
+	void postItemsRemoved( const IItem * parent, size_t index, size_t count );
+	void onDestructing();
 
 	bool ancestorFilterMatched( const IItem* item ) const;
 	bool filterMatched( const IItem* item ) const;
@@ -219,12 +215,13 @@ struct FilteredTreeModel::Implementation
 
 	FilteredTreeModel& self_;
 	ITreeModel * model_;
-	IItemFilter * treeFilter_;
+	IItemFilter * filter_;
 	IndexMap indexMap_;
 	mutable std::recursive_mutex indexMapMutex_;
 	mutable std::mutex eventControlMutex_;
 	std::atomic_uint_fast8_t remapping_;
 	std::atomic<bool> stopRemapping_;
+	ConnectionHolder connections_;
 
 	static const size_t INVALID_INDEX = SIZE_MAX;
 };
@@ -232,7 +229,7 @@ struct FilteredTreeModel::Implementation
 FilteredTreeModel::Implementation::Implementation( FilteredTreeModel & self )
 	: self_( self )
 	, model_( nullptr )
-	, treeFilter_( nullptr )
+	, filter_( nullptr )
 {
 	mapIndices();
 	initialize();
@@ -243,7 +240,7 @@ FilteredTreeModel::Implementation::Implementation(
 	const FilteredTreeModel::Implementation& rhs )
 	: self_( self )
 	, model_( rhs.model_ )
-	, treeFilter_( rhs.treeFilter_ )
+	, filter_( rhs.filter_ )
 {
 	rhs.copyIndices( indexMap_ );
 	initialize();
@@ -271,40 +268,18 @@ void FilteredTreeModel::Implementation::initialize()
 
 void FilteredTreeModel::Implementation::setSource( ITreeModel * source )
 {
-	if (model_ != nullptr)
-	{
-		model_->onPreDataChanged().remove<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::preDataChanged>( this );
-		model_->onPostDataChanged().remove<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::postDataChanged>( this );
-		model_->onPreItemsInserted().remove<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::preItemsInserted>( this );
-		model_->onPostItemsInserted().remove<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::postItemsInserted>( this );
-		model_->onPreItemsRemoved().remove<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
-		model_->onPostItemsRemoved().remove<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
-		model_->onDestructing().remove<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::onDestructing>( this );
-	}
+	connections_.clear();
 	model_ = source;
 	if (model_ != nullptr)
 	{
-		model_->onPreDataChanged().add<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::preDataChanged>( this );
-		model_->onPostDataChanged().add<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::postDataChanged>( this );
-		model_->onPreItemsInserted().add<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::preItemsInserted>( this );
-		model_->onPostItemsInserted().add<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::postItemsInserted>( this );
-		model_->onPreItemsRemoved().add<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::preItemsRemoved>( this );
-		model_->onPostItemsRemoved().add<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::postItemsRemoved>( this );
-		model_->onDestructing().add<FilteredTreeModel::Implementation,
-			&FilteredTreeModel::Implementation::onDestructing>( this );
+		using namespace std::placeholders;
+		connections_ += model_->signalPreItemDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::preItemDataChanged, this, _1, _2, _3, _4 ) );
+		connections_ += model_->signalPostItemDataChanged.connect( std::bind( &FilteredTreeModel::Implementation::postItemDataChanged, this, _1, _2, _3, _4 ) );
+		connections_ += model_->signalPreItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::preItemsInserted, this, _1, _2, _3 ) );
+		connections_ += model_->signalPostItemsInserted.connect( std::bind( &FilteredTreeModel::Implementation::postItemsInserted, this, _1, _2, _3 ) );
+		connections_ += model_->signalPreItemsRemoved.connect( std::bind( &FilteredTreeModel::Implementation::preItemsRemoved, this, _1, _2, _3 ) );
+		connections_ += model_->signalPostItemsRemoved.connect( std::bind( &FilteredTreeModel::Implementation::postItemsRemoved, this, _1, _2, _3 ) );
+		connections_ += model_->signalDestructing.connect( std::bind( &FilteredTreeModel::Implementation::onDestructing, this ) );
 	}
 }
 
@@ -355,13 +330,16 @@ std::vector<size_t>* FilteredTreeModel::Implementation::findItemsToInsert(
 		mappedIndex = itr - mappedIndicesPointer->begin();
 	}
 
-	bool ancestorInFilter = ancestorFilterMatched( parent );
+	bool ancestorInFilter =
+		filterMatched( parent ) || ancestorFilterMatched( parent );
+	bool includeDueToAncestor =
+		ancestorInFilter && !filter_->filterDescendantsOfMatchingItems();
 	size_t max = index + count;
 
 	for (size_t i = index; i < max; ++i)
 	{
 		IItem* item = model_->item( i, parent );
-		bool itemInFilter = ancestorInFilter || filterMatched( item );
+		bool itemInFilter = includeDueToAncestor || filterMatched( item );
 
 		if (itemInFilter || descendantFilterMatched( item ))
 		{
@@ -508,9 +486,13 @@ FilteredTreeModel::Implementation::FilterUpdateType FilteredTreeModel::Implement
 	const IItem* item, ItemIndex& itemIndex, size_t& mappedIndex ) const
 {
 	itemIndex = model_->index( item );
+	bool includeDueToAncestor =
+		ancestorFilterMatched( item ) &&
+		!filter_->filterDescendantsOfMatchingItems();
 	bool wasFilteredOut;
 	bool nowFilteredOut =
-		!ancestorFilterMatched( item ) &&
+		!includeDueToAncestor &&
+		!filterMatched( item ) &&
 		!descendantFilterMatched( item );
 	const std::vector<size_t>* mappedIndicesPointer =
 		findMappedIndices( itemIndex.second );
@@ -589,9 +571,9 @@ void FilteredTreeModel::Implementation::updateItem(
 
 				size_t mappedRemovedIndex = itr - mappedIndicesPointer->begin();
 
-				self_.notifyPreItemsRemoved( removedItemParent, removePointIndex.first, 1 );
+				self_.signalPreItemsRemoved( removedItemParent, removePointIndex.first, 1 );
 				removeItems( mappedRemovedIndex, 1, 0, removedItemParent, *mappedIndicesPointer, false );
-				self_.notifyPostItemsRemoved( removedItemParent, removePointIndex.first, 1 );
+				self_.signalPostItemsRemoved( removedItemParent, removePointIndex.first, 1 );
 			}
 
 			break;
@@ -664,7 +646,6 @@ size_t FilteredTreeModel::Implementation::getSourceIndex(
 	const IItem* parent, size_t index ) const
 {
 	auto itr = indexMap_.find( parent );
-	//assert( itr != indexMap_.end() );
 
 	if (itr == indexMap_.end())
 	{
@@ -745,7 +726,10 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 		return true;
 	}
 
-	bool indexFound = parentInFilter;
+	bool includeDueToAncestor =
+		(ancestorFilterMatched( parent ) || filterMatched( parent )) &&
+		!filter_->filterDescendantsOfMatchingItems();
+	bool indexFound = includeDueToAncestor;
 	size_t max = model_->size( parent );
 	std::vector<size_t> newIndices;
 
@@ -755,7 +739,7 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 
 		if (item != nullptr)
 		{
-			if (parentInFilter ||
+			if (includeDueToAncestor ||
 				filterMatched( item ) ||
 				descendantFilterMatched( item ))
 			{
@@ -766,7 +750,6 @@ bool FilteredTreeModel::Implementation::mapIndices(	const IItem* parent, bool pa
 	}
 
 	indexMap_.emplace( parent, std::move( newIndices ) );
-
 	return indexFound;
 }
 
@@ -789,6 +772,8 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 	std::vector<size_t>& mappedIndices = *mappedIndicesPointer;
 	size_t modelCount = model_->size( parent );
 	size_t index = 0;
+	bool includeDueToAncestor =
+		parentInFilter && !filter_->filterDescendantsOfMatchingItems();
 
 	for (size_t i = 0; i < modelCount; ++i)
 	{
@@ -801,7 +786,7 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 
 		bool itemInFilter =
 			item == nullptr ? false :
-			parentInFilter || filterMatched( item );
+			includeDueToAncestor || filterMatched( item );
 		bool wasInFilter =
 			index < mappedIndices.size() &&
 			mappedIndices[index] == i;
@@ -815,20 +800,20 @@ void FilteredTreeModel::Implementation::remapIndices( const IItem* parent, bool 
 		}
 		else if (wasInFilter && !nowInFilter)
 		{
-			self_.notifyPreItemsRemoved( parent, index, 1 );
+			self_.signalPreItemsRemoved( parent, index, 1 );
 			removeItems( index, 1, 0, parent, mappedIndices, false );
-			self_.notifyPostItemsRemoved( parent, index, 1 );
+			self_.signalPostItemsRemoved( parent, index, 1 );
 		}
 		else if (nowInFilter)
 		{
-			self_.notifyPreItemsInserted( parent, index, 1 );
+			self_.signalPreItemsInserted( parent, index, 1 );
 
 			std::vector<size_t> newIndices( 1, i );
 			std::vector<bool> newInFilter( 1, itemInFilter );
 			insertItems(
 				index, 0, parent, mappedIndices, newIndices, newInFilter );
 
-			self_.notifyPostItemsInserted( parent, index, 1 );
+			self_.signalPostItemsInserted( parent, index, 1 );
 			++index;
 		}
 	}
@@ -850,85 +835,70 @@ void FilteredTreeModel::Implementation::copyIndices( IndexMap& target ) const
 	eventControlMutex_.unlock();
 }
 
-void FilteredTreeModel::Implementation::preDataChanged(
-	const ITreeModel* sender,
-	const ITreeModel::PreDataChangedArgs& args )
+void FilteredTreeModel::Implementation::preItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
 {
 	eventControlMutex_.lock();
-	self_.notifyPreDataChanged(
-		args.item_, args.column_, args.roleId_, args.data_ );
+	self_.signalPreItemDataChanged( item, column, roleId, data );
 	indexMapMutex_.lock();
 }
 
-void FilteredTreeModel::Implementation::postDataChanged(
-	const ITreeModel* sender,
-	const ITreeModel::PostDataChangedArgs& args )
+void FilteredTreeModel::Implementation::postItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data  )
 {
 	indexMapMutex_.unlock();
 	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
 	ItemIndex sourceIndex;
 	size_t newIndex;
-	FilterUpdateType updateType =
-		checkUpdateType( args.item_, sourceIndex, newIndex );
+	FilterUpdateType updateType = checkUpdateType( item, sourceIndex, newIndex );
 
 	if (updateType == FilterUpdateType::UPDATE)
 	{
-		if (args.item_ != nullptr)
+		if (item != nullptr)
 		{
 			bool parentInFilter =
-				ancestorFilterMatched( args.item_ ) ||
-				filterMatched( args.item_ );
+				ancestorFilterMatched( item ) ||
+				filterMatched( item );
 
-			removeMappedIndices( args.item_ );
-			mapIndices( args.item_, parentInFilter );
+			removeMappedIndices( item );
+			mapIndices( item, parentInFilter );
 		}
 	}
 
-	self_.notifyPostDataChanged(
-		args.item_, args.column_, args.roleId_, args.data_ );
+	self_.signalPostItemDataChanged( item, column, roleId, data );
 
 	switch (updateType)
 	{
 	case FilterUpdateType::INSERT:
-		self_.notifyPreItemsInserted(
-			sourceIndex.second, sourceIndex.first, 1 );
-		updateItem( args.item_, sourceIndex, newIndex, updateType );
-		self_.notifyPostItemsInserted(
-			sourceIndex.second, sourceIndex.first, 1 );
+		self_.signalPreItemsInserted( sourceIndex.second, sourceIndex.first, 1 );
+		updateItem( item, sourceIndex, newIndex, updateType );
+		self_.signalPostItemsInserted( sourceIndex.second, sourceIndex.first, 1 );
 		break;
 
 	case FilterUpdateType::REMOVE: 
-		self_.notifyPreItemsRemoved(
-			sourceIndex.second, sourceIndex.first, 1 );
-		updateItem( args.item_, sourceIndex, newIndex, updateType );
-		self_.notifyPostItemsRemoved(
-			sourceIndex.second, sourceIndex.first, 1 );
+		self_.signalPreItemsRemoved( sourceIndex.second, sourceIndex.first, 1 );
+		updateItem( item, sourceIndex, newIndex, updateType );
+		self_.signalPostItemsRemoved( sourceIndex.second, sourceIndex.first, 1 );
 		break;
 	default:
 		break;
 	};
 }
 
-void FilteredTreeModel::Implementation::preItemsInserted(
-	const ITreeModel* sender,
-	const ITreeModel::PreItemsInsertedArgs& args )
+void FilteredTreeModel::Implementation::preItemsInserted( const IItem * parent, size_t index, size_t count )
 {
 	std::lock( eventControlMutex_, indexMapMutex_ );
 }
 
-void FilteredTreeModel::Implementation::postItemsInserted(
-	const ITreeModel* sender,
-	const ITreeModel::PostItemsInsertedArgs& args )
+void FilteredTreeModel::Implementation::postItemsInserted( const IItem * parent, size_t index, size_t count )
 {
 	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
 	// Optimization, delay inserting until getChildCount has been called.
 	// ItemIndex itemIndex = findInsertPoint( args.item_, args.index_ );
-	ItemIndex itemIndex( args.index_, args.item_ );
+	ItemIndex itemIndex( index, parent );
 	const IItem* item = itemIndex.second;
 	size_t sourceIndex = itemIndex.first;
-	size_t sourceCount = item == args.item_ ? args.count_ : 1;
+	size_t sourceCount = item == parent ? count : 1;
 
 	size_t mappedIndex;
 	std::vector<size_t> newIndices;
@@ -949,35 +919,32 @@ void FilteredTreeModel::Implementation::postItemsInserted(
 	if (newIndices.size() > 0)
 	{
 		assert( mappedIndicesPointer != nullptr );
-		self_.notifyPreItemsInserted(
-			item, mappedIndex, newIndices.size() );
-		insertItems( mappedIndex, sourceCount, item,
+		self_.signalPreItemsInserted( item, mappedIndex, newIndices.size() );
+		insertItems( 
+			mappedIndex, sourceCount, item, 
 			*mappedIndicesPointer, newIndices, inFilter, false );
-		self_.notifyPostItemsInserted(
-			item, mappedIndex, newIndices.size() );
+		self_.signalPostItemsInserted( item, mappedIndex, newIndices.size() );
 	}
 }
 
-void FilteredTreeModel::Implementation::preItemsRemoved(
-	const ITreeModel* sender,
-	const ITreeModel::PreItemsRemovedArgs& args )
+void FilteredTreeModel::Implementation::preItemsRemoved( const IItem * parent, size_t index, size_t count )
 {
 	eventControlMutex_.lock();
 
 	lastUpdateData_.set();
 	size_t mappedIndex;
 	size_t mappedCount;
-	size_t sourceCount = args.count_;
+	size_t sourceCount = count;
 	std::vector<size_t>* mappedIndicesPointer = findItemsToRemove(
-		args.item_, args.index_, sourceCount, mappedIndex, mappedCount );
+		parent, index, sourceCount, mappedIndex, mappedCount );
 
 	if (mappedIndicesPointer != nullptr)
 	{
-		const IItem* item = args.item_;
+		const IItem* item = parent;
 
 		if (mappedIndex == 0 && mappedCount == mappedIndicesPointer->size())
 		{
-			ItemIndex itemIndex = findRemovePoint( item, args.index_, sourceCount );
+			ItemIndex itemIndex = findRemovePoint( item, index, sourceCount );
 
 			if (itemIndex.second != item)
 			{
@@ -992,7 +959,7 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 		{
 			if (mappedCount > 0)
 			{
-				self_.notifyPreItemsRemoved( item, mappedIndex, mappedCount );
+				self_.signalPreItemsRemoved( item, mappedIndex, mappedCount );
 			}
 
 			indexMapMutex_.lock();
@@ -1007,9 +974,7 @@ void FilteredTreeModel::Implementation::preItemsRemoved(
 	}
 }
 
-void FilteredTreeModel::Implementation::postItemsRemoved(
-	const ITreeModel* sender,
-	const ITreeModel::PostItemsRemovedArgs& args )
+void FilteredTreeModel::Implementation::postItemsRemoved( const IItem * parent, size_t index, size_t count )
 {
 	std::lock_guard<std::mutex> blockEvents( eventControlMutex_, std::adopt_lock );
 
@@ -1019,7 +984,7 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 
 		if (lastUpdateData_.count_ > 0)
 		{
-			self_.notifyPostItemsRemoved(
+			self_.signalPostItemsRemoved(
 				lastUpdateData_.parent_,
 				lastUpdateData_.index_,
 				lastUpdateData_.count_ );
@@ -1029,36 +994,41 @@ void FilteredTreeModel::Implementation::postItemsRemoved(
 	}
 }
 
-void FilteredTreeModel::Implementation::onDestructing(const ITreeModel* sender,
-	const ITreeModel::DestructingArgs& args)
+void FilteredTreeModel::Implementation::onDestructing()
 {
 	setSource(nullptr);
 }
 
 bool FilteredTreeModel::Implementation::ancestorFilterMatched( const IItem* item ) const
 {
-	if (item == nullptr)
+	if (item == nullptr || filter_ == nullptr)
 	{
 		return false;
 	}
 
-	if (treeFilter_ != nullptr && treeFilter_->checkFilter( item ))
+	const IItem* parentItem = model_->index( item ).second;
+
+	if (parentItem == nullptr)
+	{
+		return false;
+	}
+
+	if (filter_->checkFilter( parentItem ))
 	{
 		return true;
 	}
 
-	ItemIndex itemIndex = model_->index( item );
-	return ancestorFilterMatched( itemIndex.second );
+	return ancestorFilterMatched( parentItem );
 }
 
 bool FilteredTreeModel::Implementation::filterMatched( const IItem* item ) const
 {
-	return item != nullptr && treeFilter_ != nullptr && treeFilter_->checkFilter( item );
+	return item != nullptr && filter_ != nullptr && filter_->checkFilter( item );
 }
 
 bool FilteredTreeModel::Implementation::descendantFilterMatched( const IItem* item ) const
 {
-	if (item == nullptr)
+	if (item == nullptr || filter_ == nullptr)
 	{
 		return false;
 	}
@@ -1069,7 +1039,12 @@ bool FilteredTreeModel::Implementation::descendantFilterMatched( const IItem* it
 	{
 		const IItem* child = model_->item( i, item );
 
-		if (filterMatched( child ) || descendantFilterMatched( child ))
+		if (child == nullptr)
+		{
+			continue;
+		}
+
+		if (filter_->checkFilter( child ) || descendantFilterMatched( child ))
 		{
 			return true;
 		}
@@ -1106,10 +1081,6 @@ FilteredTreeModel& FilteredTreeModel::operator=( const FilteredTreeModel& rhs )
 IItem* FilteredTreeModel::item( size_t index, const IItem* parent ) const
 {
 	std::lock_guard<std::recursive_mutex> guard( impl_->indexMapMutex_ );
-	if (index == Implementation::INVALID_INDEX)
-	{
-		return nullptr;
-	}
 	size_t sourceIndex = impl_->getSourceIndex( parent, index );
 	return sourceIndex == Implementation::INVALID_INDEX ?
 		nullptr : impl_->model_->item( sourceIndex, parent );
@@ -1145,7 +1116,10 @@ size_t FilteredTreeModel::size( const IItem* item ) const
 
 	if (childIndices == nullptr)
 	{
-		if (!impl_->mapIndices( item, impl_->ancestorFilterMatched( item ) ))
+		bool parentInFilter =
+			impl_->ancestorFilterMatched( item ) || impl_->filterMatched( item );
+
+		if (!impl_->mapIndices( item, parentInFilter ))
 		{
 			bool needsToBeInTheFilter = false;
 			assert( needsToBeInTheFilter );
@@ -1165,6 +1139,26 @@ int FilteredTreeModel::columnCount() const
 	}
 
 	return 1;
+}
+
+Variant FilteredTreeModel::getData( int column, size_t roleId ) const
+{
+	if (impl_->model_ == nullptr)
+	{
+		return Variant();
+	}
+
+	return impl_->model_->getData( column, roleId );
+}
+
+bool FilteredTreeModel::setData( int column, size_t roleId, const Variant & data )
+{
+	if (impl_->model_ == nullptr)
+	{
+		return false;
+	}
+
+	return impl_->model_->setData( column, roleId, data );
 }
 
 void FilteredTreeModel::setSource( ITreeModel * source )
@@ -1187,7 +1181,7 @@ void FilteredTreeModel::setFilter( IItemFilter * filter )
 	{
 		// wait for previous refresh to finish.
 		std::lock_guard<std::mutex> blockEvents( impl_->eventControlMutex_ );
-		impl_->treeFilter_ = filter;
+		impl_->filter_ = filter;
 	}
 
 	refresh();

@@ -25,7 +25,7 @@
 
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_command_system/i_command_event_listener.hpp"
 #include "core_command_system/i_command_manager.hpp"
 
@@ -110,8 +110,6 @@ void QtFramework::initialise( IComponentContext & contextManager )
 		qmlEngine_->addImportPath(pPluginContextManager->getExecutablePath());
 	}
 
-	Q_INIT_RESOURCE( qt_common );
-
 	SharedControls::init();
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
@@ -142,6 +140,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	auto metaTypeManager = contextManager.queryInterface<IMetaTypeManager>();
 	preferences_.reset( new QtPreferences( *definitionManager, *serializationManger, *fileSystem, *metaTypeManager ) );
 	preferences_->loadPreferences();
+
+	SharedControls::initDefs( *definitionManager );
 }
 
 void QtFramework::finalise()
@@ -165,8 +165,6 @@ void QtFramework::finalise()
 	defaultTypeConverters_.clear();
 	defaultComponentProviders_.clear();
 	defaultComponents_.clear();
-
-	Q_CLEANUP_RESOURCE( qt_common );
 }
 
 QQmlEngine * QtFramework::qmlEngine() const

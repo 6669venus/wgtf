@@ -17,6 +17,7 @@ WGBreadcrumbs {
 
 Rectangle {
     id: rootFrame
+    objectName: "WGBreadCrumbs"
 
     // Public properties
     /*! This property holds the dataModel containing all breadcrumbs data */
@@ -26,6 +27,10 @@ Rectangle {
     property var breadcrumbRepeater_: breadcrumbRepeater
     property var breadcrumbRowLayout_: breadcrumbRowLayout
 
+    // Private properties
+    property bool __showBreadcrumbs: true
+
+    // Signals
     /*! This signal is sent when a top level breadcrumb is clicked */
     signal breadcrumbClicked(var index)
 
@@ -35,13 +40,11 @@ Rectangle {
     /*! This signal is sent when the user enters a path manually and hits "enter" to confirm navigation */
     signal breadcrumbPathEntered(var path)
 
-    // Layout properties
+    // Object properties
     Layout.fillHeight: false
     Layout.preferredHeight: defaultSpacing.minimumRowHeight
     Layout.fillWidth: true
     color: "transparent"
-
-    property bool __showBreadcrumbs: true
 
     // List model needed to convert the crumbs into a QML-usable model
     WGListModel {
@@ -53,6 +56,7 @@ Rectangle {
 
     // Mouse area over the path text box
     MouseArea {
+        objectName: "pathSelect"
         anchors.fill: parent
         enabled: rootFrame.__showBreadcrumbs
         hoverEnabled: true
@@ -67,12 +71,12 @@ Rectangle {
 
     // Text box to store the full, raw path of the breadcrumbs. May be used to manually navigate to
     // a specific path in the tree.
+    //TODO MUCH LATER: Auto complete.
     WGTextBox {
         id: pathTextBox
+        objectName: "pathTextBox"
         anchors.fill: parent
         visible: !rootFrame.__showBreadcrumbs
-
-        //TODO MUCH LATER: Auto complete.
 
         text: rootFrame.dataModel.path
 
@@ -98,9 +102,11 @@ Rectangle {
 
             RowLayout {
                 id: breadcrumbRowLayout
+
+                property var breadcrumbIndex_
+
                 Layout.fillWidth: false
                 spacing: 1
-                property var breadcrumbIndex_
 
                 WGListModel {
                     id: subItemsListModel
@@ -121,7 +127,7 @@ Rectangle {
                     font.bold: true
                     font.pointSize: 11
 
-                    color: breadcrumbMouseArea.containsMouse ? palette.TextColor : palette.NeutralTextColor;
+                    color: breadcrumbMouseArea.containsMouse ? palette.textColor : palette.neutralTextColor;
 
                     Component.onCompleted: {
                         breadcrumbRowLayout.breadcrumbIndex_ = index;
@@ -129,6 +135,7 @@ Rectangle {
 
                     MouseArea {
                         id: breadcrumbMouseArea
+                        objectName: "breadcrumbMouseArea"
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true
@@ -139,6 +146,7 @@ Rectangle {
                 }
 
                 WGToolButton {
+                    objectName: "folderDivide"
                     visible: index < breadcrumbRepeater.count - 1
 
                     Layout.preferredWidth: 16
@@ -170,6 +178,7 @@ Rectangle {
 
         WGExpandingRowLayout {
             id: breadcrumbRowLayout
+            objectName: "breadcrumbRowLayout"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
 

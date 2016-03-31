@@ -27,7 +27,7 @@
 
 #include <stdio.h>
 #include "core_command_system/i_env_system.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 
 namespace
 {

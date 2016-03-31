@@ -215,78 +215,168 @@ TEST_F( TestFixture, refreshFilteredTree )
 	filteredTestTree_.setSource( &tree );
 	filteredTestTree_.setFilter( &filter_ );
 
-	size_t size;
-	bool result = true;
-
-	// One item should be in the root node with corresponding children
+	// For all of these, refer to the diagram in test_string_data.hpp for the tree data.
 	{
 		filter_.setFilterText( "anim" );
 		filteredTestTree_.refresh( true );
+		// This will spawn a second refresh that blocks until the first refresh is done.
+		// The first refresh is triggered by filter_.setFilterText.
+		// This thread will block until the second refresh has finished.
+		// TODO: Find a way to wait for the refresh to complete without triggering a second refresh.
 
-		// Only one item should remain
 		CHECK( filteredTestTree_.size( nullptr ) == 1 );
 
-		// This item should be "Animations"
-		auto remainingItem = filteredTestTree_.item( 0, nullptr );
-		CHECK( remainingItem != nullptr );
-		result = verifyTreeItemMatch( remainingItem, "Animations", true );
-		CHECK( result == true );
+		auto item = filteredTestTree_.item( 0, nullptr );
+		CHECK( verifyTreeItemMatch( item, "Animations", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
 
-		// It should have 3 children indexed under the "anim" filter.
-		CHECK( filteredTestTree_.size( remainingItem ) == 3 );
+		auto child = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( child, "Monsters", true ) );
+		CHECK( filteredTestTree_.size( child ) == 3 );
+
+		child = filteredTestTree_.item( 1, item );
+		CHECK( verifyTreeItemMatch( child, "Landscape", true ) );
+		CHECK( filteredTestTree_.size( child ) == 3 );
+
+		child = filteredTestTree_.item( 2, item );
+		CHECK( verifyTreeItemMatch( child, "Dancing", true ) );
+		CHECK( filteredTestTree_.size( child ) == 3 );
 	}
 
-	// No items should be in the tree after it has been filtered with a non-matching term
 	{
 		filter_.setFilterText( "unknown" );
 		filteredTestTree_.refresh( true );
 
-		// This should now be an empty tree
 		CHECK( filteredTestTree_.size( nullptr ) == 0 );
 	}
 
-	// Multiple items in multiple root nodes should remain
-	{
-		filter_.setFilterText( "mo" ); // Animations/Monsters/anim_mouse and Models
-		filteredTestTree_.refresh( true );
-
-		// This should have at least two root items
-		size = filteredTestTree_.size( nullptr );
-		CHECK( size == 2 );
-		if (size != 2)
-		{
-			FAIL( "Incorrect number of items found after filtering on 'mod'. Expected: 2" );
-		}
-
-		// The items should be "Animations" and "Models"
-		auto firstItem = filteredTestTree_.item( 0, nullptr );
-		CHECK( firstItem != nullptr );
-		result = verifyTreeItemMatch( firstItem, "Animations", true );
-		CHECK( result == true );
-
-		auto secondItem = filteredTestTree_.item( 1, nullptr );
-		CHECK( secondItem != nullptr );
-		result = verifyTreeItemMatch( secondItem, "Models", true );
-		CHECK( result == true );
-	}
-
-	// Children of items should remain alongside their parents, but none of the other children will be present
 	{
 		filter_.setFilterText( "fancy" );
 		filteredTestTree_.refresh( true );
 
-		// This should still have two root items
-		size = filteredTestTree_.size( nullptr );
-		CHECK( size == 1 );
-		if (size != 1)
-		{
-			FAIL( "Incorrect number of items found after filtering on 'fancy'. Expected: 1" );
-		}
+		CHECK( filteredTestTree_.size( nullptr ) == 1 );
 
-		// The item should only have 1 child
-		auto firstItem = filteredTestTree_.item( 0, nullptr );
-		CHECK( firstItem != nullptr );
-		CHECK( filteredTestTree_.size( firstItem ) == 1 );
+		auto item = filteredTestTree_.item( 0, nullptr );
+		CHECK( verifyTreeItemMatch( item, "Animations", true ) );
+		CHECK( filteredTestTree_.size( item ) == 1 );
+
+		item = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( item, "Dancing", true ) );
+		CHECK( filteredTestTree_.size( item ) == 1 );
+
+		item = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( item, "fancy_dance", true ) );
+	}
+
+	{
+		filter_.setFilterText( "mo" );
+		filteredTestTree_.refresh( true );
+
+		CHECK( filteredTestTree_.size( nullptr ) == 2 );
+
+		auto item = filteredTestTree_.item( 0, nullptr );
+		CHECK( verifyTreeItemMatch( item, "Animations", true ) );
+		CHECK( filteredTestTree_.size( item ) == 1 );
+
+		item = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( item, "Monsters", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
+
+		auto modelsItem = filteredTestTree_.item( 1, nullptr );
+		CHECK( verifyTreeItemMatch( modelsItem, "Models", true ) );
+		CHECK( filteredTestTree_.size( modelsItem ) == 3 );
+
+		item = filteredTestTree_.item( 0, modelsItem );
+		CHECK( verifyTreeItemMatch( item, "Enemies", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
+
+		item = filteredTestTree_.item( 1, modelsItem );
+		CHECK( verifyTreeItemMatch( item, "Small", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
+
+		item = filteredTestTree_.item( 2, modelsItem );
+		CHECK( verifyTreeItemMatch( item, "Large", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
+	}
+
+	filter_.filterDescendantsOfMatchingItems( true );
+
+	{
+		filter_.setFilterText( "anim" );
+		filteredTestTree_.refresh( true );
+
+		CHECK( filteredTestTree_.size( nullptr ) == 1 );
+
+		auto item = filteredTestTree_.item( 0, nullptr );
+		CHECK( verifyTreeItemMatch( item, "Animations", true ) );
+		CHECK( filteredTestTree_.size( item ) == 2 );
+
+		auto child = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( child, "Monsters", true ) );
+		CHECK( filteredTestTree_.size( child ) == 3 );
+
+		child = filteredTestTree_.item( 1, item );
+		CHECK( verifyTreeItemMatch( child, "Landscape", true ) );
+		CHECK( filteredTestTree_.size( child ) == 3 );
+	}
+
+	{
+		filter_.setFilterText( "unknown" );
+		filteredTestTree_.refresh( true );
+
+		CHECK( filteredTestTree_.size( nullptr ) == 0 );
+	}
+
+	{
+		filter_.setFilterText( "fancy" );
+		filteredTestTree_.refresh( true );
+
+		CHECK( filteredTestTree_.size( nullptr ) == 1 );
+
+		auto item = filteredTestTree_.item( 0, nullptr );
+		CHECK( verifyTreeItemMatch( item, "Animations", true ) );
+		CHECK( filteredTestTree_.size( item ) == 1 );
+
+		item = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( item, "Dancing", true ) );
+		CHECK( filteredTestTree_.size( item ) == 1 );
+
+		item = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( item, "fancy_dance", true ) );
+	}
+
+	{
+		filter_.setFilterText( "mo" );
+		filteredTestTree_.refresh( true );
+
+		CHECK( filteredTestTree_.size( nullptr ) == 2 );
+
+		auto item = filteredTestTree_.item( 0, nullptr );
+		CHECK( verifyTreeItemMatch( item, "Animations", true ) );
+		CHECK( filteredTestTree_.size( item ) == 1 );
+
+		item = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( item, "Monsters", true ) );
+		CHECK( filteredTestTree_.size( item ) == 1 );
+
+		item = filteredTestTree_.item( 0, item );
+		CHECK( verifyTreeItemMatch( item, "anim_mouse", true ) );
+
+		auto modelsItem = filteredTestTree_.item( 1, nullptr );
+		CHECK( verifyTreeItemMatch( modelsItem, "Models", true ) );
+		CHECK( filteredTestTree_.size( modelsItem ) == 3 );
+
+		item = filteredTestTree_.item( 0, modelsItem );
+		CHECK( verifyTreeItemMatch( item, "Enemies", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
+
+		item = filteredTestTree_.item( 1, modelsItem );
+		CHECK( verifyTreeItemMatch( item, "Small", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
+
+		item = filteredTestTree_.item( 2, modelsItem );
+		CHECK( verifyTreeItemMatch( item, "Large", true ) );
+		CHECK( filteredTestTree_.size( item ) == 3 );
 	}
 }
 

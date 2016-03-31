@@ -6,11 +6,12 @@ import WGControls 1.0
 // This component is for displaying the macro panel
 WGPanel {
     title: "Macros"
+    objectName: "WGMacroView"
 
     layoutHints: { 'macros': 1.0 }
 
     id: root
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     property string activeMacro: ""
 
@@ -27,7 +28,7 @@ WGPanel {
             PropertyChanges {
                 target: macroStatus
                 text: "Idle"
-                color: palette.DisabledTextColor
+                color: palette.disabledTextColor
             }
             PropertyChanges {
                 target: stopButton
@@ -51,7 +52,7 @@ WGPanel {
             PropertyChanges {
                 target: macroStatus
                 text: "Playing " + activeMacro + "..."
-                color: palette.TextColor
+                color: palette.textColor
             }
             PropertyChanges {
                 target: stopButton
@@ -73,7 +74,7 @@ WGPanel {
             PropertyChanges {
                 target: macroStatus
                 text: "Recording Macro..."
-                color: palette.TextColor
+                color: palette.textColor
             }
             PropertyChanges {
                 target: stopButton
@@ -122,6 +123,7 @@ WGPanel {
 
                 WGPushButton {
                     id: stopButton
+                    objectName: "stopButton"
                     iconSource: "icons/stop_16x16.png"
                     enabled: false
                     onClicked:{
@@ -134,6 +136,7 @@ WGPanel {
 
                 WGPushButton {
                     id: playButton
+                    objectName: "playButton"
                     iconSource: "icons/play_16x16.png"
                     onClicked:{
                         if(!playing){
@@ -159,6 +162,7 @@ WGPanel {
 
                 WGPushButton {
                     id: recordButton
+                    objectName: "recordButton"
                     iconSource: "icons/record_off_16x16.png"
 
                     onClicked:{
@@ -176,23 +180,26 @@ WGPanel {
 
                 WGLabel {
                     id: macroStatus
+                    objectName: "macroStatus"
                     text: "Idle"
-                    color: palette.DisabledTextColor
+                    color: palette.disabledTextColor
                 }
 
-                Rectangle {
-                    color: "transparent"
+                Item {
                     Layout.fillWidth: true
                 }
 
                 WGPushButton {
+                    objectName: "newFolder"
                     iconSource: "icons/new_folder_16x16.png"
                     onClicked: {
                         //create a new folder
+                        console.log("not implemented")
                     }
                 }
 
                 WGPushButton {
+                    objectName: "closeButton"
                     iconSource: "icons/close_16x16.png"
 
                     onClicked: {
@@ -214,6 +221,7 @@ WGPanel {
                 // Macro list
                 WGListView {
                     id: macros
+                    objectName: "macroList"
                     anchors.fill: parent
                     anchors.margins: defaultSpacing.standardMargin
                     selectionExtension: root.macroSelectionExtension

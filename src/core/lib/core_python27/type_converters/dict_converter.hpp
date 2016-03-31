@@ -2,32 +2,34 @@
 #ifndef _PYTHON_DICT_CONVERTER_HPP
 #define _PYTHON_DICT_CONVERTER_HPP
 
-#include "i_type_converter.hpp"
-#include "core_script/type_converter_queue.hpp"
+#include "i_parent_type_converter.hpp"
 
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
-
+class IComponentContext;
 
 namespace PythonType
 {
+
+class Converters;
 
 
 /**
  *	Attempts to convert ScriptDict<->Collection<->Variant.
  */
-class DictConverter final : public IConverter
+class DictConverter final : public IParentConverter
 {
 public:
-	DictConverter( const PythonTypeConverters & typeConverters );
+	DictConverter( IComponentContext & context,
+		const Converters & typeConverters );
 
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) override;
+		Variant & outVariant,
+		const ObjectHandle & parentHandle,
+		const std::string & childPath ) override;
 	virtual bool toScriptType( const Variant & inVariant,
 		PyScript::ScriptObject & outObject ) override;
 private:
-	const PythonTypeConverters & typeConverters_;
+	IComponentContext & context_;
+	const Converters & typeConverters_;
 };
 
 

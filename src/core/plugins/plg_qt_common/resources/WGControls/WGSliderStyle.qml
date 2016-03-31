@@ -56,20 +56,12 @@ import BWControls 1.0
                 color: "gray"
                 radius: 8
             }
-            handle: Rectangle {
-                anchors.centerIn: parent
-                color: control.pressed ? "white" : "lightgray"
-                border.color: "gray"
-                border.width: 2
-                implicitWidth: 34
-                implicitHeight: 34
-                radius: 12
-            }
         }
     }
     \endcode
 */
 Style {
+    objectName: "WGSliderStyle"
     id: styleitem
 
     /*! The \l Slider this style is attached to. */
@@ -82,20 +74,13 @@ Style {
 
     padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
-    /*! This property holds the item for the slider handle.
-        You can access the slider through the \c control property
+    /*! This property loads the slider handle style found in WGSliderHande.qml or descendent.
     */
     property Component handle:
 
-        WGButtonFrame {
-            id: handleFrame
-            implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-            implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-            color: control.enabled ? control.__handlePosList.children[buttonid].handleColor : palette.MainWindowColor
-            borderColor: control.enabled ? palette.DarkerShade : palette.DarkShade
-            highlightColor: control.__hoveredHandle === buttonid ? palette.LighterShade : "transparent"
-            innerBorderColor: control.__activeHandle === buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
-
+    Loader {
+        id: handleFrame
+        sourceComponent: control.__handlePosList.children[buttonid].handleStyle
     }
     /*! This property holds the background groove of the slider.
     */
@@ -110,7 +95,7 @@ Style {
         WGTextBoxFrame {
             radius: defaultSpacing.standardRadius
             anchors.fill: parent
-            color: control.enabled ? palette.TextBoxColor : "transparent"
+            color: control.enabled ? palette.textBoxColor : "transparent"
         }
     }
 
@@ -123,9 +108,9 @@ Style {
             clip: true
             anchors.fill: parent
             anchors.margins: defaultSpacing.standardBorderSize
-            border.color: control.enabled ? Qt.darker(fillColor, 1.2) : palette.LighterShade
+            border.color: control.enabled ? Qt.darker(fillColor, 1.2) : palette.lighterShade
             radius: defaultSpacing.halfRadius
-            color: control.enabled ? fillColor : palette.LightShade
+            color: control.enabled ? fillColor : palette.lightShade
         }
     }
 
@@ -136,7 +121,7 @@ Style {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
         WGSeparator {
-            vertical_: __horizontal
+            vertical: __horizontal
             width: __horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
             height: !__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
 
@@ -156,6 +141,7 @@ Style {
         implicitHeight: !__horizontal ? parent.height : grooveLoader.implicitHeight
 
         Item {
+            objectName: "sliderFrame"
             id: sliderFrame
             anchors.centerIn: parent
             height: control.height
@@ -270,6 +256,7 @@ Style {
                     }
 
                     MouseArea {
+                        objectName: "sliderHandleArea"
                         hoverEnabled: true
                         anchors.fill: parent
 

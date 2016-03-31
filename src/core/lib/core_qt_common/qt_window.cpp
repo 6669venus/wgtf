@@ -355,6 +355,11 @@ void QtWindow::init()
     modalityFlag_ = mainWindow_->windowModality();
     mainWindow_->installEventFilter(this);
     loadPreference();
+	mainWindow_->setStyleSheet(
+		"QMainWindow::separator:vertical{background: palette(dark); width: 4px; border-right: 1px solid palette(midlight);}"
+		"QMainWindow::separator:vertical{background: palette(dark); width: 4px; border-left: 1px solid palette(midlight);}"
+		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-bottom: 1px solid palette(midlight);}"
+		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-top: 1px solid palette(midlight);}");
 }
 
 bool QtWindow::eventFilter(QObject * obj, QEvent * event)
@@ -363,7 +368,7 @@ bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 	{
 		if (event->type() == QEvent::Close)
 		{
-			this->notifyCloseEvent();
+			this->signalClose();
 			return true;
 		}
 	}

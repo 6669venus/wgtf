@@ -10,6 +10,7 @@ import BWControls 1.0
 */
 
 WGSliderHandle {
+    objectName: "WGColorSliderHandle"
     id: sliderHandle
 
     minimumValue: handleIndex == 0 ? parentSlider.minimumValue : parentSlider.__handlePosList.children[handleIndex - 1].value
@@ -37,6 +38,7 @@ WGSliderHandle {
         if (parentSlider.linkColorsToHandles && parentSlider.__barLoaded)
         {
             parentSlider.positionData[handleIndex] = value
+            parentSlider.changeValue(value, handleIndex)
             parentSlider.updateColorBars()
         }
         if (!parentSlider.linkColorsToHandles && parentSlider.__barLoaded)
@@ -46,6 +48,18 @@ WGSliderHandle {
                 parentSlider.value = sliderHandle.value
             }
         }
+    }
+
+    handleStyle: WGButtonFrame
+    {
+        id: defaultHandleFrame
+        implicitHeight: parentSlider.__horizontal ? parentSlider.height - 2 : 8
+        implicitWidth: parentSlider.__horizontal ? 8 : parentSlider.width - 2
+        color: parentSlider.__hoveredHandle == handleIndex ? "white" : palette.overlayLighterShade
+        borderColor: palette.overlayDarkerShade
+        innerBorderColor: parentSlider.__activeHandle == handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
+
+        radius: defaultSpacing.halfRadius
     }
 
     function updateValueBinding()

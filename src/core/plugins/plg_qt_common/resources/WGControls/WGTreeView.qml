@@ -38,8 +38,9 @@ Example:
 \endcode
 */
 
-Item {
+WGItemView {
     id: treeView
+    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
 
     /*! This property holds the dataModel information that will be displayed in the tree view
     */
@@ -136,10 +137,10 @@ Item {
     */
     property var columnDelegates: []
 
-	/*! This property causes the first column to resize based on the largest label width
+    /*! This property causes the first column to resize based on the largest label width
         when a row item is expanded or contracted.
         The default value is \c true if the column handle is visible */
-	property bool autoUpdateLabelWidths: false
+    property bool autoUpdateLabelWidths: false
 
     /*!  This property enables the vertical scrollbar (both flickable and conventional).
         Mouse wheel scrolling is unaffected by this setting.
@@ -172,22 +173,75 @@ Item {
     /*! Number of shades to use for incremental colours per level until starting over using the first shade */
     property int backgroundColourIncrements: 3
 
-    readonly property color backgroundColour: palette.MidDarkColor
+    readonly property color backgroundColour: "transparent"
     readonly property color alternateBackgroundColour:
         backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
-        : Qt.darker(palette.MidLightColor,1.2)
+        : Qt.darker(palette.midLightColor,1.2)
+
+    property bool showColumnHeaders: false
+    property bool showColumnFooters: false
+
+    property Component columnHeaderDelegate: defaultColumnHeaderDelegate
+    property Component columnFooterDelegate: defaultColumnFooterDelegate
+
+    property color headerBackgroundColour: palette.midDarkColor
+    property color footerBackgroundColour: palette.midDarkColor
+
+    property Component defaultColumnHeaderDelegate: Item {
+        signal dataChanged;
+
+        property var headerTextVariant: getData("headerText");
+        property string headerText:
+            headerTextVariant !== null && typeof(headerTextVariant) === "string" ? headerTextVariant : ""
+
+        onDataChanged:headerTextVariant = getData("headerText");
+
+        Text {
+            id: textBox
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.textColor
+            text: headerText
+        }
+    }
+
+    property Component defaultColumnFooterDelegate: Item {
+        signal dataChanged;
+
+        property var footerTextVariant: getData("footerText");
+        property string footerText:
+            footerTextVariant !== null && typeof(footerTextVariant) === "string" ? footerTextVariant : ""
+
+        onDataChanged:footerTextVariant = getData("footerText");
+
+        Text {
+            id: textBoxFooter
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.textColor
+            text: footerText
+        }
+    }
 
     /*! This property contains the number of columns */
     property int columnCount: 0
-    
+
     Component.onCompleted: updateColumnCount()
 
     Connections {
         target: typeof(model) === "undefined" ? null : model
-        
+
         onModelReset: {
             updateColumnCount();
         }
+
+        onHeaderDataChanged: headerDataChanged(first, last);
     }
 
     /*! This property contains the column widths */
@@ -203,10 +257,10 @@ Item {
     //property var maximumColumnText: []
 
     readonly property real minimumScrollbarWidth:
-        enableVerticalScrollBar ? rootItem.verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
+        enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
 
     readonly property real maximumScrollbarWidth:
-        enableVerticalScrollBar ? rootItem.verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
+        enableVerticalScrollBar ? verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
 
     readonly property real rowMargins: leftMargin + rightMargin + minimumScrollbarWidth
 
@@ -231,10 +285,16 @@ Item {
 
     function updateColumnCount()
     {
-        if (showColumnsFrame)
+        if (typeof(model) === "undefined" || model === null)
         {
-            columnCount = model === null ? 0 : model.columnCount();
+            columnCount = 0;
         }
+        else
+        {
+            columnCount = model.columnCount();
+        }
+
+        headerDataChanged(0, columnCount - 1);
     }
 
     function calculateMaxTextWidth(column)
@@ -303,22 +363,53 @@ Item {
         return maxTextWidth;
     }
 
+    function columnWidthFunction(index)
+    {
+        var columnWidths = treeView.columnWidths;
+        var columnWidth = 0;
+
+        if (columnWidths.length === 0)
+        {
+            var treeWidth = rootItem.width;
+            columnWidth = Math.ceil(treeWidth / columnCount - treeView.columnSpacing);
+        }
+        else if (index < columnWidths.length)
+        {
+            columnWidth = columnWidths[index];
+        }
+
+        return Math.max(0, columnWidth);
+    }
+
+    function headerDataChanged(fromColumn, toColumn)
+    {
+        if (headerItemLoader.status === Loader.Ready)
+        {
+            headerItem.dataChanged(fromColumn, toColumn)
+        }
+
+        if (footerItemLoader.status === Loader.Ready)
+        {
+            footerItem.dataChanged(fromColumn, toColumn)
+        }
+    }
+
     function addDepthLevel(depth)
     {
-    	if (depth >= depthLevelGroups.length)
-    	{
-    		depthLevelGroups.push(1);
-    	}
+        if (depth >= depthLevelGroups.length)
+        {
+            depthLevelGroups.push(1);
+        }
 
-    	++depthLevelGroups[depth];
+        ++depthLevelGroups[depth];
     }
 
     function removeDepthLevel(depth)
     {
-    	if (--depthLevelGroups[depth] == 0)
-    	{
-    		depthLevelGroups.pop();
-    	}
+        if (--depthLevelGroups[depth] == 0)
+        {
+            depthLevelGroups.pop();
+        }
     }
 
     function setExpandIconWidth(width)
@@ -330,7 +421,7 @@ Item {
     */
     property Component defaultColumnDelegate: Text {
         property bool __treeLabel: true
-        color: palette.TextColor
+        color: palette.textColor
         clip: itemData != null && itemData.Component != null
         text: itemData != null ? itemData.display : ""
         font.bold: itemData != null && itemData.HasChildren
@@ -340,20 +431,75 @@ Item {
 
     WGTreeItem {
         id: rootItem
-        y: treeView.topMargin
-        leftMargin: treeView.leftMargin
-        rightMargin: treeView.rightMargin
-        width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
-        height: columnsFrame.height
         model: treeView.model
-        enableVerticalScrollBar: true
-        
+        clip: true
+        x: treeView.leftMargin
+        y: treeView.topMargin + headerHeight
+        width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
+        height: treeView.height - y - footerHeight
+
+        property real headerHeight: headerItemLoader.status === Loader.Ready ? treeView.headerItem.height : 0
+        property real footerHeight: footerItemLoader.status === Loader.Ready ? treeView.footerItem.height : 0
+        property bool scrollable: contentHeight > height
+
         onContentHeightChanged: {
             if (autoUpdateLabelWidths)
             {
                 columnsFrame.resizeColumnToIdealSize(0)
             }
         }
+    }
+
+    property alias headerItem: headerItemLoader.item
+
+    Loader {
+        id: headerItemLoader
+        x: leftMargin
+        anchors.top: treeView.top
+        width: rootItem.width
+        active: showColumnHeaders
+        sourceComponent: header
+    }
+
+    property Component header: showColumnHeaders ? headerComponent : null
+
+    property Component headerComponent: WGHeaderRow {
+        topMargin: treeView.topMargin
+        columnCount: treeView.columnCount
+        columnWidthFunction: treeView.columnWidthFunction
+        backgroundColour: headerBackgroundColour
+        columnDelegate: columnHeaderDelegate
+        model: treeView.model
+        minimumRowHeight: treeView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnHeaders
+        width: treeView.width - treeView.rightMargin - treeView.leftMargin
+    }
+
+    property alias footerItem: footerItemLoader.item
+
+    Loader {
+        id: footerItemLoader
+        x: leftMargin
+        anchors.bottom: treeView.bottom
+        width: rootItem.width
+        active: showColumnFooters
+        sourceComponent: footer
+    }
+
+    property Component footer: showColumnFooters ? footerComponent : null
+
+    property Component footerComponent: WGHeaderRow {
+        bottomMargin: treeView.bottomMargin
+        columnCount: treeView.columnCount
+        columnWidthFunction: treeView.columnWidthFunction
+        backgroundColour: footerBackgroundColour
+        columnDelegate: columnFooterDelegate
+        model: treeView.model
+        minimumRowHeight: treeView.minimumRowHeight
+        spacing: columnSpacing
+        visible: showColumnFooters
+        width: treeView.width - treeView.rightMargin - treeView.leftMargin
     }
 
     WGColumnsFrame {
@@ -370,9 +516,26 @@ Item {
         defaultInitialColumnWidth: treeView.columnCount === 0 ? 0 : initialColumnsFrameWidth / treeView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
         firstColumnIndentation: expandIconWidth + (depthLevelGroups.length - 1) * indentation
-		
+
         onColumnsChanged: {
             treeView.columnWidths = columnWidths;
         }
     }
+
+    WGScrollBar {
+        id: verticalScrollBar
+        width: defaultSpacing.rightMargin
+        anchors.top: treeView.top
+        anchors.right: treeView.right
+        anchors.bottom: treeView.bottom
+        anchors.topMargin: treeView.topMargin
+        anchors.bottomMargin: treeView.bottomMargin
+        anchors.rightMargin: treeView.rightMargin
+        orientation: Qt.Vertical
+        position: rootItem.visibleArea.yPosition
+        pageSize: rootItem.visibleArea.heightRatio
+        scrollFlickable: rootItem
+        visible: rootItem.scrollable && enableVerticalScrollBar
+    }
+    property alias verticalScrollBar: verticalScrollBar
 }

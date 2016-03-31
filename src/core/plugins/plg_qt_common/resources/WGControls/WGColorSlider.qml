@@ -129,12 +129,18 @@ WGSlider {
         If you need more handles, set this value to 0 and create WGColorHandles manually as with WGSlider.
 
     */
+
     /*!
         This value determines whether double clicking a handle should display a color picker.
 
         This is intended mostly to be used with linkColorsToHandles = true.constructor
     */
     property bool useColorPicker: linkColorsToHandles
+
+    /*!
+        This value determines whether the alpha value will appear when changing a color handle via a color picker.
+    */
+    property bool showAlphaChannel: true
 
     /*!
         This value determines the number of handles generated for the slider
@@ -154,12 +160,21 @@ WGSlider {
     property bool addDeleteHandles: linkColorsToHandles
 
     /*!
-        This value determines whether the handles should be large bars that fill the slider
-        or smaller arrows underneath it.
+        This value determines both the vertical offset of the handles AND the additional margin
+        below the slider groove. This works well with handles that look like arrows to make them
+        sit below the groove.
 
-        The default value is true if linkColorsToHandles is true
+        The default value is 0.
     */
-    property bool offsetArrowHandles: linkColorsToHandles
+    property int handleVerticalOffset: 0
+
+    /*!
+        This string determines the the component for the slider handle.
+
+        The default value is WGColorSliderHandle.
+        It can be set to any Item based component.
+    */
+    property Component handleStyle: WGColorSliderHandle{}
 
     implicitHeight: defaultSpacing.minimumRowHeight
 
@@ -181,7 +196,7 @@ WGSlider {
     property var colorPicker: ColorDialog {
         id: colorPicker
         title: "Please choose a color"
-        showAlphaChannel: true
+        showAlphaChannel: sliderFrame.showAlphaChannel
 
         property int currentColorIndex: -1
 
@@ -189,6 +204,7 @@ WGSlider {
             if(currentColorIndex >= 0)
             {
                 colorData[currentColorIndex] = Qt.rgba(colorPicker.color.r,colorPicker.color.g,colorPicker.color.b,colorPicker.color.a)
+                colorModified(currentColorIndex)
                 currentColorIndex = -1
                 updateColorBars()
             }
@@ -214,6 +230,11 @@ WGSlider {
         This signal is fired when a point is removed from the data with deleteData()
     */
     signal pointRemoved(int index)
+
+    /*!
+        This signal is fired when a point's color is changed via the color picker
+    */
+    signal colorModified(int index)
 
     signal changeValue(real val, int handleIndex)
 
@@ -297,10 +318,9 @@ WGSlider {
     {
         for (var i = 0; i < handlesToCreate; i++)
         {
-            var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
-            if (newHandle.status === Component.Ready)
+            if (handleStyle.status === Component.Ready)
             {
-                var newObject = newHandle.createObject(__handlePosList, {
+                var newObject = handleStyle.createObject(__handlePosList, {
                                            "value": linkColorsToHandles ? positionData[i] : sliderFrame.value,
                                            "showBar": false
                                        });
@@ -345,11 +365,9 @@ WGSlider {
         //Turn off updating values, create a new handle and update everything
         __barLoaded = false
 
-        var newHandle = Qt.createComponent("WGColorSliderHandle.qml");
-
-        if (newHandle.status === Component.Ready)
+        if (handleStyle.status === Component.Ready)
         {
-            var newObject = newHandle.createObject(__handlePosList, {
+            var newObject = handleStyle.createObject(__handlePosList, {
                                         "showBar": false
                                    });
         }

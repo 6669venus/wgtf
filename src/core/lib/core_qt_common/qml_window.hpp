@@ -58,6 +58,7 @@ public:
 private:
 	void waitForWindowExposed();
 	IQtFramework & qtFramework_;
+    QQmlEngine  & qmlEngine_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget* mainWindow_;
 	std::string id_;

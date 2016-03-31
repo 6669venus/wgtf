@@ -30,7 +30,7 @@ void WGStringFilter::Implementation::setFilterText( const QString & filterText )
 	}
 
 	filter_.setFilterText( inputValue.c_str() );
-	filter_.notifyFilterChanged();
+	filter_.signalFilterChanged();
 }
 
 WGStringFilter::WGStringFilter()
@@ -44,7 +44,7 @@ WGStringFilter::~WGStringFilter()
 
 void WGStringFilter::updateInternalItemRole()
 {
-	impl_->filter_.setRole( itemRole_.second );
+	impl_->filter_.setRole( roleId_ );
 }
 
 QString WGStringFilter::getFilterText() const

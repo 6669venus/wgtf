@@ -6,7 +6,7 @@ WGPanel {
 	title: "Custom Model Interface"
 	layoutHints: { 'test': 0.1 }
 
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 
 	Column {
 		id: original
@@ -37,6 +37,22 @@ WGPanel {
 
 		CustomModelInterfaceTestControl {
 			source: Implementation3
+		}
+	}
+
+	property var folderModel : fileSystemModel
+
+	ListView {
+		id: testTreeView
+
+		anchors.top: clones.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+		model: folderModel
+
+		delegate: Text {
+			text: display
 		}
 	}
 }

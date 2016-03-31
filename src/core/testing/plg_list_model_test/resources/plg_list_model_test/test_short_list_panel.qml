@@ -9,7 +9,7 @@ WGPanel {
 	layoutHints: { 'test': 0.1 }
 
 	property var sourceModel: source
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	
 	Label {
 		id: searchBoxLabel
@@ -23,6 +23,9 @@ WGPanel {
 		y: 2
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
+		Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
 	}
 	
 	WGFilteredListModel {
@@ -36,6 +39,7 @@ WGPanel {
 			itemRole: "Value"
 		}
 
+		HeaderFooterTextExtension {}
 		ValueExtension {}
 		ColumnExtension {}
 		SelectionExtension {
@@ -51,7 +55,9 @@ WGPanel {
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
 		backgroundColourMode: alternatingRowBackgroundColours
-		model: filteredListModel
+	    showColumnHeaders: true
+	    showColumnFooters: true
+	    model: filteredListModel
 		selectionExtension: filteredListModelSelection
 		columnDelegates: [columnDelegate]
 
@@ -70,7 +76,7 @@ WGPanel {
 					anchors.margins: 4
 					verticalAlignment: Text.AlignVCenter
 					text: itemData.Value
-					color: palette.TextColor
+					color: palette.textColor
 				}
 			}
 		}

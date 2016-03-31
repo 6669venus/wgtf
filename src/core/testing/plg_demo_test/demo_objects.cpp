@@ -11,7 +11,7 @@
 #include "core_string_utils/string_utils.hpp"
 #include "testing/reflection_objects_test/test_objects.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_command_system/i_command_manager.hpp"
 
 #include "wg_types/vector2.hpp"
@@ -109,10 +109,20 @@ ObjectHandle DemoObjects::createObject( Vector3 pos )
 	return genericObject;
 }
 
-ObjectHandle DemoObjects::undoCreateObject( Vector3 pos )
+void DemoObjects::undoCreateObject( const ObjectHandle& params, Variant result )
 {
-	// placeholder
-	return ObjectHandle();
+	assert( result.canCast<ObjectHandle>() );
+	GenericObjectPtr genericObject = result.cast<ObjectHandle>().getBase<GenericObject>();
+	auto it = std::find( objects_->objList_.begin(), objects_->objList_.end(), genericObject);
+	assert( it != objects_->objList_.end() );
+	objects_->objList_.erase( it );
+}
+
+void DemoObjects::redoCreateObject( const ObjectHandle& params, Variant result )
+{
+	assert( result.canCast<ObjectHandle>() );
+	GenericObjectPtr genericObject = result.cast<ObjectHandle>().getBase<GenericObject>();
+	objects_->objList_.push_back( genericObject );
 }
 
 void DemoObjects::onAddEnv(IEnvState* state)

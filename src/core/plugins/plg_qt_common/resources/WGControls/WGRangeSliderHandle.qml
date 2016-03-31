@@ -69,12 +69,10 @@ WGSliderHandle {
             if((range.position >= rangePartnerHandle.range.position - parentSlider.__handleWidth/2) && (range.position <= rangePartnerHandle.range.position + parentSlider.__handleWidth/2))
             {
                 return true
-                console.log("true!")
             }
             else
             {
                 return false
-                console.log("false!")
             }
         }
         else

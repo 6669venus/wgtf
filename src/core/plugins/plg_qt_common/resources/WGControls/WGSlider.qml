@@ -253,10 +253,7 @@ Control {
     property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
     property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
 
-    //x: __horizontal ? __handleWidth / 2 : 0
-    //y: !__horizontal ? __handleHeight / 2 : 0
-
-    x: __handleWidth / 2
+    x: Math.round(__handleWidth / 2)
 
     /*!
         This signal is fired when the bar is double clicked
@@ -345,22 +342,6 @@ Control {
                     preventStealing = true
                 if (overThreshold || force)
                     __handlePosList[__activeHandle].range.position = pos
-                /*
-                if (__horizontal) {
-                    pos = clamp (mouse.x + clickOffset)
-                    overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
-                    if (overThreshold)
-                        preventStealing = true
-                    if (overThreshold || force)
-                        __handlePosList[__activeHandle].range.position = pos
-                } else if (!__horizontal) {
-                    pos = clamp (mouse.y + clickOffset)
-                    overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
-                    if (overThreshold)
-                        preventStealing = true
-                    if (overThreshold || force)
-                        __handlePosList[__activeHandle].range.position = pos
-                }*/
             }
         }
 

@@ -55,12 +55,12 @@ TEST(file_sytem)
 	CHECK(fileSystem.exists(movedFilePath) == false);
 
 	IFileInfoPtr info = fileSystem.getFileInfo(filePath);
-	CHECK(fileSystem.exists(info->fullPath.c_str()) == true);
+	CHECK(fileSystem.exists(info->fullPath()) == true);
 
 	int counter = 0;
 	fileSystem.enumerate(wdir, [&](IFileInfoPtr&& info) {
-			CHECK(fileSystem.exists(info->fullPath.c_str()));
-			CHECK(fileSystem.getFileInfo(info->fullPath.c_str()).size == info->size);
+			CHECK(fileSystem.exists(info->fullPath()));
+			CHECK(fileSystem.getFileInfo(info->fullPath())->size() == info->size());
 			++counter;
 			return true;
 		});

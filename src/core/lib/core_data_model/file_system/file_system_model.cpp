@@ -85,9 +85,11 @@ AbstractItem * FileSystemModel::item( const ItemIndex & index ) const
 	}
 
 	// Item not cached, must enumerate
-	auto & directory = parentItem != nullptr ? parentItem->fileInfo_->fullPath() : impl_->rootDirectory_;
+	const auto directory = parentItem != nullptr ?
+		parentItem->fileInfo_->fullPath() :
+		impl_->rootDirectory_.c_str();
 	int i = 0;
-	impl_->fileSystem_.enumerate( directory.c_str(), [&]( IFileInfoPtr&& fileInfo )
+	impl_->fileSystem_.enumerate( directory, [&]( IFileInfoPtr&& fileInfo )
 	{
 		// Skip dots and hidden files
 		if (fileInfo->isDots() || fileInfo->isHidden())
@@ -128,9 +130,11 @@ AbstractTreeModel::ItemIndex FileSystemModel::index( const AbstractItem * item )
 	}
 
 	// Item not cached, must enumerate
-	auto & directory = parentItem != nullptr ? parentItem->fileInfo_->fullPath() : impl_->rootDirectory_;
+	const auto directory = parentItem != nullptr ?
+		parentItem->fileInfo_->fullPath() :
+		impl_->rootDirectory_.c_str();
 	int i = 0;
-	impl_->fileSystem_.enumerate( directory.c_str(), [&]( IFileInfoPtr && fileInfo )
+	impl_->fileSystem_.enumerate( directory, [&]( IFileInfoPtr && fileInfo )
 	{
 		// Skip dots and hidden files
 		if (fileInfo->isDots() || fileInfo->isHidden())
@@ -152,9 +156,11 @@ int FileSystemModel::rowCount( const AbstractItem * item ) const
 {
 	auto fileItem = static_cast< const FileItem * >( item );
 
-	auto & directory = fileItem != nullptr ? fileItem->fileInfo_->fullPath() : impl_->rootDirectory_;
+	const auto directory = fileItem != nullptr ?
+		fileItem->fileInfo_->fullPath() :
+		impl_->rootDirectory_.c_str();
 	int count = 0;
-	impl_->fileSystem_.enumerate( directory.c_str(), [&]( IFileInfoPtr && fileInfo )
+	impl_->fileSystem_.enumerate( directory, [&]( IFileInfoPtr && fileInfo )
 	{
 		// Skip dots and hidden files
 		if (fileInfo->isDots() || fileInfo->isHidden())

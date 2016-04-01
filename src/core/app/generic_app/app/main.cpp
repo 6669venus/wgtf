@@ -71,6 +71,11 @@ int main(int argc, char **argv, char **envp, char **apple)
 		_set_error_mode(_OUT_TO_STDERR);
 		_set_abort_behavior( 0, _WRITE_ABORT_MSG);
 	}
+
+	// Replaces assert dialogs with a log to the console.
+	// Which is useful if the GUI gets broken and the assert dialogs don't work
+	// or you want to ignore asserts.
+	// Put a breakpoint on OutputDebugString to break on asserts.
 	if (clp->getFlag( "--log-asserts" ))
 	{
 		_CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_DEBUG );

@@ -312,8 +312,22 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects
-	// Ignore errors if the attribute does not exist - first time hook is added
-	auto typeObject = PyScript::ScriptType::getType( pythonObject );
+	PyScript::ScriptType typeObject;
+	if (PyScript::ScriptType::check( pythonObject ))
+	{
+		// Object is already a *type*
+		return;
+	}
+	else if (PyScript::ScriptClass::check( pythonObject ))
+	{
+		// Object is already a *type*
+		return;
+	}
+	else
+	{
+		// Get type of object
+		typeObject = PyScript::ScriptType::getType( pythonObject );
+	}
 	assert( typeObject.exists() );
 	auto typeDict = typeObject.getDict();
 
@@ -332,14 +346,18 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 		assert( g_pyOriginalSetattrName.exists() && "Out of memory interning listener hook names" );
 	}
 
-	auto hookCountObject = typeObject.getAttribute( g_hookCountName,
+	// Ignore errors if the item does not exist - first time hook is added
+	// We use they type's dict rather than typeObject.get/setAttribute()
+	// because often types do not permit modification
+	// but we need to attach this data somehow
+	auto hookCountObject = typeDict.getItem( g_pyHookCountName,
 		PyScript::ScriptErrorClear() );
 	if (hookCountObject.exists())
 	{
 		// Already hooked, increment count
 		auto hookCountLong = PyScript::ScriptLong::create( hookCountObject );
 		assert( hookCountLong.exists() );
-		if (!hookCountLong.exists())
+		if (hookCountLong.exists())
 		{
 			auto hookCount = hookCountLong.asLong();
 			++hookCount;
@@ -390,21 +408,20 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	}
 
 	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
-	if( pyType->tp_setattro != static_cast< setattrofunc >( wrapperBase.function ) )
-	{
-		void * pFunctionToBeWrapped = pyType->tp_setattro;
-		auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
-			wrapperBase,
-			pFunctionToBeWrapped );
-		assert( wrapperObject.exists() );
-		const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
-			wrapperObject,
-			PyScript::ScriptErrorClear() );
-		assert( setSuccess3 );
+	assert( pyType->tp_setattro != static_cast< setattrofunc >( wrapperBase.function ) );
+	void * pFunctionToBeWrapped = pyType->tp_setattro;
+	auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
+		wrapperBase,
+		pFunctionToBeWrapped );
+	assert( wrapperObject.exists() );
+	const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
+		wrapperObject,
+		PyScript::ScriptErrorClear() );
+	assert( setSuccess3 );
 
-		// -- From typeobject.c update_one_slot
-		pyType->tp_setattro = static_cast< setattrofunc >( wrapperBase.function );
-	}
+	// -- From typeobject.c update_one_slot
+	pyType->tp_setattro = static_cast< setattrofunc >( wrapperBase.function );
+	assert( pyType->tp_setattro != static_cast< setattrofunc >( pFunctionToBeWrapped ) );
 
 	typeObject.modified();
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
@@ -424,10 +441,25 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects
-	auto typeObject = PyScript::ScriptType::getType( pythonObject );
+	PyScript::ScriptType typeObject;
+	if (PyScript::ScriptType::check( pythonObject ))
+	{
+		// Object is already a *type*
+		return;
+	}
+	else if (PyScript::ScriptClass::check( pythonObject ))
+	{
+		// Object is already a *type*
+		return;
+	}
+	else
+	{
+		// Get type of object
+		typeObject = PyScript::ScriptType::getType( pythonObject );
+	}
 	auto typeDict = typeObject.getDict();
 
-	auto hookCountObject = typeObject.getAttribute( g_hookCountName,
+	auto hookCountObject = typeDict.getItem( g_pyHookCountName,
 		PyScript::ScriptErrorClear() );
 	if (!hookCountObject.exists())
 	{
@@ -501,6 +533,8 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 	// Restore old setattr
 	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
 	auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
+	assert( pyType->tp_setattro == static_cast< setattrofunc >( wrapperBase.function ) );
+	assert( pyType->tp_setattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
 	pyType->tp_setattro = static_cast< setattrofunc >( pyWrapper->d_wrapped );
 	typeObject.modified();
 #endif // ENABLE_PYTHON_LISTENER_HOOKS

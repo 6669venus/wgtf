@@ -25,12 +25,6 @@ namespace
 MetaHandle extractMetaData( const char * name,
 	const PyScript::ScriptDict & metaData )
 {
-	if (!metaData.exists())
-	{
-		// Class has no metadata
-		return nullptr;
-	}
-
 	assert( name != nullptr );
 	assert( strlen( name ) > 0 );
 	if (name[0] == '_')
@@ -38,6 +32,12 @@ MetaHandle extractMetaData( const char * name,
 		// Members that start with an underscore are private
 		// Mark it as hidden
 		return MetaHidden();
+	}
+
+	if (!metaData.exists())
+	{
+		// Class has no metadata
+		return nullptr;
 	}
 
 	auto metaItem = metaData.getItem( name, PyScript::ScriptErrorClear() );

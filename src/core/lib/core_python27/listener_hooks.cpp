@@ -32,8 +32,8 @@ std::weak_ptr< ReflectedPython::HookListener > g_listener;
  */
 static PyObject * wrap_setattr( PyObject * self, PyObject * args, void * wrapped )
 {
-	PyObject *name, *value;
-
+	PyObject * name;
+	PyObject * value;
 	if (!PyArg_UnpackTuple( args, "", 2, 2, &name, &value ))
 	{
 		return nullptr;
@@ -56,7 +56,7 @@ static PyObject * wrap_setattr( PyObject * self, PyObject * args, void * wrapped
 	{
 		// -- Set attribute using default hook
 		// __setattr__( name, value )
-		setattrofunc func = reinterpret_cast< setattrofunc >( wrapped );
+		setattrofunc func = static_cast< setattrofunc >( wrapped );
 		const int res = (*func)(self, name, value);
 		if (res < 0)
 		{
@@ -80,7 +80,7 @@ static PyObject * wrap_setattr( PyObject * self, PyObject * args, void * wrapped
 	{
 		// -- Set attribute using default hook
 		// __setattr__( name, value )
-		setattrofunc func = reinterpret_cast< setattrofunc >( wrapped );
+		setattrofunc func = static_cast< setattrofunc >( wrapped );
 		const int res = (*func)(self, name, value);
 		if (res < 0)
 		{
@@ -163,7 +163,7 @@ static PyObject * wrap_setattr( PyObject * self, PyObject * args, void * wrapped
 
 	// -- Set attribute using default hook
 	// __setattr__( name, value )
-	setattrofunc func = reinterpret_cast< setattrofunc >( wrapped );
+	setattrofunc func = static_cast< setattrofunc >( wrapped );
 	const int res = (*func)(self, name, value);
 
 	// -- Post-notify UI
@@ -389,17 +389,22 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 		assert( setSuccess2 );
 	}
 
-	// TODO not sure if this is the correct function to be wrapped
-	// or if it should be originalSetattr, but seems to work
-	void * pFunctionToBeWrapped = &::PyObject_GenericSetAttr;
-	auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
-		wrapperBase,
-		pFunctionToBeWrapped );
-	assert( wrapperObject.exists() );
-	const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
-		wrapperObject,
-		PyScript::ScriptErrorClear() );
-	assert( setSuccess3 );
+	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
+	if( pyType->tp_setattro != static_cast< setattrofunc >( wrapperBase.function ) )
+	{
+		void * pFunctionToBeWrapped = pyType->tp_setattro;
+		auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
+			wrapperBase,
+			pFunctionToBeWrapped );
+		assert( wrapperObject.exists() );
+		const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
+			wrapperObject,
+			PyScript::ScriptErrorClear() );
+		assert( setSuccess3 );
+
+		// -- From typeobject.c update_one_slot
+		pyType->tp_setattro = static_cast< setattrofunc >( wrapperBase.function );
+	}
 
 	typeObject.modified();
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
@@ -466,6 +471,10 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 	assert( g_pyOriginalSetattrName.exists() );
 	const auto originalSetattr = typeDict.getItem( g_pyOriginalSetattrName,
 		PyScript::ScriptErrorClear() );
+
+	const auto wrapperObject = typeDict.getItem( wrapperName,
+		PyScript::ScriptErrorClear() );
+
 	if (originalSetattr.exists())
 	{
 		const auto setSuccess = typeDict.setItem( wrapperName,
@@ -490,6 +499,9 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 	assert( removeSuccess );
 
 	// Restore old setattr
+	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
+	auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
+	pyType->tp_setattro = static_cast< setattrofunc >( pyWrapper->d_wrapped );
 	typeObject.modified();
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
 }

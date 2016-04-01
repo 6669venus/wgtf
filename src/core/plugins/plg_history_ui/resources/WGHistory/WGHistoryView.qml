@@ -63,12 +63,14 @@ WGPanel {
             //Placeholder buttons add to as required
             WGExpandingRowLayout {
                 id: buttons
+                visible: IsClearButtonVisible || IsMakeMacroButtonVisible
                 Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
                 Layout.fillWidth: true
 
                 WGPushButton {
                     id: clearButton
                     objectName: "clearButton"
+                    visible: IsClearButtonVisible
                     text: "Clear"
                     onClicked: {
                         console.assert( historyModel.canClear(),
@@ -85,8 +87,9 @@ WGPanel {
 
                 WGPushButton {
                     id: macroButton
-                    objectName: macroButton
+                    objectName: "macroButton"
                     text: "Make Macro..."
+                    visible: IsMakeMacroButtonVisible
                     tooltip: "Select a history to make a macro."
                     onClicked: {
                         CreateMacro;

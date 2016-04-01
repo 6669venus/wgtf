@@ -56,6 +56,7 @@ public:
 	void deregisterCommandStatusListener( ICommandEventListener * listener ) override;
 	void fireCommandStatusChanged( const CommandInstance & command ) const override;
 	void fireProgressMade( const CommandInstance & command ) const override;
+    void fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const override;
 	void undo() override;
 	void redo() override;
 	bool canUndo() const override;
@@ -77,6 +78,7 @@ public:
 	void notifyCancelMultiCommand() override;
 	void notifyHandleCommandQueued( const char * commandId ) override;
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
+    void SetHistorySerializationEnabled(bool isEnabled) override;
 	bool SaveHistory( ISerializer & serializer ) override;
 	bool LoadHistory( ISerializer & serializer ) override;
 	ISelectionContext& selectionContext() override;
@@ -121,6 +123,11 @@ private:
 	{
 		commandSystemProvider_->fireProgressMade( commandInstance );
 	}
+
+    void commandExecuted(const CommandInstance & commandInstance, bool isRedoDirection) override
+    {
+        commandSystemProvider_->fireCommandExecuted(commandInstance, isRedoDirection);
+    }
 };
 
 #endif //COMMAND_MANAGER_HPP

@@ -110,6 +110,7 @@ public:
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
 		, envManager_( nullptr )
+        , historySerializationEnabled(true)
 	{
 	}
 
@@ -131,6 +132,7 @@ public:
 	void deregisterCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
+    void fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const;
 	void updateSelected( const int & value );
 
 	void undo();
@@ -162,6 +164,7 @@ public:
 	void addToHistory( const CommandInstancePtr & instance );
 	void processCommands();
 	void flush();
+    void SetHistorySerializationEnabled(bool isEnabled);
 	bool SaveCommandHistory( ISerializer & serializer, const HistoryEnvCom* ec ) const;
 	bool LoadCommandHistory( ISerializer & serializer, HistoryEnvCom* ec ) const;
 	void threadFunc();
@@ -222,6 +225,7 @@ private:
 
 	IApplication *							application_;
 	IEnvManager *								envManager_;
+    bool historySerializationEnabled;
 
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 	void onPreDataChanged();
@@ -507,6 +511,18 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 }
 
 
+void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const
+{
+    EventListenerCollection::const_iterator it =
+        eventListenerCollection_.begin();
+    EventListenerCollection::const_iterator itEnd =
+        eventListenerCollection_.end();
+    for (; it != itEnd; ++it)
+    {
+        (*it)->commandExecuted(command, isRedoDirection);
+    }
+}
+
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
@@ -545,18 +561,34 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
 {
     flush();
     std::unique_lock<std::mutex> lock( workerMutex_ );
+    unbindHistoryCallbacks();
+    unbindIndexCallbacks();
+    pCommandManager_->signalHistoryPreReset(historyState_->history_);
+
+    int currentIndexValue = currentIndex_.value();
+    int commandIndex = 0;
     VariantList::Iterator iter = historyState_->history_.begin();
     while(iter != historyState_->history_.end())
     {
         if (functor((*iter).value<CommandInstancePtr>()))
         {
             iter = historyState_->history_.erase(iter);
+            if (commandIndex < currentIndexValue)
+            {
+                currentIndexValue = std::max(currentIndexValue - 1, -1);
+            }
         }
         else
         {
             ++iter;
+            ++commandIndex;
         }
     }
+
+    currentIndex_.variantValue(currentIndexValue);
+    pCommandManager_->signalHistoryPostReset(historyState_->history_);
+    bindIndexCallbacks();
+    bindHistoryCallbacks();
 }
 
 //==============================================================================
@@ -814,6 +846,9 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 //==============================================================================
 bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const HistoryEnvCom* ec ) const
 {
+    if (!historySerializationEnabled)
+        return true;
+
 	// save objects
 	size_t count = ec->history_.size();
 	serializer.serialize( count );
@@ -826,9 +861,17 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
 	return true;
 }
 
+void CommandManagerImpl::SetHistorySerializationEnabled(bool isEnabled)
+{
+    historySerializationEnabled = isEnabled;
+}
+
 //==============================================================================
 bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEnvCom* ec ) const
 {
+    if (!historySerializationEnabled)
+        return false;
+
 	// read history data
 	size_t count = 0;
 	serializer.deserialize( count );
@@ -1023,7 +1066,6 @@ void CommandManagerImpl::flush()
 	}
 }
 
-
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()
 {
@@ -1050,25 +1092,28 @@ void CommandManagerImpl::onAddEnv( IEnvState* state )
 {
 	ENV_STATE_ADD( HistoryEnvCom, ec );
 
-	std::string file = state->description();
-	file += s_historyVersion;
+    if (!historySerializationEnabled)
+        return;
 
-	const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
+    std::string file = state->description();
+    file += s_historyVersion;
 
-	if (fileSystem->exists( file.c_str() ))
-	{
-		IDefinitionManager& defManager = pCommandManager_->getDefManager();
+    const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+    assert(fileSystem);
 
-		IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
-		HistorySerializer serializer( *fileStream, defManager );
-		std::string version;
-		serializer.deserialize( version );
-		if( version == s_historyVersion)
-		{
-			LoadCommandHistory( serializer, ec );
-		}
-	}
+    if (fileSystem->exists(file.c_str()))
+    {
+        IDefinitionManager& defManager = pCommandManager_->getDefManager();
+
+        IFileSystem::IStreamPtr fileStream = fileSystem->readFile(file.c_str(), std::ios::in | std::ios::binary);
+        HistorySerializer serializer(*fileStream, defManager);
+        std::string version;
+        serializer.deserialize(version);
+        if (version == s_historyVersion)
+        {
+            LoadCommandHistory(serializer, ec);
+        }
+    }
 }
 
 void CommandManagerImpl::onRemoveEnv( IEnvState* state )
@@ -1078,6 +1123,9 @@ void CommandManagerImpl::onRemoveEnv( IEnvState* state )
 	{
 		switchEnvContext( &nullHistoryState_ );
 	}
+
+    if (!historySerializationEnabled)
+        return;
 
 	IDefinitionManager& defManager = pCommandManager_->getDefManager();
 	ResizingMemoryStream stream;
@@ -1243,6 +1291,11 @@ void CommandManager::fireProgressMade( const CommandInstance & command ) const
 }
 
 
+void CommandManager::fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const
+{
+    return pImpl_->fireCommandExecuted(command, isRedoDirection);
+}
+
 //==============================================================================
 bool CommandManager::canUndo() const
 {
@@ -1384,6 +1437,11 @@ void CommandManager::notifyHandleCommandQueued( const char * commandId )
 void CommandManager::notifyNonBlockingProcessExecution( const char * commandId )
 {
 	pImpl_->notifyNonBlockingProcessExecution( commandId );
+}
+
+void CommandManager::SetHistorySerializationEnabled(bool isEnabled)
+{
+    pImpl_->SetHistorySerializationEnabled(isEnabled);
 }
 
 //==============================================================================

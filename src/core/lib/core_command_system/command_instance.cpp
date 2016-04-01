@@ -161,21 +161,27 @@ void CommandInstance::setStatus( ExecutionStatus status )
 //==============================================================================
 void CommandInstance::undo()
 {
-	getCommand()->undo( getArguments() );
+    const Command * command = getCommand();
+	command->undo( getArguments() );
+    command->fireCommandExecuted(*this, false);
 }
 
 
 //==============================================================================
 void CommandInstance::redo()
 {
-	getCommand()->redo( getArguments() );
+    const Command * command = getCommand();
+	command->redo( getArguments() );
+    command->fireCommandExecuted(*this, true);
 }
 
 
 //==============================================================================
 void CommandInstance::execute()
 {
-	returnValue_ = getCommand()->execute( arguments_ );
+    const Command * command = getCommand();
+	returnValue_ = command->execute( arguments_ );
+    command->fireCommandExecuted(*this, true);
 	auto errorCode = returnValue_.getBase<CommandErrorCode>();
 	if (errorCode != nullptr)
 	{
@@ -189,12 +195,10 @@ bool CommandInstance::isComplete() const
 	return status_ == Complete;
 }
 
-
 ExecutionStatus CommandInstance::getExecutionStatus() const
 {
 	return status_;
 }
-
 
 //==============================================================================
 void CommandInstance::connectEvent()

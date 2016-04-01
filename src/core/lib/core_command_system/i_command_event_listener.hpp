@@ -18,6 +18,7 @@ public:
 	virtual void statusChanged(
 		const CommandInstance & commandInstance ) const { }
 	virtual void progressMade( const CommandInstance & commandInstance ) const { }
+    virtual void commandExecuted( const CommandInstance & commandInstance, bool isRedoDirection ) {}
 	virtual void multiCommandStatusChanged( MultiCommandStatus multiCommandStatus ) const { }
 	virtual void handleCommandQueued( const char * commandId ) const { }
 	virtual void onNonBlockingProcessExecution( const char * commandId ) const { }

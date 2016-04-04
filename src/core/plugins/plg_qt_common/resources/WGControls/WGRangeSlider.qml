@@ -317,7 +317,7 @@ Item {
             minimumValue: sliderMinHandle.value
             maximumValue: slider.maximumValue
             showBar: true
-            barMinPos: sliderMinHandle.range.position
+            barMinPos: (sliderMinHandle.value * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue))) + parentSlider.__visualMinPos
             rangePartnerHandle: sliderMinHandle
             value: sliderFrame.upperValue
             maxHandle: true

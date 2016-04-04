@@ -71,6 +71,8 @@ Style {
     property int vertPadding: 0
     property int horzPadding: 0
 
+    property real __clampedLength: control.__clampedLength
+
     padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
     property Component groove: Item {
@@ -183,8 +185,10 @@ Style {
 
                         anchors.verticalCenter: grooveLoader.verticalCenter
 
+                        property int barClampPadding: control.handleClamp ? control.__visualMinPos : 0
+
                         height: grooveLoader.height
-                        width: control.__handlePosList[index].range.position - control.__handlePosList[index].barMinPos - padding.left - padding.right
+                        width: Math.round(((control.__handlePosList[index].value / control.maximumValue) * __clampedLength)) - control.__handlePosList[index].barMinPos + barClampPadding
 
                         x: control.__handlePosList[index].barMinPos
                         z: 1
@@ -211,7 +215,7 @@ Style {
 
                     property int handleIndex: index
 
-                    x: Math.round(((control.__handlePosList[index].value / control.maximumValue) * control.__sliderLength) + control.__visualMinPos - (control.__handleWidth / 2))
+                    x: Math.round(((control.__handlePosList[index].value / control.maximumValue) * __clampedLength) + control.__visualMinPos - (control.__handleWidth / 2))
 
                     onLoaded: {
                         control.__handleHeight = handleLoader.implicitHeight

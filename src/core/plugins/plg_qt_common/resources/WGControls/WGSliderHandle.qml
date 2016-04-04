@@ -114,8 +114,6 @@ Item {
         minimumValue: parentSlider.minimumValue
         maximumValue: parentSlider.maximumValue
 
-        property real __clampedLength: parentSlider.__visualMaxPos - parentSlider.__visualMinPos
-
         positionAtMinimum:  {
             if(sliderHandle.minimumValue == parentSlider.minimumValue)
             {
@@ -123,7 +121,7 @@ Item {
             }
             else if (sliderHandle.minimumValue > parentSlider.minimumValue)
             {
-                (sliderHandle.minimumValue * (__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
+                (sliderHandle.minimumValue * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
             }
         }
 
@@ -134,7 +132,7 @@ Item {
             }
             else if (sliderHandle.maximumValue < parentSlider.maximumValue)
             {
-                (sliderHandle.maximumValue * (__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
+                (sliderHandle.maximumValue * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
             }
         }
     }

@@ -251,9 +251,12 @@ Control {
         __handlePosList[__activeHandle].range.decreaseSingleStep()
     }
 
-    property real __sliderLength: __horizontal ? mouseArea.width : mouseArea.height
+    property real __sliderLength: mouseArea.width
+
+    property real __clampedLength: __visualMaxPos - __visualMinPos
 
     property real __visualMinPos: handleClamp ? __handleWidth / 2 : 0
+
     property real __visualMaxPos: handleClamp ? __sliderLength - __handleWidth / 2 : __sliderLength
 
     /*!
@@ -370,8 +373,7 @@ Control {
         property bool dragStarted: false
 
         function clamp ( val ) {
-            var handleClamp = Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
-            return Math.max(__visualMinPos, Math.min(__visualMaxPos, handleClamp))
+            return Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
         }
 
         function updateHandlePosition(mouse, force) {

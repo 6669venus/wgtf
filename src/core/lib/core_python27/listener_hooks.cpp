@@ -316,11 +316,12 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	if (PyScript::ScriptType::check( pythonObject ))
 	{
 		// Object is already a *type*
-		return;
+		typeObject = PyScript::ScriptType::create( pythonObject );
 	}
 	else if (PyScript::ScriptClass::check( pythonObject ))
 	{
 		// Object is already a *type*
+		// TODO not supported
 		return;
 	}
 	else
@@ -446,11 +447,12 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 	if (PyScript::ScriptType::check( pythonObject ))
 	{
 		// Object is already a *type*
-		return;
+		typeObject = PyScript::ScriptType::create( pythonObject );
 	}
 	else if (PyScript::ScriptClass::check( pythonObject ))
 	{
 		// Object is already a *type*
+		// TODO not supported
 		return;
 	}
 	else

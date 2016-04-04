@@ -362,13 +362,6 @@ void ScriptObjectDefinitionRegistry::removeDefinition(
 			const auto deleted = object.delAttribute( g_reflectionDefinition,
 				PyScript::ScriptErrorClear() );
 			assert( deleted );
-			if (!deleted)
-			{
-				const auto nullified = object.setAttribute( g_reflectionDefinition,
-					PyScript::ScriptObject::none(),
-					PyScript::ScriptErrorClear() );
-				assert( nullified );
-			}
 
 			assert( definitionManager_ != nullptr );
 			const bool deregistered = definitionManager_->deregisterDefinition( definition );

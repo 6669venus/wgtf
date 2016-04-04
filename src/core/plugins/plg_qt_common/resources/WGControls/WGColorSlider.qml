@@ -17,16 +17,23 @@ import WGControls 2.0
 
 Example:
 \code{.js}
-    WGColorSlider {
-        Layout.fillWidth: true
-        minimumValue: 0
-        maximumValue: 255
-        stepSize: 1
-        colorData: [Qt.rgba(0,0,0,1), Qt.rgba(1,1,1,1)]
-        positionData: [0, 255]
-        value: 128
-        linkColorsToHandles: false
-    }
+        WGColorSlider {
+            Layout.fillWidth: true
+            minimumValue: 0
+            maximumValue: 255
+            stepSize: 1
+            value: 128
+            gradient: Gradient {
+                GradientStop {
+                    position: 0
+                    color: "#000000"
+                }
+                GradientStop {
+                    position: 1
+                    color: "#FFFFFF"
+                }
+            }
+        }
 \endcode
 */
 

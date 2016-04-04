@@ -77,6 +77,9 @@ Item {
     /*! This property defines the colour of the slider */
     property alias barColor: slider.barColor
 
+    /*! This property defines whether the tickmarks are displayed or not */
+    property alias tickmarksEnabled: slider.tickmarksEnabled
+
     /*! This property determines the prefix string displayed within the slider textbox.
         Typically used to display unit type.
         The default value is an empty string.
@@ -281,7 +284,7 @@ Item {
             }
         }
 
-        onValueTicked: {
+        onChangeValue: {
             setValueHelper(sliderFrame, "value", value);
         }
 

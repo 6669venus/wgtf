@@ -172,6 +172,13 @@ Control {
     property bool grooveClickable: true
 
     /*!
+        This property determines if the slider will create a handle if none are initialised.
+
+        The default value is \c true
+    */
+    property bool createInitialHandle: true
+
+    /*!
         This string determines the the component for the slider handle.
 
         The default value is WGColorSliderHandle.
@@ -220,40 +227,34 @@ Control {
     /*! \internal */
     function accessibleIncreaseAction() {
         __handlePosList.children[__activeHandle].range.increaseSingleStep()
-        slider.valueTicked(__handlePosList[__activeHandle])
     }
     /*! \internal */
     function accessibleDecreaseAction() {
         __handlePosList.children[__activeHandle].range.decreaseSingleStep()
-        slider.valueTicked(__handlePosList[__activeHandle])
     }
 
     style: Qt.createComponent("WGSliderStyle.qml", slider)
 
     Keys.onRightPressed: {
         if (__horizontal) __handlePosList[__activeHandle].range.increaseSingleStep()
-        slider.valueTicked(__handlePosList[__activeHandle])
     }
 
     Keys.onLeftPressed: {
         if (__horizontal) __handlePosList[__activeHandle].range.decreaseSingleStep()
-        slider.valueTicked(__handlePosList[__activeHandle])
     }
 
     Keys.onUpPressed: {
         __handlePosList[__activeHandle].range.increaseSingleStep()
-        slider.valueTicked(__handlePosList[__activeHandle])
     }
 
     Keys.onDownPressed: {
         __handlePosList[__activeHandle].range.decreaseSingleStep()
-        slider.valueTicked(__handlePosList[__activeHandle])
     }
 
-    property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
-    property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
+    property real __sliderLength: __horizontal ? mouseArea.width : mouseArea.height
 
-    x: Math.round(__handleWidth / 2)
+    property real __visualMinPos: handleClamp ? __handleWidth / 2 : 0
+    property real __visualMaxPos: handleClamp ? __sliderLength - __handleWidth / 2 : __sliderLength
 
     /*!
         This signal is fired when the bar is double clicked
@@ -261,25 +262,71 @@ Control {
     signal sliderDoubleClicked(int index)
 
     /*!
-        This signal is fired when a handle (handleIndex == index) is left pressed when holding the Ctrl key
+        This signal is fired when a handle (index) is left pressed when holding the Ctrl key
     */
     signal handleCtrlClicked(int index)
 
+    /*!
+        This signal is fired when a handle (index) is added
+    */
+    signal handleAdded(int index)
+
+    /*!
+        This signal is fired when a handle (index) is removed
+    */
+    signal handleRemoved(int index)
+
+    /*!
+        This signal is fired when a handle (index) value (val) is changed
+    */
+    signal changeValue (real val, int index)
+
     implicitHeight: defaultSpacing.minimumRowHeight
     implicitWidth: defaultSpacing.standardMargin
+
+    function createHandle(val, handle, index)
+    {
+        if (typeof handle !== "undefined")
+        {
+            var newHandle = handle.createObject(slider, {
+                                        "value": val,
+                                        "parentSlider": slider
+                                    });
+        }
+        else
+        {
+
+            var newHandle = slider.handleType.createObject(slider, {
+                                        "value": val,
+                                        "parentSlider": slider
+                                    });
+        }
+        if (typeof index != "undefined")
+        {
+            addHandle(newHandle, index)
+        }
+        else
+        {
+            addHandle(newHandle, __handlePosList.length)
+        }
+        return newHandle
+    }
 
     function addHandle(handle, index) {
         handle.parentSlider = slider
         __handlePosList.splice(index,0,handle)
         __handleCount = __handlePosList.length
+        handleAdded(index)
     }
 
     function removeHandle(index) {
-        __handlePosList.splice(index,index)
-        __handleCount = __handlePosList.length
+        if(__handleCount > 0)
+        {
+            __handlePosList.splice(index,1)
+            __handleCount = __handlePosList.length
+            handleRemoved(index)
+        }
     }
-
-    signal valueTicked (var handle)
 
     Component.onCompleted: {
 
@@ -293,14 +340,10 @@ Control {
         }
 
         //create a handle if none were collected
-        if(__handlePosList.length == 0)
+        if(__handlePosList.length == 0 && createInitialHandle)
         {
-           var newHandle = handleType.createObject(slider, {
-                                       "parentSlider": slider
-                                   });
-
+            var newHandle = createHandle(slider.value)
             slider.value = Qt.binding(function() {return newHandle.value})
-            addHandle(newHandle,__handlePosList.length)
         }
     }
 
@@ -327,7 +370,8 @@ Control {
         property bool dragStarted: false
 
         function clamp ( val ) {
-            return Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
+            var handleClamp = Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
+            return Math.max(__visualMinPos, Math.min(__visualMaxPos, handleClamp))
         }
 
         function updateHandlePosition(mouse, force) {
@@ -416,12 +460,10 @@ Control {
                 if (wheel.angleDelta.y > 0)
                 {
                     __handlePosList[__activeHandle].range.increaseSingleStep()
-                    slider.valueTicked(__handlePosList[__activeHandle])
                 }
                 else
                 {
                     __handlePosList[__activeHandle].range.decreaseSingleStep()
-                    slider.valueTicked(__handlePosList[__activeHandle])
                 }
             }
         }

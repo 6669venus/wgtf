@@ -69,7 +69,7 @@ Style {
     property bool __horizontal: control.__horizontal
 
     property int vertPadding: 0
-    property int horzPadding: 1
+    property int horzPadding: 0
 
     padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
@@ -125,8 +125,8 @@ Style {
     property Component panel: Item {
         id: root
 
-        implicitWidth: parent.width
-        implicitHeight: grooveLoader.implicitHeight
+        implicitWidth: control.width
+        implicitHeight: control.height
 
         anchors.centerIn: parent
 
@@ -146,6 +146,8 @@ Style {
                 sourceComponent: groove
 
                 width: parent.width - padding.left - padding.right
+
+                anchors.horizontalCenter: parent.horizontalCenter
 
                 height: groove.implicitHeight
 
@@ -209,11 +211,18 @@ Style {
 
                     property int handleIndex: index
 
-                    x: Math.round(control.__handlePosList[index].range.position - control.__handleWidth / 2)
+                    x: Math.round(((control.__handlePosList[index].value / control.maximumValue) * control.__sliderLength) + control.__visualMinPos - (control.__handleWidth / 2))
 
                     onLoaded: {
                         control.__handleHeight = handleLoader.implicitHeight
                         control.__handleWidth = handleLoader.implicitWidth
+                    }
+
+                    Connections {
+                        target: control.__handlePosList[index]
+                        onValueChanged: {
+                            control.changeValue(value, index)
+                        }
                     }
 
                     MouseArea {
@@ -224,18 +233,18 @@ Style {
                         propagateComposedEvents: true
 
                         onEntered: {
-                            control.__hoveredHandle = handleIndex
+                            control.__hoveredHandle = index
                         }
 
                         onExited: {
-                            if (control.__hoveredHandle == handleIndex)
+                            if (control.__hoveredHandle == index)
                             {
                                control.__hoveredHandle = -1
                             }
                         }
 
                         onPressed: {
-                            control.__activeHandle = handleIndex
+                            control.__activeHandle = index
                             control.forceActiveFocus()
 
                             if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
@@ -250,7 +259,6 @@ Style {
                         onReleased: {
                             control.__draggable = true
                         }
-
                     }
                 }
             }

@@ -114,39 +114,27 @@ Item {
         minimumValue: parentSlider.minimumValue
         maximumValue: parentSlider.maximumValue
 
-        property int sliderLength: parentSlider.internalWidth
-
-        //The handle offset makes the handles fit inside the bar at the edges instead of overlapping the outside.
-        property int handleOffset: {
-            if(parentSlider.handleClamp)
-            {
-                 parentSlider.__handleWidth / 2
-            }
-            else
-            {
-                0
-            }
-        }
+        property real __clampedLength: parentSlider.__visualMaxPos - parentSlider.__visualMinPos
 
         positionAtMinimum:  {
             if(sliderHandle.minimumValue == parentSlider.minimumValue)
             {
-                0 + handleOffset
+                parentSlider.__visualMinPos
             }
             else if (sliderHandle.minimumValue > parentSlider.minimumValue)
             {
-                (sliderHandle.minimumValue * (sliderLength / (parentSlider.maximumValue - parentSlider.minimumValue))) + handleOffset
+                (sliderHandle.minimumValue * (__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
             }
         }
 
         positionAtMaximum: {
             if(sliderHandle.maximumValue == parentSlider.maximumValue)
             {
-                sliderLength + handleOffset - defaultSpacing.standardBorderSize
+                parentSlider.__visualMaxPos
             }
             else if (sliderHandle.maximumValue < parentSlider.maximumValue)
             {
-                (sliderHandle.maximumValue * (sliderLength / (parentSlider.maximumValue - parentSlider.minimumValue))) + handleOffset
+                (sliderHandle.maximumValue * (__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
             }
         }
     }

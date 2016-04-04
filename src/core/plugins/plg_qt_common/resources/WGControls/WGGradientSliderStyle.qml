@@ -16,6 +16,7 @@ WGSliderStyle {
 
         //changing between odd and even values causes pixel 'wiggling' as the center anchors move around.
         //can't use anchors.fill because the gradients need rotating
+
         implicitHeight: __horizontal ? control.height - control.height % 2 : control.width - control.width % 2
         implicitWidth: __horizontal ? control.width - control.width % 2 : control.height - control.height % 2
 
@@ -23,8 +24,11 @@ WGSliderStyle {
             radius: defaultSpacing.halfRadius
 
             anchors.fill: parent
+            anchors.bottomMargin: control.handleVerticalOffset
 
             color: "transparent"
+
+            clip: true
 
             //grid pattern for transparent colors
             Image {
@@ -35,22 +39,17 @@ WGSliderStyle {
                 z: -1
             }
 
-            clip: true
-
-            //Item that holds the gradient
-            //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
-
-            Rectangle {
+            Loader {
                 objectName: "gradientFrame"
                 id: gradientFrame
+                sourceComponent: control.gradientBars
                 anchors.centerIn: parent
+                smooth: true
 
-                height: parent.width - 2
-                width: parent.height - 2
+                height: parent.width
+                width: parent.height
 
                 rotation: -90
-
-                gradient: control.gradient
             }
         }
     }

@@ -1,7 +1,7 @@
 #include "qt_preferences.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_serialization/text_stream.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
 #include "core_variant/interfaces/i_meta_type_manager.hpp"
 
@@ -22,7 +22,7 @@ QtPreferences::QtPreferences( IDefinitionManager & definitionManger,
 {
 	if (fileSystem_.exists( s_definitionFile ))
 	{
-		IFileSystem::istream_uptr fileStream = 
+		IFileSystem::IStreamPtr fileStream = 
 			fileSystem_.readFile( s_definitionFile, std::ios::in | std::ios::binary );
 		XMLSerializer serializer( *fileStream, definitionManger );
 		definitionManager_.deserializeDefinitions( serializer );
@@ -79,7 +79,7 @@ void QtPreferences::loadPreferences()
 	}
 	preferences_.clear();
 
-	IFileSystem::istream_uptr fileStream = 
+	IFileSystem::IStreamPtr fileStream = 
 		fileSystem_.readFile( s_preferenceFile, std::ios::in | std::ios::binary );
 	XMLSerializer serializer( *fileStream, definitionManager_ );
 	size_t count = 0;

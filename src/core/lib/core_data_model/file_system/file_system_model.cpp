@@ -1,7 +1,7 @@
 #include "file_system_model.hpp"
 #include "core_data_model/abstract_item.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 
 #include <string>
 
@@ -13,7 +13,7 @@ namespace
 	class FileItem : public AbstractTreeItem
 	{
 	public:
-		FileItem( FileInfo && fileInfo, const FileItem * parent )
+		FileItem( const IFileInfoPtr& fileInfo, const FileItem * parent )
 			: fileInfo_( fileInfo )
 			, parent_( parent )
 		{
@@ -25,12 +25,12 @@ namespace
 			static size_t displayRole = ItemRole::compute( "display" );
 			if (roleId == displayRole)
 			{
-				return fileInfo_.name();
+				return fileInfo_->name();
 			}
 
 			if (roleId == IndexPathRole::roleId_)
 			{
-				return fileInfo_.fullPath;
+				return fileInfo_->fullPath();
 			}
 
 			return Variant();
@@ -41,7 +41,7 @@ namespace
 			throw std::logic_error("The method or operation is not implemented.");
 		}
 
-		const FileInfo fileInfo_;
+		const IFileInfoPtr fileInfo_;
 		const FileItem * parent_;
 		const FileItems children_;
 	};
@@ -85,12 +85,14 @@ AbstractItem * FileSystemModel::item( const ItemIndex & index ) const
 	}
 
 	// Item not cached, must enumerate
-	auto & directory = parentItem != nullptr ? parentItem->fileInfo_.fullPath : impl_->rootDirectory_;
+	const auto directory = parentItem != nullptr ?
+		parentItem->fileInfo_->fullPath() :
+		impl_->rootDirectory_.c_str();
 	int i = 0;
-	impl_->fileSystem_.enumerate( directory.c_str(), [&]( FileInfo && fileInfo )
+	impl_->fileSystem_.enumerate( directory, [&]( IFileInfoPtr&& fileInfo )
 	{
 		// Skip dots and hidden files
-		if (fileInfo.isDots() || fileInfo.isHidden())
+		if (fileInfo->isDots() || fileInfo->isHidden())
 		{
 			return true;
 		}
@@ -128,17 +130,19 @@ AbstractTreeModel::ItemIndex FileSystemModel::index( const AbstractItem * item )
 	}
 
 	// Item not cached, must enumerate
-	auto & directory = parentItem != nullptr ? parentItem->fileInfo_.fullPath : impl_->rootDirectory_;
+	const auto directory = parentItem != nullptr ?
+		parentItem->fileInfo_->fullPath() :
+		impl_->rootDirectory_.c_str();
 	int i = 0;
-	impl_->fileSystem_.enumerate( directory.c_str(), [&]( FileInfo && fileInfo )
+	impl_->fileSystem_.enumerate( directory, [&]( IFileInfoPtr && fileInfo )
 	{
 		// Skip dots and hidden files
-		if (fileInfo.isDots() || fileInfo.isHidden())
+		if (fileInfo->isDots() || fileInfo->isHidden())
 		{
 			return true;
 		}
 
-		if (strcmp( fileItem->fileInfo_.name(), fileInfo.name() ) == 0)
+		if (strcmp( fileItem->fileInfo_->name(), fileInfo->name() ) == 0)
 		{
 			return false;
 		}
@@ -152,12 +156,14 @@ int FileSystemModel::rowCount( const AbstractItem * item ) const
 {
 	auto fileItem = static_cast< const FileItem * >( item );
 
-	auto & directory = fileItem != nullptr ? fileItem->fileInfo_.fullPath : impl_->rootDirectory_;
+	const auto directory = fileItem != nullptr ?
+		fileItem->fileInfo_->fullPath() :
+		impl_->rootDirectory_.c_str();
 	int count = 0;
-	impl_->fileSystem_.enumerate( directory.c_str(), [&]( FileInfo && fileInfo )
+	impl_->fileSystem_.enumerate( directory, [&]( IFileInfoPtr && fileInfo )
 	{
 		// Skip dots and hidden files
-		if (fileInfo.isDots() || fileInfo.isHidden())
+		if (fileInfo->isDots() || fileInfo->isHidden())
 		{
 			return true;
 		}

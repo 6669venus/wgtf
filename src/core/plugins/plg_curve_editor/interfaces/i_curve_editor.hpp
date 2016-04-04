@@ -55,6 +55,8 @@ public:
 	
 	virtual const float& getYScale() const = 0;
 
+	virtual const bool& getTimeScaleEditEnabled() const = 0;
+
 	virtual bool removeCurve(ICurvePtr /*curve*/) = 0;
 
 	void setSubTitle(const char* subTitle)
@@ -72,6 +74,11 @@ public:
 		SET_REFLECTED_PROPERTY(yScale);
 	}
 
+	void setTimeScaleEditEnabled(const bool& timeScaleEditEnabled)
+	{
+		SET_REFLECTED_PROPERTY(timeScaleEditEnabled);
+	}
+
 	typedef std::function<void(ScaleChangeData)> ScaleChangeCallback;
 	virtual void connectOnScaleChange(ScaleChangeCallback) = 0;
 	
@@ -83,6 +90,8 @@ private:
 	virtual void putXScale(const float&) = 0;
 
 	virtual void putYScale(const float&) = 0;
+
+	virtual void putTimeScaleEditEnabled(const bool&) = 0;
 
 };
 

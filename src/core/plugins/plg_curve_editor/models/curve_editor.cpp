@@ -80,6 +80,7 @@ void CurveEditor::clear()
 	setSubTitle("");
 	setXScale(1.0f);
 	setYScale(1.0f);
+	timeScaleEditEnabled_ = true;
 }
 
 void CurveEditor::putSubTitle(const std::string& subTitle)
@@ -105,4 +106,9 @@ void CurveEditor::putYScale(const float& yScale)
 	newScale.xScale = xScale_;
 	newScale.yScale = yScale_;
 	scaleChangeSignal_(newScale);
+}
+
+void CurveEditor::putTimeScaleEditEnabled(const bool& timeScaleEditEnabled)
+{
+	timeScaleEditEnabled_ = timeScaleEditEnabled;
 }

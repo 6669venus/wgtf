@@ -348,7 +348,8 @@ bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 	while( baseDefinition != NULL )
 	{
 		const char * baseName = baseDefinition->getName();
-		if (strcmp( baseName, definitionName ) == 0)
+		// Assuming definitions are shared we only need to check the pointer
+		if ( baseName == definitionName )
 		{
 			return true;
 		}

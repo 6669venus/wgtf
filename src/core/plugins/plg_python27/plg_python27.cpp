@@ -9,6 +9,7 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
 
+
 /**
  *	Controls initialization and finalization of Python and
  *	registers the Python interface to be used by other plugins.

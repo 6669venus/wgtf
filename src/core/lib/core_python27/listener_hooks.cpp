@@ -292,7 +292,6 @@ slot_tp_setattro(PyObject *self, PyObject *name, PyObject *value)
  *	Table mapping the __setattr__ name to the tp_setattro offset and
  *	slot_tp_setattro wrapper function.
  *	Based on slotdefs from typeobject.c.
- *	TODO not sure what function does.
  */
 static wrapperbase g_setattrWrappers[] =
 {
@@ -401,7 +400,7 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	getType( pythonObject, classObject, typeObject, dict );
 	if (classObject.exists())
 	{
-		// TODO not supported
+		// TODO old-style class type not supported
 		return;
 	}
 
@@ -480,7 +479,6 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	auto setattrWrapperName = PyScript::ScriptString( setattrWrapperBase.name_strobj,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	{
 	// Attach setattr hook
 	auto originalSetattr = dict.getItem( setattrWrapperName,
 		PyScript::ScriptErrorClear() );
@@ -529,82 +527,9 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	else
 	{
 		assert( classObject.exists() );
-
-		//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
-		//assert( pyClass->cl_setattr != static_cast< setattrofunc >( wrapperBase.function ) );
-		//PyObject * pFunctionToBeWrapped = pyClass->cl_setattr;
-		//auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
-		//	wrapperBase,
-		//	pFunctionToBeWrapped );
-		//assert( wrapperObject.exists() );
-		//const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
-		//	wrapperObject,
-		//	PyScript::ScriptErrorClear() );
-		//assert( setSuccess3 );
-
-		//// -- From typeobject.c update_one_slot
-		//pyClass->cl_setattr = static_cast< PyObject * >( wrapperBase.function );
-		//assert( pyClass->cl_setattr != static_cast< PyObject * >( pFunctionToBeWrapped ) );
-	}
+		// TODO old-style class type not supported
 	}
 
-	//{
-	//auto delattrWrapperName = PyScript::ScriptString( delattrWrapperBase.name_strobj,
-	//	PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-	//// Attach delattr hook
-	//auto originalDelattr = dict.getItem( delattrWrapperName,
-	//	PyScript::ScriptErrorClear() );
-	//if (originalDelattr != nullptr)
-	//{
-	//	assert( g_pyOriginalSetattrName.exists() );
-	//	const auto setSuccess2 = dict.setItem( g_pyOriginalSetattrName,
-	//		originalDelattr,
-	//		PyScript::ScriptErrorClear() );
-	//	assert( setSuccess2 );
-	//}
-
-	//if (typeObject.exists())
-	//{
-	//	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
-	//	//assert( pyType->tp_setattro != static_cast< setattrofunc >( delattrWrapperBase.function ) );
-	//	void * pFunctionToBeWrapped = pyType->tp_setattro;
-	//	auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
-	//		delattrWrapperBase,
-	//		pFunctionToBeWrapped );
-	//	assert( wrapperObject.exists() );
-	//	const auto setSuccess3 = dict.setItem( wrapperObject.name(),
-	//		wrapperObject,
-	//		PyScript::ScriptErrorClear() );
-	//	assert( setSuccess3 );
-
-	//	// -- From typeobject.c update_one_slot
-	//	pyType->tp_setattro = static_cast< setattrofunc >( delattrWrapperBase.function );
-	//	//assert( pyType->tp_setattro != static_cast< setattrofunc >( pFunctionToBeWrapped ) );
-
-	//	typeObject.modified();
-	//}
-	//else
-	//{
-	//	assert( classObject.exists() );
-
-	//	//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
-	//	//assert( pyClass->cl_delattr != static_cast< setattrofunc >( wrapperBase.function ) );
-	//	//PyObject * pFunctionToBeWrapped = pyClass->cl_delattr;
-	//	//auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
-	//	//	wrapperBase,
-	//	//	pFunctionToBeWrapped );
-	//	//assert( wrapperObject.exists() );
-	//	//const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
-	//	//	wrapperObject,
-	//	//	PyScript::ScriptErrorClear() );
-	//	//assert( setSuccess3 );
-
-	//	//// -- From typeobject.c update_one_slot
-	//	//pyClass->cl_delattr = static_cast< PyObject * >( wrapperBase.function );
-	//	//assert( pyClass->cl_delattr != static_cast< PyObject * >( pFunctionToBeWrapped ) );
-	//}
-	//}
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 
@@ -672,67 +597,6 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 		return;
 	}
 
-	//{
-	//auto & delattrWrapperBase = g_delattrWrappers[ 0 ];
-	//assert( delattrWrapperBase.name_strobj != nullptr );
-	//auto wrapperName = PyScript::ScriptString( delattrWrapperBase.name_strobj,
-	//	PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
-
-	//assert( g_pyOriginalSetattrName.exists() );
-	//const auto originalSetattr = dict.getItem( g_pyOriginalSetattrName,
-	//	PyScript::ScriptErrorClear() );
-
-	//const auto wrapperObject = dict.getItem( wrapperName,
-	//	PyScript::ScriptErrorClear() );
-
-	//if (originalSetattr.exists())
-	//{
-	//	const auto setSuccess = dict.setItem( wrapperName,
-	//		originalSetattr,
-	//		PyScript::ScriptErrorClear() );
-	//	assert( setSuccess );
-
-	//	const auto removeSuccess = dict.delItem( g_pyOriginalSetattrName,
-	//		PyScript::ScriptErrorClear() );
-	//	assert( removeSuccess );
-	//}
-	//else
-	//{
-	//	const auto removeSuccess = dict.delItem( wrapperName,
-	//		PyScript::ScriptErrorClear() );
-	//	assert( removeSuccess );
-	//}
-
-	//// Restore old delattr
-	//if (typeObject.exists())
-	//{
-	//	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
-	//	auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
-
-	//	assert( g_pyHookCountName.exists() );
-	//	const auto removeSuccess = dict.setItem( g_pyHookCountName,
-	//		pyWrapper->d_wrapped,
-	//		PyScript::ScriptErrorClear() );
-	//	assert( removeSuccess );
-
-	//	assert( pyType->tp_setattro == static_cast< setattrofunc >( delattrWrapperBase.function ) );
-	//	//assert( pyType->tp_setattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
-	//	pyType->tp_setattro = static_cast< setattrofunc >( pyWrapper->d_wrapped );
-
-	//	typeObject.modified();
-	//}
-	//else
-	//{
-	//	assert( classObject.exists() );
-
-	//	//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
-	//	//auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
-	//	//assert( pyClass->cl_delattr == static_cast< setattrofunc >( wrapperBase.function ) );
-	//	//assert( pyClass->cl_delattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
-	//	//pyClass->cl_delattro = static_cast< PyObject * >( pyWrapper->d_wrapped );
-	//}
-	//}
-	{
 	auto & setattrWrapperBase = g_setattrWrappers[ 0 ];
 	assert( setattrWrapperBase.name_strobj != nullptr );
 	auto setattrWrapperName = PyScript::ScriptString( setattrWrapperBase.name_strobj,
@@ -799,13 +663,7 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 	else
 	{
 		assert( classObject.exists() );
-
-		//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
-		//auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
-		//assert( pyClass->cl_setattr == static_cast< setattrofunc >( wrapperBase.function ) );
-		//assert( pyClass->cl_setattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
-		//pyClass->cl_setattro = static_cast< PyObject * >( pyWrapper->d_wrapped );
-	}
+		// TODO old-style class type not supported
 	}
 
 #endif // ENABLE_PYTHON_LISTENER_HOOKS

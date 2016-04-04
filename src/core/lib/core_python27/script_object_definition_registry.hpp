@@ -1,7 +1,5 @@
 #pragma once
 
-#include "listener_hooks.hpp"
-
 #include "core_dependency_system/di_ref.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "i_script_object_definition_registry.hpp"
@@ -78,8 +76,6 @@ private:
 	typedef std::pair< PyScript::ScriptObject, RefObjectId > IdPair;
 	typedef std::vector< IdPair > IdLookup;
 	IdLookup ids_;
-
-	std::shared_ptr< HookListener > hookListener_;
 };
 
 

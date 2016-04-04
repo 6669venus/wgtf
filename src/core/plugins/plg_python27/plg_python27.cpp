@@ -1,13 +1,13 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
 #include "core_python27/defined_instance.hpp"
+#include "core_python27/listener_hooks.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
 #include "core_python27/type_converters/converter_queue.hpp"
 
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
-
 
 /**
  *	Controls initialization and finalization of Python and
@@ -21,6 +21,7 @@ public:
 		: interpreter_( contextManager )
 		, definitionRegistry_( contextManager )
 		, typeConverterQueue_( contextManager )
+		, hookListener_( new ReflectedPython::HookListener() )
 	{
 	}
 
@@ -39,6 +40,18 @@ public:
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
+		// Initialize listener hooks
+		const auto pDefinitionManager = contextManager.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Could not get IDefinitionManager\n" );
+			return;
+		}
+		pDefinitionManager->registerPropertyAccessorListener(
+			std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
+		g_pHookContext = &contextManager;
+		g_listener = hookListener_;
+
 		interpreter_.init();
 		definitionRegistry_.init();
 		typeConverterQueue_.init();
@@ -50,6 +63,20 @@ public:
 		typeConverterQueue_.fini();
 		definitionRegistry_.fini();
 		interpreter_.fini();
+
+		// Finalize listener hooks
+		// All reflected Python objects should have been removed by this point
+		const auto pDefinitionManager = contextManager.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Could not get IDefinitionManager\n" );
+			return false;
+		}
+		pDefinitionManager->deregisterPropertyAccessorListener(
+			std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
+		g_listener.reset();
+		g_pHookContext = nullptr;
+
 		return true;
 	}
 
@@ -68,6 +95,7 @@ private:
 	Python27ScriptingEngine interpreter_;
 	ReflectedPython::ScriptObjectDefinitionRegistry definitionRegistry_;
 	PythonType::ConverterQueue typeConverterQueue_;
+	std::shared_ptr< ReflectedPython::HookListener > hookListener_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

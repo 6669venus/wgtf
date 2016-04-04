@@ -156,7 +156,6 @@ bool PairMatch< PAIR_T >::operator()( const PAIR_T & entry ) const
 ScriptObjectDefinitionRegistry::ScriptObjectDefinitionRegistry( IComponentContext& context )
 	: context_( context )
 	, definitionManager_( context )
-	, hookListener_( new HookListener() )
 {
 }
 
@@ -172,27 +171,14 @@ void ScriptObjectDefinitionRegistry::init()
 
 	definitionHelper_.reset( new ReflectedPython::DefinitionHelper );
 	definitionManager_->registerDefinitionHelper( *definitionHelper_ );
-
-	definitionManager_->registerPropertyAccessorListener(
-		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
 	initDefinitionType();
 
-	g_pHookContext = &context_;
-	g_listener = hookListener_;
 }
 
 
 void ScriptObjectDefinitionRegistry::fini()
 {
-	// All reflected Python objects should have been removed by this point
-	g_listener.reset();
-	g_pHookContext = nullptr;
-
 	assert( definitionManager_ != nullptr );
-
-	definitionManager_->deregisterPropertyAccessorListener(
-		std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
-
 	definitionManager_->deregisterDefinitionHelper( *definitionHelper_ );
 	definitionHelper_.reset();
 }

@@ -369,6 +369,7 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 				hookCountLong,
 				PyScript::ScriptErrorClear() );
 			assert( setSuccess );
+			typeObject.modified();
 
 			return;
 		}
@@ -491,6 +492,7 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 			hookCountLong,
 			PyScript::ScriptErrorClear() );
 		assert( setSuccess );
+		typeObject.modified();
 
 		return;
 	}

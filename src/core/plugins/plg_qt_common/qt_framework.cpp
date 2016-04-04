@@ -359,8 +359,10 @@ std::unique_ptr< IView > QtFramework::createView(
 	const char* customTitle = 0;
 
 	//NOTE(aidan): Setting unique titles for views so ranorex can
-	//                can find them. Right now it takes information
-	//                from the attached model if there is one.
+	//              can find them. It takes information from the 
+	//				attached model if there is one and appends it
+	//				to the title
+
 	if (context.isValid())
 	{
 		ITreeModel* treeModel = context.getBase<ITreeModel>();

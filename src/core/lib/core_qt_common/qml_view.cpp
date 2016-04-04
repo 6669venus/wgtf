@@ -107,7 +107,7 @@ void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message
 		message.toLatin1().constData() );
 }
 
-bool QmlView::load( const QUrl & qUrl )
+bool QmlView::load( const QUrl & qUrl, const char * customTitle )
 {
 	url_ = qUrl;
 
@@ -118,10 +118,10 @@ bool QmlView::load( const QUrl & qUrl )
 	this->setContextProperty( QString( "viewId" ), id_.c_str() );
 	this->setContextProperty( QString( "View" ), QVariant::fromValue( quickView_ ) );
 
-	return doLoad( qUrl );
+	return doLoad( qUrl, customTitle );
 }
 
-bool QmlView::doLoad( const QUrl & url )
+bool QmlView::doLoad( const QUrl & url, const char * customTitle )
 {
 	auto qmlEngine = qmlContext_->engine();
 	qmlEngine->clearComponentCache();
@@ -164,6 +164,14 @@ bool QmlView::doLoad( const QUrl & url )
 	if (titleProperty.isValid())
 	{
 		title_ = titleProperty.toString().toUtf8().data();
+
+		if (customTitle)
+		{
+			title_ += " - ";
+			title_ += customTitle;
+
+			content->setProperty("title", title_.c_str());
+		}
 	}
 
 	if (url_.scheme() == "file")

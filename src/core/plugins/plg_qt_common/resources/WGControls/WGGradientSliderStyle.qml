@@ -20,6 +20,7 @@ WGSliderStyle {
         implicitHeight: __horizontal ? control.height - control.height % 2 : control.width - control.width % 2
         implicitWidth: __horizontal ? control.width - control.width % 2 : control.height - control.height % 2
 
+
         WGTextBoxFrame {
             radius: defaultSpacing.halfRadius
 
@@ -36,20 +37,22 @@ WGSliderStyle {
                 fillMode: Image.Tile
                 anchors.fill: parent
                 anchors.margins: defaultSpacing.standardBorderSize
+
                 z: -1
             }
 
             Loader {
                 objectName: "gradientFrame"
                 id: gradientFrame
-                sourceComponent: control.gradientBars
-                anchors.centerIn: parent
-                smooth: true
+                sourceComponent: control.gradientFrame
 
-                height: parent.width
-                width: parent.height
+                anchors.centerIn: parent
+
+                height: parent.width - 2
+                width: parent.height - 2
 
                 rotation: -90
+
             }
         }
     }

@@ -221,7 +221,20 @@ Control {
     /*! \internal */
     property bool __handleMoving: false
 
+    /*! \internal */
     property real __grabbedValue: 0
+
+    /*! \internal */
+    property real __sliderLength: mouseArea.width
+
+    /*! \internal */
+    property real __clampedLength: __visualMaxPos - __visualMinPos
+
+    /*! \internal */
+    property real __visualMinPos: handleClamp ? __handleWidth / 2 : 0
+
+    /*! \internal */
+    property real __visualMaxPos: handleClamp ? __sliderLength - __handleWidth / 2 : __sliderLength
 
     //Accessible.role: Accessible.Slider
     /*! \internal */
@@ -251,14 +264,6 @@ Control {
         __handlePosList[__activeHandle].range.decreaseSingleStep()
     }
 
-    property real __sliderLength: mouseArea.width
-
-    property real __clampedLength: __visualMaxPos - __visualMinPos
-
-    property real __visualMinPos: handleClamp ? __handleWidth / 2 : 0
-
-    property real __visualMaxPos: handleClamp ? __sliderLength - __handleWidth / 2 : __sliderLength
-
     /*!
         This signal is fired when the bar is double clicked
     */
@@ -287,6 +292,12 @@ Control {
     implicitHeight: defaultSpacing.minimumRowHeight
     implicitWidth: defaultSpacing.standardMargin
 
+    /*!
+        This function creates a new WGSliderHandle object (handle) with value (val) at (index)
+        and automatically adds it to __handlePosList.
+
+        Only the value is actually required.
+    */
     function createHandle(val, handle, index)
     {
         if (typeof handle !== "undefined")
@@ -315,6 +326,21 @@ Control {
         return newHandle
     }
 
+    /*!
+        Removes the handle (index) from __handlePosList and destroys it.
+    */
+    function removeHandle(index) {
+        var handleToRemove = __handlePosList[index]
+        if(__handleCount > 0)
+        {
+            __handlePosList.splice(index,1)
+            __handleCount = __handlePosList.length
+            handleRemoved(index)
+        }
+        handleToRemove.destroy()
+    }
+
+    /*! Internal */
     function addHandle(handle, index) {
         handle.parentSlider = slider
         __handlePosList.splice(index,0,handle)
@@ -322,12 +348,29 @@ Control {
         handleAdded(index)
     }
 
-    function removeHandle(index) {
-        if(__handleCount > 0)
+    function setHandleValue(val, index) {
+        if (typeof index == "undefined")
         {
-            __handlePosList.splice(index,1)
-            __handleCount = __handlePosList.length
-            handleRemoved(index)
+            index = 0
+        }
+        if(index <= __handleCount - 1)
+        {
+            if (val >= __handlePosList[index].minimumValue && val <= __handlePosList[index].maximumValue)
+            {
+                __handlePosList[index].value = val
+                changeValue (val, index)
+                return 1
+            }
+            else
+            {
+                console.log("WARNING WGSlider: Tried to set the value of a handle outside of minimum and maxium value")
+                return -1
+            }
+        }
+        else
+        {
+            console.log("WARNING WGSlider: Tried to change the value of a handle that does not exist")
+            return -1
         }
     }
 

@@ -113,9 +113,8 @@ WGSlider {
         onAccepted: {
             if(currentColorIndex >= 0)
             {
-                colorModified(currentColorIndex, Qt.rgba(colorPicker.color.r,colorPicker.color.g,colorPicker.color.b,colorPicker.color.a))
+                colorModified(Qt.rgba(colorPicker.color.r,colorPicker.color.g,colorPicker.color.b,colorPicker.color.a), currentColorIndex)
                 currentColorIndex = -1
-                //updateColorBars()
             }
         }
 
@@ -125,156 +124,98 @@ WGSlider {
     }
 
     // the repeated column of gradient bars loaded in WGGradientSliderStyle
-    property Component gradientBars: Item {
+    property Component gradientFrame: Item {
         id: gradientFrame
-        /*
-        Connections {
-            target: slider
-            onChangeValue: {
-                canvas.requestPaint()
-            }
-        }
 
-        Canvas {
-            id: canvas
-            property var ctx
-            anchors.fill: parent
+        Repeater {
+            //adds an extra bar at the end that has no corresponding handle
+            model: __handleCount + 1
 
-            onPaint: {
-                ctx = canvas.getContext('2d');
-                var grad = ctx.createLinearGradient(0,0,0,gradientFrame.height);
-                var previousStop = 0
-                var currentStop
-                grad.addColorStop(0, __handlePosList[0].color);
-                for (var i = 0; i < __handleCount; i++)
-                {
-                    //currentStop = ((__handlePosList[i].range.position) / __sliderLength) + (__visualMinPos / __sliderLength)
-                    //currentStop = __handlePosList[i].value
+            Rectangle {
+                id: colorBar
 
-                    currentStop = ((__handlePosList[i].value / maximumValue))
+                width: gradientFrame.width
+                height: maxPos - minPos
+                y: minPos
 
-
-                    if(currentStop == previousStop)
+                gradient: {
+                    if (slider.__handleCount > 0)
                     {
-                        currentStop += 0.000000001
-                    }
-                    /*
-                    if(currentStop == previousStop)
-                    {
-                        if (currentStop <= 1.0)
-                        {
-                            currentStop += 0.001
-                        }
-                        else
-                        {
-                            currentStop = 1.0
-                        }
-                    }
-                    */
-                    /*
-                    grad.addColorStop(currentStop, __handlePosList[i].color);
-                    previousStop = currentStop;
-                }
-                grad.addColorStop(1.0, __handlePosList[__handlePosList.length - 1].color);
-                ctx.fillStyle = grad;
-                ctx.fillRect(0,0,gradientFrame.width,gradientFrame.height)
-            }
-        }
-        */
-
-        Item {
-        id: gradientBars
-        anchors.fill: parent
-            Repeater {
-                //adds an extra bar at the end that has no corresponding handle
-                model: __handleCount + 1
-
-                Rectangle {
-                    id: colorBar
-
-                    width: gradientBars.width
-                    height: maxPos - minPos
-                    y: minPos
-
-                    gradient: {
-                        if (slider.__handleCount > 0)
-                        {
-                            if (index == slider.__handleCount)
-                            {
-                                //if it's the last bar, just uses a solid color
-                                colorBar.color = slider.__handlePosList[index - 1].color
-                                return null
-                            }
-                            else
-                            {
-                                slider.__handlePosList[index].gradient
-                            }
-                        }
-                    }
-
-                    property real minPos: {
-                        if (index == 0)
-                        {
-                            0
-                        }
-                        else
-                        {
-                            slider.__handlePosList[index - 1].range.position
-                        }
-                    }
-
-                    property real maxPos: {
                         if (index == slider.__handleCount)
                         {
-                            gradientBars.height
+                            //if it's the last bar, just uses a solid color
+                            colorBar.color = slider.__handlePosList[index - 1].color
+                            return null
                         }
                         else
                         {
-                            slider.__handlePosList[index].range.position
+                            slider.__handlePosList[index].gradient
                         }
                     }
+                }
 
-                    // Mouse area for adding new handles
-                    MouseArea
+                property real minPos: {
+                    if (index == 0)
                     {
-                        anchors.fill: parent
-                        propagateComposedEvents: true
+                        0
+                    }
+                    else
+                    {
+                        slider.__handlePosList[index - 1].range.position
+                    }
+                }
 
-                        // Workaround for crash during Shift+Click, this colorBar may no longer be associated with the parent
-                        // Without this when the event is propagated an attempt to access the null window crashes the application
-                        onPressAndHold: { mouse.accepted = true}
+                property real maxPos: {
+                    if (index == slider.__handleCount)
+                    {
+                        gradientFrame.height
+                    }
+                    else
+                    {
+                        slider.__handlePosList[index].range.position
+                    }
+                }
 
-                        onPressed: {
-                            //adds handles when bar is Shift Clicked
-                            if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && slider.addDeleteHandles)
+                // Mouse area for adding new handles
+                MouseArea
+                {
+                    anchors.fill: parent
+                    propagateComposedEvents: true
+
+                    // Workaround for crash during Shift+Click, this colorBar may no longer be associated with the parent
+                    // Without this when the event is propagated an attempt to access the null window crashes the application
+                    onPressAndHold: { mouse.accepted = true}
+
+                    onPressed: {
+                        //adds handles when bar is Shift Clicked
+                        if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && slider.addDeleteHandles)
+                        {
+                            //get the position of the mouse inside the entire slider
+                            var barPoint = mouseY / colorBar.height
+                            if (index == slider.__handleCount)
                             {
-                                //get the position of the mouse inside the entire slider
-                                var barPoint = mouseY / colorBar.height
-                                if (index == slider.__handleCount)
-                                {
-                                    var newColor = slider.__handlePosList[index - 1].color
-                                }
-                                else
-                                {
-                                    var newColor = slider.__handlePosList[index].getInternalColor(barPoint)
-                                }
-                                var mousePos = mapToItem(gradientBars, mouseX, mouseY)
-                                var newPos = mousePos.y / (gradientBars.height / (slider.maximumValue - slider.minimumValue))
-
-                                slider.createColorHandle(newPos, slider.handleType, index, newColor)
-                            }
-                            else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.sliderModifier) && slider.addDeleteHandles)
-                            {
-                                mouse.accepted = false
+                                var newColor = slider.__handlePosList[index - 1].color
                             }
                             else
                             {
-                                mouse.accepted = false
+                                var newColor = slider.__handlePosList[index].getInternalColor(barPoint)
                             }
+                            var mousePos = mapToItem(gradientFrame, mouseX, mouseY)
+                            var newPos = mousePos.y / (gradientFrame.height / (slider.maximumValue - slider.minimumValue))
+
+                            slider.createColorHandle(newPos, slider.handleType, index, newColor)
                         }
-                        onReleased: {
-                            slider.__draggable = true
+                        else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.sliderModifier) && slider.addDeleteHandles)
+                        {
+                            mouse.accepted = false
                         }
+                        else
+                        {
+                            mouse.accepted = false
+                        }
+                    }
+                    onReleased: {
+                        slider.__draggable = true
                     }
                 }
             }
@@ -282,10 +223,9 @@ WGSlider {
     }
 
     /*!
-        This signal is fired when a point's color is changed via the color picker
-
+        This signal is fired when a point's color is changed
     */
-    signal colorModified(int index, color col)
+    signal colorModified(color col, int index)
 
     /*!
         creates a new color handle with value (val), handleType (handle), color (col) and gradient (grad)
@@ -341,7 +281,7 @@ WGSlider {
 
         TODO: Fix odd color bars be created with non-linear gradients and Shift+Click
     */
-    function updateGradient(index, grad)
+    function setHandleGradient(index, grad)
     {
         if (typeof grad != "undefined")
         {
@@ -351,6 +291,27 @@ WGSlider {
         {
             __handlePosList[index].gradient.stops[0].color = __handlePosList[index].minColor
             __handlePosList[index].gradient.stops[1].color = __handlePosList[index].color
+        }
+    }
+
+    /*!
+        Changes the color (col) of handle (index).
+    */
+    function setHandleColor(col, index)
+    {
+        if (typeof index != "undefined")
+        {
+            index = 0
+        }
+        if(index <= __handleCount - 1)
+        {
+            colorModified(col, index)
+            return 1
+        }
+        else
+        {
+            console.log("WARNING WGGradientSlider: Tried to change the color of a handle that does not exist")
+            return -1
         }
     }
 

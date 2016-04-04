@@ -193,18 +193,19 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 	// Check if definition is attached to object
 	// Rather than searching through list
 	{
-		PyScript::ScriptType definitionTypeType( &Definition_Type,
+		PyScript::ScriptType definitionType( &Definition_Type,
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 		auto definitionObject = object.getAttribute( g_reflectionDefinition,
 			PyScript::ScriptErrorClear() );
 		if (definitionObject.exists())
 		{
-			const auto typeMatches = definitionTypeType.isObjectOfType( definitionObject );
-			//assert( typeMatches );
+			const auto typeMatches = definitionType.isObjectOfType( definitionObject );
+			assert( typeMatches );
 			if (typeMatches)
 			{
-				auto definitionType = (PyDefinitionObject*) definitionObject.get();
+				auto definitionType =
+					reinterpret_cast< PyDefinitionObject * >( definitionObject.get() );
 				auto pointer = definitionType->definition_.lock();
 				if (pointer != nullptr)
 				{
@@ -212,11 +213,12 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 				}
 				else
 				{
-					std::string definitionName = ReflectedPython::DefinitionDetails::generateName( object );
+					std::string definitionName =
+						ReflectedPython::DefinitionDetails::generateName( object );
 					assert( !definitionName.empty() );
 
 					auto definition = definitionManager_->getDefinition( definitionName.c_str() );
-					//assert( definition != nullptr );
+					assert( definition != nullptr );
 					if (definition != nullptr)
 					{
 						definitionManager_->deregisterDefinition( definition );
@@ -226,6 +228,8 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 		}
 
 		// Check if object can be modified
+		// Also setting the attribute to None helps detect re-entry to
+		// findDefinition() by listener hooks
 		const auto canSet = definitionObject.exists() ||
 			object.setAttribute( g_reflectionDefinition,
 				PyScript::ScriptObject::none(),
@@ -233,6 +237,7 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 		// Do not attach to type objects
 		// because getAttribute will find the Class.__reflectionDefinition
 		// before the instance.__reflectionDefinition
+		// TODO find a way to fix this so that lookup can be removed
 		const auto isType = PyScript::ScriptType::check( object );
 		const auto isClass = PyScript::ScriptClass::check( object );
 		if (canSet && !isType && !isClass)
@@ -245,7 +250,7 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 				ScriptObjectDefinitionDeleter( object, *this ) );
 
 			definitionObject = PyScript::ScriptObject(
-				definitionTypeType.genericAlloc( PyScript::ScriptErrorPrint() ),
+				definitionType.genericAlloc( PyScript::ScriptErrorPrint() ),
 				PyScript::ScriptObject::FROM_NEW_REFERENCE );
 			auto definitionType =
 				reinterpret_cast< PyDefinitionObject * >( definitionObject.get() );
@@ -262,6 +267,7 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 		{
 			object.delAttribute( g_reflectionDefinition,
 				PyScript::ScriptErrorClear() );
+			assert( !object.hasAttribute( g_reflectionDefinition ) );
 		}
 	}
 
@@ -306,21 +312,27 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findDefiniti
 {
 	assert( object.exists() );
 
-
-	PyScript::ScriptType definitionTypeType( &Definition_Type,
+	PyScript::ScriptType definitionType( &Definition_Type,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 	auto definitionObject = object.getAttribute( g_reflectionDefinition,
 		PyScript::ScriptErrorClear() );
 	if (definitionObject.exists())
 	{
-		const auto typeMatches = definitionTypeType.isObjectOfType( definitionObject );
-		//assert( typeMatches );
+		const auto typeMatches = definitionType.isObjectOfType( definitionObject );
 		if (typeMatches)
 		{
 			auto definitionType = 
 				reinterpret_cast< PyDefinitionObject * >( definitionObject.get() );
 			return definitionType->definition_.lock();
+		}
+		else
+		{
+			// This can happen during findOrCreateDefinition()
+			// If listener hooks are enabled
+			// In which case definitionType will be None
+			assert( definitionObject.isNone() );
+			return nullptr;
 		}
 	}
 
@@ -345,22 +357,22 @@ void ScriptObjectDefinitionRegistry::removeDefinition(
 	{
 		auto definitionObject = object.getAttribute( g_reflectionDefinition,
 			PyScript::ScriptErrorClear() );
-		const auto deleted = object.delAttribute( g_reflectionDefinition,
-			PyScript::ScriptErrorClear() );
-		if (definitionObject.exists() && deleted)
+		if (definitionObject.exists())
 		{
+			const auto deleted = object.delAttribute( g_reflectionDefinition,
+				PyScript::ScriptErrorClear() );
+			assert( deleted );
+			if (!deleted)
+			{
+				const auto nullified = object.setAttribute( g_reflectionDefinition,
+					PyScript::ScriptObject::none(),
+					PyScript::ScriptErrorClear() );
+				assert( nullified );
+			}
+
 			assert( definitionManager_ != nullptr );
 			const bool deregistered = definitionManager_->deregisterDefinition( definition );
 			assert( deregistered );
-
-			//assert( deleted );
-			//if (!deleted)
-			//{
-			//	const auto nullified = object.setAttribute( g_reflectionDefinition,
-			//		PyScript::ScriptObject::none(),
-			//		PyScript::ScriptErrorClear() );
-			//	assert( nullified );
-			//}
 			return;
 		}
 	}
@@ -396,15 +408,15 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 	assert( object.exists() );
 
 	{
-		PyScript::ScriptType definitionTypeType( &Definition_Type,
+		PyScript::ScriptType definitionType( &Definition_Type,
 			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 		auto definitionObject = object.getAttribute( g_reflectionDefinition,
 			PyScript::ScriptErrorClear() );
 		if (definitionObject.exists())
 		{
-			const auto typeMatches = definitionTypeType.isObjectOfType( definitionObject );
-			//assert( typeMatches );
+			const auto typeMatches = definitionType.isObjectOfType( definitionObject );
+			assert( typeMatches );
 			if (typeMatches)
 			{
 				auto definitionType = 

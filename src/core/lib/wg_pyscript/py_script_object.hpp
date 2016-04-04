@@ -966,8 +966,6 @@ public:
 	 */
 	ScriptDict getDict() const
 	{
-		// From python documentation:
-		// "This function never fails."
 		return ScriptDict( reinterpret_cast< PyTypeObject * >( this->get() )->tp_dict,
 			ScriptObject::FROM_BORROWED_REFERENCE );
 	}
@@ -1673,6 +1671,18 @@ public:
 		PyObject * pClass = PyClass_New( bases.get(), dict.get(), name.get() );
 		errorHandler.checkPtrError( pClass );
 		return ScriptClass( pClass, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+
+	/**
+	 *	This method gets the dict from a type.
+	 *
+	 *	@returns		The dict for the given type.
+	 */
+	ScriptDict getDict() const
+	{
+		return ScriptDict( reinterpret_cast< PyClassObject * >( this->get() )->cl_dict,
+			ScriptObject::FROM_BORROWED_REFERENCE );
 	}
 };
 

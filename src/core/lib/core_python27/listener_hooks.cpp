@@ -184,6 +184,47 @@ static PyObject * wrap_setattr( PyObject * self, PyObject * args, void * wrapped
 
 /**
  *	Copied from typeobject.c.
+ */
+static int
+check_num_args(PyObject *ob, int n)
+{
+	if (!PyTuple_CheckExact(ob)) {
+		PyErr_SetString(PyExc_SystemError,
+			"PyArg_UnpackTuple() argument list is not a tuple");
+		return 0;
+	}
+	if (n == PyTuple_GET_SIZE(ob))
+		return 1;
+	PyErr_Format(
+		PyExc_TypeError,
+		"expected %d arguments, got %zd", n, PyTuple_GET_SIZE(ob));
+	return 0;
+}
+
+
+/**
+ *	Copied from typeobject.c.
+ *	TODO notify listeners of add/remove
+ */
+static PyObject * wrap_delattr(PyObject *self, PyObject *args, void *wrapped)
+{
+	setattrofunc func = (setattrofunc)wrapped;
+	int res;
+	PyObject *name;
+
+	if (!check_num_args(args, 1))
+		return NULL;
+	name = PyTuple_GET_ITEM(args, 0);
+	res = (*func)(self, name, NULL);
+	if (res < 0)
+		return NULL;
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+
+/**
+ *	Copied from typeobject.c.
  *	Calls a method on a *class/type*, but binds to the *instance*.
  *	E.g. looks up a method like Class.method()
  *	but then it binds to the instance:
@@ -253,7 +294,7 @@ slot_tp_setattro(PyObject *self, PyObject *name, PyObject *value)
  *	Based on slotdefs from typeobject.c.
  *	TODO not sure what function does.
  */
-static wrapperbase g_wrappers[] =
+static wrapperbase g_setattrWrappers[] =
 {
 	{
 		"__setattr__", // name of wrapper
@@ -261,6 +302,21 @@ static wrapperbase g_wrappers[] =
 		slot_tp_setattro, // function
 		wrap_setattr, // wrapper for function
 		PyDoc_STR( "x.__setattr__('name', value) <==> x.name = value" ), // doc for wrapper
+		0, // flags
+		nullptr // name_strobj
+	},
+	{ nullptr } // Sentinel
+};
+
+
+static wrapperbase g_delattrWrappers[] =
+{
+	{
+		"__delattr__", // name of wrapper
+		offsetof( PyTypeObject, tp_setattro ), // offset to tp_setattro slot
+		slot_tp_setattro, // function
+		wrap_delattr, // wrapper for function
+		PyDoc_STR( "x.__delattr__('name') <==> del x.name" ), // doc for wrapper
 		0, // flags
 		nullptr // name_strobj
 	},
@@ -306,31 +362,48 @@ bool HookListener::entered() const
 }
 
 
+void getType( PyScript::ScriptObject & pythonObject,
+	PyScript::ScriptClass & outClassObject,
+	PyScript::ScriptType & outTypeObject,
+	PyScript::ScriptDict & outTypeDict )
+{
+	if (PyScript::ScriptType::check( pythonObject ))
+	{
+		// Object is already a *type*
+		outTypeObject = PyScript::ScriptType::create( pythonObject );
+		outTypeDict = outTypeObject.getDict();
+	}
+	else if (PyScript::ScriptClass::check( pythonObject ))
+	{
+		// Object is already a *type*
+		outClassObject = PyScript::ScriptClass::create( pythonObject );
+		outTypeDict = outClassObject.getDict();
+	}
+	else
+	{
+		// Get type of object
+		outTypeObject = PyScript::ScriptType::getType( pythonObject );
+		outTypeDict = outTypeObject.getDict();
+	}
+	assert( outTypeDict.exists() );
+}
+
+
 void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 {
 #if ENABLE_PYTHON_LISTENER_HOOKS
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects
+	PyScript::ScriptClass classObject;
 	PyScript::ScriptType typeObject;
-	if (PyScript::ScriptType::check( pythonObject ))
+	PyScript::ScriptDict dict;
+	getType( pythonObject, classObject, typeObject, dict );
+	if (classObject.exists())
 	{
-		// Object is already a *type*
-		typeObject = PyScript::ScriptType::create( pythonObject );
-	}
-	else if (PyScript::ScriptClass::check( pythonObject ))
-	{
-		// Object is already a *type*
 		// TODO not supported
 		return;
 	}
-	else
-	{
-		// Get type of object
-		typeObject = PyScript::ScriptType::getType( pythonObject );
-	}
-	assert( typeObject.exists() );
-	auto typeDict = typeObject.getDict();
 
 	// Do this first time
 	if (!g_pyHookCountName.exists())
@@ -351,7 +424,7 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	// We use they type's dict rather than typeObject.get/setAttribute()
 	// because often types do not permit modification
 	// but we need to attach this data somehow
-	auto hookCountObject = typeDict.getItem( g_pyHookCountName,
+	auto hookCountObject = dict.getItem( g_pyHookCountName,
 		PyScript::ScriptErrorClear() );
 	if (hookCountObject.exists())
 	{
@@ -366,11 +439,14 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 			hookCountLong = PyScript::ScriptLong::create( hookCount );
 			assert( hookCountLong.exists() );
 			assert( hookCountLong.asLong() > 0 );
-			const auto setSuccess = typeDict.setItem( g_pyHookCountName,
+			const auto setSuccess = dict.setItem( g_pyHookCountName,
 				hookCountLong,
 				PyScript::ScriptErrorClear() );
 			assert( setSuccess );
-			typeObject.modified();
+			if (typeObject.exists())
+			{
+				typeObject.modified();
+			}
 
 			return;
 		}
@@ -381,51 +457,154 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	auto hookCountLong = PyScript::ScriptLong::create( hookCount );
 	assert( hookCountLong.exists() );
 	assert( hookCountLong.asLong() > 0 );
-	const auto setSuccess1 = typeDict.setItem( g_pyHookCountName,
+	const auto setSuccess1 = dict.setItem( g_pyHookCountName,
 		hookCountLong,
 		PyScript::ScriptErrorClear() );
 	assert( setSuccess1 );
 
 	// -- From typeobject.c add_operators
-	auto & wrapperBase = g_wrappers[ 0 ];
-	if (wrapperBase.name_strobj == nullptr)
+	auto & setattrWrapperBase = g_setattrWrappers[ 0 ];
+	if (setattrWrapperBase.name_strobj == nullptr)
 	{
-		wrapperBase.name_strobj = PyString_InternFromString( wrapperBase.name );
-		assert( wrapperBase.name_strobj && "Out of memory interning listener hook names" );
+		setattrWrapperBase.name_strobj = PyString_InternFromString( setattrWrapperBase.name );
+		assert( setattrWrapperBase.name_strobj && "Out of memory interning listener hook names" );
 	}
 
-	auto wrapperName = PyScript::ScriptString( wrapperBase.name_strobj,
+	auto & delattrWrapperBase = g_delattrWrappers[ 0 ];
+	if (delattrWrapperBase.name_strobj == nullptr)
+	{
+		delattrWrapperBase.name_strobj = PyString_InternFromString( delattrWrapperBase.name );
+		assert( delattrWrapperBase.name_strobj && "Out of memory interning listener hook names" );
+	}
+
+	auto setattrWrapperName = PyScript::ScriptString( setattrWrapperBase.name_strobj,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-	// Attach hook
-	auto originalSetattr = typeDict.getItem( wrapperName,
+	{
+	// Attach setattr hook
+	auto originalSetattr = dict.getItem( setattrWrapperName,
 		PyScript::ScriptErrorClear() );
 	if (originalSetattr != nullptr)
 	{
 		assert( g_pyOriginalSetattrName.exists() );
-		const auto setSuccess2 = typeDict.setItem( g_pyOriginalSetattrName,
+		const auto setSuccess2 = dict.setItem( g_pyOriginalSetattrName,
 			originalSetattr,
 			PyScript::ScriptErrorClear() );
 		assert( setSuccess2 );
 	}
 
-	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
-	assert( pyType->tp_setattro != static_cast< setattrofunc >( wrapperBase.function ) );
-	void * pFunctionToBeWrapped = pyType->tp_setattro;
-	auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
-		wrapperBase,
-		pFunctionToBeWrapped );
-	assert( wrapperObject.exists() );
-	const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
-		wrapperObject,
-		PyScript::ScriptErrorClear() );
-	assert( setSuccess3 );
+	if (typeObject.exists())
+	{
+		auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
+		void * pFunctionToBeWrapped = pyType->tp_setattro;
 
-	// -- From typeobject.c update_one_slot
-	pyType->tp_setattro = static_cast< setattrofunc >( wrapperBase.function );
-	assert( pyType->tp_setattro != static_cast< setattrofunc >( pFunctionToBeWrapped ) );
+		// setattr
+		assert( pyType->tp_setattro != static_cast< setattrofunc >( setattrWrapperBase.function ) );
+		auto setattrWrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
+			setattrWrapperBase,
+			pFunctionToBeWrapped );
+		assert( setattrWrapperObject.exists() );
+		const auto setSuccess3 = dict.setItem( setattrWrapperObject.name(),
+			setattrWrapperObject,
+			PyScript::ScriptErrorClear() );
+		assert( setSuccess3 );
 
-	typeObject.modified();
+		// delattr
+		assert( setattrWrapperBase.function == delattrWrapperBase.function );
+		auto delattrWrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
+			delattrWrapperBase,
+			pFunctionToBeWrapped );
+		assert( delattrWrapperObject.exists() );
+		const auto setSuccess4 = dict.setItem( delattrWrapperObject.name(),
+			delattrWrapperObject,
+			PyScript::ScriptErrorClear() );
+		assert( setSuccess4 );
+
+		// -- From typeobject.c update_one_slot
+		pyType->tp_setattro = static_cast< setattrofunc >( setattrWrapperBase.function );
+		assert( pyType->tp_setattro != static_cast< setattrofunc >( pFunctionToBeWrapped ) );
+
+		typeObject.modified();
+	}
+	else
+	{
+		assert( classObject.exists() );
+
+		//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
+		//assert( pyClass->cl_setattr != static_cast< setattrofunc >( wrapperBase.function ) );
+		//PyObject * pFunctionToBeWrapped = pyClass->cl_setattr;
+		//auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
+		//	wrapperBase,
+		//	pFunctionToBeWrapped );
+		//assert( wrapperObject.exists() );
+		//const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
+		//	wrapperObject,
+		//	PyScript::ScriptErrorClear() );
+		//assert( setSuccess3 );
+
+		//// -- From typeobject.c update_one_slot
+		//pyClass->cl_setattr = static_cast< PyObject * >( wrapperBase.function );
+		//assert( pyClass->cl_setattr != static_cast< PyObject * >( pFunctionToBeWrapped ) );
+	}
+	}
+
+	//{
+	//auto delattrWrapperName = PyScript::ScriptString( delattrWrapperBase.name_strobj,
+	//	PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+	//// Attach delattr hook
+	//auto originalDelattr = dict.getItem( delattrWrapperName,
+	//	PyScript::ScriptErrorClear() );
+	//if (originalDelattr != nullptr)
+	//{
+	//	assert( g_pyOriginalSetattrName.exists() );
+	//	const auto setSuccess2 = dict.setItem( g_pyOriginalSetattrName,
+	//		originalDelattr,
+	//		PyScript::ScriptErrorClear() );
+	//	assert( setSuccess2 );
+	//}
+
+	//if (typeObject.exists())
+	//{
+	//	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
+	//	//assert( pyType->tp_setattro != static_cast< setattrofunc >( delattrWrapperBase.function ) );
+	//	void * pFunctionToBeWrapped = pyType->tp_setattro;
+	//	auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
+	//		delattrWrapperBase,
+	//		pFunctionToBeWrapped );
+	//	assert( wrapperObject.exists() );
+	//	const auto setSuccess3 = dict.setItem( wrapperObject.name(),
+	//		wrapperObject,
+	//		PyScript::ScriptErrorClear() );
+	//	assert( setSuccess3 );
+
+	//	// -- From typeobject.c update_one_slot
+	//	pyType->tp_setattro = static_cast< setattrofunc >( delattrWrapperBase.function );
+	//	//assert( pyType->tp_setattro != static_cast< setattrofunc >( pFunctionToBeWrapped ) );
+
+	//	typeObject.modified();
+	//}
+	//else
+	//{
+	//	assert( classObject.exists() );
+
+	//	//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
+	//	//assert( pyClass->cl_delattr != static_cast< setattrofunc >( wrapperBase.function ) );
+	//	//PyObject * pFunctionToBeWrapped = pyClass->cl_delattr;
+	//	//auto wrapperObject = PyScript::ScriptDescrWrapper::create( typeObject,
+	//	//	wrapperBase,
+	//	//	pFunctionToBeWrapped );
+	//	//assert( wrapperObject.exists() );
+	//	//const auto setSuccess3 = typeDict.setItem( wrapperObject.name(),
+	//	//	wrapperObject,
+	//	//	PyScript::ScriptErrorClear() );
+	//	//assert( setSuccess3 );
+
+	//	//// -- From typeobject.c update_one_slot
+	//	//pyClass->cl_delattr = static_cast< PyObject * >( wrapperBase.function );
+	//	//assert( pyClass->cl_delattr != static_cast< PyObject * >( pFunctionToBeWrapped ) );
+	//}
+	//}
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 
@@ -443,26 +622,17 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 	// __setattr__ hooks are added to the Python *type*, not the *instance*
 	// So we must count how many reflected Python objects are using the type
 	// Add an attribute to the object to track the number of reflected Python objects
+	PyScript::ScriptClass classObject;
 	PyScript::ScriptType typeObject;
-	if (PyScript::ScriptType::check( pythonObject ))
+	PyScript::ScriptDict dict;
+	getType( pythonObject, classObject, typeObject, dict );
+	if (classObject.exists())
 	{
-		// Object is already a *type*
-		typeObject = PyScript::ScriptType::create( pythonObject );
-	}
-	else if (PyScript::ScriptClass::check( pythonObject ))
-	{
-		// Object is already a *type*
 		// TODO not supported
 		return;
 	}
-	else
-	{
-		// Get type of object
-		typeObject = PyScript::ScriptType::getType( pythonObject );
-	}
-	auto typeDict = typeObject.getDict();
 
-	auto hookCountObject = typeDict.getItem( g_pyHookCountName,
+	auto hookCountObject = dict.getItem( g_pyHookCountName,
 		PyScript::ScriptErrorClear() );
 	if (!hookCountObject.exists())
 	{
@@ -490,57 +660,154 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 		hookCountLong = PyScript::ScriptLong::create( hookCount );
 		assert( hookCountLong.exists() );
 		assert( hookCountLong.asLong() > 0 );
-		const auto setSuccess = typeDict.setItem( g_pyHookCountName,
+		const auto setSuccess = dict.setItem( g_pyHookCountName,
 			hookCountLong,
 			PyScript::ScriptErrorClear() );
 		assert( setSuccess );
-		typeObject.modified();
 
+		if (typeObject.exists())
+		{
+			typeObject.modified();
+		}
 		return;
 	}
 
-	auto & wrapperBase = g_wrappers[ 0 ];
-	assert( wrapperBase.name_strobj != nullptr );
-	auto wrapperName = PyScript::ScriptString( wrapperBase.name_strobj,
+	//{
+	//auto & delattrWrapperBase = g_delattrWrappers[ 0 ];
+	//assert( delattrWrapperBase.name_strobj != nullptr );
+	//auto wrapperName = PyScript::ScriptString( delattrWrapperBase.name_strobj,
+	//	PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+	//assert( g_pyOriginalSetattrName.exists() );
+	//const auto originalSetattr = dict.getItem( g_pyOriginalSetattrName,
+	//	PyScript::ScriptErrorClear() );
+
+	//const auto wrapperObject = dict.getItem( wrapperName,
+	//	PyScript::ScriptErrorClear() );
+
+	//if (originalSetattr.exists())
+	//{
+	//	const auto setSuccess = dict.setItem( wrapperName,
+	//		originalSetattr,
+	//		PyScript::ScriptErrorClear() );
+	//	assert( setSuccess );
+
+	//	const auto removeSuccess = dict.delItem( g_pyOriginalSetattrName,
+	//		PyScript::ScriptErrorClear() );
+	//	assert( removeSuccess );
+	//}
+	//else
+	//{
+	//	const auto removeSuccess = dict.delItem( wrapperName,
+	//		PyScript::ScriptErrorClear() );
+	//	assert( removeSuccess );
+	//}
+
+	//// Restore old delattr
+	//if (typeObject.exists())
+	//{
+	//	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
+	//	auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
+
+	//	assert( g_pyHookCountName.exists() );
+	//	const auto removeSuccess = dict.setItem( g_pyHookCountName,
+	//		pyWrapper->d_wrapped,
+	//		PyScript::ScriptErrorClear() );
+	//	assert( removeSuccess );
+
+	//	assert( pyType->tp_setattro == static_cast< setattrofunc >( delattrWrapperBase.function ) );
+	//	//assert( pyType->tp_setattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
+	//	pyType->tp_setattro = static_cast< setattrofunc >( pyWrapper->d_wrapped );
+
+	//	typeObject.modified();
+	//}
+	//else
+	//{
+	//	assert( classObject.exists() );
+
+	//	//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
+	//	//auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
+	//	//assert( pyClass->cl_delattr == static_cast< setattrofunc >( wrapperBase.function ) );
+	//	//assert( pyClass->cl_delattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
+	//	//pyClass->cl_delattro = static_cast< PyObject * >( pyWrapper->d_wrapped );
+	//}
+	//}
+	{
+	auto & setattrWrapperBase = g_setattrWrappers[ 0 ];
+	assert( setattrWrapperBase.name_strobj != nullptr );
+	auto setattrWrapperName = PyScript::ScriptString( setattrWrapperBase.name_strobj,
+		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+
+	auto & delattrWrapperBase = g_delattrWrappers[ 0 ];
+	assert( delattrWrapperBase.name_strobj != nullptr );
+	auto delattrWrapperName = PyScript::ScriptString( delattrWrapperBase.name_strobj,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
 	assert( g_pyOriginalSetattrName.exists() );
-	const auto originalSetattr = typeDict.getItem( g_pyOriginalSetattrName,
+	const auto originalSetattr = dict.getItem( g_pyOriginalSetattrName,
 		PyScript::ScriptErrorClear() );
 
-	const auto wrapperObject = typeDict.getItem( wrapperName,
+	const auto setattrWrapperObject = dict.getItem( setattrWrapperName,
+		PyScript::ScriptErrorClear() );
+
+	const auto delattrWrapperObject = dict.getItem( delattrWrapperName,
 		PyScript::ScriptErrorClear() );
 
 	if (originalSetattr.exists())
 	{
-		const auto setSuccess = typeDict.setItem( wrapperName,
+		const auto setSuccess1 = dict.setItem( setattrWrapperName,
 			originalSetattr,
 			PyScript::ScriptErrorClear() );
-		assert( setSuccess );
+		assert( setSuccess1 );
 
-		const auto removeSuccess = typeDict.delItem( g_pyOriginalSetattrName,
+		const auto setSuccess2 = dict.setItem( delattrWrapperName,
+			originalSetattr,
+			PyScript::ScriptErrorClear() );
+		assert( setSuccess2 );
+
+		const auto removeSuccess = dict.delItem( g_pyOriginalSetattrName,
 			PyScript::ScriptErrorClear() );
 		assert( removeSuccess );
 	}
 	else
 	{
-		const auto removeSuccess = typeDict.delItem( wrapperName,
+		const auto removeSuccess1 = dict.delItem( setattrWrapperName,
 			PyScript::ScriptErrorClear() );
-		assert( removeSuccess );
+		assert( removeSuccess1 );
+
+		const auto removeSuccess2 = dict.delItem( delattrWrapperName,
+			PyScript::ScriptErrorClear() );
+		assert( removeSuccess2 );
 	}
 
 	assert( g_pyHookCountName.exists() );
-	const auto removeSuccess = typeDict.delItem( g_pyHookCountName,
+	const auto removeSuccess = dict.delItem( g_pyHookCountName,
 		PyScript::ScriptErrorClear() );
 	assert( removeSuccess );
 
 	// Restore old setattr
-	auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
-	auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
-	assert( pyType->tp_setattro == static_cast< setattrofunc >( wrapperBase.function ) );
-	assert( pyType->tp_setattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
-	pyType->tp_setattro = static_cast< setattrofunc >( pyWrapper->d_wrapped );
-	typeObject.modified();
+	if (typeObject.exists())
+	{
+		auto pyType = reinterpret_cast< PyTypeObject * >( typeObject.get() );
+		auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( setattrWrapperObject.get() );
+		assert( pyType->tp_setattro == static_cast< setattrofunc >( setattrWrapperBase.function ) );
+		assert( pyType->tp_setattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
+		pyType->tp_setattro = static_cast< setattrofunc >( pyWrapper->d_wrapped );
+
+		typeObject.modified();
+	}
+	else
+	{
+		assert( classObject.exists() );
+
+		//auto pyClass = reinterpret_cast< PyClassObject * >( classObject.get() );
+		//auto pyWrapper = reinterpret_cast< PyWrapperDescrObject * >( wrapperObject.get() );
+		//assert( pyClass->cl_setattr == static_cast< setattrofunc >( wrapperBase.function ) );
+		//assert( pyClass->cl_setattro != static_cast< setattrofunc >( pyWrapper->d_wrapped ) );
+		//pyClass->cl_setattro = static_cast< PyObject * >( pyWrapper->d_wrapped );
+	}
+	}
+
 #endif // ENABLE_PYTHON_LISTENER_HOOKS
 }
 

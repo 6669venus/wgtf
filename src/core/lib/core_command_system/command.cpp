@@ -59,7 +59,7 @@ void Command::fireProgressMade( const CommandInstance & command ) const
 	}
 }
 
-void Command::fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const
+void Command::fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const
 {
     EventListenerCollection::const_iterator it =
         eventListenerCollection_.begin();
@@ -67,7 +67,7 @@ void Command::fireCommandExecuted(const CommandInstance & command, bool isRedoDi
         eventListenerCollection_.end();
     for (; it != itEnd; ++it)
     {
-        (*it)->commandExecuted(command, isRedoDirection);
+        (*it)->commandExecuted(command, operation);
     }
 }
 

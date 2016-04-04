@@ -163,7 +163,7 @@ void CommandInstance::undo()
 {
     const Command * command = getCommand();
 	command->undo( getArguments() );
-    command->fireCommandExecuted(*this, false);
+    command->fireCommandExecuted(*this, CommandOperation::UNDO);
 }
 
 
@@ -172,7 +172,7 @@ void CommandInstance::redo()
 {
     const Command * command = getCommand();
 	command->redo( getArguments() );
-    command->fireCommandExecuted(*this, true);
+    command->fireCommandExecuted(*this, CommandOperation::REDO);
 }
 
 
@@ -181,7 +181,7 @@ void CommandInstance::execute()
 {
     const Command * command = getCommand();
 	returnValue_ = command->execute( arguments_ );
-    command->fireCommandExecuted(*this, true);
+    command->fireCommandExecuted(*this, CommandOperation::EXECUTE);
 	auto errorCode = returnValue_.getBase<CommandErrorCode>();
 	if (errorCode != nullptr)
 	{

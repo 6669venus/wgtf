@@ -56,7 +56,7 @@ public:
 	void deregisterCommandStatusListener( ICommandEventListener * listener ) override;
 	void fireCommandStatusChanged( const CommandInstance & command ) const override;
 	void fireProgressMade( const CommandInstance & command ) const override;
-    void fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const override;
+    void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const override;
 	void undo() override;
 	void redo() override;
 	bool canUndo() const override;
@@ -124,9 +124,9 @@ private:
 		commandSystemProvider_->fireProgressMade( commandInstance );
 	}
 
-    void commandExecuted(const CommandInstance & commandInstance, bool isRedoDirection) override
+    void commandExecuted(const CommandInstance & commandInstance, CommandOperation operation) override
     {
-        commandSystemProvider_->fireCommandExecuted(commandInstance, isRedoDirection);
+        commandSystemProvider_->fireCommandExecuted(commandInstance, operation);
     }
 };
 

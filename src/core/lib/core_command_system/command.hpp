@@ -61,7 +61,7 @@ public:
 
 	virtual void fireCommandStatusChanged( const CommandInstance & command ) const;
 	virtual void fireProgressMade( const CommandInstance & command ) const;
-    virtual void fireCommandExecuted( const CommandInstance & command, bool isRedoDirection ) const;
+    virtual void fireCommandExecuted( const CommandInstance & command, CommandOperation operation) const;
 
 private:
 	typedef std::list< ICommandEventListener * > EventListenerCollection;

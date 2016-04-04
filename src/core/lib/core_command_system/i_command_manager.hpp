@@ -42,7 +42,7 @@ public:
 	virtual void fireCommandStatusChanged(
 		const CommandInstance & command ) const = 0;
 	virtual void fireProgressMade( const CommandInstance & command ) const = 0;
-    virtual void fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const = 0;
+    virtual void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const = 0;
 
 	virtual void undo() = 0;
 	virtual void redo() = 0;

@@ -132,7 +132,7 @@ public:
 	void deregisterCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
-    void fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const;
+    void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const;
 	void updateSelected( const int & value );
 
 	void undo();
@@ -511,7 +511,7 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 }
 
 
-void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const
+void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const
 {
     EventListenerCollection::const_iterator it =
         eventListenerCollection_.begin();
@@ -519,7 +519,7 @@ void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, bo
         eventListenerCollection_.end();
     for (; it != itEnd; ++it)
     {
-        (*it)->commandExecuted(command, isRedoDirection);
+        (*it)->commandExecuted(command, operation);
     }
 }
 
@@ -1291,9 +1291,9 @@ void CommandManager::fireProgressMade( const CommandInstance & command ) const
 }
 
 
-void CommandManager::fireCommandExecuted(const CommandInstance & command, bool isRedoDirection) const
+void CommandManager::fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const
 {
-    return pImpl_->fireCommandExecuted(command, isRedoDirection);
+    return pImpl_->fireCommandExecuted(command, operation);
 }
 
 //==============================================================================

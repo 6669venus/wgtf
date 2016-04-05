@@ -5,8 +5,8 @@ import QtQuick.Layouts 1.0
 
 // Generic Grid Canvas
 Canvas {
-    id: timeline;
-    objectName: ""
+    id: gridCanvas;
+    objectName: "WGGridCanvas"
     contextType: "2d";
     clip: true
     Layout.fillHeight: true
@@ -68,7 +68,7 @@ Canvas {
     property color oneAxisColor: Qt.tint(majorLineColor, '#7f6600')
 
     property var viewTransform: WGViewTransform{
-        container: timeline
+        container: gridCanvas
     }
 
     onTimeScaleChanged: requestPaint();
@@ -104,8 +104,8 @@ Canvas {
 
     function paintHorizontalLines(ctx)
     {
-        var startY = timeline.viewTransform.inverseTransform(Qt.point(0,height)).y
-        var endY = timeline.viewTransform.inverseTransform(Qt.point(0,0)).y
+        var startY = gridCanvas.viewTransform.inverseTransform(Qt.point(0,height)).y
+        var endY = gridCanvas.viewTransform.inverseTransform(Qt.point(0,0)).y
         // The maximum number of pixels between lines
         var pixelGap = verticalPixelGap
         var numlines = (height / pixelGap)
@@ -122,7 +122,7 @@ Canvas {
                 if(!isMajor(i, lineGap)){
                     var y = viewTransform.transformY(i);
                     ctx.moveTo(0, Math.floor(y) + 0.5);
-                    ctx.lineTo(timeline.width, Math.floor(y) + 0.5);
+                    ctx.lineTo(gridCanvas.width, Math.floor(y) + 0.5);
                 }
             }
             ctx.stroke();
@@ -134,7 +134,7 @@ Canvas {
                 if(isMajor(i, lineGap)) {
                     var y = viewTransform.transformY(i);
                     ctx.moveTo(0, Math.floor(y) + 0.5);
-                    ctx.lineTo(timeline.width, Math.floor(y) + 0.5);
+                    ctx.lineTo(gridCanvas.width, Math.floor(y) + 0.5);
                 }
             }
             ctx.stroke();
@@ -155,8 +155,8 @@ Canvas {
 
     function paintVerticalLines(ctx)
     {
-        var startX = timeline.viewTransform.inverseTransform(Qt.point(0,0)).x
-        var endX = timeline.viewTransform.inverseTransform(Qt.point(width,0)).x
+        var startX = gridCanvas.viewTransform.inverseTransform(Qt.point(0,0)).x
+        var endX = gridCanvas.viewTransform.inverseTransform(Qt.point(width,0)).x
         // The maximum number of pixels between lines
         var pixelGap = horizontalPixelGap
         var numlines = (width / pixelGap)
@@ -176,7 +176,7 @@ Canvas {
                 if(!isMajor(i, lineGap)){
                     var x = viewTransform.transformX(i);
                     ctx.moveTo(Math.floor(x) + 0.5, 0);
-                    ctx.lineTo(Math.floor(x) + 0.5, timeline.height);
+                    ctx.lineTo(Math.floor(x) + 0.5, gridCanvas.height);
                 }
             }
             ctx.stroke();
@@ -188,7 +188,7 @@ Canvas {
                 if(isMajor(i, lineGap)) {
                     var x = viewTransform.transformX(i);
                     ctx.moveTo(Math.floor(x) + 0.5, 0);
-                    ctx.lineTo(Math.floor(x) + 0.5, timeline.height);
+                    ctx.lineTo(Math.floor(x) + 0.5, gridCanvas.height);
                 }
             }
             ctx.stroke();
@@ -213,10 +213,10 @@ Canvas {
     }
 
     onPaint: {
-        var height = timeline.height;
-        var ctx = timeline.getContext('2d');
+        var height = gridCanvas.height;
+        var ctx = gridCanvas.getContext('2d');
         ctx.fillStyle = backgroundColor
-        ctx.fillRect(0, 0, timeline.width, timeline.height);
+        ctx.fillRect(0, 0, gridCanvas.width, gridCanvas.height);
 
         // todo re-enable this line. Draw lines for allowable transform axis
         //if(axisType == 0) {
@@ -290,31 +290,31 @@ Canvas {
         onWheel: {
             var delta = 1 + wheel.angleDelta.y/120.0 * .1;
             var screenPos = Qt.point(wheel.x, wheel.y)
-            var oldPos = timeline.viewTransform.inverseTransform(screenPos);
+            var oldPos = gridCanvas.viewTransform.inverseTransform(screenPos);
 
             if (useAxis == 0) { //XY axis
                 if(Qt.AltModifier & wheel.modifiers) {
                     delta = 1 + wheel.angleDelta.x/120.0 * .1;
-                    timeline.viewTransform.xScale *= delta;
+                    gridCanvas.viewTransform.xScale *= delta;
                 } else if(Qt.ShiftModifier & wheel.modifiers) {
-                    timeline.viewTransform.yScale *= delta;
+                    gridCanvas.viewTransform.yScale *= delta;
                 } else {
                     // Zoom into the current mouse location
-                    timeline.viewTransform.xScale *= delta;
-                    timeline.viewTransform.yScale *= delta;
+                    gridCanvas.viewTransform.xScale *= delta;
+                    gridCanvas.viewTransform.yScale *= delta;
                 }
             }
             else if (useAxis == 1){
-                timeline.viewTransform.xScale *= delta;
+                gridCanvas.viewTransform.xScale *= delta;
             }
             else if (useAxis == 2) {
-                timeline.viewTransform.yScale *= delta;
+                gridCanvas.viewTransform.yScale *= delta;
             }
-            var newScreenPos = timeline.viewTransform.transform(Qt.point(oldPos.x, oldPos.y));
+            var newScreenPos = gridCanvas.viewTransform.transform(Qt.point(oldPos.x, oldPos.y));
             var shift = Qt.point(screenPos.x - newScreenPos.x, screenPos.y - newScreenPos.y)
-            timeline.viewTransform.shift(shift);
+            gridCanvas.viewTransform.shift(shift);
 
-            timeline.requestPaint()
+            gridCanvas.requestPaint()
         }
 
         hoverEnabled: true
@@ -330,17 +330,17 @@ Canvas {
                 var pos = Qt.point(mouse.x, mouse.y)
                 var delta = Qt.point(pos.x - mouseDragStart.x, pos.y - mouseDragStart.y)
                 if (useAxis == 0) {
-                    timeline.viewTransform.origin.x += delta.x
-                    timeline.viewTransform.origin.y += delta.y
+                    gridCanvas.viewTransform.origin.x += delta.x
+                    gridCanvas.viewTransform.origin.y += delta.y
                 }
                 else if (useAxis == 1){
-                    timeline.viewTransform.origin.x += delta.x
+                    gridCanvas.viewTransform.origin.x += delta.x
                 }
                 else {
-                    timeline.viewTransform.origin.y += delta.y
+                    gridCanvas.viewTransform.origin.y += delta.y
                 }
                 mouseDragStart = pos
-                timeline.requestPaint()
+                gridCanvas.requestPaint()
             }
         }
         onPressed:{

@@ -225,7 +225,7 @@ Style {
                     Connections {
                         target: control.__handlePosList[index]
                         onValueChanged: {
-                            control.changeValue(value, index)
+                            control.changeValue(control.__handlePosList[index].value, index)
                         }
                     }
 

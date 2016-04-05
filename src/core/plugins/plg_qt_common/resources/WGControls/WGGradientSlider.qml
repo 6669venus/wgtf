@@ -72,7 +72,7 @@ WGSlider {
     property bool showAlphaChannel: true
 
     /*!
-        This value determines whether the user can add and delete handles from the slider.
+        This value determines whether the user can add and delete handles from the slider by ctrl and shift clicking.
     */
     property bool addDeleteHandles: true
 
@@ -127,16 +127,52 @@ WGSlider {
     property Component gradientFrame: Item {
         id: gradientFrame
 
+        //finds the right color bar and then tells it to create a new handle based off pos
+        Connections {
+            target: slider
+            onCreateHandleAtPosition: {
+                pos = Math.max(pos, 0)
+                pos = Math.min(pos, 1)
+
+                var framePos = mapToItem(gradientFrame, 1, pos * __sliderLength)
+
+                var bar = childAt(framePos.x, framePos.y)
+                bar.addPointToBar(framePos)
+            }
+        }
+
         Repeater {
+            id: barRepeater
             //adds an extra bar at the end that has no corresponding handle
             model: __handleCount + 1
 
             Rectangle {
                 id: colorBar
+                objectName: "ColorBar"
 
                 width: gradientFrame.width
                 height: maxPos - minPos
                 y: minPos
+
+                function addPointToBar(pos)
+                {
+                    var barPos = mapFromItem(gradientFrame, pos.x, pos.y)
+
+                    barPos = barPos.y / colorBar.height
+
+                    if (index == slider.__handleCount)
+                    {
+                        var newColor = slider.__handlePosList[index - 1].color
+                    }
+                    else
+                    {
+                        var newColor = slider.__handlePosList[index].getInternalColor(barPos)
+                    }
+
+                    var newPos = pos.y / (gradientFrame.height / (slider.maximumValue - slider.minimumValue))
+
+                    slider.createColorHandle(newPos, slider.handleType, index, newColor, true)
+                }
 
                 gradient: {
                     if (slider.__handleCount > 0)
@@ -190,20 +226,8 @@ WGSlider {
                         //adds handles when bar is Shift Clicked
                         if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier) && slider.addDeleteHandles)
                         {
-                            //get the position of the mouse inside the entire slider
-                            var barPoint = mouseY / colorBar.height
-                            if (index == slider.__handleCount)
-                            {
-                                var newColor = slider.__handlePosList[index - 1].color
-                            }
-                            else
-                            {
-                                var newColor = slider.__handlePosList[index].getInternalColor(barPoint)
-                            }
-                            var mousePos = mapToItem(gradientFrame, mouseX, mouseY)
-                            var newPos = mousePos.y / (gradientFrame.height / (slider.maximumValue - slider.minimumValue))
-
-                            slider.createColorHandle(newPos, slider.handleType, index, newColor)
+                            var framePos = mapToItem(gradientFrame, mouseX, mouseY)
+                            addPointToBar(framePos)
                         }
                         else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.sliderModifier) && slider.addDeleteHandles)
                         {
@@ -234,8 +258,13 @@ WGSlider {
         Color will default to the default color in the handle.
         The gradient can usually be ignored unless you wish to create a non-linear gradient
     */
-    function createColorHandle(val, handle, index, col, grad)
+    function createColorHandle(val, handle, index, col, emitSignal, grad)
     {
+        if (typeof emitSignal == "undefined")
+        {
+            var emitSignal = true
+        }
+
         if (typeof handle !== "undefined")
         {
             var newHandle = handle.createObject(slider, {
@@ -254,10 +283,18 @@ WGSlider {
         if (typeof index != "undefined")
         {
             addHandle(newHandle, index)
+            if (emitSignal)
+            {
+                handleAdded(index)
+            }
         }
         else
         {
             addHandle(newHandle, __handlePosList.length)
+            if (emitSignal)
+            {
+                handleAdded(index)
+            }
         }
 
         if (typeof col != "undefined")
@@ -273,6 +310,27 @@ WGSlider {
         updateHandles()
 
         return newHandle
+    }
+
+    /*!
+        creates a new color handle at the position (pos) in pixels of the entire slider.
+
+        The color will be worked out automatically.
+    */
+    signal createHandleAtPosition(real pos)
+
+    /*!
+        creates a new color handle at the position (pos) in pixels of the entire slider.
+
+        The color will be worked out automatically.
+    */
+    signal createHandleAtPixelPosition(int pos)
+
+    onCreateHandleAtPixelPosition: {
+        pos = pos / __sliderLength
+        pos = Math.max(pos, 0)
+        pos = Math.min(pos, 1)
+        createHandleAtPosition(pos)
     }
 
     /*!
@@ -299,18 +357,47 @@ WGSlider {
     */
     function setHandleColor(col, index)
     {
-        if (typeof index != "undefined")
+        if (typeof index == "undefined")
+        {
+            var index = [0]
+        }
+
+        if (!Array.isArray(index))
+        {
+            var index = [index]
+        }
+
+        if (!Array.isArray(col))
+        {
+            var colo = [col]
+        }
+
+        for (var i = 0; i < index.length; i++)
+        {
+            var indexToChange = index[i]
+            if (indexToChange <= __handleCount - 1)
+            {
+                __handlePosList[indexToChange].color = col[i]
+            }
+            else
+            {
+                console.log("WARNING WGSlider: Tried to change the color of a handle that does not exist")
+            }
+        }
+    }
+
+    function getHandleColor(index) {
+        if (typeof index == "undefined")
         {
             index = 0
         }
         if(index <= __handleCount - 1)
         {
-            colorModified(col, index)
-            return 1
+            return __handlePosList[index].color
         }
         else
         {
-            console.log("WARNING WGGradientSlider: Tried to change the color of a handle that does not exist")
+            console.log("WARNING WGGradientSlider: Tried to return a color for a handle that does not exist")
             return -1
         }
     }

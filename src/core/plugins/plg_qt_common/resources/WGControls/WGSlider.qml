@@ -289,6 +289,16 @@ Control {
     */
     signal changeValue (real val, int index)
 
+    /*!
+        This signal is fired when a handle (index) begins dragging
+    */
+    signal beginDrag (int index)
+
+    /*!
+        This signal is fired when a handle (index) has finished dragging
+    */
+    signal endDrag (int index)
+
     implicitHeight: defaultSpacing.minimumRowHeight
     implicitWidth: defaultSpacing.standardMargin
 
@@ -298,8 +308,13 @@ Control {
 
         Only the value is actually required.
     */
-    function createHandle(val, handle, index)
+    function createHandle(val, handle, index, emitSignal)
     {
+        if (typeof emitSignal == "undefined")
+        {
+            var emitSignal = true
+        }
+
         if (typeof handle !== "undefined")
         {
             var newHandle = handle.createObject(slider, {
@@ -318,10 +333,18 @@ Control {
         if (typeof index != "undefined")
         {
             addHandle(newHandle, index)
+            if (emitSignal)
+            {
+                handleAdded(index)
+            }
         }
         else
         {
             addHandle(newHandle, __handlePosList.length)
+            if (emitSignal)
+            {
+                handleAdded(index)
+            }
         }
         return newHandle
     }
@@ -345,33 +368,105 @@ Control {
         handle.parentSlider = slider
         __handlePosList.splice(index,0,handle)
         __handleCount = __handlePosList.length
-        handleAdded(index)
     }
 
-    function setHandleValue(val, index) {
+    /*!
+        Returns the handle value at a given index (index) or returns an array of values for an array of indexes
+    */
+    function getHandleValue(index) {
         if (typeof index == "undefined")
         {
-            index = 0
+            var index = 0
         }
-        if(index <= __handleCount - 1)
+
+        if (!Array.isArray(index))
         {
-            if (val >= __handlePosList[index].minimumValue && val <= __handlePosList[index].maximumValue)
+            return __handlePosList[index].value
+        }
+
+        for (var i = 0; i < index.length; i++)
+        {
+            var valueToReturn = []
+            if (i <= __handleCount - 1)
             {
-                __handlePosList[index].value = val
-                changeValue (val, index)
-                return 1
+                valueToReturn.push(__handlePosList[index].value)
             }
             else
             {
-                console.log("WARNING WGSlider: Tried to set the value of a handle outside of minimum and maxium value")
-                return -1
+                console.log("WARNING WGSlider: Tried to return a value for a handle that does not exist")
             }
         }
-        else
+        return valueToReturn
+    }
+
+    /*!
+        Sets the handle value at a given index (index) to val or sets the values of an array of handle indexes to an array of values.
+
+        TODO: Make it possible to set multiple handles to one value?
+    */
+    function setHandleValue(val, index) {
+
+        if (typeof index == "undefined")
         {
-            console.log("WARNING WGSlider: Tried to change the value of a handle that does not exist")
-            return -1
+            var index = [0]
         }
+
+        if (!Array.isArray(index))
+        {
+            var index = [index]
+        }
+
+        if (!Array.isArray(val))
+        {
+            var val = [val]
+        }
+
+        for (var i = 0; i < index.length; i++)
+        {
+            var indexToMove = index[i]
+            if (indexToMove <= __handleCount - 1)
+            {
+                if (val[i] < __handlePosList[indexToMove].minimumValue)
+                {
+                    console.log("WARNING WGSlider: Tried to set the value of handle " + indexToMove + " to less than its minimum value")
+                    __handlePosList[indexToMove].value = __handlePosList[indexToMove].minimumValue
+                }
+                else if ( val[i] > __handlePosList[indexToMove].maximumValue )
+                {
+                    console.log("WARNING WGSlider: Tried to set the value of handle " + indexToMove + " to more than its maximum value")
+                    __handlePosList[indexToMove].value = __handlePosList[indexToMove].maximumValue
+                }
+                else
+                {
+                    __handlePosList[indexToMove].value = val[i]
+                }
+            }
+            else
+            {
+                console.log("WARNING WGSlider: Tried to change the value of a handle that does not exist")
+            }
+        }
+    }
+
+    /*!
+        Attempts to find a handle at a particular value and returns the index.
+
+        Pretty hacky..
+    */
+
+    function getHandleAtValue(val)
+    {
+        var roundedPos
+        for (var i = 0; i < __handlePosList.length; i++)
+        {
+            roundedPos = Number(Math.round(__handlePosList[i].value + 'e2') + 'e-2')
+            if (roundedPos == val)
+            {
+                return i
+            }
+        }
+        console.log("WARNING WGSlider: No handle found at position " + val)
+        return -1
     }
 
     Component.onCompleted: {
@@ -442,6 +537,7 @@ Control {
         onPressed: {
             if (__draggable)
             {
+                beginDrag(__activeHandle)
                 beginUndoFrame();
                 __handleMoving = true
                 __grabbedValue = value;
@@ -483,6 +579,8 @@ Control {
             }
 
             endUndoFrame();
+
+            endDrag(__activeHandle)
 
             clickOffset = 0
             preventStealing = false

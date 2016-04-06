@@ -6,9 +6,9 @@ import BWControls 1.0
 import WGControls 1.0
 
 /*!
-    \brief Timeline Panel
-
+    \brief Timeline Panel WIP.
 */
+
 WGPanel {
     id: timelinePanel
     objectName: "TimelinePanel"
@@ -21,10 +21,10 @@ WGPanel {
 
     property var sourceModel: source
 
-    //get model from SB
+    // Awaiting dummy model
     WGTreeModel {
         id: treeModel
-        source: root.testTreeModel
+        source: timelinePanel.sourceModel
         objectName: "TreeExpansionTest"
         ValueExtension {}
         ColumnExtension {}
@@ -40,14 +40,66 @@ WGPanel {
         }
     }
 
+    //The GridCanvas will draw behind the TreeView
+    WGGridCanvas {
+        id: keyframeGrid
+        objectName: "keyframeGrid"
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        useAxis: xGrid
+        showYGridLines: false
+        //x: //The position of the grids left should be ~2xtreeview.columnWidth + 1stcolumnWidth + secondcolumnWidth
+
+        //Current Time Handle
+        Rectangle {
+            id: currentTimeHandle
+            objectName: "currentTimeHandle"
+            property real currentTime: 0
+            x: currentTime
+            width: 7
+            y: 0
+            height: parent.height
+            color: "yellow"
+
+            MouseArea {
+                id: currentTimeHandleMouseArea
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
+                height: parent.height
+                cursorShape: Qt.SplitHCursor
+
+                drag.target: currentTimeHandle
+                drag.threshold: 0
+                drag.axis: Drag.XAxis
+                //drag.minimumX: index === 0 ? firstColumnIndentation + minimumColumnSize : minimumColumnSize
+                //drag.maximumX: resizable ? maximumColumnSize : columns.calculateMaxColumnSize(column.x, index)
+
+                onPositionChanged: {
+                    console.log("timelineHandle dragged")
+                }
+            }
+
+            Rectangle {
+                id: innerShade
+                color: "white"
+                width: 1
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.centerIn: parent
+            }
+        }
+    }
+
     WGTreeView {
         id: timelineView
-        anchors.top: searchBox.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         spacing: 1
-        showColumnsFrame: true
+        // Set the columnsFrame invisible to allow the gridView visibility
+        showColumnsFrame: false //true
         showColumnHeaders: false
         showColumnFooters: false
         model: treeModel
@@ -55,54 +107,21 @@ WGPanel {
         //columnSpacing: 4
         //backgroundColourMode: incrementalGroupBackgroundColours
 
-        columnDelegates: [defaultColumnDelegate, columnDelegate, timelineDelegate]
+        columnDelegates: [defaultColumnDelegate, propertyDelegate, keyframeColumnDelegate]
 
-        Component {
-            id: columnDelegate
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: timelineView.minimumRowHeight
-
-                Rectangle {
-                    anchors.fill: parent
-                    anchors.margins: 1
-                    color: {
-                        if (typeof itemData.Value === "string")
-                        {
-                            return "transparent";
-                        }
-
-                        var colour = itemData.Value;
-                        var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
-                        var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
-                        var b = colour % 100 + 156;
-
-                        return Qt.rgba(r / 255, g / 255, b / 255, 1);
-                    }
-                }
-
-                Text {
-                    clip: true
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.margins: 4
-                    verticalAlignment: Text.AlignVCenter
-                    visible: typeof itemData.Value === "string"
-                    text: typeof itemData.Value === "string" ? itemData.Value : ""
-                    color: palette.textColor
-                }
-            }
+        property Component propertyDelegate: Loader {
+            clip: true
+            sourceComponent: itemData != null ? itemData.Component : null
         }
 
         Component {
-            id: timelineDelegate
+            id: keyframeColumnDelegate
 
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: timelineView.minimumRowHeight
 
+                //to be replaced by WGKeyframeControl
                 WGSliderControl {
                     anchors.fill: parent
                 }

@@ -274,6 +274,50 @@ Canvas {
         ctx.stroke();
     }
 
+    function getWidth( startTime, endTime )
+    {
+        //var startX = gridCanvas.viewTransform.inverseTransform(Qt.point(0,0)).x
+        var endX = gridCanvas.viewTransform.inverseTransform(Qt.point(width,0)).x
+        console.log("----------endX is " + endX)
+        var pixelEndX = viewTransform.transformX(endX);
+        console.log("----------pixelEndX is " + pixelEndX)
+        var startPixelLocation = (timeScale/startTime * pixelEndX)
+        console.log("----------startPixelLocation is " + startPixelLocation)
+        var endPixelLocation =  (timeScale/endTime * pixelEndX)
+        console.log("----------endPixelLocation is " + endPixelLocation)
+        var newWidth = startPixelLocation - endPixelLocation
+        console.log("----------newWidth is " + newWidth)
+        return newWidth
+    }
+
+    //TEST
+    Rectangle {
+        id: slider
+        color: "pink"
+        // These objects cant have a width. They can have time positions
+        property real startTime: 0.1
+        property real endTime: 0.4
+
+        height: 22
+        //width: bindToTransform( gridCanvas.viewTransform, pixelWidth )
+        width: getWidth( startTime, endTime )
+
+        //WILL NEED TO CHECK THAT ITS POSITIONED CORRECTLY.
+        //property real pixelWidth : 100
+        //property real pixelHeight : 22
+        property int offsetX: 10
+        property int offsetY: 10
+
+
+        x: gridCanvas.viewTransform.origin.x + offsetX;
+        y: gridCanvas.viewTransform.origin.y + offsetY;
+
+
+//        x: gridCanvas.viewTransform.inverseTransform( offsetX, 0 ); //(slider.pos.x);
+//        y: gridCanvas.viewTransform.inverseTransform( 0, offsetY ); //(slider.pos.y);
+    }
+
+
     // This does not work yet. The Rectangle is not at mouse cursor
     Rectangle {
         id: mouseLine;

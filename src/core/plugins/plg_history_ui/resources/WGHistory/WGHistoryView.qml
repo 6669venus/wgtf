@@ -85,7 +85,7 @@ WGPanel {
 
                 WGPushButton {
                     id: macroButton
-                    objectName: macroButton
+                    objectName: "macroButton"
                     text: "Make Macro..."
                     tooltip: "Select a history to make a macro."
                     onClicked: {

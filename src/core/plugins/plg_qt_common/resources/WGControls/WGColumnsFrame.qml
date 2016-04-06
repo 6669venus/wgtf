@@ -52,7 +52,7 @@ Item {
         {
             var column = null;
 
-            for (var i = 0; i < columnCount; ++i)
+            for (var i = 0; i < columns.children.length; ++i)
             {
                 column = columns.children[i];
                 var handle = column.children[0];

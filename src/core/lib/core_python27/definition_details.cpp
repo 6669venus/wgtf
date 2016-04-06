@@ -313,7 +313,7 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 	if (PyScript::ScriptType::check( object ))
 	{
 		// Type type
-		// type.__module__ + type.__name__
+		// type.__module__ + type.__name__ + id( object )
 		PyScript::ScriptType scriptType(
 			reinterpret_cast<PyTypeObject*>( object.get() ), PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
@@ -324,9 +324,24 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 	else
 	{
 		// Class or None type
-		// __module__ + __name__
+		// __module__ + __name__ + id( object )
 		typeName = object.str( errorHandler ).c_str();
 	}
+
+	// Add an address in case there are multiple classes/types with the same
+	// name in the same file.
+	// E.g.
+	// # module "Test"
+	// class A( object ):
+	//     class InnerClass( object ):
+	//         pass
+	//     pass
+	// class B( object ):
+	//     class InnerClass( object ): # different type with the name "Test.InnerClass"
+	//         pass
+	//     pass
+	typeName += " at ";
+	typeName += std::to_string( object.id().asLong() );
 
 	return typeName;
 }

@@ -18,6 +18,7 @@ namespace PyScript
 class ScriptDict;
 class ScriptIter;
 class ScriptList;
+class ScriptLong;
 class ScriptTuple;
 class ScriptString;
 class ScriptArgs;
@@ -431,6 +432,7 @@ public:
 
 	template <class ERROR_HANDLER>
 	inline ScriptString str( const ERROR_HANDLER & errorHandler ) const;
+	inline ScriptLong id() const;
 
 
 	/**

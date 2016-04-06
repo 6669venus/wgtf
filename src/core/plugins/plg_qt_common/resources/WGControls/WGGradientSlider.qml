@@ -260,10 +260,7 @@ WGSlider {
     */
     function createColorHandle(val, handle, index, col, emitSignal, grad)
     {
-        if (typeof emitSignal == "undefined")
-        {
-            var emitSignal = true
-        }
+        emitSignal = emitSignal !== "undefined" ? emitSignal : true
 
         if (typeof handle !== "undefined")
         {
@@ -350,6 +347,7 @@ WGSlider {
             __handlePosList[index].gradient.stops[0].color = __handlePosList[index].minColor
             __handlePosList[index].gradient.stops[1].color = __handlePosList[index].color
         }
+        updateHandles()
     }
 
     /*!
@@ -357,20 +355,10 @@ WGSlider {
     */
     function setHandleColor(col, index)
     {
-        if (typeof index == "undefined")
-        {
-            var index = [0]
-        }
-
-        if (!Array.isArray(index))
-        {
-            var index = [index]
-        }
-
-        if (!Array.isArray(col))
-        {
-            var colo = [col]
-        }
+        //default values
+        index = typeof index !== "undefined" ? index : [0]
+        index = Array.isArray(index) ? index : [index]
+        col = Array.isArray(col) ? col : [col]
 
         for (var i = 0; i < index.length; i++)
         {
@@ -384,13 +372,30 @@ WGSlider {
                 console.log("WARNING WGSlider: Tried to change the color of a handle that does not exist")
             }
         }
+        updateHandles()
+    }
+
+    /*!
+        applies the deltas to the handle color at (index) and returns the new color
+    */
+    function getChangedHandleColor(rDelta,gDelta,bDelta,aDelta, index)
+    {
+        index = typeof index !== "undefined" ? index : 0
+
+        var handleColor = slider.__handlePosList[index].color
+
+        handleColor.r = Math.max(Math.min(handleColor.r += rDelta, 1),0)
+        handleColor.g = Math.max(Math.min(handleColor.g += gDelta, 1),0)
+        handleColor.b = Math.max(Math.min(handleColor.b += bDelta, 1),0)
+        handleColor.a = Math.max(Math.min(handleColor.a += aDelta, 1),0)
+
+        return handleColor
     }
 
     function getHandleColor(index) {
-        if (typeof index == "undefined")
-        {
-            index = 0
-        }
+
+        index = typeof index !== "undefined" ? index : 0
+
         if(index <= __handleCount - 1)
         {
             return __handlePosList[index].color

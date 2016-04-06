@@ -58,7 +58,7 @@ WGSliderHandle {
     handleStyle:
         Item {
         implicitHeight: __horizontal ? parentSlider.height - 2 : parentSlider.width - 2
-        implicitWidth: 11
+        implicitWidth: 15
         Image {
             id: arrowHandleFrame
             source: "icons/arrow_handle.png"

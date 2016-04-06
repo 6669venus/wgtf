@@ -371,32 +371,19 @@ Control {
     }
 
     /*!
-        Returns the handle value at a given index (index) or returns an array of values for an array of indexes
+        Returns the handle value at a given index (index) or -1 if the handle doesn't exist
     */
     function getHandleValue(index) {
-        if (typeof index == "undefined")
-        {
-            var index = 0
-        }
+        index = typeof index !== "undefined" ? index : 0
 
-        if (!Array.isArray(index))
+        if (index <= __handleCount - 1)
         {
             return __handlePosList[index].value
         }
-
-        for (var i = 0; i < index.length; i++)
+        else
         {
-            var valueToReturn = []
-            if (i <= __handleCount - 1)
-            {
-                valueToReturn.push(__handlePosList[index].value)
-            }
-            else
-            {
-                console.log("WARNING WGSlider: Tried to return a value for a handle that does not exist")
-            }
+            return -1
         }
-        return valueToReturn
     }
 
     /*!
@@ -406,20 +393,9 @@ Control {
     */
     function setHandleValue(val, index) {
 
-        if (typeof index == "undefined")
-        {
-            var index = [0]
-        }
-
-        if (!Array.isArray(index))
-        {
-            var index = [index]
-        }
-
-        if (!Array.isArray(val))
-        {
-            var val = [val]
-        }
+        index = typeof index !== "undefined" ? index : 0
+        index = Array.isArray(index) ? index : [index]
+        val = Array.isArray(val) ? val : [val]
 
         for (var i = 0; i < index.length; i++)
         {

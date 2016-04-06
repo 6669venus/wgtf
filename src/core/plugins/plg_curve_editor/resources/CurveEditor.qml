@@ -14,16 +14,13 @@ Rectangle {
 
     property var selection: [];
 
+    property bool showColorSlider: true
+    property bool alphaEnabled: true
+
+    property bool dataLoaded
+
     Layout.fillHeight: true
     color: palette.mainWindowColor
-
-    QtObject
-    {
-        id: internal
-        property var colors: []
-        property var positions: []
-        property bool gradientEnabled: curveRepeater.count == 3 || curveRepeater.count == 4
-    }
 
     function addPointsToCurves(mouse, updateGradient)
     {
@@ -40,7 +37,6 @@ Rectangle {
         if(updateGradient)
         {
             colorGradient.createHandleAtPosition(pos.x)
-            updateColorGradient();
         }
         endUndoFrame();
     }
@@ -85,7 +81,6 @@ Rectangle {
                 if(updateGradient)
                 {
                     colorGradient.removeHandle(i)
-                    updateColorGradient();
                 }
             }
             endUndoFrame();
@@ -148,17 +143,16 @@ Rectangle {
         var movedX = [point.point.pos.x, point.point.pos.x - xDelta]
         movedX.sort();
 
-        //Find the handle at pos and move it
-        //This seems very hacky... and it breaks easily.
-        var roundedPos = point.point.pos.x - xDelta
-        roundedPos = Number(Math.round(roundedPos + 'e2') + 'e-2')
-        var gradHandleIndex = colorGradient.getHandleAtValue(roundedPos)
+        //gets the yDeltas as color change values. For some reason getting a lot of yDeltas < 0 and > 1
+        var rDelta = point.parentCurve.curveIndex === 0 ? yDelta : 0;
+        var gDelta = point.parentCurve.curveIndex === 1 ? yDelta : 0;
+        var bDelta = point.parentCurve.curveIndex === 2 ? yDelta : 0;
+        var aDelta = point.parentCurve.curveIndex === 3 ? yDelta : 0;
 
-        if (gradHandleIndex !== -1)
-        {
-            colorGradient.setHandleValue(point.point.pos.x, gradHandleIndex)
-        }
-
+        //add these values to an array
+        var gradHandleIndexes = [point.pointIndex]
+        var gradHandleValues = [point.point.pos.x - xDelta]
+        var gradHandleColors = [colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,point.pointIndex)]
 
         for(var i = 0; i < selection.length; ++i)
         {
@@ -168,6 +162,22 @@ Rectangle {
             {
                 var newX = selectedPoint.point.pos.x + xDelta;
                 var newY = selectedPoint.point.pos.y + yDelta;
+
+                //add more values and colors to arrays
+
+                if (gradHandleValues.indexOf(selectedPoint.index) == -1)
+                {
+                    rDelta = selectedPoint.parentCurve.curveIndex === 0 ? yDelta : 0;
+                    gDelta = selectedPoint.parentCurve.curveIndex === 1 ? yDelta : 0;
+                    bDelta = selectedPoint.parentCurve.curveIndex === 2 ? yDelta : 0;
+                    aDelta = selectedPoint.parentCurve.curveIndex === 3 ? yDelta : 0;
+
+
+                    gradHandleIndexes.push(selectedPoint.pointIndex)
+                    gradHandleValues.push(newX)
+                    gradHandleColors.push(colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,selectedPoint.pointIndex))
+                }
+
                 // For now points with the same x's are moved in C++ Particle Editor code
                 // TODO: Make this code generic for the curve editor
                 var index = binarySearch(movedX, selectedPoint.point.pos.x)
@@ -190,16 +200,11 @@ Rectangle {
                 {
                     movedX.splice(-index - 1, 0, selectedPoint.point.pos.x)
                 }
-
-                colorGradient.setHandleColor(Qt.rgba(
-                                                 red.pointRepeater.itemAt(i).point.pos.y,
-                                                 green.pointRepeater.itemAt(i).point.pos.y,
-                                                 blue.pointRepeater.itemAt(i).point.pos.y,
-                                                 alpha.pointRepeater.itemAt(i%alpha.pointRepeater.count).point.pos.y), i)
-
             }
         }
-        updateColorGradient();
+        //update all the necessary handles.
+        colorGradient.setHandleValue(gradHandleValues, gradHandleIndexes);
+        colorGradient.setHandleColor(gradHandleColors, gradHandleIndexes);
     }
 
     function repaintCurves() {
@@ -219,55 +224,6 @@ Rectangle {
     function curveEnabled(index) {
         var curve = curveRepeater.itemAt(index)
         return curveRepeater.count > index && curve && curve.enabled;
-    }
-
-    function updateColorGradient()
-    {
-        if(!internal.gradientEnabled)
-            return;
-
-        var oldCount = internal.colors.length
-
-        var newColors = [];
-        var newPositions = [];
-        var red = curveRepeater.itemAt(0);
-        var green = curveRepeater.itemAt(1);
-        var blue = curveRepeater.itemAt(2);
-        var alpha = curveRepeater.count == 4 ? curveRepeater.itemAt(3)
-            : {
-                pointRepeater:{
-                    count: 1,
-                    itemAt: function(index){ return {point:{pos:{y:1.0}}}; }
-                }};
-        for(var i = 0; i < red.pointRepeater.count; ++i)
-        {
-            newColors.push(Qt.rgba(
-                              red.pointRepeater.itemAt(i).point.pos.y,
-                              green.pointRepeater.itemAt(i).point.pos.y,
-                              blue.pointRepeater.itemAt(i).point.pos.y,
-                              alpha.pointRepeater.itemAt(i%alpha.pointRepeater.count).point.pos.y))
-            newPositions.push(red.pointRepeater.itemAt(i).point.pos.x)
-        }
-        internal.colors = newColors;
-        internal.positions = newPositions;
-
-        var handleIndexes = []
-
-        for(var j = 0; i < red.pointRepeater.count; j++)
-        {
-            handleIndexes[j] = j
-        }
-
-        colorGradient.setHandleColor(internal.colors, handleIndexes)
-        colorGradient.setHandleValue(internal.positions, handleIndexes)
-
-        if (colorGradient.__handleCount == 0)
-        {
-            for (i = 0; i < internal.positions.length; i++)
-            {
-                colorGradient.createColorHandle(internal.positions[i],colorGradient.handleStyle,i,internal.colors[i], false)
-            }
-        }
     }
 
     ColumnLayout{
@@ -493,8 +449,10 @@ Rectangle {
             {
                 id: curveRepeater
                 model: curvesModel
+
                 delegate: Curve{
                     objectName: index
+                    curveIndex: index
                     points: Value.points
                     curveModel: Value
                     viewTransform: timeline.viewTransform;
@@ -535,19 +493,60 @@ Rectangle {
             // Also need signals to enable handling changes to update the curve data
             WGGradientSlider {
                 id: colorGradient
-                visible: internal.gradientEnabled
+                visible: showColorSlider
                 anchors.bottom: timeline.bottom
                 x: timeline.viewTransform.transformX(0)
                 width: timeline.viewTransform.transformX(1) - timeline.viewTransform.transformX(0)
-                height: 10
+                height: defaultSpacing.minimumRowHeight
                 minimumValue: 0
                 maximumValue: 1.0
                 stepSize: .001
 
-                onVisibleChanged: {
-                    // When initially made visible update the gradient
-                    if(visible)
-                        curveEditor.updateColorGradient();
+                //this is some grade A fakery to deal with the fake data being created over time
+                //basically looks at the curve repeaters and then add points when the red curve adds points
+                //or updates colors when the other curves add points
+                QtObject {
+                    id: fakeCurve
+                    signal itemAdded(var lol)
+                }
+
+                Connections {
+                    target: curveRepeater.count > 0 ? curveRepeater.itemAt(0).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        //don't create a handle if one is already there
+                        if(colorGradient.getHandleValue(index) == -1)
+                        {
+                            var newColor = Qt.rgba(item.point.pos.y, 0, 0, 1)
+                            colorGradient.createColorHandle(item.point.pos.x,colorGradient.handleStyle,index,newColor, false)
+                        }
+                    }
+                }
+
+                Connections {
+                    target: curveRepeater.count > 1 ? curveRepeater.itemAt(1).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        var newColor = colorGradient.getHandleColor(index)
+                        newColor.g = item.point.pos.y
+                        colorGradient.setHandleColor(newColor, index)
+                    }
+                }
+
+                Connections {
+                    target: curveRepeater.count > 2 ? curveRepeater.itemAt(2).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        var newColor = colorGradient.getHandleColor(index)
+                        newColor.b = item.point.pos.y
+                        colorGradient.setHandleColor(newColor, index)
+                    }
+                }
+
+                Connections {
+                    target: curveRepeater.count > 3 ? curveRepeater.itemAt(3).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        var newColor = colorGradient.getHandleColor(index)
+                        newColor.a = item.point.pos.y
+                        colorGradient.setHandleColor(newColor, index)
+                    }
                 }
 
                 //onWidthChanged: {
@@ -556,9 +555,6 @@ Rectangle {
                 //}
 
                 onChangeValue: {
-                    if(!internal.gradientEnabled)
-                        return;
-
                     var red = curveRepeater.itemAt(0).getPoint(index);
                     var green = curveRepeater.itemAt(1).getPoint(index);
                     var blue = curveRepeater.itemAt(2).getPoint(index);

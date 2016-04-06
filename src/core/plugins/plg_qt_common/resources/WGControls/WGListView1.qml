@@ -249,7 +249,14 @@ Item {
         }
         else
         {
-            columnCount = model.columnCount();
+            if ( columnSequence.length !== 0 )
+            {
+                columnCount = columnSequence.length;
+            }
+            else
+            {
+                columnCount = model.columnCount();
+            }
         }
 
         headerDataChanged(0, columnCount - 1);
@@ -443,7 +450,7 @@ Item {
 
     WGColumnsFrame {
         id: columnsFrame
-        columnCount: listView.columnSequence.length === 0 ? listView.columnCount : listView.columnSequence.length 
+        columnCount: listView.columnCount
         y: listView.topMargin
         x: listView.leftMargin
         height: listView.height - listView.topMargin - listView.bottomMargin
@@ -452,7 +459,7 @@ Item {
         drawHandles: showColumnsFrame && listView.columnSpacing > 1
         resizableColumns: showColumnsFrame
         initialColumnWidths: listView.initialColumnWidths
-        defaultInitialColumnWidth: columnsFrame.columnCount === 0 ? 0 : initialColumnsFrameWidth / columnsFrame.columnCount - handleWidth 
+        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth 
         idealColumnSizeFunction: calculateMaxTextWidth
 
         onColumnsChanged: {

@@ -137,12 +137,6 @@ Item {
     */
     property string label: ""
 
-
-    function setHandleValue(val, index)
-    {
-        slider.setHandleValue(val, index)
-    }
-
     /*! \internal */
     property alias __slider: slider
 

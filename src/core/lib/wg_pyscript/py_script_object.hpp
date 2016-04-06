@@ -757,86 +757,6 @@ public:
 
 
 // -----------------------------------------------------------------------------
-// Section: ScriptDict
-// -----------------------------------------------------------------------------
-
-/**
- *	This class provides the ability to create and modify dict objects
- */
-class ScriptDict : public ScriptObject
-{
-public:
-	STANDARD_SCRIPT_OBJECT_IMP( ScriptDict, ScriptObject )
-
-	typedef Py_ssize_t size_type;
-
-	/**
-	 *	This method checks if the given object is a ScriptDict object
-	 *	@param object The object to check
-	 *	@return True if object is a ScriptDict object, false otherwise
-	 */
-	static bool check( const ScriptObject & object )
-	{
-		return PyDict_Check( object.get() );
-	}
-
-	static ScriptDict create( size_type capacity = 0 );
-
-	bool next( size_type & pos, 
-		ScriptObject & key,
-		ScriptObject & value )
-	{
-		PyObject * pKey = NULL;
-		PyObject * pValue = NULL;
-
-		int result = PyDict_Next( this->get(), &pos, &pKey, &pValue );
-
-		if (result != 0)
-		{
-			key = ScriptObject( pKey, ScriptObject::FROM_BORROWED_REFERENCE );
-			value = ScriptObject( pValue,
-				ScriptObject::FROM_BORROWED_REFERENCE );
-		}
-		return result != 0;
-	}
-
-	template <class ERROR_HANDLER>
-	bool setItem( const char * key, const ScriptObject & value,
-		const ERROR_HANDLER & errorHandler ) const;
-		
-	template <class ERROR_HANDLER>
-	bool setItem( const ScriptObject & key, const ScriptObject & value,
-		const ERROR_HANDLER & errorHandler ) const;
-
-	template <class ERROR_HANDLER>
-	ScriptObject getItem( const char * key, 
-		const ERROR_HANDLER & errorHandler ) const;
-		
-	template <class ERROR_HANDLER>
-	ScriptObject getItem( const ScriptObject & key, 
-		const ERROR_HANDLER & errorHandler ) const;
-
-	template <class ERROR_HANDLER>
-	ScriptList keys( const ERROR_HANDLER & errorHandler ) const;
-
-	template <class ERROR_HANDLER>
-	bool delItem( const char * key, const ERROR_HANDLER & errorHandler );
-
-	template <class ERROR_HANDLER>
-	bool delItem( const ScriptObject & key,
-		const ERROR_HANDLER & errorHandler );
-
-	size_type size() const;
-
-	template <class ERROR_HANDLER>
-	bool update( const ScriptDict & other, 
-		const ERROR_HANDLER & errorHandler ) const;
-
-	void clear() const;
-};
-
-
-// -----------------------------------------------------------------------------
 // Section: ScriptModule
 // -----------------------------------------------------------------------------
 /**
@@ -966,11 +886,7 @@ public:
 	 *
 	 *	@returns		The dict for the given type.
 	 */
-	ScriptDict getDict() const
-	{
-		return ScriptDict( reinterpret_cast< PyTypeObject * >( this->get() )->tp_dict,
-			ScriptObject::FROM_BORROWED_REFERENCE );
-	}
+	inline ScriptDict getDict() const;
 
 	/**
 	 *	This method allocates a new object of this type
@@ -992,6 +908,86 @@ public:
 	{
 		PyType_Modified( reinterpret_cast< PyTypeObject * >( this->get() ) );
 	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptDict
+// -----------------------------------------------------------------------------
+
+/**
+ *	This class provides the ability to create and modify dict objects
+ */
+class ScriptDict : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptDict, ScriptObject )
+
+	typedef Py_ssize_t size_type;
+
+	/**
+	 *	This method checks if the given object is a ScriptDict object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptDict object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyDict_Check( object.get() );
+	}
+
+	static ScriptDict create( size_type capacity = 0 );
+
+	bool next( size_type & pos, 
+		ScriptObject & key,
+		ScriptObject & value )
+	{
+		PyObject * pKey = NULL;
+		PyObject * pValue = NULL;
+
+		int result = PyDict_Next( this->get(), &pos, &pKey, &pValue );
+
+		if (result != 0)
+		{
+			key = ScriptObject( pKey, ScriptObject::FROM_BORROWED_REFERENCE );
+			value = ScriptObject( pValue,
+				ScriptObject::FROM_BORROWED_REFERENCE );
+		}
+		return result != 0;
+	}
+
+	template <class ERROR_HANDLER>
+	bool setItem( const char * key, const ScriptObject & value,
+		const ERROR_HANDLER & errorHandler ) const;
+		
+	template <class ERROR_HANDLER>
+	bool setItem( const ScriptObject & key, const ScriptObject & value,
+		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	ScriptObject getItem( const char * key, 
+		const ERROR_HANDLER & errorHandler ) const;
+		
+	template <class ERROR_HANDLER>
+	ScriptObject getItem( const ScriptObject & key, 
+		const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	ScriptList keys( const ERROR_HANDLER & errorHandler ) const;
+
+	template <class ERROR_HANDLER>
+	bool delItem( const char * key, const ERROR_HANDLER & errorHandler );
+
+	template <class ERROR_HANDLER>
+	bool delItem( const ScriptObject & key,
+		const ERROR_HANDLER & errorHandler );
+
+	size_type size() const;
+
+	template <class ERROR_HANDLER>
+	bool update( const ScriptDict & other, 
+		const ERROR_HANDLER & errorHandler ) const;
+
+	void clear() const;
 };
 
 
@@ -2070,6 +2066,7 @@ inline int setData( PyObject * pObj, ScriptObject & rScriptObject,
 #include "py_script_dict.ipp"
 #include "py_script_sequence.ipp"
 #include "py_script_tuple.ipp"
+#include "py_script_type.ipp"
 #include "py_script_list.ipp"
 
 

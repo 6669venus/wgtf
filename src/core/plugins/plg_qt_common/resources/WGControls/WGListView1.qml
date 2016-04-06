@@ -443,7 +443,7 @@ Item {
 
     WGColumnsFrame {
         id: columnsFrame
-        columnCount: listView.columnCount
+        columnCount: listView.columnSequence.length === 0 ? listView.columnCount : listView.columnSequence.length 
         y: listView.topMargin
         x: listView.leftMargin
         height: listView.height - listView.topMargin - listView.bottomMargin
@@ -452,7 +452,7 @@ Item {
         drawHandles: showColumnsFrame && listView.columnSpacing > 1
         resizableColumns: showColumnsFrame
         initialColumnWidths: listView.initialColumnWidths
-        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
+        defaultInitialColumnWidth: columnsFrame.columnCount === 0 ? 0 : initialColumnsFrameWidth / columnsFrame.columnCount - handleWidth 
         idealColumnSizeFunction: calculateMaxTextWidth
 
         onColumnsChanged: {

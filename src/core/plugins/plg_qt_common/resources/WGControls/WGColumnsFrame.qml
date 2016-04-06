@@ -67,7 +67,7 @@ Item {
             var columnWidth = 0;
             var totalWidth = 0;
 
-            for (var i = 0; i < columnCount; ++i)
+            for (var i = 0; i < columns.children.length; ++i)
             {
                 column = columns.children[i];
                 columnWidth = column.width;

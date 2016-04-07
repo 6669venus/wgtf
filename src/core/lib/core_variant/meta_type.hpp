@@ -4,8 +4,6 @@
 // define this to 1 once non-exception type cast is implemented
 #define FAST_RUNTIME_POINTER_CAST 0
 
-#include "variant_dll.hpp"
-
 #include "type_id.hpp"
 #include <typeinfo>
 #include <type_traits>
@@ -21,11 +19,7 @@ class BinaryStream;
 /**
 Base metatype class for any type that can be used inside Variant.
 */
-
-#pragma warning (push)
-#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
-
-class VARIANT_DLL MetaType
+class MetaType
 {
 public:
 	typedef bool (*ConversionFunc)( const MetaType* toType, void* to, const MetaType* fromType, const void* from );
@@ -295,7 +289,5 @@ private:
 #endif // FAST_RUNTIME_POINTER_CAST
 
 };
-
-#pragma warning (pop)
 
 #endif //META_TYPE_HPP

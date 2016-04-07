@@ -120,6 +120,8 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
+		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
+
 		if (IDefinitionManager* dm = contextManager.queryInterface<IDefinitionManager>())
 		{
 			def1_ = dm->registerDefinition( new TypeClassDefinition< Test1 > );

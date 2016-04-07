@@ -35,6 +35,8 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{		
+ 		Variant::setMetaTypeManager( 
+ 			contextManager.queryInterface< IMetaTypeManager >() );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

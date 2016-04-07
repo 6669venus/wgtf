@@ -169,7 +169,6 @@ BW_TARGET_LINK_LIBRARIES( core_qt_common
 	core_data_model
 	core_logging
 	core_string_utils
-	core_ui_framework
     Qt5::Core
     Qt5::Gui
     Qt5::QuickWidgets

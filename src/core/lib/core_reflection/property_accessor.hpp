@@ -6,8 +6,6 @@
 #include "i_definition_manager.hpp"
 #include "core_variant/collection.hpp"
 
-#include "reflection_dll.hpp"
-
 class TypeId;
 class ObjectHandle;
 class IBaseProperty;
@@ -16,10 +14,7 @@ class MetaBase;
 class Variant;
 class ReflectedMethodParameters;
 
-#pragma warning (push)
-#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
-
-class REFLECTION_DLL PropertyAccessor
+class PropertyAccessor
 {
 public:
 	PropertyAccessor();
@@ -76,7 +71,5 @@ private:
 	void setBaseProperty( const IBasePropertyPtr & property );
 	void setParent( const PropertyAccessor& parent );
 };
-
-#pragma warning (pop)
 
 #endif // PROPERTY_ACCESSOR_HPP

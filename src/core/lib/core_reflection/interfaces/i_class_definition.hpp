@@ -19,6 +19,11 @@ typedef ObjectHandleT< MetaBase > MetaHandle;
 typedef std::function<void*( )> DataGetter;
 
 
+extern const char INDEX_OPEN;
+extern const char INDEX_CLOSE;
+extern const char DOT_OPERATOR;
+
+
 /**
  *	Interface for storing info that "defines" a class.
  *	
@@ -33,10 +38,6 @@ typedef std::function<void*( )> DataGetter;
 class IClassDefinition
 {
 public:
-	static const char INDEX_OPEN = '[';
-	static const char INDEX_CLOSE = ']';
-	static const char DOT_OPERATOR = '.';
-
 	virtual ~IClassDefinition() {}
 
 	/**

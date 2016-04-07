@@ -1,4 +1,6 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_variant/variant.hpp"
+#include "core_variant/default_meta_type_manager.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
@@ -27,6 +29,9 @@ public:
 	//==========================================================================
 	void Initialise(IComponentContext & contextManager) override
 	{
+		Variant::setMetaTypeManager( 
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		auto defManager = contextManager.queryInterface< IDefinitionManager >();
 		if (defManager == nullptr)
 		{

@@ -1,8 +1,6 @@
 #ifndef SERIALIZATION_MANAGER_HPP
 #define SERIALIZATION_MANAGER_HPP
 
-#include "../serialization_dll.hpp"
-
 #include <string>
 #include <unordered_map>
 #include "core_common/deprecated.hpp"
@@ -14,7 +12,7 @@ class IDataStream;
 /**
  * Serialization Manager
  */
-class DEPRECATED SERIALIZATION_DLL SerializationManager
+class DEPRECATED SerializationManager
 	: public Implements< ISerializationManager >
 {
 public:
@@ -25,12 +23,9 @@ public:
 	void deregisterSerializer( const char * typeName ) override;
 
 private:
-
-
 	ISerializer * getSerializer( const TypeId & typeId ) override;
-
-	class Impl;
-	Impl* serializerMapImpl_;
+	typedef std::unordered_map< const TypeId , ISerializer * > SerializerMap;
+	SerializerMap serializerMap_;
 };
 
 

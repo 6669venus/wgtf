@@ -4,7 +4,6 @@
 #include "core_variant/variant.hpp"
 #include "core_common/deprecated.hpp"
 #include "core_reflection/object_handle.hpp"
-#include "core_serialization/serialization_dll.hpp"
 #include <utility>
 
 class IDataStream;
@@ -14,7 +13,7 @@ class ISerializationManager;
  * Serializer interface
  */
 
-class SERIALIZATION_DLL ISerializer
+class ISerializer
 {
 public:
 	virtual ~ISerializer();

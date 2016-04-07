@@ -6,8 +6,6 @@
 #include <memory>
 #include "core_variant/variant.hpp"
 
-#include "core_reflection/reflection_dll.hpp"
-
 //TODO:
 //add #include "i_class_member.hpp"
 //inherit from IClassMember and make IMethod inherit from it as well.
@@ -29,7 +27,7 @@ typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
  *	Interface for storing info about a member/method of a class.
  *	A collection of all members of a class is stored in an IClassDefinition.
  */
-class REFLECTION_DLL IBaseProperty: public IMethod
+class IBaseProperty: public IMethod
 {
 public:
 	virtual ~IBaseProperty() {}

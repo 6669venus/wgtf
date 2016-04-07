@@ -3,15 +3,14 @@
 
 #include "core_variant/variant.hpp"
 #include "core_reflection/object_handle.hpp"
-#include "core_reflection/reflection_dll.hpp"
 
 class IDefinitionManager;
 
 namespace ReflectionUtilities
 {
 
-REFLECTION_DLL bool isPolyStruct( const PropertyAccessor & pa );
-REFLECTION_DLL bool isStruct( const PropertyAccessor & pa );
+bool isPolyStruct( const PropertyAccessor & pa );
+bool isStruct( const PropertyAccessor & pa );
 
 
 // =============================================================================
@@ -58,22 +57,22 @@ Variant reference( T *& value )
 
 // =============================================================================
 template<>
-REFLECTION_DLL Variant copy< Variant >( Variant & value );
+Variant copy< Variant >( Variant & value );
 
 
 // =============================================================================
 template<>
-REFLECTION_DLL Variant copy< const Variant >( const Variant & value );
+Variant copy< const Variant >( const Variant & value );
 
 
 // =============================================================================
 template<>
-REFLECTION_DLL Variant reference< Variant >( Variant & value );
+Variant reference< Variant >( Variant & value );
 
 
 // =============================================================================
 template<>
-REFLECTION_DLL Variant reference< const Variant >( const Variant & value );
+Variant reference< const Variant >( const Variant & value );
 
 
 // =============================================================================

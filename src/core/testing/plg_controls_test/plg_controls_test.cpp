@@ -2,6 +2,8 @@
 
 #include "controls_test_panel.hpp"
 
+#include "core_variant/variant.hpp"
+
 
 #include <memory>
 
@@ -17,6 +19,8 @@ public:
 
 	bool PostLoad( IComponentContext & componentContext ) override
 	{
+		Variant::setMetaTypeManager(
+			componentContext.queryInterface< IMetaTypeManager >() );
 		controlsTestPanel_.reset( new ControlsTestPanel( componentContext ) );
 		return true;
 	}

@@ -124,6 +124,9 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
+		Variant::setMetaTypeManager( 
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		defManager_ =
 			contextManager.queryInterface< IDefinitionManager >();
 		assert(defManager_ != nullptr);

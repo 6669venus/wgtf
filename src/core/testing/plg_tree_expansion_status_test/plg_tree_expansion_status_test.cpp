@@ -1,6 +1,7 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_variant/variant.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
@@ -34,6 +35,9 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
+		Variant::setMetaTypeManager( 
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		IDefinitionManager* defManager =
 			contextManager.queryInterface< IDefinitionManager >();
 		assert(defManager != nullptr);

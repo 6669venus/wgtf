@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
-PROJECT( plg_serialization )
+PROJECT( plg_variant )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
@@ -11,16 +11,19 @@ ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 SET( ALL_SRCS
-	plg_serialization.cpp
+	plg_variant.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_ADD_TOOL_PLUGIN( plg_serialization SHARED
+BW_ADD_TOOL_PLUGIN( plg_variant SHARED
 	${ALL_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( plg_serialization PRIVATE
-	core_generic_plugin
-	core_serialization )
+# Must be copied to unit test bin
+BW_COPY_PLUGIN_TO_UNIT_TEST_BIN( plg_variant )
 
-BW_PROJECT_CATEGORY( plg_serialization "Plugins" )
+BW_TARGET_LINK_LIBRARIES( plg_variant PRIVATE
+	core_generic_plugin
+	core_variant )
+
+BW_PROJECT_CATEGORY( plg_variant "Plugins" )

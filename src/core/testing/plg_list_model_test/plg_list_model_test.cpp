@@ -1,6 +1,7 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_variant/variant.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
@@ -33,6 +34,9 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
+		Variant::setMetaTypeManager( 
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );

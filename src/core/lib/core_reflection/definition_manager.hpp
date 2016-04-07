@@ -8,15 +8,10 @@
 
 #include "wg_types/hashed_string_ref.hpp"
 
-#include "reflection_dll.hpp"
-
-#pragma warning (push)
-#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
-
 /**
  * DefinitionManager
  */
-class REFLECTION_DLL DefinitionManager 
+class DefinitionManager 
 	: public Implements< IDefinitionManager >
 { 
 public:
@@ -67,6 +62,5 @@ private:
 	IObjectManager & objectManager_;
 };
 
-#pragma warning (pop)
 
 #endif // DEFINITION_MANAGER_HPP

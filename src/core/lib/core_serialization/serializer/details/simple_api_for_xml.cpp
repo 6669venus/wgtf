@@ -1,35 +1,7 @@
 #include "simple_api_for_xml.hpp"
-#include <string>
-#include <expat.h>
 
 
-class SimpleApiForXml::Impl
-{
-public:
-	explicit Impl( SimpleApiForXml* sax, TextStream& stream );
-	~Impl();
-
-	bool parse();
-	void abortParsing();
-
-	bool aborted() const
-	{
-		return aborted_;
-	}
-
-private:
-	XML_Parser parser_;
-	TextStream& stream_;
-	bool aborted_;
-	std::streamoff bytesRead_;
-
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-SimpleApiForXml::Impl::Impl( SimpleApiForXml* sax, TextStream& stream ):
+SimpleApiForXml::SimpleApiForXml( TextStream& stream ):
 	parser_( XML_ParserCreate( "UTF-8" ) ),
 	stream_( stream ),
 	aborted_( false ),
@@ -75,7 +47,7 @@ SimpleApiForXml::Impl::Impl( SimpleApiForXml* sax, TextStream& stream ):
 		}
 	};
 
-	XML_SetUserData( parser_, sax );
+	XML_SetUserData( parser_, this );
 
 	XML_SetElementHandler(
 		parser_,
@@ -87,12 +59,14 @@ SimpleApiForXml::Impl::Impl( SimpleApiForXml* sax, TextStream& stream ):
 		&Callbacks::CharacterDataHandler );
 }
 
-SimpleApiForXml::Impl::~Impl()
+
+SimpleApiForXml::~SimpleApiForXml()
 {
 	XML_ParserFree( parser_ );
 }
 
-bool SimpleApiForXml::Impl::parse()
+
+bool SimpleApiForXml::parse()
 {
 	if( aborted_ )
 	{
@@ -151,45 +125,14 @@ bool SimpleApiForXml::Impl::parse()
 	return result;
 }
 
-void SimpleApiForXml::Impl::abortParsing()
+
+void SimpleApiForXml::abortParsing()
 {
 	if( !aborted_ )
 	{
 		XML_StopParser( parser_, XML_FALSE );
 		aborted_ = true;
 	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-SimpleApiForXml::SimpleApiForXml( TextStream& stream ):
-	impl_( new Impl( this, stream ) )
-{
-}
-
-
-SimpleApiForXml::~SimpleApiForXml()
-{
-	// nop
-}
-
-
-bool SimpleApiForXml::parse()
-{
-	return impl_->parse();
-}
-
-
-void SimpleApiForXml::abortParsing()
-{
-	impl_->abortParsing();
-}
-
-
-bool SimpleApiForXml::aborted() const
-{
-	return impl_->aborted();
 }
 
 

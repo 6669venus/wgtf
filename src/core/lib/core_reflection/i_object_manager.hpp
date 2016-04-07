@@ -6,8 +6,6 @@
 #include "core_dependency_system/i_interface.hpp"
 #include <memory>
 
-#include "reflection_dll.hpp"
-
 class ObjectHandle;
 class RefObjectId;
 class ISerializer;
@@ -18,7 +16,7 @@ class IBaseProperty;
  *	Interface for receiving notifications when objects are registered or
  *	deregistered with IObjectManager.
  */
-class REFLECTION_DLL IObjectManagerListener
+class IObjectManagerListener
 {
 public:
 	virtual ~IObjectManagerListener() {}
@@ -55,7 +53,7 @@ public:
  *	"Managed" objects - IObjectManager controls deletion.
  *	"Unmanaged" objects - owner controls deletion.
  */
-class REFLECTION_DLL IObjectManager
+class IObjectManager
 {
 public:
 	/**

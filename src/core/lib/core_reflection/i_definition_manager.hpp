@@ -8,7 +8,6 @@
 #include "core_serialization/i_datastream.hpp"
 #include "reflected_object.hpp"
 #include "object_handle.hpp"
-#include "reflection_dll.hpp"
 
 class IClassDefinitionModifier;
 class IClassDefinitionDetails;
@@ -21,7 +20,7 @@ class ISerializer;
 /**
  * IDefinitionManager
  */
-class REFLECTION_DLL IDefinitionManager
+class IDefinitionManager
 {
 public:
 	virtual ~IDefinitionManager() {}

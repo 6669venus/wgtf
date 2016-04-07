@@ -142,9 +142,9 @@ Variant MappingIterator::value() const /* override */
 	
 	Variant result;
 	std::string childPath;
-	childPath += IClassDefinition::INDEX_OPEN;
+	childPath += INDEX_OPEN;
 	childPath += key_.str( PyScript::ScriptErrorPrint() ).c_str();
-	childPath += IClassDefinition::INDEX_CLOSE;
+	childPath += INDEX_CLOSE;
 	const bool success = typeConverters_.toVariant( item, result, containerHandle_, childPath );
 	assert( success );
 	return result;

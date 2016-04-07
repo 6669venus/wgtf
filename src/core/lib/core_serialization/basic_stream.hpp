@@ -2,7 +2,6 @@
 #define BASIC_STREAM_HPP_INCLUDED
 
 //#include "i_datastream.hpp" // break cyclic include: i_datastream.hpp -> variant.hpp -> text_stream.hpp -> basic_stream.hpp -> i_datastream.hpp
-#include "serialization_dll.hpp"
 class IDataStream;
 #include <ios>
 
@@ -10,7 +9,7 @@ class IDataStream;
 /**
 Basic IDataStream wrapper for more convenient IO.
 */
-class SERIALIZATION_DLL BasicStream
+class BasicStream
 {
 public:
 	/**

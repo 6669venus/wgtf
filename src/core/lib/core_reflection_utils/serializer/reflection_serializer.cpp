@@ -6,15 +6,18 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_iterator.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_variant/interfaces/i_meta_type_manager.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 
 ReflectionSerializer::ReflectionSerializer( ISerializationManager & serializationManager , 
+										    IMetaTypeManager & metaTypeManager, 
 										    IObjectManager & objManager,
 											IDefinitionManager & defManager )
 	: serializationManager_( serializationManager )
+	, metaTypeManager_( metaTypeManager )
 	, objManager_( objManager )
 	, defManager_( defManager )
 	, curDataStream_( nullptr )
@@ -259,7 +262,8 @@ void ReflectionSerializer::readProperty( const ObjectHandle & provider )
 
 	std::string valueType;
 	curDataStream_->read( valueType );
-	const MetaType * metaType = Variant::findType( valueType.c_str() );
+	const MetaType * metaType = 
+		metaTypeManager_.findType( valueType.c_str() );
 	if(metaType == nullptr)
 	{
 		assert( false );
@@ -304,7 +308,8 @@ void ReflectionSerializer::readCollection( const PropertyAccessor & prop )
 		assert( pa.isValid() );
 		valueType.clear();
 		curDataStream_->read( valueType );
-		const MetaType * metaType = Variant::findType( valueType.c_str() );
+		const MetaType * metaType = 
+			metaTypeManager_.findType( valueType.c_str() );
 		if(metaType == nullptr)
 		{
 			assert( false );
@@ -316,7 +321,8 @@ void ReflectionSerializer::readCollection( const PropertyAccessor & prop )
 
 void ReflectionSerializer::readPropertyValue( const char * valueType, PropertyAccessor & pa )
 {
-	const MetaType * metaType = Variant::findType( valueType );
+	const MetaType * metaType = 
+		metaTypeManager_.findType( valueType );
 	if(metaType == nullptr)
 	{
 		assert( false );

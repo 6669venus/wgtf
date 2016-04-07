@@ -4,7 +4,7 @@
 #include "meta_base.hpp"
 
 #include "../types/reflected_collection.hpp"
-#include "../reflection_dll.hpp"
+
 class IEnumGenerator;
 typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
 
@@ -12,10 +12,10 @@ typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
  *	Depricated: only for use with EXPOSE macros.
  *	Use nullptr for no metadata where possible.
  */
-REFLECTION_DLL MetaHandle MetaNone();
-REFLECTION_DLL MetaHandle MetaMinMax( float min, float max );
-REFLECTION_DLL MetaHandle MetaStepSize( float stepSize );
-REFLECTION_DLL MetaHandle MetaDecimals( int decimals );
+MetaHandle MetaNone();
+MetaHandle MetaMinMax( float min, float max );
+MetaHandle MetaStepSize( float stepSize );
+MetaHandle MetaDecimals( int decimals );
 
 
 #define MetaEnumFunc( getterFunc ) \
@@ -26,38 +26,38 @@ REFLECTION_DLL MetaHandle MetaDecimals( int decimals );
 					"EnumTypes", &SelfType::getterFunc, NULL,\
 					TypeId::getType< std::map< int, std::wstring > >() ) ) ) ) )
 
-REFLECTION_DLL MetaHandle MetaEnum( IEnumGeneratorPtr enumGenerator );
-REFLECTION_DLL MetaHandle MetaEnum( const wchar_t * enumString );
+MetaHandle MetaEnum( IEnumGeneratorPtr enumGenerator );
+MetaHandle MetaEnum( const wchar_t * enumString );
 
-REFLECTION_DLL MetaHandle MetaSlider();
+MetaHandle MetaSlider();
 
-REFLECTION_DLL MetaHandle MetaGroup( const wchar_t * groupName );
+MetaHandle MetaGroup( const wchar_t * groupName );
 
-REFLECTION_DLL MetaHandle MetaAttributeDisplayName( const char * attributePath );
+MetaHandle MetaAttributeDisplayName( const char * attributePath );
 
-REFLECTION_DLL MetaHandle MetaDisplayName( const wchar_t * displayName );
+MetaHandle MetaDisplayName( const wchar_t * displayName );
 
-REFLECTION_DLL MetaHandle MetaDescription( const wchar_t * displayName );
+MetaHandle MetaDescription( const wchar_t * displayName );
 
-REFLECTION_DLL MetaHandle MetaPanelLayout( const char * layoutFile, const char * bindingsFile = NULL );
+MetaHandle MetaPanelLayout( const char * layoutFile, const char * bindingsFile = NULL );
 
-REFLECTION_DLL MetaHandle MetaNoNull();
+MetaHandle MetaNoNull();
 
-REFLECTION_DLL MetaHandle MetaColor();
+MetaHandle MetaColor();
 
-REFLECTION_DLL MetaHandle MetaHidden();
+MetaHandle MetaHidden();
 
-REFLECTION_DLL MetaHandle MetaThumbnail( int width = -1, int height = -1 );
+MetaHandle MetaThumbnail( int width = -1, int height = -1 );
 
-REFLECTION_DLL MetaHandle MetaInPlace( const char * propertyName = NULL );
+MetaHandle MetaInPlace( const char * propertyName = NULL );
 
-REFLECTION_DLL MetaHandle MetaSelected( const char * propertyName );
+MetaHandle MetaSelected( const char * propertyName );
 
-REFLECTION_DLL MetaHandle MetaInPlacePropertyName( const char * propertyName );
+MetaHandle MetaInPlacePropertyName( const char * propertyName );
 
-REFLECTION_DLL MetaHandle MetaReadOnly();
+MetaHandle MetaReadOnly();
 
-REFLECTION_DLL MetaHandle MetaUrl(bool isAssetBrowserDialog = false,
+MetaHandle MetaUrl(bool isAssetBrowserDialog = false,
 				   const char * urlDlgTitle = nullptr, 
 				   const char * urlDlgDefaultFolder = nullptr,
 				   int urlDlgModality = 1,
@@ -101,30 +101,30 @@ private:
 			reinterpret_cast< MetaCommandExecutableImpl< SelfType >::CommandExecuteFunc >(\
 			&SelfType::executeFunc ) ) )
 
-REFLECTION_DLL MetaHandle MetaCommandBase(
+MetaHandle MetaCommandBase(
 	const wchar_t * commandName, const IMetaCommandExecutable * executeFunc );
 
-REFLECTION_DLL MetaHandle MetaNoSerialization();
+MetaHandle MetaNoSerialization();
 
-REFLECTION_DLL MetaHandle MetaUniqueId( const char * id );
+MetaHandle MetaUniqueId( const char * id );
 
-REFLECTION_DLL MetaHandle MetaOnStack();
+MetaHandle MetaOnStack();
 
-REFLECTION_DLL MetaHandle MetaUnique();
+MetaHandle MetaUnique();
 
-REFLECTION_DLL MetaHandle MetaParamHelp( const char* paramName, const MetaParamTypes::MetaParamType paramType, const char* paramDesc );
+MetaHandle MetaParamHelp( const char* paramName, const MetaParamTypes::MetaParamType paramType, const char* paramDesc );
 
-REFLECTION_DLL MetaHandle MetaReturnHelp( const char* returnName, const MetaParamTypes::MetaParamType returnType, const char* returnDesc );
+MetaHandle MetaReturnHelp( const char* returnName, const MetaParamTypes::MetaParamType returnType, const char* returnDesc );
 
-REFLECTION_DLL MetaHandle MetaConsoleHelp( const char* text );
+MetaHandle MetaConsoleHelp( const char* text );
 
-REFLECTION_DLL MetaHandle MetaScriptFunctionHelp( const char* name );
+MetaHandle MetaScriptFunctionHelp( const char* name );
 
-REFLECTION_DLL MetaHandle MetaTooltip( const char* tooltip );
+MetaHandle MetaTooltip( const char* tooltip );
 
-REFLECTION_DLL MetaHandle MetaPassword();
+MetaHandle MetaPassword();
 
-REFLECTION_DLL MetaHandle MetaMultiline();
+MetaHandle MetaMultiline();
 
 
 #endif //META_TYPES_HPP

@@ -19,113 +19,85 @@ WGPanel {
 
     property var title: qsTr( "Timeline Panel" )
 
-    property var sourceModel: source
+    ListModel {
+        id: barModel
 
-    // Awaiting dummy model
-    WGTreeModel {
-        id: treeModel
-        source: timelinePanel.sourceModel
-        objectName: "TreeExpansionTest"
-        ValueExtension {}
-        ColumnExtension {}
-        ComponentExtension {}
-        TreeExtension {
-            id: treeModelExtension
-            selectionExtension: treeModelSelection
+        ListElement {
+            startTime: 0
+            endTime: 0.2
+            barColor: "red"
+            rowSpan: 1
         }
-        ThumbnailExtension {}
-        SelectionExtension {
-            id: treeModelSelection
-            multiSelect: true
+        ListElement {
+            startTime: 0.2
+            endTime: 0.4
+            barColor: "blue"
+            rowSpan: 1
+        }
+        ListElement {
+            startTime: 0.2
+            endTime: 0.6
+            barColor: "green"
+            rowSpan: 1
+        }
+        ListElement {
+            startTime: 0.6
+            endTime: 0.8
+            barColor: "yellow"
+            rowSpan: 1
+        }
+        ListElement {
+            startTime: 0.4
+            endTime: 0.6
+            barColor: "aqua"
+            rowSpan: 1
+        }
+        ListElement {
+            startTime: 0.2
+            endTime: 0.4
+            barColor: "orange"
+            rowSpan: 1
+        }
+        ListElement {
+            startTime: 0.4
+            endTime: 1.0
+            barColor: "purple"
+            rowSpan: 1
         }
     }
 
-    //The GridCanvas will draw behind the TreeView
     WGGridCanvas {
-        id: keyframeGrid
-        objectName: "keyframeGrid"
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        id: gridCanvas
+        anchors.fill: parent
+        focus: true
         useAxis: xGrid
+        showMouseLine: true
+        showXGridLines: true
         showYGridLines: false
-        //x: //The position of the grids left should be ~2xtreeview.columnWidth + 1stcolumnWidth + secondcolumnWidth
 
-        //Current Time Handle
-        Rectangle {
-            id: currentTimeHandle
-            objectName: "currentTimeHandle"
-            property real currentTime: 0
-            x: currentTime
-            width: 7
-            y: 0
-            height: parent.height
-            color: "yellow"
+        timeScale: 100
 
-            MouseArea {
-                id: currentTimeHandleMouseArea
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width
-                height: parent.height
-                cursorShape: Qt.SplitHCursor
+        property real totalWidth: Math.abs(gridCanvas.viewTransform.transformX(0) - gridCanvas.viewTransform.transformX(1))
+        property real totalHeight: Math.abs(gridCanvas.viewTransform.transformY(0) - gridCanvas.viewTransform.transformY(1))
 
-                drag.target: currentTimeHandle
-                drag.threshold: 0
-                drag.axis: Drag.XAxis
-                //drag.minimumX: index === 0 ? firstColumnIndentation + minimumColumnSize : minimumColumnSize
-                //drag.maximumX: resizable ? maximumColumnSize : columns.calculateMaxColumnSize(column.x, index)
+        ListView {
+            model: barModel
 
-                onPositionChanged: {
-                    console.log("timelineHandle dragged")
-                }
-            }
+            width: gridCanvas.totalWidth
+            height: gridCanvas.totalHeight
+            x: gridCanvas.viewTransform.transformX(0)
+            y: gridCanvas.viewTransform.transformY(1)
 
-            Rectangle {
-                id: innerShade
-                color: "white"
-                width: 1
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.centerIn: parent
-            }
-        }
-    }
-
-    WGTreeView {
-        id: timelineView
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: 1
-        // Set the columnsFrame invisible to allow the gridView visibility
-        showColumnsFrame: false //true
-        showColumnHeaders: false
-        showColumnFooters: false
-        model: treeModel
-        selectionExtension: treeModelExtension
-        //columnSpacing: 4
-        //backgroundColourMode: incrementalGroupBackgroundColours
-
-        columnDelegates: [defaultColumnDelegate, propertyDelegate, keyframeColumnDelegate]
-
-        property Component propertyDelegate: Loader {
-            clip: true
-            sourceComponent: itemData != null ? itemData.Component : null
-        }
-
-        Component {
-            id: keyframeColumnDelegate
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: timelineView.minimumRowHeight
-
-                //to be replaced by WGKeyframeControl
-                WGSliderControl {
-                    anchors.fill: parent
+            delegate: Item {
+                height: defaultSpacing.minimumRowHeight
+                width: gridCanvas.totalWidth
+                Rectangle {
+                    color: barColor
+                    x: gridCanvas.totalWidth * startTime
+                    width: (gridCanvas.totalWidth * endTime) - (gridCanvas.totalWidth * startTime)
+                    height: defaultSpacing.minimumRowHeight
                 }
             }
         }
-    }
+   }
 }

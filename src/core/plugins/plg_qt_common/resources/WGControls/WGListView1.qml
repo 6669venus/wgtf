@@ -265,7 +265,7 @@ Item {
 
         headerDataChanged(0, columnCount - 1);
 
-        list.model = 0;
+        list.model = null;
         list.model = listView.model;
     }
 

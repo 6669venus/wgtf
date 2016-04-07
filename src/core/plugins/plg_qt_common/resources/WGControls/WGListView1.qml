@@ -265,6 +265,7 @@ Item {
 
         headerDataChanged(0, columnCount - 1);
 
+        //TODO(aidan): check if there is a better way to do this NGT-2101
         list.model = null;
         list.model = listView.model;
     }

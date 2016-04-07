@@ -256,12 +256,16 @@ Style {
                                 control.__draggable = false
                                 control.handleCtrlClicked(index)
                             }
+                            else if (!control.grooveClickable)
+                            {
+                                control.__draggable = true
+                            }
 
                             mouse.accepted = false
                         }
 
                         onReleased: {
-                            control.__draggable = true
+                            control.__draggable = control.grooveClickable
                         }
                     }
                 }

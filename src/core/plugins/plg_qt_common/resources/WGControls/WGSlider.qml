@@ -164,7 +164,7 @@ Control {
 
     /*!
         This property determines if the user can click the bar itself to
-        move the handle to that position. Setting this to false gives better control
+        move the active handle to that position. Setting this to false gives better control
         and makes it harder to move the handles by accident.
 
         The default value is \c true
@@ -187,7 +187,7 @@ Control {
     property Component handleType: WGSliderHandle{}
 
     /*! \internal */
-    property bool __draggable: true
+    property bool __draggable: grooveClickable
 
     /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal
@@ -565,7 +565,7 @@ Control {
 
             dragStarted = false
 
-            __draggable = true
+            __draggable = grooveClickable
         }
 
         //signal when bar is double clicked.

@@ -16,15 +16,20 @@ WGSliderStyle {
 
         //changing between odd and even values causes pixel 'wiggling' as the center anchors move around.
         //can't use anchors.fill because the gradients need rotating
+
         implicitHeight: __horizontal ? control.height - control.height % 2 : control.width - control.width % 2
         implicitWidth: __horizontal ? control.width - control.width % 2 : control.height - control.height % 2
+
 
         WGTextBoxFrame {
             radius: defaultSpacing.halfRadius
 
             anchors.fill: parent
+            anchors.bottomMargin: control.handleVerticalOffset
 
             color: "transparent"
+
+            clip: true
 
             //grid pattern for transparent colors
             Image {
@@ -32,17 +37,15 @@ WGSliderStyle {
                 fillMode: Image.Tile
                 anchors.fill: parent
                 anchors.margins: defaultSpacing.standardBorderSize
+
                 z: -1
             }
 
-            clip: true
-
-            //Item that holds the gradient
-            //QML can't make horizontal gradients so this is always vertical, then possibly rotated.
-
-            Rectangle {
+            Loader {
                 objectName: "gradientFrame"
                 id: gradientFrame
+                sourceComponent: control.gradientFrame
+
                 anchors.centerIn: parent
 
                 height: parent.width - 2
@@ -50,7 +53,6 @@ WGSliderStyle {
 
                 rotation: -90
 
-                gradient: control.gradient
             }
         }
     }

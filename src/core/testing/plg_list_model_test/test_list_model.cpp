@@ -103,7 +103,7 @@ void TestListModel::Implementation::generateData()
 	std::random_device randomDevice;
 	std::default_random_engine randomEngine( randomDevice() );
 	std::uniform_int_distribution<size_t> uniformDistribution( 0, 999999 );
-	size_t max = shortList_ ? 100 : 1000;
+	size_t max = shortList_ ? 1000 : 2000;
 
 	while (!dataString.empty())
 	{

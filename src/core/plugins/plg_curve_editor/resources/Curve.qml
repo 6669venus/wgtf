@@ -14,6 +14,7 @@ Canvas {
     property alias pointRepeater: pointRepeater;
     property var points;
     property var curveModel;
+    property var curveIndex;
     property color color;
     property bool enabled: true;
     property bool showControlPoints: enabled && curveModel.showControlPoints
@@ -142,6 +143,7 @@ Canvas {
             baseColor: curve.color;
             enabled: curve.enabled;
             viewTransform: curve.viewTransform;
+            pointIndex: index
             onSelectedChanged:{
                 pointSelectionChanged(this)
             }

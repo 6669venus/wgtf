@@ -6,6 +6,8 @@ import WGControls 1.0
 
 /*!
     \brief An arrow style slider handle for multi-handle Gradient WGColorSliders
+
+    DEPRECATED - This control has been replaced by WGGradientSliderHandle in WGControls 2.0
 */
 
 WGColorSliderHandle {

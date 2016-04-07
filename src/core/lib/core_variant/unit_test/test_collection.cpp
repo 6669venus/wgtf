@@ -332,6 +332,56 @@ TEST_F(VectorFixture, Collection_vector_erase_iterator)
 }
 
 
+TEST_F(VectorFixture, Collection_vector_erase_iterator_range)
+{
+	auto rangeEnd = collection.find(2);
+	CHECK(rangeEnd != collection.end());
+	auto it = collection.erase(collection.begin(), rangeEnd);
+	CHECK(it != collection.end());
+	CHECK(*it == 2);
+
+	const CheckValue<size_t, int> check[] =
+	{
+		{0, 2}
+	};
+
+	checkContents(EXTRA_ARGS, check);
+}
+
+
+TEST_F(VectorFixture, Collection_vector_erase_iterator_range_end)
+{
+	auto rangeBegin = collection.find(1);
+	CHECK(rangeBegin != collection.end());
+	auto it = collection.erase(rangeBegin, collection.end());
+	CHECK(it == collection.end());
+
+	const CheckValue<size_t, int> check[] =
+	{
+		{0, 0}
+	};
+
+	checkContents(EXTRA_ARGS, check);
+}
+
+
+TEST_F(VectorFixture, Collection_vector_erase_iterator_empty_range)
+{
+	auto it = collection.erase(collection.begin(), collection.begin());
+	CHECK(it != collection.end());
+	CHECK(*it == 0);
+
+	const CheckValue<size_t, int> check[] =
+	{
+		{0, 0},
+		{1, 1},
+		{2, 2}
+	};
+
+	checkContents(EXTRA_ARGS, check);
+}
+
+
 TEST_F(VectorFixture, Collection_vector_erase_key)
 {
 	CHECK(collection.erase(1) == 1);

@@ -53,7 +53,7 @@ public:
 
 		std::unique_ptr< IListModel > multiColumnListModel( new TestListModel( true ) );
 		multiColumnListView_ = uiFramework->createView(
-			"plg_list_model_test/test_multi_column_list_panel.qml",
+			"plg_list_model_test/test_column_sequence_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( multiColumnListModel ) );
 		
 		uiApplication->addView( *listView_ );

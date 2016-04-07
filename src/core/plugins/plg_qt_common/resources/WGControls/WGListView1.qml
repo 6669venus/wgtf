@@ -103,6 +103,10 @@ Item {
     */
     property var columnSequence: []
 
+    onColumnSequenceChanged: {
+        updateColumnCount();
+    }
+
     /*! This property defines the anchors.margins used by the selection highlight
         The default value is \c 0
     */
@@ -260,6 +264,9 @@ Item {
         }
 
         headerDataChanged(0, columnCount - 1);
+
+        list.model = 0;
+        list.model = listView.model;
     }
 
     function calculateMaxTextWidth(index)

@@ -56,7 +56,10 @@ Item {
             {
                 column = columns.children[i];
                 var handle = column.children[0];
-                handle.x = handle.x;
+                if (typeof(handle) !== "undefined") 
+                {
+                    handle.x = handle.x;
+                }
             }
         }
 

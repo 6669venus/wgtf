@@ -3,6 +3,7 @@
 
 
 #include "base_generic_object.hpp"
+#include "core_reflection/reflection_dll.hpp"
 
 
 #include <unordered_map>
@@ -15,12 +16,14 @@ class GenericDefinition;
 class GenericProperty;
 class TypeId;
 
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
 
 /**
  *	GenericObject is an object that has a "generic type".
  *	And it has storage for any properties that are added/removed.
  */
-class GenericObject : public BaseGenericObject
+class REFLECTION_DLL GenericObject : public BaseGenericObject
 {
 public:
 	/// Only GenericDefinition::create should use this function
@@ -42,5 +45,7 @@ private:
 	mutable std::unordered_map< const GenericProperty *, Variant > properties_;
 	friend class GenericProperty;
 };
+
+#pragma warning (pop)
 
 #endif //GENERIC_OBJECT_HPP

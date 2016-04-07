@@ -56,9 +56,9 @@ DefinedInstance::DefinedInstance(
 		fullPath_ = pParentInstance->fullPath();
 		if (!fullPath_.empty() && !childPath.empty())
 		{
-			if (childPath[0] != INDEX_OPEN)
+			if (childPath[0] != IClassDefinition::INDEX_OPEN)
 			{
-				fullPath_ += DOT_OPERATOR;
+				fullPath_ += IClassDefinition::DOT_OPERATOR;
 			}
 		}
 	}

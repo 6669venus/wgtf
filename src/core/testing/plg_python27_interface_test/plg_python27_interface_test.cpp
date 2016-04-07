@@ -2,7 +2,6 @@
 #include "main_application.hpp"
 
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "core_variant/variant.hpp"
 
 
 class Python27TestPlugin
@@ -23,7 +22,6 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
 	}
 
 

@@ -26,8 +26,6 @@ public:
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager )
 	{
-		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
-
 		return true;
 	}
 

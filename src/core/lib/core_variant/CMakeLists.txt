@@ -4,10 +4,7 @@ PROJECT( core_variant )
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
-SET( INTERFACES_SRC
-	interfaces/i_meta_type_manager.hpp
-)
-SOURCE_GROUP( "interfaces" FILES ${INTERFACES_SRC} )
+ADD_DEFINITIONS( -DVARIANT_EXPORT )
 
 SET( STL_CONTAINER_SRC
 	stl_container/linear_collection.hpp
@@ -28,11 +25,11 @@ SET( ALL_SRCS
 	type_id.cpp
 	variant.cpp
 	variant.hpp
+	variant_dll.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 BW_BLOB_SOURCES( BLOB_SRCS
-	${INTERFACES_SRC}
 	${STL_CONTAINER_SRC}
 	${ALL_SRCS}
 )

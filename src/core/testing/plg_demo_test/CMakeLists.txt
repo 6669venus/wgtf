@@ -34,6 +34,7 @@ BW_ADD_TOOL_PLUGIN( plg_demo_test SHARED
 )
 
 BW_TARGET_LINK_LIBRARIES( plg_demo_test PRIVATE
+	core_reflection
 	core_generic_plugin
 	core_qt_common
 	core_ui_framework

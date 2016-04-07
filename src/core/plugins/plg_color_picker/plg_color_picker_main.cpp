@@ -33,10 +33,6 @@ public:
     // Plugin creates resources
     bool PostLoad( IComponentContext & componentContext ) override
     {
-        // Static variable that must be set for every plugin
-        Variant::setMetaTypeManager(
-            componentContext.queryInterface< IMetaTypeManager >() );
- 
 		auto defManager = componentContext.queryInterface< IDefinitionManager >();
 		defManager->registerDefinition( new TypeClassDefinition< ColorPickerContext >() );
 

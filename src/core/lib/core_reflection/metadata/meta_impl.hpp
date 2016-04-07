@@ -8,10 +8,12 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 
 #include "meta_base.hpp"
 
+#include "core_reflection/reflection_dll.hpp"
+
 class Collection;
 
 //==============================================================================
-class MetaNoneObj
+class REFLECTION_DLL MetaNoneObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -22,7 +24,7 @@ public:
 };
 
 //==============================================================================
-class MetaMinMaxObj
+class REFLECTION_DLL MetaMinMaxObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -40,7 +42,7 @@ private:
 };
 
 //==============================================================================
-class MetaStepSizeObj
+class REFLECTION_DLL MetaStepSizeObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -59,7 +61,7 @@ private:
 };
 
 //==============================================================================
-class MetaDecimalsObj
+class REFLECTION_DLL MetaDecimalsObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -79,8 +81,12 @@ private:
 
 class IEnumGenerator;
 typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
+
 //==============================================================================
-class MetaEnumObj
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class REFLECTION_DLL MetaEnumObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -101,9 +107,10 @@ private:
 	const wchar_t *		enumString_;
 };
 
+#pragma warning (pop)
 
 //==============================================================================
-class MetaSliderObj
+class REFLECTION_DLL MetaSliderObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -115,7 +122,7 @@ public:
 
 
 //==============================================================================
-class MetaGroupObj
+class REFLECTION_DLL MetaGroupObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -140,7 +147,7 @@ private:
 
 
 //==============================================================================
-class MetaAttributeDisplayNameObj
+class REFLECTION_DLL MetaAttributeDisplayNameObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -162,7 +169,7 @@ private:
 
 
 //==============================================================================
-class MetaDisplayNameObj
+class REFLECTION_DLL MetaDisplayNameObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -184,7 +191,7 @@ private:
 
 
 //==============================================================================
-class MetaDescriptionObj
+class REFLECTION_DLL MetaDescriptionObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -206,7 +213,7 @@ private:
 
 
 //==============================================================================
-class MetaPanelLayoutObj
+class REFLECTION_DLL MetaPanelLayoutObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -232,7 +239,7 @@ private:
 
 
 //==============================================================================
-class MetaNoNullObj
+class REFLECTION_DLL MetaNoNullObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -244,7 +251,7 @@ public:
 
 
 //==============================================================================
-class MetaColorObj
+class REFLECTION_DLL MetaColorObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -256,7 +263,7 @@ public:
 
 
 //==============================================================================
-class MetaHiddenObj
+class REFLECTION_DLL MetaHiddenObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -268,7 +275,7 @@ public:
 
 
 //==============================================================================
-class MetaThumbnailObj
+class REFLECTION_DLL MetaThumbnailObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -292,7 +299,7 @@ private:
 
 
 //==============================================================================
-class MetaInPlaceObj
+class REFLECTION_DLL MetaInPlaceObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -311,7 +318,7 @@ private:
 
 
 //==============================================================================
-class MetaSelectedObj
+class REFLECTION_DLL MetaSelectedObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -332,7 +339,7 @@ private:
 class IMetaCommandExecutable;
 
 //==============================================================================
-class MetaCommandObj
+class REFLECTION_DLL MetaCommandObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -360,7 +367,7 @@ private:
 };
 
 //==============================================================================
-class MetaNoSerializationObj
+class REFLECTION_DLL MetaNoSerializationObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -371,7 +378,7 @@ public:
 };
 
 //==============================================================================
-class MetaUniqueIdObj
+class REFLECTION_DLL MetaUniqueIdObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -388,7 +395,7 @@ private:
 };
 
 //==============================================================================
-class MetaOnStackObj
+class REFLECTION_DLL MetaOnStackObj
 	: public MetaBase
 {
 	DECLARE_REFLECTED
@@ -399,7 +406,7 @@ public:
 };
 
 //==============================================================================
-class MetaInPlacePropertyNameObj
+class REFLECTION_DLL MetaInPlacePropertyNameObj
 	: public MetaBase
 {
 public:
@@ -416,7 +423,7 @@ private:
 };
 
 //==============================================================================
-class MetaReadOnlyObj : public MetaBase
+class REFLECTION_DLL MetaReadOnlyObj : public MetaBase
 {
 	DECLARE_REFLECTED
 
@@ -425,7 +432,7 @@ public:
 	~MetaReadOnlyObj() {}
 };
 
-class MetaUrlObj : public MetaBase
+class REFLECTION_DLL MetaUrlObj : public MetaBase
 {
 	DECLARE_REFLECTED
 
@@ -455,13 +462,13 @@ private:
 };
 
 //==============================================================================
-class MetaUniqueObj : public MetaBase
+class REFLECTION_DLL MetaUniqueObj : public MetaBase
 {
 	DECLARE_REFLECTED
 };
 
 //==============================================================================
-class MetaParamHelpObj : public MetaBase 
+class REFLECTION_DLL MetaParamHelpObj : public MetaBase 
 {
 	DECLARE_REFLECTED
 
@@ -502,7 +509,7 @@ private:
 };
 
 //==============================================================================
-class MetaReturnHelpObj : public MetaBase
+class REFLECTION_DLL MetaReturnHelpObj : public MetaBase
 {
 	DECLARE_REFLECTED
 
@@ -526,7 +533,7 @@ private:
 };
 
 //==============================================================================
-class MetaConsoleHelpObj : public MetaBase
+class REFLECTION_DLL MetaConsoleHelpObj : public MetaBase
 {
 	DECLARE_REFLECTED
 
@@ -544,7 +551,7 @@ private:
 };
 
 //==============================================================================
-class MetaScriptFunctionHelpObj : public MetaBase
+class REFLECTION_DLL MetaScriptFunctionHelpObj : public MetaBase
 {
 	DECLARE_REFLECTED
 
@@ -562,7 +569,7 @@ private:
 };
 
 //==============================================================================
-class MetaTooltipObj : public MetaBase
+class REFLECTION_DLL MetaTooltipObj : public MetaBase
 {
 	DECLARE_REFLECTED
 
@@ -580,13 +587,13 @@ private:
 };
 
 //==============================================================================
-class MetaPasswordObj : public MetaBase
+class REFLECTION_DLL MetaPasswordObj : public MetaBase
 {
 	DECLARE_REFLECTED
 };
 
 //==============================================================================
-class MetaMultilineObj : public MetaBase
+class REFLECTION_DLL MetaMultilineObj : public MetaBase
 {
 	DECLARE_REFLECTED
 };

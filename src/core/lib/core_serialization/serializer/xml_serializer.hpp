@@ -6,15 +6,21 @@
 
 #include "core_serialization/text_stream.hpp"
 #include <string>
+
+#include "core_serialization/serialization_dll.hpp"
+
 class IDefinitionManager;
 
-class XMLSerializer:
+#pragma warning (push)
+#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
+
+class SERIALIZATION_DLL XMLSerializer:
 	public Implements< ISerializer >
 {
 public:
 	using ISerializer::deserialize;
 
-	struct Format
+	struct SERIALIZATION_DLL Format
 	{
 		struct Unformatted {};
 
@@ -103,5 +109,6 @@ private:
 
 };
 
+#pragma warning (pop)
 
 #endif

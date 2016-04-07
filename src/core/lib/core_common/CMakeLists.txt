@@ -19,6 +19,7 @@ SET( ALL_SRCS
 	platform_dll.cpp
 	platform_env.hpp
 	platform_env.cpp
+	platform_export.hpp
 	platform_path.hpp
 	platform_path.cpp
 	platform_std.hpp

@@ -4,6 +4,9 @@
 #include <string>
 #include <utility>
 
+#include "serialization_dll.hpp"
+
+
 class TextStream;
 
 
@@ -41,7 +44,7 @@ namespace text_stream_manip_details
 
 	};
 
-	TextStream& operator>>( TextStream& stream, const CStringMatcher& value );
+	SERIALIZATION_DLL TextStream& operator>>( TextStream& stream, const CStringMatcher& value );
 
 
 	class StringMatcher
@@ -62,7 +65,7 @@ namespace text_stream_manip_details
 
 	};
 
-	TextStream& operator>>( TextStream& stream, const StringMatcher& value );
+	SERIALIZATION_DLL TextStream& operator>>( TextStream& stream, const StringMatcher& value );
 
 
 	class CharMatcher
@@ -83,7 +86,7 @@ namespace text_stream_manip_details
 
 	};
 
-	TextStream& operator>>( TextStream& stream, const CharMatcher& value );
+	SERIALIZATION_DLL TextStream& operator>>( TextStream& stream, const CharMatcher& value );
 
 }
 
@@ -167,7 +170,7 @@ namespace text_stream_manip_details
 
 	};
 
-	TextStream& operator<<( TextStream& stream, const QuotedCStr& value );
+	SERIALIZATION_DLL TextStream& operator<<( TextStream& stream, const QuotedCStr& value );
 
 
 	/**
@@ -196,8 +199,8 @@ namespace text_stream_manip_details
 
 	};
 
-	TextStream& operator<<( TextStream& stream, const QuotedStr& value );
-	TextStream& operator>>( TextStream& stream, QuotedStr value );
+	SERIALIZATION_DLL TextStream& operator<<( TextStream& stream, const QuotedStr& value );
+	SERIALIZATION_DLL TextStream& operator>>( TextStream& stream, QuotedStr value );
 
 }
 

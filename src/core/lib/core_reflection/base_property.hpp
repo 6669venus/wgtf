@@ -4,7 +4,9 @@
 #include "interfaces/i_base_property.hpp"
 #include "core_variant/type_id.hpp"
 
-class BaseProperty
+#include "reflection_dll.hpp"
+
+class REFLECTION_DLL BaseProperty
 	: public IBaseProperty
 {
 public:

@@ -38,8 +38,6 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		Variant::setMetaTypeManager(
-			contextManager.queryInterface< IMetaTypeManager >() );
 
 		// Initialize listener hooks
 		const auto pDefinitionManager = contextManager.queryInterface< IDefinitionManager >();
@@ -96,7 +94,6 @@ private:
 	Python27ScriptingEngine interpreter_;
 	ReflectedPython::ScriptObjectDefinitionRegistry definitionRegistry_;
 	PythonType::ConverterQueue typeConverterQueue_;
-	std::shared_ptr< ReflectedPython::HookListener > hookListener_;
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )

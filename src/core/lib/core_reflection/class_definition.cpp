@@ -92,11 +92,6 @@ namespace
 }
 
 
-const char INDEX_OPEN = '[';
-const char INDEX_CLOSE = ']';
-const char DOT_OPERATOR = '.';
-
-
 //------------------------------------------------------------------------------
 ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
 	: details_( details )

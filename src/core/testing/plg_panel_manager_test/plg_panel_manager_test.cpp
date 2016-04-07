@@ -20,8 +20,6 @@ public:
 
 	void Initialise(IComponentContext& contextManager) override
 	{
-		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
-
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
 		auto fileSystem = contextManager.queryInterface<IFileSystem>();

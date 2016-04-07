@@ -6,7 +6,6 @@
 #include <core_generic_plugin/generic_plugin.hpp>
 
 #include <core_variant/variant.hpp>
-#include <core_variant/interfaces/i_meta_type_manager.hpp>
 
 #include <core_reflection/i_definition_manager.hpp>
 
@@ -35,8 +34,6 @@ public:
         assert(uiFramework != nullptr);
         assert(uiapplication != nullptr);
         assert(defMng != nullptr);
-
-        Variant::setMetaTypeManager(context.queryInterface<IMetaTypeManager>());
 
         RegisterGrapEditorTypes(*defMng);
         editor = defMng->create<GraphEditor>(false);

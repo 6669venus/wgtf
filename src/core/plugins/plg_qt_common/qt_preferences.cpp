@@ -3,7 +3,6 @@
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
-#include "core_variant/interfaces/i_meta_type_manager.hpp"
 
 namespace {
 	const char* s_preferenceFile = "generic_app_test_preferences.xml";
@@ -13,12 +12,10 @@ namespace {
 //------------------------------------------------------------------------------
 QtPreferences::QtPreferences( IDefinitionManager & definitionManger, 
 							  ISerializationManager & serializationManager, 
-							  IFileSystem & fileSystem,
-							  IMetaTypeManager & metaTypeManager )
+							  IFileSystem & fileSystem )
 	: definitionManager_( definitionManger )
 	, serializationManager_( serializationManager )
 	, fileSystem_( fileSystem )
-	, metaTypeManager_( metaTypeManager )
 {
 	if (fileSystem_.exists( s_definitionFile ))
 	{
@@ -90,7 +87,7 @@ void QtPreferences::loadPreferences()
 		serializer.deserialize( key );
 
 		const MetaType * metaType = 
-			metaTypeManager_.findType( getClassIdentifier<ObjectHandle>() );
+			Variant::findType( getClassIdentifier<ObjectHandle>() );
 		Variant value( metaType );
 		serializer.deserialize( value );
 		GenericObjectPtr obj;

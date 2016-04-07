@@ -8,7 +8,6 @@
 #include <QScreen>
 
 #include "core_reflection/property_accessor.hpp"
-#include "core_dependency_system/i_interface.hpp"
 
 namespace
 {

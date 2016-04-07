@@ -13,12 +13,11 @@
 
 #include "type_id.hpp"
 #include "meta_type.hpp"
+#include "interfaces/i_meta_type_manager.hpp"
 #include <atomic>
 
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/binary_stream.hpp"
-
-#include "variant_dll.hpp"
 
 class Variant;
 
@@ -191,11 +190,11 @@ inline const std::string& upcast( const std::string & v )
 	return v;
 }
 
-std::string VARIANT_DLL upcast(const char* v);
-std::string VARIANT_DLL upcast(const std::wstring& v);
-std::string VARIANT_DLL upcast(const wchar_t* v);
+std::string upcast(const char* v);
+std::string upcast(const std::wstring& v);
+std::string upcast(const wchar_t* v);
 
-bool VARIANT_DLL downcast(std::wstring* v, const std::string& storage);
+bool downcast(std::wstring* v, const std::string& storage);
 
 // forbid casting to raw string pointers as string lifetime is managed by Variant internals
 void downcast(const char** v, const std::string& storage);
@@ -578,15 +577,12 @@ namespace variant_details
 
 }
 
-#pragma warning (push)
-#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
-
-class VARIANT_DLL Variant
+class Variant
 {
-	friend VARIANT_DLL TextStream& operator<<( TextStream& stream, const Variant& value );
-	friend VARIANT_DLL TextStream& operator>>( TextStream& stream, Variant& value );
-	friend VARIANT_DLL BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
-	friend VARIANT_DLL BinaryStream& operator>>( BinaryStream& stream, Variant& value );
+	friend TextStream& operator<<( TextStream& stream, const Variant& value );
+	friend TextStream& operator>>( TextStream& stream, Variant& value );
+	friend BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
+	friend BinaryStream& operator>>( BinaryStream& stream, Variant& value );
 
 public:
 	/**
@@ -1000,6 +996,10 @@ public:
 		return false;
 	}
 
+	// Must be used before any other function on Variant.
+	static void setMetaTypeManager( IMetaTypeManager * metaTypeManager );
+	static IMetaTypeManager * getMetaTypeManager();
+
 	/**
 	Register type in current metatype manager (if any).
 	*/
@@ -1007,16 +1007,29 @@ public:
 
 	/**
 	Templated version of findType.
+
+	@see IMetaTypeManager::findType
 	*/
 	template<typename T>
 	static const MetaType* findType()
 	{
-		return findType(TypeId::getType<typename std::decay<T>::type>());
+		return findTypeImpl<typename std::decay<T>::type>();
 	}
 
-	static const MetaType* findType( const TypeId& typeId );
-	static const MetaType* findType( const std::type_info& typeInfo );
-	static const MetaType* findType( const char* name );
+	static const MetaType* findType( const TypeId& typeId )
+	{
+		return getMetaTypeManager()->findType( typeId );
+	}
+
+	static const MetaType* findType( const std::type_info& typeInfo )
+	{
+		return getMetaTypeManager()->findType( typeInfo );
+	}
+
+	static const MetaType* findType( const char* name )
+	{
+		return getMetaTypeManager()->findType( name );
+	}
 
 	/**
 	Check whether given type is registered.
@@ -1032,7 +1045,7 @@ public:
 private:
 	static const size_t INLINE_PAYLOAD_SIZE = sizeof( std::shared_ptr< void > );
 
-	class VARIANT_DLL DynamicData
+	class DynamicData
 	{
 	public:
 		template<typename T>
@@ -1122,6 +1135,12 @@ private:
 	T& forceCast()
 	{
 		return *reinterpret_cast<T*>(payload());
+	}
+
+	template<typename T>
+	static const MetaType* findTypeImpl()
+	{
+		return getMetaTypeManager()->findType(TypeId::getType<T>());
 	}
 
 	template< typename T >
@@ -1251,12 +1270,11 @@ private:
 
 };
 
-#pragma warning (pop)
 
 /**
 Serialize Variant to a text stream.
 */
-VARIANT_DLL TextStream& operator<<( TextStream& stream, const Variant& value );
+TextStream& operator<<( TextStream& stream, const Variant& value );
 
 /**
 Deserialize Variant from a text stream.
@@ -1266,29 +1284,29 @@ types may be deduced: void, signed/unsigned integer, real, string. If neither
 explicit type was given (input value has void type) nor type can be deduced
 then deserialization fails.
 */
-VARIANT_DLL TextStream& operator>>( TextStream& stream, Variant& value );
+TextStream& operator>>( TextStream& stream, Variant& value );
 
 /**
 Serialize Variant to a binary stream.
 */
-VARIANT_DLL BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
+BinaryStream& operator<<( BinaryStream& stream, const Variant& value );
 
 /**
 Deserialize Variant from a binary stream.
 
 Variant type must be given explicitly.
 */
-VARIANT_DLL BinaryStream& operator>>( BinaryStream& stream, Variant& value );
+BinaryStream& operator>>( BinaryStream& stream, Variant& value );
 
 /**
 Text streaming wrapper for std::ostream.
 */
-VARIANT_DLL std::ostream& operator<<( std::ostream& stream, const Variant& value );
+std::ostream& operator<<( std::ostream& stream, const Variant& value );
 
 /**
 Text streaming wrapper for std::istream.
 */
-VARIANT_DLL std::istream& operator>>( std::istream& stream, Variant& value );
+std::istream& operator>>( std::istream& stream, Variant& value );
 
 template<typename T>
 class MetaTypeImplNoStream:

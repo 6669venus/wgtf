@@ -63,6 +63,9 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
+		Variant::setMetaTypeManager(
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		IApplication * application = contextManager.queryInterface< IApplication >();
 		assert( application != nullptr );
 		IEnvManager * envManager = contextManager.queryInterface< IEnvManager >();

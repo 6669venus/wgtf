@@ -4,9 +4,7 @@
 #include <string>
 #include "wg_types/hash_utilities.hpp"
 
-#include "reflection_dll.hpp"
-
-class REFLECTION_DLL RefObjectId
+class RefObjectId
 {
 private:
 	// NOTE: Structure must be compatible with Microsoft's GUID structure since
@@ -15,6 +13,8 @@ private:
 	unsigned int b_;
 	unsigned int c_;
 	unsigned int d_;
+
+	static RefObjectId s_zero_;
 
 public:
 	RefObjectId();
@@ -39,7 +39,7 @@ public:
 	bool operator<( const RefObjectId & rhs ) const;
 
 	static RefObjectId generate();
-	static const RefObjectId & zero();
+	static const RefObjectId & zero() { return s_zero_; }
 
 private:
     static bool fromString( const std::string & s, unsigned int * data );

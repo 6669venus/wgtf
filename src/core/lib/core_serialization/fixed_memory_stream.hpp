@@ -2,9 +2,8 @@
 #define FIXED_MEMORY_STREAM_HPP
 
 #include "i_datastream.hpp"
-#include "serialization_dll.hpp"
 
-class SERIALIZATION_DLL FixedMemoryStream:
+class FixedMemoryStream:
 	public IDataStream
 {
 public:

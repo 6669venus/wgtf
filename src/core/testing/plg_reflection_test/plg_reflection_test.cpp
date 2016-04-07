@@ -24,7 +24,13 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		Variant::registerType( baseProviderMetaType_.get() );
+		auto metaTypeManager =
+			contextManager.queryInterface< IMetaTypeManager >();
+		if (metaTypeManager)
+		{
+			metaTypeManager->registerType( baseProviderMetaType_.get() );
+		}
+		Variant::setMetaTypeManager( metaTypeManager );
 
 		IDefinitionManager* pDefinitionManager =
 			contextManager.queryInterface< IDefinitionManager >();

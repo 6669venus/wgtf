@@ -38,6 +38,8 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
+		Variant::setMetaTypeManager(
+			contextManager.queryInterface< IMetaTypeManager >() );
 
 		// Initialize listener hooks
 		const auto pDefinitionManager = contextManager.queryInterface< IDefinitionManager >();

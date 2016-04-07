@@ -1,6 +1,7 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_variant/variant.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
@@ -16,6 +17,7 @@ private:
 	std::vector<IInterface*> types_;
 	std::unique_ptr<IView> listView_;
 	std::unique_ptr<IView> shortListView_;
+	std::unique_ptr<IView> multiColumnListView_;
 public:
 	//==========================================================================
 	ListModelTestPlugin(IComponentContext & contextManager )
@@ -32,6 +34,9 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
+		Variant::setMetaTypeManager( 
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
@@ -45,9 +50,15 @@ public:
 		shortListView_ = uiFramework->createView(
 			"plg_list_model_test/test_short_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
+
+		std::unique_ptr< IListModel > multiColumnListModel( new TestListModel( true ) );
+		multiColumnListView_ = uiFramework->createView(
+			"plg_list_model_test/test_column_sequence_list_panel.qml",
+			IUIFramework::ResourceType::Url, std::move( multiColumnListModel ) );
 		
 		uiApplication->addView( *listView_ );
 		uiApplication->addView( *shortListView_ );
+		uiApplication->addView( *multiColumnListView_ );
 
 	}
 	//==========================================================================
@@ -55,10 +66,12 @@ public:
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
+		uiApplication->removeView( *multiColumnListView_ );
 		uiApplication->removeView( *shortListView_ );
 		uiApplication->removeView( *listView_ );
 		listView_ = nullptr;
 		shortListView_ = nullptr;
+		multiColumnListView_ = nullptr;
 		return true;
 	}
 	//==========================================================================

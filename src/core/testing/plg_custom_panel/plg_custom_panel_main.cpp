@@ -11,6 +11,9 @@
 // Declaration of the Panel
 #include "custom_panel.hpp"
  
+// Declaration of the type system
+#include "core_variant/variant.hpp"
+ 
  
 #include <memory>
  
@@ -26,6 +29,10 @@ public:
     // Plugin creates resources
     bool PostLoad( IComponentContext & componentContext ) override
     {
+        // Static variable that must be set for every plugin
+        Variant::setMetaTypeManager(
+            componentContext.queryInterface< IMetaTypeManager >() );
+ 
         // Create the panel
         customPanel_.reset( new CustomPanel( componentContext ) );
         return true;

@@ -4,8 +4,6 @@ PROJECT( core_serialization )
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
-ADD_DEFINITIONS( -DSERIALIZATION_EXPORT )
-
 find_package(Expat REQUIRED)
 
 SET( SERIALIZER_DETAILS_SRCS
@@ -52,7 +50,6 @@ SET( ALL_SRCS
 	i_datastream.hpp
 	resizing_memory_stream.hpp
 	resizing_memory_stream.cpp
-	serialization_dll.hpp
 	std_data_stream.hpp
 	text_stream.cpp
 	text_stream.hpp

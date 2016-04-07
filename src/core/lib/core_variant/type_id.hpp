@@ -4,9 +4,8 @@
 #include <stdint.h>
 #include <functional>
 #include <typeinfo>
-#include "variant_dll.hpp"
 
-class VARIANT_DLL TypeId
+class TypeId
 {
 private:
 	TypeId( const std::string & name );

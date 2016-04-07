@@ -47,6 +47,7 @@ BW_TARGET_LINK_LIBRARIES( core_command_system PUBLIC
 	core_common
 	core_reflection
 	core_reflection_utils
+	core_serialization
 	core_data_model
 	core_logging
 )

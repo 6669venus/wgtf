@@ -2,7 +2,6 @@
 #define BASE_GENERIC_OBJECT_HPP
 
 #include "core_reflection/utilities/reflection_utilities.hpp"
-#include "core_reflection/reflection_dll.hpp"
 
 class IClassDefinition;
 class ReflectedMethodParameters;
@@ -17,7 +16,7 @@ class PropertyAccessor;
  *	definition or be per instance because they can dynamically
  *	add and remove members.
  */
-class REFLECTION_DLL BaseGenericObject
+class BaseGenericObject
 {
 public:
 	BaseGenericObject();

@@ -16,6 +16,7 @@ class ReflectionSerializer : public ISerializer
 {
 public:
 	ReflectionSerializer( ISerializationManager & serializationManager, 
+						  IMetaTypeManager & metaTypeManager, 
 						  IObjectManager & objManager,
 						  IDefinitionManager & defManager );
 	~ReflectionSerializer();
@@ -40,6 +41,7 @@ private:
 	
 
 	ISerializationManager & serializationManager_;
+	IMetaTypeManager & metaTypeManager_;
 	IObjectManager & objManager_;
 	IDefinitionManager & defManager_;
 	IDataStream * curDataStream_;

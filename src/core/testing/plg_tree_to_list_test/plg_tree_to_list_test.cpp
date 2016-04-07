@@ -8,6 +8,7 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_window.hpp"
+#include "core_variant/variant.hpp"
 #include "test_tree_model.hpp"
 
 //==============================================================================
@@ -27,6 +28,8 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager )
 	{
+		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
+
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( uiFramework != nullptr );
 

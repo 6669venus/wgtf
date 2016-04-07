@@ -12,15 +12,10 @@
 
 #pragma once
 
-#include "serialization_dll.hpp"
-
 #include "std_data_stream.hpp"
 #include <fstream>
 
-#pragma warning (push)
-#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
-
-class SERIALIZATION_DLL FileDataStream:
+class FileDataStream:
 	public StdDataStream
 {
 	typedef StdDataStream base;
@@ -35,7 +30,5 @@ private:
 	std::filebuf file_;
 
 };
-
-#pragma warning (pop)
 
 #endif // FILE_DATA_STREAM_H_

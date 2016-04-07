@@ -1,15 +1,13 @@
 #ifndef I_SERIALIZATION_MANAGER_HPP
 #define I_SERIALIZATION_MANAGER_HPP
 
-#include "../serialization_dll.hpp"
-
 #include "core_variant/type_id.hpp"
 #include "core_serialization/serializer/i_serializer.hpp"
 #include "core_serialization/i_datastream.hpp"
 #include "core_common/deprecated.hpp"
 
 class IDataStream;
-class DEPRECATED SERIALIZATION_DLL ISerializationManager
+class DEPRECATED ISerializationManager
 {
 
 public:

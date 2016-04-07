@@ -30,6 +30,9 @@ public:
 
 	void Initialise( IComponentContext& contextManager ) override
 	{
+		Variant::setMetaTypeManager(
+			contextManager.queryInterface< IMetaTypeManager >() );
+
 		auto uiApplication = Context::queryInterface< IUIApplication >();
 		if (uiApplication == nullptr)
 		{

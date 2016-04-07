@@ -6,6 +6,7 @@
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
 #include "core_reflection/reflection_macros.hpp"
+#include "core_variant/variant.hpp"
 
 #include <memory>
 
@@ -57,6 +58,10 @@ struct Python27TestUIPlugin
 
 	void Initialise( IComponentContext& componentContext ) override
 	{
+		// Initialise variant system; this is required for every plugin that uses Variant.
+		auto metaTypeManager = componentContext.queryInterface<IMetaTypeManager>();
+		Variant::setMetaTypeManager( metaTypeManager );
+
 		auto pDefinitionManager = componentContext.queryInterface< IDefinitionManager >();
 		if (pDefinitionManager == nullptr)
 		{

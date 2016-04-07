@@ -1,14 +1,12 @@
 #ifndef SIMPLE_API_FOR_XML_HPP_INCLUDED
 #define SIMPLE_API_FOR_XML_HPP_INCLUDED
 
-#include "core_serialization/serialization_dll.hpp"
 #include "core_serialization/text_stream.hpp"
-#include <memory>
+#include <vector>
+#include <string>
+#include <expat.h>
 
-#pragma warning (push)
-#pragma warning (disable : 4251) // * needs to have dll-interface to be used by clients of class '*'
-
-class SERIALIZATION_DLL SimpleApiForXml
+class SimpleApiForXml
 {
 public:
 	explicit SimpleApiForXml( TextStream& stream );
@@ -19,11 +17,17 @@ public:
 protected:
 	// Not just `abort()` to avoid accidental `::abort()` call.
 	void abortParsing();
-	bool aborted() const;
+
+	bool aborted() const
+	{
+		return aborted_;
+	}
 
 private:
-	class Impl;
-	std::unique_ptr< Impl > impl_;
+	XML_Parser parser_;
+	TextStream& stream_;
+	bool aborted_;
+	std::streamoff bytesRead_;
 
 	virtual void elementStart( const char* name, const char* const* attributes );
 	virtual void elementEnd( const char* name );
@@ -31,6 +35,5 @@ private:
 
 };
 
-#pragma warning (pop)
 
 #endif

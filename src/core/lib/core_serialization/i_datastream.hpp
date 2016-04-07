@@ -1,8 +1,6 @@
 #ifndef I_DATASTREAM_HPP
 #define I_DATASTREAM_HPP
 
-#include "serialization_dll.hpp"
-
 // BEGIN DEPRECATED
 #include "core_variant/type_id.hpp"
 #include "core_variant/variant.hpp"
@@ -31,7 +29,7 @@ negative value (indicating failure).
 of `read` and `write` functions (currently they're implemented using deprecated
 interface).
 */
-class SERIALIZATION_DLL IDataStream
+class IDataStream
 {
 public:
 	virtual ~IDataStream();

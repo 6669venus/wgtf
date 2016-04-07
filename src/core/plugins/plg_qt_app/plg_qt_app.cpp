@@ -31,6 +31,8 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
+		Variant::setMetaTypeManager( contextManager.queryInterface< IMetaTypeManager >() );
+
 		IQtFramework* qtFramework =
 			contextManager.queryInterface< IQtFramework >();
 		assert( qtFramework != nullptr );

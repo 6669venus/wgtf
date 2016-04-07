@@ -3,13 +3,11 @@
 
 #include <cstddef>
 
-#include "core_reflection/reflection_dll.hpp"
-
 class ObjectHandle;
 class ReflectedMethodParameters;
 class Variant;
 
-class REFLECTION_DLL IMethod
+class IMethod
 {
 public:
 	virtual ~IMethod() {}

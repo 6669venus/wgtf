@@ -2,13 +2,12 @@
 #define BINARY_STREAM_HPP_INCLUDED
 
 #include "basic_stream.hpp"
-#include "serialization_dll.hpp"
 #include <type_traits>
 #include <string>
 #include <cstdint>
 
 
-class SERIALIZATION_DLL BinaryStream:
+class BinaryStream:
 	public BasicStream
 {
 	typedef BasicStream base;

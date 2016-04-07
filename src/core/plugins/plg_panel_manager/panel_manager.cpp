@@ -37,6 +37,12 @@ std::unique_ptr< IView > PanelManager::createAssetBrowser(
 		return nullptr;
 	}
 
+	// The variant meta type manager is required for converting an IAssetObjectModel
+	if(Variant::getMetaTypeManager() == nullptr)
+	{
+		Variant::setMetaTypeManager( Context::queryInterface< IMetaTypeManager >() );
+	}
+
 	if ( !eventModel )
 	{
 		eventModel.reset(new AssetBrowserEventModel());

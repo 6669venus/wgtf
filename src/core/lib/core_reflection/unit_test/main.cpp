@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 #include "core_variant/variant.hpp"
+#include "core_variant/collection.hpp"
+#include "core_variant/default_meta_type_manager.hpp"
 #include "test_objects.hpp"
 
 int main( int argc, char* argv[] )
@@ -10,6 +12,8 @@ int main( int argc, char* argv[] )
 	_set_error_mode(_OUT_TO_STDERR);
 	_set_abort_behavior( 0, _WRITE_ABORT_MSG);
 #endif // _WIN32
+	DefaultMetaTypeManager metaTypeManager;
+	Variant::setMetaTypeManager( &metaTypeManager );
 
 	std::vector<std::unique_ptr<MetaType>> metaTypes;
 	metaTypes.emplace_back(new MetaTypeImpl<Vector3>);
@@ -19,7 +23,7 @@ int main( int argc, char* argv[] )
 
 	for(const auto& m: metaTypes)
 	{
-		Variant::registerType(m.get());
+		metaTypeManager.registerType(m.get());
 	}
 
 	int result = 0;

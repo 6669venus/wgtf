@@ -432,12 +432,19 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 		assert( hookCountLong.exists() );
 		if (hookCountLong.exists())
 		{
-			auto hookCount = hookCountLong.asLong();
+			auto hookCount = hookCountLong.asLong( PyScript::ScriptErrorClear() );
 			++hookCount;
 
 			hookCountLong = PyScript::ScriptLong::create( hookCount );
 			assert( hookCountLong.exists() );
-			assert( hookCountLong.asLong() > 0 );
+			assert( hookCountLong.asLong( PyScript::ScriptErrorRetain() ) > 0 );
+
+			// Check for overflow after incrementing hookCount
+			assert( !PyScript::Script::hasError() );
+#if defined( _DEBUG )
+			PyScript::Script::clearError();
+#endif // defined( _DEBUG )
+
 			const auto setSuccess = dict.setItem( g_pyHookCountName,
 				hookCountLong,
 				PyScript::ScriptErrorClear() );
@@ -455,7 +462,7 @@ void attachListenerHooks( PyScript::ScriptObject & pythonObject )
 	const long hookCount = 1;
 	auto hookCountLong = PyScript::ScriptLong::create( hookCount );
 	assert( hookCountLong.exists() );
-	assert( hookCountLong.asLong() > 0 );
+	assert( hookCountLong.asLong( PyScript::ScriptErrorClear() ) > 0 );
 	const auto setSuccess1 = dict.setItem( g_pyHookCountName,
 		hookCountLong,
 		PyScript::ScriptErrorClear() );
@@ -574,7 +581,7 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 		return;
 	}
 
-	auto hookCount = hookCountLong.asLong();
+	auto hookCount = hookCountLong.asLong( PyScript::ScriptErrorClear() );
 	assert( hookCount > 0 );
 	--hookCount;
 
@@ -584,7 +591,7 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 		// Update new count
 		hookCountLong = PyScript::ScriptLong::create( hookCount );
 		assert( hookCountLong.exists() );
-		assert( hookCountLong.asLong() > 0 );
+		assert( hookCountLong.asLong( PyScript::ScriptErrorClear() ) > 0 );
 		const auto setSuccess = dict.setItem( g_pyHookCountName,
 			hookCountLong,
 			PyScript::ScriptErrorClear() );

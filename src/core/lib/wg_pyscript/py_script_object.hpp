@@ -1340,11 +1340,28 @@ public:
 	/**
 	 *	This method gets the long value from the ScriptLong
 	 *	@return A long representation of the ScriptLong
+	 *		or -1 on overflow error.
 	 */
-	long asLong() const
+	template < class ERROR_HANDLER >
+	long asLong( const ERROR_HANDLER & errorHandler ) const
 	{
-		// TODO: -1 is error?
-		return PyLong_AsLong( this->get() );
+		const long result = PyLong_AsLong( this->get() );
+		errorHandler.checkErrorOccured();
+		return result;
+	}
+
+
+	/**
+	 *	This method gets the unsigned long long value from the ScriptLong.
+	 *	@return A long representation of the ScriptLong
+	 *		or -1 on overflow error.
+	 */
+	template < class ERROR_HANDLER >
+	unsigned PY_LONG_LONG asUnsignedLongLong( const ERROR_HANDLER & errorHandler ) const
+	{
+		const unsigned PY_LONG_LONG result = PyLong_AsUnsignedLongLong( this->get() );
+		errorHandler.checkErrorOccured();
+		return result;
 	}
 };
 

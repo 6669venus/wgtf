@@ -341,9 +341,23 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 	//         pass
 	//     pass
 	typeName += " at ";
-	typeName += std::to_string( object.id().asLong() );
+	typeName += std::to_string( object.id().asUnsignedLongLong(
+		PyScript::ScriptErrorRetain() ) );
+
+	// Check for overflow
+	assert( !PyScript::Script::hasError() );
+#if defined( _DEBUG )
+	PyScript::Script::clearError();
+#endif // defined( _DEBUG )
 
 	return typeName;
 }
+
+
+const PyScript::ScriptObject & DefinitionDetails::object() const
+{
+	return pythonObject_;
+}
+
 
 } // namespace ReflectedPython

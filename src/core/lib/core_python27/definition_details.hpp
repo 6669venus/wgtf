@@ -45,7 +45,17 @@ public:
 
 	IBasePropertyPtr addProperty( const char * name, const TypeId & typeId, MetaHandle metaData ) override;
 
+	/**
+	 *	Calculate a reflected property name for the given script object.
+	 *	@param object for which to generate the name.
+	 *	@return copy of generated name.
+	 */
 	static std::string generateName( const PyScript::ScriptObject & object );
+
+	/**
+	 *	@return the script object that is defined by this.
+	 */
+	const PyScript::ScriptObject & object() const;
 
 private:
 	IComponentContext & context_;

@@ -40,6 +40,8 @@ WGSlider {
 
     clickAreaBuffer: 50
 
+    allowMouseWheel: false
+
     property Component barContent: Rectangle {
         color: slider.barColor
     }
@@ -56,6 +58,10 @@ WGSlider {
         onValueChanged: {
             slider.startFrame = value
         }
+
+        Component.onCompleted: {
+            maximumValue = Qt.binding(function() { return sliderMaxHandle.value - 1 })
+        }
     }
 
     WGTimelineBarSliderHandle {
@@ -70,6 +76,10 @@ WGSlider {
 
         onValueChanged: {
             slider.endFrame = value
+        }
+
+        Component.onCompleted: {
+            minimumValue = Qt.binding(function() { return sliderMinHandle.value + 1 })
         }
     }
 }

@@ -61,6 +61,9 @@ Canvas {
     property real valueScale: 1;
     property var mouseDragStart;
 
+    property int canvasWidth: Math.abs(viewTransform.transformX(0) - viewTransform.transformX(1))
+    property int canvasHeight: Math.abs(viewTransform.transformY(0) - viewTransform.transformY(1))
+
     property color majorLineColor: palette.placeholderTextColor
     property color minorLineColor: Qt.tint(palette.placeholderTextColor, palette.mainWindowColor)
     property color backgroundColor: Qt.tint(Qt.tint(Qt.tint(palette.mainWindowColor, palette.textBoxColor), palette.textBoxColor), palette.textBoxColor)

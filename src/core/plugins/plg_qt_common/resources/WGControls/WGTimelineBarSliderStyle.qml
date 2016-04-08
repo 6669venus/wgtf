@@ -27,8 +27,6 @@ WGSliderStyle {
             clip: true
 
             anchors.fill: parent
-            anchors.leftMargin: -1
-            anchors.rightMargin: -1
         }
     }
 }

@@ -78,12 +78,16 @@ WGOne.WGPanel {
 
         timeScale: 10
 
-        property real totalWidth: Math.abs(gridCanvas.viewTransform.transformX(0) - gridCanvas.viewTransform.transformX(1))
-        property real totalHeight: Math.abs(gridCanvas.viewTransform.transformY(0) - gridCanvas.viewTransform.transformY(1))
+        horizontalPixelGap: (gridCanvas.width / totalFrames) * framesPerSecond
+
+        onWidthChanged: {
+            console.log(gridCanvas.width + " / " + totalFrames + " * " + framesPerSecond)
+            console.log(horizontalPixelGap)
+        }
 
         property int framesPerSecond: 30
         property int totalFrames: (framesPerSecond * timeScale)
-        property real frameWidth: totalWidth / totalFrames
+        property real frameWidth: canvasWidth / totalFrames
 
         function pixelsToFrames(pixels) {
             return Math.round(pixels / frameWidth)
@@ -98,11 +102,13 @@ WGOne.WGPanel {
             id: timelineView
             model: barModel
 
-            width: gridCanvas.totalWidth
-            height: gridCanvas.totalHeight
+            width: gridCanvas.canvasWidth
+            height: gridCanvas.canvasHeight
 
             x: gridCanvas.viewTransform.transformX(0)
             y: gridCanvas.viewTransform.transformY(1)
+
+            interactive: false
 
 
             delegate: WGTimelineBarSlider {
@@ -117,11 +123,6 @@ WGOne.WGPanel {
                 startFrame: startTime * gridCanvas.framesPerSecond
                 endFrame: endTime * gridCanvas.framesPerSecond
                 barColor: model.barColor
-
-                Component.onCompleted: {
-                    slider.__handlePosList[0].minimumValue =  slider.minimumValue
-                    slider.__handlePosList[1].maximumValue =  slider.maximumValue
-                }
             }
         }
    }

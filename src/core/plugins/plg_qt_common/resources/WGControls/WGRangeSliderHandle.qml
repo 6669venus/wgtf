@@ -34,7 +34,7 @@ WGSliderHandle {
         WGButtonFrame{
             color: parentSlider.enabled ? handleColor : palette.mainWindowColor
             borderColor: parentSlider.enabled ? palette.darkerShade : palette.darkShade
-            highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
+            highlightColor: parentSlider.hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
             innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
             implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
             implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2

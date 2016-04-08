@@ -239,14 +239,16 @@ Style {
 
                         propagateComposedEvents: true
 
+                        cursorShape: control.__currentCursor
+
                         onEntered: {
-                            control.__hoveredHandle = index
+                            control.hoveredHandle = index
                         }
 
                         onExited: {
-                            if (control.__hoveredHandle == index)
+                            if (control.hoveredHandle == index)
                             {
-                               control.__hoveredHandle = -1
+                               control.hoveredHandle = -1
                             }
                         }
 

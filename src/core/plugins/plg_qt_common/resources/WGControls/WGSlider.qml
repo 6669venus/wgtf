@@ -193,6 +193,19 @@ Control {
     */
     property Component handleType: WGSliderHandle{}
 
+    /*!
+        The cursorShape within the slider area.
+
+        This is changed by hoverCursor and dragCursor in slider handles.
+
+        The default value is Qt.ArrowCursor
+    */
+    property var cursorShape: Qt.ArrowCursor
+
+    /*! The index of the currently hovered handle */
+
+    property int hoveredHandle: -1
+
     /*! \internal */
     property bool __draggable: grooveClickable
 
@@ -201,9 +214,6 @@ Control {
 
     /*! \internal */
     property int __activeHandle: 0
-
-    /*! \internal */
-    property int __hoveredHandle: -1
 
     /*! \internal */
     property int __handleHeight: defaultSpacing.minimumRowHeight
@@ -224,6 +234,9 @@ Control {
     property int __handleCount: 0
 
     activeFocusOnTab: true
+
+    /*! \internal */
+    property var __currentCursor: cursorShape
 
     /*! \internal */
     property bool __handleMoving: false
@@ -452,6 +465,17 @@ Control {
         return -1
     }
 
+    onHoveredHandleChanged: {
+        if (hoveredHandle == -1)
+        {
+            __currentCursor = cursorShape
+        }
+        else
+        {
+            __currentCursor = __handlePosList[hoveredHandle].hoverCursor
+        }
+    }
+
     Component.onCompleted: {
 
         //collect any child handles and put them in __handlePosList
@@ -487,6 +511,8 @@ Control {
 
         hoverEnabled: true
 
+        cursorShape: slider.__currentCursor
+
         function clamp ( val ) {
             return Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
         }
@@ -516,6 +542,7 @@ Control {
             if (__draggable)
             {
                 beginDrag(__activeHandle)
+                slider.__currentCursor = __handlePosList[__activeHandle].dragCursor
                 beginUndoFrame();
                 __handleMoving = true
                 __grabbedValue = value;
@@ -532,6 +559,7 @@ Control {
                 updateHandlePosition(mouse, Settings.hasTouchScreen)
 
                 endUndoFrame();
+                slider.__currentCursor = slider.cursorShape
 
                 endDrag(__activeHandle)
 

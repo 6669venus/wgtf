@@ -87,6 +87,20 @@ Item {
     property int handleOffset: - parentSlider.__handleWidth / 2
 
     /*!
+        The mouse cursor when the handle is hovered.
+
+        The default value is the standard arrow cursor.
+    */
+    property var hoverCursor: Qt.ArrowCursor
+
+    /*!
+        The mouse cursor when the handle is dragged.
+
+        The default value is hoverCursor
+    */
+    property var dragCursor: hoverCursor
+
+    /*!
         This is the Component for the handle style.
 
         This can be any Item based component.
@@ -94,7 +108,7 @@ Item {
     property Component handleStyle: WGButtonFrame{
         color: parentSlider.enabled ? handleColor : palette.mainWindowColor
         borderColor: parentSlider.enabled ? palette.darkerShade : palette.darkShade
-        highlightColor: parentSlider.__hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
+        highlightColor: parentSlider.hoveredHandle === handleIndex ? palette.lighterShade : "transparent"
         innerBorderColor: parentSlider.__activeHandle === handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
         implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
         implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2

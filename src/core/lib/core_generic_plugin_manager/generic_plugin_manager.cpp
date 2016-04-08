@@ -133,7 +133,7 @@ GenericPluginManager::GenericPluginManager(bool applyDebugPostfix_)
 	{
 		std::string newPath( "\"" );
 		newPath += ngtHome;
-#ifdef _APPLE_
+#ifdef __APPLE__
         newPath += "\":";
 #else
 		newPath += "\";";

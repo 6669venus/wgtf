@@ -15,7 +15,7 @@ WGSliderHandle {
         id: defaultHandleFrame
         implicitHeight: parentSlider.__handleHeight
         implicitWidth: 8
-        color: parentSlider.__hoveredHandle == handleIndex ? "white" : palette.overlayLighterShade
+        color: parentSlider.hoveredHandle == handleIndex ? "white" : palette.overlayLighterShade
         borderColor: palette.overlayDarkerShade
         innerBorderColor: parentSlider.__activeHandle == handleIndex && parentSlider.activeFocus ? palette.highlightShade : "transparent"
 

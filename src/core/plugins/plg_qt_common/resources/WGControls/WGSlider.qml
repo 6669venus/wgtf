@@ -132,8 +132,15 @@ Control {
 
         The default value is \ctrue
     */
-
     property bool handleClamp: true
+
+    /*!
+        This property the specifieid amount of clickable area outside the visible groovearea at each end of the slider.
+        This is useful if the handles project outside the groove but still need to be clickable
+
+        The default value adds half the handle width if handleClamp = true
+    */
+    property int clickAreaBuffer: handleClamp ? 0 : (__horizontal ? __handleWidth / 2 : __handleHeight / 2)
 
     /*!
         This property determines the default color of the bar that 'fills' the slider if is enabled
@@ -225,7 +232,7 @@ Control {
     property real __grabbedValue: 0
 
     /*! \internal */
-    property real __sliderLength: mouseArea.width
+    property real __sliderLength: __horizontal ? slider.width : slider.height
 
     /*! \internal */
     property real __clampedLength: __visualMaxPos - __visualMinPos
@@ -473,18 +480,12 @@ Control {
         anchors.centerIn: parent
 
         height: __horizontal ? parent.height : parent.width
-        width: __horizontal ? parent.width : parent.height
+        width: (__horizontal ? parent.width : parent.height) + clickAreaBuffer
 
         rotation: __horizontal ? 0 : -90
         transformOrigin: Item.Center
 
         hoverEnabled: true
-
-        property int clickOffset: 0
-        property real pressX: 0
-        property real pressY: 0
-
-        property bool dragStarted: false
 
         function clamp ( val ) {
             return Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
@@ -494,14 +495,15 @@ Control {
 
             if (__draggable)
                 {
-                var pos, overThreshold
+                var pos
 
-                pos = clamp (mouse.x + clickOffset)
-                overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
-                if (overThreshold)
-                    preventStealing = true
-                if (overThreshold || force)
-                    __handlePosList[__activeHandle].range.position = pos
+                if (slider.clickAreaBuffer > 0)
+                {
+                    mouse = mouseArea.mapToItem(sliderArea,mouse.x,mouse.y)
+                }
+
+                pos = clamp (mouse.x)
+                __handlePosList[__activeHandle].range.position = pos
             }
         }
 
@@ -520,52 +522,25 @@ Control {
                 if (slider.activeFocusOnPress)
                     slider.forceActiveFocus();
 
-                if(!grooveClickable)
-                {
-                    if(dragStarted) {
-                        pressX = mouse.x
-                        pressY = mouse.y
-
-                        updateHandlePosition(mouse, !Settings.hasTouchScreen)
-                    }
-                }
-                else
-                {
-                    pressX = mouse.x
-                    pressY = mouse.y
-
-                    updateHandlePosition(mouse, !Settings.hasTouchScreen)
-                }
+                updateHandlePosition(mouse, !Settings.hasTouchScreen)
             }
         }
 
         onReleased: {
+            if(__draggable) {
 
-            if (!grooveClickable)
-            {
-                if(dragStarted) {
-                    updateHandlePosition(mouse, Settings.hasTouchScreen)
-                    // If we don't update while dragging, this is the only
-                    // moment that the range is updated.
-                }
-            }
-            else
-            {
                 updateHandlePosition(mouse, Settings.hasTouchScreen)
+
+                endUndoFrame();
+
+                endDrag(__activeHandle)
+
+                preventStealing = false
+
+                __handleMoving = false
+
+                __draggable = grooveClickable
             }
-
-            endUndoFrame();
-
-            endDrag(__activeHandle)
-
-            clickOffset = 0
-            preventStealing = false
-
-            __handleMoving = false
-
-            dragStarted = false
-
-            __draggable = grooveClickable
         }
 
         //signal when bar is double clicked.
@@ -586,6 +561,18 @@ Control {
                 }
             }
         }
+    }
+
+    //an invisible object to represent the area the handles can actually move
+    Item {
+        id: sliderArea
+        anchors.centerIn: parent
+
+        height: __horizontal ? parent.height : parent.width
+        width: __horizontal ? parent.width : parent.height
+
+        rotation: __horizontal ? 0 : -90
+        transformOrigin: Item.Center
     }
 
     /* Deprecated */

@@ -63,7 +63,6 @@ WGSliderHandle {
             id: arrowHandleFrame
             source: "icons/arrow_handle.png"
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: 1
             anchors.bottom: parent.bottom
 
             Rectangle {

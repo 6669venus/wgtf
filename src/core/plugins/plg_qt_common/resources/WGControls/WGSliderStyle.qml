@@ -209,13 +209,16 @@ Style {
 
                 Loader {
                     id: handleLoader
+
+                    property int handleIndex: index
+
+                    property int handleOffset: control.__handlePosList[index].handleOffset
+
                     sourceComponent: control.__handlePosList[index].handleStyle
 
                     anchors.verticalCenter: grooveLoader.verticalCenter
 
-                    property int handleIndex: index
-
-                    x: Math.round(((control.__handlePosList[index].value / control.maximumValue) * __clampedLength) + control.__visualMinPos - (control.__handleWidth / 2))
+                    x: Math.round(((control.__handlePosList[index].value / control.maximumValue) * __clampedLength) + control.__visualMinPos + (handleOffset))
 
                     onLoaded: {
                         control.__handleHeight = handleLoader.implicitHeight

@@ -150,8 +150,30 @@ WGSlider {
                 id: colorBar
                 objectName: "ColorBar"
 
+                property real minPos: {
+                    if (index == 0)
+                    {
+                        1
+                    }
+                    else
+                    {
+                        Math.max(slider.__handlePosList[index - 1].range.position, 1)
+                    }
+                }
+
+                property real maxPos: {
+                    if (index == slider.__handleCount)
+                    {
+                        gradientFrame.height - 1
+                    }
+                    else
+                    {
+                        Math.min(slider.__handlePosList[index].range.position, gradientFrame.height - 1)
+                    }
+                }
+
                 width: gradientFrame.width
-                height: maxPos - minPos
+                height: Math.max((maxPos - minPos),0)
                 y: minPos
 
                 function addPointToBar(pos)
@@ -187,28 +209,6 @@ WGSlider {
                         {
                             slider.__handlePosList[index].gradient
                         }
-                    }
-                }
-
-                property real minPos: {
-                    if (index == 0)
-                    {
-                        0
-                    }
-                    else
-                    {
-                        slider.__handlePosList[index - 1].range.position
-                    }
-                }
-
-                property real maxPos: {
-                    if (index == slider.__handleCount)
-                    {
-                        gradientFrame.height
-                    }
-                    else
-                    {
-                        slider.__handlePosList[index].range.position
                     }
                 }
 

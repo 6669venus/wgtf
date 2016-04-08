@@ -46,9 +46,9 @@ WGSliderStyle {
                 id: gradientFrame
                 sourceComponent: control.gradientFrame
 
-                anchors.centerIn: parent
+                anchors.centerIn:parent
 
-                height: parent.width - 2
+                height: parent.width
                 width: parent.height - 2
 
                 rotation: -90

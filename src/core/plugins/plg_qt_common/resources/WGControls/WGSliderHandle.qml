@@ -79,6 +79,14 @@ Item {
     property alias value: range.value
 
     /*!
+        The offset of the handle on the slider. This is useful if you want the handle offset from the value.
+        (For example if you want the handles to resize the internal bar without obscuring it)
+
+        The default value is parentSlider.__handleWidth / 2 which centers the handle on the exact value.
+    */
+    property int handleOffset: - parentSlider.__handleWidth / 2
+
+    /*!
         This is the Component for the handle style.
 
         This can be any Item based component.

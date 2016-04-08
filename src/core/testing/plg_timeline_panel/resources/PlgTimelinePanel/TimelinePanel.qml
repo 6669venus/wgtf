@@ -1,15 +1,16 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.1
 import BWControls 1.0
-import WGControls 1.0
+import WGControls 1.0 as WGOne
+import WGControls 2.0
 
 /*!
     \brief Timeline Panel WIP.
 */
 
-WGPanel {
+WGOne.WGPanel {
     id: timelinePanel
     objectName: "TimelinePanel"
     layoutHints: { 'test': 0.1 }
@@ -24,43 +25,43 @@ WGPanel {
 
         ListElement {
             startTime: 0
-            endTime: 0.2
+            endTime: 2
             barColor: "red"
             rowSpan: 1
         }
         ListElement {
-            startTime: 0.2
-            endTime: 0.4
+            startTime: 2
+            endTime: 4
             barColor: "blue"
             rowSpan: 1
         }
         ListElement {
-            startTime: 0.2
-            endTime: 0.6
+            startTime: 2
+            endTime: 6
             barColor: "green"
             rowSpan: 1
         }
         ListElement {
-            startTime: 0.6
-            endTime: 0.8
+            startTime: 6
+            endTime: 8
             barColor: "yellow"
             rowSpan: 1
         }
         ListElement {
-            startTime: 0.4
-            endTime: 0.6
+            startTime: 4
+            endTime: 6
             barColor: "aqua"
             rowSpan: 1
         }
         ListElement {
-            startTime: 0.2
-            endTime: 0.4
+            startTime: 2
+            endTime: 4
             barColor: "orange"
             rowSpan: 1
         }
         ListElement {
-            startTime: 0.4
-            endTime: 1.0
+            startTime: 4
+            endTime: 10
             barColor: "purple"
             rowSpan: 1
         }
@@ -75,27 +76,51 @@ WGPanel {
         showXGridLines: true
         showYGridLines: false
 
-        timeScale: 100
+        timeScale: 10
 
         property real totalWidth: Math.abs(gridCanvas.viewTransform.transformX(0) - gridCanvas.viewTransform.transformX(1))
         property real totalHeight: Math.abs(gridCanvas.viewTransform.transformY(0) - gridCanvas.viewTransform.transformY(1))
 
+        property int framesPerSecond: 30
+        property int totalFrames: (framesPerSecond * timeScale)
+        property real frameWidth: totalWidth / totalFrames
+
+        function pixelsToFrames(pixels) {
+            return Math.round(pixels / frameWidth)
+        }
+
+        function framesToPixels(frames) {
+            return frames * frameWidth
+        }
+
+
         ListView {
+            id: timelineView
             model: barModel
 
             width: gridCanvas.totalWidth
             height: gridCanvas.totalHeight
+
             x: gridCanvas.viewTransform.transformX(0)
             y: gridCanvas.viewTransform.transformY(1)
 
-            delegate: Item {
+
+            delegate: WGTimelineBarSlider {
+                id: slider
+
                 height: defaultSpacing.minimumRowHeight
-                width: gridCanvas.totalWidth
-                Rectangle {
-                    color: barColor
-                    x: gridCanvas.totalWidth * startTime
-                    width: (gridCanvas.totalWidth * endTime) - (gridCanvas.totalWidth * startTime)
-                    height: defaultSpacing.minimumRowHeight
+                anchors.left: parent.left
+                anchors.right: parent.right
+                minimumValue: 0
+                maximumValue: gridCanvas.totalFrames
+                stepSize: 1
+                startFrame: startTime * gridCanvas.framesPerSecond
+                endFrame: endTime * gridCanvas.framesPerSecond
+                barColor: model.barColor
+
+                Component.onCompleted: {
+                    slider.__handlePosList[0].minimumValue =  slider.minimumValue
+                    slider.__handlePosList[1].maximumValue =  slider.maximumValue
                 }
             }
         }

@@ -179,10 +179,19 @@ Control {
     property bool grooveClickable: true
 
     /*!
+        This property determines if the slider handles can be moved using the mouse wheel.
+
+        The default value is \c true
+    */
+
+    property bool allowMouseWheel: true
+
+    /*!
         This property determines if the slider will create a handle if none are initialised.
 
         The default value is \c true
     */
+
     property bool createInitialHandle: true
 
     /*!
@@ -578,7 +587,7 @@ Control {
         }
 
         onWheel: {
-            if(slider.activeFocus){
+            if(slider.activeFocus && allowMouseWheel){
                 if (wheel.angleDelta.y > 0)
                 {
                     __handlePosList[__activeHandle].range.increaseSingleStep()
@@ -587,6 +596,10 @@ Control {
                 {
                     __handlePosList[__activeHandle].range.decreaseSingleStep()
                 }
+            }
+            else
+            {
+                wheel.accepted = false
             }
         }
     }

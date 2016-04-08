@@ -17,7 +17,8 @@ class WGItemView : public QQuickItem
 	Q_PROPERTY( QQmlListProperty< IModelExtension > extensions READ getExtensions )
 
 	Q_PROPERTY( QAbstractItemModel * extendedModel READ getExtendedModel NOTIFY extendedModelChanged )
-	Q_PROPERTY( QObject * headerData READ getHeaderData NOTIFY headerDataChanged )
+	//Enable for headers once body works.
+	//Q_PROPERTY( QObject * headerData READ getHeaderData NOTIFY headerDataChanged )
 
 public:
 	WGItemView();

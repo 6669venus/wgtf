@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
+import WGControls 1.0 as WG1
 
 /*!
  \brief WGListView displays data from a model defined by its delegate.
@@ -37,14 +38,49 @@ WGListView {
 \endcode
 */
 
-WGItemView {
+WG1.WGItemView {
     id: listView
     objectName: "WGListView"
 
-    /*! This property holds the dataModel information that will be displayed in the tree view
-    */
-    property var model
+    model: null
 
+    WG1.ValueExtension {
+        id: valueExtension
+    }
+    // These aliases might not be needed, left here in case.
+    //property alias valueExtension: valueExtension
+    
+    WG1.HeaderFooterTextExtension {
+        id: headerFooterTextExtension
+    }
+    //property alias headerFooterTextExtension: headerFooterTextExtension
+    WG1.ColumnExtension {
+        id: columnExtension
+    }
+    //property alias columnExtension: columnExtension
+    WG1.SelectionExtension {
+        id: selectionExtension
+        multiSelect: true
+    }
+    //property alias selectionExtension: selectionExtension
+
+    extensions: model === null ? [] : [valueExtension, headerFooterTextExtension, columnExtension, selectionExtension]
+
+    // Alternative code to have extensions. This causes problems with object lifetimes.
+    /*
+    extensions: model === null ? [] : extensionList
+    
+    property var extensionList: [
+        WG1.ValueExtension {},
+        WG1.HeaderFooterTextExtension {},
+        WG1.ColumnExtension {},
+        WG1.SelectionExtension {
+            multiSelect: true
+        }
+    ]
+
+    property var selectionExtension: extensions[3]
+*/
     /*! This property determines the gap between the left edge of the entire control and the list contents.
         The default value is \c 2
     */
@@ -85,9 +121,6 @@ WGItemView {
 
     property alias currentIndex: list.currentIndex
 
-    /*! This property holds multi select state information */
-    property var selectionExtension: null
-    property var treeExtension: null
 
     /*! This property holds a list of items to be passed to the WGListViewRowDelegate
         The default value is an empty list
@@ -203,10 +236,27 @@ WGItemView {
     /*! This property contains the number of columns */
     property int columnCount: 0
 
-    Component.onCompleted: updateColumnCount()
+    Component.onCompleted: {
+        // Experimental code to keep extensions up to date.
+        //extensions = model === null ? [] : [valueExtension, headerFooterTextExtension, columnExtension, selectionExtension]
+        updateColumnCount()
+    }
+    // Experimental code to keep extensions up to date.
+    /*
+    onModelChanged: {
+        extensions = model === null ? [] : [valueExtension, headerFooterTextExtension, columnExtension, selectionExtension]
+    }
 
     Connections {
-        target: typeof(model) === "undefined" ? null : model
+        target: model
+
+        onModelReset: {
+            extensions = model === null ? [] : [valueExtension, headerFooterTextExtension, columnExtension, selectionExtension]
+        }
+    }
+    */
+    Connections {
+        target: typeof(extendedModel) === "undefined" ? null : extendedModel
 
         onModelReset: {
             updateColumnCount();
@@ -242,13 +292,13 @@ WGItemView {
 
     function updateColumnCount()
     {
-        if (typeof(model) === "undefined" || model === null)
+        if (typeof(extendedModel) === "undefined" || extendedModel === null)
         {
             columnCount = 0;
         }
         else
         {
-            columnCount = model.columnCount();
+            columnCount = extendedModel.columnCount();
         }
 
         headerDataChanged(0, columnCount - 1);
@@ -276,7 +326,7 @@ WGItemView {
 
     function keyboardScroll( /* bool */ isUpward, /* bool */ calculateRows ) {
 
-        var currentRow = listView.model.indexRow(selectionExtension.currentIndex);
+        var currentRow = listView.extendedModel.indexRow(selectionExtension.currentIndex);
         listView.positionViewAtIndex( currentRow, ListView.Contain );
     }
 
@@ -343,7 +393,7 @@ WGItemView {
 
     ListView {
         id: list
-        model: listView.model
+        model: listView.extendedModel
         clip: true
         spacing: listView.spacing
         x: listView.leftMargin
@@ -355,7 +405,7 @@ WGItemView {
         property real footerHeight: footerItemLoader.status === Loader.Ready ? listView.footerItem.height : 0
         property bool scrollable: contentHeight > height
 
-        delegate: WGItemRow {
+        delegate: WG1.WGItemRow {
             anchors.left: parent.left
             width: Math.max(columnsFrame.width, minimumRowWidth)
             defaultColumnDelegate: listView.defaultColumnDelegate
@@ -364,14 +414,14 @@ WGItemView {
             columnWidths: listView.columnWidths
             columnSpacing: listView.columnSpacing
             selectionExtension: listView.selectionExtension
-            modelIndex: listView.model.index(rowIndex, 0)
+            modelIndex: listView.extendedModel.index(rowIndex, 0)
             showBackgroundColour: backgroundColourMode !== noBackgroundColour
             backgroundColour: listView.backgroundColour
             alternateBackgroundColour: listView.alternateBackgroundColour
             hasActiveFocusDelegate: listView.activeFocus
 
             onClicked: {
-                var modelIndex = listView.model.index(rowIndex, 0);
+                var modelIndex = listView.extendedModel.index(rowIndex, 0);
                 listView.rowClicked(mouse, modelIndex);
 
                 // Update the selectionExtension's currentIndex
@@ -379,7 +429,7 @@ WGItemView {
             }
 
             onDoubleClicked: {
-                var modelIndex = listView.model.index(rowIndex, 0);
+                var modelIndex = listView.extendedModel.index(rowIndex, 0);
                 listView.rowDoubleClicked(mouse, modelIndex);
 
                 // Update the selectionExtension's currentIndex
@@ -401,13 +451,13 @@ WGItemView {
 
     property Component header: !showColumnHeaders ? null : headerComponent
 
-    property Component headerComponent: WGHeaderRow {
+    property Component headerComponent: WG1.WGHeaderRow {
         topMargin: listView.topMargin
         columnCount: listView.columnCount
         columnWidthFunction: listView.columnWidthFunction
         backgroundColour: headerBackgroundColour
         columnDelegate: columnHeaderDelegate
-        model: listView.model
+        model: listView.extendedModel
         minimumRowHeight: listView.minimumRowHeight
         spacing: columnSpacing
         visible: showColumnHeaders
@@ -427,20 +477,20 @@ WGItemView {
 
     property Component footer: !showColumnFooters ? null : footerComponent
 
-    property Component footerComponent: WGHeaderRow {
+    property Component footerComponent: WG1.WGHeaderRow {
         bottomMargin: listView.bottomMargin
         columnCount: listView.columnCount
         columnWidthFunction: listView.columnWidthFunction
         backgroundColour: footerBackgroundColour
         columnDelegate: columnFooterDelegate
-        model: listView.model
+        model: listView.extendedModel
         minimumRowHeight: listView.minimumRowHeight
         spacing: columnSpacing
         visible: showColumnFooters
         width: listView.width - listView.rightMargin - listView.leftMargin
     }
 
-    WGColumnsFrame {
+    WG1.WGColumnsFrame {
         id: columnsFrame
         columnCount: listView.columnCount
         y: listView.topMargin
@@ -459,7 +509,7 @@ WGItemView {
         }
     }
 
-    WGScrollBar {
+    WG1.WGScrollBar {
         objectName: "verticalScrollBar"
         id: verticalScrollBar
         width: defaultSpacing.rightMargin

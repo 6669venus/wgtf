@@ -312,11 +312,12 @@ void WGItemView::refresh()
 		impl_->extendedModel_.reset( new ExtendedModel( *impl_->model_, impl_->extensions_ ) );
 	}
 	emit extendedModelChanged();
-
+	//Enable for headers once body works.
+	/*
 	impl_->headerData_.reset();
 	if (impl_->extendedModel_ != nullptr)
 	{
 		impl_->headerData_.reset( new HeaderData( *impl_->extendedModel_, 0, Qt::Horizontal ) );
 	}
-	emit headerDataChanged();
+	emit headerDataChanged();*/
 }

@@ -1,10 +1,9 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
-import WGControls 1.0 as WG1
-import WGControls 2.0
+import WGControls 1.0
 
-WG1.WGPanel {
+WGPanel {
 	title: "ListModel Test"
 	layoutHints: { 'test': 0.1 }
 
@@ -27,21 +26,19 @@ WG1.WGPanel {
         }
     }
 
-    //Temporary code to test if model has data.
-    /*
-    ListView {
-        anchors.top: switchModelButton.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: 1
-        model: sourceModel
-
-        delegate: Text {
-            text: display
+    WGListModel {
+        id: listModel
+        source: sourceModel
+       
+        HeaderFooterTextExtension {}
+        ValueExtension {}
+        ColumnExtension {}
+        SelectionExtension {
+            id: listModelSelection
+            multiSelect: true
         }
     }
-        */
+
     WGListView {
         id: testListView
         anchors.top: switchModelButton.bottom
@@ -50,10 +47,10 @@ WG1.WGPanel {
         anchors.bottom: parent.bottom
         spacing: 1
         showColumnsFrame: true
-        //Enable and test headers once body is working.
-        //showColumnHeaders: true
-        //showColumnFooters: true
-        model: sourceModel
+        showColumnHeaders: true
+        showColumnFooters: true
+        model: listModel
+        selectionExtension: listModelSelection
         columnDelegates: [defaultColumnDelegate, columnDelegate]
         
         Component {

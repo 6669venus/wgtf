@@ -35,7 +35,7 @@ ObjectHandle UndoRedoCommand::execute( const ObjectHandle & arguments ) const
 		return CommandErrorCode::INVALID_VALUE;
 	}
 	
-	return CommandErrorCode::NO_ERROR;
+    return CommandErrorCode::COMMAND_NO_ERROR;
 }
 
 
@@ -47,12 +47,12 @@ CommandThreadAffinity UndoRedoCommand::threadAffinity() const
 
 
 //--------------------------------------------------------------------------
-void UndoRedoCommand::undo( IDataStream & stream ) const
+void UndoRedoCommand::undo( const ObjectHandle & arguments ) const
 {
 }
 
 
 //--------------------------------------------------------------------------
-void UndoRedoCommand::redo( IDataStream & stream ) const
+void UndoRedoCommand::redo( const ObjectHandle & arguments ) const
 {
 }

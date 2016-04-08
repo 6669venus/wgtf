@@ -24,11 +24,22 @@ public:
 	static const char * contextIdPropertyName();
 	static const char * pathPropertyName();
 	static const char * valuePropertyName();
-
+    
+    ResizingMemoryStream& getUndoStream() { return undoData_; }
+    ResizingMemoryStream& getRedoStream() { return redoData_; }
+    
+    void connectEvents(IDefinitionManager * definitionManager);
+    void disconnectEvents(IDefinitionManager * definitionManager);
+    
 private:
 	RefObjectId contextId_;
 	std::string propertyPath_;
 	Variant		value_;
+    
+    ResizingMemoryStream		undoData_;
+    ResizingMemoryStream		redoData_;
+    std::shared_ptr< PropertyAccessorListener > paListener_;
+    ReflectedPropertyUndoRedoUtility::UndoRedoHelperList	undoRedoHelperList_;
 
 	static const char * s_ContextId;
 	static const char * s_PropertyPath;
@@ -38,7 +49,6 @@ private:
 class SetReflectedPropertyCommand
 	: public Command
 {
-
 public:
 	SetReflectedPropertyCommand( IDefinitionManager & definitionManager );
 	~SetReflectedPropertyCommand() override;
@@ -48,8 +58,9 @@ public:
 	bool validateArguments(const ObjectHandle& arguments) const override;
 	CommandThreadAffinity threadAffinity() const override;
 
-	virtual void undo( IDataStream & dataStore ) const override;
-	virtual void redo( IDataStream & dataStore ) const override;
+	virtual void undo( const ObjectHandle & arguments ) const override;
+	virtual void redo( const ObjectHandle & arguments ) const override;
+    virtual ObjectHandle getCommandDescription(const ObjectHandle & arguments) const override;
 
 private:
 	IDefinitionManager & definitionManager_;

@@ -1,3 +1,5 @@
+INCLUDE( WGPython27Common )
+
 add_definitions(-DPy_BUILD_CORE)
 add_definitions(-DNDEBUG)
 
@@ -293,21 +295,10 @@ endif(BUILD_SHARED)
 SET_SOURCE_FILES_PROPERTIES( ${SRC_DIR}/Python/marshal.c
        PROPERTIES COMPILE_FLAGS "-wd4819" )
 
-#BigWorld: Copy lib directory to /bigworld/res/script/common/lib
-
-set( sourceScriptLib ${SRC_DIR}/Lib/ )
-set( targetScriptLib ${BW_RESOURCE_DIR}/scripts/common/Lib/ )
-
+# NGT: Deploy *.pycs from Lib directory to <deployment_dir>/scripts/common/Lib
 if(BUILD_STATIC)
-	ADD_CUSTOM_COMMAND(
-		TARGET libpython POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E echo Copying files from Python/Lib/ to BigWorld/res/scripts/common/Lib
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${sourceScriptLib} ${targetScriptLib}
-	)
+	WG_DEPLOY_PYTHON( libpython scripts/common/Lib )
 elseif(BUILD_SHARED)
-	ADD_CUSTOM_COMMAND(
-		TARGET libpython-shared POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E echo Copying files from Python/Lib/ to BigWorld/res/scripts/common/Lib
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${sourceScriptLib} ${targetScriptLib}
-	)
+	WG_DEPLOY_PYTHON( libpython-shared scripts/common/Lib )
 endif(BUILD_STATIC)
+

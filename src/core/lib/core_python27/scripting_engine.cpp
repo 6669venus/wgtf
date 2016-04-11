@@ -144,8 +144,7 @@ bool Python27ScriptingEngine::init()
 		NGT_ERROR_MSG( "Failed to append path to system modules\n" );
 		return false;
 	}
-	if (!this->appendBinPath(
-		L"./plugins/third_party/python/Python-2.7.10/Lib" ))
+	if (!this->appendBinPath( L"./scripts/common/Lib" ))
 	{
 		NGT_ERROR_MSG( "Failed to append path to system modules\n" );
 		return false;

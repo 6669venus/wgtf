@@ -26,43 +26,43 @@ WGOne.WGPanel {
         ListElement {
             startTime: 0
             endTime: 2
-            barColor: "red"
+            barColor: "#3FA9F5"
             rowSpan: 1
         }
         ListElement {
             startTime: 2
             endTime: 4
-            barColor: "blue"
+            barColor: "#7AC943"
             rowSpan: 1
         }
         ListElement {
             startTime: 2
             endTime: 6
-            barColor: "green"
+            barColor: "#FF931E"
             rowSpan: 1
         }
         ListElement {
             startTime: 6
             endTime: 8
-            barColor: "yellow"
+            barColor: "#3FA9F5"
             rowSpan: 1
         }
         ListElement {
             startTime: 4
             endTime: 6
-            barColor: "aqua"
+            barColor: "#7AC943"
             rowSpan: 1
         }
         ListElement {
             startTime: 2
             endTime: 4
-            barColor: "orange"
+            barColor: "#FF931E"
             rowSpan: 1
         }
         ListElement {
             startTime: 4
             endTime: 10
-            barColor: "purple"
+            barColor: "#3FA9F5"
             rowSpan: 1
         }
     }
@@ -78,14 +78,9 @@ WGOne.WGPanel {
 
         timeScale: 10
 
-        horizontalPixelGap: (gridCanvas.width / totalFrames) * framesPerSecond
-
-        onWidthChanged: {
-            console.log(gridCanvas.width + " / " + totalFrames + " * " + framesPerSecond)
-            console.log(horizontalPixelGap)
-        }
-
+        // is fps necessary?
         property int framesPerSecond: 30
+
         property int totalFrames: (framesPerSecond * timeScale)
         property real frameWidth: canvasWidth / totalFrames
 
@@ -110,6 +105,9 @@ WGOne.WGPanel {
 
             interactive: false
 
+            spacing: 1
+
+            property int selectedBar: -1
 
             delegate: WGTimelineBarSlider {
                 id: slider
@@ -123,6 +121,8 @@ WGOne.WGPanel {
                 startFrame: startTime * gridCanvas.framesPerSecond
                 endFrame: endTime * gridCanvas.framesPerSecond
                 barColor: model.barColor
+
+                barIndex: index
             }
         }
    }

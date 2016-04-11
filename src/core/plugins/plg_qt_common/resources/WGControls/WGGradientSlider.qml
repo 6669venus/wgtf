@@ -249,7 +249,7 @@ WGSlider {
     /*!
         This signal is fired when a point's color is changed
     */
-    signal colorModified(color col, int index)
+    signal colorModified(color color, int index)
 
     /*!
         creates a new color handle with value (val), handleType (handle), color (col) and gradient (grad)
@@ -258,7 +258,57 @@ WGSlider {
         Color will default to the default color in the handle.
         The gradient can usually be ignored unless you wish to create a non-linear gradient
     */
-    function createColorHandle(val, handle, index, col, emitSignal, grad)
+
+    /*!
+        creates a new color handle at the position (pos) in pixels of the entire slider.
+
+        The color will be worked out automatically.
+    */
+    signal createHandleAtPosition(real pos)
+
+    /*!
+        creates a new color handle at the position (pos) in pixels of the entire slider.
+
+        The color will be worked out automatically.
+    */
+    signal createHandleAtPixelPosition(int pos)
+
+    onColorModified: {
+        __handlePosList[index].color = color
+        updateHandles()
+    }
+
+    onCreateHandleAtPixelPosition: {
+        pos = pos / __sliderLength
+        pos = Math.max(pos, 0)
+        pos = Math.min(pos, 1)
+        createHandleAtPosition(pos)
+    }
+
+    onChangeValue: {
+        updateHandles()
+    }
+
+    //delete a handle
+    onHandleCtrlClicked: {
+        if (addDeleteHandles)
+        {
+            removeHandle(index)
+            updateHandles()
+        }
+    }
+
+    //pick a color using ColorDialog
+    onSliderDoubleClicked: {
+        if (useColorPicker)
+        {
+            colorPicker.color = __handlePosList[index].color
+            colorPicker.currentColorIndex = index
+            colorPicker.open()
+        }
+    }
+
+    function createColorHandle(val, handle, index, color, emitSignal, grad)
     {
         emitSignal = emitSignal !== "undefined" ? emitSignal : true
 
@@ -294,9 +344,9 @@ WGSlider {
             }
         }
 
-        if (typeof col != "undefined")
+        if (typeof color != "undefined")
         {
-            newHandle.color = col
+            newHandle.color = color
         }
 
         if (typeof grad != "undefined")
@@ -307,27 +357,6 @@ WGSlider {
         updateHandles()
 
         return newHandle
-    }
-
-    /*!
-        creates a new color handle at the position (pos) in pixels of the entire slider.
-
-        The color will be worked out automatically.
-    */
-    signal createHandleAtPosition(real pos)
-
-    /*!
-        creates a new color handle at the position (pos) in pixels of the entire slider.
-
-        The color will be worked out automatically.
-    */
-    signal createHandleAtPixelPosition(int pos)
-
-    onCreateHandleAtPixelPosition: {
-        pos = pos / __sliderLength
-        pos = Math.max(pos, 0)
-        pos = Math.min(pos, 1)
-        createHandleAtPosition(pos)
     }
 
     /*!
@@ -353,19 +382,19 @@ WGSlider {
     /*!
         Changes the color (col) of handle (index).
     */
-    function setHandleColor(col, index)
+    function setHandleColor(color, index)
     {
         //default values
         index = typeof index !== "undefined" ? index : [0]
         index = Array.isArray(index) ? index : [index]
-        col = Array.isArray(col) ? col : [col]
+        color = Array.isArray(color) ? color : [color]
 
         for (var i = 0; i < index.length; i++)
         {
             var indexToChange = index[i]
             if (indexToChange <= __handleCount - 1)
             {
-                __handlePosList[indexToChange].color = col[i]
+                __handlePosList[indexToChange].color = color[i]
             }
             else
             {
@@ -442,35 +471,6 @@ WGSlider {
                 i--
                 console.log("WARNING WGGradientSlider: Child object found in __handlePosList that isn't a valid slider handle")
             }
-        }
-    }
-
-    onColorModified: {
-        __handlePosList[index].color = col
-        updateHandles()
-    }
-
-    onChangeValue: {
-        updateHandles()
-    }
-
-
-    //delete a handle
-    onHandleCtrlClicked: {
-        if (addDeleteHandles)
-        {
-            removeHandle(index)
-            updateHandles()
-        }
-    }
-
-    //pick a color using ColorDialog
-    onSliderDoubleClicked: {
-        if (useColorPicker)
-        {
-            colorPicker.color = __handlePosList[index].color
-            colorPicker.currentColorIndex = index
-            colorPicker.open()
         }
     }
 

@@ -143,16 +143,19 @@ Rectangle {
         var movedX = [point.point.pos.x, point.point.pos.x - xDelta]
         movedX.sort();
 
-        //gets the yDeltas as color change values. For some reason getting a lot of yDeltas < 0 and > 1
-        var rDelta = point.parentCurve.curveIndex === 0 ? yDelta : 0;
-        var gDelta = point.parentCurve.curveIndex === 1 ? yDelta : 0;
-        var bDelta = point.parentCurve.curveIndex === 2 ? yDelta : 0;
-        var aDelta = point.parentCurve.curveIndex === 3 ? yDelta : 0;
+        if (showColorSlider)
+        {
+            //gets the yDeltas as color change values. For some reason getting a lot of yDeltas < 0 and > 1
+            var rDelta = point.parentCurve.curveIndex === 0 ? yDelta : 0;
+            var gDelta = point.parentCurve.curveIndex === 1 ? yDelta : 0;
+            var bDelta = point.parentCurve.curveIndex === 2 ? yDelta : 0;
+            var aDelta = point.parentCurve.curveIndex === 3 ? yDelta : 0;
 
-        //add these values to an array
-        var gradHandleIndexes = [point.pointIndex]
-        var gradHandleValues = [point.point.pos.x - xDelta]
-        var gradHandleColors = [colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,point.pointIndex)]
+            //add these values to an array
+            var gradHandleIndexes = [point.pointIndex]
+            var gradHandleValues = [point.point.pos.x - xDelta]
+            var gradHandleColors = [colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,point.pointIndex)]
+        }
 
         for(var i = 0; i < selection.length; ++i)
         {
@@ -167,15 +170,18 @@ Rectangle {
 
                 if (gradHandleValues.indexOf(selectedPoint.index) == -1)
                 {
-                    rDelta = selectedPoint.parentCurve.curveIndex === 0 ? yDelta : 0;
-                    gDelta = selectedPoint.parentCurve.curveIndex === 1 ? yDelta : 0;
-                    bDelta = selectedPoint.parentCurve.curveIndex === 2 ? yDelta : 0;
-                    aDelta = selectedPoint.parentCurve.curveIndex === 3 ? yDelta : 0;
+                    if (showColorSlider)
+                    {
+                        rDelta = selectedPoint.parentCurve.curveIndex === 0 ? yDelta : 0;
+                        gDelta = selectedPoint.parentCurve.curveIndex === 1 ? yDelta : 0;
+                        bDelta = selectedPoint.parentCurve.curveIndex === 2 ? yDelta : 0;
+                        aDelta = selectedPoint.parentCurve.curveIndex === 3 ? yDelta : 0;
 
 
-                    gradHandleIndexes.push(selectedPoint.pointIndex)
-                    gradHandleValues.push(newX)
-                    gradHandleColors.push(colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,selectedPoint.pointIndex))
+                        gradHandleIndexes.push(selectedPoint.pointIndex)
+                        gradHandleValues.push(newX)
+                        gradHandleColors.push(colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,selectedPoint.pointIndex))
+                    }
                 }
 
                 // For now points with the same x's are moved in C++ Particle Editor code
@@ -203,8 +209,11 @@ Rectangle {
             }
         }
         //update all the necessary handles.
-        colorGradient.setHandleValue(gradHandleValues, gradHandleIndexes);
-        colorGradient.setHandleColor(gradHandleColors, gradHandleIndexes);
+        if (showColorSlider)
+        {
+            colorGradient.setHandleValue(gradHandleValues, gradHandleIndexes);
+            colorGradient.setHandleColor(gradHandleColors, gradHandleIndexes);
+        }
     }
 
     function repaintCurves() {
@@ -284,6 +293,17 @@ Rectangle {
                         toolbar.time = 0;
                         toolbar.value = 0;
                     }
+                }
+            }
+            // This makes the points update a lot better but seems to drastically affect performance
+            // and might be causing the app to lock up
+            // the points can still get out of synch too.
+            Timer {
+                interval: 100
+                running: true
+                repeat: true
+                onTriggered: {
+                    repaintCurves();
                 }
             }
         }

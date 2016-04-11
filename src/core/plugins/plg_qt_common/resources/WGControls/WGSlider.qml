@@ -314,6 +314,13 @@ Control {
     signal handleRemoved(int index)
 
     /*!
+        This signal is fired when the mouse is pressed anywhere in the groove.
+
+        If the handle is able to be moved, draggable will be true
+    */
+    signal sliderPressed(bool draggable)
+
+    /*!
         This signal is fired when a handle (index) value (val) is changed
     */
     signal changeValue (real val, int index)
@@ -548,6 +555,7 @@ Control {
         }
 
         onPressed: {
+            sliderPressed(__draggable)
             if (__draggable)
             {
                 beginDrag(__activeHandle)
@@ -559,6 +567,10 @@ Control {
                     slider.forceActiveFocus();
 
                 updateHandlePosition(mouse, !Settings.hasTouchScreen)
+            }
+            else
+            {
+                mouse.accepted = false
             }
         }
 

@@ -291,6 +291,15 @@ Rectangle {
 					}
 				}
 			}
+
+            Timer {
+				interval: 100
+				running: true
+                repeat: true
+                onTriggered: {
+                    repaintCurves();
+                }
+            }
 		}
 
 		Timeline {

@@ -86,7 +86,7 @@ TEST( Python27 )
 
 	// Import a builtin module
 	{
-		ObjectHandle module = scriptingEngine->appendPathAndImport( L"", "sys" );
+		ObjectHandle module = scriptingEngine->import( "sys" );
 		CHECK( module.isValid() );
 		// Python test failed to import sys
 		if (!module.isValid())
@@ -103,10 +103,14 @@ TEST( Python27 )
 
 	// Import the test module and run it
 	{
-		const wchar_t* path =
-			L"..\\..\\..\\src\\core\\testing\\plg_python27_unit_test\\scripts";
-		const char* moduleName = "python27_test";
-		auto module = scriptingEngine->appendPathAndImport( path, moduleName );
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_unit_test/scripts";
+		const wchar_t * deployPath = L"./plugins/plg_python27_unit_test/scripts";
+		const char * moduleName = "python27_test";
+		const bool sourcePathSet = scriptingEngine->appendSourcePath( sourcePath );
+		CHECK( sourcePathSet );
+		const bool deployPathSet =  scriptingEngine->appendBinPath( deployPath );
+		CHECK( deployPathSet );
+		auto module = scriptingEngine->import( moduleName );
 		CHECK( module.isValid() );
 		// Python failed to import test script.
 		if (!module.isValid())

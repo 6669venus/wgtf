@@ -10,6 +10,7 @@
 #include "wg_pyscript/py_script_object.hpp"
 #include "wg_pyscript/py_script_output_writer.hpp"
 
+#include <algorithm>
 #include <cstring>
 #include <cwchar>
 
@@ -25,8 +26,19 @@ bool appendPath( const wchar_t * path )
 		return true;
 	}
 
+	// Normalize path
+	// Replace '/' with '\\' on Windows
+	// Because Python always uses the platform's native format
+#if defined( WIN32 )
+	std::wstring tmpPath( path );
+	std::replace( std::begin( tmpPath ), std::end( tmpPath ), L'/', L'\\' );
+	const auto normalizedPath = tmpPath.c_str();
+#else // defined( WIN32 )
+	const auto normalizedPath = path;
+#endif // defined( WIN32 )
+
 	PyScript::ScriptObject testPathObject =
-		PyScript::ScriptObject::createFrom( path );
+		PyScript::ScriptObject::createFrom( normalizedPath );
 
 	PyObject* pySysPaths = PySys_GetObject( "path" );
 	if (pySysPaths == nullptr)
@@ -126,8 +138,14 @@ bool Python27ScriptingEngine::init()
 	PyImport_ImportModule( "scriptoutputwriter" );
 
 	// Allow import from supported system modules
-	if (!appendPath(
-		L"..\\..\\..\\src\\core\\third_party\\python\\Python-2.7.10\\Lib" ))
+	if (!this->appendSourcePath(
+		L"../../../src/core/third_party/python/Python-2.7.10/Lib" ))
+	{
+		NGT_ERROR_MSG( "Failed to append path to system modules\n" );
+		return false;
+	}
+	if (!this->appendBinPath(
+		L"./plugins/third_party/python/Python-2.7.10/Lib" ))
 	{
 		NGT_ERROR_MSG( "Failed to append path to system modules\n" );
 		return false;
@@ -144,15 +162,21 @@ void Python27ScriptingEngine::fini()
 }
 
 
-ObjectHandle Python27ScriptingEngine::appendPathAndImport( const wchar_t * path,
-	const char * moduleName )
+bool Python27ScriptingEngine::appendSourcePath( const wchar_t * path )
 {
-	if (!appendPath( path ))
-	{
-		return nullptr;
-	}
+	return ::appendPath( path );
+}
 
-	return import( context_, moduleName );
+
+bool Python27ScriptingEngine::appendBinPath( const wchar_t * path )
+{
+	return ::appendPath( path );
+}
+
+
+ObjectHandle Python27ScriptingEngine::import( const char * moduleName )
+{
+	return ::import( context_, moduleName );
 }
 
 

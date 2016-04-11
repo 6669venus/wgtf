@@ -79,9 +79,14 @@ struct Python27TestUIPlugin
 		}
 		auto & scriptingEngine = (*pScriptingEngine);
 
-		auto module = scriptingEngine.appendPathAndImport(
-			L"..\\..\\..\\src\\core\\testing\\plg_python27_ui_test\\scripts",
-			"test_objects" );
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_ui_test/scripts";
+		const wchar_t * deployPath = L"./plugins/plg_python27_ui_test/scripts";
+		const char * moduleName = "test_objects";
+		const bool sourcePathSet = scriptingEngine.appendSourcePath( sourcePath );
+		assert( sourcePathSet );
+		const bool deployPathSet =  scriptingEngine.appendBinPath( deployPath );
+		assert( deployPathSet );
+		auto module = scriptingEngine.import( moduleName );
 		if (!module.isValid())
 		{
 			NGT_ERROR_MSG( "Could not load from scripts\n" );

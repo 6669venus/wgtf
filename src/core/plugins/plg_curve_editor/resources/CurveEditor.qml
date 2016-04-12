@@ -235,6 +235,18 @@ Rectangle {
         return curveRepeater.count > index && curve && curve.enabled;
     }
 
+    //hacky timer to keep things updating when points or slider handles are moved.
+    Timer {
+        id: curveTimer
+        interval: 100
+        running: false
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            repaintCurves();
+        }
+    }
+
     ColumnLayout{
         id: contents
         spacing: 2
@@ -298,14 +310,6 @@ Rectangle {
             // This makes the points update a lot better but seems to drastically affect performance
             // and might be causing the app to lock up
             // the points can still get out of synch too.
-            Timer {
-                interval: 100
-                running: true
-                repeat: true
-                onTriggered: {
-                    repaintCurves();
-                }
-            }
         }
 
         Timeline {
@@ -488,10 +492,14 @@ Rectangle {
                         curveEditor.pointPositionChanged(point, xDelta, yDelta)
                     }
                     onPointPressed:{
+                        curveTimer.start()
                         if(point.selected === false && mouse.modifiers !== Qt.ControlModifier)
                         {
                             clearSelection();
                         }
+                    }
+                    onPointReleased:{
+                        curveTimer.stop()
                     }
                     onPointClicked:{
                         if(mouse.modifiers !== Qt.ControlModifier)
@@ -521,6 +529,13 @@ Rectangle {
                 minimumValue: 0
                 maximumValue: 1.0
                 stepSize: .001
+
+                onBeginDrag: {
+                    curveTimer.start()
+                }
+                onEndDrag: {
+                    curveTimer.stop()
+                }
 
                 //this is some grade A fakery to deal with the fake data being created over time
                 //basically looks at the curve repeaters and then add points when the red curve adds points

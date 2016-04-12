@@ -52,11 +52,14 @@ Item {
         {
             var column = null;
 
-            for (var i = 0; i < columnCount; ++i)
+            for (var i = 0; i < columns.children.length; ++i)
             {
                 column = columns.children[i];
                 var handle = column.children[0];
-                handle.x = handle.x;
+                if (typeof(handle) !== "undefined") 
+                {
+                    handle.x = handle.x;
+                }
             }
         }
 
@@ -67,7 +70,7 @@ Item {
             var columnWidth = 0;
             var totalWidth = 0;
 
-            for (var i = 0; i < columnCount; ++i)
+            for (var i = 0; i < columns.children.length; ++i)
             {
                 column = columns.children[i];
                 columnWidth = column.width;

@@ -29,6 +29,7 @@ Canvas {
     signal pointSelectionChanged(Point point)
     signal pointPositionChanged(Point point, real xDelta, real yDelta)
     signal pointPressed(Point point, var mouse)
+    signal pointReleased(Point point, var mouse)
     signal pointClicked(Point point, var mouse)
     signal pointAdded(int index, var point)
     signal pointRemoved(int index, var point)
@@ -149,6 +150,7 @@ Canvas {
             }
             onPositionChanged: pointPositionChanged(point, xDelta, yDelta)
             onPressed: pointPressed(point, mouse)
+            onReleased: pointReleased(point, mouse)
             onClicked: pointClicked(point, mouse)
         }
         onItemAdded:

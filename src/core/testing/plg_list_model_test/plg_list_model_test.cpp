@@ -17,6 +17,7 @@ private:
 	std::vector<IInterface*> types_;
 	std::unique_ptr<IView> listView_;
 	std::unique_ptr<IView> shortListView_;
+	std::unique_ptr<IView> multiColumnListView_;
 public:
 	//==========================================================================
 	ListModelTestPlugin(IComponentContext & contextManager )
@@ -49,9 +50,15 @@ public:
 		shortListView_ = uiFramework->createView(
 			"plg_list_model_test/test_short_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
+
+		std::unique_ptr< IListModel > multiColumnListModel( new TestListModel( true ) );
+		multiColumnListView_ = uiFramework->createView(
+			"plg_list_model_test/test_column_sequence_list_panel.qml",
+			IUIFramework::ResourceType::Url, std::move( multiColumnListModel ) );
 		
 		uiApplication->addView( *listView_ );
 		uiApplication->addView( *shortListView_ );
+		uiApplication->addView( *multiColumnListView_ );
 
 	}
 	//==========================================================================
@@ -59,10 +66,12 @@ public:
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
+		uiApplication->removeView( *multiColumnListView_ );
 		uiApplication->removeView( *shortListView_ );
 		uiApplication->removeView( *listView_ );
 		listView_ = nullptr;
 		shortListView_ = nullptr;
+		multiColumnListView_ = nullptr;
 		return true;
 	}
 	//==========================================================================

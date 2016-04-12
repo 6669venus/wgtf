@@ -38,6 +38,7 @@ Rectangle {
     signal positionChanged(var point, real xDelta, real yDelta)
     signal clicked(var point, var mouse)
     signal pressed(var point, var mouse)
+    signal released(var point, var mouse)
 
     function setPosition(x, y) {
         if(x === handle.point.pos.x && y === handle.point.pos.y)
@@ -195,6 +196,7 @@ Rectangle {
         onReleased: {
             if(dragging)
             {
+                handle.released(handle, mouse);
                 handle.state = handle.selected ? "selected" : "unselected";
                 endUndoFrame();
                 dragging = false

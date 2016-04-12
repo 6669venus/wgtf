@@ -3,6 +3,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
+import WGCopyableFunctions 1.0
 
 /*!
  \brief A control used to represent the presence of a user definable filter.

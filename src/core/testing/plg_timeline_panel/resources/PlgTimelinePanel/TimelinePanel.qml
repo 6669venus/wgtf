@@ -67,63 +67,11 @@ WGOne.WGPanel {
         }
     }
 
-    WGGridCanvas {
+    WGTimelineControl {
         id: gridCanvas
         anchors.fill: parent
         focus: true
-        useAxis: xGrid
-        showMouseLine: true
-        showXGridLines: true
-        showYGridLines: false
 
-        timeScale: 10
-
-        // is fps necessary?
-        property int framesPerSecond: 30
-
-        property int totalFrames: (framesPerSecond * timeScale)
-        property real frameWidth: canvasWidth / totalFrames
-
-        function pixelsToFrames(pixels) {
-            return Math.round(pixels / frameWidth)
-        }
-
-        function framesToPixels(frames) {
-            return frames * frameWidth
-        }
-
-
-        ListView {
-            id: timelineView
-            model: barModel
-
-            width: gridCanvas.canvasWidth
-            height: gridCanvas.canvasHeight
-
-            x: gridCanvas.viewTransform.transformX(0)
-            y: gridCanvas.viewTransform.transformY(1)
-
-            interactive: false
-
-            spacing: 1
-
-            property int selectedBar: -1
-
-            delegate: WGTimelineBarSlider {
-                id: slider
-
-                height: defaultSpacing.minimumRowHeight
-                anchors.left: parent.left
-                anchors.right: parent.right
-                minimumValue: 0
-                maximumValue: gridCanvas.totalFrames
-                stepSize: 1
-                startFrame: startTime * gridCanvas.framesPerSecond
-                endFrame: endTime * gridCanvas.framesPerSecond
-                barColor: model.barColor
-
-                barIndex: index
-            }
-        }
-   }
+        model: barModel
+    }
 }

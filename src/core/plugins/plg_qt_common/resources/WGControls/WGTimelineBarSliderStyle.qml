@@ -4,22 +4,22 @@ import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
 
 /*!
-    A slider style that contains a color gradient as the background
+    A slider style loads a bar based off control.barContent.
+
+    Defaults to a colored rectangle.
 */
 WGSliderStyle {
     id: sliderStyle
-    objectName: "WGColorSliderStyle"
+    objectName: "WGTimelineBarSliderStyle"
 
     groove: Item {
 
         anchors.verticalCenter: parent.verticalCenter
 
-        //changing between odd and even values causes pixel 'wiggling' as the center anchors move around.
-        //can't use anchors.fill because the gradients need rotating
         implicitHeight: __horizontal ? control.height : control.width
         implicitWidth: __horizontal ? control.width : control.height
     }
-    // There is no expanding bar that follows the handles in a ColorSlider
+
     bar: Item {
         Loader
         {

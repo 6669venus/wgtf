@@ -77,6 +77,7 @@ WGRangeSlider 2.0 WGRangeSlider.qml
 WGScrollBar 1.0 WGScrollBar.qml
 WGScrollBarStyle 1.0 WGScrollBarStyle.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
+WGSelectionArea 2.0 WGSelectionArea.qml
 WGSeparator 1.0 WGSeparator.qml
 WGSlider 1.0 WGSlider1.qml
 WGSlider 2.0 WGSlider.qml
@@ -101,6 +102,7 @@ WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGTimelineBarSlider 2.0 WGTimelineBarSlider.qml
 WGTimelineBarSliderHandle 2.0 WGTimelineBarSliderHandle.qml
 WGTimelineBarSliderStyle 2.0 WGTimelineBarSliderStyle.qml
+WGTimelineControl 2.0 WGTimelineControl.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolButtonStyle 1.0 WGToolButtonStyle.qml
 WGTreeItem.qml 1.0 WGTreeItem.qml

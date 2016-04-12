@@ -74,6 +74,25 @@ Canvas {
         container: gridCanvas
     }
 
+    WGSelectionArea
+    {
+        id: selectionArea
+        onSelectArea: {
+            gridCanvas.selectArea(min,max,mouse)
+            z = 0
+        }
+        onPreviewSelectArea: {
+            gridCanvas.previewSelectArea(min,max,mouse)
+            z = 5
+        }
+    }
+
+    signal selectArea(point min, point max, var mouse)
+
+    signal previewSelectArea(point min, point max, var mouse)
+
+    signal canvasPressed();
+
     onTimeScaleChanged: requestPaint();
     onValueScaleChanged: requestPaint();
 
@@ -277,6 +296,22 @@ Canvas {
         ctx.stroke();
     }
 
+    function getWidth( startTime, endTime )
+    {
+        //var startX = gridCanvas.viewTransform.inverseTransform(Qt.point(0,0)).x
+        var endX = gridCanvas.viewTransform.inverseTransform(Qt.point(width,0)).x
+        console.log("----------endX is " + endX)
+        var pixelEndX = viewTransform.transformX(endX);
+        console.log("----------pixelEndX is " + pixelEndX)
+        var startPixelLocation = (timeScale/startTime * pixelEndX)
+        console.log("----------startPixelLocation is " + startPixelLocation)
+        var endPixelLocation =  (timeScale/endTime * pixelEndX)
+        console.log("----------endPixelLocation is " + endPixelLocation)
+        var newWidth = startPixelLocation - endPixelLocation
+        console.log("----------newWidth is " + newWidth)
+        return newWidth
+    }
+
     Rectangle {
         id: mouseLine;
         height: useAxis == 2 ? 1 : parent.height
@@ -347,6 +382,11 @@ Canvas {
         }
         onPressed:{
             mouseDragStart = Qt.point(mouse.x, mouse.y)
+            if(mouse.button == Qt.LeftButton)
+            {
+                canvasPressed()
+            }
+            mouse.accepted = false;
         }
         onReleased: {
             mouseDragStart = null;

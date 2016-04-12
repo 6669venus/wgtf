@@ -5,9 +5,14 @@ ENDIF()
 
 BW_GET_EXECUTABLE_DST_DIR( EXE_DIR )
 
-# Copy Python pycs to bin.
+# Copy Python pycs to bin/generic_app_test/win64.
 # Use SET( DEPLOY_PYTHON_SUPPORT ON ) to enable.
-# DEPLOY_PYTHON_TARGET_PROJECT must be set. It defines which exe the default is generic_app.
+# _TARGET_PROJECT name of the source project.
+#	E.g. plg_example.
+# _SCRIPT_DIR relative path to script *.py sources from the plugin.
+#	E.g. ${CMAKE_CURRENT_LIST_DIR}/scripts.
+# _BIN_SUBDIR_NAME name of the destination folder in bin.
+#	E.g. scripts/plg_example.
 FUNCTION( WG_DEPLOY_PYTHON _TARGET_PROJECT _SCRIPT_DIR _BIN_SUBDIR_NAME )
 	IF( NOT DEPLOY_PYTHON_SUPPORT )
 		MESSAGE( STATUS "Python deployment disabled" )

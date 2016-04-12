@@ -607,7 +607,6 @@ Rectangle {
                 }
 
                 onColorModified: {
-                    var color = col
                     beginUndoFrame()
                     var red = curveRepeater.itemAt(0).getPoint(index);
                     var green = curveRepeater.itemAt(1).getPoint(index);

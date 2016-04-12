@@ -31,13 +31,18 @@ def main():
 		for fileName in fileNames:
 			if fileName.endswith(".pyc"):
 
-				deploymentSubDir = \
-					os.path.join(deploymentDir, dirPath.lstrip(sourceDir))
+				# Get the name of the sub-directory in the source folder
+				subDir = dirPath.replace(sourceDir, "").lstrip("\\/")
+
+				# Create a similar sub-directory in the deployment folder
+				deploymentSubDir = os.path.join(deploymentDir, subDir)
 				if not os.path.exists(deploymentSubDir):
 					os.makedirs(deploymentSubDir)
 
+				# Add file name to directory names
 				sourceFile = os.path.join(dirPath, fileName)
 				deploymentFile = os.path.join(deploymentSubDir, fileName)
+
 				shutil.copyfile(sourceFile, deploymentFile)
 
 if __name__ == '__main__':

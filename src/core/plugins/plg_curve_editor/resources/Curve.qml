@@ -14,6 +14,7 @@ Canvas {
     property alias pointRepeater: pointRepeater;
     property var points;
     property var curveModel;
+    property var curveIndex;
     property color color;
     property bool enabled: true;
     property bool showControlPoints: enabled && curveModel.showControlPoints
@@ -28,6 +29,7 @@ Canvas {
     signal pointSelectionChanged(Point point)
     signal pointPositionChanged(Point point, real xDelta, real yDelta)
     signal pointPressed(Point point, var mouse)
+    signal pointReleased(Point point, var mouse)
     signal pointClicked(Point point, var mouse)
     signal pointAdded(int index, var point)
     signal pointRemoved(int index, var point)
@@ -142,11 +144,13 @@ Canvas {
             baseColor: curve.color;
             enabled: curve.enabled;
             viewTransform: curve.viewTransform;
+            pointIndex: index
             onSelectedChanged:{
                 pointSelectionChanged(this)
             }
             onPositionChanged: pointPositionChanged(point, xDelta, yDelta)
             onPressed: pointPressed(point, mouse)
+            onReleased: pointReleased(point, mouse)
             onClicked: pointClicked(point, mouse)
         }
         onItemAdded:

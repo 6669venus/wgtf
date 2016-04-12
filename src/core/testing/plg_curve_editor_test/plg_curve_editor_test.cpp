@@ -45,7 +45,7 @@ public:
 			curve->add(pointData4);
         }
 
-        curve = curveEditor->createCurve(CurveTypes::CubicBezier, true);
+		curve = curveEditor->createCurve(CurveTypes::Linear, true);
         {
             BezierPointData pointData1 = { { 0.0f, 0.0f }, { -0.1f, 0.0f }, { 0.1f, 0.1f } };
             curve->add(pointData1);
@@ -57,7 +57,7 @@ public:
             curve->add(pointData4);
         }
 
-        curve = curveEditor->createCurve(CurveTypes::CubicBezier, true);
+		curve = curveEditor->createCurve(CurveTypes::Linear, true);
         {
             BezierPointData pointData1 = { { 0.0f, 0.75f }, { 0.00f, 0.00f }, { 0.1f, 0.1f } };
             curve->add(pointData1);

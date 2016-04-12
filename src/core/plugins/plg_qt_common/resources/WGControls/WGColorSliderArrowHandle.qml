@@ -1,11 +1,13 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
-import BWControls 1.0
+import WGControls 1.0
 
 
 /*!
     \brief An arrow style slider handle for multi-handle Gradient WGColorSliders
+
+    DEPRECATED - This control has been replaced by WGGradientSliderHandle in WGControls 2.0
 */
 
 WGColorSliderHandle {

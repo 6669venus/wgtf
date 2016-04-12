@@ -31,24 +31,24 @@ WGRangeSliderHandle {
         if (handleDragging)
         {
             var handleDelta = sliderHandle.value - slider.initialValues[maxHandle ? 1 : 0]
-            slider.ListView.view.handleDragged(handleDelta, !maxHandle, maxHandle)
+            view.handleDragged(handleDelta, !maxHandle, maxHandle)
         }
     }
 
     Connections {
-        target: slider.ListView.view
+        target: view
         // if a bar is being dragged and this handle has been auto selected by it's handle being selected drag this handle
         onMouseXDragCurrentChanged: {
-            if (sliderHandle.selected && slider.ListView.view.itemDragging)
+            if (sliderHandle.selected && view.itemDragging)
             {
-                var clampedDelta = slider.ListView.view.deltaValue
+                var clampedDelta = view.deltaValue
 
-                if(slider.initialValues[0] + slider.ListView.view.deltaValue < slider.minimumValue)
+                if(slider.initialValues[0] + view.deltaValue < slider.minimumValue)
                 {
                     clampedDelta = slider.minimumValue - slider.initialValues[0]
                 }
 
-                else if (slider.initialValues[1] + slider.ListView.view.deltaValue > slider.maximumValue)
+                else if (slider.initialValues[1] + view.deltaValue > slider.maximumValue)
                 {
                     clampedDelta = slider.maximumValue - slider.initialValues[1]
                 }

@@ -50,20 +50,20 @@ WGSlider {
     // tell the view a drag has started
     onBeginDrag: {
         __handlePosList[index].handleDragging = true
-        slider.ListView.view.itemDragging = true
+        view.itemDragging = true
     }
 
     onEndDrag: {
         __handlePosList[index].handleDragging = false
-        slider.ListView.view.itemDragging = false
+        view.itemDragging = false
         initialValues = []
     }
 
     Connections {
-        target: slider.ListView.view
+        target: view
         // check to see if the bar is still selected or not and then auto-select the handles
         onSelectionChanged: {
-            if (slider.ListView.view.selectedBars.indexOf(slider.barIndex) != -1)
+            if (view.selectedBars.indexOf(slider.barIndex) != -1)
             {
                 slider.__handlePosList[0].selected = true
                 slider.__handlePosList[1].selected = true
@@ -76,7 +76,7 @@ WGSlider {
         }
         // if anything in the view starts dragging, populate the initial values
         onItemDraggingChanged: {
-            if (slider.ListView.view.itemDragging)
+            if (view.itemDragging)
             {
                 for (var i = 0; i < __handlePosList.length; i++)
                 {
@@ -95,10 +95,10 @@ WGSlider {
 
         // change the styling if bar is selected
         Connections {
-            target: slider.ListView.view
+            target: view
             onSelectionChanged: {
-                barContent.border.color = slider.barIndex === slider.ListView.view.selectedBars.indexOf(slider.barIndex) != -1 ? Qt.darker(color, 2.0) : Qt.darker(color, 1.5)
-                barSelection.visible = slider.ListView.view.selectedBars.indexOf(slider.barIndex) != -1
+                barContent.border.color = slider.barIndex === view.selectedBars.indexOf(slider.barIndex) != -1 ? Qt.darker(color, 2.0) : Qt.darker(color, 1.5)
+                barSelection.visible = view.selectedBars.indexOf(slider.barIndex) != -1
             }
         }
 
@@ -126,45 +126,45 @@ WGSlider {
 
                 //clamp it to the min or max values or weird things happen when the mouse strays too far from the current window
                 currentPos.x = Math.max(0, Math.min(slider.width, currentPos.x))
-                slider.ListView.view.mouseXDragCurrent = currentPos
+                view.mouseXDragCurrent = currentPos
             }
 
             onPressed: {
                 // populate the initial mouse values in order to calculate delta
-                slider.ListView.view.mouseXDragStart = barMouseArea.mapToItem(slider,mouse.x,mouse.y).x
-                slider.ListView.view.mouseXDragCurrent = slider.ListView.view.mouseXDragStart
+                view.mouseXDragStart = barMouseArea.mapToItem(slider,mouse.x,mouse.y).x
+                view.mouseXDragCurrent = view.mouseXDragStart
 
-                slider.ListView.view.itemDragging = true
+                view.itemDragging = true
 
                 beginUndoFrame();
                 // add to the selected bars if Shift clicked
                 if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier))
                 {
-                    if (slider.ListView.view.selectedBars.indexOf(barIndex) == -1)
+                    if (view.selectedBars.indexOf(barIndex) == -1)
                     {
-                        slider.ListView.view.selectedBars.push(barIndex)
+                        view.selectedBars.push(barIndex)
                     }
                 }
                 // add or remove bars if Ctrl clicked
                 else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
                 {
-                    var barIndexLocation = slider.ListView.view.selectedBars.indexOf(barIndex)
+                    var barIndexLocation = view.selectedBars.indexOf(barIndex)
                     if (barIndexLocation == -1)
                     {
-                        slider.ListView.view.selectedBars.push(barIndex)
+                        view.selectedBars.push(barIndex)
                     }
                     else
                     {
-                        slider.ListView.view.selectedBars.splice(barIndexLocation, 1)
+                        view.selectedBars.splice(barIndexLocation, 1)
                     }
                 }
                 // or just select this one if no shift or ctrl
-                else if (mouse.button == Qt.LeftButton && slider.ListView.view.selectedBars.indexOf(barIndex) == -1)
+                else if (mouse.button == Qt.LeftButton && view.selectedBars.indexOf(barIndex) == -1)
                 {
-                    slider.ListView.view.selectedBars = [barIndex]
+                    view.selectedBars = [barIndex]
                 }
 
-                slider.ListView.view.selectionChanged();
+                view.selectionChanged();
 
                 preventStealing = true
                 __handleMoving = true
@@ -174,10 +174,10 @@ WGSlider {
                 endUndoFrame();
                 preventStealing = false
                 __handleMoving = false
-                slider.ListView.view.itemDragging = false
+                view.itemDragging = false
 
-                slider.ListView.view.mouseXDragStart = 0
-                slider.ListView.view.mouseXDragCurrent = 0
+                view.mouseXDragStart = 0
+                view.mouseXDragCurrent = 0
             }
         }
     }

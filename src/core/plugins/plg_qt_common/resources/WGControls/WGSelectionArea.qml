@@ -7,6 +7,8 @@ MouseArea
 
     property point _startPoint: Qt.point(0,0)
 
+    acceptedButtons: Qt.LeftButton
+
     signal selectArea(point min, point max, var mouse)
     signal previewSelectArea(point min, point max, var mouse)
 

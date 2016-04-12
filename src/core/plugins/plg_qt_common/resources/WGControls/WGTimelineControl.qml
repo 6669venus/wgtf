@@ -9,26 +9,30 @@ import WGControls 2.0
     \brief Timeline Panel WIP.
 */
 
-WGGridCanvas {
-    id: gridCanvas
-
-    focus: true
-    useAxis: xGrid
-    showMouseLine: true
-    showXGridLines: true
-    showYGridLines: false
-
-    z: 0
-
-    property alias model: timelineView.model
-
-    timeScale: 10
+Rectangle {
+    id: timelineFrame
 
     // is fps necessary?
     property int framesPerSecond: 30
 
     property int totalFrames: (framesPerSecond * timeScale)
-    property real frameWidth: canvasWidth / totalFrames
+
+    property real frameWidth: gridCanvas.canvasWidth / totalFrames
+
+    property int topMargin: gridCanvas.viewTransform.transformY(1) + timelineToolbar.height
+
+    property alias model: timelineView.model
+
+    property alias timeScale: gridCanvas.timeScale
+
+    signal yPositionChanged(var yPos)
+
+    function setViewYPosition(yPos) {
+        if (timelineView.contentY != yPos)
+        {
+            timelineView.contentY = yPos
+        }
+    }
 
     function pixelsToFrames(pixels) {
         return Math.round(pixels / frameWidth)
@@ -38,116 +42,222 @@ WGGridCanvas {
         return frames * frameWidth
     }
 
-    onPreviewSelectArea: {
-        timelineView.selectedBars = []
-        timelineView.selectionChanged()
-    }
+    Rectangle {
+        id: timelineToolbar
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
 
-    onCanvasPressed: {
-        timelineView.selectedBars = []
-        timelineView.selectionChanged()
-    }
+        color: palette.mainWindowColor
 
-    ListView {
-        id: timelineView
-        model: barModel
+        RowLayout {
+            anchors.fill: parent
+            anchors.margins: defaultSpacing.standardMargin
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
 
-        width: gridCanvas.canvasWidth
-        height: gridCanvas.canvasHeight
+            WGLabel {
+                text: "Duration: "
+            }
 
-        x: gridCanvas.viewTransform.transformX(0)
-        y: gridCanvas.viewTransform.transformY(1)
+            WGNumberBox {
+                id: durationNumberBox
 
-        interactive: false
+                Layout.preferredWidth: 50
 
-        spacing: 1
-        z: 1
+                value: timeScale
+                minimumValue: 0.1
+                maximumValue: 100
+                stepSize: 0.1
+                decimals: 1
 
-        property var selectedBars: []
+                // Need to upgrade WGSpinBox to QtQuick.Controls 1.3
+                onEditingFinished: {
+                    timelineFrame.timeScale = durationNumberBox.value
+                }
 
-        //dragging a bar will change these but not a handle
-        property real mouseXDragStart: 0
-        property real mouseXDragCurrent: 0
-
-        property real deltaValue: (mouseXDragCurrent - mouseXDragStart) / (width / gridCanvas.totalFrames)
-
-        //if a bar or a handle is dragged
-        property bool itemDragging: false
-
-        // sent if the bar or handle selection is changed
-        signal selectionChanged()
-
-        // sent if a handle is dragged.
-        signal handleDragged(real delta, bool minHandle, bool maxHandle)
-
-        // currently the only delegate is the WGTimelineBarSlider but this will change
-        delegate: WGTimelineBarSlider {
-            id: slider
-
-            height: defaultSpacing.minimumRowHeight
-            anchors.left: parent.left
-            anchors.right: parent.right
-            minimumValue: 0
-            maximumValue: gridCanvas.totalFrames
-            stepSize: 1
-            startFrame: startTime * gridCanvas.framesPerSecond
-            endFrame: endTime * gridCanvas.framesPerSecond
-            barColor: model.barColor
-
-            barIndex: index
-
-            // check if minPoint and maxPoint lie wholly within min and max
-            // or if minPoint and maxPoint y's are wholly within AND minPoint and maxPoint x's are wholly without
-            function checkSelection(min, max, minPoint, maxPoint)
-            {
-                //y selection is pretty basic
-                if (minPoint.y >= min.y && maxPoint.y <= max.y)
-                {
-                    //x selection is more picky. Could make this select any bar the selection crosses... but this may be too coarse.
-                    if ((minPoint.x <= min.x && maxPoint.x >= max.x)
-                            || (minPoint.x >= min.x && maxPoint.x <= max.x))
-                    {
-                        return true
-                    }
-                    else
-                    {
-                        return false
+                Connections {
+                    target: timelineFrame
+                    onTimeScaleChanged: {
+                        durationNumberBox.value = timeScale
                     }
                 }
             }
+        }
+    }
 
-            Connections {
-                target: gridCanvas
 
-                onPreviewSelectArea: {
-                    min = gridCanvas.viewTransform.inverseTransform(min)
-                    max = gridCanvas.viewTransform.inverseTransform(max)
+    WGGridCanvas {
+        id: gridCanvas
 
-                    // find the bar area
-                    var minPoint = slider.mapToItem(gridCanvas,slider.__handlePosList[0].range.position,0)
-                    var maxPoint = slider.mapToItem(gridCanvas,slider.__handlePosList[1].range.position,slider.height)
+        anchors.top: timelineToolbar.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
 
-                    var barSelected = checkSelection(min,max,minPoint,maxPoint)
+        focus: true
+        useAxis: xGrid
+        showMouseLine: true
+        showXGridLines: true
+        showYGridLines: false
 
-                    // add or remove selections as necessary
-                    // is it causing poor performance to do this onPreviewSelectArea???
-                    var barIndexLocation = -1
-                    if (barSelected)
+        z: 0
+
+        onPreviewSelectArea: {
+            timelineView.selectedBars = []
+            timelineView.selectionChanged()
+        }
+
+        onCanvasPressed: {
+            timelineView.selectedBars = []
+            timelineView.selectionChanged()
+        }
+
+
+        ListView {
+            id: timelineView
+            model: barModel
+
+            width: gridCanvas.canvasWidth
+            height: gridCanvas.canvasHeight
+
+            x: gridCanvas.viewTransform.transformX(0)
+            y: gridCanvas.viewTransform.transformY(1)
+
+            interactive: false
+
+            spacing: 1
+            z: 1
+
+            property var selectedBars: []
+
+            //dragging a bar will change these but not a handle
+            property real mouseXDragStart: 0
+            property real mouseXDragCurrent: 0
+
+            property real deltaValue: (mouseXDragCurrent - mouseXDragStart) / (width / totalFrames)
+
+            //if a bar or a handle is dragged
+            property bool itemDragging: false
+
+            // sent if the bar or handle selection is changed
+            signal selectionChanged()
+
+            // sent if a handle is dragged.
+            signal handleDragged(real delta, bool minHandle, bool maxHandle)
+
+            onContentYChanged: {
+                timelineFrame.yPositionChanged(contentY)
+            }
+
+            // this really doesn't seem like the ideal way to reflect on the model data... but will do for now.
+            delegate: Loader {
+                id: rowDelegate
+                height: defaultSpacing.minimumRowHeight
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                property var view: rowDelegate.ListView.view
+
+                sourceComponent: {
+                    if (type == "textBox")
                     {
-                        barIndexLocation = slider.ListView.view.selectedBars.indexOf(barIndex)
-                        if (barIndexLocation == -1)
+                        return textObject
+                    }
+                    else if (type == "fullBar")
+                    {
+                        return fullBar
+                    }
+                    else if (type == "barSlider")
+                    {
+                        return barSlider
+                    }
+                }
+
+                // TODO: move these to a WGTimelineBlahDelegate control??
+
+                property Component textObject: WGTextBox {
+                    id: textObject
+                    text: model.text
+                }
+
+                property Component fullBar: WGButtonFrame {
+                    id: fullBar
+                    color: model.barColor
+                    WGLabel {
+                        anchors.centerIn: parent
+                        text: model.name
+                    }
+                }
+
+                property Component barSlider: WGTimelineBarSlider {
+                    id: slider
+
+                    minimumValue: 0
+                    maximumValue: totalFrames
+                    stepSize: 1
+                    startFrame: startTime * framesPerSecond
+                    endFrame: endTime * framesPerSecond
+                    barColor: model.barColor
+
+                    barIndex: index
+
+                    // check if minPoint and maxPoint lie wholly within min and max
+                    // or if minPoint and maxPoint y's are wholly within AND minPoint and maxPoint x's are wholly without
+                    function checkSelection(min, max, minPoint, maxPoint)
+                    {
+                        //y selection is pretty basic
+                        if (minPoint.y >= min.y && maxPoint.y <= max.y)
                         {
-                            slider.ListView.view.selectedBars.push(slider.barIndex)
-                            slider.ListView.view.selectionChanged()
+                            //x selection is more picky. Could make this select any bar the selection crosses... but this may be too coarse.
+                            if ((minPoint.x <= min.x && maxPoint.x >= max.x)
+                                    || (minPoint.x >= min.x && maxPoint.x <= max.x))
+                            {
+                                return true
+                            }
+                            else
+                            {
+                                return false
+                            }
                         }
                     }
-                    else
-                    {
-                        barIndexLocation = slider.ListView.view.selectedBars.indexOf(barIndex)
-                        if (barIndexLocation != -1)
-                        {
-                            slider.ListView.view.selectedBars.slice(barIndexLocation, 1)
-                            slider.ListView.view.selectionChanged()
+
+                    Connections {
+                        target: gridCanvas
+
+                        onPreviewSelectArea: {
+                            min = gridCanvas.viewTransform.inverseTransform(min)
+                            max = gridCanvas.viewTransform.inverseTransform(max)
+
+                            // find the bar area
+                            var minPoint = slider.mapToItem(gridCanvas,slider.__handlePosList[0].range.position,0)
+                            var maxPoint = slider.mapToItem(gridCanvas,slider.__handlePosList[1].range.position,slider.height)
+
+                            var barSelected = checkSelection(min,max,minPoint,maxPoint)
+
+                            // add or remove selections as necessary
+                            // is it causing poor performance to do this onPreviewSelectArea???
+                            var barIndexLocation = -1
+                            if (barSelected)
+                            {
+                                barIndexLocation = view.selectedBars.indexOf(barIndex)
+                                if (barIndexLocation == -1)
+                                {
+                                    view.selectedBars.push(slider.barIndex)
+                                    view.selectionChanged()
+                                }
+                            }
+                            else
+                            {
+                                barIndexLocation = view.selectedBars.indexOf(barIndex)
+                                if (barIndexLocation != -1)
+                                {
+                                    view.selectedBars.slice(barIndexLocation, 1)
+                                    view.selectionChanged()
+                                }
+                            }
                         }
                     }
                 }

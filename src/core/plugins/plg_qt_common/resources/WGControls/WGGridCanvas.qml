@@ -385,8 +385,8 @@ Canvas {
             if(mouse.button == Qt.LeftButton)
             {
                 canvasPressed()
+                mouse.accepted = false;
             }
-            mouse.accepted = false;
         }
         onReleased: {
             mouseDragStart = null;

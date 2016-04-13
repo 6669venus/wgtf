@@ -169,13 +169,11 @@ private:
 
 
 DefinitionDetails::DefinitionDetails( IComponentContext & context,
-	const PyScript::ScriptObject & pythonObject,
-	HookLookup & hookLookup )
+	const PyScript::ScriptObject & pythonObject )
 	: context_( context )
 	, name_( DefinitionDetails::generateName( pythonObject ) )
 	, pythonObject_( pythonObject )
 	, metaData_( MetaNone() )
-	, hookLookup_( hookLookup )
 {
 	assert( !name_.empty() );
 
@@ -185,13 +183,13 @@ DefinitionDetails::DefinitionDetails( IComponentContext & context,
 		PyScript::ScriptErrorClear() );
 	metaDataDict_ = PyScript::ScriptDict::create( metaDataAttribute );
 
-	attachListenerHooks( pythonObject_, hookLookup_ );
+	attachListenerHooks( pythonObject_ );
 }
 
 
 DefinitionDetails::~DefinitionDetails()
 {
-	detachListenerHooks( pythonObject_, hookLookup_ );
+	detachListenerHooks( pythonObject_ );
 }
 
 
@@ -315,7 +313,7 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 	if (PyScript::ScriptType::check( object ))
 	{
 		// Type type
-		// type.__module__ + type.__name__
+		// type.__module__ + type.__name__ + id( object )
 		PyScript::ScriptType scriptType(
 			reinterpret_cast<PyTypeObject*>( object.get() ), PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
@@ -326,11 +324,40 @@ std::string DefinitionDetails::generateName( const PyScript::ScriptObject & obje
 	else
 	{
 		// Class or None type
-		// __module__ + __name__
+		// __module__ + __name__ + id( object )
 		typeName = object.str( errorHandler ).c_str();
 	}
 
+	// Add an address in case there are multiple classes/types with the same
+	// name in the same file.
+	// E.g.
+	// # module "Test"
+	// class A( object ):
+	//     class InnerClass( object ):
+	//         pass
+	//     pass
+	// class B( object ):
+	//     class InnerClass( object ): # different type with the name "Test.InnerClass"
+	//         pass
+	//     pass
+	typeName += " at ";
+	typeName += std::to_string( object.id().asUnsignedLongLong(
+		PyScript::ScriptErrorRetain() ) );
+
+	// Check for overflow
+	assert( !PyScript::Script::hasError() );
+#if defined( _DEBUG )
+	PyScript::Script::clearError();
+#endif // defined( _DEBUG )
+
 	return typeName;
 }
+
+
+const PyScript::ScriptObject & DefinitionDetails::object() const
+{
+	return pythonObject_;
+}
+
 
 } // namespace ReflectedPython

@@ -21,6 +21,7 @@ SET( ALL_SRCS
 	py_script_output_writer.hpp
 	py_script_sequence.ipp
 	py_script_tuple.ipp
+	py_script_type.ipp
 	pyobject_pointer.hpp
 	type_converter.cpp
 	type_converter.hpp

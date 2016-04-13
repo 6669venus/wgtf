@@ -2,6 +2,7 @@
 
 #include "core_dependency_system/di_ref.hpp"
 #include "core_python27/defined_instance.hpp"
+#include "core_python27/listener_hooks.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
 
@@ -31,7 +32,20 @@ public:
 		, scriptingEngine_( contextManager )
 		, definitionRegistry_( contextManager )
 		, typeConverterQueue_( contextManager )
+		, hookListener_( new ReflectedPython::HookListener() )
 	{
+		// Initialize listener hooks
+		const auto pDefinitionManager = contextManager.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Could not get IDefinitionManager\n" );
+			return;
+		}
+		pDefinitionManager->registerPropertyAccessorListener(
+			std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
+		g_pHookContext = &contextManager;
+		g_listener = hookListener_;
+
 		scriptingEngine_.init();
 
 		const bool transferOwnership = false;
@@ -47,6 +61,19 @@ public:
 		contextManager_.deregisterInterface( pDefinitionRegistryInterface_ );
 		definitionRegistry_.fini();
 		scriptingEngine_.fini();
+
+		// Finalize listener hooks
+		// All reflected Python objects should have been removed by this point
+		const auto pDefinitionManager = contextManager_.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Could not get IDefinitionManager\n" );
+			return;
+		}
+		pDefinitionManager->deregisterPropertyAccessorListener(
+			std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
+		g_listener.reset();
+		g_pHookContext = nullptr;
 	}
 
 	IComponentContext & contextManager_;
@@ -57,6 +84,7 @@ public:
 	IInterface * pDefinitionRegistryInterface_;
 
 	PythonType::ConverterQueue typeConverterQueue_;
+	std::shared_ptr< ReflectedPython::HookListener > hookListener_;
 };
 
 

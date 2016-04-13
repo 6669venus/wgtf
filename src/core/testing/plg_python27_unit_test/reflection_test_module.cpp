@@ -163,6 +163,9 @@ void newPropertyTest( ReflectedPython::DefinedInstance & instance,
 void pathTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void compareTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 
 
 /**
@@ -227,6 +230,7 @@ static PyObject * commonConversionTest(
 	methodConversionTest( instance, m_name, result_ );
 	newPropertyTest( instance, m_name, result_ );
 	pathTest( instance, m_name, result_ );
+	compareTest( instance, m_name, result_ );
 
 	// Return none to pass the test
 	Py_RETURN_NONE;
@@ -2850,6 +2854,23 @@ void pathTest( ReflectedPython::DefinedInstance & instance,
 }
 
 
+void compareTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Access object that cannot be compared to other objects
+	{
+		ObjectHandle result;
+		const bool getSuccess = instance.get< ObjectHandle >(
+			"badComparison", result );
+
+		CHECK( getSuccess );
+		CHECK( result.isValid() );
+		CHECK( result.getBase< ReflectedPython::DefinedInstance >() != nullptr );
+	}
+}
+
+
 /**
  *	Tests for converting an old-style Python class to a reflected object.
 
@@ -2906,7 +2927,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	CHECK( definitionManager != nullptr );
 
 	// @see types.ClassType for expectedType.
-	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
+	auto checkObjectType = [&]( const char* attribute, const char* expectedTypeBase )
 	{
 		ObjectHandle handle;
 		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
@@ -2916,15 +2937,27 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		CHECK( definition != nullptr );
 
 		auto actualType = definition->getName();
-		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+
+		const auto & details = static_cast< const ReflectedPython::DefinitionDetails & >(
+			definition->getDetails() );
+		std::string expectedType = expectedTypeBase;
+		expectedType += " at ";
+		expectedType += std::to_string( details.object().id().asUnsignedLongLong(
+			PyScript::ScriptErrorRetain() ) );
+
+		// Check for overflow
+		CHECK( !PyScript::Script::hasError() );
+		PyScript::Script::clearError();
+
+		CHECK_EQUAL( expectedType, actualType );
 	};
 
 	// Convert Python types -> C++ TypeIds
-	checkObjectType( "typeTest1", "__builtin__.classobj");
-	checkObjectType( "typeTest2", "__builtin__.type");
-	checkObjectType( "classTest1", "python27_test.OldClassTest");
-	checkObjectType( "classTest2", "python27_test.OldClassTest");
-	checkObjectType( "instanceTest", "__builtin__.instance");
+	checkObjectType( "typeTest1", "__builtin__.classobj" );
+	checkObjectType( "typeTest2", "__builtin__.type" );
+	checkObjectType( "classTest1", "python27_test.OldClassTest" );
+	checkObjectType( "classTest2", "python27_test.OldClassTest" );
+	checkObjectType( "instanceTest", "__builtin__.instance" );
 	
 	// Convert Python type <- C++ TypeId
 	{
@@ -2946,8 +2979,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		success = instance.set( "typeTest1", intType );
 		CHECK( success );
 
-		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
-		checkObjectType( "typeTest1", expectedType.c_str() );
+		checkObjectType( "typeTest1", "__builtin__.int" );
 	}
 	
 	Py_RETURN_NONE;
@@ -3010,7 +3042,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	CHECK( definitionManager != nullptr );
 
 	// @see types.ClassType for expectedType.
-	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
+	auto checkObjectType = [&]( const char* attribute, const char* expectedTypeBase )
 	{
 		ObjectHandle handle;
 		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
@@ -3020,15 +3052,29 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		CHECK( definition != nullptr );
 
 		auto actualType = definition->getName();
-		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+
+		const auto & details = static_cast< const ReflectedPython::DefinitionDetails & >(
+			definition->getDetails() );
+		std::string expectedType = expectedTypeBase;
+		expectedType += " at ";
+		expectedType += std::to_string( details.object().id().asUnsignedLongLong(
+			PyScript::ScriptErrorRetain() ) );
+
+		// Check for overflow
+		assert( !PyScript::Script::hasError() );
+#if defined( _DEBUG )
+		PyScript::Script::clearError();
+#endif // defined( _DEBUG )
+
+		CHECK_EQUAL( expectedType, actualType );
 	};
 
 	// Convert Python types -> C++ TypeIds
-	checkObjectType( "typeTest1", "__builtin__.type");
-	checkObjectType( "typeTest2", "__builtin__.type");
-	checkObjectType( "classTest1", "python27_test.NewClassTest");
-	checkObjectType( "classTest2", "python27_test.NewClassTest");
-	checkObjectType( "instanceTest", "python27_test.NewClassTest");
+	checkObjectType( "typeTest1", "__builtin__.type" );
+	checkObjectType( "typeTest2", "__builtin__.type" );
+	checkObjectType( "classTest1", "python27_test.NewClassTest" );
+	checkObjectType( "classTest2", "python27_test.NewClassTest" );
+	checkObjectType( "instanceTest", "python27_test.NewClassTest" );
 
 	// Convert Python type <- C++ TypeId
 	{
@@ -3050,8 +3096,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		success = instance.set( "typeTest1", intType );
 		CHECK( success );
 
-		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
-		checkObjectType( "typeTest1", expectedType.c_str() );
+		checkObjectType( "typeTest1", "__builtin__.int" );
 	}
 
 	{

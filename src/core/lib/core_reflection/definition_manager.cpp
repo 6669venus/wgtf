@@ -91,7 +91,9 @@ IClassDefinition * DefinitionManager::registerDefinition( IClassDefinitionDetail
 {
 	assert( defDetails );
 	IClassDefinition * definition = new ClassDefinition( defDetails );
-	definitions_.insert( std::make_pair( definition->getName(), definition ) );
+	const auto result =
+		definitions_.insert( std::make_pair( definition->getName(), definition ) );
+	assert( result.second && "Duplicate definition overwritten in map." );
 	definition->setDefinitionManager( this );
 
 	return definition;

@@ -77,6 +77,10 @@ class ChildObjectTest( object ):
 			ValueObjectTest( 3 )]
 		self.dictTest = {ValueObjectTest( 'Bacon' ) : ValueObjectTest( 0 )}
 
+class BadComparison( object ):
+	def __cmp__( self, other ):
+		raise Exception( "Bad comparison" )
+
 class OldClassTest:
 	'''Test of old-style classes'''
 
@@ -88,19 +92,21 @@ class OldClassTest:
 		"floatTest" : "MetaSlider",
 	}
 
+	# Enable for testing
 	#def __setattr__( self, name, value ):
 	#	'''
 	#	Hook for notifying the GUI
 	#	'''
+	#	print "setattr", self, name
 	#	self.__dict__[ name ] = value
-	#	# TODO NGT-1561 notify GUI
 
+	# Enable for testing
 	#def __delattr__( self, name ):
 	#	'''
 	#	Hook for notifying the GUI
 	#	'''
+	#	print "delattr", self, name
 	#	del object.name
-	#	# TODO NGT-1561 notify GUI
 
 	classIntTest = 1
 
@@ -122,6 +128,7 @@ class OldClassTest:
 		self.functionTest2 = OldCallableClassTest()
 		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
+		self.badComparison = BadComparison()
 
 		# Old-style classes only
 		self.typeTest1 = type( OldClassTest )
@@ -148,6 +155,16 @@ class OldClassTest:
 	class ConstructorTest2:
 		pass
 
+	def updateValues( self ):
+		OldClassTest.classIntTest = OldClassTest.classIntTest + 1
+		self.noneTest = None
+		self.boolTest = not self.boolTest
+		self.intTest = self.intTest + 1
+		self.longTest = self.longTest + 1
+		self.floatTest = self.floatTest + 1.0
+		self.stringTest = "Spam" + repr( self.intTest )
+		self.unicodeTest = u"Spam" + repr( self.intTest )
+
 class NewClassTest( object ):
 	'''Test of new-style classes'''
 
@@ -161,22 +178,23 @@ class NewClassTest( object ):
 		"readOnlyPropertyTest2" : "MetaReadOnly",
 	}
 
-
+	# Enable for testing
 	#def __setattr__( self, name, value ):
 	#	'''
 	#	Hook for notifying the GUI
 	#	Note: descriptors will not be caught by this hook.
 	#	'''
+	#	print "setattr", self, name
 	#	super( NewClassTest, self ).__setattr__( name, value )
-	#	# TODO NGT-1561 notify GUI
 
+	# Enable for testing
 	#def __delattr__( self, name ):
 	#	'''
 	#	Hook for notifying the GUI
 	#	Note: descriptors will not be caught by this hook.
 	#	'''
+	#	print "delattr", self, name
 	#	del object.name
-	#	# TODO NGT-1561 notify GUI
 
 	classIntTest = 1
 
@@ -198,6 +216,7 @@ class NewClassTest( object ):
 		self.functionTest2 = OldCallableClassTest()
 		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
+		self.badComparison = BadComparison()
 
 		# New-style classes only
 		self.typeTest1 = type( NewClassTest )
@@ -236,6 +255,16 @@ class NewClassTest( object ):
 
 	class ConstructorTest2( object ):
 		pass
+
+	def updateValues( self ):
+		NewClassTest.classIntTest = NewClassTest.classIntTest + 1
+		self.noneTest = None
+		self.boolTest = not self.boolTest
+		self.intTest = self.intTest + 1
+		self.longTest = self.longTest + 1
+		self.floatTest = self.floatTest + 1.0
+		self.stringTest = "Spam" + repr( self.intTest )
+		self.unicodeTest = u"Spam" + repr( self.intTest )
 
 def run():
 	print "~~ Begin test"

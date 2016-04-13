@@ -7,6 +7,7 @@ class TestObjects
 {
 public:
 	void initDefs( IDefinitionManager & definitionManager );
+	void finiDefs( IDefinitionManager & definitionManager );
 
 	TestStructure & getTestStructure();
 

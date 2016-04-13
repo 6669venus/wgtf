@@ -304,6 +304,16 @@ Control {
     signal handleCtrlClicked(int index)
 
     /*!
+        This signal is fired when a handle (index) is left pressed when holding the Shift key
+    */
+    signal handleShiftClicked(int index)
+
+    /*!
+        This signal is fired when a handle (index) is pressed
+    */
+    signal handleClicked(int index)
+
+    /*!
         This signal is fired when a handle (index) is added
     */
     signal handleAdded(int index)

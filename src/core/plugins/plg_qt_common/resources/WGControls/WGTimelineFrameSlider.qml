@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.1
 import WGControls 2.0
 
 /*!
- \brief Slider with a large bar and invisible handles that should really only be used in the Timeline Control
+ \brief Slider with a multiple handles that should really only be used in the Timeline Control
 
 \code{.js}
 
@@ -29,15 +29,12 @@ WGSlider {
 
     activeFocusOnPress: true
 
-    style: WGTimelineBarSliderStyle{}
-
-    property real startFrame: 0
-    property real endFrame: 1
+    style: WGTimelineFrameSliderStyle{}
 
     // initial handle values to apply deltas to
     property var initialValues: []
 
-    property int barIndex: -1
+    property bool showLabel: false
 
     grooveClickable: false
 
@@ -57,23 +54,40 @@ WGSlider {
         __handlePosList[index].handleDragging = false
         view.itemDragging = false
         initialValues = []
+        //updateHandles()
     }
 
-    Connections {
-        target: view
-        // check to see if the bar is still selected or not and then auto-select the handles
-        onSelectionChanged: {
-            if (view.selectedBars.indexOf(slider.barIndex) != -1)
+    /*
+    // sorts the handles by value and updates their neighbour handles
+    function updateHandles()
+    {
+        __handlePosList.sort(function(a, b){
+            return a.value-b.value
+           })
+        for (var i = 0; i < __handlePosList.length; i++)
+        {
+            if (i > 0)
             {
-                slider.__handlePosList[0].selected = true
-                slider.__handlePosList[1].selected = true
+                __handlePosList[i].previousHandle = __handlePosList[i - 1]
             }
             else
             {
-                slider.__handlePosList[0].selected = false
-                slider.__handlePosList[1].selected = false
+                __handlePosList[i].previousHandle = null
+            }
+
+            if (i < __handlePosList.length - 1)
+            {
+                __handlePosList[i].nextHandle = __handlePosList[i + 1]
+            }
+            else
+            {
+                __handlePosList[i].nextHandle = null
             }
         }
+    }*/
+
+    Connections {
+        target: view
         // if anything in the view starts dragging, populate the initial values
         onItemDraggingChanged: {
             if (view.itemDragging)
@@ -85,7 +99,7 @@ WGSlider {
             }
         }
     }
-
+    /*
     property Component barContent: Rectangle {
         id: barContent
         color: slider.barColor
@@ -162,7 +176,6 @@ WGSlider {
                 else if (mouse.button == Qt.LeftButton && view.selectedBars.indexOf(barIndex) == -1)
                 {
                     view.selectedBars = [barIndex]
-                    view.selectedHandles = []
                 }
 
                 view.selectionChanged();
@@ -182,43 +195,5 @@ WGSlider {
             }
         }
     }
-
-    WGTimelineBarSliderHandle {
-        id: sliderMinHandle
-        minimumValue: slider.minimumValue
-        maximumValue: sliderMaxHandle.value
-        showBar: false
-        rangePartnerHandle: sliderMaxHandle
-        value: slider.startFrame
-        maxHandle: false
-
-        onValueChanged: {
-            slider.startFrame = value
-        }
-
-        // need to set max value here or the value might be clamped before the value is valid
-        Component.onCompleted: {
-            maximumValue = Qt.binding(function() { return sliderMaxHandle.value - 1 })
-        }
-    }
-
-    WGTimelineBarSliderHandle {
-        id: sliderMaxHandle
-        minimumValue: sliderMinHandle.value
-        maximumValue: slider.maximumValue
-        showBar: true
-        barMinPos: (sliderMinHandle.value * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue))) + parentSlider.__visualMinPos
-        rangePartnerHandle: sliderMinHandle
-        value: slider.endFrame
-        maxHandle: true
-
-        onValueChanged: {
-            slider.endFrame = value
-        }
-
-        // need to set min value here or the value might be clamped before the value is valid
-        Component.onCompleted: {
-            minimumValue = Qt.binding(function() { return sliderMinHandle.value + 1 })
-        }
-    }
+    */
 }

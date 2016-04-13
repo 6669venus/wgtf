@@ -261,11 +261,19 @@ Style {
                                 control.__draggable = false
                                 control.handleCtrlClicked(index)
                             }
-                            else if (!control.grooveClickable)
+                            else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier))
                             {
-                                control.__draggable = true
+                                control.__draggable = false
+                                control.handleShiftClicked(index)
                             }
-
+                            else
+                            {
+                                if (!control.grooveClickable)
+                                {
+                                    control.__draggable = true
+                                }
+                                control.handleClicked(index)
+                            }
                             mouse.accepted = false
                         }
 

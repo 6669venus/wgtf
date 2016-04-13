@@ -36,6 +36,20 @@ WGOne.WGPanel {
             rowSpan: 1
         }
         ListElement {
+            name: "Framedata 1"
+            type: "frameSlider"
+            frameProperty: "health"
+            showHandleLabel: true
+            keyFrames: [
+                ListElement {
+                    time: 1
+                    value: 50
+                    type: "constant"
+                }
+            ]
+            rowSpan: 1
+        }
+        ListElement {
             name: "Property 1"
             type: "barSlider"
             startTime: 0
@@ -52,6 +66,30 @@ WGOne.WGPanel {
             rowSpan: 1
         }
         ListElement {
+            name: "Framedata 2"
+            type: "frameSlider"
+            frameProperty: "volume"
+            showHandleLabel: false
+            keyFrames: [
+                ListElement {
+                    time: 2
+                    value: 25
+                    type: "linear"
+                },
+                ListElement {
+                    time: 3
+                    value: 50
+                    type: "linear"
+                },
+                ListElement {
+                    time: 4
+                    value: 75
+                    type: "linear"
+                }
+            ]
+            rowSpan: 1
+        }
+        ListElement {
             name: "Property 3"
             type: "barSlider"
             startTime: 2
@@ -65,6 +103,30 @@ WGOne.WGPanel {
             startTime: 6
             endTime: 8
             barColor: "#3FA9F5"
+            rowSpan: 1
+        }
+        ListElement {
+            name: "Framedata 3"
+            type: "frameSlider"
+            frameProperty: "opacity"
+            showHandleLabel: false
+            keyFrames: [
+                ListElement {
+                    time: 6
+                    value: 25
+                    type: "bezier"
+                },
+                ListElement {
+                    time: 7
+                    value: 50
+                    type: "bezier"
+                },
+                ListElement {
+                    time: 8
+                    value: 75
+                    type: "bezier"
+                }
+            ]
             rowSpan: 1
         }
         ListElement {

@@ -102,6 +102,9 @@ WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGTimelineBarSlider 2.0 WGTimelineBarSlider.qml
 WGTimelineBarSliderHandle 2.0 WGTimelineBarSliderHandle.qml
 WGTimelineBarSliderStyle 2.0 WGTimelineBarSliderStyle.qml
+WGTimelineFrameSlider 2.0 WGTimelineFrameSlider.qml
+WGTimelineFrameSliderHandle 2.0 WGTimelineFrameSliderHandle.qml
+WGTimelineFrameSliderStyle 2.0 WGTimelineFrameSliderStyle.qml
 WGTimelineControl 2.0 WGTimelineControl.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolButtonStyle 1.0 WGToolButtonStyle.qml

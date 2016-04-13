@@ -30,30 +30,29 @@ WGRangeSliderHandle {
         // send a signal to the timeline view if this handle is the one explicitly being dragged
         if (handleDragging)
         {
-            var handleDelta = sliderHandle.value - slider.initialValues[maxHandle ? 1 : 0]
+            var handleDelta = sliderHandle.value - parentSlider.initialValues[maxHandle ? 1 : 0]
             view.handleDragged(handleDelta, !maxHandle, maxHandle)
         }
     }
 
     Connections {
         target: view
-        // if a bar is being dragged and this handle has been auto selected by it's handle being selected drag this handle
+        // if a bar is being dragged and this handle has been auto selected by it's bar being selected drag this handle
         onMouseXDragCurrentChanged: {
             if (sliderHandle.selected && view.itemDragging)
             {
                 var clampedDelta = view.deltaValue
 
-                if(slider.initialValues[0] + view.deltaValue < slider.minimumValue)
+                if(parentSlider.initialValues[0] + clampedDelta < parentSlider.minimumValue)
                 {
-                    clampedDelta = slider.minimumValue - slider.initialValues[0]
+                    clampedDelta = parentSlider.minimumValue - parentSlider.initialValues[0]
+                }
+                else if (parentSlider.initialValues[1] + view.deltaValue > parentSlider.maximumValue)
+                {
+                    clampedDelta = parentSlider.maximumValue - parentSlider.initialValues[1]
                 }
 
-                else if (slider.initialValues[1] + view.deltaValue > slider.maximumValue)
-                {
-                    clampedDelta = slider.maximumValue - slider.initialValues[1]
-                }
-
-                sliderHandle.value = maxHandle ? slider.initialValues[1] + clampedDelta : slider.initialValues[0] + clampedDelta
+                sliderHandle.value = maxHandle ? parentSlider.initialValues[1] + clampedDelta : barSlider.initialValues[0] + clampedDelta
             }
         }
 
@@ -63,11 +62,33 @@ WGRangeSliderHandle {
             {
                 if (minHandle && !sliderHandle.maxHandle)
                 {
-                    sliderHandle.value = slider.initialValues[0] + delta
+                    sliderHandle.value = parentSlider.initialValues[0] + delta
                 }
                 else if (maxHandle && sliderHandle.maxHandle)
                 {
-                    sliderHandle.value = slider.initialValues[1] +  delta
+                    sliderHandle.value = parentSlider.initialValues[1] +  delta
+                }
+                else if (!minHandle && !maxHandle)
+                {
+                    var clampedDelta = delta
+
+                    if(parentSlider.initialValues[0] + clampedDelta < parentSlider.minimumValue)
+                    {
+                        clampedDelta = parentSlider.minimumValue - parentSlider.initialValues[0]
+                    }
+                    else if (parentSlider.initialValues[1] + clampedDelta > parentSlider.maximumValue)
+                    {
+                        clampedDelta = parentSlider.maximumValue - parentSlider.initialValues[1]
+                    }
+
+                    if (sliderHandle.maxHandle)
+                    {
+                        sliderHandle.value = parentSlider.initialValues[1] + clampedDelta
+                    }
+                    else
+                    {
+                        sliderHandle.value = parentSlider.initialValues[0] + clampedDelta
+                    }
                 }
             }
         }

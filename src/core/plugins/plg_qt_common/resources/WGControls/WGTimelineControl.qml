@@ -99,19 +99,20 @@ Rectangle {
 
         focus: true
         useAxis: xGrid
-        showMouseLine: true
+        showMouseLine: false
         showXGridLines: true
         showYGridLines: false
 
         z: 0
 
         onPreviewSelectArea: {
-            timelineView.selectedBars = []
+            //timelineView.selectedBars = []
             timelineView.selectionChanged()
         }
 
         onCanvasPressed: {
             timelineView.selectedBars = []
+            timelineView.selectedHandles = []
             timelineView.selectionChanged()
         }
 
@@ -132,6 +133,8 @@ Rectangle {
             z: 1
 
             property var selectedBars: []
+
+            property var selectedHandles: []
 
             //dragging a bar will change these but not a handle
             property real mouseXDragStart: 0
@@ -174,6 +177,10 @@ Rectangle {
                     {
                         return barSlider
                     }
+                    else if (type == "frameSlider")
+                    {
+                        return frameSlider
+                    }
                 }
 
                 // TODO: move these to a WGTimelineBlahDelegate control??
@@ -193,7 +200,7 @@ Rectangle {
                 }
 
                 property Component barSlider: WGTimelineBarSlider {
-                    id: slider
+                    id: barSlider
 
                     minimumValue: 0
                     maximumValue: totalFrames
@@ -203,6 +210,8 @@ Rectangle {
                     barColor: model.barColor
 
                     barIndex: index
+
+                    //TODO duplicating a lot of code for selection here...
 
                     // check if minPoint and maxPoint lie wholly within min and max
                     // or if minPoint and maxPoint y's are wholly within AND minPoint and maxPoint x's are wholly without
@@ -232,8 +241,8 @@ Rectangle {
                             max = gridCanvas.viewTransform.inverseTransform(max)
 
                             // find the bar area
-                            var minPoint = slider.mapToItem(gridCanvas,slider.__handlePosList[0].range.position,0)
-                            var maxPoint = slider.mapToItem(gridCanvas,slider.__handlePosList[1].range.position,slider.height)
+                            var minPoint = barSlider.mapToItem(gridCanvas,barSlider.__handlePosList[0].range.position,0)
+                            var maxPoint = barSlider.mapToItem(gridCanvas,barSlider.__handlePosList[1].range.position,barSlider.height)
 
                             var barSelected = checkSelection(min,max,minPoint,maxPoint)
 
@@ -245,7 +254,7 @@ Rectangle {
                                 barIndexLocation = view.selectedBars.indexOf(barIndex)
                                 if (barIndexLocation == -1)
                                 {
-                                    view.selectedBars.push(slider.barIndex)
+                                    view.selectedBars.push(barSlider.barIndex)
                                     view.selectionChanged()
                                 }
                             }
@@ -254,8 +263,99 @@ Rectangle {
                                 barIndexLocation = view.selectedBars.indexOf(barIndex)
                                 if (barIndexLocation != -1)
                                 {
-                                    view.selectedBars.slice(barIndexLocation, 1)
+                                    view.selectedBars.splice(barIndexLocation, 1)
                                     view.selectionChanged()
+                                }
+                            }
+                        }
+                    }
+                }
+
+                property Component frameSlider: WGTimelineFrameSlider {
+                    id: frameSlider
+
+                    minimumValue: 0
+                    maximumValue: totalFrames
+                    stepSize: 1
+
+                    showLabel: showHandleLabel
+
+                    //TODO duplicating a lot of code for selection here...
+
+                    // check if minPoint and maxPoint lie wholly within min and max
+                    // or if minPoint and maxPoint y's are wholly within AND minPoint and maxPoint x's are wholly without
+                    function checkSelection(min, max, point)
+                    {
+                        //y selection is pretty basic
+                        if (point.y >= min.y && point.y <= max.y)
+                        {
+                            //x selection is more picky. Could make this select any bar the selection crosses... but this may be too coarse.
+                            if (point.x >= min.x && point.x <= max.x)
+                            {
+                                return true
+                            }
+                            else
+                            {
+                                return false
+                            }
+                        }
+                    }
+
+                    Repeater {
+                        model: keyFrames
+
+                        WGTimelineFrameSliderHandle {
+                            minimumValue: frameSlider.minimumValue
+                            maximumValue: frameSlider.maximumValue
+                            showBar: false
+                            value: time * framesPerSecond
+                            frameType: type
+
+                            label: frameProperty + " = " + model.value
+
+                            /*
+                            onValueChanged: {
+                                slider.startFrame = value
+                            }*/
+                        }
+                    }
+
+                    Connections {
+                        target: gridCanvas
+
+                        onPreviewSelectArea: {
+                            min = gridCanvas.viewTransform.inverseTransform(min)
+                            max = gridCanvas.viewTransform.inverseTransform(max)
+
+                            var handlePoint
+
+                            for (var i = 0; i < __handlePosList.length; i++)
+                            {
+                                handlePoint = frameSlider.mapToItem(gridCanvas,frameSlider.__handlePosList[i].range.position,frameSlider.height / 2)
+
+                                // find the bar area
+
+                                var pointSelected = checkSelection(min,max,handlePoint)
+
+                                // add or remove selections as necessary
+                                // is it causing poor performance to do this onPreviewSelectArea???
+                                var handleIndexLocation = view.selectedHandles.indexOf(frameSlider.__handlePosList[i])
+
+                                if (pointSelected)
+                                {
+                                    if (handleIndexLocation == -1)
+                                    {
+                                        view.selectedHandles.push(__handlePosList[i])
+                                        view.selectionChanged()
+                                    }
+                                }
+                                else
+                                {
+                                    if (handleIndexLocation != -1)
+                                    {
+                                        view.selectedHandles.splice(handleIndexLocation, 1)
+                                        view.selectionChanged()
+                                    }
                                 }
                             }
                         }

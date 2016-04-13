@@ -382,7 +382,15 @@ Canvas {
         }
         onPressed:{
             mouseDragStart = Qt.point(mouse.x, mouse.y)
-            if(mouse.button == Qt.LeftButton)
+            if (mouse.button == Qt.LeftButton && (mouse.modifiers & Qt.ShiftModifier))
+            {
+                mouse.accepted = false;
+            }
+            else if (mouse.button == Qt.LeftButton && (mouse.modifiers & Qt.ControlModifier))
+            {
+                mouse.accepted = false;
+            }
+            else
             {
                 canvasPressed()
                 mouse.accepted = false;

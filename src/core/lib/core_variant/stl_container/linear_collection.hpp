@@ -439,10 +439,13 @@ namespace collection_details
 			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last ) override
 		{
 			iterator_impl_type* ii_first = dynamic_cast< iterator_impl_type* >( first.get() );
-			iterator_impl_type* ii_last = dynamic_cast< iterator_impl_type* >( first.get() );
-			assert( ii_first && ii_last );
-			assert( &ii_first->container() == &container_ && &ii_last->container() == &container_ );
-			assert( ii_first->index() < container_.size() && ii_last->index() < container_.size() );
+			iterator_impl_type* ii_last = dynamic_cast< iterator_impl_type* >( last.get() );
+			assert( ii_first );
+			assert( ii_last );
+			assert( &ii_first->container() == &container_ );
+			assert( &ii_last->container() == &container_ );
+			assert( ii_last->index() <= container_.size() );
+			assert( ii_first->index() <= ii_last->index() );
 
 			auto count = ii_last->index() - ii_first->index();
 			onPreErase_( first, count );

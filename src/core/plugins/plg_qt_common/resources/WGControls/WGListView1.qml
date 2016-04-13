@@ -103,6 +103,10 @@ Item {
     */
     property var columnSequence: []
 
+    onColumnSequenceChanged: {
+        updateColumnCount();
+    }
+
     /*! This property defines the anchors.margins used by the selection highlight
         The default value is \c 0
     */
@@ -249,10 +253,21 @@ Item {
         }
         else
         {
-            columnCount = model.columnCount();
+            if ( columnSequence.length !== 0 )
+            {
+                columnCount = columnSequence.length;
+            }
+            else
+            {
+                columnCount = model.columnCount();
+            }
         }
 
         headerDataChanged(0, columnCount - 1);
+
+        //TODO(aidan): check if there is a better way to do this NGT-2101
+        list.model = null;
+        list.model = listView.model;
     }
 
     function calculateMaxTextWidth(index)
@@ -452,7 +467,7 @@ Item {
         drawHandles: showColumnsFrame && listView.columnSpacing > 1
         resizableColumns: showColumnsFrame
         initialColumnWidths: listView.initialColumnWidths
-        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
+        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth 
         idealColumnSizeFunction: calculateMaxTextWidth
 
         onColumnsChanged: {

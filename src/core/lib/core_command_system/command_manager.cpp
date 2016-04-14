@@ -431,16 +431,23 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 	// command 4 actually needs to wait for command 1, as the result of command 2 should not be visible to
 	// command 4 until the BatchCommand it belongs to has completed.
 
-	std::deque< CommandInstancePtr > stackQueue;
+	std::deque< CommandInstancePtr > commandQueue;
+	CommandInstancePtr batchFrame = nullptr;
 	{
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		auto commandFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
-		stackQueue = commandFrame->stackQueue_;
+		commandQueue = commandFrame->commandQueue_;
+		batchFrame = commandFrame->stackQueue_.back();
 	}
-	assert( std::find( stackQueue.begin(), stackQueue.end(), instance ) == stackQueue.end() );
 
+	auto first = batchFrame != nullptr ? 
+		std::find( commandQueue.begin(), commandQueue.end(), batchFrame ) : commandQueue.begin();
+	assert( first == commandQueue.begin() || first != commandQueue.end() );
+	auto last = std::find( commandQueue.begin(), commandQueue.end(), instance );
+
+	auto it = last;
 	auto waitFor = instance;
-	while (std::find( stackQueue.begin(), stackQueue.end(), waitFor ) == stackQueue.end())
+	while (waitFor != nullptr)
 	{
 		while (waitFor->status_ != Complete)
 		{
@@ -450,11 +457,18 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 			// This needs to be revised.
 			fireProgressMade( *waitFor );
 		}
-		waitFor = waitFor->parent_;
-		if (waitFor == nullptr)
+
+		CommandInstancePtr parent = nullptr;
+		while (it != first)
 		{
-			break;
+			--it;
+			if (std::find( (*it)->children_.begin(), (*it)->children_.end(), waitFor ) != (*it)->children_.end())
+			{
+				parent = *it;
+				break;
+			}
 		}
+		waitFor = parent;
 	}
 }
 
@@ -664,13 +678,8 @@ void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
 			instance->connectEvent();
 		}*/
 
-		assert( instance->parent_ == nullptr );
 		if (parentInstance != nullptr)
 		{
-			// This code creates a circular reference causing a memory leak
-			// Not sure of the intention of this code or responsibility of ownership of the CommandInstance
-			// @m_martin
-			instance->parent_ = parentInstance;
 			parentInstance->children_.push_back( instance );
 		}
 	}

@@ -24,6 +24,8 @@ WGSliderHandle {
 
     property string label: ""
 
+    property bool keyframeActive: false
+
     property Component handleStyle: Item {
 
         implicitWidth: defaultSpacing.minimumRowHeight
@@ -36,14 +38,15 @@ WGSliderHandle {
             color: palette.lightestShade
         }
 
-        WGButtonFrame {
+        Rectangle {
             id: keyframeWidget
             anchors.centerIn: parent
 
             height: parent.height - defaultSpacing.doubleMargin
             width: parent.width - defaultSpacing.doubleMargin
 
-            highlightColor: selected ? palette.highlightShade : "transparent"
+            border.width: 1
+            border.color: selected ? palette.highlightColor : "transparent"
 
             color: "#CCCCCC"
 
@@ -52,6 +55,38 @@ WGSliderHandle {
 
             radius: frameType == "bezier" ? height : 0
             clip: true
+
+            Rectangle {
+                id: activeHighlight
+                anchors.fill: parent
+                anchors.margins: 2
+                radius: parent.radius
+                color: "red"
+
+                visible: true
+                opacity: 0
+
+                states: [
+                    State {
+                        name: "INACTIVE"
+                        when: !sliderHandle.keyframeActive
+                        PropertyChanges { target: activeHighlight; opacity: 0.0}
+                    },
+                    State {
+                        name: "ACTIVE"
+                        when: sliderHandle.keyframeActive
+                        PropertyChanges { target: activeHighlight; opacity: 1.0}
+                    }
+
+                ]
+                transitions: [
+                    Transition {
+                        from: "ACTIVE"
+                        to: "INACTIVE"
+                        NumberAnimation { target: activeHighlight; properties: "opacity"; duration: 800}
+                    }
+                ]
+            }
 
         }
 
@@ -76,6 +111,7 @@ WGSliderHandle {
 
     Connections {
         target: parentSlider
+        // reset selection if a frame handle is clicked
         onHandleClicked: {
             if (frameSlider.__handlePosList[index] == sliderHandle)
             {
@@ -89,6 +125,8 @@ WGSliderHandle {
                 }
             }
         }
+
+        // add to selection if a frame handle is shift clicked
         onHandleShiftClicked: {
             if (frameSlider.__handlePosList[index] == sliderHandle)
             {
@@ -105,6 +143,7 @@ WGSliderHandle {
                 view.selectionChanged()
             }
         }
+        // add/remove to selection if a frame handle is shift clicked
         onHandleCtrlClicked: {
             if (frameSlider.__handlePosList[index] == sliderHandle)
             {

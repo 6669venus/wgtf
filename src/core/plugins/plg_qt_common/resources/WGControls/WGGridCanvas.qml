@@ -9,8 +9,6 @@ Canvas {
     objectName: "WGGridCanvas"
     contextType: "2d";
     clip: true
-    Layout.fillHeight: true
-    Layout.fillWidth: true
 
     /*! Determines what axis of the grid will be tranformable
         The default value is \c xyGrid*/
@@ -389,6 +387,10 @@ Canvas {
             else if (mouse.button == Qt.LeftButton && (mouse.modifiers & Qt.ControlModifier))
             {
                 mouse.accepted = false;
+            }
+            else if (mouse.button == Qt.MiddleButton)
+            {
+
             }
             else
             {

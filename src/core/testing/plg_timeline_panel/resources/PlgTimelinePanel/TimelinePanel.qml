@@ -17,6 +17,7 @@ WGOne.WGPanel {
     color: palette.mainWindowColor
     Layout.fillWidth: true
     Layout.fillHeight: true
+    Layout.minimumWidth: 400
 
     property var title: qsTr( "Timeline Panel" )
 
@@ -38,12 +39,13 @@ WGOne.WGPanel {
         ListElement {
             name: "Framedata 1"
             type: "frameSlider"
-            frameProperty: "health"
-            showHandleLabel: true
+            eventName: "set"
+            eventProperty: "health"
+            eventAction: "="
             keyFrames: [
                 ListElement {
                     time: 1
-                    value: 50
+                    eventValue: 50
                     type: "constant"
                 }
             ]
@@ -68,22 +70,23 @@ WGOne.WGPanel {
         ListElement {
             name: "Framedata 2"
             type: "frameSlider"
-            frameProperty: "volume"
-            showHandleLabel: false
+            eventName: "set"
+            eventProperty: "volume"
+            eventAction: "="
             keyFrames: [
                 ListElement {
                     time: 2
-                    value: 25
+                    eventValue: 25
                     type: "linear"
                 },
                 ListElement {
                     time: 3
-                    value: 50
+                    eventValue: 50
                     type: "linear"
                 },
                 ListElement {
                     time: 4
-                    value: 75
+                    eventValue: 75
                     type: "linear"
                 }
             ]
@@ -108,22 +111,23 @@ WGOne.WGPanel {
         ListElement {
             name: "Framedata 3"
             type: "frameSlider"
-            frameProperty: "opacity"
-            showHandleLabel: false
+            eventName: "set"
+            eventProperty: "opacity"
+            eventAction: "="
             keyFrames: [
                 ListElement {
                     time: 6
-                    value: 25
+                    eventValue: 25
                     type: "bezier"
                 },
                 ListElement {
                     time: 7
-                    value: 50
+                    eventValue: 50
                     type: "bezier"
                 },
                 ListElement {
                     time: 8
-                    value: 75
+                    eventValue: 75
                     type: "bezier"
                 }
             ]

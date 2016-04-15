@@ -192,8 +192,11 @@ WGSlider {
         value: slider.startFrame
         maxHandle: false
 
-        onValueChanged: {
-            slider.startFrame = value
+        Connections {
+            target: slider
+            onStartFrameChanged: {
+                sliderMinHandle.value = startFrame
+            }
         }
 
         // need to set max value here or the value might be clamped before the value is valid
@@ -212,8 +215,11 @@ WGSlider {
         value: slider.endFrame
         maxHandle: true
 
-        onValueChanged: {
-            slider.endFrame = value
+        Connections {
+            target: slider
+            onEndFrameChanged: {
+                sliderMaxHandle.value = endFrame
+            }
         }
 
         // need to set min value here or the value might be clamped before the value is valid

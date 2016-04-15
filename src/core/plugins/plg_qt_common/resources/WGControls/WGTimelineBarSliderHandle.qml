@@ -36,6 +36,18 @@ WGRangeSliderHandle {
     }
 
     Connections {
+        target: parentSlider
+        onHandleClicked: {
+            if (view.selectedBars.indexOf(barSlider.barIndex) == -1)
+            {
+                view.selectedHandles = []
+                view.selectedBars = []
+                view.selectionChanged()
+            }
+        }
+    }
+
+    Connections {
         target: view
         // if a bar is being dragged and this handle has been auto selected by it's bar being selected drag this handle
         onMouseXDragCurrentChanged: {
@@ -68,7 +80,7 @@ WGRangeSliderHandle {
                 {
                     sliderHandle.value = parentSlider.initialValues[1] +  delta
                 }
-                else if (!minHandle && !maxHandle)
+                else if (!minHandle && !maxHandle && view.selectedBars.indexOf(parentSlider.barIndex) != -1)
                 {
                     var clampedDelta = delta
 

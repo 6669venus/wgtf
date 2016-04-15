@@ -80,6 +80,15 @@ CMAKE_GENERATORS = dict(
 
 CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ PLATFORM ]
 
+QT_VERSIONS = [
+	dict( label = 'Qt 5.3.1', version = '5.3.1' ),
+	dict( label = 'Qt 5.3.2', version = '5.3.2' ),
+	dict( label = 'Qt 5.4.2', version = '5.4.2' ),
+	dict( label = 'Qt 5.5.0', version = '5.5.0' ),
+	dict( label = 'Qt 5.5.1', version = '5.5.1' ),
+	dict( label = 'Qt 5.6.0 (default)', version = '5.6.0' ),
+]
+
 YES_NO_OPTION = [
 	dict( label = 'Yes', value = True ),
 	dict( label = 'No' , value = False )
@@ -139,6 +148,14 @@ def generatorChoices():
 		generators.append( generator['dirsuffix'] )
 	generators.sort()
 	return generators
+
+
+def qtChoices():
+	qtVersions = []
+	for qtVersion in QT_VERSIONS:
+		qtVersions.append( qtVersion[ 'version' ] )
+	qtVersions.sort()
+	return qtVersions
 
 
 def chooseItem( prompt, items, deprecated = False, experimental = False, targets = None ):
@@ -221,14 +238,6 @@ def chooseMayaVersion():
 	return chooseItem( "Which Maya version you want to build with ?", MAYA_VERSIONS )['version']
 
 def chooseQtVersion():
-	QT_VERSIONS = [
-		dict( label = 'Qt 5.3.1', version = '5.3.1' ),
-		dict( label = 'Qt 5.3.2', version = '5.3.2' ),
-		dict( label = 'Qt 5.4.2', version = '5.4.2' ),
-		dict( label = 'Qt 5.5.0', version = '5.5.0' ),
-		dict( label = 'Qt 5.5.1', version = '5.5.1' ),
-		dict( label = 'Qt 5.6.0 (default)', version = '5.6.0' ),
-	]
 	return chooseItem( "Which Qt version you want to build with ?", QT_VERSIONS )['version']
 
 
@@ -385,6 +394,9 @@ def main():
 	parser.add_argument( '--generator', action='append',
 			choices=generatorChoices(),
 			help='use the specified generators' )
+	parser.add_argument( '--qt-version', type=str,
+			choices=qtChoices(),
+			help='use the specified Qt version' )
 	parser.add_argument( '--build', action='store_true',
 			help='build the generated targets' )
 	parser.add_argument( '--rebuild', action='store_true',
@@ -439,7 +451,10 @@ def main():
 	# write batch files
 	for generator in generators:
 		for target in targets:
-			generator[ 'qt' ] = chooseQtVersion()
+			if args.qt_version is None:
+				generator[ 'qt' ] = chooseQtVersion()
+			else:
+				generator[ 'qt' ] = args.qt_version
 			generator[ 'dirsuffix' ] += '_qt%s' % generator[ 'qt' ]
 			genBat = writeGenerateBat( target, generator, cmakeExe,
 					args.builddir, args.dry_run );

@@ -431,19 +431,27 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 	// command 4 actually needs to wait for command 1, as the result of command 2 should not be visible to
 	// command 4 until the BatchCommand it belongs to has completed.
 
+	std::deque< CommandInstancePtr > stackQueue;
 	std::deque< CommandInstancePtr > commandQueue;
 	CommandInstancePtr batchFrame = nullptr;
 	{
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		auto commandFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
+		stackQueue = commandFrame->stackQueue_;
 		commandQueue = commandFrame->commandQueue_;
-		batchFrame = commandFrame->stackQueue_.back();
 	}
 
-	auto first = batchFrame != nullptr ? 
-		std::find( commandQueue.begin(), commandQueue.end(), batchFrame ) : commandQueue.begin();
-	assert( first == commandQueue.begin() || first != commandQueue.end() );
+	auto first = commandQueue.begin();
 	auto last = std::find( commandQueue.begin(), commandQueue.end(), instance );
+	for (auto batch = stackQueue.rbegin(); batch != stackQueue.rend(); ++batch)
+	{
+		auto it = std::find( first, last, *batch );
+		if (it != last)
+		{
+			first = it;
+			break;
+		}
+	}
 
 	auto it = last;
 	auto waitFor = instance;

@@ -1,11 +1,11 @@
 #include "generic_plugin.hpp"
+#include "env_context.hpp"
 #include "interfaces/i_memory_allocator.hpp"
 #include "core_common/shared_library.hpp"
 #include "core_common/platform_env.hpp"
 #include "core_common/platform_std.hpp"
 
 #include <cstdint>
-
 
 namespace
 {
@@ -53,49 +53,12 @@ namespace
 
 	} s_defaultAllocator;
 
-	IComponentContext * getContext()
-	{
-		static IComponentContext * s_context = nullptr;
-		if (s_context == nullptr)
-		{
-			char buf[33] = {};
-			if (Environment::getValue( "PLUGIN_CONTEXT_PTR", buf ))
-			{
-				// convert hex string to pointer value
-				uintptr_t ptr = 0;
-				for (const char* pc = buf; *pc; ++pc )
-				{
-					// to lower case
-					char c = *pc | 0x20;
-					uintptr_t digit = 0;
-					if (c >= '0' && c <= '9')
-					{
-						digit = c - '0';
-					}
-					else if (c >= 'a' && c <= 'f')
-					{
-						digit = c - 'a' + 10;
-					}
-					else
-					{
-						break;
-					}
-
-					ptr = ptr * 16 + digit;
-				}
-
-				s_context = reinterpret_cast< IComponentContext* >( ptr );
-			}
-		}
-		return s_context;
-	}
-
 	IMemoryAllocator * getMemoryAllocator()
 	{
 		static IMemoryAllocator * s_allocator = nullptr;
 		if (s_allocator == nullptr)
 		{
-			IComponentContext * context = getContext();
+			IComponentContext * context = PluginMain::getContext();
 			if (context != nullptr)
 			{
 				s_allocator = context->queryInterface< IMemoryAllocator >();
@@ -107,18 +70,16 @@ namespace
 		return s_allocator;
 	}
 
-	class StaticInitializer
+	class ContextInitializer
 	{
 	public:
-		StaticInitializer()
+		ContextInitializer()
 		{
-			// Ensure plugin context is cached before plugin is completely loaded
-			getContext();
+			PluginMain::setContext( getEnvContext() );
 		}
 	};
 
-	static StaticInitializer s_staticInitializer;
-
+	static ContextInitializer s_ContextInitializer;
 }
 
 
@@ -142,21 +103,21 @@ namespace Context
 
 	bool deregisterInterface( IInterface * pImpl )
 	{
-		IComponentContext * context = getContext();
+		IComponentContext * context = PluginMain::getContext();
 		assert(context != nullptr );
 		return context->deregisterInterface( pImpl );
 	}
 
 	void * queryInterface( const TypeId & name )
 	{
-		IComponentContext * context = getContext();
+		IComponentContext * context = PluginMain::getContext();
 		assert(context != nullptr );
 		return context->queryInterface( name );
 	}
 
 	void queryInterface( const TypeId & name, std::vector< void * > & o_Impls )
 	{
-		IComponentContext * context = getContext();
+		IComponentContext * context = PluginMain::getContext();
 		assert(context != nullptr );
 		return context->queryInterface( name, o_Impls );
 	}
@@ -266,11 +227,23 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 
 PluginMain * createPlugin( IComponentContext & contextManager );
 
+IComponentContext * PluginMain::s_Context_ = nullptr;
+
+void PluginMain::setContext( IComponentContext * context )
+{
+	s_Context_ = context;
+}
+
+IComponentContext * PluginMain::getContext()
+{
+	return s_Context_;
+}
+
 //==============================================================================
 EXPORT bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
 {
 	static PluginMain * s_pluginMain = nullptr;
-	auto contextManager = getContext();
+	auto contextManager = PluginMain::getContext();
 	assert( contextManager );
 	switch (loadState)
 	{

@@ -75,15 +75,20 @@ TEST( Python27Interface )
 
 	// Import a builtin module
 	{
-		ObjectHandle module = scriptingEngine->appendPathAndImport( L"", "sys" );
+		ObjectHandle module = scriptingEngine->import( "sys" );
 		CHECK( module.isValid() );
 	}
 
 	{
 		// Import a test module
-		const wchar_t* path = L"..\\..\\..\\src\\core\\testing\\plg_python27_interface_test\\scripts";
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_interface_test/scripts";
+		const wchar_t * deployPath = L"./scripts/plg_python27_interface_test";
 		const char * moduleName = "python27_test";
-		auto module = scriptingEngine->appendPathAndImport( path, moduleName );
+		const bool sourcePathSet = scriptingEngine->appendSourcePath( sourcePath );
+		CHECK( sourcePathSet );
+		const bool deployPathSet =  scriptingEngine->appendBinPath( deployPath );
+		CHECK( deployPathSet );
+		auto module = scriptingEngine->import( moduleName );
 		CHECK( module.isValid() );
 		if (!module.isValid())
 		{

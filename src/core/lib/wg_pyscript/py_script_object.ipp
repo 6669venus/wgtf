@@ -177,6 +177,22 @@ inline ScriptString ScriptObject::str(
 	return ScriptString( pStr, ScriptObject::FROM_NEW_REFERENCE );
 }
 
+
+/**
+ *	Equivalent to Python built-in id( object ).
+ *	@see builtinmodule.c builtin_id().
+ *
+ *	@param errorHandler The type of error handling to use if this method.
+ *		fails
+ *	@return				The id as a ScriptLong.
+ */
+inline ScriptLong ScriptObject::id() const
+{
+	PyObject * pLong = PyLong_FromVoidPtr( this->get() );
+	return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
+}
+
+
 /**
  *	This method creates a new ScriptObject from a given value
  *	@return A new script object

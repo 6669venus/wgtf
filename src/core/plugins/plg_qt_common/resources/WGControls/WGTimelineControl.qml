@@ -53,6 +53,10 @@ Rectangle {
         return frames * frameWidth
     }
 
+    Component.onCompleted: {
+        currentFrame = 0
+    }
+
     // animates currentFrame by the timeScale (seconds)
     NumberAnimation on currentFrame {
         id: playbackAnim
@@ -61,6 +65,17 @@ Rectangle {
         running: false
         duration: (timeScale * 1000)
         loops: loop.checked ? Animation.Infinite : 1
+        onStopped: {
+            if (currentFrame == totalFrames)
+            {
+                playbackAnim.stop()
+                playbackAnim.paused = false
+                timelineFrame.previewPlaying = false
+                pause.checked = false
+                play.checked = false
+                currentFrame = 0
+            }
+        }
     }
 
     // toolbar for holding useful buttons that affect the timeline
@@ -190,7 +205,7 @@ Rectangle {
 
             // changing the framerate at the moment does bad things.
             WGLabel {
-                text: framesPerSecond + "( fps)"
+                text: "(" + framesPerSecond + " fps)"
             }
 
             // show frame labels
@@ -344,7 +359,7 @@ Rectangle {
         // The list of bars, keyframes etc.
         ListView {
             id: timelineView
-            model: barModel
+            model: timelineModel
 
             width: gridCanvas.canvasWidth
             height: gridCanvas.canvasHeight
@@ -509,6 +524,8 @@ Rectangle {
                     minimumValue: 0
                     maximumValue: totalFrames
                     stepSize: 1
+
+                    barColor: model.barColor
 
                     showLabel: timelineFrame.showLabels
 

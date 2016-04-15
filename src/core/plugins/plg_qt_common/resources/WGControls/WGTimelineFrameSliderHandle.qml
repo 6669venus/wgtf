@@ -35,7 +35,7 @@ WGSliderHandle {
             anchors.centerIn: parent
             width: 2
             height: parent.height
-            color: palette.lightestShade
+            color: parentSlider.barColor
         }
 
         Rectangle {

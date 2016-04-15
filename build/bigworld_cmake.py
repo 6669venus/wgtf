@@ -27,7 +27,7 @@ elif PLATFORM_MAC:
 	CMAKE_RUN_BAT = 'rerun_cmake.sh'
 	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
 
-DEFAULT_CONFIGS = [ 'Debug', 'Hybrid' ]
+DEFAULT_CONFIGS = [ 'Debug', 'Hybrid', 'Release' ]
 
 # Set up MSVC x86 environment with XP support, see
 # http://blogs.msdn.com/b/vcblog/archive/2012/10/08/windows-xp-targeting-with-c-in-visual-studio-2012.aspx
@@ -227,7 +227,7 @@ def chooseQtVersion():
 		dict( label = 'Qt 5.4.2', version = '5.4.2' ),
 		dict( label = 'Qt 5.5.0', version = '5.5.0' ),
 		dict( label = 'Qt 5.5.1', version = '5.5.1' ),
-		dict( label = 'Qt 5.6.0', version = '5.6.0' ),
+		dict( label = 'Qt 5.6.0 (default)', version = '5.6.0' ),
 	]
 	return chooseItem( "Which Qt version you want to build with ?", QT_VERSIONS )['version']
 

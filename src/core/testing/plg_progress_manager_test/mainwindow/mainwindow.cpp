@@ -48,7 +48,7 @@ void MainWindow::createActions()
 	assert( uiFramework );
 
 	uiFramework->loadActionData( 
-		":/testing_pgm/actiondata",
+		":/plg_progress_manager_test/actions.xml",
 		IUIFramework::ResourceType::File );
 
 	// TestCommand1/TestCommand2 QActions

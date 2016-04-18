@@ -31,7 +31,6 @@ WGColumnScrollPanel 1.0 WGColumnScrollPanel.qml
 WGColumnsFrame 1.0 WGColumnsFrame.qml
 WGContextArea 1.0 WGContextArea.qml
 WGCopyable 1.0 WGCopyable.qml
-WGCopyableHelper 1.0 WGCopyableHelper.js
 WGDraggableColumn 1.0 WGDraggableColumn.qml
 WGDragHandle 1.0 WGDragHandle.qml
 WGDropDownBox 1.0 WGDropDownBox.qml

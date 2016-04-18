@@ -293,6 +293,8 @@ Control {
         __handlePosList[__activeHandle].range.decreaseSingleStep()
     }
 
+    // TODO This might be better with one clicked event and some mouse.modifier parameters
+
     /*!
         This signal is fired when the bar is double clicked
     */
@@ -328,7 +330,7 @@ Control {
 
         If the handle is able to be moved, draggable will be true
     */
-    signal sliderPressed(bool draggable)
+    signal sliderPressed(bool draggable, point mouse)
 
     /*!
         This signal is fired when a handle (index) value (val) is changed
@@ -565,7 +567,7 @@ Control {
         }
 
         onPressed: {
-            sliderPressed(__draggable)
+            sliderPressed(__draggable, Qt.point(mouse.x,mouse.y))
             if (__draggable)
             {
                 beginDrag(__activeHandle)

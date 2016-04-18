@@ -21,7 +21,7 @@ Rectangle {
 
     property real frameWidth: gridCanvas.canvasWidth / totalFrames
 
-    property int topMargin: gridCanvas.viewTransform.transformY(1) + timelineToolbar.height
+    property int topMargin: (defaultSpacing.minimumRowHeight * 4) + timelineToolbar.height
 
     property int currentFrame: 0
 
@@ -294,7 +294,9 @@ Rectangle {
             width: gridCanvas.canvasWidth
             height: defaultSpacing.minimumRowHeight
             x: gridCanvas.viewTransform.transformX(0)
-            y: gridCanvas.viewTransform.transformY(1) - defaultSpacing.minimumRowHeight - defaultSpacing.standardMargin
+            anchors.bottom: timelineView.top
+            anchors.bottomMargin: defaultSpacing.standardMargin
+
             z: 5
             minimumValue: 0
             maximumValue: totalFrames
@@ -365,7 +367,7 @@ Rectangle {
             height: gridCanvas.canvasHeight
 
             x: gridCanvas.viewTransform.transformX(0)
-            y: gridCanvas.viewTransform.transformY(1)
+            y: defaultSpacing.minimumRowHeight * 4
 
             interactive: false
 
@@ -376,25 +378,38 @@ Rectangle {
 
             property var selectedHandles: []
 
-            // dragging a bar will change these but not a handle
-            property real mouseXDragStart: 0
-            property real mouseXDragCurrent: 0
-
-            // records current mouse movements when dragging any handle
-            property real deltaValue: (mouseXDragCurrent - mouseXDragStart) / (width / totalFrames)
-
             // if a bar or a handle is dragged
             property bool itemDragging: false
 
             // sent if the bar or handle selection is changed
             signal selectionChanged()
 
-            // sent if a handle is dragged.
-            signal handleDragged(real delta, bool minHandle, bool maxHandle)
+            // sent if a moveable item in the view is dragged.
+            signal itemDragged(real delta, bool minHandle, bool maxHandle, bool bar)
 
             // sends any vertical movement of the content to the root (useful for linking other Flickables/ListViews)
             onContentYChanged: {
                 timelineFrame.yPositionChanged(contentY)
+            }
+
+            // check if minPoint and maxPoint lie wholly within min and max
+            // or if minPoint and maxPoint y's are wholly within AND minPoint and maxPoint x's are wholly without
+            function checkSelection(min, max, minPoint, maxPoint)
+            {
+                //y selection is pretty basic
+                if (minPoint.y >= min.y && maxPoint.y <= max.y)
+                {
+                    //x selection is more picky. Could make this select any bar the selection crosses... but this may be too coarse.
+                    if ((minPoint.x <= min.x && maxPoint.x >= max.x)
+                            || (minPoint.x >= min.x && maxPoint.x <= max.x))
+                    {
+                        return true
+                    }
+                    else
+                    {
+                        return false
+                    }
+                }
             }
 
             // this really doesn't seem like the ideal way to reflect on the model data... but will do for now.
@@ -425,8 +440,6 @@ Rectangle {
                     }
                 }
 
-                // TODO: move these to a WGTimelineBlahDelegate control??
-
                 // a full width textbox, possibly for entering scripts? conditions? comments?
                 property Component textObject: WGTextBox {
                     id: textObject
@@ -444,7 +457,7 @@ Rectangle {
                 }
 
                 // coloured moveable and scalable bar
-                property Component barSlider: WGTimelineBarSlider {
+                property Component barSlider: WGTimelineBarDelegate {
                     id: barSlider
 
                     minimumValue: 0
@@ -456,171 +469,29 @@ Rectangle {
 
                     barIndex: index
 
-                    //TODO duplicating a lot of code for selection here...
-
-                    // check if minPoint and maxPoint lie wholly within min and max
-                    // or if minPoint and maxPoint y's are wholly within AND minPoint and maxPoint x's are wholly without
-                    function checkSelection(min, max, minPoint, maxPoint)
-                    {
-                        //y selection is pretty basic
-                        if (minPoint.y >= min.y && maxPoint.y <= max.y)
-                        {
-                            //x selection is more picky. Could make this select any bar the selection crosses... but this may be too coarse.
-                            if ((minPoint.x <= min.x && maxPoint.x >= max.x)
-                                    || (minPoint.x >= min.x && maxPoint.x <= max.x))
-                            {
-                                return true
-                            }
-                            else
-                            {
-                                return false
-                            }
-                        }
-                    }
-
-                    Connections {
-                        target: gridCanvas
-
-                        // check to see if bar is selected
-                        onPreviewSelectArea: {
-                            min = gridCanvas.viewTransform.inverseTransform(min)
-                            max = gridCanvas.viewTransform.inverseTransform(max)
-
-                            // find the bar area
-                            var minPoint = barSlider.mapToItem(gridCanvas,barSlider.__handlePosList[0].range.position,0)
-                            var maxPoint = barSlider.mapToItem(gridCanvas,barSlider.__handlePosList[1].range.position,barSlider.height)
-
-                            var barSelected = checkSelection(min,max,minPoint,maxPoint)
-
-                            // add or remove selections as necessary
-                            // is it causing poor performance to do this onPreviewSelectArea???
-                            var barIndexLocation = -1
-                            if (barSelected)
-                            {
-                                barIndexLocation = view.selectedBars.indexOf(barIndex)
-                                if (barIndexLocation == -1)
-                                {
-                                    view.selectedBars.push(barSlider.barIndex)
-                                    view.selectionChanged()
-                                }
-                            }
-                            else
-                            {
-                                barIndexLocation = view.selectedBars.indexOf(barIndex)
-                                if (barIndexLocation != -1)
-                                {
-                                    view.selectedBars.splice(barIndexLocation, 1)
-                                    view.selectionChanged()
-                                }
-                            }
-                        }
-                    }
+                    view: timelineView
+                    grid: gridCanvas
+                    rootFrame: timelineFrame
                 }
 
                 // a multi handle slider of keyframes
-                property Component frameSlider: WGTimelineFrameSlider {
+                property Component frameSlider: WGTimelineKeyframeDelegate {
                     id: frameSlider
 
                     minimumValue: 0
                     maximumValue: totalFrames
                     stepSize: 1
 
-                    barColor: model.barColor
+                    barColor: barColor
 
-                    showLabel: timelineFrame.showLabels
+                    showLabel: showLabels
 
-                    //TODO duplicating a lot of code for selection here...
+                    view: timelineView
+                    grid: gridCanvas
 
-                    // check if minPoint and maxPoint lie wholly within min and max
-                    // or if minPoint and maxPoint y's are wholly within AND minPoint and maxPoint x's are wholly without
-                    function checkSelection(min, max, point)
-                    {
-                        //y selection is pretty basic
-                        if (point.y >= min.y && point.y <= max.y)
-                        {
-                            //x selection is more picky. Could make this select any bar the selection crosses... but this may be too coarse.
-                            if (point.x >= min.x && point.x <= max.x)
-                            {
-                                return true
-                            }
-                            else
-                            {
-                                return false
-                            }
-                        }
-                    }
-
-                    Repeater {
-                        model: keyFrames
-
-                        WGTimelineFrameSliderHandle {
-                            id: frameSliderHandle
-                            minimumValue: frameSlider.minimumValue
-                            maximumValue: frameSlider.maximumValue
-                            showBar: false
-                            value: time * timelineFrame.framesPerSecond
-                            frameType: type
-
-                            label: eventName + " " + eventProperty + " " + eventAction + " " + eventValue
-
-                            // if scrubber is over frame, fireoff active state and trigger event
-                            Connections {
-                                target:timelineFrame
-                                onCurrentFrameChanged:{
-                                    if (currentFrame == frameSliderHandle.value)
-                                    {
-                                        frameSliderHandle.keyframeActive = true
-                                        timelineFrame.eventFired(frameSliderHandle.eventName, frameSliderHandle.eventAction, frameSliderHandle.eventValue)
-                                    }
-                                    else
-                                    {
-                                        frameSliderHandle.keyframeActive = false
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Connections {
-                        target: gridCanvas
-
-                        onPreviewSelectArea: {
-                            min = gridCanvas.viewTransform.inverseTransform(min)
-                            max = gridCanvas.viewTransform.inverseTransform(max)
-
-                            var handlePoint
-
-                            for (var i = 0; i < __handlePosList.length; i++)
-                            {
-                                handlePoint = frameSlider.mapToItem(gridCanvas,frameSlider.__handlePosList[i].range.position,frameSlider.height / 2)
-
-                                // find the bar area
-
-                                var pointSelected = checkSelection(min,max,handlePoint)
-
-                                // add or remove selections as necessary
-                                // is it causing poor performance to do this onPreviewSelectArea???
-                                var handleIndexLocation = view.selectedHandles.indexOf(frameSlider.__handlePosList[i])
-
-                                if (pointSelected)
-                                {
-                                    if (handleIndexLocation == -1)
-                                    {
-                                        view.selectedHandles.push(__handlePosList[i])
-                                        view.selectionChanged()
-                                    }
-                                }
-                                else
-                                {
-                                    if (handleIndexLocation != -1)
-                                    {
-                                        view.selectedHandles.splice(handleIndexLocation, 1)
-                                        view.selectionChanged()
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    //for some reason these have to be given different names or they cause errors
+                    rootFrame: timelineFrame
+                    keys: keyFrames
                 }
             }
         }

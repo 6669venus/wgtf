@@ -48,7 +48,7 @@ WGPanel {
             keyFrames: [
                 ListElement {
                     time: 0
-                    eventValue: 0
+                    eventValue: "0"
                     type: "constant"
                 }
             ]
@@ -123,22 +123,22 @@ WGPanel {
             keyFrames: [
                 ListElement {
                     time: 0.1
-                    eventValue: 0
+                    eventValue: "0"
                     type: "linear"
                 },
                 ListElement {
                     time: 0.9
-                    eventValue: 100
+                    eventValue: "100"
                     type: "linear"
                 },
                 ListElement {
                     time: 1.6
-                    eventValue: 100
+                    eventValue: "100"
                     type: "linear"
                 },
                 ListElement {
                     time: 2.2
-                    eventValue: 0
+                    eventValue: "0"
                     type: "linear"
                 }
             ]
@@ -161,7 +161,7 @@ WGPanel {
             keyFrames: [
                 ListElement {
                     time: 0
-                    eventValue: 0
+                    eventValue: "0"
                     type: "constant"
                 }
             ]
@@ -302,7 +302,7 @@ WGPanel {
             keyFrames: [
                 ListElement {
                     time: 0
-                    eventValue: 0
+                    eventValue: "0"
                     type: "constant"
                 }
             ]
@@ -361,17 +361,17 @@ WGPanel {
             keyFrames: [
                 ListElement {
                     time: 0.1
-                    eventValue: 0
+                    eventValue: "0"
                     type: "linear"
                 },
                 ListElement {
                     time: 0.5
-                    eventValue: 100
+                    eventValue: "100"
                     type: "linear"
                 },
                 ListElement {
                     time: 1.5
-                    eventValue: 0
+                    eventValue: "0"
                     type: "linear"
                 }
             ]

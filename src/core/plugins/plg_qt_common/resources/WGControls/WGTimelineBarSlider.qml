@@ -37,6 +37,8 @@ WGSlider {
     // initial handle values to apply deltas to
     property var initialValues: []
 
+    property point mouseInitialPoint: Qt.point(0,0)
+
     property int barIndex: -1
 
     grooveClickable: false
@@ -47,44 +49,28 @@ WGSlider {
 
     allowMouseWheel: false
 
+    onHandleClicked: {
+        initialValues[0] = __handlePosList[0].value
+        initialValues[1] = __handlePosList[1].value
+    }
+
     // tell the view a drag has started
     onBeginDrag: {
         __handlePosList[index].handleDragging = true
-        view.itemDragging = true
     }
 
     onEndDrag: {
         __handlePosList[index].handleDragging = false
-        view.itemDragging = false
         initialValues = []
     }
 
-    Connections {
-        target: view
-        // check to see if the bar is still selected or not and then auto-select the handles
-        onSelectionChanged: {
-            if (view.selectedBars.indexOf(slider.barIndex) != -1)
-            {
-                slider.__handlePosList[0].selected = true
-                slider.__handlePosList[1].selected = true
-            }
-            else
-            {
-                slider.__handlePosList[0].selected = false
-                slider.__handlePosList[1].selected = false
-            }
-        }
-        // if anything in the view starts dragging, populate the initial values
-        onItemDraggingChanged: {
-            if (view.itemDragging)
-            {
-                for (var i = 0; i < __handlePosList.length; i++)
-                {
-                    initialValues[i] = __handlePosList[i].value
-                }
-            }
-        }
-    }
+    signal updateSelection (bool barSelected)
+
+    signal barDragging (real delta)
+
+    signal barEndDragging ()
+
+    signal barPressed (int modifiers)
 
     property Component barContent: Rectangle {
         id: barContent
@@ -95,10 +81,10 @@ WGSlider {
 
         // change the styling if bar is selected
         Connections {
-            target: view
-            onSelectionChanged: {
-                barContent.border.color = slider.barIndex === view.selectedBars.indexOf(slider.barIndex) != -1 ? Qt.darker(color, 2.0) : Qt.darker(color, 1.5)
-                barSelection.visible = view.selectedBars.indexOf(slider.barIndex) != -1
+            target: slider
+            onUpdateSelection: {
+                barContent.border.color = barSelected ? Qt.darker(color, 2.0) : Qt.darker(color, 1.5)
+                barSelection.visible = barSelected
             }
         }
 
@@ -125,47 +111,22 @@ WGSlider {
                 var currentPos = barMouseArea.mapToItem(slider,mouse.x,mouse.y).x
 
                 //clamp it to the min or max values or weird things happen when the mouse strays too far from the current window
-                currentPos.x = Math.max(0, Math.min(slider.width, currentPos.x))
-                view.mouseXDragCurrent = currentPos
+                currentPos = Math.max(0, Math.min(slider.width, currentPos))
+
+                slider.barDragging(currentPos - slider.mouseInitialPoint.x)
             }
 
             onPressed: {
                 // populate the initial mouse values in order to calculate delta
-                view.mouseXDragStart = barMouseArea.mapToItem(slider,mouse.x,mouse.y).x
-                view.mouseXDragCurrent = view.mouseXDragStart
 
-                view.itemDragging = true
+                initialValues[0] = __handlePosList[0].value
+                initialValues[1] = __handlePosList[1].value
+
+                slider.mouseInitialPoint = barMouseArea.mapToItem(slider,mouse.x,mouse.y)
+
+                slider.barPressed(mouse.modifiers)
 
                 beginUndoFrame();
-                // add to the selected bars if Shift clicked
-                if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier))
-                {
-                    if (view.selectedBars.indexOf(barIndex) == -1)
-                    {
-                        view.selectedBars.push(barIndex)
-                    }
-                }
-                // add or remove bars if Ctrl clicked
-                else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
-                {
-                    var barIndexLocation = view.selectedBars.indexOf(barIndex)
-                    if (barIndexLocation == -1)
-                    {
-                        view.selectedBars.push(barIndex)
-                    }
-                    else
-                    {
-                        view.selectedBars.splice(barIndexLocation, 1)
-                    }
-                }
-                // or just select this one if no shift or ctrl
-                else if (mouse.button == Qt.LeftButton && view.selectedBars.indexOf(barIndex) == -1)
-                {
-                    view.selectedBars = [barIndex]
-                    view.selectedHandles = []
-                }
-
-                view.selectionChanged();
 
                 preventStealing = true
                 __handleMoving = true
@@ -175,10 +136,6 @@ WGSlider {
                 endUndoFrame();
                 preventStealing = false
                 __handleMoving = false
-                view.itemDragging = false
-
-                view.mouseXDragStart = 0
-                view.mouseXDragCurrent = 0
             }
         }
     }

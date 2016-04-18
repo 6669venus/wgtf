@@ -100,94 +100,13 @@ WGSliderHandle {
         }
     }
 
-    onValueChanged: {
-        // send a signal to the timeline view if this handle is the one explicitly being dragged
-        if (handleDragging)
-        {
-            var handleDelta = sliderHandle.value - parentSlider.initialValues[parentSlider.__handlePosList.indexOf(sliderHandle)]
-            view.handleDragged(handleDelta, false, false)
-        }
-    }
-
     Connections {
         target: parentSlider
-        // reset selection if a frame handle is clicked
-        onHandleClicked: {
-            if (frameSlider.__handlePosList[index] == sliderHandle)
-            {
-                var handleIndexLocation = view.selectedHandles.indexOf(sliderHandle)
 
-                if (handleIndexLocation == -1)
-                {
-                    view.selectedHandles = [sliderHandle]
-                    view.selectedBars = []
-                    view.selectionChanged()
-                }
-            }
-        }
-
-        // add to selection if a frame handle is shift clicked
-        onHandleShiftClicked: {
-            if (frameSlider.__handlePosList[index] == sliderHandle)
-            {
-                var handleIndexLocation = view.selectedHandles.indexOf(sliderHandle)
-
-                if (handleIndexLocation == -1)
-                {
-                    view.selectedHandles.push(sliderHandle)
-                }
-                else
-                {
-                    view.selectedHandles.splice(handleIndexLocation, 1)
-                }
-                view.selectionChanged()
-            }
-        }
-        // add/remove to selection if a frame handle is shift clicked
-        onHandleCtrlClicked: {
-            if (frameSlider.__handlePosList[index] == sliderHandle)
-            {
-                var handleIndexLocation = view.selectedHandles.indexOf(sliderHandle)
-
-                if (handleIndexLocation == -1)
-                {
-                    view.selectedHandles.push(sliderHandle)
-                }
-                else
-                {
-                    view.selectedHandles.splice(handleIndexLocation, 1)
-                }
-                view.selectionChanged()
-            }
-        }
-    }
-
-    Connections {
-        target: view
-        // if a bar is being dragged and this handle has selected drag this handle
-        onMouseXDragCurrentChanged: {
-            if (sliderHandle.selected && view.itemDragging)
-            {
-                sliderHandle.value = frameSlider.initialValues[frameSlider.__handlePosList.indexOf(sliderHandle)] + view.deltaValue
-            }
-        }
-
-        // if another handle is being dragged and this handle is selected, drag it.
-        onHandleDragged: {
+        onDragSelectedHandles: {
             if (sliderHandle.selected && !handleDragging)
             {
-                sliderHandle.value = frameSlider.initialValues[frameSlider.__handlePosList.indexOf(sliderHandle)] + delta
-            }
-        }
-
-        onSelectionChanged: {
-            if (view.selectedHandles.indexOf(sliderHandle) != -1)
-            {
-                sliderHandle.selected = true
-            }
-            else
-            {
-                sliderHandle.selected = false
+                sliderHandle.value = parentSlider.initialValues[__handlePosList.indexOf(sliderHandle)] + delta
             }
         }
     }

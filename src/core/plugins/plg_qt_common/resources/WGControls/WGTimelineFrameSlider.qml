@@ -22,7 +22,6 @@ import WGControls 2.0
 \endcode
 */
 
-
 WGSlider {
     objectName: "slider"
     id: slider
@@ -44,29 +43,22 @@ WGSlider {
 
     allowMouseWheel: false
 
+    signal dragSelectedHandles(real delta)
+
+    onHandleClicked: {
+        for (var i = 0; i < slider.__handlePosList.length; i++)
+        {
+            slider.initialValues[i] = slider.__handlePosList[i].value
+        }
+    }
+
     // tell the view a drag has started
     onBeginDrag: {
         __handlePosList[index].handleDragging = true
-        view.itemDragging = true
     }
 
     onEndDrag: {
         __handlePosList[index].handleDragging = false
-        view.itemDragging = false
         initialValues = []
-    }
-
-    Connections {
-        target: view
-        // if anything in the view starts dragging, populate the initial values
-        onItemDraggingChanged: {
-            if (view.itemDragging)
-            {
-                for (var i = 0; i < __handlePosList.length; i++)
-                {
-                    initialValues[i] = __handlePosList[i].value
-                }
-            }
-        }
     }
 }

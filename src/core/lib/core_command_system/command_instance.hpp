@@ -1,6 +1,8 @@
 #ifndef COMMAND_INSTANCE_HPP
 #define COMMAND_INSTANCE_HPP
 
+#include "reflection_undo_redo_data.hpp"
+
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
 
@@ -50,6 +52,7 @@ class CommandInstance
 
 public:
 	friend CommandManagerImpl;
+	friend ReflectionUndoRedoData;
 
 	typedef XMLSerializer UndoRedoSerializer;
 
@@ -104,10 +107,11 @@ private:
 	ObjectHandle				returnValue_;
 	CommandInstancePtr			parent_;
 	std::vector< CommandInstancePtr > children_;
-	ICommandManager *		pCmdSysProvider_;
-	std::string commandId_;
+	ICommandManager *			pCmdSysProvider_;
+	std::string					commandId_;
 	ObjectHandle				contextObject_;
 	CommandErrorCode			errorCode_;
+	ReflectionUndoRedoData		reflectionUndoRedoData_;
 };
 
 #endif //COMMAND_INSTANCE_HPP

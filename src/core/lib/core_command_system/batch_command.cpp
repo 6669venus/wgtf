@@ -46,15 +46,3 @@ CommandThreadAffinity BatchCommand::threadAffinity() const
 { 
 	return CommandThreadAffinity::ANY_THREAD;
 }
-
-
-//--------------------------------------------------------------------------
-void BatchCommand::undo( const ObjectHandle & arguments ) const
-{
-}
-
-
-//--------------------------------------------------------------------------
-void BatchCommand::redo( const ObjectHandle & arguments ) const
-{
-}

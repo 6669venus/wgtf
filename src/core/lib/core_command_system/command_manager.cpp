@@ -1158,7 +1158,6 @@ void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 	currentIndex_.value( NO_SELECTION );
 	pCommandManager_->signalHistoryPreReset( historyState_->history_ );
 	{
-		pCommandManager_->abortBatchCommand();
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		historyState_ = ec;
 	}

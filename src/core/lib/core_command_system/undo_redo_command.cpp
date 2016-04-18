@@ -44,15 +44,3 @@ CommandThreadAffinity UndoRedoCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
 }
-
-
-//--------------------------------------------------------------------------
-void UndoRedoCommand::undo( const ObjectHandle & arguments ) const
-{
-}
-
-
-//--------------------------------------------------------------------------
-void UndoRedoCommand::redo( const ObjectHandle & arguments ) const
-{
-}

@@ -18,8 +18,6 @@ public:
 	const char * getId() const override;
 	ObjectHandle execute( const ObjectHandle & arguments ) const override;
 	CommandThreadAffinity threadAffinity() const override;
-	void undo( const ObjectHandle & arguments ) const override;
-	void redo( const ObjectHandle & arguments ) const override;
 
 private:
 	friend CommandManagerImpl;

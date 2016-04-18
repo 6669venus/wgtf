@@ -27,11 +27,13 @@ CommandInstance::CommandInstance()
 	, commandId_("")
 	, contextObject_( nullptr )
 	, errorCode_( CommandErrorCode::COMMAND_NO_ERROR )
+	, reflectionUndoRedoData_( *this )
 {
 }
 
 //==============================================================================
 CommandInstance::CommandInstance( const CommandInstance& )
+	: reflectionUndoRedoData_( *this )
 {
 	assert(!"Not copyable");
 }
@@ -162,7 +164,10 @@ void CommandInstance::setStatus( ExecutionStatus status )
 void CommandInstance::undo()
 {
     const Command * command = getCommand();
-	command->undo( getArguments() );
+	if (!command->undo( getArguments() ))
+	{
+		reflectionUndoRedoData_.undo();
+	}
     command->fireCommandExecuted(*this, CommandOperation::UNDO);
 }
 
@@ -171,7 +176,10 @@ void CommandInstance::undo()
 void CommandInstance::redo()
 {
     const Command * command = getCommand();
-	command->redo( getArguments() );
+	if (!command->redo( getArguments() ))
+	{
+		reflectionUndoRedoData_.redo();
+	}
     command->fireCommandExecuted(*this, CommandOperation::REDO);
 }
 
@@ -203,21 +211,13 @@ ExecutionStatus CommandInstance::getExecutionStatus() const
 //==============================================================================
 void CommandInstance::connectEvent()
 {
-    ReflectedPropertyCommandArgument * arguments = getArguments().getBase<ReflectedPropertyCommandArgument>();
-    if (arguments != nullptr)
-    {
-        arguments->connectEvents(defManager_);
-    }
+    reflectionUndoRedoData_.connect();
 }
 
 //==============================================================================
 void CommandInstance::disconnectEvent()
 {
-    ReflectedPropertyCommandArgument * arguments = getArguments().getBase<ReflectedPropertyCommandArgument>();
-    if (arguments != nullptr)
-    {
-        arguments->disconnectEvents(defManager_);
-    }
+    reflectionUndoRedoData_.disconnect();
 }
 
 //==============================================================================
@@ -228,7 +228,12 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 
 ObjectHandle CommandInstance::getCommandDescription() const
 {
-    return getCommand()->getCommandDescription(getArguments());
+    auto description = getCommand()->getCommandDescription(getArguments());
+	if (description == nullptr)
+	{
+		description = reflectionUndoRedoData_.getCommandDescription();
+	}
+	return description;
 }
 
 //==============================================================================

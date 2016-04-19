@@ -482,7 +482,7 @@ Rectangle {
                     maximumValue: totalFrames
                     stepSize: 1
 
-                    barColor: barColor
+                    barColor: model.barColor
 
                     showLabel: showLabels
 
@@ -497,8 +497,12 @@ Rectangle {
         }
     }
 
+
+
+
     // Non-interactive depiction of total duration and visible duration. Maths too hard to make it interactive at the moment.
-    WGSlider {
+
+    WGTimelineBarSlider {
         id: timelineArea
 
         anchors.bottom: parent.bottom
@@ -506,19 +510,19 @@ Rectangle {
         anchors.right: parent.right
         handleClamp: false
 
-        property real totalWidth: realMax - realMin
-
-        property real realMin: gridCanvas.width > 0 ? Math.min(Math.round(gridCanvas.viewTransform.transformX(0)), 0) : 0
-        property real realMax: gridCanvas.width > 0 ? Math.max(Math.round(gridCanvas.viewTransform.transformX(1)), gridCanvas.width) : 1
-
         property real leftBound: Math.max(gridCanvas.viewTransform.inverseTransform(Qt.point(0,0)).x,0)
         property real rightBound: Math.min(gridCanvas.viewTransform.inverseTransform(Qt.point(gridCanvas.width,0)).x,1)
 
-        property real startFrame: gridCanvas.width > 0 ? leftBound : 0
-        property real endFrame: gridCanvas.width > 0 ? rightBound : 1
+        property real barWidth: rightBound - leftBound
+
+        property real initialTransformOrigin: 0
+
+        barColor: "#77AAAAAA"
+
+        startFrame: gridCanvas.width > 0 ? leftBound : 0
+        endFrame: gridCanvas.width > 0 ? rightBound : 1
 
         grooveClickable: false
-        allowMouseWheel: false
 
         stepSize: 0.001
 
@@ -526,6 +530,8 @@ Rectangle {
 
         minimumValue: 0
         maximumValue: 1
+
+        minimumBarWidth: 0
 
         style: WGSliderStyle {
             groove: WGTextBoxFrame {
@@ -536,46 +542,43 @@ Rectangle {
                 color: control.enabled ? palette.textBoxColor : "transparent"
             }
             bar: Item {
-                clip: true
-                WGButtonFrame {
+                Loader
+                {
+                    sourceComponent: control.barContent
+                    clip: true
+
                     anchors.fill: parent
-                    anchors.margins: defaultSpacing.standardBorderSize
-                    highlightColor: "#77AAAAAA"
                 }
             }
+        }
+
+        onChangeValue: {
+            // TODO Make the zoomed area expand/contract based on stretching or shrinking the handles.
+            // Maths too hard.
+        }
+
+        onBarPressed: {
+            initialTransformOrigin = gridCanvas.viewTransform.origin.x
+        }
+
+        onBarDragging: {
+            // TODO Make the bar not shrink in width when it goes past the bounds.
+            gridCanvas.viewTransform.origin.x = initialTransformOrigin - delta * (gridCanvas.viewTransform.xScale / timelineArea.width)
+            gridCanvas.requestPaint()
         }
 
         onLeftBoundChanged: {
             if (!__handleMoving)
             {
-                sliderMinHandle.value = leftBound
+                timelineArea.setHandleValue(leftBound, 0)
             }
         }
+
         onRightBoundChanged: {
             if (!__handleMoving)
             {
-                sliderMaxHandle.value = rightBound
+                timelineArea.setHandleValue(rightBound, 1)
             }
-        }
-
-        // invisible handles
-        WGSliderHandle {
-            id: sliderMinHandle
-            minimumValue: timelineArea.minimumValue
-            maximumValue: timelineArea.maximumValue
-            showBar: false
-            property QtObject rangePartnerHandle: sliderMaxHandle
-            handleStyle: Item {}
-        }
-
-        WGSliderHandle {
-            id: sliderMaxHandle
-            minimumValue: timelineArea.minimumValue
-            maximumValue: timelineArea.maximumValue
-            showBar: true
-            barMinPos: (sliderMinHandle.value * (timelineArea.__clampedLength / timelineArea.maximumValue)) + timelineArea.__visualMinPos
-            property QtObject rangePartnerHandle: sliderMinHandle
-            handleStyle: Item {}
         }
     }
 }

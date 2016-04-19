@@ -41,6 +41,9 @@ WGSlider {
 
     property int barIndex: -1
 
+    // the minimum width the slider bar can be. Should be within the minimum and maximumum values.
+    property real minimumBarWidth: 1
+
     grooveClickable: false
 
     handleClamp: false
@@ -54,7 +57,6 @@ WGSlider {
         initialValues[1] = __handlePosList[1].value
     }
 
-    // tell the view a drag has started
     onBeginDrag: {
         __handlePosList[index].handleDragging = true
     }
@@ -134,6 +136,7 @@ WGSlider {
 
             onReleased: {
                 endUndoFrame();
+                barEndDragging();
                 preventStealing = false
                 __handleMoving = false
             }
@@ -158,7 +161,7 @@ WGSlider {
 
         // need to set max value here or the value might be clamped before the value is valid
         Component.onCompleted: {
-            maximumValue = Qt.binding(function() { return sliderMaxHandle.value - 1 })
+            maximumValue = Qt.binding(function() { return sliderMaxHandle.value - minimumBarWidth })
         }
     }
 
@@ -181,7 +184,7 @@ WGSlider {
 
         // need to set min value here or the value might be clamped before the value is valid
         Component.onCompleted: {
-            minimumValue = Qt.binding(function() { return sliderMinHandle.value + 1 })
+            minimumValue = Qt.binding(function() { return sliderMinHandle.value + minimumBarWidth })
         }
     }
 }

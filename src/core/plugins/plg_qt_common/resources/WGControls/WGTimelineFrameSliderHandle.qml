@@ -97,6 +97,8 @@ WGSliderHandle {
 
             visible: parentSlider.showLabel
             text: label
+
+            color: selected ? palette.highlightColor : palette.textColor
         }
     }
 

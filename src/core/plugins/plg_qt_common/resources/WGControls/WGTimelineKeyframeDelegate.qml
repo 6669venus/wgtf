@@ -159,8 +159,6 @@ WGTimelineFrameSlider {
         target: grid
 
         onPreviewSelectArea: {
-            min = grid.viewTransform.inverseTransform(min)
-            max = grid.viewTransform.inverseTransform(max)
 
             var handlePoint
 
@@ -175,12 +173,11 @@ WGTimelineFrameSlider {
                 // add or remove selections as necessary
                 // is it causing poor performance to do this onPreviewSelectArea???
                 var handleIndexLocation = view.selectedHandles.indexOf(frameSlider.__handlePosList[i])
-
                 if (pointSelected)
                 {
                     if (handleIndexLocation == -1)
                     {
-                        view.selectedHandles.push(__handlePosList[i])
+                        view.selectedHandles.push(frameSlider.__handlePosList[i])
                         view.selectionChanged()
                     }
                 }

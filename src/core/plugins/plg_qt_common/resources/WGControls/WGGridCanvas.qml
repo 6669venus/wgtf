@@ -390,7 +390,7 @@ Canvas {
             }
             else if (mouse.button == Qt.MiddleButton)
             {
-
+                //for some reason this needs to be here
             }
             else
             {

@@ -163,8 +163,6 @@ WGTimelineBarSlider {
 
         // check to see if bar is selected
         onPreviewSelectArea: {
-            min = grid.viewTransform.inverseTransform(min)
-            max = grid.viewTransform.inverseTransform(max)
 
             // find the bar area
             var minPoint = barSlider.mapToItem(grid,barSlider.__handlePosList[0].range.position,0)
@@ -177,7 +175,7 @@ WGTimelineBarSlider {
             var barIndexLocation = -1
             if (barSelected)
             {
-                barIndexLocation = view.selectedBars.indexOf(barIndex)
+                barIndexLocation = view.selectedBars.indexOf(barSlider.barIndex)
                 if (barIndexLocation == -1)
                 {
                     view.selectedBars.push(barSlider.barIndex)
@@ -186,7 +184,7 @@ WGTimelineBarSlider {
             }
             else
             {
-                barIndexLocation = view.selectedBars.indexOf(barIndex)
+                barIndexLocation = view.selectedBars.indexOf(barSlider.barIndex)
                 if (barIndexLocation != -1)
                 {
                     view.selectedBars.splice(barIndexLocation, 1)

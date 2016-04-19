@@ -31,4 +31,11 @@ WGSubScrollPanel {
 WGScrollPanel {
     objectName: "WGSubScrollPanel"
     anchors.bottom: undefined
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+
+    childObject_:
+        Text {
+            text: "Warning: WGSubScrollPanel has no childObject defined"
+            color: "orange"
+        }
 }

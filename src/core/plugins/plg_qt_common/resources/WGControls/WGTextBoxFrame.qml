@@ -28,4 +28,9 @@ Rectangle {
     border.width: defaultSpacing.standardBorderSize
     border.color: palette.darkestShade
     radius: defaultSpacing.halfRadius
+
+    // Default size to prevent invisible controls when creating UI
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.minimumRowHeight
+
 }

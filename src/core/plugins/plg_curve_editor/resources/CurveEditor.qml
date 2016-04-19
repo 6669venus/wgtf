@@ -22,6 +22,14 @@ Rectangle {
     Layout.fillHeight: true
     color: palette.mainWindowColor
 
+    onFocusChanged: {
+        if ( curveEditor.focus === true )
+        {
+            timeline.requestPaint();
+            repaintCurves();
+        }
+    }
+
     function addPointsToCurves(mouse, updateGradient)
     {
         var pos = timeline.viewTransform.inverseTransform(Qt.point(mouse.x, mouse.y))

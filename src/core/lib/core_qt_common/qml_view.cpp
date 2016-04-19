@@ -207,6 +207,8 @@ void QmlView::focusInEvent()
 	{
 		l->onFocusIn( this );
 	}
+
+	quickView_->rootObject()->setFocus(true);
 }
 
 void QmlView::focusOutEvent()
@@ -215,6 +217,7 @@ void QmlView::focusOutEvent()
 	{
 		l->onFocusOut( this );
 	}
+	quickView_->rootObject()->setFocus(false);
 }
 
 void QmlView::registerListener(IViewEventListener* listener)

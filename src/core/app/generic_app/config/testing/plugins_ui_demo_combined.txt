@@ -9,7 +9,6 @@ plugins/plg_qt_app
 plugins/plg_qt_common
 plugins/plg_editor_interaction
 plugins/plg_macros_ui
-plugins/plg_demo_test
 plugins/plg_reflection_object_test
 plugins/plg_window_test
 plugins/plg_history_ui
@@ -27,5 +26,7 @@ plugins/plg_tree_model_test
 plugins/plg_modal_dlg_test
 plugins/plg_context_menu_test
 plugins/plg_python27_ui_test
+plugins/plg_custom_panel
+plugins/plg_demo_test
 plugins/plg_curve_editor
 plugins/plg_curve_editor_test

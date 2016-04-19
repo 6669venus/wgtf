@@ -13,7 +13,6 @@ plugins/plg_reflection_object_test
 plugins/plg_window_test
 plugins/plg_history_ui
 plugins/plg_ui_main_test
-plugins/plg_tree_expansion_status_test
 plugins/plg_copy_paste
 plugins/plg_file_system
 plugins/plg_progress_manager

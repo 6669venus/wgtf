@@ -51,6 +51,7 @@ public:
 
 private:
 	static IComponentContext * s_Context_;
+	static bool s_ContextInitialized_;
 };
 
 #endif //GENERIC_PLUGIN_HPP

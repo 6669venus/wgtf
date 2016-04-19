@@ -20,6 +20,9 @@ Rectangle {
     id: basePanel
     objectName: "WGPanel"
 
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.minimumRowHeight
+
     /*!
         This property sets the frame colour to dark
         The default value is \c true

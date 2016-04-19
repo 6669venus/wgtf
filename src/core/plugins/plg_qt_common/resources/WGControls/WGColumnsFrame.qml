@@ -1,5 +1,10 @@
 import QtQuick 2.0
 
+/*!
+ \brief WGColumnsFrame is used as a frame for listView and treeView columns
+*/
+
+
 Item {
     id: columnsFrame
     objectName: "WGColumnsFrame"
@@ -56,7 +61,7 @@ Item {
             {
                 column = columns.children[i];
                 var handle = column.children[0];
-                if (typeof(handle) !== "undefined") 
+                if (typeof(handle) !== "undefined")
                 {
                     handle.x = handle.x;
                 }

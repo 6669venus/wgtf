@@ -78,7 +78,7 @@ bool ControlsTestPanel::addPanel()
 	auto def = REGISTER_DEFINITION( ColorSliderDataModel );
 	controlData_ = def->create();
 	controlsView_ = uiFramework->createView(
-		"plg_controls_test/controls_test_panel.qml",
+		"WGControlsTest/WGControlsTestPanel.qml",
 		IUIFramework::ResourceType::Url, controlData_ );
 
 	uiApplication->addView( *controlsView_ );

@@ -27,5 +27,6 @@ plugins/plg_modal_dlg_test
 plugins/plg_context_menu_test
 plugins/plg_python27_ui_test
 plugins/plg_custom_panel
+plugins/plg_demo_test
 plugins/plg_curve_editor
 plugins/plg_curve_editor_test

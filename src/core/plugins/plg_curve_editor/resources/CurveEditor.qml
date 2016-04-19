@@ -312,11 +312,13 @@ Rectangle {
             // the points can still get out of synch too.
         }
 
-        Timeline {
+        WGGridCanvas {
             id:timeline
             focus: true
             timeScale: xScale
             valueScale: yScale
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
             // Zoom to the extents of the curve, always zooms the full X axis and zooms to the available y extremes
             function zoomExtents()
@@ -420,7 +422,7 @@ Rectangle {
                 WGOne.ValueExtension {}
             }
 
-            SelectionArea
+            WGSelectionArea
             {
                 onSelectArea:{
                     min = timeline.viewTransform.inverseTransform(min)

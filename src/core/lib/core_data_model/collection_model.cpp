@@ -1,5 +1,4 @@
 #include "collection_model.hpp"
-#include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_variant/collection.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"

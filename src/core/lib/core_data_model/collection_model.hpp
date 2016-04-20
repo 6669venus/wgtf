@@ -2,7 +2,6 @@
 #define COLLECTION_MODEL_HPP
 
 #include "core_data_model/abstract_item_model.hpp"
-#include "core_data_model/i_list_model.hpp"
 #include "core_variant/collection.hpp"
 #include <memory>
 

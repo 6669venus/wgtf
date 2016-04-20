@@ -37,7 +37,7 @@ QtDockRegion::QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDo
 			qMainWindow->tabifyDockWidget( qDockWidget, &qDockWidget_ );
 		}
 	}
-	qDockWidget_.setVisible( qDockWidget_.widget() != nullptr);
+	qDockWidget_.setVisible( false );
 
 	auto layoutTagsProperty = qDockWidget_.property( "layoutTags" );
 	if (layoutTagsProperty.isValid())

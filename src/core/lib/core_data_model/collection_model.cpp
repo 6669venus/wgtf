@@ -6,10 +6,153 @@
 
 namespace
 {
-	class CollectionItem : public IItem
+	class CollectionItem : public AbstractItem
 	{
 	public:
-		CollectionItem( CollectionModel & model, size_t index )
+		CollectionItem(CollectionModel & model, size_t index)
+			: model_(model)
+			, index_(index)
+		{
+
+		}
+
+		Variant getData(int row, int column, size_t roleId) const override
+		{
+			auto & collection = model_.getSource();
+			if (roleId == ValueTypeRole::roleId_)
+			{
+				return collection.valueType().getName();
+			}
+			else if (roleId == KeyTypeRole::roleId_)
+			{
+				return collection.keyType().getName();
+			}
+
+			auto it = collection.begin();
+			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
+			if (it == collection.end())
+			{
+				return Variant();
+			}
+
+			if (roleId == IndexPathRole::roleId_)
+			{
+				ResizingMemoryStream dataStream;
+				TextStream s(dataStream);
+				Variant value = it.value();
+				s << value;
+				return dataStream.takeBuffer();
+			}
+
+			if (roleId == ValueRole::roleId_)
+			{
+				return it.value();
+			}
+			else if (roleId == KeyRole::roleId_)
+			{
+				return it.key();
+			}
+
+			return Variant();
+		}
+
+		bool setData(int row, int column, size_t roleId, const Variant & data) override
+		{
+			if (roleId != ValueRole::roleId_)
+			{
+				return false;
+			}
+
+			auto & collection = model_.getSource();
+			auto it = collection.begin();
+			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
+			if (it == collection.end())
+			{
+				return false;
+			}
+
+			it.setValue(data);
+			return true;
+		}
+
+	private:
+		CollectionModel & model_;
+		size_t index_;
+	};
+}
+
+
+CollectionModel::CollectionModel()
+{
+}
+
+
+CollectionModel::~CollectionModel()
+{
+}
+
+
+void CollectionModel::setSource(Collection & collection)
+{
+	// TODO emit signal
+	items_.clear();
+	collection_ = collection;
+}
+
+
+Collection & CollectionModel::getSource()
+{
+	return collection_;
+}
+
+
+AbstractItem * CollectionModel::item(int index) const
+{
+	if (items_.size() <= index)
+	{
+		items_.resize(index + 1);
+	}
+
+	auto item = items_[index].get();
+	if (item != nullptr)
+	{
+		return item;
+	}
+
+	item = new CollectionItem(*const_cast< CollectionModel * >(this), index);
+	items_[index] = std::unique_ptr< AbstractItem >(item);
+	return item;
+}
+
+
+int CollectionModel::index(const AbstractItem* item) const
+{
+	auto index = 0;
+	auto it = items_.begin();
+	for (; it != items_.end() && it->get() != item; ++index, ++it) {}
+	assert(it != items_.end());
+	return index;
+}
+
+
+int CollectionModel::rowCount() const
+{
+	return (int)collection_.size();
+}
+
+
+int CollectionModel::columnCount() const
+{
+	return 1;
+}
+
+
+namespace
+{
+	class CollectionItemOld : public IItem
+	{
+	public:
+		CollectionItemOld(CollectionModelOld & model, size_t index)
 			: model_( model )
 			, index_( index )
 		{
@@ -86,23 +229,23 @@ namespace
 		}
 
 	private:
-		CollectionModel & model_;
+		CollectionModelOld & model_;
 		size_t index_;
 	};
 }
 
 
-CollectionModel::CollectionModel()
+CollectionModelOld::CollectionModelOld()
 {
 }
 
 
-CollectionModel::~CollectionModel()
+CollectionModelOld::~CollectionModelOld()
 {
 }
 
 
-void CollectionModel::setSource( Collection & collection )
+void CollectionModelOld::setSource(Collection & collection)
 {
 	// TODO emit signal
 	items_.clear();
@@ -110,13 +253,13 @@ void CollectionModel::setSource( Collection & collection )
 }
 
 
-Collection & CollectionModel::getSource()
+Collection & CollectionModelOld::getSource()
 {
 	return collection_;
 }
 
 
-IItem * CollectionModel::item( size_t index ) const
+IItem * CollectionModelOld::item(size_t index) const
 {
 	if (items_.size() <= index)
 	{
@@ -129,13 +272,13 @@ IItem * CollectionModel::item( size_t index ) const
 		return item;
 	}
 
-	item = new CollectionItem( *const_cast< CollectionModel * >( this ), index );
+	item = new CollectionItemOld( *const_cast< CollectionModelOld * >( this ), index );
 	items_[index] = std::unique_ptr< IItem >( item );
 	return item;
 }
 
 
-size_t CollectionModel::index( const IItem* item ) const
+size_t CollectionModelOld::index(const IItem* item) const
 {
 	auto index = 0;
 	auto it = items_.begin();
@@ -145,19 +288,19 @@ size_t CollectionModel::index( const IItem* item ) const
 }
 
 
-bool CollectionModel::empty() const
+bool CollectionModelOld::empty() const
 {
 	return collection_.empty();
 }
 
 
-size_t CollectionModel::size() const
+size_t CollectionModelOld::size() const
 {
 	return collection_.size();
 }
 
 
-int CollectionModel::columnCount() const
+int CollectionModelOld::columnCount() const
 {
 	return 1;
 }

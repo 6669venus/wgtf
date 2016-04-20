@@ -74,7 +74,7 @@ bool CollectionQtTypeConverter::toQVariant( const Variant& variant,
 	// Create a new collection model
 	auto collectionModel = new CollectionModel();
 	collectionModel->setSource( value );
-	auto listModel = std::unique_ptr< IListModel >( collectionModel );
+	auto listModel = std::unique_ptr< AbstractListModel >( collectionModel );
 
 	// Give ownership to ObjectHandle
 	ObjectHandle handle( std::move( listModel ) );

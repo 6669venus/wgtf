@@ -1,6 +1,7 @@
 #ifndef COLLECTION_MODEL_HPP
 #define COLLECTION_MODEL_HPP
 
+#include "core_data_model/abstract_item_model.hpp"
 #include "core_data_model/i_list_model.hpp"
 #include "core_variant/collection.hpp"
 #include <memory>
@@ -9,11 +10,37 @@
  *	Data model for displaying a Collection as a list.
  */
 class CollectionModel
-	: public IListModel
+	: public AbstractListModel
 {
 public:
 	CollectionModel();
 	virtual ~CollectionModel();
+
+	void setSource(Collection & collection);
+	Collection & getSource();
+
+	// AbstractListModel
+	virtual AbstractItem * item(int index) const override;
+	virtual int index(const AbstractItem* item) const override;
+
+	virtual int rowCount() const override;
+	virtual int columnCount() const override;
+
+protected:
+	Collection collection_;
+	mutable std::vector< std::unique_ptr< AbstractItem > > items_;
+};
+
+
+/**
+ *	Data model for displaying a Collection as a list.
+ */
+class CollectionModelOld
+	: public IListModel
+{
+public:
+	CollectionModelOld();
+	virtual ~CollectionModelOld();
 
 	void setSource( Collection & collection );
 	Collection & getSource();

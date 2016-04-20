@@ -24,7 +24,7 @@ bool ColorPicker::addPanel()
 
 	
 	colorView_ = uiFramework->createView(
-		"plg_color_picker/color_picker_panel.qml",
+		"WGColorPicker/WGColorPickerPanel.qml",
 		IUIFramework::ResourceType::Url, colorPickerContext_ );
 
 	uiApplication->addView( *colorView_ );

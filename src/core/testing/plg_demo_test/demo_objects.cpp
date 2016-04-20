@@ -11,7 +11,7 @@
 #include "core_string_utils/string_utils.hpp"
 #include "testing/reflection_objects_test/test_objects.hpp"
 #include "core_data_model/i_item_role.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_command_system/i_command_manager.hpp"
 
 #include "wg_types/vector2.hpp"

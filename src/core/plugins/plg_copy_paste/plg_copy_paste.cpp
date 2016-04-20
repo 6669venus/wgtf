@@ -25,28 +25,28 @@ private:
 		auto uiFramework = contextManager.queryInterface<IUIFramework>();
 		auto uiApplication = contextManager.queryInterface<IUIApplication>();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
-		uiFramework->loadActionData( 
-			":/actiondata",
+		uiFramework->loadActionData(
+			":/WGCopyableFunctions/actions.xml",
 			IUIFramework::ResourceType::File );
-		
+
 		using namespace std::placeholders;
 
 		toggleCopyControl_ = uiFramework->createAction(
-			"ToggleCopyControls", 
-			std::bind( &CopyPastePlugin::toggleCopyControl, this, _1 ), 
+			"ToggleCopyControls",
+			std::bind( &CopyPastePlugin::toggleCopyControl, this, _1 ),
 			[] ( const IAction* ) { return true; },
 			std::bind( &CopyPastePlugin::isCopyControlChecked, this, _1 ) );
 
-        copyPasteManager_ = contextManager.queryInterface< ICopyPasteManager >();
-        assert( copyPasteManager_ != nullptr );
+		copyPasteManager_ = contextManager.queryInterface< ICopyPasteManager >();
+		assert( copyPasteManager_ != nullptr );
 
 		copy_ = uiFramework->createAction(
-			"Copy", 
+			"Copy",
 			std::bind( &CopyPastePlugin::copy, this, _1 ),
 			std::bind( &CopyPastePlugin::canCopy, this, _1 ) );
 
-		paste_ = uiFramework->createAction( 
-			"Paste", 
+		paste_ = uiFramework->createAction(
+			"Paste",
 			std::bind( &CopyPastePlugin::paste, this, _1 ),
 			std::bind( &CopyPastePlugin::canPaste, this, _1 ) );
 
@@ -116,7 +116,7 @@ public:
 	//==========================================================================
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		Variant::setMetaTypeManager( 
+		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
 		createCopyPasteUI( contextManager );

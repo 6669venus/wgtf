@@ -10,11 +10,6 @@ IF( NOT PYTHON_FOUND )
 	RETURN()
 ENDIF()
 
-SET( METADATA_SRCS
-	metadata/scenario.mpp
-)
-SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
-
 SET( TYPE_CONVERTER_SRCS
 	type_converters/converter_queue.cpp
 	type_converters/converter_queue.hpp

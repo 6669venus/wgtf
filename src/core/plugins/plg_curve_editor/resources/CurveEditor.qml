@@ -3,7 +3,8 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import BWControls 1.0
-import WGControls 1.0
+import WGControls 1.0 as WGOne
+import WGControls 2.0
 
 
 Rectangle {
@@ -13,15 +14,20 @@ Rectangle {
 
     property var selection: [];
 
-	Layout.fillHeight: true
-	color: palette.mainWindowColor
+    property bool showColorSlider: true
+    property bool alphaEnabled: true
 
-    QtObject
-    {
-        id: internal
-        property var colors: []
-        property var positions: []
-        property bool gradientEnabled: curveRepeater.count == 3 || curveRepeater.count == 4
+    property bool dataLoaded
+
+    Layout.fillHeight: true
+    color: palette.mainWindowColor
+
+    onFocusChanged: {
+        if ( curveEditor.focus === true )
+        {
+            timeline.requestPaint();
+            repaintCurves();
+        }
     }
 
     function addPointsToCurves(mouse, updateGradient)
@@ -29,7 +35,7 @@ Rectangle {
         var pos = timeline.viewTransform.inverseTransform(Qt.point(mouse.x, mouse.y))
         pos.x = Math.max(pos.x, 0)
         pos.x = Math.min(pos.x, 1)
-	
+
 
         beginUndoFrame();
         var curveIt = iterator(curves)
@@ -38,7 +44,7 @@ Rectangle {
         }
         if(updateGradient)
         {
-            updateColorGradient();
+            colorGradient.createHandleAtPosition(pos.x)
         }
         endUndoFrame();
     }
@@ -80,10 +86,10 @@ Rectangle {
                 while(curveIt.moveNext()){
                     curveIt.current.removeAt( valuesToDelete[i], true );
                 }
-            }
-            if(updateGradient)
-            {
-                updateColorGradient();
+                if(updateGradient)
+                {
+                    colorGradient.removeHandle(i)
+                }
             }
             endUndoFrame();
         }
@@ -144,6 +150,21 @@ Rectangle {
     {
         var movedX = [point.point.pos.x, point.point.pos.x - xDelta]
         movedX.sort();
+
+        if (showColorSlider)
+        {
+            //gets the yDeltas as color change values. For some reason getting a lot of yDeltas < 0 and > 1
+            var rDelta = point.parentCurve.curveIndex === 0 ? yDelta : 0;
+            var gDelta = point.parentCurve.curveIndex === 1 ? yDelta : 0;
+            var bDelta = point.parentCurve.curveIndex === 2 ? yDelta : 0;
+            var aDelta = point.parentCurve.curveIndex === 3 ? yDelta : 0;
+
+            //add these values to an array
+            var gradHandleIndexes = [point.pointIndex]
+            var gradHandleValues = [point.point.pos.x - xDelta]
+            var gradHandleColors = [colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,point.pointIndex)]
+        }
+
         for(var i = 0; i < selection.length; ++i)
         {
             var selectedPoint = selection[i]
@@ -152,6 +173,25 @@ Rectangle {
             {
                 var newX = selectedPoint.point.pos.x + xDelta;
                 var newY = selectedPoint.point.pos.y + yDelta;
+
+                //add more values and colors to arrays
+
+                if (gradHandleValues.indexOf(selectedPoint.index) == -1)
+                {
+                    if (showColorSlider)
+                    {
+                        rDelta = selectedPoint.parentCurve.curveIndex === 0 ? yDelta : 0;
+                        gDelta = selectedPoint.parentCurve.curveIndex === 1 ? yDelta : 0;
+                        bDelta = selectedPoint.parentCurve.curveIndex === 2 ? yDelta : 0;
+                        aDelta = selectedPoint.parentCurve.curveIndex === 3 ? yDelta : 0;
+
+
+                        gradHandleIndexes.push(selectedPoint.pointIndex)
+                        gradHandleValues.push(newX)
+                        gradHandleColors.push(colorGradient.getChangedHandleColor(rDelta,gDelta,bDelta,aDelta,selectedPoint.pointIndex))
+                    }
+                }
+
                 // For now points with the same x's are moved in C++ Particle Editor code
                 // TODO: Make this code generic for the curve editor
                 var index = binarySearch(movedX, selectedPoint.point.pos.x)
@@ -176,7 +216,12 @@ Rectangle {
                 }
             }
         }
-        updateColorGradient();
+        //update all the necessary handles.
+        if (showColorSlider)
+        {
+            colorGradient.setHandleValue(gradHandleValues, gradHandleIndexes);
+            colorGradient.setHandleColor(gradHandleColors, gradHandleIndexes);
+        }
     }
 
     function repaintCurves() {
@@ -198,37 +243,16 @@ Rectangle {
         return curveRepeater.count > index && curve && curve.enabled;
     }
 
-    function updateColorGradient()
-    {
-        if(!internal.gradientEnabled)
-            return;
-
-        var oldCount = internal.colors.length
-
-        var newColors = [];
-        var newPositions = [];
-        var red = curveRepeater.itemAt(0);
-        var green = curveRepeater.itemAt(1);
-        var blue = curveRepeater.itemAt(2);
-        var alpha = curveRepeater.count == 4 ? curveRepeater.itemAt(3)
-            : {
-                pointRepeater:{
-                    count: 1,
-                    itemAt: function(index){ return {point:{pos:{y:1.0}}}; }
-                }};
-        for(var i = 0; i < red.pointRepeater.count; ++i)
-        {
-            newColors.push(Qt.rgba(
-                              red.pointRepeater.itemAt(i).point.pos.y,
-                              green.pointRepeater.itemAt(i).point.pos.y,
-                              blue.pointRepeater.itemAt(i).point.pos.y,
-                              alpha.pointRepeater.itemAt(i%alpha.pointRepeater.count).point.pos.y))
-            newPositions.push(red.pointRepeater.itemAt(i).point.pos.x)
+    //hacky timer to keep things updating when points or slider handles are moved.
+    Timer {
+        id: curveTimer
+        interval: 100
+        running: false
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            repaintCurves();
         }
-        internal.colors = newColors;
-        internal.positions = newPositions;
-
-        colorGradient.updateData();
     }
 
     ColumnLayout{
@@ -245,6 +269,7 @@ Rectangle {
             timeScale: xScale
             valueScale: yScale
             editEnabled: selection.length > 0
+            timeScaleEnabled: timeScaleEditEnabled
 
             onToggleX: toggleCurve(0)
             onToggleY: toggleCurve(1)
@@ -290,6 +315,9 @@ Rectangle {
                     }
                 }
             }
+            // This makes the points update a lot better but seems to drastically affect performance
+            // and might be causing the app to lock up
+            // the points can still get out of synch too.
         }
 
         Timeline {
@@ -393,11 +421,11 @@ Rectangle {
             }
 
             // Data model coming from C++
-            WGListModel
+            WGOne.WGListModel
             {
                 id: curvesModel
                 source: curves
-                ValueExtension {}
+                WGOne.ValueExtension {}
             }
 
             SelectionArea
@@ -453,8 +481,10 @@ Rectangle {
             {
                 id: curveRepeater
                 model: curvesModel
+
                 delegate: Curve{
                     objectName: index
+                    curveIndex: index
                     points: Value.points
                     curveModel: Value
                     viewTransform: timeline.viewTransform;
@@ -470,10 +500,14 @@ Rectangle {
                         curveEditor.pointPositionChanged(point, xDelta, yDelta)
                     }
                     onPointPressed:{
+                        curveTimer.start()
                         if(point.selected === false && mouse.modifiers !== Qt.ControlModifier)
                         {
                             clearSelection();
                         }
+                    }
+                    onPointReleased:{
+                        curveTimer.stop()
                     }
                     onPointClicked:{
                         if(mouse.modifiers !== Qt.ControlModifier)
@@ -493,24 +527,69 @@ Rectangle {
 
             // Commenting this out until multiple gradient stops work correctly
             // Also need signals to enable handling changes to update the curve data
-            WGColorSlider {
+            WGGradientSlider {
                 id: colorGradient
-                visible: internal.gradientEnabled
+                visible: showColorSlider
                 anchors.bottom: timeline.bottom
                 x: timeline.viewTransform.transformX(0)
                 width: timeline.viewTransform.transformX(1) - timeline.viewTransform.transformX(0)
-                height: 10
+                height: defaultSpacing.minimumRowHeight
                 minimumValue: 0
                 maximumValue: 1.0
                 stepSize: .001
-                colorData: internal.colors
-                positionData: internal.positions
-                linkColorsToHandles: true
 
-                onVisibleChanged: {
-                    // When initially made visible update the gradient
-                    if(visible)
-                        curveEditor.updateColorGradient();
+                onBeginDrag: {
+                    curveTimer.start()
+                }
+                onEndDrag: {
+                    curveTimer.stop()
+                }
+
+                //this is some grade A fakery to deal with the fake data being created over time
+                //basically looks at the curve repeaters and then add points when the red curve adds points
+                //or updates colors when the other curves add points
+                QtObject {
+                    id: fakeCurve
+                    signal itemAdded(var lol)
+                }
+
+                Connections {
+                    target: curveRepeater.count > 0 ? curveRepeater.itemAt(0).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        //don't create a handle if one is already there
+                        if(colorGradient.getHandleValue(index) == -1)
+                        {
+                            var newColor = Qt.rgba(item.point.pos.y, 0, 0, 1)
+                            colorGradient.createColorHandle(item.point.pos.x,colorGradient.handleStyle,index,newColor, false)
+                        }
+                    }
+                }
+
+                Connections {
+                    target: curveRepeater.count > 1 ? curveRepeater.itemAt(1).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        var newColor = colorGradient.getHandleColor(index)
+                        newColor.g = item.point.pos.y
+                        colorGradient.setHandleColor(newColor, index)
+                    }
+                }
+
+                Connections {
+                    target: curveRepeater.count > 2 ? curveRepeater.itemAt(2).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        var newColor = colorGradient.getHandleColor(index)
+                        newColor.b = item.point.pos.y
+                        colorGradient.setHandleColor(newColor, index)
+                    }
+                }
+
+                Connections {
+                    target: curveRepeater.count > 3 ? curveRepeater.itemAt(3).pointRepeater : fakeCurve
+                    onItemAdded: {
+                        var newColor = colorGradient.getHandleColor(index)
+                        newColor.a = item.point.pos.y
+                        colorGradient.setHandleColor(newColor, index)
+                    }
                 }
 
                 //onWidthChanged: {
@@ -519,11 +598,6 @@ Rectangle {
                 //}
 
                 onChangeValue: {
-                    if(!internal.gradientEnabled)
-                        return;
-
-                    // The handle index is the point index
-                    var index = handleIndex
                     var red = curveRepeater.itemAt(0).getPoint(index);
                     var green = curveRepeater.itemAt(1).getPoint(index);
                     var blue = curveRepeater.itemAt(2).getPoint(index);
@@ -541,7 +615,6 @@ Rectangle {
                 }
 
                 onColorModified: {
-                    var color = colorGradient.colorData[index]
                     beginUndoFrame()
                     var red = curveRepeater.itemAt(0).getPoint(index);
                     var green = curveRepeater.itemAt(1).getPoint(index);
@@ -559,9 +632,9 @@ Rectangle {
                     repaintCurves()
                 }
 
-                onPointAdded: {
-                    var color = colorGradient.colorData[index]
-                    var relPos = colorGradient.positionData[index]
+                onHandleAdded: {
+                    var color = colorGradient.getHandleColor[index]
+                    var relPos = colorGradient.getHandleValue[index]
                     var mousePos = timeline.viewTransform.transformX(relPos)
                     beginUndoFrame()
                     curveEditor.addPointsToCurves(Qt.point(mousePos,0), false)
@@ -580,7 +653,7 @@ Rectangle {
                     endUndoFrame()
                 }
 
-                onPointRemoved: {
+                onHandleRemoved: {
                     var red = curveRepeater.itemAt(0).getPoint(index);
                     curveEditor.deletePointsAt([red.pos.x], false);
                 }

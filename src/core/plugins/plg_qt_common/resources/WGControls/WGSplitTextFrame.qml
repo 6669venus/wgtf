@@ -72,11 +72,22 @@ WGTextBoxFrame {
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
-    implicitWidth: 40 * boxList.length
+    implicitWidth: boxList.length === 0 ? warningtext.contentWidth + defaultSpacing.standardMargin * 2 : 40 * boxList.length
 
-    Layout.preferredWidth: __totalWidth
+    Layout.preferredWidth: __totalWidth == 0 ? warningtext.contentWidth + defaultSpacing.standardMargin * 2 : __totalWidth
 
-    width: __totalWidth
+    width: __totalWidth == 0 ? warningtext.contentWidth + defaultSpacing.standardMargin * 2: __totalWidth
+
+    // Placeholder text prevents zero size UI components
+    Text {
+        id: warningtext
+        text: "Warning: WGSplitTextFrame has no boxList"
+        visible: boxList.length == 0
+        color: "white"
+        anchors.left: mainFrame.left
+        anchors.bottom: mainFrame.bottom
+        anchors.margins: defaultSpacing.standardMargin
+    }
 
     //TODO give this frame a disabled state
     Row {

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "interfaces/version_control/i_result.hpp"
+#include "version_control/i_result.hpp"
 
 #include <vector>
 #include <unordered_map>

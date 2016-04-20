@@ -40,7 +40,7 @@ bool PythonPanel::addPanel()
 	}
 
 	pythonView_ = uiFramework->createView(
-		"plg_python27_ui_test/PythonObjectTestPanel.qml", IUIFramework::ResourceType::Url, contextObject_ );
+		"Python27UITest/PythonObjectTestPanel.qml", IUIFramework::ResourceType::Url, contextObject_ );
 
 	uiApplication->addView( *pythonView_ );
 	return true;

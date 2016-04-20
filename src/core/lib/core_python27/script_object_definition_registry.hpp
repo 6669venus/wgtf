@@ -1,14 +1,12 @@
 #pragma once
 
-#include "listener_hooks.hpp"
-
 #include "core_dependency_system/di_ref.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "i_script_object_definition_registry.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
-#include <map>
 #include <mutex>
+#include <vector>
 
 
 class IClassDefinition;
@@ -61,20 +59,23 @@ private:
 
 	friend struct ScriptObjectDefinitionDeleter;
 
-	typedef std::map< PyScript::ScriptObject,
-		std::weak_ptr< IClassDefinition >,
-		ScriptObjectCompare > DefinitionMap;
-	DefinitionMap definitions_;
+	template< typename PAIR_T >
+	friend class PairMatch;
+	typedef std::pair< PyScript::ScriptObject, std::weak_ptr< IClassDefinition > >
+		DefinitionPair;
+	typedef std::vector< DefinitionPair > DefinitionLookup;
+	DefinitionLookup definitions_;
+	// TODO replace mutex with a check that it's the main thread
+	// because Python scripts should only be run from a single thread
 	std::mutex definitionsMutex_;
+
 	IComponentContext& context_;
 	DIRef< IDefinitionManager > definitionManager_;
 	std::unique_ptr< IDefinitionHelper > definitionHelper_;
-	typedef std::map< PyScript::ScriptObject,
-		RefObjectId,
-		ScriptObjectCompare > IDMap;
-	IDMap idMap_;
-	HookLookup hookLookup_;
-	std::shared_ptr< HookListener > hookListener_;
+
+	typedef std::pair< PyScript::ScriptObject, RefObjectId > IdPair;
+	typedef std::vector< IdPair > IdLookup;
+	IdLookup ids_;
 };
 
 

@@ -62,9 +62,9 @@ public:
 	void cancel();
 
 	void execute();
-	bool isComplete() const { return status_ == Complete; }
+	bool isComplete() const;
 
-	ExecutionStatus getExecutionStatus() const { return status_; }
+	ExecutionStatus getExecutionStatus() const;
 	ObjectHandle getArguments() const { return arguments_; }
 	ObjectHandle getReturnValue() const { return returnValue_; }
 
@@ -109,11 +109,10 @@ private:
 
 	std::mutex					mutex_;
 	IDefinitionManager *		defManager_;
-	ExecutionStatus				status_;
+	std::atomic< ExecutionStatus > status_;
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
-	CommandInstancePtr			parent_;
 	std::vector< CommandInstancePtr > children_;
 	ResizingMemoryStream		undoData_;
 	ResizingMemoryStream		redoData_;

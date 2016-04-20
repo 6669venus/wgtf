@@ -2,7 +2,7 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "custom_xml_data.hpp"
 #include "core_variant/variant.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "custom_xml_serializer.hpp"
 #include <memory>
@@ -130,7 +130,7 @@ public:
 			{
 				if (fileSystem->exists( objectFile.c_str() ))
 				{
-					IFileSystem::istream_uptr fileStream = 
+					IFileSystem::IStreamPtr fileStream = 
 						fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
 					CustomXmlSerializer serializer( *fileStream );
 					const MetaType * metaType = 
@@ -179,7 +179,7 @@ public:
 			{
 				if (fileSystem->exists( objectFile.c_str() ))
 				{
-					IFileSystem::istream_uptr fileStream = 
+					IFileSystem::IStreamPtr fileStream = 
 						fileSystem->readFile( objectFile.c_str(), std::ios::in | std::ios::binary );
 					// you can use either CustomXmlSerializer or XMLSerializer to read the data, both are working
 					//XMLSerializer serializer( *fileStream, *defManager );

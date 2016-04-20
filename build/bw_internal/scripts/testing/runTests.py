@@ -579,6 +579,10 @@ def runTests():
 					dest = "changelist", default=0, type=int,
 					help = "Specify p4 changelist number" )
 
+	parser.add_option( "-o", "--output",
+					dest = "output", default=None,
+					help = "Save report to specified file instead of sending to e-mail" )
+
 	(options, args) = parser.parse_args()
 
 	branchName = "ngt/develop"
@@ -629,8 +633,10 @@ def runTests():
 					options.changelist, dbType, flags,
 					options.submit_to_graphite)
 
-
-	reportHolder.sendMail()
+	if options.output:
+		reportHolder.save( options.output )
+	else:
+		reportHolder.sendMail()
 
 	for report in reportHolder.reports:
 		if not report.success:

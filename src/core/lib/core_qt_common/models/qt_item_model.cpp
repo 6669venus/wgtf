@@ -122,6 +122,16 @@ namespace
 		QModelIndex index_;
 		std::weak_ptr< MetaObject > metaObject_;
 	};
+
+
+	/**
+	 *	Helper to convert item to model index.
+	 */
+	QModelIndex itemToIndex( const QObject * item )
+	{
+		auto itemData = qobject_cast< const ItemData * >( item );
+		return item != nullptr ? itemData->index_ : QModelIndex();
+	}
 }
 
 struct QtItemModel::Impl
@@ -149,30 +159,27 @@ QtItemModel::~QtItemModel()
 {
 }
 
-AbstractItemModel & QtItemModel::source() const
+const AbstractItemModel & QtItemModel::source() const
 {
 	return impl_->source_;
 }
 
 QObject * QtItemModel::item( int row, int column, const QObject * parent ) const
 {
-	auto parentItem = qobject_cast< const ItemData * >( parent );
-	auto parentIndex = parent != nullptr ? parentItem->index_ : QModelIndex();
+	auto parentIndex = itemToIndex( parent );
 	auto index = this->index( row, column, parentIndex );
 	return new ItemData( index, impl_->metaObject_ );
 }
 
 int QtItemModel::rowCount( const QObject * parent ) const
 {
-	auto parentItem = qobject_cast< const ItemData * >( parent );
-	auto parentIndex = parent != nullptr ? parentItem->index_ : QModelIndex();
+	auto parentIndex = itemToIndex( parent );
 	return rowCount( parentIndex );
 }
 
 int QtItemModel::columnCount( const QObject * parent ) const
 {
-	auto parentItem = qobject_cast< const ItemData * >( parent );
-	auto parentIndex = parent != nullptr ? parentItem->index_ : QModelIndex();
+	auto parentIndex = itemToIndex( parent );
 	return columnCount( parentIndex );
 }
 
@@ -300,9 +307,9 @@ QtListModel::QtListModel( AbstractListModel & source )
 	: QtItemModel( source ) 
 {}
 
-AbstractListModel & QtListModel::source() const
+const AbstractListModel & QtListModel::source() const
 {
-	return static_cast< AbstractListModel & >( QtItemModel::source() );
+	return static_cast< const AbstractListModel & >( QtItemModel::source() );
 }
 
 QObject * QtListModel::item( int row ) const 
@@ -315,13 +322,26 @@ int QtListModel::count() const
 	return QtItemModel::rowCount( nullptr ); 
 }
 
+
+bool QtListModel::insertItem( int row )
+{
+	return QtItemModel::insertRow( row ); 
+}
+
+
+bool QtListModel::removeItem( int row )
+{
+	return QtItemModel::removeRow( row ); 
+}
+
+
 QtTreeModel::QtTreeModel( AbstractTreeModel & source ) 
 	: QtItemModel( source ) 
 {}
 
-AbstractTreeModel & QtTreeModel::source() const
+const AbstractTreeModel & QtTreeModel::source() const
 {
-	return static_cast< AbstractTreeModel & >( QtItemModel::source() );
+	return static_cast< const AbstractTreeModel & >( QtItemModel::source() );
 }
 
 QObject * QtTreeModel::item( int row, QObject * parent ) const 
@@ -334,13 +354,28 @@ int QtTreeModel::count( QObject * parent ) const
 	return QtItemModel::rowCount( parent ); 
 }
 
+
+bool QtTreeModel::insertItem( int row, QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QtItemModel::insertRow( row, parentIndex ); 
+}
+
+
+bool QtTreeModel::removeItem( int row, QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QtItemModel::removeRow( row, parentIndex ); 
+}
+
+
 QtTableModel::QtTableModel( AbstractTableModel & source ) 
 	: QtItemModel( source ) 
 {}
 
-AbstractTableModel & QtTableModel::source() const
+const AbstractTableModel & QtTableModel::source() const
 {
-	return static_cast< AbstractTableModel & >( QtItemModel::source() );
+	return static_cast< const AbstractTableModel & >( QtItemModel::source() );
 }
 
 QObject * QtTableModel::item( int row, int column ) const 
@@ -356,4 +391,28 @@ int QtTableModel::rowCount() const
 int QtTableModel::columnCount() const 
 { 
 	return QtItemModel::columnCount( nullptr ); 
+}
+
+
+bool QtTableModel::insertRow( int row )
+{
+	return QtItemModel::insertRow( row ); 
+}
+
+
+bool QtTableModel::insertColumn( int column )
+{
+	return QtItemModel::insertColumn( column ); 
+}
+
+
+bool QtTableModel::removeRow( int row )
+{
+	return QtItemModel::removeRow( row ); 
+}
+
+
+bool QtTableModel::removeColumn( int column )
+{
+	return QtItemModel::removeColumn( column ); 
 }

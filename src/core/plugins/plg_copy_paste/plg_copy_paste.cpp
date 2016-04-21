@@ -26,7 +26,7 @@ private:
 		auto uiApplication = contextManager.queryInterface<IUIApplication>();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 		uiFramework->loadActionData(
-			":/plg_copy_paste/actions.xml",
+			":/WGCopyableFunctions/actions.xml",
 			IUIFramework::ResourceType::File );
 
 		using namespace std::placeholders;

@@ -64,7 +64,6 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_python27_unit_test			core/testing/plg_python27_unit_test
 	plg_curve_editor_test			core/testing/plg_curve_editor_test
 	plg_ui_main_test			    core/testing/plg_ui_main_test
-    plg_tree_expansion_status_test  core/testing/plg_tree_expansion_status_test
     plg_list_model_test  			core/testing/plg_list_model_test
 	plg_tree_model_test  			core/testing/plg_tree_model_test
 	plg_data_model_test			    core/testing/plg_data_model_test

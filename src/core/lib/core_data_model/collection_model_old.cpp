@@ -1,21 +1,33 @@
-#include "collection_model.hpp"
+#include "collection_model_old.hpp"
+#include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_variant/collection.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 
+
 namespace
 {
-	class CollectionItem : public AbstractItem
+	class CollectionItemOld : public IItem
 	{
 	public:
-		CollectionItem(CollectionModel & model, size_t index)
-			: model_(model)
-			, index_(index)
+		CollectionItemOld(CollectionModelOld & model, size_t index)
+			: model_( model )
+			, index_( index )
 		{
 
 		}
 
-		Variant getData(int row, int column, size_t roleId) const override
+		const char * getDisplayText( int column ) const override
+		{
+			return nullptr;
+		}
+
+		ThumbnailData getThumbnail( int column ) const override
+		{
+			return nullptr;
+		}
+
+		Variant getData( int column, size_t roleId ) const override
 		{
 			auto & collection = model_.getSource();
 			if (roleId == ValueTypeRole::roleId_)
@@ -26,7 +38,7 @@ namespace
 			{
 				return collection.keyType().getName();
 			}
-
+			
 			auto it = collection.begin();
 			for (size_t i = 0; i < index_ && it != collection.end(); ++i, ++it) {}
 			if (it == collection.end())
@@ -55,7 +67,7 @@ namespace
 			return Variant();
 		}
 
-		bool setData(int row, int column, size_t roleId, const Variant & data) override
+		bool setData( int column, size_t roleId, const Variant & data ) override
 		{
 			if (roleId != ValueRole::roleId_)
 			{
@@ -70,28 +82,28 @@ namespace
 				return false;
 			}
 
-			it.setValue(data);
+			it.setValue( data );
 			return true;
 		}
 
 	private:
-		CollectionModel & model_;
+		CollectionModelOld & model_;
 		size_t index_;
 	};
 }
 
 
-CollectionModel::CollectionModel()
+CollectionModelOld::CollectionModelOld()
 {
 }
 
 
-CollectionModel::~CollectionModel()
+CollectionModelOld::~CollectionModelOld()
 {
 }
 
 
-void CollectionModel::setSource(Collection & collection)
+void CollectionModelOld::setSource(Collection & collection)
 {
 	// TODO emit signal
 	items_.clear();
@@ -99,17 +111,17 @@ void CollectionModel::setSource(Collection & collection)
 }
 
 
-Collection & CollectionModel::getSource()
+Collection & CollectionModelOld::getSource()
 {
 	return collection_;
 }
 
 
-AbstractItem * CollectionModel::item(int index) const
+IItem * CollectionModelOld::item(size_t index) const
 {
 	if (items_.size() <= index)
 	{
-		items_.resize(index + 1);
+		items_.resize( index + 1 );
 	}
 
 	auto item = items_[index].get();
@@ -118,29 +130,35 @@ AbstractItem * CollectionModel::item(int index) const
 		return item;
 	}
 
-	item = new CollectionItem(*const_cast< CollectionModel * >(this), index);
-	items_[index] = std::unique_ptr< AbstractItem >(item);
+	item = new CollectionItemOld( *const_cast< CollectionModelOld * >( this ), index );
+	items_[index] = std::unique_ptr< IItem >( item );
 	return item;
 }
 
 
-int CollectionModel::index(const AbstractItem* item) const
+size_t CollectionModelOld::index(const IItem* item) const
 {
 	auto index = 0;
 	auto it = items_.begin();
 	for (; it != items_.end() && it->get() != item; ++index, ++it) {}
-	assert(it != items_.end());
+	assert( it != items_.end() );
 	return index;
 }
 
 
-int CollectionModel::rowCount() const
+bool CollectionModelOld::empty() const
 {
-	return (int)collection_.size();
+	return collection_.empty();
 }
 
 
-int CollectionModel::columnCount() const
+size_t CollectionModelOld::size() const
+{
+	return collection_.size();
+}
+
+
+int CollectionModelOld::columnCount() const
 {
 	return 1;
 }

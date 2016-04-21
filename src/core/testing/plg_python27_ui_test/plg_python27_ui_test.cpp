@@ -5,6 +5,7 @@
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_variant/variant.hpp"
 

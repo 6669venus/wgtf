@@ -9,6 +9,8 @@ SET( MODEL_SRCS
 	abstract_item_model.hpp
 	collection_model.cpp
 	collection_model.hpp
+	collection_model_old.cpp
+	collection_model_old.hpp
 	filtered_list_model.cpp
 	filtered_list_model.hpp
 	filtered_tree_model.cpp

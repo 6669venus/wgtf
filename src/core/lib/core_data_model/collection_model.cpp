@@ -107,7 +107,7 @@ Collection & CollectionModel::getSource()
 
 AbstractItem * CollectionModel::item(int index) const
 {
-	if (items_.size() <= index)
+	if (items_.size() <= (size_t)index) 
 	{
 		items_.resize(index + 1);
 	}

@@ -1,11 +1,9 @@
 #include "generic_tree_model.hpp"
 #include "generic_tree_item.hpp"
 
-
 GenericTreeModel::GenericTreeModel( int columnCount/* = 1 */ )
 	:columnCount_( columnCount )
 {
-
 }
 
 void GenericTreeModel::addRootItem( GenericTreeItem * item )

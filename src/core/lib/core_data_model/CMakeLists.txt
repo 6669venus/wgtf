@@ -56,6 +56,16 @@ SET( MODEL_REFLECTION_SRCS
 	reflection/reflected_tree_model.hpp
 	reflection/reflected_list.cpp
 	reflection/reflected_list.hpp
+	reflection/reflected_property_model.hpp
+	reflection/reflected_property_model.cpp
+	reflection/default_property_model_extensions.cpp
+	reflection/default_property_model_extensions.hpp
+	reflection/property_model_extensions.hpp
+	reflection/property_model_extensions.cpp
+	reflection/reflected_collection_item.hpp
+	reflection/reflected_collection_item.cpp
+	reflection/child_creator.hpp
+	reflection/child_creator.cpp
 )
 SOURCE_GROUP( "DataModel\\Reflection"
 	FILES ${MODEL_REFLECTION_SRCS} )

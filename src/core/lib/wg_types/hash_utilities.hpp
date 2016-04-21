@@ -27,6 +27,8 @@ namespace HashUtilities
 			//have a small output range.
 			(seed << 5) + (seed >> 3);
 	}
+
+    void directCombine(uint64_t & seed, uint64_t value);
 }
 
 #endif // HASH_UTILITIES_HPP

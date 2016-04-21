@@ -26,7 +26,7 @@ WGPanel {
         id: timelineModel
 
         ListElement {
-            name: "Turret"
+            name: "Component 1"
             type: "fullBar"
             barColor: "#666666"
             rowSpan: 1
@@ -146,7 +146,7 @@ WGPanel {
         }
         ListElement {
             name: "Condition 2"
-            text: "if (turretLife == 0 && onFire)"
+            text: "if (componentLife == 0 && onFire)"
             barColor: "#6666DD"
             type: "textBox"
             rowSpan: 1
@@ -188,7 +188,7 @@ WGPanel {
             type: "frameSlider"
             barColor: "#3333BB"
             eventName: "set"
-            eventProperty: "noTurretWreckModel"
+            eventProperty: "objectWreckModel"
             eventAction: "="
             keyFrames: [
                 ListElement {
@@ -204,7 +204,7 @@ WGPanel {
             type: "frameSlider"
             barColor: "#3333BB"
             eventName: "set"
-            eventProperty: "turretModel"
+            eventProperty: "componentModel"
             eventAction: "="
             keyFrames: [
                 ListElement {
@@ -280,14 +280,14 @@ WGPanel {
             rowSpan: 1
         }
         ListElement {
-            name: "Track"
+            name: "Component 2"
             type: "fullBar"
             barColor: "#666666"
             rowSpan: 1
         }
         ListElement {
             name: "Condition 1"
-            text: "if (trackLife == 0 && speed >= 10)"
+            text: "if (componentLife == 0 && speed >= 10)"
             type: "textBox"
             barColor: "#6666DD"
             rowSpan: 1
@@ -313,7 +313,7 @@ WGPanel {
             type: "frameSlider"
             barColor: "#3333BB"
             eventName: "set"
-            eventProperty: "trackModel"
+            eventProperty: "componentModel"
             eventAction: "="
             keyFrames: [
                 ListElement {
@@ -329,7 +329,7 @@ WGPanel {
             type: "frameSlider"
             barColor: "#3333BB"
             eventName: "set"
-            eventProperty: "thrownTrackModel"
+            eventProperty: "wreckedComponentModel"
             eventAction: "="
             keyFrames: [
                 ListElement {
@@ -348,7 +348,7 @@ WGPanel {
             barColor: "#3FA9F5"
             eventProperty: "file"
             eventAction: "="
-            eventValue: "trackThrown.fsb"
+            eventValue: "componentBreak.fsb"
             rowSpan: 1
         }
         ListElement {

@@ -500,7 +500,7 @@ Rectangle {
 
 
 
-    // Non-interactive depiction of total duration and visible duration. Maths too hard to make it interactive at the moment.
+    // Slideable depiction of total duration and visible duration.
 
     WGTimelineBarSlider {
         id: timelineArea

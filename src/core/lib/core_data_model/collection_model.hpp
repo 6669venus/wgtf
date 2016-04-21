@@ -16,6 +16,7 @@ public:
 	virtual ~CollectionModel();
 
 	void setSource(Collection & collection);
+	const Collection & getSource() const;
 	Collection & getSource();
 
 	// AbstractListModel

@@ -1,37 +1,81 @@
 #include "qt_collection_model.hpp"
+
+#include "helpers/qt_helpers.hpp"
+
 #include "core_data_model/collection_model.hpp"
 
 
-QtListModel::QtListModel( CollectionModel & source ) 
+QtCollectionModel::QtCollectionModel( CollectionModel & source ) 
 	: QtListModel( source ) 
 {
 }
 
 
-const CollectionModel & QtListModel::source() const
+const CollectionModel & QtCollectionModel::source() const
 {
 	return static_cast< const CollectionModel & >( QtItemModel::source() );
 }
 
 
-//QObject * QtListModel::item( const QVariant & key ) const
-//{
-//	const auto variantKey = QtHelpers::toVariant( key );
-//	const auto & collectionModel = this->source();
-//	const auto & collection = collectionModel.getSource();
-//	if (variantKey.type
+QObject * QtCollectionModel::item( const QVariant & key ) const
+{
+	const auto & collectionModel = this->source();
+	const auto & collection = collectionModel.getSource();
 
-//	return QtItemModel::item( row, 0, nullptr );
-//}
+	const auto variantKey = QtHelpers::toVariant( key );
+	int row = -1;
+	const auto isRow = variantKey.tryCast< int >( row );
+	if (!isRow)
+	{
+		return false;
+	}
+
+	assert( QtItemModel::hasIndex( row, 0 ) );
+	return QtItemModel::item( row, 0, nullptr );
+}
 
 
-//bool QtListModel::insertItem( const QVariant & key )
-//{
-//	return QtItemModel::insertRow( row );
-//}
+bool QtCollectionModel::insertItem( const QVariant & key )
+{
+	const auto & collectionModel = this->source();
+	const auto & collection = collectionModel.getSource();
+	// Insert/remove disabled for mapping types
+	// which may not be ordered
+	if (collection.isMapping())
+	{
+		return false;
+	}
+
+	const auto variantKey = QtHelpers::toVariant( key );
+	int row = -1;
+	const auto isRow = variantKey.tryCast< int >( row );
+	if (!isRow)
+	{
+		return false;
+	}
+
+	return QtItemModel::insertRow( row );
+}
 
 
-//bool QtListModel::removeItem( const QVariant & key )
-//{
-//	return QtItemModel::removeRow( row );
-//}
+bool QtCollectionModel::removeItem( const QVariant & key )
+{
+	const auto & collectionModel = this->source();
+	const auto & collection = collectionModel.getSource();
+	// Insert/remove disabled for mapping types
+	// which may not be ordered
+	if (collection.isMapping())
+	{
+		return false;
+	}
+
+	const auto variantKey = QtHelpers::toVariant( key );
+	int row = -1;
+	const auto isRow = variantKey.tryCast< int >( row );
+	if (!isRow)
+	{
+		return false;
+	}
+
+	return QtItemModel::removeRow( row );
+}

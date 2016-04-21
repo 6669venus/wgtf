@@ -26,24 +26,24 @@ public:
 	/**
 	 *	Get item from row in list.
 	 */
-	//Q_INVOKABLE QObject * item( const QVariant & key ) const;
+	Q_INVOKABLE QObject * item( const QVariant & key ) const;
 
-	///**
-	// *	Add a new row.
-	// *	@param key the position to insert the new item.
-	// *		Inserts the item *before* the given key.
-	// *		If the key is 0, the new item is added to the start.
-	// *		If key is count(), the new item is added to the end.
-	// *	@return true on success.
-	// */
-	//Q_INVOKABLE bool insertItem( const QVariant & key );
+	/**
+	 *	Add a new row.
+	 *	@param key the position to insert the new item.
+	 *		Inserts the item *before* the given key.
+	 *		If the key is 0, the new item is added to the start.
+	 *		If key is count(), the new item is added to the end.
+	 *	@return true on success.
+	 */
+	Q_INVOKABLE bool insertItem( const QVariant & key );
 
-	///**
-	// *	Remove a row.
-	// *	@param row to be removed.
-	// *	@return true on success.
-	// */
-	//Q_INVOKABLE bool removeItem( const QVariant & key );
+	/**
+	 *	Remove a row.
+	 *	@param row to be removed.
+	 *	@return true on success.
+	 */
+	Q_INVOKABLE bool removeItem( const QVariant & key );
 };
 
 

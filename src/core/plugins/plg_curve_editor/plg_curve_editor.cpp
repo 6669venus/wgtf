@@ -7,6 +7,8 @@
 
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
+#include "core_logging/logging.hpp"
+
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_window.hpp"
@@ -60,20 +62,27 @@ public:
 		std::unique_ptr<ICurveEditor> curvesModel = std::unique_ptr<ICurveEditor>( new CurveEditor() );
 		types_.emplace_back( contextManager.registerInterface<ICurveEditor>(curvesModel.get(), false) );
 
-        auto uiApplication = contextManager.queryInterface< IUIApplication >();
-        auto uiFramework = contextManager.queryInterface< IUIFramework >();
+		auto uiApplication = contextManager.queryInterface< IUIApplication >();
+		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		curvePanel_ = uiFramework->createView("plg_curve_editor/CurveEditor.qml", IUIFramework::ResourceType::Url, std::move(curvesModel));
-		uiApplication->addView(*curvePanel_);
-
-        
+		if (curvePanel_ != nullptr)
+		{
+			uiApplication->addView(*curvePanel_);
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		if(uiApplication)
+		if(uiApplication && (curvePanel_ != nullptr))
+		{
 			uiApplication->removeView(*curvePanel_);
+		}
 		curvePanel_.reset();
 		
 		return true;

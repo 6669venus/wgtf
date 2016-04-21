@@ -22,28 +22,46 @@ QObject * QtCollectionModel::item( const QVariant & key ) const
 	const auto & collectionModel = this->source();
 	const auto & collection = collectionModel.getSource();
 
+	// Check key types match
 	const auto variantKey = QtHelpers::toVariant( key );
 	const auto pMetaType = variantKey.type();
 	if (pMetaType == nullptr)
 	{
 		return nullptr;
 	}
-
 	if (pMetaType->typeId() != collection.keyType())
 	{
 		return nullptr;
 	}
 
-	const auto foundItr = collection.find( variantKey );
-	if (foundItr == collection.cend())
-	{
-		return nullptr;
-	}
-
 	int row = 0;
-	for (auto itr = collection.cbegin(); itr != foundItr; ++itr)
+	if (collection.isMapping())
 	{
-		++row;
+		// Key type may not be an index.
+		// E.g. map[ "string key" ]
+		// Iterate to convert key to an index.
+		auto itr = collection.cbegin();
+		for (; itr != collection.cend(); ++itr, ++row)
+		{
+			if (itr.key() == variantKey)
+			{
+				break;
+			}
+		}
+		if (itr == collection.cend())
+		{
+			return nullptr;
+		}
+	}
+	else
+	{
+		// Since this is an index-able collection
+		// Convert key directly to index
+		const auto isRow = variantKey.tryCast< int >( row );
+		if (!isRow)
+		{
+			return nullptr;
+		}
 	}
 
 	assert( QtItemModel::hasIndex( row, 0 ) );
@@ -55,6 +73,7 @@ bool QtCollectionModel::insertItem( const QVariant & key )
 {
 	const auto & collectionModel = this->source();
 	const auto & collection = collectionModel.getSource();
+
 	// Insert/remove disabled for mapping types
 	// which may not be ordered
 	if (collection.isMapping())
@@ -62,7 +81,20 @@ bool QtCollectionModel::insertItem( const QVariant & key )
 		return false;
 	}
 
+	// Check key types match
 	const auto variantKey = QtHelpers::toVariant( key );
+	const auto pMetaType = variantKey.type();
+	if (pMetaType == nullptr)
+	{
+		return false;
+	}
+	if (pMetaType->typeId() != collection.keyType())
+	{
+		return false;
+	}
+
+	// Since this is an index-able collection
+	// Convert key directly to index
 	int row = -1;
 	const auto isRow = variantKey.tryCast< int >( row );
 	if (!isRow)
@@ -78,6 +110,7 @@ bool QtCollectionModel::removeItem( const QVariant & key )
 {
 	const auto & collectionModel = this->source();
 	const auto & collection = collectionModel.getSource();
+
 	// Insert/remove disabled for mapping types
 	// which may not be ordered
 	if (collection.isMapping())
@@ -85,7 +118,20 @@ bool QtCollectionModel::removeItem( const QVariant & key )
 		return false;
 	}
 
+	// Check key types match
 	const auto variantKey = QtHelpers::toVariant( key );
+	const auto pMetaType = variantKey.type();
+	if (pMetaType == nullptr)
+	{
+		return false;
+	}
+	if (pMetaType->typeId() != collection.keyType())
+	{
+		return false;
+	}
+
+	// Since this is an index-able collection
+	// Convert key directly to index
 	int row = -1;
 	const auto isRow = variantKey.tryCast< int >( row );
 	if (!isRow)

@@ -87,17 +87,18 @@ Item {
     implicitHeight: defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2)
     implicitWidth: defaultSpacing.standardMargin
 
-    height: lineFrame ? content.height + defaultSpacing.doubleMargin +
-                        (defaultSpacing.topBottomMargin * 3) + toggleableBox.height
+    property bool __hasHeader: lineFrame && (text != "" || toggleable) ? true : false
+
+    height: lineFrame ? content.height + defaultSpacing.doubleMargin + defaultSpacing.topBottomMargin + lineFrameHeader.height
                          : (content.height + defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2))
 
-    Layout.preferredHeight: content.height + defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2)
+    Layout.preferredHeight: height
 
     Layout.fillWidth: true
 
     Rectangle {
         id: frame
-        visible: lineFrame ? false : true
+        visible: !lineFrame
         color: {
             if (shade)
             {
@@ -134,7 +135,6 @@ Item {
     Item {
         id: lineFrameHeader
         height: defaultSpacing.minimumRowHeight
-        Layout.preferredHeight: childrenRect.height + defaultSpacing.topMargin + defaultSpacing.bottomMargin
         anchors {left: parent.left; right: parent.right}
         anchors.top: parent.top
         visible: lineFrame
@@ -163,7 +163,7 @@ Item {
         WGSeparator {
             id: topSeparator
             vertical: false
-            anchors.left: toggleable ? toggleableBox.right : frameLabel.right
+            anchors.left: __hasHeader ? (toggleable ? toggleableBox.right : frameLabel.right) : parent.left
             anchors.right: lineFrameHeader.right
             anchors.leftMargin: defaultSpacing.leftMargin
             anchors.rightMargin: defaultSpacing.standardMargin
@@ -197,6 +197,7 @@ Item {
         vertical: false
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.leftMargin: defaultSpacing.leftMargin
         anchors.rightMargin: defaultSpacing.standardMargin
         anchors.bottom: parent.bottom
         anchors.bottomMargin: defaultSpacing.standardMargin

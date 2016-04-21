@@ -23,11 +23,27 @@ QObject * QtCollectionModel::item( const QVariant & key ) const
 	const auto & collection = collectionModel.getSource();
 
 	const auto variantKey = QtHelpers::toVariant( key );
-	int row = -1;
-	const auto isRow = variantKey.tryCast< int >( row );
-	if (!isRow)
+	const auto pMetaType = variantKey.type();
+	if (pMetaType == nullptr)
 	{
-		return false;
+		return nullptr;
+	}
+
+	if (pMetaType->typeId() != collection.keyType())
+	{
+		return nullptr;
+	}
+
+	const auto foundItr = collection.find( variantKey );
+	if (foundItr == collection.cend())
+	{
+		return nullptr;
+	}
+
+	int row = 0;
+	for (auto itr = collection.cbegin(); itr != foundItr; ++itr)
+	{
+		++row;
 	}
 
 	assert( QtItemModel::hasIndex( row, 0 ) );

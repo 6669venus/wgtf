@@ -2,6 +2,7 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_command_system/compound_command.hpp"
 #include "core_command_system/i_env_system.hpp"
+#include "core_logging/logging.hpp"
 #include "core_reflection/interfaces/i_reflection_property_setter.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/i_definition_manager.hpp"
@@ -138,15 +139,35 @@ void TestUI::addActions( IUIApplication & uiApplication )
 // =============================================================================
 void TestUI::addViews( IUIApplication & uiApplication )
 {
-	uiApplication.addView( *test1Views_.back().first );
-	uiApplication.addView( *test2Views_.back().first );
+	if (test1Views_.back().first != nullptr)
+	{
+		uiApplication.addView( *test1Views_.back().first );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
+	if (test2Views_.back().first != nullptr)
+	{
+		uiApplication.addView( *test2Views_.back().first );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
 }
 
 void TestUI::removeViews( size_t idx )
 {
 	assert( app_ != nullptr );
-	app_->removeView( *test1Views_[idx].first );
-	app_->removeView( *test2Views_[idx].first );
+	if (test1Views_[idx].first != nullptr)
+	{
+		app_->removeView( *test1Views_[idx].first );
+	}
+	if (test2Views_[idx].first != nullptr)
+	{
+		app_->removeView( *test2Views_[idx].first );
+	}
 }
 
 void TestUI::onFocusIn( IView* view )

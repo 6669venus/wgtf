@@ -6,6 +6,8 @@
 
 #include "core_command_system/i_command_manager.hpp"
 
+#include "core_logging/logging.hpp"
+
 #include "core_qt_common/i_qt_framework.hpp"
 
 #include "core_reflection/reflection_macros.hpp"
@@ -71,7 +73,14 @@ public:
 			"WGMacros/WGMacroView.qml",
 			IUIFramework::ResourceType::Url, macros_ );
 
-		uiApplication->addView( *panel_ );
+		if (panel_ != nullptr)
+		{
+			uiApplication->addView( *panel_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 	}
 
 	bool Finalise( IComponentContext& contextManager ) override
@@ -81,8 +90,11 @@ public:
 		{
 			return true;
 		}
-		uiApplication->removeView( *panel_ );
-		panel_ = nullptr;
+		if (panel_ != nullptr)
+		{
+			uiApplication->removeView( *panel_ );
+			panel_ = nullptr;
+		}
 
 		return true;
 	}

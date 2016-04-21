@@ -1,6 +1,7 @@
 #include "custom_model_interface_test.hpp"
 
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_logging/logging.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
@@ -185,7 +186,14 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 		return;
 	}
 
-	uiApplication->addView( *testView_ );
+	if (testView_ != nullptr)
+	{
+		uiApplication->addView( *testView_ );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
 }
 
 void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
@@ -196,6 +204,9 @@ void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
 		return;
 	}
 
-	uiApplication->removeView( *testView_ );
-	testView_.reset();
+	if (testView_ != nullptr)
+	{
+		uiApplication->removeView( *testView_ );
+		testView_.reset();
+	}
 }

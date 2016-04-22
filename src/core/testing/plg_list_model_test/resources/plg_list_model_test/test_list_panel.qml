@@ -28,71 +28,81 @@ WG1.WGPanel {
     }
 
     //Temporary code to test if model has data.
-    /*
-    ListView {
-        anchors.top: switchModelButton.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: 1
-        model: sourceModel
+    /*ScrollView {
+		anchors.top: switchModelButton.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
 
-        delegate: Text {
-            text: display
-        }
-    }
-        */
-    WGListView {
-        id: testListView
-        anchors.top: switchModelButton.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: 1
-        showColumnsFrame: true
-        //Enable and test headers once body is working.
-        //showColumnHeaders: true
-        //showColumnFooters: true
-        model: sourceModel
-        columnDelegates: [defaultColumnDelegate, columnDelegate]
-        
-        Component {
-            id: columnDelegate
+		ListView {
+			//leftMargin: 50
+			//rightMargin: 50
+			//topMargin: 50
+			//bottomMargin: 50
+			model: sourceModel
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: testListView.minimumRowHeight
-				
-                Rectangle {
-                    anchors.fill: parent
-                    anchors.margins: 1
-                    color: {
-                        if (typeof itemData.Value === "string")
-                        {
-                            return "transparent";
-                        }
+			delegate: Text {
+				text: display
+			}
+		}
+	}*/
+
+
+	ScrollView {
+		anchors.top: switchModelButton.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+
+		WGListView {
+			//anchors.margins: 10
+			//leftMargin: 50
+			//rightMargin: 50
+			//topMargin: 50
+			//bottomMargin: 50
+			columnWidth: 50
+			columnSpacing: 1
+			columnDelegates: [columnDelegate, colorDelegate]
+			roles: ["value"]
+			model: sourceModel
+
+			Component {
+				id: colorDelegate
+
+				Item {
+					width: itemWidth
+					implicitWidth: textItem.implicitWidth
+					implicitHeight: 24
+
+					Rectangle {
+						id: colorItem
+
+						anchors.fill: parent
+						anchors.margins: 1
+						color: {
+							if (typeof itemData.value === "string")
+							{
+								return "transparent";
+							}
 						
-                        var colour = itemData.Value;
-                        var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
-                        var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
-                        var b = colour % 100 + 156;
+							var colour = itemData.value;
+							var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
+							var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
+							var b = colour % 100 + 156;
 						
-                        return Qt.rgba(r / 255, g / 255, b / 255, 1);
-                    }
-                }
+							return Qt.rgba(r / 255, g / 255, b / 255, 1);
+						}
+					}
 
-                Text {
-                    clip: true
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.margins: 4
-                    verticalAlignment: Text.AlignVCenter
-                    visible: typeof itemData.Value === "string"
-                    text: typeof itemData.Value === "string" ? itemData.Value : ""
-                    color: palette.textColor
-                }
-            }
-        }
-    }
+					Text {
+						id: textItem
+
+						visible: typeof itemData.value === "string"
+						text: typeof itemData.value === "string" ? itemData.value : ""
+						color: palette.textColor
+					}
+				}
+			}
+		}
+	}
 }

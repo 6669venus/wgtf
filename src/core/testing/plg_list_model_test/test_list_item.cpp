@@ -3,6 +3,9 @@
 
 #include <vector>
 
+ITEMROLE( display )
+ITEMROLE( value )
+
 enum class TestListItemType
 {
 	STRING,
@@ -304,9 +307,7 @@ TestListItem& TestListItem::operator=( const TestListItem& rhs )
 
 Variant TestListItem::getData( int column, size_t roleId ) const
 {
-	static size_t displayRole = ItemRole::compute( "display" );
-
-	if (roleId == displayRole)
+	if (roleId == ItemRole::displayId)
 	{
 		return column == 0 ? impl_->name_.c_str() : "Value";
 	}
@@ -321,7 +322,7 @@ Variant TestListItem::getData( int column, size_t roleId ) const
 			return typeid( size_t ).name();
 		}
 	}
-	else if (roleId == ValueRole::roleId_)
+	else if (roleId == ItemRole::valueId)
 	{
 		if (column == 0)
 		{

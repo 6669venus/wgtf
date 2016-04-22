@@ -8,6 +8,9 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+ITEMROLE( display )
+ITEMROLE( decoration )
+
 namespace
 {
 	class ItemData : public QObject
@@ -242,19 +245,16 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 	{
 		return QVariant();
 	}
-
-	static size_t displayRole = ItemRole::compute( "display" );
-	static size_t decorationRole = ItemRole::compute( "decoration" );
 	
 	size_t roleId;
 	switch (role)
 	{
 	case Qt::DisplayRole:
-		roleId = displayRole;
+		roleId = ItemRole::displayId;
 		break;
 
 	case Qt::DecorationRole:
-		roleId = decorationRole;
+		roleId = ItemRole::decorationId;
 		break;
 
 	default:

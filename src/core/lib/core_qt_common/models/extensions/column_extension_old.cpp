@@ -1,36 +1,34 @@
-#include "column_extension.hpp"
+#include "column_extension_old.hpp"
 #include "core_qt_common/models/adapters/column_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
 
-ITEMROLE( columnModel )
-
-struct ColumnExtension::Implementation
+struct ColumnExtensionOld::Implementation
 {
 	std::vector< IndexedAdapter< ColumnListAdapter > > columnModels_;
 	std::vector< std::unique_ptr< ColumnListAdapter > > redundantColumnModels_;
 };
 
 
-ColumnExtension::ColumnExtension()
+ColumnExtensionOld::ColumnExtensionOld()
 	: impl_( new Implementation() )
 {
 }
 
 
-ColumnExtension::~ColumnExtension()
+ColumnExtensionOld::~ColumnExtensionOld()
 {
 }
 
 
-QHash< int, QByteArray > ColumnExtension::roleNames() const
+QHash< int, QByteArray > ColumnExtensionOld::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	this->registerRole( ItemRole::columnModelName, roleNames );
+	this->registerRole( ColumnModelRole::roleName_, roleNames );
 	return roleNames;
 }
 
 
-QVariant ColumnExtension::data( const QModelIndex &index, int role ) const
+QVariant ColumnExtensionOld::data( const QModelIndex &index, int role ) const
 {
 	size_t roleId;
 	if (!this->decodeRole( role, roleId ))
@@ -38,7 +36,7 @@ QVariant ColumnExtension::data( const QModelIndex &index, int role ) const
 		return QVariant( QVariant::Invalid );
 	}
 
-	if (roleId != ItemRole::columnModelId)
+	if (roleId != ColumnModelRole::roleId_)
 	{
 		return QVariant( QVariant::Invalid );
 	}
@@ -58,14 +56,14 @@ QVariant ColumnExtension::data( const QModelIndex &index, int role ) const
 }
 
 
-bool ColumnExtension::setData( 
+bool ColumnExtensionOld::setData( 
 	const QModelIndex &index, const QVariant &value, int role )
 {
 	return false;
 }
 
 
-void ColumnExtension::onLayoutAboutToBeChanged(
+void ColumnExtensionOld::onLayoutAboutToBeChanged(
 	const QList<QPersistentModelIndex> & parents, 
 	QAbstractItemModel::LayoutChangeHint hint )
 {
@@ -77,7 +75,7 @@ void ColumnExtension::onLayoutAboutToBeChanged(
 }
 
 
-void ColumnExtension::onLayoutChanged(
+void ColumnExtensionOld::onLayoutChanged(
 	const QList<QPersistentModelIndex> & parents, 
 	QAbstractItemModel::LayoutChangeHint hint )
 {
@@ -85,7 +83,7 @@ void ColumnExtension::onLayoutChanged(
 }
 
 
-void ColumnExtension::onRowsAboutToBeRemoved( 
+void ColumnExtensionOld::onRowsAboutToBeRemoved( 
 	const QModelIndex& parent, int first, int last )
 {
 	isolateRedundantIndices( parent, first, last,
@@ -93,7 +91,7 @@ void ColumnExtension::onRowsAboutToBeRemoved(
 }
 
 
-void ColumnExtension::onRowsRemoved(
+void ColumnExtensionOld::onRowsRemoved(
 	const QModelIndex & parent, int first, int last )
 {
 	impl_->redundantColumnModels_.clear();

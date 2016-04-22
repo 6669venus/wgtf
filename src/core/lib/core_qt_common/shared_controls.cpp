@@ -14,7 +14,9 @@
 #include "models/data_change_notifier.hpp"
 #include "models/extensions/asset_item_extension.hpp"
 #include "models/extensions/column_extension.hpp"
+#include "models/extensions/column_extension_old.hpp"
 #include "models/extensions/component_extension.hpp"
+#include "models/extensions/list_extension.hpp"
 #include "models/extensions/selection_extension.hpp"
 #include "models/extensions/thumbnail_extension.hpp"
 #include "models/extensions/tree_extension.hpp"
@@ -60,7 +62,7 @@
 	qmlRegisterType< SequenceListAdapter, 1 >("BWControls", 1, 0, "SequenceList" );
 	qmlRegisterType< WGTreeListAdapter, 1 >( "WGControls", 1, 0, "WGTreeListAdapter" );
 
-	qmlRegisterType< ColumnExtension, 1 >( "WGControls", 1, 0, "ColumnExtension" );
+	qmlRegisterType< ColumnExtensionOld, 1 >( "WGControls", 1, 0, "ColumnExtension" );
 	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 1, 0, "ComponentExtension" );
 	qmlRegisterType< SelectionExtension, 1 >( "WGControls", 1, 0, "SelectionExtension" );
 	qmlRegisterType< ThumbnailExtension, 1 >( "WGControls", 1, 0, "ThumbnailExtension" );
@@ -69,7 +71,10 @@
 	qmlRegisterType< AssetItemExtension, 1 >( "WGControls", 1, 0, "AssetItemExtension" );
 	qmlRegisterType< HeaderFooterTextExtension, 1 >( "WGControls", 1, 0, "HeaderFooterTextExtension" );
 
-	qmlRegisterType< WGItemView, 1 >( "WGControls", 1, 0, "WGItemView" );
+	qmlRegisterType< ColumnExtension, 1 >( "WGControls", 2, 0, "ColumnExtension" );
+	qmlRegisterType< ListExtension, 1 >( "WGControls", 2, 0, "ListExtension" );
+
+	qmlRegisterType< WGItemView, 1 >( "WGControls", 2, 0, "WGItemView" );
 
 	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );
 	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );

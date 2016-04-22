@@ -45,7 +45,7 @@ public:
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 		//The other three panels have been taken out to reduce clutter while testing, please add again when everything works.
-		/*
+		
 		std::unique_ptr< IListModel > oldListModel( new OldTestListModel() );
 		oldListView_ = uiFramework->createView(
 			"plg_list_model_test/test_list_panel_old.qml",
@@ -55,7 +55,7 @@ public:
 		oldShortListView_ = uiFramework->createView(
 			"plg_list_model_test/test_short_list_panel_old.qml",
 			IUIFramework::ResourceType::Url, std::move( oldShortListModel ) );
-		*/
+		
 		//std::unique_ptr<AbstractListModel> listModel( new TestListModel() );
 		listModel_ = std::make_shared<TestListModel>();
 		listView_ = uiFramework->createView(
@@ -74,8 +74,8 @@ public:
 			IUIFramework::ResourceType::Url, std::move( multiColumnListModel ) );
 		
 		*/
-		//uiApplication->addView( *oldListView_ );
-		//uiApplication->addView( *oldShortListView_ );
+		uiApplication->addView( *oldListView_ );
+		uiApplication->addView( *oldShortListView_ );
 		uiApplication->addView( *listView_ );
 		//uiApplication->addView( *shortListView_ );
 		//uiApplication->addView( *multiColumnListView_ );

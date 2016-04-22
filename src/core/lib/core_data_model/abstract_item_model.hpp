@@ -85,7 +85,7 @@ public:
 private:
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
-		if (index.parent_ != nullptr || index.column_ != 0)
+		if (index.parent_ != nullptr)
 		{
 			return nullptr;
 		}
@@ -218,11 +218,6 @@ public:
 private:
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
-		if (index.column_ != 0)
-		{
-			return nullptr;
-		}
-
 		return item( ItemIndex( index.row_, index.parent_ ) );
 	}
 

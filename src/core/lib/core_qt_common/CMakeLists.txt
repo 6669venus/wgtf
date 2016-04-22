@@ -50,8 +50,12 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
+	models/extensions/column_extension_old.cpp
+	models/extensions/column_extension_old.hpp
 	models/extensions/component_extension.cpp
 	models/extensions/component_extension.hpp
+	models/extensions/list_extension.cpp
+	models/extensions/list_extension.hpp
 	models/extensions/selection_extension.cpp
 	models/extensions/selection_extension.hpp
 	models/extensions/tree_extension.cpp

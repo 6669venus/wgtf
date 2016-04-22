@@ -3,248 +3,71 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import BWControls 1.0
 
-/*!
- \brief WGListViewRowDelegate is used within WGListView's delegate.
- WGListViewRowDelegate will load custom column delegates in its delegate or fall back to a default if none exists.
- WGListViewRowDelegate should only be used within the contexts of a ListView.
- See WGTreeItem for an example of its use.
-*/
-
 Item {
-    id: rowDelegate
-    objectName: "WGListViewRowDelegate"
+	id: itemRow
+    objectName: "WGItemRow"
 
-    /*!
-        This property defines the indentation before the first element on each row
-        The default value is \c 0
-    */
-    property int indentation: 0
+	width: childrenRect.width
+	height: childrenRect.height
 
-    /*!
-        This property holds the index of the selected row in the list
-    */
-    property int rowIndex: index
-
-    /*!
-        This property represents the model index (QModelIndex) of the selected row in the list
-    */
-    property var modelIndex: null
-
-    /*!
-        This property contains a default column delegate.
-        The default value is \c null
-    */
-    property var defaultColumnDelegate: null
-
-    /*!
-        This property contains the items to be delegated by the WGListViewRowDelegate's delegate.
-        The default value is an empty list
-    */
-    property var columnDelegates: []
-
+	property Component columnDelegate
+	property var columnDelegates: []
     property var columnSequence: []
+	property var columnWidths: []
+	property alias columnSpacing: row.spacing
 
-    /*! This property contains the column widths */
-    property var columnWidths: []
+	property bool selected: false
 
-    property real columnSpacing: 0
+	signal itemPressed(var mouse, var itemIndex)
+    signal itemClicked(var mouse, var itemIndex)
+    signal itemDoubleClicked(var mouse, var itemIndex)
 
-    /*!
-        This property describes mouse selection behaviour
-    */
-    property var selectionExtension: null
-
-    /*! This property holds the active focus state of the control
-        The default value is \c false */
-    property bool hasActiveFocusDelegate: false
-
-    /*! This property specifies the main colour for the row background */
-    property bool showBackgroundColour: false
-
-    /*! This property specifies the main colour for the row background */
-    property color backgroundColour: palette.midDarkColor
-
-    /*! This property specifies the alternate colour for the row background */
-    property color alternateBackgroundColour: Qt.darker(palette.midLightColor,1.2)
-
-    /*! This signal is sent on a single click
-    */
-    signal clicked(var mouse)
-
-    //TODO: Improve documentation
-    /*! This signal is sent on a double click
-    */
-    signal doubleClicked(var mouse)
-
-    function calculateMaxTextWidth(index)
-    {
-        var maxTextWidth = 0;
-        var parentComponent = itemMouseArea.columnsList;
-        var childObject = parentComponent.children[index]
-
-        if (!childObject.visible)
-        {
-            return maxTextWidth;
-        }
-
-        // if it has a painted width, turn off elide,
-        // check if its painted width is the longest then update and reset elide
-        var childElide = Text.ElideNone
-
-        if (childObject.elide != Text.ElideNone)
-        {
-            childElide = childObject.elide
-            childObject.elide = Text.ElideNone
-        }
-
-        maxTextWidth = childObject.paintedWidth
-
-        if(childElide != childObject.elide)
-        {
-            childObject.elide = childElide
-        }
-
-        return maxTextWidth;
+	/* MOVE INTO STYLE*/
+	Rectangle {
+		id: backgroundArea
+		anchors.fill: row
+        color: palette.highlightShade
+		opacity: selected ? 1 : 0.5 
+        visible: hoverArea.containsMouse || selected
     }
 
-    height: minimumRowHeight
-    clip: true
+	MouseArea {
+		id: hoverArea
+		anchors.fill: backgroundArea
+		hoverEnabled: true
+	}
+	/**/
 
-    MouseArea {
-        id: itemMouseArea
-        parent: rowDelegate.parent
-        anchors.fill: rowDelegate
-        hoverEnabled: true
-        acceptedButtons: Qt.RightButton | Qt.LeftButton;
-        property var columnsList: columns;
+	Row {
+		id: row
 
-        onPressed: {
-            if ((selectionExtension == null) || (typeof Selected == 'undefined'))
-            {
-                return;
-            }
+		Repeater {
+			model: SequenceList {
+				model: columnModel
+				sequence: columnSequence
+			}
 
-            if (mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton)
-            {
-                var multiSelect = selectionExtension.multiSelect;
+			Item {
+				width: columnWidths[index]
+				height: childrenRect.height
+				clip: true
 
-                if (mouse.modifiers & Qt.ControlModifier)
-                {
-                    Selected = !Selected;
-                }
-                else if (mouse.modifiers & Qt.ShiftModifier)
-                {
-                    if (multiSelect)
-                    {
-                        selectionExtension.prepareRangeSelect();
-                        Selected = true;
-                    }
-                }
-                else
-                {
-                    if (multiSelect && ((mouse.button == Qt.LeftButton) || (mouse.button == Qt.RightButton && modelIndex != null && !selectionExtension.indexInSelection(modelIndex))))
-                    {
-                        selectionExtension.clearOnNextSelect();
-                    }
+				MouseArea {
+					width: columnWidths[index]
+					height: row.height
+					acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
-                    Selected = true;
-                }
-            }
-        }
+					onPressed: itemPressed(mouse, modelIndex)
+					onClicked: itemClicked(mouse, modelIndex)
+					onDoubleClicked: itemDoubleClicked(mouse, modelIndex)
+				}
 
-        onClicked: {
-            rowDelegate.clicked(mouse)
-            // NOTE: Do not give the parent active focus here. The tree view and the list view have different ways to utilize
-            //		 us, so giving parent focus will break keyboard input event handles.
-        }
-
-        onDoubleClicked: rowDelegate.doubleClicked(mouse)
-
-        Rectangle {
-            id: background
-            anchors.fill: parent
-            visible: rowDelegate.showBackgroundColour
-            color: index % 2 === 0 ? rowDelegate.backgroundColour : rowDelegate.alternateBackgroundColour
-        }
-
-        Rectangle {
-            id: selectionHighlight
-            color: hasActiveFocusDelegate ? palette.highlightShade : "grey"
-            anchors.fill: itemMouseArea
-            anchors.margins: selectionMargin
-            visible: !itemMouseArea.pressed && typeof Selected != 'undefined' && Selected
-        }
-
-        Rectangle {
-            id: mouseOverHighlight
-            anchors.fill: itemMouseArea
-            visible: itemMouseArea.containsMouse
-            opacity: 0.5
-            color: palette.highlightShade
-        }
-
-        ListView {
-            id: columns
-
-            // Adapt from number of columns in the model to the number of
-            // columns in the view.
-            // @see WGListView.columnSequence
-            model: SequenceList {
-                model: ColumnModel
-                sequence: rowDelegate.columnSequence
-            }
-
-            x: indentation
-            width: Math.max(0, parent.width - indentation)
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            orientation: Qt.Horizontal
-            interactive: false
-            spacing: rowDelegate.columnSpacing
-
-            delegate: Loader {
-                id: columnDelegate
-
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-
-                property var itemData: model
-                property int rowIndex: rowDelegate.rowIndex
-                property int columnIndex: index
-                property int indentation: rowDelegate.indentation
-
-                sourceComponent:
-                    columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
-                    defaultColumnDelegate
-
-                onLoaded: {
-                    var widthFunction = function()
-                    {
-                        var columnWidths = rowDelegate.columnWidths;
-                        var columnWidth = 0;
-
-                        if (columnWidths.length === 0)
-                        {
-                            columnWidth = Math.ceil(rowDelegate.width / columns.count - rowDelegate.columnSpacing);
-                        }
-                        else if (columnIndex < columnWidths.length)
-                        {
-                            columnWidth = columnWidths[columnIndex];
-                        }
-
-                        if (columnIndex === 0)
-                        {
-                            columnWidth -= indentation;
-                        }
-
-                        return Math.max(0, columnWidth);
-                    }
-
-                    item.width = Qt.binding(widthFunction);
-                    rowDelegate.height = Math.max(height, minimumRowHeight);
-                    item.clip = true;
-                }
-            }
-        }
+				Loader {
+					property var itemData: model
+					property var itemWidth: columnWidths[index]
+					sourceComponent: itemRow.columnDelegates[index]
+				}
+			}
+		}
     }
 }

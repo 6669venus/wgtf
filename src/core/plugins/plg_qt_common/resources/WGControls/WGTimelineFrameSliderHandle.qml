@@ -1,6 +1,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
+import QtQuick.Layouts 1.0
 
 /*!
  \An invisible Slider handle intended for the WGTimelineBarSlider Control.
@@ -12,18 +13,31 @@ WGSliderHandle {
     id: sliderHandle
     objectName: "SliderHandle"
 
-    //property QtObject previousHandle: null
+    /*!
+        This determines what type of data the keyframe represents and how the data is changed/eased. Current options are ("constant", "linear", "bezier")
 
-    //property QtObject nextHandle: null
-
+        Currently this only affects the handle shape. (square, diamond, circle)
+    */
     property string frameType
 
+    /*!
+        If the handle is selected or not
+    */
     property bool selected: false
 
+    /*!
+        If this keyframe is explicitly being dragged by the user handleDragging == true. (If it is being dragged as part of a multi-selection this will be false.)
+    */
     property bool handleDragging: false
 
+    /*!
+        A string of text that appears next to the keyframe.
+    */
     property string label: ""
 
+    /*!
+        If currentFrame == this handles value this will be true.
+    */
     property bool keyframeActive: false
 
     property Component handleStyle: Item {
@@ -87,7 +101,6 @@ WGSliderHandle {
                     }
                 ]
             }
-
         }
 
         WGLabel {

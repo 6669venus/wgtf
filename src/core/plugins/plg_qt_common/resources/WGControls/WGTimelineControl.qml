@@ -54,8 +54,15 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        currentFrame = 0
+        timelineFrame.currentFrame = 0
     }
+
+    property alias setTimeDialog: timelineDialogs.setTimeDialog
+
+    WGTimelineDialogs {
+        id: timelineDialogs
+    }
+
 
     // animates currentFrame by the timeScale (seconds)
     NumberAnimation on currentFrame {
@@ -64,195 +71,50 @@ Rectangle {
         to: totalFrames
         running: false
         duration: (timeScale * 1000)
-        loops: loop.checked ? Animation.Infinite : 1
+        loops: timelineToolbar.looping ? Animation.Infinite : 1
         onStopped: {
             if (currentFrame == totalFrames)
             {
                 playbackAnim.stop()
                 playbackAnim.paused = false
                 timelineFrame.previewPlaying = false
-                pause.checked = false
-                play.checked = false
-                currentFrame = 0
+                timelineFrame.currentFrame = 0
             }
         }
     }
 
     // toolbar for holding useful buttons that affect the timeline
-    Rectangle {
+    WGTimelineToolbar {
         id: timelineToolbar
         anchors.left: parent.left
         anchors.right: parent.right
         height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
 
-        color: palette.mainWindowColor
-
-        RowLayout {
-            anchors.fill: parent
-            anchors.margins: defaultSpacing.standardMargin
-
-            // start/stop playback
-            WGPushButton {
-                id: play
-                checkable: true
-                iconSource: checked ? "icons/stop_16x16.png" : "icons/play_on_16x16.png"
-                onCheckedChanged: {
-                    if (checked)
-                    {
-                        playbackAnim.start()
-                        timelineFrame.previewPlaying = true
-                    }
-                    else
-                    {
-                        playbackAnim.stop()
-                        playbackAnim.paused = false
-                        timelineFrame.previewPlaying = false
-                        pause.checked = false
-                        currentFrame = 0
-                    }
-                }
+        onPlayingChanged: {
+            if (playing)
+            {
+                playbackAnim.start()
+                timelineFrame.previewPlaying = true
             }
-
-            // pause/resume playback
-            WGPushButton {
-                id: pause
-                iconSource: "icons/pause_16x16.png"
-                enabled: play.checked
-                checkable: true
-                onCheckedChanged: {
-                    if (checked)
-                    {
-                        playbackAnim.pause()
-                        timelineFrame.previewPlaying = false
-                    }
-                    else
-                    {
-                        playbackAnim.resume()
-                        timelineFrame.previewPlaying = true
-                    }
-                }
+            else
+            {
+                playbackAnim.stop()
+                timelineToolbar.paused = false
+                timelineFrame.previewPlaying = false
+                currentFrame = 0
             }
+        }
 
-            // loop playback
-            WGPushButton {
-                id: loop
-                iconSource: "icons/loop_16x16.png"
-                checkable: true
-                enabled: !play.checked
+        onPausedChanged: {
+            if (paused)
+            {
+                playbackAnim.pause()
+                timelineFrame.previewPlaying = false
             }
-
-            // time broken up into seconds and frames
-            WGLabel {
-                text: "Current Time: "
-            }
-            WGNumberBox {
-                id: currentTimeBox
-
-                Layout.preferredWidth: 50
-
-                value: Math.floor(timelineFrame.currentFrame / timelineFrame.framesPerSecond)
-                minimumValue: 0.1
-                maximumValue: 100
-                stepSize: 1
-                decimals: 0
-                suffix: "s"
-
-                // Need to upgrade WGSpinBox to QtQuick.Controls 1.3
-                onEditingFinished: {
-                    timelineFrame.currentFrame = (currentTimeBox.value * timelineFrame.framesPerSecond) + currentFrameBox.value
-                }
-
-                Connections {
-                    target: timelineFrame
-                    onCurrentFrameChanged: {
-                        currentTimeBox.value = Math.floor(timelineFrame.currentFrame / timelineFrame.framesPerSecond)
-                    }
-                }
-            }
-
-            WGNumberBox {
-                id: currentFrameBox
-
-                Layout.preferredWidth: 50
-
-                value: timelineFrame.currentFrame % timelineFrame.framesPerSecond
-                minimumValue: 0
-                maximumValue: timelineFrame.framesPerSecond
-                stepSize: 1
-                decimals: 0
-                suffix: "f"
-
-                // Need to upgrade WGSpinBox to QtQuick.Controls 1.3
-                onEditingFinished: {
-
-                    // TODO make it tick back a second if pressing the down arrow
-                    if (currentFrameBox.value == timelineFrame.framesPerSecond)
-                    {
-                        currentTimeBox.value += 1
-                        currentFrameBox.value = 0
-                    }
-
-                    timelineFrame.currentFrame = (currentTimeBox.value * timelineFrame.framesPerSecond) + currentFrameBox.value
-                }
-
-                Connections {
-                    target: timelineFrame
-                    onCurrentFrameChanged: {
-                        currentFrameBox.value = timelineFrame.currentFrame % timelineFrame.framesPerSecond
-                    }
-                }
-            }
-
-            // changing the framerate at the moment does bad things.
-            WGLabel {
-                text: "(" + framesPerSecond + " fps)"
-            }
-
-            // show frame labels
-            WGPushButton {
-                id: showLables
-                iconSource: checked ? "icons/tag_on_16x16.png" : "icons/tag_off_16x16.png"
-                checkable: true
-                checked: timelineFrame.showLabels
-
-                onClicked: {
-                    timelineFrame.showLabels = !timelineFrame.showLabels
-                }
-            }
-
-            Item {
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-
-            // TODO: Make changing the duration less destructive
-            WGLabel {
-                text: "Duration: "
-            }
-
-            WGNumberBox {
-                id: durationNumberBox
-
-                Layout.preferredWidth: 50
-
-                value: timeScale
-                minimumValue: 0.1
-                maximumValue: 100
-                stepSize: 1
-                decimals: 0
-                suffix: "s"
-
-                // Need to upgrade WGSpinBox to QtQuick.Controls 1.3
-                onEditingFinished: {
-                    timelineFrame.timeScale = durationNumberBox.value
-                }
-
-                Connections {
-                    target: timelineFrame
-                    onTimeScaleChanged: {
-                        durationNumberBox.value = timeScale
-                    }
-                }
+            else
+            {
+                playbackAnim.resume()
+                timelineFrame.previewPlaying = true
             }
         }
     }
@@ -357,6 +219,9 @@ Rectangle {
             }
         }
 
+        WGTimelineContextMenu {
+
+        }
 
         // The list of bars, keyframes etc.
         ListView {
@@ -387,9 +252,29 @@ Rectangle {
             // sent if a moveable item in the view is dragged.
             signal itemDragged(real delta, bool minHandle, bool maxHandle, bool bar)
 
+            // sent to select all bars and points in the timeline
+            signal selectAll()
+
             // sends any vertical movement of the content to the root (useful for linking other Flickables/ListViews)
             onContentYChanged: {
                 timelineFrame.yPositionChanged(contentY)
+            }
+
+            function changeTime(startHandle, endHandle)
+            {
+                setTimeDialog.startHandle = startHandle
+
+                if (typeof endHandle != "undefined")
+                {
+                    setTimeDialog.endTime = true
+                    setTimeDialog.endHandle = endHandle
+                }
+                else
+                {
+                    setTimeDialog.endTime = false
+                }
+
+                setTimeDialog.open()
             }
 
             // check if minPoint and maxPoint lie wholly within min and max

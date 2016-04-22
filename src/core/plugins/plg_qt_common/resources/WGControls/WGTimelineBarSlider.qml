@@ -108,6 +108,8 @@ WGSlider {
             anchors.leftMargin: 3
             anchors.rightMargin: 3
 
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
             // give the view the current mouse delta (only the X really matters)
             onPositionChanged: {
                 var currentPos = barMouseArea.mapToItem(slider,mouse.x,mouse.y).x

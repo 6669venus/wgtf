@@ -16,7 +16,7 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
  
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/PlgTimelinePanel )
+BW_QT_ADD_QRC( PlgTimelinePanel resources/PlgTimelinePanel )
 BW_GLOB_RESOURCE_FILES()
  
 BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED

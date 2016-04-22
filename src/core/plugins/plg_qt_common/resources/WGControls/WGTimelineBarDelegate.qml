@@ -13,6 +13,8 @@ WGTimelineBarSlider {
     property QtObject grid
     property QtObject rootFrame
 
+    property bool barSelected: false
+
     // tell the view a drag has started
     onBeginDrag: {
         view.itemDragging = true
@@ -105,12 +107,21 @@ WGTimelineBarSlider {
                 barSlider.updateSelection(true)
                 barSlider.__handlePosList[0].selected = true
                 barSlider.__handlePosList[1].selected = true
+                barSelected = true
             }
             else
             {
                 barSlider.updateSelection(false)
                 barSlider.__handlePosList[0].selected = false
                 barSlider.__handlePosList[1].selected = false
+                barSelected = false
+            }
+        }
+
+        onSelectAll: {
+            if (view.selectedBars.indexOf(barSlider.barIndex) == -1)
+            {
+                view.selectedBars.push(barIndex)
             }
         }
 
@@ -154,6 +165,41 @@ WGTimelineBarSlider {
                 {
                     barSlider.setHandleValue(barSlider.initialValues[1] + clampedDelta, 1)
                 }
+            }
+        }
+    }
+
+    WGContextArea {
+        id: sliderContextMenu
+
+        anchors.fill: undefined
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+
+        x: barSlider.startFrame * (view.width / rootFrame.totalFrames) + 3
+        width: barSlider.endFrame * (view.width / rootFrame.totalFrames) - 6
+
+        onPressed: {
+            view.selectedBars = [barSlider.barIndex]
+            view.selectedHandles = []
+            view.selectionChanged()
+        }
+
+        Action {
+            id: setStartEndTime
+            text: qsTr("Set Start and End Time")
+            shortcut: "Ctrl+T"
+            //iconName: "setTime"
+
+            onTriggered: {
+                view.changeTime(barSlider.__handlePosList[0], barSlider.__handlePosList[1])
+            }
+        }
+
+        contextMenu: WGMenu {
+
+            MenuItem {
+                action: setStartEndTime
             }
         }
     }

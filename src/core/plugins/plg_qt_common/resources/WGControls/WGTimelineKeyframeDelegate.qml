@@ -14,6 +14,10 @@ WGTimelineFrameSlider {
     property QtObject rootFrame
     property QtObject keys
 
+    property int selectedHandles: 0
+
+    //property alias menu: sliderContextMenu
+
     // tell the view a drag has started
     onBeginDrag: {
         view.itemDragging = true
@@ -29,51 +33,38 @@ WGTimelineFrameSlider {
 
     onHandleClicked: {
 
-        // pre-emptively populate the initial drag values before any dragging
-        for (var i = 0; i < frameSlider.__handlePosList.length; i++)
+        if (mouseButton == Qt.LeftButton || mouseButton == Qt.RightButton)
         {
-            frameSlider.initialValues[i] = frameSlider.__handlePosList[i].value
-        }
+            var handleIndexLocation = view.selectedHandles.indexOf(frameSlider.__handlePosList[index])
 
-        // reset selection if this handle is not selected.
-        var handleIndexLocation = view.selectedHandles.indexOf(frameSlider.__handlePosList[index])
+            // pre-emptively populate the initial drag values before any dragging
+            for (var i = 0; i < frameSlider.__handlePosList.length; i++)
+            {
+                frameSlider.initialValues[i] = frameSlider.__handlePosList[i].value
+            }
 
-        if (handleIndexLocation == -1)
-        {
-            view.selectedHandles = [frameSlider.__handlePosList[index]]
-            view.selectedBars = []
-            view.selectionChanged()
+            if ((mouseModifiers & Qt.ControlModifier) || (mouseModifiers & Qt.ShiftModifier))
+            {
+                if (handleIndexLocation == -1)
+                {
+                    view.selectedHandles.push(frameSlider.__handlePosList[index])
+                }
+                else
+                {
+                    view.selectedHandles.splice(handleIndexLocation, 1)
+                }
+                view.selectionChanged()
+            }
+            else
+            {
+                if (handleIndexLocation == -1)
+                {
+                    view.selectedHandles = [frameSlider.__handlePosList[index]]
+                    view.selectedBars = []
+                    view.selectionChanged()
+                }
+            }
         }
-    }
-
-    // add handle to selection
-    onHandleShiftClicked: {
-        var handleIndexLocation = view.selectedHandles.indexOf(frameSlider.__handlePosList[index])
-
-        if (handleIndexLocation == -1)
-        {
-            view.selectedHandles.push(frameSlider.__handlePosList[index])
-        }
-        else
-        {
-            view.selectedHandles.splice(handleIndexLocation, 1)
-        }
-        view.selectionChanged()
-    }
-
-    // add or remove handle from selection
-    onHandleCtrlClicked: {
-        var handleIndexLocation = view.selectedHandles.indexOf(frameSlider.__handlePosList[index])
-
-        if (handleIndexLocation == -1)
-        {
-            view.selectedHandles.push(frameSlider.__handlePosList[index])
-        }
-        else
-        {
-            view.selectedHandles.splice(handleIndexLocation, 1)
-        }
-        view.selectionChanged()
     }
 
     // if a handle is the one being explicitly dragged by the user, let the view know a drag is happening
@@ -83,6 +74,30 @@ WGTimelineFrameSlider {
         {
             var handleDelta = (handle.value - frameSlider.initialValues[index]) * (view.width / rootFrame.totalFrames)
             view.itemDragged(handleDelta, false, false, false)
+        }
+    }
+
+    WGContextArea {
+        id: sliderContextMenu
+
+        enabled: frameSlider.selectedHandles == 1 && view.selectedHandles.length == 1
+
+        Action {
+            id: setKeyframeTime
+            text: qsTr("Set Keyframe Time")
+            shortcut: "Ctrl+T"
+            //iconName: "setTime"
+
+            onTriggered: {
+                view.changeTime(view.selectedHandles[0])
+            }
+        }
+
+        contextMenu: WGMenu {
+
+            MenuItem {
+                action: setKeyframeTime
+            }
         }
     }
 
@@ -124,15 +139,27 @@ WGTimelineFrameSlider {
 
         //update selection
         onSelectionChanged: {
+            selectedHandles = 0
             for (var i = 0; i < frameSlider.__handlePosList.length; i++)
             {
                 if (view.selectedHandles.indexOf(frameSlider.__handlePosList[i]) != -1)
                 {
                     frameSlider.__handlePosList[i].selected = true
+                    selectedHandles += 1
                 }
                 else
                 {
                     frameSlider.__handlePosList[i].selected = false
+                }
+            }
+        }
+
+        onSelectAll: {
+            for (var i = 0; i < frameSlider.__handlePosList.length; i++)
+            {
+                if (view.selectedHandles.indexOf(frameSlider.__handlePosList[i]) == -1)
+                {
+                    view.selectedHandles.push(frameSlider.__handlePosList[i])
                 }
             }
         }

@@ -301,19 +301,9 @@ Control {
     signal sliderDoubleClicked(int index)
 
     /*!
-        This signal is fired when a handle (index) is left pressed when holding the Ctrl key
+        This signal is fired when a handle (index) is pressed with the mouse button (mouseButton) and mouse modifiers (mouseModifiers)
     */
-    signal handleCtrlClicked(int index)
-
-    /*!
-        This signal is fired when a handle (index) is left pressed when holding the Shift key
-    */
-    signal handleShiftClicked(int index)
-
-    /*!
-        This signal is fired when a handle (index) is pressed
-    */
-    signal handleClicked(int index)
+    signal handleClicked(int index, int mouseButton, int mouseModifiers)
 
     /*!
         This signal is fired when a handle (index) is added

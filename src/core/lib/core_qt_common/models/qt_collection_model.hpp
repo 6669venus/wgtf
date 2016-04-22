@@ -23,6 +23,23 @@ public:
 	 *	Get CollectionModel that is being adapted to be used by Qt.
 	 */
 	const CollectionModel & source() const;
+	CollectionModel & source();
+
+	/**
+	 *	Note: cannot be used with mapping types where row cannot be converted
+	 *	to a key.
+	 */
+	virtual bool insertRows( int row,
+		int count,
+		const QModelIndex & parent = QModelIndex() ) override;
+
+	/**
+	 *	Note: cannot be used with mapping types where row cannot be converted
+	 *	to a key.
+	 */
+	virtual bool removeRows( int row,
+		int count,
+		const QModelIndex & parent = QModelIndex() ) override;
 
 	/**
 	 *	Get item from collection.
@@ -36,26 +53,16 @@ public:
 	/**
 	 *	Add a new item using the given key.
 	 *	
-	 *	@pre key must be an index type, cannot be a key into a map.
-	 *	
-	 *	@param key the position to insert the new item.
-	 *		Inserts the item *before* the given key.
-	 *		If the key is 0, the new item is added to the start.
-	 *		If key is count(), the new item is added to the end.
+	 *	@param key into the collection to insert the new item.
 	 *	@return true on success.
 	 */
 	Q_INVOKABLE bool insertItem( const QVariant & key );
 
 	/**
-	 *	Remove an item using the given key.
+	 *	Remove all items matching the given key.
 	 *	
-	 *	@pre key must be an index type, cannot be a key into a map.
-	 *	
-	 *	@param key the position to insert the new item.
-	 *		Inserts the item *before* the given key.
-	 *		If the key is 0, the new item is added to the start.
-	 *		If key is count(), the new item is added to the end.
-	 *	@return true on success.
+	 *	@param key erase all elements matching the given key.
+	 *	@return true if at least one item was erased (may be more than one).
 	 */
 	Q_INVOKABLE bool removeItem( const QVariant & key );
 };

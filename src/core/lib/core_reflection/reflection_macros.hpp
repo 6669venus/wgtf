@@ -135,4 +135,10 @@
 #define REGISTER_DEFINITION( type )\
 	definitionManager.registerDefinition( new TypeClassDefinition< type > );
 
+#define DEREGISTER_DEFINITION( type ) \
+	{ \
+		const auto pDefinition = definitionManager.getDefinition( getClassIdentifier< type >() ); \
+		definitionManager.deregisterDefinition( pDefinition ); \
+	}
+
 #endif // REFLECTION_MACROS_HPP

@@ -36,16 +36,13 @@ class ReportHolder:
 		self.buildUrl = buildUrl
 		self.changelist = changelist
 		
-	def sendMail( self ):
-		if len( self.reports ) == 0 or len( EMAIL_ADDRESSES ) == 0:
-			return
-		
+	def _createReport( self ):
 		self.failCount = 0
 		mailBody = "" + str(self.buildUrl) + "\n\n"
 		mailBody += "Changelist %s\n" % (self.changelist)
 		
 		indentation = "    "
-		print "Sending e-mail (%d reports)..." % len(self.reports)
+		print "Creating report (%d reports)..." % len(self.reports)
 		for report in self.reports:
 			status = "succeeded"
 			if not report.success:
@@ -66,9 +63,31 @@ class ReportHolder:
 		else:
 			mailTitle = "[%s] OK: %s" % ( self.category, self.name )
 			
+		print "Finished creating report!\n"
+
+		return ( mailTitle, mailBody )
+
+	def sendMail( self ):
+		if len( self.reports ) == 0 or len( EMAIL_ADDRESSES ) == 0:
+			return
+
+		mailTitle, mailBody = self._createReport()
+
+		print "Sending e-mail to %s..." % str( EMAIL_ADDRESSES )
 		_sendEmail( EMAIL_ADDRESSES, mailTitle, mailBody )
 		print "Finished sending report!"
-	
+
+	def save( self, fileName ):
+		mailTitle, mailBody = self._createReport()
+
+		print "Saving report to %s..." % fileName
+		with open( fileName, "w" ) as f:
+			f.write(mailTitle)
+			f.write("\n")
+			f.write("\n")
+			f.write(mailBody)
+		print "Finished saving report!"
+
 	def addReport( self, report ):
 		assert( isinstance( report, Report ) )
 		self.reports.append( report )

@@ -44,6 +44,14 @@ public:
 
 private:
 	const char * name_;
+	
+public:
+	static void setContext( IComponentContext * context );
+	static IComponentContext * getContext();
+
+private:
+	static IComponentContext * s_Context_;
+	static bool s_ContextInitialized_;
 };
 
 #endif //GENERIC_PLUGIN_HPP

@@ -120,6 +120,7 @@ bool QtCollectionModel::insertItem( const QVariant & key )
 	auto & collectionModel = this->source();
 	auto & collection = collectionModel.getSource();
 
+	const auto variantKey = QtHelpers::toVariant( key );
 	const auto insertItr = collection.insert( variantKey );
 	return (insertItr != collection.end());
 }
@@ -130,6 +131,7 @@ bool QtCollectionModel::removeItem( const QVariant & key )
 	auto & collectionModel = this->source();
 	auto & collection = collectionModel.getSource();
 
+	const auto variantKey = QtHelpers::toVariant( key );
 	const auto erasedCount = collection.erase( variantKey );
 	return (erasedCount > 0);
 }

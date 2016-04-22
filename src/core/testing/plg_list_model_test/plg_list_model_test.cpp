@@ -20,6 +20,7 @@ private:
 	std::unique_ptr<IView> listView_;
 	std::unique_ptr<IView> shortListView_;
 	std::unique_ptr<IView> multiColumnListView_;
+	std::shared_ptr<AbstractListModel> listModel_;
 
 public:
 	//==========================================================================
@@ -54,23 +55,10 @@ public:
 			"plg_list_model_test/test_short_list_panel_old.qml",
 			IUIFramework::ResourceType::Url, std::move( oldShortListModel ) );
 		
-		std::unique_ptr<AbstractListModel> listModel( new TestListModel() );
+		listModel_ = std::make_shared<TestListModel>();
 		listView_ = uiFramework->createView(
 			"plg_list_model_test/test_list_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( listModel ) );
-		/*
-		std::unique_ptr<AbstractListModel> shortListModel( new TestListModel( true ) );
-		shortListView_ = uiFramework->createView(
-			"plg_list_model_test/test_list_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
-		
-
-		std::unique_ptr< IListModel > multiColumnListModel( new TestListModel( true ) );
-		multiColumnListView_ = uiFramework->createView(
-			"plg_list_model_test/test_column_sequence_list_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( multiColumnListModel ) );
-		
-		*/
+			IUIFramework::ResourceType::Url, listModel_ );
 
 		if (oldListView_ != nullptr)
 		{
@@ -96,22 +84,6 @@ public:
 		{
 			NGT_ERROR_MSG( "Failed to load qml\n" );
 		}
-		/*if (shortListView_ != nullptr)
-		{
-			uiApplication->addView( *shortListView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
-		if (multiColumnListView_ != nullptr)
-		{
-			uiApplication->addView( *multiColumnListView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}*/
 
 	}
 	//==========================================================================
@@ -119,14 +91,6 @@ public:
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
-		/*if (multiColumnListView_ != nullptr)
-		{
-			uiApplication->removeView( *multiColumnListView_ );
-		}
-		if (shortListView_ != nullptr)
-		{
-			uiApplication->removeView( *shortListView_ );
-		}*/
 		if (listView_ != nullptr)
 		{
 			uiApplication->removeView( *listView_ );
@@ -139,6 +103,7 @@ public:
 		{
 			uiApplication->removeView( *oldListView_ );
 		}
+		listModel_ = nullptr;
 		listView_ = nullptr;
 		shortListView_ = nullptr;
 		multiColumnListView_ = nullptr;

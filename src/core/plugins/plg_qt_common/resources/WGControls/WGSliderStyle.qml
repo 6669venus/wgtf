@@ -241,6 +241,8 @@ Style {
 
                         cursorShape: control.__currentCursor
 
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
                         onEntered: {
                             control.hoveredHandle = index
                         }
@@ -259,14 +261,23 @@ Style {
                             if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
                             {
                                 control.__draggable = false
-                                control.handleCtrlClicked(index)
                             }
-                            else if (!control.grooveClickable)
+                            else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier))
                             {
-                                control.__draggable = true
+                                control.__draggable = false
                             }
-
-                            mouse.accepted = false
+                            else
+                            {
+                                if (!control.grooveClickable)
+                                {
+                                    control.__draggable = true
+                                }
+                            }
+                            control.handleClicked(index, mouse.button, mouse.modifiers)
+                            if (mouse.button == Qt.LeftButton)
+                            {
+                                mouse.accepted = false
+                            }
                         }
 
                         onReleased: {

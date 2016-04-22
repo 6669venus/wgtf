@@ -290,8 +290,8 @@ WGSlider {
     }
 
     //delete a handle
-    onHandleCtrlClicked: {
-        if (addDeleteHandles)
+    onHandleClicked: {
+        if (mouseModifiers & Qt.ControlModifier)
         {
             removeHandle(index)
             updateHandles()

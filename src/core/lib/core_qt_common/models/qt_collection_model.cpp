@@ -27,8 +27,8 @@ bool QtCollectionModel::insertRows( int row,
 	int count,
 	const QModelIndex & parent )
 {
-	const auto & collectionModel = this->source();
-	const auto & collection = collectionModel.getSource();
+	auto & collectionModel = this->source();
+	auto & collection = collectionModel.getSource();
 
 	// Insert/remove by row disabled for mapping types
 	if (collection.isMapping())
@@ -38,8 +38,16 @@ bool QtCollectionModel::insertRows( int row,
 
 	// Since this is an index-able collection
 	// Convert index directly to key
-	QVariant key( row );
-	return this->insertItem( key );
+	Variant key( row );
+	bool success = true;
+	for (int i = 0; i < count; ++i)
+	{
+		// Repeatedly inserting items at the same key
+		// should add count items above the first
+		const auto insertItr = collection.insert( key );
+		success &= (insertItr != collection.end());
+	}
+	return success;
 }
 
 
@@ -47,8 +55,8 @@ bool QtCollectionModel::removeRows( int row,
 	int count,
 	const QModelIndex & parent )
 {
-	const auto & collectionModel = this->source();
-	const auto & collection = collectionModel.getSource();
+	auto & collectionModel = this->source();
+	auto & collection = collectionModel.getSource();
 
 	// Insert/remove by row disabled for mapping types
 	if (collection.isMapping())
@@ -56,10 +64,24 @@ bool QtCollectionModel::removeRows( int row,
 		return false;
 	}
 
+	// Trying to remove too many rows
+	if ((row + count) >= this->rowCount( parent ))
+	{
+		return false;
+	}
+
 	// Since this is an index-able collection
 	// Convert index directly to key
-	QVariant key( row );
-	return this->removeItem( key );
+	Variant key( row );
+	bool success = true;
+	for (int i = 0; i < count; ++i)
+	{
+		// Repeatedly removing items at the same key
+		// should remove count items after the first
+		const auto erasedCount = collection.erase( key );
+		success &= (erasedCount > 0);
+	}
+	return success;
 }
 
 

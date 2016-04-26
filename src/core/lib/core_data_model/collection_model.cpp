@@ -2,6 +2,7 @@
 #include "core_data_model/i_item_role.hpp"
 #include "core_variant/collection.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
+#include "core_data_model/i_item_role.hpp"
 
 namespace
 {
@@ -90,12 +91,119 @@ CollectionModel::~CollectionModel()
 {
 }
 
+Connection CollectionModel::connectPreItemDataChanged(AbstractListModel::DataCallback callback) 
+{
+	return preItemDataChanged_.connect(callback);
+}
+Connection CollectionModel::connectPostItemDataChanged(AbstractListModel::DataCallback callback) 
+{
+	return postItemDataChanged_.connect(callback);
+}
+
+Connection CollectionModel::connectPreRowsInserted(AbstractListModel::RangeCallback callback) 
+{
+	return preRowsInserted_.connect(callback);
+}
+Connection CollectionModel::connectPostRowsInserted(AbstractListModel::RangeCallback callback) 
+{
+	return postRowsInserted_.connect(callback);
+}
+
+Connection CollectionModel::connectPreRowsRemoved(AbstractListModel::RangeCallback callback) 
+{
+	return preRowsRemoved_.connect(callback);
+}
+Connection CollectionModel::connectPostRowsRemoved(AbstractListModel::RangeCallback callback) 
+{
+	return postRowsRemoved_.connect(callback);
+}
+
 
 void CollectionModel::setSource(Collection & collection)
 {
 	// TODO emit signal
 	items_.clear();
+
+	connectPreChange.disconnect();
+	connectPostChanged.disconnect();
+	connectPreInsert.disconnect();
+	connectPostInserted.disconnect();
+	connectPreErase.disconnect();
+	connectPostErase.disconnect();
+
 	collection_ = collection;
+	
+	connectPreChange = 
+		collection_.connectPreChange((Collection::ElementPreChangeCallback)[=](const Collection::Iterator& pos, const Variant& newValue)
+	{
+		int row = -1;
+		if (pos.key().tryCast<int>(row))
+		{
+			if (newValue.canCast<AbstractItem>())
+			{
+				size_t role = ValueTypeRole::roleId_;
+				//int row, int column, size_t role, const Variant & value 
+				preItemDataChanged_(row, 0, role, newValue);
+			}
+		}
+	});
+	
+	connectPostChanged = 
+		collection_.connectPostChanged((Collection::ElementPostChangedCallback)[=](const Collection::Iterator& pos, const Variant& oldValue)
+	{
+		int row = -1;
+		if (pos.key().tryCast<int>(row))
+		{
+			size_t role = ValueTypeRole::roleId_;
+
+			//int row, int column, size_t role, const Variant & value 
+			postItemDataChanged_(row, 0, role, oldValue);
+		}
+	});
+
+	connectPreInsert = 
+		collection_.connectPreInsert(Collection::ElementRangeCallback([=](const Collection::Iterator& pos, size_t count)
+	{
+		int row = -1;
+		if (pos.key().tryCast<int>(row))
+		{
+			//int row, int count
+			preRowsInserted_(row, (int)count);
+		}
+	}));
+
+	connectPostInserted =
+		collection_.connectPostInserted((Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
+	{
+		int row = -1;
+		if (pos.key().tryCast<int>(row))
+		{
+			//int row, int count
+			postRowsInserted_(row, (int)count);
+		}
+	});
+
+	connectPreErase = 
+		collection_.connectPreErase((Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
+	{
+		int row = -1;
+		if (pos.key().tryCast<int>(row))
+		{
+			//int row, int count
+			preRowsRemoved_(row, (int)count);
+		}
+	});
+
+	connectPostErase =
+		collection_.connectPostErased((Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
+	{
+		int row = -1;
+		if (pos.key().tryCast<int>(row))
+		{
+			//int row, int count
+			postRowsRemoved_(row, (int)count);
+		}
+	});
 }
 
 

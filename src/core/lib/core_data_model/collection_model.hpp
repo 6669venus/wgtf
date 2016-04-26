@@ -25,9 +25,39 @@ public:
 	virtual int rowCount() const override;
 	virtual int columnCount() const override;
 
+	virtual Connection connectPreItemDataChanged(AbstractListModel::DataCallback callback) override;
+	virtual Connection connectPostItemDataChanged(AbstractListModel::DataCallback callback) override;
+
+	virtual Connection connectPreRowsInserted(AbstractListModel::RangeCallback callback) override;
+	virtual Connection connectPostRowsInserted(AbstractListModel::RangeCallback callback) override;
+
+	virtual Connection connectPreRowsRemoved(AbstractListModel::RangeCallback callback) override;
+	virtual Connection connectPostRowsRemoved(AbstractListModel::RangeCallback callback) override;
+
 protected:
 	Collection collection_;
 	mutable std::vector< std::unique_ptr< AbstractItem > > items_;
+
+private:
+
+	Signal<AbstractListModel::DataSignature> preItemDataChanged_;
+	Signal<AbstractListModel::DataSignature> postItemDataChanged_;
+
+	Signal<AbstractListModel::RangeSignature> preRowsInserted_; 
+	Signal<AbstractListModel::RangeSignature> postRowsInserted_;
+
+	Signal<AbstractListModel::RangeSignature> preRowsRemoved_;
+	Signal<AbstractListModel::RangeSignature> postRowsRemoved_; 
+
+
+	Connection connectPreChange;
+	Connection connectPostChanged;
+
+	Connection connectPreInsert;
+	Connection connectPostInserted;
+
+	Connection connectPreErase;
+	Connection connectPostErase;
 };
 
 

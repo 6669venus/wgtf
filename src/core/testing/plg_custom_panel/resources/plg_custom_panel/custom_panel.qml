@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
-import WGControls 2.0 as Two
 
 WGPanel {
 
@@ -40,15 +39,12 @@ WGPanel {
             }
         }
     }
-    //BEST NO LAYOUT HERE
-    WGGroupBox {
-        id:testthing
-    }
+
 
 
     WGScrollPanel { // Entire panel
         id: baseLayout
-        anchors.top: testthing.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
 
@@ -327,14 +323,6 @@ WGPanel {
                                                     checked: true
                                                 }
                                             }
-                                            // BEST LAYOUTS HERE
-                                            WGExpandingRowLayout {
-                                                WGGroupBox {
-
-                                                }
-                                            }
-
-
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
                                                 Rectangle {

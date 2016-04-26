@@ -1,13 +1,13 @@
 #include "reflection_undo_redo_data.hpp"
 #include "command_instance.hpp"
-#include "core_reflection_utils\commands\reflectedproperty_undoredo_helper.hpp"
-#include "core_reflection\generic\generic_object.hpp"
-#include "core_reflection\property_accessor_listener.hpp"
-#include "core_reflection\property_accessor.hpp"
-#include "core_serialization\serializer\xml_serializer.hpp"
-#include "core_reflection\metadata\meta_utilities.hpp"
-#include "core_reflection\metadata\meta_impl.hpp"
-#include "core_reflection\i_object_manager.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_reflection/property_accessor_listener.hpp"
+#include "core_reflection/property_accessor.hpp"
+#include "core_serialization/serializer/xml_serializer.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
+#include "core_reflection/i_object_manager.hpp"
 
 int ReflectionUndoRedoData::s_Connected = 0;
 

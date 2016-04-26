@@ -27,6 +27,12 @@ public:
 	const ISelectionHandler * selectionHandlerSource() const;
 	ObjectHandle createMacro() const;
 
+    void setClearButtonVisible(const bool& isVisible);
+    bool isClearButtonVisible() const;
+
+    void setMakeMacroButtonVisible(const bool& isVisible);
+    bool isMakeMacroButtonVisible() const;
+
 private:
 	void pushHistoryItems( const VariantList& history );
 	void bindCommandHistoryCallbacks();
@@ -48,6 +54,9 @@ private:
 	VariantList historyItems_;
 	Connection postHistoryItemsRemoved_;
 	ConnectionHolder historyCallbacks_;
+
+    bool clearButtonVisible;
+    bool makeMacroButtonVisible;
 };
 
 

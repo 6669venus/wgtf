@@ -42,12 +42,16 @@ public:
 	virtual void fireCommandStatusChanged(
 		const CommandInstance & command ) const = 0;
 	virtual void fireProgressMade( const CommandInstance & command ) const = 0;
+    virtual void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const = 0;
 
 	virtual void undo() = 0;
 	virtual void redo() = 0;
 
 	virtual bool canUndo() const = 0;
 	virtual bool canRedo() const = 0;
+    
+    typedef std::function<bool (const CommandInstancePtr&)> TRemoveFunctor;
+    virtual void removeCommands(const TRemoveFunctor & functor) = 0;
 
 	virtual const VariantList & getHistory() const = 0;
 	virtual IValueChangeNotifier& currentIndex() = 0;
@@ -55,7 +59,6 @@ public:
 	virtual bool createMacro( const VariantList & commandInstanceList, const char * id = "" ) = 0;
 	virtual bool deleteMacroByName( const char * id ) = 0;
 
-	
 	virtual void beginBatchCommand() = 0;
 	virtual void endBatchCommand() = 0;
 	virtual void abortBatchCommand() = 0;
@@ -67,6 +70,7 @@ public:
 	virtual void notifyHandleCommandQueued( const char * commandId ) = 0;
 	virtual void notifyNonBlockingProcessExecution( const char * commandId ) = 0;
 
+    virtual void SetHistorySerializationEnabled(bool isEnabled) = 0; // enabled default 
 	virtual bool SaveHistory( ISerializer & serializer ) = 0;
 	virtual bool LoadHistory( ISerializer & serializer ) = 0;
 

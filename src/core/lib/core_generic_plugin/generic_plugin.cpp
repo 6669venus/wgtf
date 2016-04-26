@@ -64,9 +64,11 @@ namespace
 				s_allocator = context->queryInterface< IMemoryAllocator >();
 			}
 			if (s_allocator == nullptr)
+			{
 				s_allocator = &s_defaultAllocator;
 				return s_allocator;
 			}
+		}
 		return s_allocator;
 	}
 
@@ -228,14 +230,26 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 PluginMain * createPlugin( IComponentContext & contextManager );
 
 IComponentContext * PluginMain::s_Context_ = nullptr;
+bool PluginMain::s_ContextInitialized_ = false;
 
 void PluginMain::setContext( IComponentContext * context )
 {
+	// Context may be set more than once
+	// By ContextInitializer and PluginMain::getContext()
+	// Assert that it is always set to the same context
+	assert( (s_Context_ == nullptr) || (s_Context_ == context) );
 	s_Context_ = context;
+	s_ContextInitialized_ = true;
 }
 
 IComponentContext * PluginMain::getContext()
 {
+	if (!s_ContextInitialized_)
+	{
+		// This can happen if a static variable is initialized before
+		// s_ContextInitializer and it tries to access the context.
+		PluginMain::setContext( getEnvContext() );
+	}
 	return s_Context_;
 }
 

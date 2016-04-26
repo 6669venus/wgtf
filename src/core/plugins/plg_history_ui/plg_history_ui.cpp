@@ -5,6 +5,8 @@
 #include "metadata/display_object.mpp"
 #include "core_command_system/i_command_manager.hpp"
 
+#include "core_logging/logging.hpp"
+
 #include "core_qt_common/i_qt_framework.hpp"
 
 #include "core_reflection/reflection_macros.hpp"
@@ -137,7 +139,14 @@ public:
 			return;
 		}
 
-		uiApplication->addView( *panel_ );
+		if (panel_ != nullptr)
+		{
+			uiApplication->addView( *panel_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 		createActions( *pQtFramework, *uiApplication );
 	}
@@ -149,8 +158,11 @@ public:
 		{
 			return true;
 		}
-		uiApplication->removeView( *panel_ );
-		panel_ = nullptr;
+		if (panel_ != nullptr)
+		{
+			uiApplication->removeView( *panel_ );
+			panel_ = nullptr;
+		}
 		destroyActions( *uiApplication );
 		auto historyObject = history_.getBase< HistoryObject >();
 		assert( historyObject != nullptr );

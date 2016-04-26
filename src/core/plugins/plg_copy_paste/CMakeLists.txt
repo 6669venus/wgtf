@@ -18,7 +18,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
 
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/WGCopyableFunctions )
+BW_QT_ADD_QRC( WGCopyableFunctions resources/WGCopyableFunctions )
 BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( plg_copy_paste SHARED

@@ -1,6 +1,6 @@
 #include "collection_qt_type_converter.hpp"
 
-#include "core_data_model/collection_model.hpp"
+#include "core_data_model/collection_model_old.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/collection.hpp"
 
@@ -38,7 +38,7 @@ bool CollectionQtTypeConverter::toVariant( const QVariant & qVariant,
 
 	// Check if the ObjectHandle contains a CollectionModel
 	auto pCollectionModel =
-		handle.getBase< CollectionModel >();
+		handle.getBase< CollectionModelOld >();
 	if (pCollectionModel == nullptr)
 	{
 		return false;
@@ -72,7 +72,7 @@ bool CollectionQtTypeConverter::toQVariant( const Variant& variant,
 	}
 
 	// Create a new collection model
-	auto collectionModel = new CollectionModel();
+	auto collectionModel = new CollectionModelOld();
 	collectionModel->setSource( value );
 	auto listModel = std::unique_ptr< IListModel >( collectionModel );
 

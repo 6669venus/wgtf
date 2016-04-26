@@ -1,6 +1,7 @@
 #include "core_data_model/i_tree_model.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_logging/logging.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qt_action_manager.hpp"
 #include "core_ui_framework/i_action.hpp"
@@ -42,7 +43,14 @@ public:
 			"plg_tree_to_list_test/test_tree_to_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( model ) );
 
-		uiApplication->addView( *testView_ );
+		if (testView_ != nullptr)
+		{
+			uiApplication->addView( *testView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 	}
 
 	//==========================================================================
@@ -51,8 +59,11 @@ public:
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
 
-		uiApplication->removeView( *testView_ );
-		testView_ = nullptr;
+		if (testView_ != nullptr)
+		{
+			uiApplication->removeView( *testView_ );
+			testView_ = nullptr;
+		}
 
 		return true;
 	}

@@ -39,6 +39,7 @@ WGFileDialog 1.0 WGFileDialog.qml
 WGFileSelectBox 1.0 WGFileSelectBox.qml
 WGFormLayout 1.0 WGFormLayout.qml
 WGFrame 1.0 WGFrame.qml
+WGGridCanvas 2.0 WGGridCanvas.qml
 WGGradientSlider 2.0 WGGradientSlider.qml
 WGGradientSliderHandle 2.0 WGGradientSliderHandle.qml
 WGGradientSliderStyle 2.0 WGGradientSliderStyle.qml
@@ -99,6 +100,18 @@ WGTextBoxFrame 1.0 WGTextBoxFrame.qml
 WGTextBoxStyle 1.0 WGTextBoxStyle.qml
 WGThumbnail 1.0 WGThumbnail.qml
 WGThumbnailButton 1.0 WGThumbnailButton.qml
+WGTimelineBarDelegate 2.0 WGTimelineBarDelegate.qml
+WGTimelineBarSlider 2.0 WGTimelineBarSlider.qml
+WGTimelineBarSliderHandle 2.0 WGTimelineBarSliderHandle.qml
+WGTimelineBarSliderStyle 2.0 WGTimelineBarSliderStyle.qml
+WGTimelineContextMenu 2.0 WGTimelineContextMenu.qml
+WGTimelineDialogs 2.0 WGTimelineDialogs.qml
+WGTimelineFrameSlider 2.0 WGTimelineFrameSlider.qml
+WGTimelineFrameSliderHandle 2.0 WGTimelineFrameSliderHandle.qml
+WGTimelineFrameSliderStyle 2.0 WGTimelineFrameSliderStyle.qml
+WGTimelineKeyframeDelegate 2.0 WGTimelineKeyframeDelegate.qml
+WGTimelineControl 2.0 WGTimelineControl.qml
+WGTimelineToolbar 2.0 WGTimelineToolbar.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolButtonStyle 1.0 WGToolButtonStyle.qml
 WGTreeItem.qml 1.0 WGTreeItem.qml

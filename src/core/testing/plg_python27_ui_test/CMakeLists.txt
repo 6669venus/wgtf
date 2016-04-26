@@ -20,7 +20,7 @@ SET( QML_FILES
 	resources/Python27UITest/PythonObjectTestPanel.qml
 )
 SOURCE_GROUP( "QML" FILES ${QML_FILES} )
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/Python27UITest )
+BW_QT_ADD_QRC( Python27UITest resources/Python27UITest )
 BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS

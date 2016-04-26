@@ -42,7 +42,7 @@ WGFrame {
 \endcode
 */
 
-Rectangle {
+Item {
     id: baseFrame
     objectName: "WGFrame"
 
@@ -66,21 +66,39 @@ Rectangle {
     //TODO: This should be renamed, it does not require "_"
     property string label: ""
 
-    property Component childObject
+    //This could be broken out into two separate style files but for now its so simple I created
+    //it as a simple swicth.
+    /*! This property determines if the Frame should use a lined box in place of a shaded rectangle */
+    property bool lineFrame: false
 
-    color: "transparent"
+    /*! This property defines the text used as a title for the frame. Note, text is only visible when
+      lineFrame style is used */
+    property string text: ""
+
+    /*! This property determines if the contents of the frame can be disabled. Note, the checkbox is only
+        visible if lineFrame is used*/
+    property bool toggleable: true
+
+    /*! This property sets the checked state of the controls checkbox. */
+    property alias enableControls: toggleableBox.checked
+
+    property Component childObject
 
     implicitHeight: defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2)
     implicitWidth: defaultSpacing.standardMargin
 
-    height: content.height + defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2)
+    property bool __hasHeader: lineFrame && (text != "" || toggleable) ? true : false
 
-    Layout.preferredHeight: content.height + defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2)
+    height: lineFrame ? content.height + defaultSpacing.doubleMargin + defaultSpacing.topBottomMargin + lineFrameHeader.height
+                         : (content.height + defaultSpacing.doubleMargin + (defaultSpacing.topBottomMargin * 2))
+
+    Layout.preferredHeight: height
 
     Layout.fillWidth: true
 
     Rectangle {
         id: frame
+        visible: !lineFrame
         color: {
             if (shade)
             {
@@ -107,28 +125,83 @@ Rectangle {
         }
 
         radius: defaultSpacing.standardRadius
-
         height: parent.height - (defaultSpacing.topBottomMargin * 2)
-
         Layout.preferredHeight: parent.height - (defaultSpacing.topBottomMargin * 2)
-
         anchors {left: parent.left; right: parent.right}
-
         anchors.verticalCenter: parent.verticalCenter
+
     }
 
-    Loader {
-        id: content
+    Item {
+        id: lineFrameHeader
+        height: defaultSpacing.minimumRowHeight
         anchors {left: parent.left; right: parent.right}
+        anchors.top: parent.top
+        visible: lineFrame
 
+        Text {
+            id: frameLabel
+            color: palette.highlightTextColor
+            anchors.left: parent.left
+            anchors.top: parent.top
+            text: baseFrame.text
+            visible: toggleable ? false : true
+        }
+
+        WGCheckBox {
+            id: toggleableBox
+            objectName: "ToggleFrameCheckBox"
+            text: baseFrame.text
+            visible: toggleable ? true : false
+            enabled: visible
+            width: toggleable ? implicitWidth : 0
+            checked: true
+            anchors.left: parent.left
+            anchors.top: parent.top
+        }
+
+        WGSeparator {
+            id: topSeparator
+            vertical: false
+            anchors.left: __hasHeader ? (toggleable ? toggleableBox.right : frameLabel.right) : parent.left
+            anchors.right: lineFrameHeader.right
+            anchors.leftMargin: defaultSpacing.leftMargin
+            anchors.rightMargin: defaultSpacing.standardMargin
+            anchors.verticalCenter: toggleable ? toggleableBox.verticalCenter : frameLabel.verticalCenter
+        }
+    }
+
+    // Frame content
+    Item {
+        id: contentHolder
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: lineFrame ? bottomSeparator.top : parent.bottom
+        anchors.top: lineFrame ? lineFrameHeader.bottom : parent.top
+
+        Loader {
+            id: content
+            anchors {left: parent.left; right: parent.right}
+            anchors.leftMargin: defaultSpacing.leftMargin
+            anchors.rightMargin: defaultSpacing.rightMargin
+            anchors.verticalCenter: parent.verticalCenter
+            enabled: enableControls
+
+            sourceComponent: childObject
+            z: 1
+        }
+    }
+
+    WGSeparator {
+        id: bottomSeparator
+        vertical: false
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.leftMargin: defaultSpacing.leftMargin
-        anchors.rightMargin: defaultSpacing.rightMargin
-
-        anchors.verticalCenter: parent.verticalCenter
-
-        sourceComponent: childObject
-
-        z: 1
+        anchors.rightMargin: defaultSpacing.standardMargin
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: defaultSpacing.standardMargin
+        visible: lineFrame
     }
 
     /*! Deprecated */

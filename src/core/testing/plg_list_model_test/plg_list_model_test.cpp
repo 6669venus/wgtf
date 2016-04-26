@@ -1,6 +1,7 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
@@ -56,9 +57,30 @@ public:
 			"plg_list_model_test/test_column_sequence_list_panel.qml",
 			IUIFramework::ResourceType::Url, std::move( multiColumnListModel ) );
 		
-		uiApplication->addView( *listView_ );
-		uiApplication->addView( *shortListView_ );
-		uiApplication->addView( *multiColumnListView_ );
+		if (listView_ != nullptr)
+		{
+			uiApplication->addView( *listView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
+		if (shortListView_ != nullptr)
+		{
+			uiApplication->addView( *shortListView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
+		if (multiColumnListView_ != nullptr)
+		{
+			uiApplication->addView( *multiColumnListView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 	}
 	//==========================================================================
@@ -66,9 +88,18 @@ public:
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
-		uiApplication->removeView( *multiColumnListView_ );
-		uiApplication->removeView( *shortListView_ );
-		uiApplication->removeView( *listView_ );
+		if (multiColumnListView_ != nullptr)
+		{
+			uiApplication->removeView( *multiColumnListView_ );
+		}
+		if (shortListView_ != nullptr)
+		{
+			uiApplication->removeView( *shortListView_ );
+		}
+		if (listView_ != nullptr)
+		{
+			uiApplication->removeView( *listView_ );
+		}
 		listView_ = nullptr;
 		shortListView_ = nullptr;
 		multiColumnListView_ = nullptr;

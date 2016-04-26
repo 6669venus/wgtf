@@ -1,5 +1,6 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_logging/logging.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/qt_action_manager.hpp"
 #include "core_ui_framework/i_action.hpp"
@@ -55,7 +56,14 @@ public:
 			"plg_context_menu_test/test_contextmenu_panel.qml",
 			IUIFramework::ResourceType::Url );
 
-		uiApplication->addView( *testView_ );
+		if (testView_ != nullptr)
+		{
+			uiApplication->addView( *testView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 	}
 
 	//==========================================================================
@@ -70,8 +78,11 @@ public:
 		cmTestOpen_.reset();
 		cmTestCheckOut_.reset();
 
-		uiApplication->removeView( *testView_ );
-		testView_ = nullptr;
+		if (testView_ != nullptr)
+		{
+			uiApplication->removeView( *testView_ );
+			testView_ = nullptr;
+		}
 
 		return true;
 	}

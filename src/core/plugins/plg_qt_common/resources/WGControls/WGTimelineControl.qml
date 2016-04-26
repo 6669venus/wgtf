@@ -79,6 +79,8 @@ Rectangle {
                 playbackAnim.paused = false
                 timelineFrame.previewPlaying = false
                 timelineFrame.currentFrame = 0
+                timelineToolbar.playing = false
+                timelineToolbar.paused = false
             }
         }
     }

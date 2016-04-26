@@ -251,7 +251,7 @@ WGItemView {
     property var initialColumnWidths: []
 
     /*! This property determines if the column sizing handles are shown */
-    property bool showColumnsFrame: false
+    property bool showColumnsFrame: true
 
     property var depthLevelGroups: []
     //property var maximumColumnText: []

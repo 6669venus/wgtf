@@ -3,6 +3,10 @@
 
 #include "abstract_item.hpp"
 
+
+/**
+ *	Base class for all types of data models.
+ */
 class AbstractItemModel : public AbstractItem
 {
 public:
@@ -59,6 +63,11 @@ public:
 	virtual Connection connectPostColumnRemoved( RangeCallback callback ) { return Connection(); }
 };
 
+
+/**
+ *	Provide models with items arranged one after the other; a list.
+ *	Items in rows are all connected, cannot have different items in different columns.
+ */
 class AbstractListModel : public AbstractItemModel
 {
 public:
@@ -166,6 +175,11 @@ private:
 	}
 };
 
+
+/**
+ *	Provide models with items arranged in a hierarchy; a tree.
+ *	Items in rows are all connected, cannot have different items in different columns.
+ */
 class AbstractTreeModel : public AbstractItemModel
 {
 public:
@@ -215,6 +229,7 @@ public:
 	virtual Connection connectPreRowsRemoved( RangeCallback callback ) { return Connection(); }
 	virtual Connection connectPostRowsRemoved( RangeCallback callback ) { return Connection(); }
 
+// Private fns never/cannot get called?
 private:
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
@@ -289,6 +304,11 @@ private:
 	}
 };
 
+
+/**
+ *	Provide models with items arranged in a grid; a table.
+ *	Items in each (row, column) can be unrelated.
+ */
 class AbstractTableModel : public AbstractItemModel
 {
 public:

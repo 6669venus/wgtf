@@ -57,6 +57,8 @@ SET( MODEL_REFLECTION_SRCS
 	reflection/reflected_property_item.hpp
 	reflection/reflected_tree_model.cpp
 	reflection/reflected_tree_model.hpp
+	reflection/reflected_tree_model_new.cpp
+	reflection/reflected_tree_model_new.hpp
 	reflection/reflected_list.cpp
 	reflection/reflected_list.hpp
 )

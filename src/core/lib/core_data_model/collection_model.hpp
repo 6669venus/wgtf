@@ -50,14 +50,14 @@ private:
 	Signal<AbstractListModel::RangeSignature> postRowsRemoved_; 
 
 
-	Connection connectPreChange;
-	Connection connectPostChanged;
+	Connection connectPreChange_;
+	Connection connectPostChanged_;
 
-	Connection connectPreInsert;
-	Connection connectPostInserted;
+	Connection connectPreInsert_;
+	Connection connectPostInserted_;
 
-	Connection connectPreErase;
-	Connection connectPostErase;
+	Connection connectPreErase_;
+	Connection connectPostErase_;
 };
 
 

@@ -124,16 +124,16 @@ void CollectionModel::setSource(Collection & collection)
 	// TODO emit signal
 	items_.clear();
 
-	connectPreChange.disconnect();
-	connectPostChanged.disconnect();
-	connectPreInsert.disconnect();
-	connectPostInserted.disconnect();
-	connectPreErase.disconnect();
-	connectPostErase.disconnect();
+	connectPreChange_.disconnect();
+	connectPostChanged_.disconnect();
+	connectPreInsert_.disconnect();
+	connectPostInserted_.disconnect();
+	connectPreErase_.disconnect();
+	connectPostErase_.disconnect();
 
 	collection_ = collection;
 	
-	connectPreChange = 
+	connectPreChange_ =
 		collection_.connectPreChange((Collection::ElementPreChangeCallback)[=](const Collection::Iterator& pos, const Variant& newValue)
 	{
 		int row = -1;
@@ -148,7 +148,7 @@ void CollectionModel::setSource(Collection & collection)
 		}
 	});
 	
-	connectPostChanged = 
+	connectPostChanged_ =
 		collection_.connectPostChanged((Collection::ElementPostChangedCallback)[=](const Collection::Iterator& pos, const Variant& oldValue)
 	{
 		int row = -1;
@@ -161,7 +161,7 @@ void CollectionModel::setSource(Collection & collection)
 		}
 	});
 
-	connectPreInsert = 
+	connectPreInsert_ =
 		collection_.connectPreInsert(Collection::ElementRangeCallback([=](const Collection::Iterator& pos, size_t count)
 	{
 		int row = -1;
@@ -172,7 +172,7 @@ void CollectionModel::setSource(Collection & collection)
 		}
 	}));
 
-	connectPostInserted =
+	connectPostInserted_ =
 		collection_.connectPostInserted((Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
 	{
 		int row = -1;
@@ -183,7 +183,7 @@ void CollectionModel::setSource(Collection & collection)
 		}
 	});
 
-	connectPreErase = 
+	connectPreErase_ =
 		collection_.connectPreErase((Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
 	{
 		int row = -1;
@@ -194,7 +194,7 @@ void CollectionModel::setSource(Collection & collection)
 		}
 	});
 
-	connectPostErase =
+	connectPostErase_ =
 		collection_.connectPostErased((Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
 	{
 		int row = -1;

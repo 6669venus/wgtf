@@ -2,18 +2,59 @@
 #define PROJECT_HPP
 
 #include "core_reflection/reflected_object.hpp"
+#include "core_reflection/object_handle.hpp"
 #include "wg_types/vector3.hpp"
 #include "wg_types/vector4.hpp"
 #include <string>
+#include "core_ui_framework/i_view.hpp"
+
+class IComponentContext;
+
 
 
 
 class Project
 {
+public:
+    Project();
+    ~Project();
+    void setProjectName( const char * projectName );
+private:
+    ObjectHandle projectData_;
+    std::string projectName_;
+    std::unique_ptr<IView> view_;
+};
+
+class ProjectManager
+{
+public:
+    ProjectManager();
+    void init( IComponentContext& contextManager );
+    void fini();
+
+    void createProject();
+    void openProject( const Variant& strProjectName );
+    void saveProject();
+    void closeProject();
+    bool canOpen();
+    bool canSave();
+    bool canClose();
+
+    bool isProjectNameOk( const Variant& strProjectName );
+
+private:
+    IComponentContext* contextManager_;
+    std::unordered_map<std::string, Project* > projects_;
+    Project* curProject_;
+
+};
+
+class ProjectData
+{
 	DECLARE_REFLECTED
 public:
-	Project();
-	~Project();
+	ProjectData();
+	~ProjectData();
 
 private:
 	void setCheckBoxState( const bool & bChecked ) ;

@@ -7,7 +7,7 @@ import WGCopyableFunctions 1.0
 
 Rectangle {
     color: palette.mainWindowColor
-    property var title: "Project Test"
+    property var title: "Project Data"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: source
 

@@ -7,115 +7,11 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_action.hpp"
-#include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/i_window.hpp"
 
 #include "project/metadata/project.mpp"
 #include <vector>
 
-
-
-namespace{
-
-    class ProjectManager
-    {
-    public:
-        ProjectManager( IComponentContext & contextManager )
-            : contextManager_( contextManager )
-        {
-
-        }
-        void init()
-        {
-            auto uiFramework = contextManager_.queryInterface<IUIFramework>();
-            auto uiApplication = contextManager_.queryInterface<IUIApplication>();
-            assert( uiFramework != nullptr && uiApplication != nullptr );
-            uiFramework->loadActionData( 
-                ":/testing_project/actions.xml", IUIFramework::ResourceType::File );
-
-            newProject_ = uiFramework->createAction(
-                "NewProject", 
-                std::bind( &ProjectManager::newProject, this ) );
-
-            openProject_ = uiFramework->createAction(
-                "OpenProject", 
-                std::bind( &ProjectManager::openProject, this ),
-                std::bind( &ProjectManager::canOpen, this ) );
-
-            saveProject_ = uiFramework->createAction(
-                "SaveProject", 
-                std::bind( &ProjectManager::saveProject, this ),
-                std::bind( &ProjectManager::canSave, this ) );
-
-            closeProject_ = uiFramework->createAction(
-                "CloseProject", 
-                std::bind( &ProjectManager::closeProject, this ),
-                std::bind( &ProjectManager::canClose, this ) );
-
-            uiApplication->addAction( *newProject_ );
-            uiApplication->addAction( *openProject_ );
-            uiApplication->addAction( *saveProject_ );
-            uiApplication->addAction( *closeProject_ );
-
-        }
-        void fini()
-        {
-            auto uiApplication = contextManager_.queryInterface<IUIApplication>();
-            assert( uiApplication != nullptr );
-            uiApplication->removeAction( *newProject_ );
-            uiApplication->removeAction( *openProject_ );
-            uiApplication->removeAction( *saveProject_ );
-            uiApplication->removeAction( *closeProject_ );
-            newProject_ = nullptr;
-            openProject_ = nullptr;
-            saveProject_ = nullptr;
-            closeProject_ = nullptr;
-        }
-
-    private:
-
-        void newProject()
-        {
-
-        }
-        void openProject()
-        {
-
-        }
-        void saveProject()
-        {
-
-        }
-        void closeProject()
-        {
-
-        }
-        bool canOpen()
-        {
-            return true;
-        }
-
-        bool canSave()
-        {
-            return curProject_ != nullptr;
-        }
-
-        bool canClose()
-        {
-            return curProject_ != nullptr;
-        }
-
-
-        IComponentContext& contextManager_;
-        std::vector<std::string> savedProjectIds_;
-        std::unordered_map<std::string, ObjectHandle > projects_;
-        std::unordered_map<std::string, std::unique_ptr<IView> > projectViews_;
-        ObjectHandle curProject_;
-        std::unique_ptr< IAction > newProject_;
-        std::unique_ptr< IAction > openProject_;
-        std::unique_ptr< IAction > saveProject_;
-        std::unique_ptr< IAction > closeProject_;
-    };
-}
 
 
 //==============================================================================
@@ -124,11 +20,17 @@ class EnvrionmentTestPlugin
 {
 private:
 	std::vector<IInterface*> types_;
-    std::unique_ptr<ProjectManager> projectManager_;
+    std::unique_ptr< IAction > newProject_;
+    std::unique_ptr< IAction > openProject_;
+    std::unique_ptr< IAction > saveProject_;
+    std::unique_ptr< IAction > closeProject_;
+    std::unique_ptr< IWindow > newProjectDialog_;
+    IComponentContext* contextManager_;
+    ObjectHandle projectManager_;
 public:
 	//==========================================================================
 	EnvrionmentTestPlugin(IComponentContext & contextManager )
-        : projectManager_( new ProjectManager( contextManager ))
+        : contextManager_( & contextManager )
 	{
 
 	}
@@ -150,14 +52,65 @@ public:
 		assert(defManager != nullptr);
 
 		this->initReflectedTypes( *defManager );
+        auto pDefinition = defManager->getDefinition(
+            getClassIdentifier< ProjectManager >() );
+        assert( pDefinition != nullptr );
+        projectManager_ = pDefinition->create();
+        projectManager_.getBase< ProjectManager >()->init( contextManager );
 
-        projectManager_->init();
+        auto uiFramework = contextManager.queryInterface<IUIFramework>();
+        auto uiApplication = contextManager.queryInterface<IUIApplication>();
+        assert( uiFramework != nullptr && uiApplication != nullptr );
+        uiFramework->loadActionData( 
+            ":/testing_project/actions.xml", IUIFramework::ResourceType::File );
+
+        newProject_ = uiFramework->createAction(
+            "NewProject", 
+            std::bind( &EnvrionmentTestPlugin::newProject, this ) );
+
+        openProject_ = uiFramework->createAction(
+            "OpenProject", 
+            std::bind( &EnvrionmentTestPlugin::openProject, this ),
+            std::bind( &EnvrionmentTestPlugin::canOpen, this ) );
+
+        saveProject_ = uiFramework->createAction(
+            "SaveProject", 
+            std::bind( &EnvrionmentTestPlugin::saveProject, this ),
+            std::bind( &EnvrionmentTestPlugin::canSave, this ) );
+
+        closeProject_ = uiFramework->createAction(
+            "CloseProject", 
+            std::bind( &EnvrionmentTestPlugin::closeProject, this ),
+            std::bind( &EnvrionmentTestPlugin::canClose, this ) );
+
+        uiApplication->addAction( *newProject_ );
+        uiApplication->addAction( *openProject_ );
+        uiApplication->addAction( *saveProject_ );
+        uiApplication->addAction( *closeProject_ );
+
+        newProjectDialog_ = uiFramework->createWindow( 
+            "testing_project/new_project_dialog.qml", 
+            IUIFramework::ResourceType::Url, projectManager_ );
+        uiApplication->addWindow( *newProjectDialog_ );
 
 	}
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
 	{
-        projectManager_->fini();
+        projectManager_.getBase< ProjectManager >()->fini();
+        projectManager_ = nullptr;
+        auto uiApplication = contextManager.queryInterface<IUIApplication>();
+        assert( uiApplication != nullptr );
+        uiApplication->removeAction( *newProject_ );
+        uiApplication->removeAction( *openProject_ );
+        uiApplication->removeAction( *saveProject_ );
+        uiApplication->removeAction( *closeProject_ );
+        uiApplication->removeWindow( *newProjectDialog_ );
+        newProject_ = nullptr;
+        openProject_ = nullptr;
+        saveProject_ = nullptr;
+        closeProject_ = nullptr;
+        newProjectDialog_ = nullptr;
 		return true;
 	}
 	//==========================================================================
@@ -171,8 +124,43 @@ public:
 
 	void initReflectedTypes( IDefinitionManager & definitionManager )
 	{
-        REGISTER_DEFINITION( Project )
+        REGISTER_DEFINITION( ProjectManager )
+        REGISTER_DEFINITION( ProjectData )
 	}
+
+    void newProject()
+    {
+        if (newProjectDialog_ != nullptr)
+        {
+            newProjectDialog_->showModal();
+        }
+    }
+    void openProject()
+    {
+        
+    }
+    void saveProject()
+    {
+        projectManager_.getBase< ProjectManager >()->saveProject();
+    }
+    void closeProject()
+    {
+        projectManager_.getBase< ProjectManager >()->closeProject();
+    }
+    bool canOpen()
+    {
+        return projectManager_.getBase< ProjectManager >()->canOpen();
+    }
+
+    bool canSave()
+    {
+        return projectManager_.getBase< ProjectManager >()->canSave();
+    }
+
+    bool canClose()
+    {
+        return projectManager_.getBase< ProjectManager >()->canClose();
+    }
 
 };
 

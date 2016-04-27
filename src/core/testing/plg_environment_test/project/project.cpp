@@ -1,7 +1,69 @@
 #include "project.hpp"
+#include "core_generic_plugin\interfaces\i_component_context.hpp"
 
 
+//////////////////////////////////////////////////////////////////////////
 Project::Project()
+{
+
+}
+
+Project::~Project()
+{
+
+}
+
+void Project::setProjectName( const char * projectName )
+{
+    projectName_ = projectName;
+}
+
+ //////////////////////////////////////////////////////////////////////////
+ProjectManager::ProjectManager()
+{
+}
+void ProjectManager::init( IComponentContext& contextManager )
+{
+    contextManager_ = &contextManager;
+}
+void ProjectManager::fini()
+{
+}
+
+void ProjectManager::createProject()
+{
+}
+void ProjectManager::openProject( const Variant& strProjectName )
+{
+}
+void ProjectManager::saveProject()
+{
+}
+void ProjectManager::closeProject()
+{
+}
+bool ProjectManager::canOpen()
+{
+    return true;
+}
+
+bool ProjectManager::canSave()
+{
+    return curProject_ != nullptr;
+}
+
+bool ProjectManager::canClose()
+{
+    return curProject_ != nullptr;
+}
+
+bool ProjectManager::isProjectNameOk( const Variant& strProjectName )
+{
+    return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+ProjectData::ProjectData()
 	: bChecked_( false)
 	, text_( L"Hello Test" )
 	, curSlideData_( 0 )
@@ -15,29 +77,29 @@ Project::Project()
 {
 }
 
-Project::~Project()
+ProjectData::~ProjectData()
 {
 }
 
-void Project::setCheckBoxState( const bool & bChecked )
+void ProjectData::setCheckBoxState( const bool & bChecked )
 {
 	bChecked_ = bChecked;
 }
-void Project::getCheckBoxState( bool * bChecked ) const
+void ProjectData::getCheckBoxState( bool * bChecked ) const
 {
 	*bChecked = bChecked_;
 }
 
-void Project::setTextField( const std::wstring & text )
+void ProjectData::setTextField( const std::wstring & text )
 {
 	text_ = text;
 }
-void Project::getTextField( std::wstring * text ) const
+void ProjectData::getTextField( std::wstring * text ) const
 {
 	*text = text_;
 }
 
-void Project::setSlideData( const double & length )
+void ProjectData::setSlideData( const double & length )
 {
 	if ((length < this->getSlideMinData()) || (length > this->getSlideMaxData()))
 	{
@@ -45,59 +107,59 @@ void Project::setSlideData( const double & length )
 	}
 	curSlideData_ = length;
 }
-void Project::getSlideData(double * length) const
+void ProjectData::getSlideData(double * length) const
 {
 	*length = curSlideData_;
 }
 
-int Project::getSlideMaxData()
+int ProjectData::getSlideMaxData()
 {
 	return 100;
 }
-int Project::getSlideMinData()
+int ProjectData::getSlideMinData()
 {
 	return -100;
 }
 
-void Project::setNumber( const int & num )
+void ProjectData::setNumber( const int & num )
 {
 	curNum_ = num;
 }
-void Project::getNumber( int * num ) const
+void ProjectData::getNumber( int * num ) const
 {
 	*num = curNum_;
 }
 
-void Project::setSelected( const int & select )
+void ProjectData::setSelected( const int & select )
 {
 	curSelected_ = select;
 }
-void Project::getSelected( int * select ) const
+void ProjectData::getSelected( int * select ) const
 {
 	*select = curSelected_;
 }
 
-void Project::setVector3(const Vector3 & vec3)
+void ProjectData::setVector3(const Vector3 & vec3)
 {
 	vec3_.x = vec3.x;
 	vec3_.y = vec3.y;
 	vec3_.z = vec3.z;
 }
-void Project::getVector3(Vector3 * vec3) const
+void ProjectData::getVector3(Vector3 * vec3) const
 {
 	vec3->x = vec3_.x;
 	vec3->y = vec3_.y;
 	vec3->z = vec3_.z;
 }
 
-void Project::setVector4(const Vector4 & vec4)
+void ProjectData::setVector4(const Vector4 & vec4)
 {
 	vec4_.x = vec4.x;
 	vec4_.y = vec4.y;
 	vec4_.z = vec4.z;
 	vec4_.w = vec4.w;
 }
-void Project::getVector4(Vector4 * vec4) const
+void ProjectData::getVector4(Vector4 * vec4) const
 {
 	vec4->x = vec4_.x;
 	vec4->y = vec4_.y;
@@ -105,27 +167,27 @@ void Project::getVector4(Vector4 * vec4) const
 	vec4->w = vec4_.w;
 }
 
-void Project::setColor3(const Vector3 & color)
+void ProjectData::setColor3(const Vector3 & color)
 {
 	color3_.x = color.x;
 	color3_.y = color.y;
 	color3_.z = color.z;
 }
-void Project::getColor3(Vector3 * color) const
+void ProjectData::getColor3(Vector3 * color) const
 {
 	color->x = color3_.x;
 	color->y = color3_.y;
 	color->z = color3_.z;
 }
 
-void Project::setColor4(const Vector4 & color)
+void ProjectData::setColor4(const Vector4 & color)
 {
 	color4_.x = color.x;
 	color4_.y = color.y;
 	color4_.z = color.z;
 	color4_.w = color.w;
 }
-void Project::getColor4(Vector4 * color) const
+void ProjectData::getColor4(Vector4 * color) const
 {
 	color->x = color4_.x;
 	color->y = color4_.y;

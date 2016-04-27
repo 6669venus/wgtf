@@ -136,7 +136,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         width: parent.width + dragWidthIncrease
                         height: parent.height
-                        cursorShape: Qt.SplitHCursor
+                        cursorShape: drawHandles ? Qt.SplitHCursor : Qt.ArrowCursor
 
                         drag.target: handle
                         drag.threshold: 0

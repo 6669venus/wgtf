@@ -45,16 +45,28 @@ SOURCE_GROUP( "DataModel" FILES ${SHARED_MODEL_SRCS} )
 SET( MODEL_REFLECTION_SRCS
 	reflection/class_definition_model.cpp
 	reflection/class_definition_model.hpp
+	reflection/class_definition_model_new.cpp
+	reflection/class_definition_model_new.hpp
 	reflection/reflected_enum_model.cpp
 	reflection/reflected_enum_model.hpp
+	reflection/reflected_enum_model_new.cpp
+	reflection/reflected_enum_model_new.hpp
 	reflection/reflected_group_item.cpp
 	reflection/reflected_group_item.hpp
+	reflection/reflected_group_item_new.cpp
+	reflection/reflected_group_item_new.hpp
 	reflection/reflected_item.cpp
 	reflection/reflected_item.hpp
 	reflection/reflected_object_item.cpp
 	reflection/reflected_object_item.hpp
+	reflection/reflected_object_item_new.cpp
+	reflection/reflected_object_item_new.hpp
 	reflection/reflected_property_item.cpp
 	reflection/reflected_property_item.hpp
+	reflection/reflected_property_item_new.cpp
+	reflection/reflected_property_item_new.hpp
+	reflection/reflected_tree_item_new.cpp
+	reflection/reflected_tree_item_new.hpp
 	reflection/reflected_tree_model.cpp
 	reflection/reflected_tree_model.hpp
 	reflection/reflected_tree_model_new.cpp

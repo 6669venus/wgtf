@@ -14,7 +14,7 @@ class ReflectedTreeModelNew
 {
 public:
 
-	ReflectedTreeModelNew();
+	ReflectedTreeModelNew( int columnCount = 1 );
 	virtual ~ReflectedTreeModelNew();
 	
 
@@ -22,25 +22,26 @@ public:
 	virtual ItemIndex index( const AbstractItem * item ) const override;
 
 	/**
-	 *	Check if tree has child items, excluding hidden items, including null items
+	 *	Get the number of child items, excluding hidden items, including null items
 	 *	E.g.
 	 *	> group1
 	 *	>> group2 <- hidden
 	 *	>>> item1 - count
 	 *	>>> item2 - count
 	 *	>>> item3 - count
-	 *	hasChildren( group1 ) == true
+	 *	>> item4 - count
+	 *	getChildCount( group1 ) == 4
 	 *	E.g.
 	 *	> group1
 	 *	>> group2 <- hidden
 	 *	>> group3 <- hidden
-	 *	hasChildren( group1 ) == false
+	 *	getChildCount( group1 ) == 0
 	 */
 	virtual int rowCount( const AbstractItem * item ) const override;
 	virtual int columnCount() const override;
 
-	void addRootItem( AbstractItem * item );
-	void removeRootItem( AbstractItem * item );
+	virtual void addRootItem( AbstractItem * item );
+	virtual void removeRootItem( AbstractItem * item );
 
 private:
 	class Implementation;

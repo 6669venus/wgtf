@@ -23,7 +23,7 @@ public:
 			return row_ >= 0 && column_ >= 0;
 		}
 
-		bool operator==(const ItemIndex & other)
+		bool operator==( const ItemIndex & other ) const
 		{
 			if (!isValid() && !other.isValid())
 			{
@@ -31,6 +31,11 @@ public:
 			}
 
 			return row_ == other.row_ && column_ == other.column_ && parent_ == other.parent_;
+		}
+
+		bool operator!=( const ItemIndex & other ) const
+		{
+			return !this->operator==( other );
 		}
 
 		int row_;
@@ -195,7 +200,7 @@ public:
 			return row_ >= 0;
 		}
 
-		bool operator==(const ItemIndex & other)
+		bool operator==( const ItemIndex & other ) const
 		{
 			if (!isValid() && !other.isValid())
 			{
@@ -203,6 +208,11 @@ public:
 			}
 
 			return row_ == other.row_ && parent_ == other.parent_;
+		}
+
+		bool operator!=( const ItemIndex & other ) const
+		{
+			return !this->operator==( other );
 		}
 
 		int row_;
@@ -324,7 +334,7 @@ public:
 			return row_ >= 0 && column_ >= 0;
 		}
 
-		bool operator==(const ItemIndex & other)
+		bool operator==( const ItemIndex & other ) const
 		{
 			if (!isValid() && !other.isValid())
 			{
@@ -332,6 +342,11 @@ public:
 			}
 
 			return row_ == other.row_ && column_ == other.column_;
+		}
+
+		bool operator!=( const ItemIndex & other ) const
+		{
+			return !this->operator==( other );
 		}
 
 		int row_;

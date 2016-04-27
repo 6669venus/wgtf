@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import BWControls 1.0
-import WGControls 1.0
+import WGControls 1.0 as WGOne
+import WGControls 2.0
 
 Canvas {
     id: curve
@@ -22,7 +23,7 @@ Canvas {
     property var _scaleY: viewTransform.yScale;
     property var _originX: viewTransform.origin.x;
     property var _originY: viewTransform.origin.y;
-    property var viewTransform: ViewTransform{
+    property var viewTransform: WGViewTransform{
         container: curve
     }
 
@@ -125,12 +126,12 @@ Canvas {
         }
     }
 
-    WGListModel
+    WGOne.WGListModel
     {
         id: pointModel
         source: points
 
-        ValueExtension {}
+        WGOne.ValueExtension {}
     }
 
     Repeater

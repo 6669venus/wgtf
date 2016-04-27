@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import WGControls 2.0
 
 Rectangle {
     id: handle
@@ -31,7 +32,7 @@ Rectangle {
     property bool cp1Enabled: prevPoint !== undefined && parentCurve.showControlPoints;
     property bool cp2Enabled: nextPoint !== undefined && parentCurve.showControlPoints;
     property real minDistance: .001
-    property var viewTransform: ViewTransform{
+    property var viewTransform: WGViewTransform{
         container: parent
     }
 

@@ -20,7 +20,7 @@ namespace
 
 		//const char * getDisplayText( int column ) const 
 		//{ 
-		//	return definition_->getName(); 
+		//	return definition_->getName();
 		//}
 
 		//ThumbnailData getThumbnail( int column ) const
@@ -44,7 +44,7 @@ namespace
 		
 		bool setData( int column, size_t roleId, const Variant & data ) override
 		{ 
-			return false; 
+			return false;
 		}
 
 	private:

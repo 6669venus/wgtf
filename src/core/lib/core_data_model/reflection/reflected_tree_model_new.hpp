@@ -62,11 +62,11 @@ private:
 	Signal< AbstractTreeModel::DataSignature > preItemDataChanged_;
 	Signal< AbstractTreeModel::DataSignature > postItemDataChanged_;
 
-	Signal< AbstractTreeModel::RangeSignature > preRowsInserted_; 
+	Signal< AbstractTreeModel::RangeSignature > preRowsInserted_;
 	Signal< AbstractTreeModel::RangeSignature > postRowsInserted_;
 
 	Signal< AbstractTreeModel::RangeSignature > preRowsRemoved_;
-	Signal< AbstractTreeModel::RangeSignature > postRowsRemoved_; 
+	Signal< AbstractTreeModel::RangeSignature > postRowsRemoved_;
 
 	class Implementation;
 	std::unique_ptr< Implementation > impl_;

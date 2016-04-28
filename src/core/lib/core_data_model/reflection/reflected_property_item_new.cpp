@@ -33,72 +33,106 @@ namespace
 		Variant maxValue_;
 	};
 
-	typedef std::unordered_map<const TypeId, MaxMinValuePair> MaxMinValuePairMap;
+	typedef std::unordered_map< const TypeId, MaxMinValuePair > MaxMinValuePairMap;
 
-	MaxMinValuePair getValuePair(const TypeId& tid)
+	MaxMinValuePair getValuePair( const TypeId & tid )
 	{
-			static const TypeId int8Type = TypeId::getType<int8_t>();
-			static const TypeId int16Type = TypeId::getType<int16_t>();
-			static const TypeId int32Type = TypeId::getType<int32_t>();
-			static const TypeId int64Type = TypeId::getType<int64_t>();
-			static const TypeId uint8Type = TypeId::getType<uint8_t>();
-			static const TypeId uint16Type = TypeId::getType<uint16_t>();
-			static const TypeId uint32Type = TypeId::getType<uint32_t>();
-			static const TypeId uint64Type = TypeId::getType<uint64_t>();
-			static const TypeId longType = TypeId::getType<long>();
-			static const TypeId ulongType = TypeId::getType<unsigned long>();
-			static const TypeId floatType = TypeId::getType<float>();
-			static const TypeId doubleType = TypeId::getType<double>();
+			static const TypeId int8Type = TypeId::getType< int8_t >();
+			static const TypeId int16Type = TypeId::getType< int16_t >();
+			static const TypeId int32Type = TypeId::getType< int32_t >();
+			static const TypeId int64Type = TypeId::getType< int64_t >();
+			static const TypeId uint8Type = TypeId::getType< uint8_t >();
+			static const TypeId uint16Type = TypeId::getType< uint16_t >();
+			static const TypeId uint32Type = TypeId::getType< uint32_t >();
+			static const TypeId uint64Type = TypeId::getType< uint64_t >();
+			static const TypeId longType = TypeId::getType< long >();
+			static const TypeId ulongType = TypeId::getType< unsigned long >();
+			static const TypeId floatType = TypeId::getType< float >();
+			static const TypeId doubleType = TypeId::getType< double >();
 
 			if (int8Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int8_t>::lowest(), std::numeric_limits<int8_t>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< int8_t >::lowest(),
+					std::numeric_limits< int8_t >::max() );
+			}
 
 			if (int16Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int16_t>::lowest(), std::numeric_limits<int16_t>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< int16_t >::lowest(),
+					std::numeric_limits< int16_t >::max() );
+			}
 
 			if (int32Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int32_t>::lowest(), std::numeric_limits<int32_t>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< int32_t >::lowest(),
+					std::numeric_limits< int32_t >::max() );
+			}
 
 			if (int64Type == tid)
-				return MaxMinValuePair( std::numeric_limits<int64_t>::lowest(), std::numeric_limits<int64_t>::max() );
-
+			{
+				return MaxMinValuePair( std::numeric_limits< int64_t >::lowest(),
+					std::numeric_limits< int64_t >::max() );
+			}
 
 			if (uint8Type == tid)
-				return MaxMinValuePair( std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< uint8_t >::min(),
+					std::numeric_limits< uint8_t >::max() );
+			}
 
 			if (uint16Type == tid)
-				return MaxMinValuePair( std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< uint16_t >::min(),
+					std::numeric_limits< uint16_t >::max() );
+			}
 
 			if (uint32Type == tid)
-				return MaxMinValuePair( std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint32_t>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< uint8_t >::min(),
+					std::numeric_limits< uint32_t >::max() );
+			}
 
 			if (uint64Type == tid)
-				return MaxMinValuePair( std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint64_t>::max() );
-
+			{
+				return MaxMinValuePair( std::numeric_limits< uint16_t >::min(),
+					std::numeric_limits< uint64_t >::max() );
+			}
 
 			if (longType == tid)
-				return MaxMinValuePair( std::numeric_limits<long>::lowest(), std::numeric_limits<long>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< long >::lowest(),
+					std::numeric_limits< long >::max() );
+			}
 
 			if (ulongType == tid)
-				return MaxMinValuePair( std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< unsigned long >::min(),
+					std::numeric_limits< unsigned long >::max() );
+			}
 
 			if (floatType == tid)
-				return MaxMinValuePair( std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< float >::lowest(),
+					std::numeric_limits< float >::max() );
+			}
 
 			if (doubleType == tid)
-				return MaxMinValuePair( std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max() );
+			{
+				return MaxMinValuePair( std::numeric_limits< double >::lowest(),
+					std::numeric_limits< double >::max() );
+			}
 
-		return MaxMinValuePair(Variant(), Variant());
+		return MaxMinValuePair( Variant(), Variant() );
 	}
 
 	Variant getMaxValue( const TypeId & typeId )
 	{
-		return getValuePair(typeId).maxValue_;
+		return getValuePair( typeId ).maxValue_;
 	}
 
 	Variant getMinValue( const TypeId & typeId )
 	{
-		return getValuePair(typeId).minValue_;
+		return getValuePair( typeId ).minValue_;
 	}
 }
 

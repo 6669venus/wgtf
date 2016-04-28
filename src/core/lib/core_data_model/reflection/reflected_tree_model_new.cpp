@@ -228,7 +228,7 @@ void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
 	assert( reflectedItem->getModel() == this );
 	const auto foundItr =
 		std::find( impl_->rootItems_.cbegin(), impl_->rootItems_.cend(), reflectedItem );
-	assert( foundItr != rootItems_.cend() );
+	assert( foundItr != impl_->rootItems_.cend() );
 
 	reflectedItem->setModel( nullptr );
 	auto foundIter = std::find( impl_->rootItems_.cbegin(),

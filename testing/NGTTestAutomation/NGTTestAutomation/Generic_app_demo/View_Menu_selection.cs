@@ -91,9 +91,9 @@ namespace NGTTestAutomation.Generic_app_demo
             Validate.ContainsImage(repo.Menu.View.HistoryInfo, History_Screenshot1, History_Screenshot1_Options);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'Menu.View.TreeExpansionTest'.", repo.Menu.View.TreeExpansionTestInfo, new RecordItemIndex(3));
-            Validate.ContainsImage(repo.Menu.View.TreeExpansionTestInfo, TreeExpansionTest_Screenshot1, TreeExpansionTest_Screenshot1_Options);
-            Delay.Milliseconds(0);
+            //Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'Menu.View.TreeExpansionTest'.", repo.Menu.View.TreeExpansionTestInfo, new RecordItemIndex(3));
+            //Validate.ContainsImage(repo.Menu.View.TreeExpansionTestInfo, TreeExpansionTest_Screenshot1, TreeExpansionTest_Screenshot1_Options);
+            //Delay.Milliseconds(0);
             
             Report.Log(ReportLevel.Info, "Validation", "Validating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'Menu.View.CustomModelInterface'.", repo.Menu.View.CustomModelInterfaceInfo, new RecordItemIndex(4));
             Validate.ContainsImage(repo.Menu.View.CustomModelInterfaceInfo, CustomModelInterface_Screenshot1, CustomModelInterface_Screenshot1_Options);

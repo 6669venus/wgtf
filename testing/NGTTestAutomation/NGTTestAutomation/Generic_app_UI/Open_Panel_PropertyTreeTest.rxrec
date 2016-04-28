@@ -31,7 +31,7 @@ mode="Global">
 		enabled="True"
 		optional="False"
 		duration="500ms"
-		searchpropertyid="4e59b8cc-37f8-437e-aca0-7d5f5f16d16f"
+		searchpropertyid="048b5ff7-610e-4ace-912f-8486495a95a9"
 		action="Click"
 		button="Left"
 		movetime="300ms"
@@ -44,7 +44,7 @@ mode="Global">
 			sourcename="RepositoryEditor"
 			id="1b73b804-aadb-46b7-87af-bf044fcd46f9">
 				<path>
-					/form[@objectname='MainWindow']/?/?/tabpage[@index='10']
+					/form[@objectname='MainWindow']/?/?/tabpage[@title='PropertyTree Test - class TestPage']
 				</path>
 			</info>
 		</mouseitem>

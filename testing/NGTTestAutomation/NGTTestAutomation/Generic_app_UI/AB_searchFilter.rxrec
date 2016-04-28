@@ -89,12 +89,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot1"
-		screenshotguid="99b0a047-e57b-42a8-a297-eb7365a0ca90"
-		codegenpropertyname="AssetGrid_Screenshot1"
+		screenshotname="Screenshot3"
+		screenshotguid="9ea60776-e27c-46ae-b995-c48ec998afb0"
+		codegenpropertyname="AssetGrid_Screenshot3"
 		searchpropertyid="307346b8-3aeb-4785-882d-9f018fb30ed9"
-		imagerect="0,0,1646,200"
-		imageoptions="0.8;EdgesSobel;0,0,1646,200;True;10000000;0ms"
+		imagerect="0,0,904,200"
+		imageoptions="0.8;EdgesSobel;0,0,904,200;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>
@@ -143,12 +143,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot2"
-		screenshotguid="27203252-d73b-451d-af8e-948bf80a50d6"
-		codegenpropertyname="AssetGrid_Screenshot2"
+		screenshotname="Screenshot4"
+		screenshotguid="0605befd-b487-4041-93e0-57afb62b8e7a"
+		codegenpropertyname="AssetGrid_Screenshot4"
 		searchpropertyid="307346b8-3aeb-4785-882d-9f018fb30ed9"
-		imagerect="0,0,1646,204"
-		imageoptions="0.85;EdgesSobel;0,0,1646,204;True;10000000;0ms"
+		imagerect="0,0,886,510"
+		imageoptions="0.85;EdgesSobel;0,0,886,510;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>

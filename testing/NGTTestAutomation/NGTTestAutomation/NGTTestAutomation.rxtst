@@ -25,6 +25,9 @@ reportlevel="Info;20">
 			<folder
 			name="Initial_Test"
 			id="71c1a0bf-4222-44d0-bc10-6d5caa643052">
+				<description>
+					Open/close
+				</description>
 				<testcase
 				name="Starting_Generic_App_UI_test_/Close_Generic_app"
 				id="4d36ff13-1412-4a18-af20-e8d4909351e8">
@@ -91,6 +94,50 @@ reportlevel="Info;20">
 						<testmodule
 						name="Close_GenericApp_demo"
 						id="22ffaffe-ceb8-446e-b99a-ec3906891856"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
+			<folder
+			name="Panel_layout"
+			id="b78bcc74-8ef7-4a95-9d55-1b31aecdc779">
+				<testcase
+				name="Layout_assetBrowser"
+				id="ad4cce63-c4bc-4118-bd29-f76e5d69bfbe">
+					<setup
+					name="setup"
+					id="fe03f69b-1796-413e-96d7-c4b797d9a2ff">
+						<testmodule
+						name="Open_GenericApp_ui"
+						id="68ef5911-526b-4551-8fce-fefc917e8a41"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="AB_layout_RHS"
+					id="09008e22-c74b-450f-b06f-daef698a629f"
+					ref="1427968f-49e2-4ae1-95b0-c3ef9b297360"
+					type="Recording"/>
+					<testmodule
+					name="AB_layout_validation"
+					id="eb132c94-b4b8-4f6f-902b-b4510168acde"
+					ref="cc3d5e49-cc6f-47b1-a6af-3c7f0c9874c0"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="ee507b05-223c-4b6f-a169-d85ac37393a7">
+						<testmodule
+						name="Close_GenericApp_demo"
+						id="f5beed8d-9186-4470-9e78-261c3d7de107"
 						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
@@ -218,7 +265,7 @@ reportlevel="Info;20">
 				</testcase>
 			</folder>
 			<folder
-			name="Toolbar"
+			name="Testdata/PropertyTree"
 			id="a003f6b1-712e-4dbd-87eb-8767afc6a4a0">
 				<testcase
 				name="Redo/Undo"
@@ -282,6 +329,177 @@ reportlevel="Info;20">
 				</testcase>
 			</folder>
 			<folder
+			name="Panels"
+			id="e0c8a1c5-09e9-4155-a5ff-fca563957211">
+				<testcase
+				name="Active_Filters_Control_Test"
+				id="19e323c2-503c-4c55-9369-be10a671e2a8">
+					<setup
+					name="setup"
+					id="5a6b1850-760d-4dbe-b9de-e8b77e8a2de8">
+						<testmodule
+						name="Open_GenericApp_ui"
+						id="29ec324b-3563-473a-af2e-cb2e4ee1c82e"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="AFCT_Panel_Selection"
+					id="4ff69d0e-5983-46a9-b7af-c541440a2d71"
+					ref="9086e580-c635-42d1-8a4e-066ad1298541"
+					type="Recording">
+						<description>
+							AFCT panel selection
+						</description>
+					</testmodule>
+					<testmodule
+					name="AFCT_colapse"
+					id="bb8e3076-ac7a-4224-9744-4dc2bd4513b7"
+					ref="d79ef13b-66ee-466e-a284-af5d45ad7bb9"
+					type="Recording">
+						<description>
+							Colapse and expand list test
+						</description>
+					</testmodule>
+					<testmodule
+					name="AFCT_Filters"
+					id="ab18b671-8de9-4888-9498-035e874379d4"
+					ref="8dd8d592-4d7f-469c-af72-5bb1fb3b9c1a"
+					type="Recording">
+						<description>
+							Filtering test
+						</description>
+					</testmodule>
+					<testmodule
+					name="AFCT_SaveFilters"
+					id="f0c514c0-06b0-4abc-a343-bdf0123720fe"
+					ref="d47949c3-8d09-4aee-ab65-7440130c0267"
+					type="Recording"
+					enabled="False">
+						<description>
+							*WIP* Save filter test (disable because a crash jira # )
+						</description>
+					</testmodule>
+				</testcase>
+				<testcase
+				name="ListModel_Test"
+				id="532e53cb-067a-44dd-a118-a715c0967f4f">
+					<testmodule
+					name="LMT_panel_selection"
+					id="57cea397-c6fa-405f-a98d-1f56d85a773a"
+					ref="b013d206-1ec5-4a1a-882f-120e533b9bdd"
+					type="Recording">
+						<description>
+							LMT panel Selection
+						</description>
+					</testmodule>
+					<testmodule
+					name="LMT_ListSelection"
+					id="7c24bdbe-07ef-4d76-a471-236b22707c96"
+					ref="b82f4c3d-b79e-459f-a6e4-b580a2ce82f8"
+					type="Recording">
+						<description>
+							Item selection in list
+						</description>
+					</testmodule>
+					<testmodule
+					name="LMT_SwitchModel"
+					id="008e6775-a05f-4e67-86a3-f17cd9955073"
+					ref="1bd606eb-c7e1-45d7-8c91-61a76a4bb58c"
+					type="Recording">
+						<description>
+							Switch Model on/off test
+						</description>
+					</testmodule>
+				</testcase>
+				<testcase
+				name="ListFilter_test"
+				id="727af20f-04bd-4507-a2a9-913115ded043">
+					<testmodule
+					name="LFT_Panel_selection"
+					id="de03b92f-5244-45a1-8858-82603666622d"
+					ref="2d270537-ffc8-4cad-a6d3-f3103f4d5c51"
+					type="Recording">
+						<description>
+							LFT panel selection
+						</description>
+					</testmodule>
+					<testmodule
+					name="LFT_ScrollBar"
+					id="bde2e673-421e-493d-b6a3-f0dcc297e065"
+					ref="0cce184d-3ea9-46d8-91b7-56559d1f9d2e"
+					type="Recording">
+						<description>
+							Scroll bar testing
+						</description>
+					</testmodule>
+					<testmodule
+					name="LFT_Item_selection"
+					id="48db00b0-d0e6-482d-904a-2664e64485d9"
+					ref="4d2ddd2d-e70d-437a-8ed6-1b436697f806"
+					type="Recording">
+						<description>
+							Item Selection in list
+						</description>
+					</testmodule>
+					<testmodule
+					name="LFT_Search"
+					id="c60b2508-baf5-4d8c-ab02-5fe92473b001"
+					ref="86b4ba44-4d9d-453c-a7c3-eb655af623e2"
+					type="Recording">
+						<description>
+							Search filter test
+						</description>
+					</testmodule>
+				</testcase>
+				<testcase
+				name="MultiColumn_List_Test"
+				id="7f6715f1-b074-4f71-b465-3e3489485735">
+					<testmodule
+					name="Multicol_panel_selection"
+					id="0832fb88-849b-4e9c-b4df-7c7e6f2e58f3"
+					ref="8603dc29-f13a-4f49-aef7-a3b4222db340"
+					type="Recording">
+						<description>
+							Multicolum panel selection
+						</description>
+					</testmodule>
+					<testmodule
+					name="Multicol_Add_Column"
+					id="1ae1eb51-a28a-4c02-bc4d-839034473fab"
+					ref="413d97ba-2da5-4a2f-91b3-a0f2b67df87f"
+					type="Recording">
+						<description>
+							Add and remove column test
+						</description>
+					</testmodule>
+				</testcase>
+				<testcase
+				name="TreeModel_Test"
+				id="c70774a5-911a-4fbf-8cfe-793e57682d95"/>
+				<testcase
+				name="Python_Test"
+				id="3d3ed08f-04e7-47d0-b93f-97bd441e8bb0">
+					<teardown
+					name="teardown"
+					id="3ecbe8e0-9917-477d-a7e6-0ce13e057cbf">
+						<testmodule
+						name="Close_GenericApp_demo"
+						id="9481f1aa-0ab7-4543-9e94-638c3c48a1a0"
+						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
+			<folder
 			name="Asset_Browser"
 			id="24ee083c-2eaa-48ba-b407-f2e3f802c1ea">
 				<testcase
@@ -310,6 +528,11 @@ reportlevel="Info;20">
 						type="UserCode"
 						enabled="False"/>
 					</setup>
+					<testmodule
+					name="AB_select_Asset_Browser_tab"
+					id="964be88f-8382-4118-ae3c-d9d0e62090ed"
+					ref="67107961-4469-4e80-9429-fc8fc90dde83"
+					type="Recording"/>
 					<testmodule
 					name="AB_expand"
 					id="0d03fbcf-7241-426a-843a-7645246b41c1"
@@ -371,6 +594,11 @@ reportlevel="Info;20">
 						</testmodule>
 					</setup>
 					<testmodule
+					name="AB_select_Asset_Browser_tab"
+					id="7861d1ed-8d52-4efc-a2e4-70d6c5d06835"
+					ref="67107961-4469-4e80-9429-fc8fc90dde83"
+					type="Recording"/>
+					<testmodule
 					name="AB_expand"
 					id="6cf76a50-0219-45e3-9c1c-3b986ee103ad"
 					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
@@ -421,6 +649,11 @@ reportlevel="Info;20">
 						</testmodule>
 					</setup>
 					<testmodule
+					name="AB_select_Asset_Browser_tab"
+					id="3c92f952-5c3b-4342-a3d4-a5fd132f790c"
+					ref="67107961-4469-4e80-9429-fc8fc90dde83"
+					type="Recording"/>
+					<testmodule
 					name="AB_expand"
 					id="f3fd9423-d162-4894-ae53-b1742be8e312"
 					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
@@ -434,11 +667,6 @@ reportlevel="Info;20">
 					name="AB_Horizontal_Vertical_toggle"
 					id="8db20e52-5e83-403a-91f9-bcaf458e8801"
 					ref="a0032775-d7f5-4c8d-96ef-43d4899a6384"
-					type="Recording"/>
-					<testmodule
-					name="AB_IconSize"
-					id="fec4e414-47ba-400c-8b35-a5913ef022e2"
-					ref="11a7a3c6-d73b-46e0-903d-fc6f4f79513d"
 					type="Recording"/>
 					<teardown
 					name="teardown"
@@ -470,6 +698,11 @@ reportlevel="Info;20">
 							</databinding>
 						</testmodule>
 					</setup>
+					<testmodule
+					name="AB_select_Asset_Browser_tab"
+					id="09a46535-aec7-456b-a9cf-7d8f59007bed"
+					ref="67107961-4469-4e80-9429-fc8fc90dde83"
+					type="Recording"/>
 					<testmodule
 					name="AB_expand"
 					id="a114ecd9-f138-4638-b207-dcfefde9d300"
@@ -651,9 +884,13 @@ properties, not selected items</P>]]>
 			<testcase
 			id="0432b46d-4642-401b-bc53-9a065f5c269a"/>
 			<testcase
+			id="19e323c2-503c-4c55-9369-be10a671e2a8"/>
+			<testcase
 			id="24ee083c-2eaa-48ba-b407-f2e3f802c1ea"/>
 			<testcase
 			id="37538fc7-1001-4549-82ed-e10cb0a9b7d7"/>
+			<testcase
+			id="3d3ed08f-04e7-47d0-b93f-97bd441e8bb0"/>
 			<testcase
 			id="4d36ff13-1412-4a18-af20-e8d4909351e8"/>
 			<testcase
@@ -661,17 +898,31 @@ properties, not selected items</P>]]>
 			<testcase
 			id="4f8d0db5-0cb2-401e-880a-b827e7d5fd02"/>
 			<testcase
+			id="532e53cb-067a-44dd-a118-a715c0967f4f"/>
+			<testcase
 			id="6ae71e00-ea11-46d1-aa1c-a2d0882e06fb"/>
 			<testcase
 			id="71c1a0bf-4222-44d0-bc10-6d5caa643052"/>
+			<testcase
+			id="727af20f-04bd-4507-a2a9-913115ded043"/>
 			<testcase
 			id="7488b862-8d43-48e2-b26c-d57659ab9c49"/>
 			<testcase
 			id="8919c9a0-abc7-492f-ad70-8c647ef85378"/>
 			<testcase
+			id="a003f6b1-712e-4dbd-87eb-8767afc6a4a0"/>
+			<testcase
+			id="ad4cce63-c4bc-4118-bd29-f76e5d69bfbe"/>
+			<testcase
 			id="b7308b9a-1454-4734-8cb6-c72173fe524a"/>
 			<testcase
+			id="b78bcc74-8ef7-4a95-9d55-1b31aecdc779"/>
+			<testcase
 			id="b946ca30-95c6-42e4-b8ed-2c5e938dd9e7"/>
+			<testcase
+			id="e0c8a1c5-09e9-4155-a5ff-fca563957211"/>
+			<testcase
+			id="e7887b5b-96bd-4a84-8045-6709650d5080"/>
 		</testconfiguration>
 	</testconfigurations>
 	<references/>

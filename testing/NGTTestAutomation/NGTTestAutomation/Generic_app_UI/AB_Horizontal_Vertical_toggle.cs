@@ -86,16 +86,16 @@ namespace NGTTestAutomation.Generic_app_UI
             Report.Log(ReportLevel.Info, "Delay", "Waiting for 500ms.", new RecordItemIndex(1));
             Delay.Duration(500, false);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot2' with region {X=0,Y=0,Width=1920,Height=250}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(2));
-            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot2, QQuickWidget_AB_Screenshot2_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot8' with region {X=0,Y=0,Width=1178,Height=250}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(2));
+            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot8, QQuickWidget_AB_Screenshot8_Options);
             Delay.Milliseconds(0);
             
             Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.BtnAssetBrowserOrientation' at Center.", repo.Generic_app.MainWindow.BtnAssetBrowserOrientationInfo, new RecordItemIndex(3));
             repo.Generic_app.MainWindow.BtnAssetBrowserOrientation.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=1920,Height=250}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(4));
-            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot1, QQuickWidget_AB_Screenshot1_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot9' with region {X=310,Y=60,Width=846,Height=499}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(4));
+            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot9, QQuickWidget_AB_Screenshot9_Options);
             Delay.Milliseconds(0);
             
             Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.BtnAssetBrowserHideFolders' at Center.", repo.Generic_app.MainWindow.BtnAssetBrowserHideFoldersInfo, new RecordItemIndex(5));
@@ -105,44 +105,44 @@ namespace NGTTestAutomation.Generic_app_UI
             Report.Log(ReportLevel.Info, "Delay", "Waiting for 500ms.", new RecordItemIndex(6));
             Delay.Duration(500, false);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot3' with region {X=0,Y=0,Width=1920,Height=250}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(7));
-            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot3, QQuickWidget_AB_Screenshot3_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot10' with region {X=0,Y=0,Width=1165,Height=464}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(7));
+            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot10, QQuickWidget_AB_Screenshot10_Options);
             Delay.Milliseconds(0);
             
             Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.BtnAssetBrowserHideFolders' at Center.", repo.Generic_app.MainWindow.BtnAssetBrowserHideFoldersInfo, new RecordItemIndex(8));
             repo.Generic_app.MainWindow.BtnAssetBrowserHideFolders.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=1920,Height=250}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(9));
-            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot1_2, QQuickWidget_AB_Screenshot1_2_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot11' with region {X=296,Y=19,Width=882,Height=878}) on item 'Generic_app.MainWindow.QQuickWidget_AB'.", repo.Generic_app.MainWindow.QQuickWidget_ABInfo, new RecordItemIndex(9));
+            Validate.CompareImage(repo.Generic_app.MainWindow.QQuickWidget_ABInfo, QQuickWidget_AB_Screenshot11, QQuickWidget_AB_Screenshot11_Options);
             Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
-        CompressedImage QQuickWidget_AB_Screenshot2
-        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot2(new Rectangle(0, 0, 1920, 250)); } }
+        CompressedImage QQuickWidget_AB_Screenshot8
+        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot8(new Rectangle(0, 0, 1178, 250)); } }
 
-        Imaging.FindOptions QQuickWidget_AB_Screenshot2_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"); } }
+        Imaging.FindOptions QQuickWidget_AB_Screenshot8_Options
+        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,1178,250;True;10000000;0ms"); } }
 
-        CompressedImage QQuickWidget_AB_Screenshot1
-        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot1(new Rectangle(0, 0, 1920, 250)); } }
+        CompressedImage QQuickWidget_AB_Screenshot9
+        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot9(new Rectangle(310, 60, 846, 499)); } }
 
-        Imaging.FindOptions QQuickWidget_AB_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"); } }
+        Imaging.FindOptions QQuickWidget_AB_Screenshot9_Options
+        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;310,60,846,499;True;10000000;0ms"); } }
 
-        CompressedImage QQuickWidget_AB_Screenshot3
-        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot3(new Rectangle(0, 0, 1920, 250)); } }
+        CompressedImage QQuickWidget_AB_Screenshot10
+        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot10(new Rectangle(0, 0, 1165, 464)); } }
 
-        Imaging.FindOptions QQuickWidget_AB_Screenshot3_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"); } }
+        Imaging.FindOptions QQuickWidget_AB_Screenshot10_Options
+        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,1165,464;True;10000000;0ms"); } }
 
-        CompressedImage QQuickWidget_AB_Screenshot1_2
-        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot1(new Rectangle(0, 0, 1920, 250)); } }
+        CompressedImage QQuickWidget_AB_Screenshot11
+        { get { return repo.Generic_app.MainWindow.QQuickWidget_ABInfo.GetScreenshot11(new Rectangle(296, 19, 882, 878)); } }
 
-        Imaging.FindOptions QQuickWidget_AB_Screenshot1_2_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"); } }
+        Imaging.FindOptions QQuickWidget_AB_Screenshot11_Options
+        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;296,19,882,878;True;10000000;0ms"); } }
 
 #endregion
     }

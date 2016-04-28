@@ -69,6 +69,18 @@
       <UserCode>true</UserCode>
       <id>cb126d51-36b4-4c53-8a76-d56200f3dd43</id>
     </Compile>
+    <Compile Include="Generic_app_demo\AB_layout_validation.cs">
+      <BoundTo>5252a8f2-c170-429d-a1fd-cba9bd807836</BoundTo>
+      <DependentUpon>AB_layout_validation.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>dc2b6563-b8b1-493b-ae05-e96504ce5b61</id>
+    </Compile>
+    <Compile Include="Generic_app_demo\AB_layout_validation.UserCode.cs">
+      <BoundTo>5252a8f2-c170-429d-a1fd-cba9bd807836</BoundTo>
+      <DependentUpon>AB_layout_validation.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>c32bde90-67ea-41a0-9da8-6ee65ed66334</id>
+    </Compile>
     <Compile Include="Generic_app_demo\AB_selectItems.cs">
       <BoundTo>e462d373-7336-4549-b3e9-070f8d09f631</BoundTo>
       <DependentUpon>AB_selectItems.rxrec</DependentUpon>
@@ -237,6 +249,30 @@
       <UserCode>true</UserCode>
       <id>2e65c5ca-f29a-4990-954e-534d6b0f535b</id>
     </Compile>
+    <Compile Include="Generic_app_UI\AB_layout.cs">
+      <BoundTo>c1c91803-6db3-4bd8-a869-b3be6b303da7</BoundTo>
+      <DependentUpon>AB_layout.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>d979bc43-6662-4c26-b697-c91bd7afdfcd</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_layout.UserCode.cs">
+      <BoundTo>c1c91803-6db3-4bd8-a869-b3be6b303da7</BoundTo>
+      <DependentUpon>AB_layout.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>8025fae5-0105-4df8-a095-17cb7de77dcf</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_layout_RHS.cs">
+      <BoundTo>d5a449a5-cd3a-48de-a841-f455e1b8ac71</BoundTo>
+      <DependentUpon>AB_layout_RHS.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>11d212d5-8a3d-4398-a9cf-610622516919</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_layout_RHS.UserCode.cs">
+      <BoundTo>d5a449a5-cd3a-48de-a841-f455e1b8ac71</BoundTo>
+      <DependentUpon>AB_layout_RHS.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>be2e0d5b-bf25-4823-8142-38fa491694e9</id>
+    </Compile>
     <Compile Include="Generic_app_UI\AB_Multipl_filter.cs">
       <BoundTo>cf6c9c88-f3bd-462d-bbae-bfdf57a29b0d</BoundTo>
       <DependentUpon>AB_Multipl_filter.rxrec</DependentUpon>
@@ -273,6 +309,18 @@
       <UserCode>true</UserCode>
       <id>b7dee806-ba91-4bf8-86f9-4ae9176544ff</id>
     </Compile>
+    <Compile Include="Generic_app_UI\AB_select_Asset_Browser_tab.cs">
+      <BoundTo>8be5a098-7772-468f-adc2-d32fa86d4105</BoundTo>
+      <DependentUpon>AB_select_Asset_Browser_tab.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>b989614d-040f-4d2d-9b48-0bf922ac8726</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AB_select_Asset_Browser_tab.UserCode.cs">
+      <BoundTo>8be5a098-7772-468f-adc2-d32fa86d4105</BoundTo>
+      <DependentUpon>AB_select_Asset_Browser_tab.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>39c94820-f943-43b0-bcce-fd86c6aeade9</id>
+    </Compile>
     <Compile Include="Generic_app_UI\AB_Select_folder_win64.cs">
       <BoundTo>13e0023d-88dc-4145-b4bb-d0e39a4842ee</BoundTo>
       <DependentUpon>AB_Select_folder_win64.rxrec</DependentUpon>
@@ -296,6 +344,54 @@
       <DependentUpon>AB_shortcut_crash.rxrec</DependentUpon>
       <UserCode>true</UserCode>
       <id>a2e2fad9-0c16-42e1-a409-4c96424b0246</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_colapse.cs">
+      <BoundTo>3ef8b8c1-bb80-460d-a7d1-afd6f565d8ac</BoundTo>
+      <DependentUpon>AFCT_colapse.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>53f864b9-14f4-49cd-8546-3c07e2408b32</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_colapse.UserCode.cs">
+      <BoundTo>3ef8b8c1-bb80-460d-a7d1-afd6f565d8ac</BoundTo>
+      <DependentUpon>AFCT_colapse.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>6237e816-da4a-4742-9e7b-859ed69abf60</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_Filters.cs">
+      <BoundTo>b3ce0e40-8f6a-4f66-94a7-08359ae832f5</BoundTo>
+      <DependentUpon>AFCT_Filters.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>52bc5b88-ddcb-427e-b0b6-5e0f2f928577</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_Filters.UserCode.cs">
+      <BoundTo>b3ce0e40-8f6a-4f66-94a7-08359ae832f5</BoundTo>
+      <DependentUpon>AFCT_Filters.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>01cabc11-0144-4f4c-88c0-d56ca8003285</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_Panel_Selection.cs">
+      <BoundTo>e4de6cb1-5b8d-4615-aaa0-b82c2721bcf8</BoundTo>
+      <DependentUpon>AFCT_Panel_Selection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>d4ab011b-b69e-4eaa-a9eb-0fc51a25258a</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_Panel_Selection.UserCode.cs">
+      <BoundTo>e4de6cb1-5b8d-4615-aaa0-b82c2721bcf8</BoundTo>
+      <DependentUpon>AFCT_Panel_Selection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>9e658955-23e9-439e-8341-03dbc474289b</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_SaveFilters.cs">
+      <BoundTo>1052e241-767f-4534-b7af-afe3a9b8311e</BoundTo>
+      <DependentUpon>AFCT_SaveFilters.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>dd1d7714-df8a-41b4-a0e4-656e5dec9546</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\AFCT_SaveFilters.UserCode.cs">
+      <BoundTo>1052e241-767f-4534-b7af-afe3a9b8311e</BoundTo>
+      <DependentUpon>AFCT_SaveFilters.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>b0b61d30-4c6f-40bd-a519-1d53ebc5b879</id>
     </Compile>
     <Compile Include="Generic_app_UI\Bool01.cs">
       <BoundTo>1f3550ca-9436-42c1-bb65-925361c1fa3e</BoundTo>
@@ -332,6 +428,126 @@
       <DependentUpon>Expand_SimpleCases.rxrec</DependentUpon>
       <UserCode>true</UserCode>
       <id>5c82d4b8-b35b-455c-abed-3cd9e9a53f11</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\Layou_undock_redock.cs">
+      <BoundTo>7383c761-e2d0-4ddb-ac7c-7be07b143ab2</BoundTo>
+      <DependentUpon>Layou_undock_redock.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>f4dd5abb-f15e-4d3e-80f3-9ddfff624a75</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\Layou_undock_redock.UserCode.cs">
+      <BoundTo>7383c761-e2d0-4ddb-ac7c-7be07b143ab2</BoundTo>
+      <DependentUpon>Layou_undock_redock.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>801b5067-3528-41ec-9ada-67243905085b</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_Item_selection.cs">
+      <BoundTo>fefead98-a290-4165-b722-1caed1b791e1</BoundTo>
+      <DependentUpon>LFT_Item_selection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>4ac799c8-3465-4833-829d-765f02129937</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_Item_selection.UserCode.cs">
+      <BoundTo>fefead98-a290-4165-b722-1caed1b791e1</BoundTo>
+      <DependentUpon>LFT_Item_selection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>96c45f4d-a198-4586-9143-0a26736a8b89</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_Panel_selection.cs">
+      <BoundTo>e6a3ff20-5956-4a32-9f1b-61d79a03a38a</BoundTo>
+      <DependentUpon>LFT_Panel_selection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>b1a49003-1cb6-4ce3-af1a-792a16f8f015</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_Panel_selection.UserCode.cs">
+      <BoundTo>e6a3ff20-5956-4a32-9f1b-61d79a03a38a</BoundTo>
+      <DependentUpon>LFT_Panel_selection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>43cf556f-300d-41eb-8bd9-7593615d6a1a</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_ScrollBar.cs">
+      <BoundTo>42b40a68-b2a9-4b14-93c4-860e41cb8a5b</BoundTo>
+      <DependentUpon>LFT_ScrollBar.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>2ba94401-5d43-454e-8438-05a61be3a3e4</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_ScrollBar.UserCode.cs">
+      <BoundTo>42b40a68-b2a9-4b14-93c4-860e41cb8a5b</BoundTo>
+      <DependentUpon>LFT_ScrollBar.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>5355455e-b6ea-4a68-b6fa-6636477fe2c0</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_Search.cs">
+      <BoundTo>f6f8ebae-8705-4aee-8d1c-04234323839b</BoundTo>
+      <DependentUpon>LFT_Search.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>56443d90-ca3d-4ff6-b9b3-ef58debbdea7</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LFT_Search.UserCode.cs">
+      <BoundTo>f6f8ebae-8705-4aee-8d1c-04234323839b</BoundTo>
+      <DependentUpon>LFT_Search.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>21f282a3-c98a-4f31-9f0f-4bfbae725c9d</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LMT_ListSelection.cs">
+      <BoundTo>d2963789-3f08-4cce-891b-f2f024a2b5ce</BoundTo>
+      <DependentUpon>LMT_ListSelection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>38bdaf59-23ed-4ad7-bac5-f58269ffc25c</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LMT_ListSelection.UserCode.cs">
+      <BoundTo>d2963789-3f08-4cce-891b-f2f024a2b5ce</BoundTo>
+      <DependentUpon>LMT_ListSelection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>6db5f439-e89d-4683-bac6-facedfc5fff0</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LMT_panel_selection.cs">
+      <BoundTo>05dc3530-adad-40b6-90dc-94f6b5f67be4</BoundTo>
+      <DependentUpon>LMT_panel_selection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>9aa58cbd-1f62-4b90-a76a-f85ac4d195ca</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LMT_panel_selection.UserCode.cs">
+      <BoundTo>05dc3530-adad-40b6-90dc-94f6b5f67be4</BoundTo>
+      <DependentUpon>LMT_panel_selection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>a12570fe-bccf-4596-9b7f-b4f72f38a889</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LMT_SwitchModel.cs">
+      <BoundTo>836e0ce4-f0fb-4505-99e8-07d7f5819a44</BoundTo>
+      <DependentUpon>LMT_SwitchModel.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>6b53e7ec-e678-477e-902c-8e4260e97f04</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\LMT_SwitchModel.UserCode.cs">
+      <BoundTo>836e0ce4-f0fb-4505-99e8-07d7f5819a44</BoundTo>
+      <DependentUpon>LMT_SwitchModel.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>85ef949d-fa25-41ab-8419-57e52311b978</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\Multicol_Add_Column.cs">
+      <BoundTo>30bfcb44-20c5-4eee-b3d7-758c761dd265</BoundTo>
+      <DependentUpon>Multicol_Add_Column.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>478d8f29-9891-4c1e-a2ec-65534720a9d3</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\Multicol_Add_Column.UserCode.cs">
+      <BoundTo>30bfcb44-20c5-4eee-b3d7-758c761dd265</BoundTo>
+      <DependentUpon>Multicol_Add_Column.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>b2c0edcc-fdbd-4ccc-aaa3-0a6cbb7a13c1</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\Multicol_panel_selection.cs">
+      <BoundTo>0ee967e7-951b-49ef-8439-2fc76cd9487e</BoundTo>
+      <DependentUpon>Multicol_panel_selection.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>88fa598d-be75-4cdd-8322-8243f9670b8e</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\Multicol_panel_selection.UserCode.cs">
+      <BoundTo>0ee967e7-951b-49ef-8439-2fc76cd9487e</BoundTo>
+      <DependentUpon>Multicol_panel_selection.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>9b1876f4-d20c-40ff-8646-8c97b5a0c9cc</id>
     </Compile>
     <Compile Include="Generic_app_UI\Open_Panel_PropertyTreeTest.cs">
       <BoundTo>be52d17e-7c86-4b06-9fc0-ad359193407c</BoundTo>
@@ -545,6 +761,11 @@
       <id>cc8eef84-3b75-49a8-937a-24df20d40907</id>
       <recordtableid>ce93ef25-0a18-46cd-98e1-00ebde4952a3</recordtableid>
     </None>
+    <None Include="Generic_app_demo\AB_layout_validation.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>5252a8f2-c170-429d-a1fd-cba9bd807836</id>
+      <recordtableid>cc3d5e49-cc6f-47b1-a6af-3c7f0c9874c0</recordtableid>
+    </None>
     <None Include="Generic_app_demo\AB_selectItems.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>e462d373-7336-4549-b3e9-070f8d09f631</id>
@@ -615,6 +836,16 @@
       <id>b020767a-363e-4add-a2ed-6e10ebbeae03</id>
       <recordtableid>11a7a3c6-d73b-46e0-903d-fc6f4f79513d</recordtableid>
     </None>
+    <None Include="Generic_app_UI\AB_layout.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>c1c91803-6db3-4bd8-a869-b3be6b303da7</id>
+      <recordtableid>8b018407-08db-4838-89b2-73766f901eac</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AB_layout_RHS.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>d5a449a5-cd3a-48de-a841-f455e1b8ac71</id>
+      <recordtableid>1427968f-49e2-4ae1-95b0-c3ef9b297360</recordtableid>
+    </None>
     <None Include="Generic_app_UI\AB_Multipl_filter.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>cf6c9c88-f3bd-462d-bbae-bfdf57a29b0d</id>
@@ -630,6 +861,11 @@
       <id>054ac6ef-d7b5-4d3b-815a-cfff49be68ce</id>
       <recordtableid>6e148f37-0147-4956-a96a-6875f8657779</recordtableid>
     </None>
+    <None Include="Generic_app_UI\AB_select_Asset_Browser_tab.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>8be5a098-7772-468f-adc2-d32fa86d4105</id>
+      <recordtableid>67107961-4469-4e80-9429-fc8fc90dde83</recordtableid>
+    </None>
     <None Include="Generic_app_UI\AB_Select_folder_win64.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>13e0023d-88dc-4145-b4bb-d0e39a4842ee</id>
@@ -639,6 +875,26 @@
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>d6a29548-77f4-4bb8-8cf7-035a79c0c5b4</id>
       <recordtableid>de2ea3a7-64d1-4a33-81c2-4bc2e7b0ccbc</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AFCT_colapse.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>3ef8b8c1-bb80-460d-a7d1-afd6f565d8ac</id>
+      <recordtableid>d79ef13b-66ee-466e-a284-af5d45ad7bb9</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AFCT_Filters.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>b3ce0e40-8f6a-4f66-94a7-08359ae832f5</id>
+      <recordtableid>8dd8d592-4d7f-469c-af72-5bb1fb3b9c1a</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AFCT_Panel_Selection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>e4de6cb1-5b8d-4615-aaa0-b82c2721bcf8</id>
+      <recordtableid>9086e580-c635-42d1-8a4e-066ad1298541</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\AFCT_SaveFilters.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>1052e241-767f-4534-b7af-afe3a9b8311e</id>
+      <recordtableid>d47949c3-8d09-4aee-ab65-7440130c0267</recordtableid>
     </None>
     <None Include="Generic_app_UI\Bool01.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
@@ -654,6 +910,56 @@
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>fd7e0f1c-801f-488a-9d8b-ee4a015bd1f9</id>
       <recordtableid>8655191f-3431-42ca-a488-31ddeee306a4</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\Layou_undock_redock.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>7383c761-e2d0-4ddb-ac7c-7be07b143ab2</id>
+      <recordtableid>1c4cbc78-05ca-44cb-a7fa-cdf5dc198d3a</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\LFT_Item_selection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>fefead98-a290-4165-b722-1caed1b791e1</id>
+      <recordtableid>4d2ddd2d-e70d-437a-8ed6-1b436697f806</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\LFT_Panel_selection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>e6a3ff20-5956-4a32-9f1b-61d79a03a38a</id>
+      <recordtableid>2d270537-ffc8-4cad-a6d3-f3103f4d5c51</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\LFT_ScrollBar.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>42b40a68-b2a9-4b14-93c4-860e41cb8a5b</id>
+      <recordtableid>0cce184d-3ea9-46d8-91b7-56559d1f9d2e</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\LFT_Search.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>f6f8ebae-8705-4aee-8d1c-04234323839b</id>
+      <recordtableid>86b4ba44-4d9d-453c-a7c3-eb655af623e2</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\LMT_ListSelection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>d2963789-3f08-4cce-891b-f2f024a2b5ce</id>
+      <recordtableid>b82f4c3d-b79e-459f-a6e4-b580a2ce82f8</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\LMT_panel_selection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>05dc3530-adad-40b6-90dc-94f6b5f67be4</id>
+      <recordtableid>b013d206-1ec5-4a1a-882f-120e533b9bdd</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\LMT_SwitchModel.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>836e0ce4-f0fb-4505-99e8-07d7f5819a44</id>
+      <recordtableid>1bd606eb-c7e1-45d7-8c91-61a76a4bb58c</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\Multicol_Add_Column.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>30bfcb44-20c5-4eee-b3d7-758c761dd265</id>
+      <recordtableid>413d97ba-2da5-4a2f-91b3-a0f2b67df87f</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\Multicol_panel_selection.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>0ee967e7-951b-49ef-8439-2fc76cd9487e</id>
+      <recordtableid>8603dc29-f13a-4f49-aef7-a3b4222db340</recordtableid>
     </None>
     <None Include="Generic_app_UI\Open_Panel_PropertyTreeTest.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

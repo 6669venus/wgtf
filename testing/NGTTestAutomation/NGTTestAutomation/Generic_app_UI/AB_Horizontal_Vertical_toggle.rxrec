@@ -58,12 +58,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot2"
-		screenshotguid="0bd28c09-7b0c-4486-9b91-7c9cc82c5c5d"
-		codegenpropertyname="QQuickWidget_AB_Screenshot2"
+		screenshotname="Screenshot8"
+		screenshotguid="1b8ef29a-5282-402a-8989-671aaaa89b5a"
+		codegenpropertyname="QQuickWidget_AB_Screenshot8"
 		searchpropertyid="34fa4d29-d266-4216-bd2c-3f741d917a16"
-		imagerect="0,0,1920,250"
-		imageoptions="0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"
+		imagerect="0,0,1178,250"
+		imageoptions="0.85;EdgesSobel;0,0,1178,250;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>
@@ -105,12 +105,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot1"
-		screenshotguid="8a82c1ce-2123-4953-bf98-e85e1d68c254"
-		codegenpropertyname="QQuickWidget_AB_Screenshot1"
+		screenshotname="Screenshot9"
+		screenshotguid="a53db0c2-33b5-414f-a9e4-afbbf3fb8c84"
+		codegenpropertyname="QQuickWidget_AB_Screenshot9"
 		searchpropertyid="34fa4d29-d266-4216-bd2c-3f741d917a16"
-		imagerect="0,0,1920,250"
-		imageoptions="0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"
+		imagerect="310,60,846,499"
+		imageoptions="0.85;EdgesSobel;310,60,846,499;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>
@@ -159,12 +159,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot3"
-		screenshotguid="96c594c1-3937-45b1-8b3a-f6a1e169aca8"
-		codegenpropertyname="QQuickWidget_AB_Screenshot3"
+		screenshotname="Screenshot10"
+		screenshotguid="4aae4aef-a812-437c-8c13-35374223ac73"
+		codegenpropertyname="QQuickWidget_AB_Screenshot10"
 		searchpropertyid="34fa4d29-d266-4216-bd2c-3f741d917a16"
-		imagerect="0,0,1920,250"
-		imageoptions="0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"
+		imagerect="0,0,1165,464"
+		imageoptions="0.85;EdgesSobel;0,0,1165,464;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>
@@ -206,12 +206,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot1"
-		screenshotguid="8a82c1ce-2123-4953-bf98-e85e1d68c254"
-		codegenpropertyname="QQuickWidget_AB_Screenshot1_2"
+		screenshotname="Screenshot11"
+		screenshotguid="5d9b2b6a-aa7e-4ead-8107-4e8960a05f1d"
+		codegenpropertyname="QQuickWidget_AB_Screenshot11"
 		searchpropertyid="34fa4d29-d266-4216-bd2c-3f741d917a16"
-		imagerect="0,0,1920,250"
-		imageoptions="0.85;EdgesSobel;0,0,1920,250;True;10000000;0ms"
+		imagerect="296,19,882,878"
+		imageoptions="0.85;EdgesSobel;296,19,882,878;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>

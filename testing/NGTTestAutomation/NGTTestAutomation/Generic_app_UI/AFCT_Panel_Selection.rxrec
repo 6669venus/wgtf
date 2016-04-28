@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="9086e580-c635-42d1-8a4e-066ad1298541"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		AFCT_Panel_Selection
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="AFCT_Panel_Selection"
+	namespace="NGTTestAutomation.Generic_app_UI"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="3c44ded8-607a-47e2-b73d-bbbfe8570202"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="0"
+		sy="0"
+		loc="Center">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="2775437f-2500-4b6f-a1bc-97ee14190e43">
+				<path>
+					/form[@objectname='MainWindow']/?/?/tabpage[@title~'^Active\ Filters\ Control\ Te']
+				</path>
+			</info>
+		</mouseitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		AFCT_Panel_Selection.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

@@ -126,13 +126,13 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties(
 		return true;
 	}
 
-	auto definitionManager = this->getDefinitionManager();
-	if (definitionManager == nullptr)
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
 	{
 		return true;
 	}
 
-	return enumerateVisibleProperties( object, *definitionManager, "", callback );
+	return enumerateVisibleProperties( object, *pDefinitionManager, "", callback );
 }
 
 

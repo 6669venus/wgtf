@@ -64,13 +64,19 @@ ReflectedObjectItemNew::Implementation::getGroups(
 		return groups_;
 	}
 
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return groups_;
+	}
+
 	auto & parent = const_cast< ReflectedObjectItemNew & >( self );
-	self.enumerateVisibleProperties( [ this, &self, &parent ](
+	self.enumerateVisibleProperties( [ this, &self, &parent, pDefinitionManager ](
 		const IBasePropertyPtr & property,
 		const std::string & inPlacePath )
 	{
 		const MetaGroupObj * groupObj = findFirstMetaData< MetaGroupObj >( *property,
-			*self.getDefinitionManager() );
+			*pDefinitionManager );
 		if (groupObj != nullptr && groups_.insert( groupObj->getGroupName() ).second)
 		{
 			children_.emplace_back( new ReflectedGroupItemNew(
@@ -114,8 +120,13 @@ const ObjectHandle & ReflectedObjectItemNew::getObject() const /* override */
 
 
 const IClassDefinition * ReflectedObjectItemNew::getDefinition() const 
-{ 
-	return impl_->object_.getDefinition( *this->getDefinitionManager() );
+{
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return nullptr;
+	}
+	return impl_->object_.getDefinition( *pDefinitionManager );
 }
 
 
@@ -201,15 +212,15 @@ bool ReflectedObjectItemNew::setData( int column, size_t roleId,
 		return false;
 	}
 
-	auto definitionManager = this->getDefinitionManager();
-	if (definitionManager == nullptr)
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
 	{
 		return false;
 	}
 
 	auto obj = this->getRootObject();
-	auto definition = obj.getDefinition( *definitionManager );
-	auto otherDef = other.getDefinition( *definitionManager );
+	auto definition = obj.getDefinition( *pDefinitionManager );
+	auto otherDef = other.getDefinition( *pDefinitionManager );
 	if (definition != otherDef)
 	{
 		return false;
@@ -257,7 +268,7 @@ ReflectedTreeItemNew * ReflectedObjectItemNew::getChild( size_t index ) const
 }
 
 
-int ReflectedObjectItemNew::size() const
+int ReflectedObjectItemNew::rowCount() const
 {
 	int count = 0;
 
@@ -324,6 +335,12 @@ void ReflectedObjectItemNew::enumerateChildren(
 		}
 	}
 
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return;
+	}
+
 	// ReflectedGroupItem children handle grouped items
 	int skipChildCount = static_cast< int >( impl_->children_.size() - groups.size() );
 	auto parent = const_cast< ReflectedObjectItemNew * >( this );
@@ -331,7 +348,7 @@ void ReflectedObjectItemNew::enumerateChildren(
 		const std::string & inPlacePath )
 	{
 		bool isGrouped = findFirstMetaData< MetaGroupObj >( *property,
-			*this->getDefinitionManager() ) != nullptr;
+			*pDefinitionManager ) != nullptr;
 		if (!isGrouped)
 		{
 			// Skip already iterated children

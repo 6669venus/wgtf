@@ -54,7 +54,7 @@ public:
 	ReflectedTreeItemNew * getParent() const;
 	virtual ReflectedTreeItemNew * getChild( size_t index ) const = 0;
 
-	virtual int size() const = 0;
+	virtual int rowCount() const = 0;
 
 protected:
 	ReflectedTreeItemNew * parent_;
@@ -67,6 +67,10 @@ protected:
 	bool enumerateVisibleProperties( const PropertyCallback & callback ) const;
 
 private:
+
+	/**
+	 *	Iterate through properties, ignoring items with MetaHidden.
+	 */
 	static bool enumerateVisibleProperties( ObjectHandle object,
 		const IDefinitionManager & definitionManager,
 		const std::string & inPlacePath,

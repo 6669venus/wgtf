@@ -167,8 +167,8 @@ bool ReflectedGroupItemNew::setData( int column,
 		return false;
 	}
 
-	auto definitionManager = this->getDefinitionManager();
-	if (definitionManager == nullptr)
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
 	{
 		return false;
 	}
@@ -196,7 +196,7 @@ bool ReflectedGroupItemNew::setData( int column,
 		}
 
 		auto pFoundGroupObj = findFirstMetaData< MetaGroupObj >( *property,
-			*this->getDefinitionManager() );
+			*pDefinitionManager );
 		if (isSameGroup( impl_->groupObj_, pFoundGroupObj ))
 		{
 			const Variant & value = *iter++;
@@ -223,14 +223,20 @@ ReflectedTreeItemNew * ReflectedGroupItemNew::getChild( size_t index ) const /* 
 		return child;
 	}
 
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return nullptr;
+	}
+
 	auto parent = const_cast< ReflectedGroupItemNew * >( this );
-	int skipChildren = static_cast<int>(impl_->children_.size());
+	int skipChildren = static_cast< int >( impl_->children_.size() );
 	this->enumerateVisibleProperties( [ this, parent, &child, &skipChildren ] (
 		const IBasePropertyPtr & property,
 		const std::string & inPlacePath )
 	{
 		auto groupObj = findFirstMetaData< MetaGroupObj >( *property,
-			*this->getDefinitionManager() );
+			*pDefinitionManager );
 		if ((property != nullptr) && isSameGroup( impl_->groupObj_, groupObj ))
 		{
 			// Skip already iterated children
@@ -252,15 +258,21 @@ ReflectedTreeItemNew * ReflectedGroupItemNew::getChild( size_t index ) const /* 
 }
 
 
-int ReflectedGroupItemNew::size() const /* override */
+int ReflectedGroupItemNew::rowCount() const /* override */
 {
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return 0;
+	}
+
 	int count = 0;
-	this->enumerateVisibleProperties( [ this, &count ](
+	this->enumerateVisibleProperties( [ this, &count, pDefinitionManager ](
 		const IBasePropertyPtr & property,
 		const std::string & )
 	{
 		auto groupObj = findFirstMetaData< MetaGroupObj >( *property,
-			*this->getDefinitionManager() );
+			*pDefinitionManager );
 		count += isSameGroup( impl_->groupObj_, groupObj );
 		return true;
 	});
@@ -319,13 +331,13 @@ void ReflectedGroupItemNew::getChildValues( Variants & outChildValues ) const
 		return;
 	}
 
-	auto definitionManager = this->getDefinitionManager();
-	if (definitionManager == nullptr)
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
 	{
 		return;
 	}
 
-	auto definition = object.getDefinition( *this->getDefinitionManager() );
+	auto definition = object.getDefinition( *pDefinitionManager );
 	if (definition == nullptr)
 	{
 		return;
@@ -336,7 +348,7 @@ void ReflectedGroupItemNew::getChildValues( Variants & outChildValues ) const
 	{
 		// Check if this property is a part of this group
 		const auto pFoundGroupObj =
-			findFirstMetaData< MetaGroupObj >( *property, *definitionManager );
+			findFirstMetaData< MetaGroupObj >( *property, *pDefinitionManager );
 		if (isSameGroup( impl_->groupObj_, pFoundGroupObj ))
 		{
 			// TODO string allocs

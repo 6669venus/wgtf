@@ -37,7 +37,7 @@ public:
 
 	virtual ReflectedTreeItemNew * getChild( size_t index ) const override;
 
-	virtual int size() const override;
+	virtual int rowCount() const override;
 
 	virtual bool preSetValue( const PropertyAccessor & accessor,
 		const Variant & value ) override;

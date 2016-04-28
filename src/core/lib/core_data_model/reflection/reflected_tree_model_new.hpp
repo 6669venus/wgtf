@@ -43,16 +43,18 @@ public:
 	virtual void addRootItem( AbstractItem * item );
 	virtual void removeRootItem( AbstractItem * item );
 
-	virtual Connection connectPreItemDataChanged( DataCallback callback ) override;
-	virtual Connection connectPostItemDataChanged( DataCallback callback ) override;
-	virtual Connection connectPreRowsInserted( RangeCallback callback ) override;
-	virtual Connection connectPostRowsInserted( RangeCallback callback ) override;
-	virtual Connection connectPreRowsRemoved( RangeCallback callback ) override;
-	virtual Connection connectPostRowsRemoved( RangeCallback callback ) override;
-	virtual Connection connectPreColumnsInserted( RangeCallback callback ) override;
-	virtual Connection connectPostColumnsInserted( RangeCallback callback ) override;
-	virtual Connection connectPreColumnsRemoved( RangeCallback callback ) override;
-	virtual Connection connectPostColumnRemoved( RangeCallback callback ) override;
+	virtual Connection connectPreItemDataChanged(
+		AbstractTreeModel::DataCallback callback ) override;
+	virtual Connection connectPostItemDataChanged(
+		AbstractTreeModel::DataCallback callback ) override;
+	virtual Connection connectPreRowsInserted(
+		AbstractTreeModel::RangeCallback callback ) override;
+	virtual Connection connectPostRowsInserted(
+		AbstractTreeModel::RangeCallback callback ) override;
+	virtual Connection connectPreRowsRemoved(
+		AbstractTreeModel::RangeCallback callback ) override;
+	virtual Connection connectPostRowsRemoved(
+		AbstractTreeModel::RangeCallback callback ) override;
 
 private:
 	class Implementation;

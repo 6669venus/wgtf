@@ -218,10 +218,10 @@ void ReflectedTreeModelNew::addRootItem( AbstractItem * item )
 	//reflectedItem->model_ = this;
 
 	const int row = static_cast< int >( impl_->rootItems_.size() );
-	const AbstractItem * pParent = nullptr 
+	const AbstractItem * pParent = nullptr;
 	const ItemIndex index( row, pParent );
 	const int pos = 0; // TODO what is pos??
-	const int rowCount = reflectedItem != nullptr ? reflectedItem->size() : 0;
+	const int rowCount = reflectedItem != nullptr ? reflectedItem->rowCount() : 0;
 
 	impl_->preRowsInserted_( index, pos, rowCount );
 	impl_->rootItems_.emplace_back( reflectedItem );
@@ -250,10 +250,10 @@ void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
 
 	const int row = static_cast< int >(
 		std::distance( foundIter, impl_->rootItems_.cbegin() ) );
-	const AbstractItem * pParent = nullptr 
+	const AbstractItem * pParent = nullptr;
 	const ItemIndex index( row, pParent );
 	const int pos = 0; // TODO what is pos??
-	const int rowCount = pItem != nullptr ? pItem->size() : 0;
+	const int rowCount = pItem != nullptr ? pItem->rowCount() : 0;
 
 	impl_->preRowsRemoved_( index, pos, rowCount );
 	impl_->rootItems_.erase( foundItr );
@@ -262,7 +262,8 @@ void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
 
 
 #define CONNECT_METHOD( method, connection, callbackType ) \
-Connection CollectionModel::method( AbstractTreeModel::callbackType callback ) \
+Connection ReflectedTreeModelNew::method( \
+	AbstractTreeModel::callbackType callback ) /* override */ \
 { \
 	return connection.connect( callback ); \
 } \

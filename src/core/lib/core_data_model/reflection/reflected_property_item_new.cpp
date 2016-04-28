@@ -5,15 +5,15 @@
 #include "reflected_object_item_new.hpp"
 #include "reflected_tree_model_new.hpp"
 
-//#include "core_data_model/generic_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
-//#include "core_logging/logging.hpp"
 
 #include "core_string_utils/string_utils.hpp"
+
+#include "wg_types/binary_block.hpp"
 
 #include <memory>
 #include <codecvt>
@@ -218,23 +218,6 @@ const ObjectHandle & ReflectedPropertyItemNew::getObject() const /* override */
 }
 
 
-//const char * ReflectedPropertyItemNew::getDisplayText( int column ) const
-//{
-//	switch (column)
-//	{
-//	case 0:
-//		return impl_->displayName_.c_str();
-
-//	case 1:
-//		return "Reflected Property";
-
-//	default:
-//		assert( false );
-//		return "";
-//	}
-//}
-
-
 Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 {
 	auto pDefinitionManager = this->getDefinitionManager();
@@ -258,10 +241,6 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 	else if (roleId == RootObjectRole::roleId_)
 	{
 		return getRootObject();
-	}
-	else if (roleId == ValueTypeRole::roleId_)
-	{
-		return propertyAccessor.getType().getName();
 	}
 	else if (roleId == IsEnumRole::roleId_)
 	{
@@ -290,6 +269,48 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 			return Variant();
 		}
 		return propertyAccessor.getValue();
+	}
+	else if (roleId == ValueTypeRole::roleId_)
+	{
+		return propertyAccessor.getType().getName();
+	}
+	else if (roleId == KeyRole::roleId_)
+	{
+		switch (column)
+		{
+		case 0:
+			return impl_->displayName_.c_str();
+
+		case 1:
+			return "Reflected Property";
+
+		default:
+			assert( false );
+			return "";
+		}
+	}
+	else if (roleId == KeyTypeRole::roleId_)
+	{
+		return TypeId::getType< const char * >().getName();
+	}
+	else if (roleId == ThumbnailRole::roleId_)
+	{
+		if (findFirstMetaData< MetaThumbnailObj >( propertyAccessor,
+			*pDefinitionManager ) == nullptr)
+		{
+			return Variant();
+		}
+
+		// Should not have a MetaThumbObj for properties that do not have a value
+		assert( propertyAccessor.canGetValue() );
+
+		typedef std::shared_ptr< BinaryBlock > ThumbnailData;
+		const Variant value =  propertyAccessor.getValue();
+		if (value.canCast< ThumbnailData >())
+		{
+			return value;
+		}
+		return Variant();
 	}
 	else if (roleId == MinValueRole::roleId_)
 	{

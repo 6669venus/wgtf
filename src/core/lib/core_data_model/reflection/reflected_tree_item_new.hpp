@@ -40,9 +40,6 @@ public:
 	IDefinitionManager * getDefinitionManager() const;
 
 	// AbstractTreeItem 
-	virtual Variant getData( int column, size_t roleId ) const override;
-	virtual bool setData( int column, size_t roleId, const Variant & data ) override;
-
 	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
 	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
 

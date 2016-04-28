@@ -3,8 +3,6 @@
 
 #include "core_data_model/i_item_role.hpp"
 
-//#include "core_reflection/interfaces/i_base_property.hpp"
-//#include "core_reflection/interfaces/i_class_definition.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 
@@ -90,23 +88,6 @@ const ObjectHandle & ReflectedGroupItemNew::getObject() const /* override */
 }
 
 
-//const char * ReflectedGroupItemNew::getDisplayText( int column ) const
-//{
-//	switch (column)
-//	{
-//	case 0:
-//		return impl_->displayName_.c_str();
-
-//	case 1:
-//		return "Reflected Group";
-
-//	default:
-//		assert( false );
-//		return "";
-//	}
-//}
-
-
 Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* override */
 {
 	auto obj = this->getRootObject();
@@ -137,8 +118,7 @@ Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* ove
 	{
 		return this->getRootObject();
 	}
-
-	if (roleId == ValueRole::roleId_)
+	else if (roleId == ValueRole::roleId_)
 	{
 		auto collectionHolder = std::make_shared< CollectionHolder< Variants > >();
 		Variants & childValues = collectionHolder->storage();
@@ -146,6 +126,29 @@ Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* ove
 		this->getChildValues( childValues );
 
 		return std::move( Collection( collectionHolder ) );
+	}
+	else if (roleId == ValueTypeRole::roleId_)
+	{
+		return TypeId::getType< Collection >().getName();
+	}
+	else if (roleId == KeyRole::roleId_)
+	{
+		switch (column)
+		{
+		case 0:
+			return impl_->displayName_.c_str();
+
+		case 1:
+			return "Reflected Group";
+
+		default:
+			assert( false );
+			return "";
+		}
+	}
+	else if (roleId == KeyTypeRole::roleId_)
+	{
+		return TypeId::getType< const char * >().getName();
 	}
 	return Variant();
 }

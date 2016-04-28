@@ -16,15 +16,6 @@ public:
 
 	std::vector< ReflectedTreeItemNew * > rootItems_;
 	int columnCount_;
-
-	Connection connectPreChange_;
-	Connection connectPostChanged_;
-
-	Connection connectPreInsert_;
-	Connection connectPostInserted_;
-
-	Connection connectPreErase_;
-	Connection connectPostErased_;
 };
 
 

@@ -18,22 +18,24 @@ namespace
 			: definition_( definition )
 		{}
 
-		//const char * getDisplayText( int column ) const 
-		//{ 
-		//	return definition_->getName();
-		//}
-
-		//ThumbnailData getThumbnail( int column ) const
-		//{
-		//	return nullptr;
-		//}
-
 		Variant getData( int column, size_t roleId ) const override
 		{ 
 			if (roleId == ValueRole::roleId_)
 			{
-				return ObjectHandle( 
+				return ObjectHandle(
 					const_cast< IClassDefinition * >( definition_ ) );
+			}
+			else if (roleId == ValueTypeRole::roleId_)
+			{
+				return TypeId::getType< ObjectHandle >().getName();
+			}
+			else if (roleId == KeyRole::roleId_)
+			{
+				return definition_->getName();
+			}
+			else if (roleId == KeyTypeRole::roleId_)
+			{
+				return TypeId::getType< const char * >().getName();
 			}
 			else if (roleId == IndexPathRole::roleId_)
 			{
@@ -73,7 +75,7 @@ ClassDefinitionModelNew::~ClassDefinitionModelNew()
 	}
 }
 
-AbstractItem * ClassDefinitionModelNew::item( int row ) const
+AbstractItem * ClassDefinitionModelNew::item( int row ) const /* override */
 {
 	assert( row >= 0 );
 	const auto index = static_cast< std::vector< AbstractItem * >::size_type >( row );
@@ -81,7 +83,7 @@ AbstractItem * ClassDefinitionModelNew::item( int row ) const
 	return items_[ index ];
 }
 
-int ClassDefinitionModelNew::index( const AbstractItem * item ) const
+int ClassDefinitionModelNew::index( const AbstractItem * item ) const /* override */
 {
 	auto it = std::find( items_.begin(), items_.end(), item );
 	assert( it != items_.end() );
@@ -89,13 +91,13 @@ int ClassDefinitionModelNew::index( const AbstractItem * item ) const
 }
 
 
-int ClassDefinitionModelNew::rowCount() const
+int ClassDefinitionModelNew::rowCount() const /* override */
 {
 	return static_cast< int >( items_.size() );
 }
 
 
-int ClassDefinitionModelNew::columnCount() const
+int ClassDefinitionModelNew::columnCount() const /* override */
 {
 	return 1;
 }

@@ -80,20 +80,6 @@ IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const
 }
 
 
-Variant ReflectedTreeItemNew::getData( int column, size_t roleId ) const /* override */
-{
-	return Variant();
-}
-
-
-bool ReflectedTreeItemNew::setData( int column,
-	size_t roleId,
-	const Variant & data ) /* override */
-{
-	return false;
-}
-
-
 ReflectedTreeItemNew * ReflectedTreeItemNew::getParent() const
 {
 	return parent_;

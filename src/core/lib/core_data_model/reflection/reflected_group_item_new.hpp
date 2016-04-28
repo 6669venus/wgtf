@@ -8,6 +8,9 @@
 
 class MetaGroupObj;
 
+/**
+ *	Collects together items with the same group metadata.
+ */
 class ReflectedGroupItemNew : public ReflectedTreeItemNew
 {
 public:

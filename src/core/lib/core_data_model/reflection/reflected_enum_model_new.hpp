@@ -8,17 +8,21 @@
 class PropertyAccessor;
 class MetaEnumObj;
 
+
+/**
+ *	Expose an enum property as a list model.
+ */
 class ReflectedEnumModelNew : public AbstractListModel
 {
 public:
-	ReflectedEnumModelNew( const PropertyAccessor &, const MetaEnumObj * enumObj );
+	ReflectedEnumModelNew( const PropertyAccessor & pA, const MetaEnumObj * enumObj );
 	virtual ~ReflectedEnumModelNew();
 
-	AbstractItem * item( int row ) const override;
-	int index( const AbstractItem * item ) const override;
+	virtual AbstractItem * item( int row ) const override;
+	virtual int index( const AbstractItem * item ) const override;
 
-	int rowCount() const override;
-	int columnCount() const override;
+	virtual int rowCount() const override;
+	virtual int columnCount() const override;
 
 private:
 	std::vector< AbstractItem * > items_;

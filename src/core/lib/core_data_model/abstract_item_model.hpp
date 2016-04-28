@@ -65,7 +65,7 @@ public:
 	virtual Connection connectPreColumnsInserted( RangeCallback callback ) { return Connection(); }
 	virtual Connection connectPostColumnsInserted( RangeCallback callback ) { return Connection(); }
 	virtual Connection connectPreColumnsRemoved( RangeCallback callback ) { return Connection(); }
-	virtual Connection connectPostColumnRemoved( RangeCallback callback ) { return Connection(); }
+	virtual Connection connectPostColumnsRemoved( RangeCallback callback ) { return Connection(); }
 };
 
 
@@ -97,6 +97,9 @@ public:
 	virtual Connection connectPostRowsRemoved( RangeCallback callback ) { return Connection(); }
 
 private:
+	// Override functions using base class ItemIndex and hide them
+	// Users can use public overloads with current class' ItemIndex type
+
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
 		if (index.parent_ != nullptr || index.column_ != 0)
@@ -107,7 +110,7 @@ private:
 		return item( index.row_ );
 	}
 
-	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const
+	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const override
 	{
 		int row = index( item );
 
@@ -131,7 +134,7 @@ private:
 		return columnCount();
 	}
 
-	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPreItemDataChanged( ( DataCallback )[=]( int row, int column, size_t role, const Variant & value )
 		{
@@ -139,7 +142,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPostItemDataChanged( ( DataCallback )[=]( int row, int column, size_t role, const Variant & value )
 		{
@@ -147,7 +150,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -155,7 +158,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -163,7 +166,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -171,7 +174,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -239,8 +242,10 @@ public:
 	virtual Connection connectPreRowsRemoved( RangeCallback callback ) { return Connection(); }
 	virtual Connection connectPostRowsRemoved( RangeCallback callback ) { return Connection(); }
 
-// Private fns never/cannot get called?
 private:
+	// Override functions using base class ItemIndex and hide them
+	// Users can use public overloads with current class' ItemIndex type
+
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
 		if (index.column_ != 0)
@@ -251,7 +256,7 @@ private:
 		return item( ItemIndex( index.row_, index.parent_ ) );
 	}
 
-	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const
+	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const override
 	{
 		ItemIndex index = this->index( item );
 
@@ -265,7 +270,7 @@ private:
 		return columnCount();
 	}
 
-	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPreItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, int column, size_t role, const Variant & value )
 		{
@@ -273,7 +278,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPostItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, int column, size_t role, const Variant & value )
 		{
@@ -281,7 +286,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsInserted( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -289,7 +294,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsInserted( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -297,7 +302,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsRemoved( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -305,7 +310,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsRemoved( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -378,6 +383,9 @@ public:
 	virtual Connection connectPostColumnsRemoved( RangeCallback callback ) { return Connection(); }
 
 private:
+	// Override functions using base class ItemIndex and hide them
+	// Users can use public overloads with current class' ItemIndex type
+
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
 		if (index.parent_ != nullptr)
@@ -388,7 +396,7 @@ private:
 		return item( ItemIndex( index.row_, index.column_ ) );
 	}
 
-	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const
+	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const override
 	{
 		ItemIndex index = this->index( item );
 
@@ -417,7 +425,7 @@ private:
 		return columnCount();
 	}
 
-	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPreItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, size_t role, const Variant & value )
 		{
@@ -425,7 +433,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPostItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, size_t role, const Variant & value )
 		{
@@ -433,7 +441,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -441,7 +449,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -449,7 +457,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -457,7 +465,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -465,7 +473,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreColumnsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreColumnsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreColumnsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -473,7 +481,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostColumnsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostColumnsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostColumnsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -481,7 +489,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreColumnsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreColumnsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreColumnsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -489,7 +497,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostColumnsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostColumnsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostColumnsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{

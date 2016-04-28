@@ -21,21 +21,23 @@ namespace
 			, text_( text ) 
 		{}
 
-		//const char * getDisplayText( int column ) const 
-		//{ 
-		//	return text_.c_str();
-		//}
-
-		//ThumbnailData getThumbnail( int column ) const
-		//{
-		//	return nullptr;
-		//}
-
 		Variant getData( int column, size_t roleId ) const override
 		{ 
 			if (roleId == ValueRole::roleId_)
 			{
 				return Variant( index_ );
+			}
+			else if (roleId == ValueTypeRole::roleId_)
+			{
+				return TypeId::getType< int >().getName();
+			}
+			else if (roleId == KeyRole::roleId_)
+			{
+				return text_.c_str();
+			}
+			else if (roleId == KeyTypeRole::roleId_)
+			{
+				return TypeId::getType< const char * >().getName();
 			}
 			else if (roleId == IndexPathRole::roleId_)
 			{
@@ -53,9 +55,11 @@ namespace
 		int index_;
 		std::string text_;
 	};
-}
+} // namespace
 
-ReflectedEnumModelNew::ReflectedEnumModelNew( const PropertyAccessor & pA, const MetaEnumObj * enumObj )
+
+ReflectedEnumModelNew::ReflectedEnumModelNew( const PropertyAccessor & pA,
+	const MetaEnumObj * enumObj )
 {
 	std::wstring_convert< Utf16to8Facet > conversion( Utf16to8Facet::create() );
 	const wchar_t * enumString = enumObj->getEnumString();
@@ -82,7 +86,8 @@ ReflectedEnumModelNew::ReflectedEnumModelNew( const PropertyAccessor & pA, const
 			}
 			std::wstring text( start, end );
 
-			items_.push_back( new ReflectedEnumItem( index, conversion.to_bytes( text ) ) );
+			items_.push_back( new ReflectedEnumItem( index,
+				conversion.to_bytes( text ) ) );
 			start = trueEnd + 1;
 			++index;
 		}
@@ -106,6 +111,7 @@ ReflectedEnumModelNew::ReflectedEnumModelNew( const PropertyAccessor & pA, const
 	}
 }
 
+
 ReflectedEnumModelNew::~ReflectedEnumModelNew()
 {
 	for (auto it = items_.begin(); it != items_.end(); ++it)
@@ -114,7 +120,8 @@ ReflectedEnumModelNew::~ReflectedEnumModelNew()
 	}
 }
 
-AbstractItem * ReflectedEnumModelNew::item( int row ) const
+
+AbstractItem * ReflectedEnumModelNew::item( int row ) const /* override */
 {
 	assert( row >= 0 );
 	const auto index = static_cast< std::vector< AbstractItem * >::size_type >( row );
@@ -122,7 +129,8 @@ AbstractItem * ReflectedEnumModelNew::item( int row ) const
 	return items_[ index ];
 }
 
-int ReflectedEnumModelNew::index( const AbstractItem * item ) const
+
+int ReflectedEnumModelNew::index( const AbstractItem * item ) const /* override */
 {
 	auto it = std::find( items_.begin(), items_.end(), item );
 	assert( it != items_.end() );
@@ -130,13 +138,13 @@ int ReflectedEnumModelNew::index( const AbstractItem * item ) const
 }
 
 
-int ReflectedEnumModelNew::rowCount() const
+int ReflectedEnumModelNew::rowCount() const /* override */
 {
 	return static_cast< int >( items_.size() );
 }
 
 
-int ReflectedEnumModelNew::columnCount() const
+int ReflectedEnumModelNew::columnCount() const /* override */
 {
 	return 1;
 }

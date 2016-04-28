@@ -39,10 +39,10 @@ WGFileDialog 1.0 WGFileDialog.qml
 WGFileSelectBox 1.0 WGFileSelectBox.qml
 WGFormLayout 1.0 WGFormLayout.qml
 WGFrame 1.0 WGFrame.qml
-WGGridCanvas 2.0 WGGridCanvas.qml
 WGGradientSlider 2.0 WGGradientSlider.qml
 WGGradientSliderHandle 2.0 WGGradientSliderHandle.qml
 WGGradientSliderStyle 2.0 WGGradientSliderStyle.qml
+WGGridCanvas 2.0 WGGridCanvas.qml
 WGGroupBox 1.0 WGGroupBox.qml
 WGHeaderRow 1.0 WGHeaderRow.qml
 WGHighlightFrame 1.0 WGHighlightFrame.qml
@@ -123,4 +123,4 @@ WGVectorN 1.0 WGVectorN.qml
 WGVectorRGB 1.0 WGVectorRGB.qml
 WGVectorRGBA 1.0 WGVectorRGBA.qml
 WGVerticalSpacer 1.0 WGVerticalSpacer.qml
-WGViewTransform 1.0 WGViewTransform.qml
+WGViewTransform 2.0 WGViewTransform.qml

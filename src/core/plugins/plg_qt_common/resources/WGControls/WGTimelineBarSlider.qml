@@ -44,6 +44,9 @@ WGSlider {
     // the minimum width the slider bar can be. Should be within the minimum and maximumum values.
     property real minimumBarWidth: 1
 
+    // this is set to the mouseArea inside the colored bar.
+    property QtObject barArea
+
     grooveClickable: false
 
     handleClamp: false

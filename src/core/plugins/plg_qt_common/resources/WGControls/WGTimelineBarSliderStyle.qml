@@ -27,6 +27,10 @@ WGSliderStyle {
             clip: true
 
             anchors.fill: parent
+
+            Component.onCompleted: {
+                control.barArea = item
+            }
         }
     }
 }

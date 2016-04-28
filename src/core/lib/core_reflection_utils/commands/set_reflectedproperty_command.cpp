@@ -4,10 +4,11 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/utilities/reflection_utilities.hpp"
+#include "core_reflection/generic/generic_object.hpp"
+#include "core_reflection/metadata/meta_utilities.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
 #include "core_command_system/i_command_manager.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
-
-namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
@@ -41,7 +42,6 @@ ReflectedPropertyCommandArgument::ReflectedPropertyCommandArgument()
 	, propertyPath_("")
 {
 }
-
 
 //==============================================================================
 const RefObjectId & ReflectedPropertyCommandArgument::getContextId() const
@@ -154,7 +154,7 @@ bool SetReflectedPropertyCommand::validateArguments(const ObjectHandle& argument
 ObjectHandle SetReflectedPropertyCommand::execute(
 	const ObjectHandle & arguments ) const
 {
-	auto commandArgs =
+	ReflectedPropertyCommandArgument * commandArgs =
 		arguments.getBase< ReflectedPropertyCommandArgument >();
 	auto objManager = definitionManager_.getObjectManager();
 	assert( objManager != nullptr );
@@ -189,14 +189,4 @@ ObjectHandle SetReflectedPropertyCommand::execute(
 CommandThreadAffinity SetReflectedPropertyCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
-}
-
-typedef XMLSerializer UndoRedoSerializer;
-
-void SetReflectedPropertyCommand::undo(IDataStream & dataStore) const 
-{
-}
-
-void SetReflectedPropertyCommand::redo(IDataStream & dataStore) const 
-{
 }

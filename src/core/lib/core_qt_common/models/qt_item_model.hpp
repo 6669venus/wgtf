@@ -25,6 +25,7 @@ public:
 	 *	Get AbstractItemModel that is being adapted to be used by Qt.
 	 */
 	const AbstractItemModel & source() const;
+	AbstractItemModel & source();
 
 	Q_INVOKABLE QObject * item( int row, int column, const QObject * parent ) const;
 
@@ -64,6 +65,7 @@ public:
 	 *	Get AbstractListModel that is being adapted to be used by Qt.
 	 */
 	const AbstractListModel & source() const;
+	AbstractListModel & source();
 
 	/**
 	 *	Get item from row in list.
@@ -109,6 +111,7 @@ public:
 	 *	Get AbstractTreeModel that is being adapted to be used by Qt.
 	 */
 	const AbstractTreeModel & source() const;
+	AbstractTreeModel & source();
 
 	/**
 	 *	Get item from row and parent.
@@ -156,6 +159,7 @@ public:
 	 *	Get AbstractTableModel that is being adapted to be used by Qt.
 	 */
 	const AbstractTableModel & source() const;
+	AbstractTableModel & source();
 
 	/**
 	 *	Get item from row and column.

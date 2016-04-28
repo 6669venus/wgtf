@@ -1,5 +1,9 @@
 #include "project.hpp"
 #include "core_generic_plugin\interfaces\i_component_context.hpp"
+#include "core_reflection\i_definition_manager.hpp"
+#include "core_ui_framework\i_ui_framework.hpp"
+#include "core_ui_framework\i_ui_application.hpp"
+#include "core_data_model\reflection\reflected_tree_model.hpp"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -13,9 +17,34 @@ Project::~Project()
 
 }
 
-void Project::setProjectName( const char * projectName )
+void Project::init( IComponentContext& contextManager, const char * projectName )
 {
     projectName_ = projectName;
+    auto defManager = contextManager.queryInterface<IDefinitionManager>();
+    auto controller = contextManager.queryInterface<IReflectionController>();
+    assert( defManager != nullptr && controller != nullptr );
+    auto pDefinition = defManager->getDefinition(
+        getClassIdentifier< ProjectData >() );
+    assert( pDefinition != nullptr );
+    projectData_ = pDefinition->create();
+    auto model = std::unique_ptr< ITreeModel >(
+        new ReflectedTreeModel( projectData_, *defManager, controller ) );
+
+    auto uiFramework = contextManager.queryInterface<IUIFramework>();
+    auto uiApplication = contextManager.queryInterface<IUIApplication>();
+    assert( uiFramework != nullptr && uiApplication != nullptr );
+    view_ = uiFramework->createView( "testing_project/project_data_panel.qml", 
+        IUIFramework::ResourceType::Url, std::move( model ) );
+    uiApplication->addView( *view_ );
+}
+
+void Project::fini( IComponentContext& contextManager )
+{
+    auto uiApplication = contextManager.queryInterface<IUIApplication>();
+    assert( uiApplication != nullptr );
+    uiApplication->removeView( *view_ );
+    view_ = nullptr;
+    projectData_ = nullptr;
 }
 
  //////////////////////////////////////////////////////////////////////////
@@ -32,6 +61,9 @@ void ProjectManager::fini()
 
 void ProjectManager::createProject()
 {
+    this->closeProject();
+    curProject_.reset( new Project );
+    curProject_->init( *contextManager_, newProjectName_.c_str() );
 }
 void ProjectManager::openProject( const Variant& strProjectName )
 {
@@ -41,6 +73,11 @@ void ProjectManager::saveProject()
 }
 void ProjectManager::closeProject()
 {
+    if(curProject_ != nullptr)
+    {
+        curProject_->fini( *contextManager_ );
+        curProject_ = nullptr;
+    }
 }
 bool ProjectManager::canOpen()
 {
@@ -59,6 +96,8 @@ bool ProjectManager::canClose()
 
 bool ProjectManager::isProjectNameOk( const Variant& strProjectName )
 {
+    assert( strProjectName.canCast<std::string>());
+    strProjectName.tryCast( newProjectName_ );
     return true;
 }
 

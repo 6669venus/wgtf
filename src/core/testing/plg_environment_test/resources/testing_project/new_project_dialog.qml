@@ -8,8 +8,8 @@ Item {
     id: root
     property var id: "newProjectDlg"
     property var title: "Choose a project name"
-    width: 150
-    height: 80
+    width: 270
+    height: 60
 
     Connections {
         target: textBox
@@ -40,6 +40,7 @@ Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     text: ""
+                    placeholderText: "Input a project name here"
                 }
             }
 

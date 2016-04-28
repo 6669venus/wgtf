@@ -18,7 +18,8 @@ class Project
 public:
     Project();
     ~Project();
-    void setProjectName( const char * projectName );
+    void init( IComponentContext& contextManager, const char * projectName );
+    void fini( IComponentContext& contextManager );
 private:
     ObjectHandle projectData_;
     std::string projectName_;
@@ -45,8 +46,8 @@ public:
 private:
     IComponentContext* contextManager_;
     std::unordered_map<std::string, Project* > projects_;
-    Project* curProject_;
-
+    std::unique_ptr<Project> curProject_;
+    std::string newProjectName_;
 };
 
 class ProjectData

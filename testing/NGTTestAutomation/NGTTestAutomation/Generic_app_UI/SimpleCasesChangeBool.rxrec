@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="4a620fbf-de10-45fc-b45c-c91bb4a0d9b7"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		SimpleCasesChangeBool
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="SimpleCasesChangeBool"
+	namespace="NGTTestAutomation.Generic_app_UI"/>
+	<variables/>
+	<recorditems/>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		SimpleCasesChangeBool.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

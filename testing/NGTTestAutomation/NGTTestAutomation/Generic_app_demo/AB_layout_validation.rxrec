@@ -1,0 +1,815 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="cc3d5e49-cc6f-47b1-a6af-3c7f0c9874c0"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		AB_layout_validation
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="AB_layout_validation"
+	namespace="NGTTestAutomation.Generic_app_demo"/>
+	<variables/>
+	<recorditems>
+		<validationitem
+		enabled="True"
+		optional="False"
+		duration="100ms"
+		screenshotname="Screenshot5"
+		screenshotguid="7179f7ae-2e20-47ed-8735-71a45046b4d2"
+		codegenpropertyname="AssetBrowser_Screenshot5"
+		searchpropertyid="c2110922-7a2f-4a83-b735-ac168ffde362"
+		imagerect="0,0,1178,1024"
+		imageoptions="0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"
+		action="ContainsImage">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="ElementTree"
+			id="857a46b9-ee0e-4b64-82ba-a433727e623b">
+				<element
+				role="container"
+				prefcap="container"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="742,81,1178,1024"
+				snapElem="">
+					<attribute
+					name="caption"
+					type="System.String">
+						Asset Browser
+					</attribute>
+					<attribute
+					name="accessiblename"
+					type="System.String">
+						plg_panel_manager/asset_browser_panel.qml
+					</attribute>
+					<attribute
+					name="basetype"
+					type="System.String">
+						QDockWidget
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						102
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						plg_panel_manager/asset_browser_panel.qml
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						QDockWidget
+					</attribute>
+					<dynamicattribute
+					name="AcceptDrops"
+					type="System.Boolean"
+					description="The Qt QDockWidget.acceptDrops property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="AllowedAreas"
+					type="System.String"
+					description="The Qt QDockWidget.allowedAreas property of type String."
+					readonly="False">
+						LeftDockWidgetArea,RightDockWidgetArea,TopDockWidgetArea,BottomDockWidgetArea,DockWidgetArea_Mask,AllDockWidgetAreas
+					</dynamicattribute>
+					<dynamicattribute
+					name="AutoFillBackground"
+					type="System.Boolean"
+					description="The Qt QDockWidget.autoFillBackground property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="BaseSize"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.baseSize property of type Size."
+					readonly="False">
+						0, 0
+					</dynamicattribute>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.Rectangle, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.childrenRect property of type Rectangle."
+					readonly="False">
+						0,2,1178,1022
+					</dynamicattribute>
+					<dynamicattribute
+					name="ChildrenRegion"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QDockWidget.childrenRegion property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ContextMenuPolicy"
+					type="System.String"
+					description="The Qt QDockWidget.contextMenuPolicy property of type String."
+					readonly="False">
+						DefaultContextMenu
+					</dynamicattribute>
+					<dynamicattribute
+					name="Cursor"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QDockWidget.cursor property of type QRemoteObject."
+					readonly="False">
+						0
+					</dynamicattribute>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt QDockWidget.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Features"
+					type="System.Object"
+					description="The Qt QDockWidget.features property of type Object.">
+						7
+					</dynamicattribute>
+					<dynamicattribute
+					name="Floating"
+					type="System.Boolean"
+					description="The Qt QDockWidget.floating property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt QDockWidget.focus property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="FocusPolicy"
+					type="System.String"
+					description="The Qt QDockWidget.focusPolicy property of type String."
+					readonly="False">
+						NoFocus
+					</dynamicattribute>
+					<dynamicattribute
+					name="Font"
+					type="System.String"
+					description="The Qt QDockWidget.font property of type String."
+					readonly="False">
+						Noto Sans,9,-1,5,50,0,0,0,0,0
+					</dynamicattribute>
+					<dynamicattribute
+					name="FrameGeometry"
+					type="System.Drawing.Rectangle, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.frameGeometry property of type Rectangle."
+					readonly="False">
+						742,59,1178,1024
+					</dynamicattribute>
+					<dynamicattribute
+					name="FrameSize"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.frameSize property of type Size."
+					readonly="False">
+						1178, 1024
+					</dynamicattribute>
+					<dynamicattribute
+					name="FullScreen"
+					type="System.Boolean"
+					description="The Qt QDockWidget.fullScreen property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="Geometry"
+					type="System.Drawing.Rectangle, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.geometry property of type Rectangle."
+					readonly="False">
+						742,59,1178,1024
+					</dynamicattribute>
+					<dynamicattribute
+					name="Height"
+					type="System.Int32"
+					description="The Qt QDockWidget.height property of type Int32."
+					readonly="False">
+						1024
+					</dynamicattribute>
+					<dynamicattribute
+					name="InputMethodHints"
+					type="System.String"
+					description="The Qt QDockWidget.inputMethodHints property of type String."
+					readonly="False">
+						ImhNone
+					</dynamicattribute>
+					<dynamicattribute
+					name="IsActiveWindow"
+					type="System.Boolean"
+					description="The Qt QDockWidget.isActiveWindow property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="LayoutDirection"
+					type="System.String"
+					description="The Qt QDockWidget.layoutDirection property of type String."
+					readonly="False">
+						LeftToRight
+					</dynamicattribute>
+					<dynamicattribute
+					name="Locale"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QDockWidget.locale property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Maximized"
+					type="System.Boolean"
+					description="The Qt QDockWidget.maximized property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="MaximumHeight"
+					type="System.Int32"
+					description="The Qt QDockWidget.maximumHeight property of type Int32."
+					readonly="False">
+						524287
+					</dynamicattribute>
+					<dynamicattribute
+					name="MaximumSize"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.maximumSize property of type Size."
+					readonly="False">
+						524287, 524287
+					</dynamicattribute>
+					<dynamicattribute
+					name="MaximumWidth"
+					type="System.Int32"
+					description="The Qt QDockWidget.maximumWidth property of type Int32."
+					readonly="False">
+						524287
+					</dynamicattribute>
+					<dynamicattribute
+					name="Minimized"
+					type="System.Boolean"
+					description="The Qt QDockWidget.minimized property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="MinimumHeight"
+					type="System.Int32"
+					description="The Qt QDockWidget.minimumHeight property of type Int32."
+					readonly="False">
+						19
+					</dynamicattribute>
+					<dynamicattribute
+					name="MinimumSize"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.minimumSize property of type Size."
+					readonly="False">
+						58, 19
+					</dynamicattribute>
+					<dynamicattribute
+					name="MinimumSizeHint"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.minimumSizeHint property of type Size."
+					readonly="False">
+						58, 19
+					</dynamicattribute>
+					<dynamicattribute
+					name="MinimumWidth"
+					type="System.Int32"
+					description="The Qt QDockWidget.minimumWidth property of type Int32."
+					readonly="False">
+						58
+					</dynamicattribute>
+					<dynamicattribute
+					name="Modal"
+					type="System.Boolean"
+					description="The Qt QDockWidget.modal property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="MouseTracking"
+					type="System.Boolean"
+					description="The Qt QDockWidget.mouseTracking property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="NormalGeometry"
+					type="System.Drawing.Rectangle, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.normalGeometry property of type Rectangle."
+					readonly="False">
+						742,59,1178,1024
+					</dynamicattribute>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt QDockWidget.objectName property of type String."
+					weight="999"
+					readonly="False">
+						plg_panel_manager/asset_browser_panel.qml
+					</dynamicattribute>
+					<dynamicattribute
+					name="Palette"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QDockWidget.palette property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Pos"
+					type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.pos property of type Point."
+					readonly="False">
+						742, 59
+					</dynamicattribute>
+					<dynamicattribute
+					name="Rect"
+					type="System.Drawing.Rectangle, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.rect property of type Rectangle."
+					readonly="False">
+						0,0,1178,1024
+					</dynamicattribute>
+					<dynamicattribute
+					name="Size"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.size property of type Size."
+					readonly="False">
+						1178, 1024
+					</dynamicattribute>
+					<dynamicattribute
+					name="SizeHint"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.sizeHint property of type Size."
+					readonly="False">
+						58, 41
+					</dynamicattribute>
+					<dynamicattribute
+					name="SizeIncrement"
+					type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt QDockWidget.sizeIncrement property of type Size."
+					readonly="False">
+						0, 0
+					</dynamicattribute>
+					<dynamicattribute
+					name="SizePolicy"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt QDockWidget.sizePolicy property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="StatusTip"
+					type="System.String"
+					description="The Qt QDockWidget.statusTip property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="StyleSheet"
+					type="System.String"
+					description="The Qt QDockWidget.styleSheet property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="ToolTipDuration"
+					type="System.Int32"
+					description="The Qt QDockWidget.toolTipDuration property of type Int32."
+					readonly="False">
+						-1
+					</dynamicattribute>
+					<dynamicattribute
+					name="UpdatesEnabled"
+					type="System.Boolean"
+					description="The Qt QDockWidget.updatesEnabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt QDockWidget.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="WhatsThis"
+					type="System.String"
+					description="The Qt QDockWidget.whatsThis property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Int32"
+					description="The Qt QDockWidget.width property of type Int32."
+					readonly="False">
+						1178
+					</dynamicattribute>
+					<dynamicattribute
+					name="WindowFilePath"
+					type="System.String"
+					description="The Qt QDockWidget.windowFilePath property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="WindowIcon"
+					type="System.String"
+					description="The Qt QDockWidget.windowIcon property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="WindowIconText"
+					type="System.String"
+					description="The Qt QDockWidget.windowIconText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="WindowModality"
+					type="System.String"
+					description="The Qt QDockWidget.windowModality property of type String."
+					readonly="False">
+						NonModal
+					</dynamicattribute>
+					<dynamicattribute
+					name="WindowModified"
+					type="System.Boolean"
+					description="The Qt QDockWidget.windowModified property of type Boolean."
+					readonly="False">
+						False
+					</dynamicattribute>
+					<dynamicattribute
+					name="WindowOpacity"
+					type="System.Double"
+					description="The Qt QDockWidget.windowOpacity property of type Double."
+					readonly="False">
+						1
+					</dynamicattribute>
+					<dynamicattribute
+					name="WindowTitle"
+					type="System.String"
+					description="The Qt QDockWidget.windowTitle property of type String."
+					readonly="False">
+						Asset Browser
+					</dynamicattribute>
+					<dynamicattribute
+					name="X"
+					type="System.Int32"
+					description="The Qt QDockWidget.x property of type Int32."
+					readonly="False">
+						742
+					</dynamicattribute>
+					<dynamicattribute
+					name="Y"
+					type="System.Int32"
+					description="The Qt QDockWidget.y property of type Int32."
+					readonly="False">
+						59
+					</dynamicattribute>
+					<dynamicaction
+					displayName="Close"
+					description="The Qt QDockWidget.close() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt QDockWidget.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Grab"
+					description="The Qt QDockWidget.grab(QRect) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Rectangle."
+						type="System.Drawing.Rectangle, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Int64"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Hide"
+					description="The Qt QDockWidget.hide() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Lower"
+					description="The Qt QDockWidget.lower() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Raise"
+					description="The Qt QDockWidget.raise() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Repaint"
+					description="The Qt QDockWidget.repaint() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetDisabled"
+					description="The Qt QDockWidget.setDisabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetEnabled"
+					description="The Qt QDockWidget.setEnabled(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetFocus"
+					description="The Qt QDockWidget.setFocus() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetHidden"
+					description="The Qt QDockWidget.setHidden(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetStyleSheet"
+					description="The Qt QDockWidget.setStyleSheet(QString) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type String."
+						type="System.String"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetVisible"
+					description="The Qt QDockWidget.setVisible(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetWindowModified"
+					description="The Qt QDockWidget.setWindowModified(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SetWindowTitle"
+					description="The Qt QDockWidget.setWindowTitle(QString) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type String."
+						type="System.String"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Show"
+					description="The Qt QDockWidget.show() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ShowFullScreen"
+					description="The Qt QDockWidget.showFullScreen() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ShowMaximized"
+					description="The Qt QDockWidget.showMaximized() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ShowMinimized"
+					description="The Qt QDockWidget.showMinimized() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ShowNormal"
+					description="The Qt QDockWidget.showNormal() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt QDockWidget.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@objectname='MainWindow']/container[@objectname='plg_panel_manager/asset_browser_panel.qml']
+				</path>
+			</info>
+			<helperscreenshot
+			guid="27996f90-5fc2-40cc-8bd7-451c23cd1971">
+				/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDABwTFRgVERwYFhgfHRwhKUUtKSYmKVQ8QDJFZFhpZ2JY
+YF9ufJ6GbnWWd19giruLlqOpsbOxa4TC0MGszp6usar/2wBDAR0fHykkKVEtLVGqcmByqqqqqqqq
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr/wAARCAH0AfQDASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDpKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA41vvH60lK33j9aSm
+IKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAKKKKACiiigAooooAKKKKAOzooopDCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA
+KKKKACiiigAooooA41vvH60lK33j9aSmIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAOzoqgdRO+bFu5SMMQ2
+GGSvbJGP1NTR3TmQRyRBX8zYcPkfd3Z6UhlmimQSedAkmNu4ZxnpT6ACiiigAooooAKKKKACiiig
+AooooAKKKKACiiigAooooAKKKKACiiigDjW+8frSUrfeP1pKYgooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA6
+w2cBZ22t8+dw3tt568Zxn3pZLWGTJZTktuyGIOcY6j2qaikMbHGsUaxxjaqjAHoKdRRQAUUUUAFF
+FFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAca33j9aSlb7x+tJTEFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFAHZ0UUUhhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUU
+UAca33j9aSlb7x+tJTEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAHZ0UUUhhRRRQAUUUUAFFFFABRRRQAUUU
+UAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAca33j9aSlb7x+tJTEFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+HZ0UUUhhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAca33j9aSlb
+7x+tJTEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAHZ0UUUhhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQ
+AUUUUAFFFFABRRRQAUUUUAca33j9aSlb7x+tJTEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAHZ0UUUhhRRRQ
+AUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAca33j9aSlb7x+tJTEFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFAHZ0UUUhhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAB
+RRRQAUUUUAca33j9aSlb7x+tJTEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAHZ0UUUhhRRRQAUUUUAFFFFAB
+RRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAca33j9aSlb7x+tJTEFFFFABRRRQAUUUUAF
+FFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFAHRx+aiSPaCaaNsKu6TcSecsNx6dO/NRxZNvDO8b+dHMyrvILsMkYyD/9bir8NtbwEmCC
+KInqUQDP5UNbq0kbZIEZLBBgAk9zxnuaQyWiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooo
+AKKKKACiiigAooooA41vvH60lK33j9aSmIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiig
+AooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAOzooopDCiiigAoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA41vvH60lK33j9aSmIKKKKACiiig
+AooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKAOzooopDCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooA41vvH60lK33j9aSmIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAOzooopDCiiigAooooAKKKKACiiigA
+ooooAKKKKACiiigAooooAKKKKACiiigAooooA41vvH60lK33j9aSmIKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKK
+KKAOzooopDCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA41vvH60
+lK33j9aSmIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKK
+KKACiiigAooooAKKKKACiiigAooooAKKKKAOzooopDCiiigAooooAKKKKACiiigAooooAKKKKACi
+iigAooooAKKKKACiiigAooooA41vvH60lK33j9aSmIKKKKACiiigAooooAKKKKACiiigAooooAKK
+KKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAOzooopDCi
+iigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA41vvH60lK33j9aSmIKK
+KKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKAOzooopDCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooA41vvH60lK33j9aSmIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAOzorLlLrMgmu2VY58eYQo
+6pnB4x14/GpzLffatvlfut+M+WvTPr5n9PwpDLtFZMf2SKe43m2lQiRpXWPDoM9GOTnr7dKWFfNt
+n+w/ZzE7ZaNJcBRjp8oOM9TR0A1aKx0e1K2iS+RHc7EO9mGVUdACcHJ9B7/i63ETX03meWykSeYp
+HIG7+P146e3r1oA1HkRCod1UscKCcZPoKdWYkEUdhLKsaxCVldVVQMYI28ce351pLuKjeAGxyAcg
+H60ALRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAca33j9aSlb7x+tJTEFFFFABRRRQAU
+UUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRR
+RQAUUUUAFFFFAHZ0UUUhhRRRQAUUUUAMlhSbb5gJCsGA3EDI9fX8afRRQAUUUUAFFFFABRRRQAUU
+UUAFFFFABRRRQAUUUUAFFFFAHGt94/WkpW+8frSUxBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRR
+RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB2dFFFIYUU
+UUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAHGt94/WkpW+8frSUxBRR
+RQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFF
+ABRRRQAUUUUAFFFFABRRRQB2dFFFIYUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFAHGt94/WkpW+8frSUxBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFF
+ABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB1kcrm6aNipQoHQgYOO4PP
+Pb86nquqM94XePEcagR5IOTzkj8OPzqxSGFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQ
+AUUUUAFFFFABRRRQBxrfeP1pKVvvH60lMQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAdY93HG210nDY5Ahds
+fiARStLILsRbF2GMsDnkkEcY/GkeytZG3TW8Ur45d41JP6UrW+66WfzpBtXbsG3aR+Wew70hlOG7
+lu4ZVjmj8wIHXyhkqeflYHPPHt+FX4ZBLErqQc9cdj3FQy28gim8p98sg27pDjaPwHbP/wBerCKE
+jVB0UACgBaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAONb7x+tJSt94/W
+kpiCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigDs6KKKQwooooAKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKAONb7x+tJSt94/WkpiCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDs6KKKQwooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAONb7x+tJSt94/WkpiCiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiig
+AooooAKKKKACiiigDs6KKKQwooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoooo
+AKKKKAONb7x+tJSt94/WkpiCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiig
+AooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDs6KKaXUSCPPzEEgew//AF0hjqKZ
+LIIlDMDgsF49zin0AFFFFABRRRQAUUUUAFFFNlkEUTyNkhQScUAOooooAKKZFIJU3KCBkjn2OP6U
++gAooooAKKKKACiiigAooooA41vvH60lK33j9aSmIKKKKACiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAN2KzmFnPGk
+Bi3beCEDuAec4yp+pA96dBarA8Mr2zbIw3zSeXmPkHPHAHXpWpRSGUbmeC7h8u3kjuWDKxjjkUkg
+MM96ZHZ7wga2CQ+cW8k4wo246DjrzgetaNFAGfHat9qy1vg7n3zZHzqc4X17jrxxSRW1yGj8wAg/
+6z5v7o+XH161o0UAZMVnMLOeNIDFu28EIHcA85xlT9SB71Jb2ixmJ5YisUSuf32z5DkEHC8DoenS
+tKigDPvLq1uLfZFLHcHehMcbqSRuHvTHtHNo0a222N5d3khUJRcdgfl68/jWnRQBlx2MmyNpIwZY
+0iCkkEgg84P0ppspvOuGKSNI6uA+UCsD0H97068CtaigDKv43kWaSez3gIRGcq2zBPzc9MjHTnil
+bTtykmBS7LLknHJJyv8A9b0rUooAgs43jtwsgw25j19STU9FFABRRRQAUUUUAFFFFABRRRQBxrfe
+P1pKVvvH60lMQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQ
+AUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAdnRRRSGFFFFABRRRQAUUUUAFFFFABRRRQAUUUU
+AFFFFABRRRQAUUUUAFFFFABRRRQBxrfeP1pKVvvH60lMQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQ
+AUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAdnRRRS
+GFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBxrfeP1pKKKYgoooo
+AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA
+ooooAKKKKACiiigAooooA//Z
+			</helperscreenshot>
+			<matchname/>
+			<matchvalue/>
+		</validationitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		AB_layout_validation.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

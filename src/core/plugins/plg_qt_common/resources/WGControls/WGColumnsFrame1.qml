@@ -1,5 +1,10 @@
 import QtQuick 2.0
 
+/*!
+ \brief WGColumnsFrame is used as a frame for listView and treeView columns
+*/
+
+
 Item {
     id: columnsFrame
     objectName: "WGColumnsFrame"
@@ -131,7 +136,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         width: parent.width + dragWidthIncrease
                         height: parent.height
-                        cursorShape: Qt.SplitHCursor
+                        cursorShape: drawHandles ? Qt.SplitHCursor : Qt.ArrowCursor
 
                         drag.target: handle
                         drag.threshold: 0

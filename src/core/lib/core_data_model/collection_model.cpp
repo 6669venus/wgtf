@@ -99,6 +99,12 @@ void CollectionModel::setSource(Collection & collection)
 }
 
 
+const Collection & CollectionModel::getSource() const
+{
+	return collection_;
+}
+
+
 Collection & CollectionModel::getSource()
 {
 	return collection_;

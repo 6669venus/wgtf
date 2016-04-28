@@ -37,7 +37,7 @@ Rectangle {
         id: innerFrame
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardBorderSize
-        radius: outerFrame.radius == defaultSpacing.standardRadius ? defaultSpacing.halfRadius : 0
+        radius: parent.radius /2
 
         border.width: defaultSpacing.standardBorderSize
         border.color: innerBorderColor
@@ -49,7 +49,7 @@ Rectangle {
         id: pressHighlight
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardBorderSize
-        radius: outerFrame.radius == defaultSpacing.standardRadius ? defaultSpacing.halfRadius : 0
+        radius: parent.radius /2
         color: highlightColor
     }
 }

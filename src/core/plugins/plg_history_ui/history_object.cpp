@@ -12,6 +12,8 @@
 //==============================================================================
 HistoryObject::HistoryObject()
 	: commandSystem_( nullptr )
+    , clearButtonVisible(true)
+    , makeMacroButtonVisible(true)
 {
 }
 
@@ -112,6 +114,26 @@ ObjectHandle HistoryObject::createMacro() const
 	}
 	commandSystem_->createMacro( commandList );
 	return nullptr;
+}
+
+void HistoryObject::setClearButtonVisible(const bool& isVisible)
+{
+    clearButtonVisible = isVisible;
+}
+
+bool HistoryObject::isClearButtonVisible() const
+{
+    return clearButtonVisible;
+}
+
+void HistoryObject::setMakeMacroButtonVisible(const bool& isVisible)
+{
+    makeMacroButtonVisible = isVisible;
+}
+
+bool HistoryObject::isMakeMacroButtonVisible() const
+{
+    return makeMacroButtonVisible;
 }
 
 //==============================================================================

@@ -23,5 +23,5 @@ WGPushButton {
     text: ""
     style: WGToolButtonStyle {}
     // A default icon to prevent invisible buttons during UI creation
-    iconSource: "icons/placeholder_icon_16x16.png"
+    iconSource: text == "" ? "icons/placeholder_icon_16x16.png" : ""
 }

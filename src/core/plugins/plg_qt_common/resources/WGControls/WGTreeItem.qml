@@ -8,11 +8,11 @@ import WGControls 1.0
 /*!
     \brief Items that make the rows in a WGTreeView.
     Should only be used within a WGTreeView. Not intended to be used on its own.
-    The WGTreeItem1 is a ListView that loads further treeItems via a delegate loader.
+    The WGTreeItem is a ListView that loads further treeItems via a delegate loader.
 
 Example:
 \code{.js}
-    WGTreeItem1 {
+    WGTreeItem {
         id: rootItem
         model: treeView.model
         width: treeView.width
@@ -451,7 +451,7 @@ ListView {
 
                 Loader {
                     id: subTree
-                    source: "WGTreeItem1.qml"
+                    source: "WGTreeItem.qml"
                     width: treeItem.marginedWidth
                 }
             }

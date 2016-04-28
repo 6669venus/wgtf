@@ -8,7 +8,6 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_window.hpp"
-
 #include "project/metadata/project.mpp"
 #include <vector>
 
@@ -25,6 +24,7 @@ private:
     std::unique_ptr< IAction > saveProject_;
     std::unique_ptr< IAction > closeProject_;
     std::unique_ptr< IWindow > newProjectDialog_;
+    std::unique_ptr< IWindow > openProjectDialog_;
     IComponentContext* contextManager_;
     ObjectHandle projectManager_;
 public:
@@ -92,7 +92,6 @@ public:
             "testing_project/new_project_dialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
         uiApplication->addWindow( *newProjectDialog_ );
-
 	}
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
@@ -111,6 +110,7 @@ public:
         saveProject_ = nullptr;
         closeProject_ = nullptr;
         newProjectDialog_ = nullptr;
+        openProjectDialog_ = nullptr;
 		return true;
 	}
 	//==========================================================================
@@ -137,7 +137,11 @@ public:
     }
     void openProject()
     {
-        
+        openProjectDialog_ = nullptr;
+        auto uiFramework = contextManager_->queryInterface<IUIFramework>();
+        openProjectDialog_ = uiFramework->createWindow( 
+            "testing_project/open_project_dialog.qml", 
+            IUIFramework::ResourceType::Url, projectManager_ );
     }
     void saveProject()
     {

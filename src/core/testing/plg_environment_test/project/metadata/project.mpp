@@ -8,6 +8,7 @@
 BEGIN_EXPOSE( ProjectManager, MetaNone() )
     EXPOSE_METHOD( "isProjectNameOk", isProjectNameOk )
     EXPOSE_METHOD( "createProject", createProject )
+    EXPOSE_METHOD( "openProject", openProject )
 END_EXPOSE()
 
 BEGIN_EXPOSE( ProjectData, MetaNone() )

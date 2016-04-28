@@ -36,9 +36,7 @@ public:
 
 	const std::string & getPath() const;
 	IReflectionController * getController() const;
-	void setController( DIRef< IReflectionController > & controller );
 	IDefinitionManager * getDefinitionManager() const;
-	void setDefinitionManager( DIRef< IDefinitionManager > & definitionManager );
 
 	// AbstractTreeItem 
 	virtual Variant getData( int column, size_t roleId ) const override;
@@ -56,7 +54,7 @@ public:
 	ReflectedTreeItemNew * getParent() const;
 	virtual ReflectedTreeItemNew * getChild( size_t index ) const = 0;
 
-	virtual size_t size() const = 0;
+	virtual int size() const = 0;
 
 protected:
 	ReflectedTreeItemNew * parent_;
@@ -64,14 +62,14 @@ protected:
 	DIRef< IReflectionController > controller_;
 	DIRef< IDefinitionManager > definitionManager_;
 
-	typedef std::function< bool( IBasePropertyPtr &, const std::string & ) >
+	typedef std::function< bool( const IBasePropertyPtr &, const std::string & ) >
 		PropertyCallback;
 	bool enumerateVisibleProperties( const PropertyCallback & callback ) const;
 
 private:
 	static bool enumerateVisibleProperties( ObjectHandle object,
 		const IDefinitionManager & definitionManager,
-		const std::string & inplacePath,
+		const std::string & inPlacePath,
 		const PropertyCallback & callback );
 
 	AbstractTreeModel * model_;

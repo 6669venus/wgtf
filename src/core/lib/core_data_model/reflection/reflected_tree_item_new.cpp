@@ -29,7 +29,7 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 }
 
 
-virtual ReflectedTreeItemNew::~ReflectedTreeItemNew()
+ReflectedTreeItemNew::~ReflectedTreeItemNew()
 {
 }
 
@@ -65,12 +65,6 @@ IReflectionController * ReflectedTreeItemNew::getController() const
 }
 
 
-void ReflectedTreeItemNew::setController( DIRef< IReflectionController > & controller )
-{
-	controller_ = controller;
-}
-
-
 IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const 
 { 
 	if (definitionManager_ != nullptr)
@@ -82,13 +76,6 @@ IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const
 		return parent_->getDefinitionManager();
 	}
 	return nullptr;
-}
-
-
-void ReflectedTreeItemNew::setDefinitionManager(
-	DIRef< IDefinitionManager > & definitionManager )
-{
-	definitionManager_ = definitionManager;
 }
 
 
@@ -151,7 +138,7 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties(
 
 bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 	const IDefinitionManager & definitionManager,
-	const std::string & inplacePath,
+	const std::string & inPlacePath,
 	const PropertyCallback & callback )
 {
 	auto definition = object.getDefinition( definitionManager );
@@ -182,7 +169,7 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 				// Currently Despair's ContainerProperty is pushed up to the collection
 				// Eventually we'll need a MetaContainer which we can check here
 
-				if (!callback( property, inplacePath ))
+				if (!callback( property, inPlacePath ))
 				{
 					return false;
 				}
@@ -192,9 +179,9 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 			const bool isObjectHandle = value.tryCast(handle);
 			if (isObjectHandle)
 			{
-				handle = this->reflectedRoot( handle, definitionManager );
-				auto path = inplacePath + property->getName() + ".";
-				if (!this->enumerateVisibleProperties( handle,
+				handle = reflectedRoot( handle, definitionManager );
+				auto path = inPlacePath + property->getName() + ".";
+				if (!enumerateVisibleProperties( handle,
 					definitionManager,
 					path,
 					callback ))
@@ -210,7 +197,7 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 		{
 			continue;
 		}
-		if (!callback( property, inplacePath ))
+		if (!callback( property, inPlacePath ))
 		{
 			return false;
 		}

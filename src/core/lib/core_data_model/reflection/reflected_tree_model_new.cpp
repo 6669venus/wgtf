@@ -12,7 +12,7 @@ public:
 	ReflectedTreeItemNew * getItemInternal( size_t index,
 		const ReflectedTreeItemNew * parent ) const;
 	size_t getIndexInternal( const ReflectedTreeItemNew * item ) const;
-	size_t getChildCountInternal( const ReflectedTreeItemNew * item ) const;
+	int getChildCountInternal( const ReflectedTreeItemNew * item ) const;
 
 	std::vector< ReflectedTreeItemNew * > rootItems_;
 	int columnCount_;
@@ -77,12 +77,12 @@ size_t ReflectedTreeModelNew::Implementation::getIndexInternal(
  *	>> item4 - count
  *	getChildCountInternal( group1 ) == 2 // group2 and item4
  */
-size_t ReflectedTreeModelNew::Implementation::getChildCountInternal(
+int ReflectedTreeModelNew::Implementation::getChildCountInternal(
 	const ReflectedTreeItemNew * item ) const
 {
 	if (item == nullptr)
 	{
-		return rootItems_.size();
+		return static_cast< int >( rootItems_.size() );
 	}
 
 	return item->size();
@@ -108,25 +108,27 @@ AbstractItem * ReflectedTreeModelNew::item(
 	assert( index.parent_ == nullptr || reflectedParent != nullptr );
 
 	auto itemCount = impl_->getChildCountInternal( reflectedParent );
-	for (size_t i = 0; i < itemCount; ++i)
+	auto row = index.row_;
+	for (int i = 0; i < itemCount; ++i)
 	{
 		auto item = impl_->getItemInternal( i, reflectedParent );
 		if (item != nullptr && item->hidden())
 		{
 			auto childItemCount = impl_->getChildCountInternal( item );
-			if (index < childItemCount)
+			if (row < childItemCount)
 			{
-				return this->item( index, item );
+				const AbstractTreeModel::ItemIndex parentIndex( row, item );
+				return this->item( parentIndex );
 			}
-			index -= childItemCount;
+			row -= childItemCount;
 		}
 		else
 		{
-			if (index == 0)
+			if (row == 0)
 			{
 				return item;
 			}
-			--index;
+			--row;
 		}
 	}
 	return nullptr;
@@ -144,24 +146,25 @@ AbstractTreeModel::ItemIndex ReflectedTreeModelNew::index(
 	auto reflectedItem = dynamic_cast< const ReflectedTreeItemNew * >( item );
 	assert( reflectedItem != nullptr );
 
-	size_t index = 0;
+	int row = 0;
 	auto parent = reflectedItem->getParent();
 	auto indexInternal = impl_->getIndexInternal( reflectedItem );
 	for (size_t i = 0; i < indexInternal; ++i)
 	{
 		auto itemInternal = impl_->getItemInternal( i, parent );
-		index += itemInternal != nullptr && itemInternal->hidden() ? 
-			this->size( itemInternal ) : 1;
+		row += itemInternal != nullptr && itemInternal->hidden() ? 
+			this->rowCount( itemInternal ) : 1;
 	}
 
 	if (parent != nullptr && parent->hidden())
 	{
 		auto parentIndex = this->index( parent );
-		index += parentIndex.first;
+		row += parentIndex.row_;
 		parent = const_cast< ReflectedTreeItemNew *>(
-			dynamic_cast< const ReflectedTreeItemNew * >( parentIndex.second ) );
+			dynamic_cast< const ReflectedTreeItemNew * >( parentIndex.parent_ ) );
+		assert( parentIndex.parent_ == nullptr || parent != nullptr );
 	}
-	return AbstractTreeModel::ItemIndex( index, parent );
+	return AbstractTreeModel::ItemIndex( row, parent );
 }
 
 
@@ -190,21 +193,21 @@ int ReflectedTreeModelNew::columnCount() const /* override */
 
 void ReflectedTreeModelNew::addRootItem( AbstractItem * item )
 {
-	auto reflectedItem = dynamic_cast< ReflectedTreeModelNew * >( item );
+	auto reflectedItem = dynamic_cast< ReflectedTreeItemNew * >( item );
 	assert( reflectedItem != nullptr );
 	assert( reflectedItem->getParent() == nullptr );
-	assert( reflectedItem->model_ == nullptr );
-	reflectedItem->model_ = this;
+	//assert( reflectedItem->model_ == nullptr );
+	//reflectedItem->model_ = this;
 
 	//size_t index = impl_->rootItems_.size();
 	//signalPreItemsInserted(nullptr, index, 1);
-	impl_->rootItems_.push_back( reflectedItem );
+	impl_->rootItems_.emplace_back( reflectedItem );
 	//signalPostItemsInserted(nullptr, index, 1);
 }
 
-void ReflectedTreeModelNew::removeRootItem( ReflectedTreeItemNew * item )
+void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
 {
-	auto reflectedItem = dynamic_cast< ReflectedTreeModelNew * >( item );
+	auto reflectedItem = dynamic_cast< ReflectedTreeItemNew * >( item );
 	assert( reflectedItem != nullptr );
 	assert( reflectedItem != nullptr );
 	assert( reflectedItem->model_ == this );
@@ -212,7 +215,7 @@ void ReflectedTreeModelNew::removeRootItem( ReflectedTreeItemNew * item )
 		std::find( impl_->rootItems_.cbegin(), impl_->rootItems_.cend(), reflectedItem );
 	assert( foundItr != rootItems_.cend() );
 
-	reflectedItem->model_ = nullptr;
+	//reflectedItem->model_ = nullptr;
 	auto findIter = std::find( impl_->rootItems_.cbegin(),
 		impl_->rootItems_.cend(),
 		reflectedItem );

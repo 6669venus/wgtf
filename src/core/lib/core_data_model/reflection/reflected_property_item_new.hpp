@@ -32,7 +32,7 @@ public:
 	ReflectedPropertyItemNew( IComponentContext & contextManager,
 		const IBasePropertyPtr & property,
 		ReflectedTreeItemNew * parent,
-		const std::string & inplacePath );
+		const std::string & inPlacePath );
 
 	/**
 	 *	Construct a data model by reflecting over the given property.
@@ -44,7 +44,8 @@ public:
 	 *	@param parent the parent of this property.
 	 *		Cannot be null.
 	 */
-	ReflectedPropertyItemNew( const std::string & propertyName,
+	ReflectedPropertyItemNew( IComponentContext & contextManager,
+		const std::string & propertyName,
 		std::string displayName,
 		ReflectedTreeItemNew * parent );
 	virtual ~ReflectedPropertyItemNew();
@@ -58,7 +59,7 @@ public:
 	virtual Variant getData( int column, size_t roleId ) const override;
 	virtual bool setData( int column, size_t roleId, const Variant & data ) override;
 
-	virtual size_t size() const override;
+	virtual int size() const override;
 
 	virtual bool preSetValue( const PropertyAccessor & accessor,
 		const Variant & value ) override;

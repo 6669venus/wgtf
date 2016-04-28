@@ -29,12 +29,14 @@ bool compareWStrings( const wchar_t * a, const wchar_t * b )
 class ReflectedObjectItemNew::Implementation
 {
 public:
-	Implementation( const ObjectHandle & object );
+	Implementation( IComponentContext & contextManager,
+		const ObjectHandle & object );
 
 	typedef std::set< const wchar_t *, bool(*)( const wchar_t *, const wchar_t * ) > Groups;
 
 	const Groups & getGroups( const ReflectedObjectItemNew & self );
 
+	IComponentContext & contextManager_;
 	ObjectHandle object_;
 	std::string displayName_;
 	std::vector< std::unique_ptr< ReflectedTreeItemNew > > children_;
@@ -42,8 +44,11 @@ public:
 };
 
 
-ReflectedObjectItemNew::Implementation::Implementation( const ObjectHandle & object )
-	: object_( object )
+ReflectedObjectItemNew::Implementation::Implementation(
+	IComponentContext & contextManager,
+	const ObjectHandle & object )
+	: contextManager_( contextManager )
+	, object_( object )
 	, groups_( compareWStrings )
 {
 }
@@ -61,14 +66,16 @@ ReflectedObjectItemNew::Implementation::getGroups(
 
 	auto & parent = const_cast< ReflectedObjectItemNew & >( self );
 	self.enumerateVisibleProperties( [ this, &self, &parent ](
-		IBasePropertyPtr & property,
+		const IBasePropertyPtr & property,
 		const std::string & inPlacePath )
 	{
 		const MetaGroupObj * groupObj = findFirstMetaData< MetaGroupObj >( *property,
 			*self.getDefinitionManager() );
 		if (groupObj != nullptr && groups_.insert( groupObj->getGroupName() ).second)
 		{
-			children_.emplace_back( new ReflectedGroupItemNew( groupObj,
+			children_.emplace_back( new ReflectedGroupItemNew(
+				contextManager_,
+				groupObj,
 				&parent,
 				inPlacePath ) );
 		}
@@ -84,7 +91,7 @@ ReflectedObjectItemNew::ReflectedObjectItemNew( IComponentContext & contextManag
 	: ReflectedTreeItemNew( contextManager,
 		parent,
 		parent ? parent->getPath() + "." : "" )
-	, impl_( new Implementation( object ) )
+	, impl_( new Implementation( contextManager, object ) )
 {
 }
 
@@ -250,9 +257,9 @@ ReflectedTreeItemNew * ReflectedObjectItemNew::getChild( size_t index ) const
 }
 
 
-size_t ReflectedObjectItemNew::size() const
+int ReflectedObjectItemNew::size() const
 {
-	size_t count = 0;
+	int count = 0;
 
 	this->enumerateChildren( [ &count ]( ReflectedTreeItemNew & )
 	{
@@ -320,7 +327,7 @@ void ReflectedObjectItemNew::enumerateChildren(
 	// ReflectedGroupItem children handle grouped items
 	int skipChildCount = static_cast< int >( impl_->children_.size() - groups.size() );
 	auto parent = const_cast< ReflectedObjectItemNew * >( this );
-	this->enumerateVisibleProperties( [ & ]( IBasePropertyPtr & property,
+	this->enumerateVisibleProperties( [ & ]( const IBasePropertyPtr & property,
 		const std::string & inPlacePath )
 	{
 		bool isGrouped = findFirstMetaData< MetaGroupObj >( *property,
@@ -331,6 +338,7 @@ void ReflectedObjectItemNew::enumerateChildren(
 			if (--skipChildCount < 0)
 			{
 				impl_->children_.emplace_back( new ReflectedPropertyItemNew(
+					impl_->contextManager_,
 					property,
 					parent,
 					inPlacePath ) );

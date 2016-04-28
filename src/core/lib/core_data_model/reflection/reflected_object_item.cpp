@@ -10,7 +10,7 @@
 
 #include <codecvt>
 
-bool compareWStrings(const wchar_t * a, const wchar_t * b)
+bool CompareWStrings(const wchar_t * a, const wchar_t * b)
 {
 	return wcscmp(a, b) < 0;
 }
@@ -18,7 +18,7 @@ bool compareWStrings(const wchar_t * a, const wchar_t * b)
 ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
 	, object_( object )
-	, groups_(compareWStrings)
+	, groups_(CompareWStrings)
 {
 }
 

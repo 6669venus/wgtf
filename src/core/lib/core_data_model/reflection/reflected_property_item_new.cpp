@@ -105,9 +105,18 @@ namespace
 class ReflectedPropertyItemNew::Implementation
 {
 public:
+	Implementation( IComponentContext & contextManager );
+	IComponentContext & contextManager_;
 	std::string displayName_;
 	std::vector< std::unique_ptr< ReflectedTreeItemNew > > children_;
 };
+
+
+ReflectedPropertyItemNew::Implementation::Implementation(
+	IComponentContext & contextManager )
+	: contextManager_( contextManager )
+{
+}
 
 
 ReflectedPropertyItemNew::ReflectedPropertyItemNew( IComponentContext & contextManager,
@@ -117,7 +126,7 @@ ReflectedPropertyItemNew::ReflectedPropertyItemNew( IComponentContext & contextM
 	: ReflectedTreeItemNew( contextManager,
 		parent,
 		std::string( inPlacePath ) + property->getName() )
-	, impl_( new Implementation() )
+	, impl_( new Implementation( contextManager ) )
 {
 	// Must have a parent
 	assert( parent != nullptr );
@@ -142,7 +151,7 @@ ReflectedPropertyItemNew::ReflectedPropertyItemNew( IComponentContext & contextM
 	: ReflectedTreeItemNew( contextManager,
 		parent,
 		parent ? parent->getPath() + propertyName : "" )
-	, impl_( new Implementation() )
+	, impl_( new Implementation( contextManager ) )
 {
 	impl_->displayName_ = std::move( displayName );
 
@@ -570,7 +579,8 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 				}
 			}
 
-			child = new ReflectedPropertyItemNew( propertyName,
+			child = new ReflectedPropertyItemNew( impl_->contextManager_,
+				propertyName,
 				std::move( displayName ),
 				const_cast< ReflectedPropertyItemNew * >( this ) );
 		}
@@ -587,7 +597,8 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 		return nullptr;
 	}
 	baseProvider = reflectedRoot( baseProvider, *getDefinitionManager() );
-	child = new ReflectedObjectItemNew( baseProvider ,
+	child = new ReflectedObjectItemNew( impl_->contextManager_,
+		baseProvider ,
 		const_cast< ReflectedPropertyItemNew * >( this ) );
 	child->hidden( true );
 	impl_->children_[index] = std::unique_ptr< ReflectedTreeItemNew >( child );
@@ -595,7 +606,7 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 }
 
 
-size_t ReflectedPropertyItemNew::size() const
+int ReflectedPropertyItemNew::size() const
 {
 	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
@@ -611,7 +622,7 @@ size_t ReflectedPropertyItemNew::size() const
 	bool isCollection = value.tryCast( collection );
 	if (isCollection)
 	{
-		return collection.size();
+		return static_cast< int >( collection.size() );
 	}
 
 	ObjectHandle handle;

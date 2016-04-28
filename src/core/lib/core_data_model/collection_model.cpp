@@ -90,12 +90,110 @@ CollectionModel::~CollectionModel()
 {
 }
 
+#define CONNECT_METHOD(method, connection, callbackType) \
+Connection CollectionModel::method(AbstractListModel::callbackType callback) \
+{ \
+	return connection.connect(callback); \
+} \
+
+CONNECT_METHOD(connectPreItemDataChanged, preItemDataChanged_, DataCallback)
+CONNECT_METHOD(connectPostItemDataChanged, postItemDataChanged_, DataCallback)
+
+CONNECT_METHOD(connectPreRowsInserted, preRowsInserted_, RangeCallback)
+CONNECT_METHOD(connectPostRowsInserted, postRowsInserted_, RangeCallback)
+
+CONNECT_METHOD(connectPreRowsRemoved, preRowsRemoved_, RangeCallback)
+CONNECT_METHOD(connectPostRowsRemoved, postRowsRemoved_, RangeCallback)
+
+#undef CONNECT_METHOD
 
 void CollectionModel::setSource(Collection & collection)
 {
 	// TODO emit signal
 	items_.clear();
+
+	connectPreChange_.disconnect();
+	connectPostChanged_.disconnect();
+	connectPreInsert_.disconnect();
+	connectPostInserted_.disconnect();
+	connectPreErase_.disconnect();
+	connectPostErase_.disconnect();
+
 	collection_ = collection;
+
+	//callback(int row, int column, size_t role, const Variant & value)
+#define VALUE_CALLBACK(callback) \
+		{ \
+			size_t role = ValueTypeRole::roleId_; \
+			int row = -1; \
+			if (pos.key().tryCast<int>(row)) \
+			{ \
+				callback(row, 0, role, value); \
+			} \
+			else \
+			{ \
+				auto it = collection_.begin(); \
+				int index = 0; \
+				for ( ; it != collection_.end() && it != pos; ++it, ++index); \
+				callback(index, 0, role, value); \
+			} \
+		}
+
+	//callback(int row, int count)
+#define RANGE_CALLBACK(callback) \
+	{\
+		int row = -1;\
+		if (pos.key().tryCast<int>(row))\
+		{\
+			callback(row, (int)count);\
+		}\
+		else\
+		{\
+			auto it = collection_.begin();\
+			int index = 0;\
+			for ( ; it != collection_.end() && it != pos; ++it, ++index);\
+			callback(index, (int)count);\
+		}\
+	}
+	
+	connectPreChange_ =
+		collection_.connectPreChange(
+		(Collection::ElementPreChangeCallback)[=](const Collection::Iterator& pos, const Variant& value)
+			VALUE_CALLBACK(preItemDataChanged_)
+		);
+	
+	connectPostChanged_ =
+		collection_.connectPostChanged(
+		(Collection::ElementPostChangedCallback)[=](const Collection::Iterator& pos, const Variant& value)
+			VALUE_CALLBACK(postItemDataChanged_)
+		);
+
+	connectPreInsert_ =
+		collection_.connectPreInsert(
+		(Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
+			RANGE_CALLBACK(preRowsInserted_)
+		);
+	
+	connectPostInserted_ =
+		collection_.connectPostInserted(
+		(Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
+			RANGE_CALLBACK(postRowsInserted_)
+		);
+
+	connectPreErase_ =
+		collection_.connectPreErase(
+		(Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
+			RANGE_CALLBACK(preRowsRemoved_)
+		);
+
+	connectPostErase_ =
+		collection_.connectPostErased(
+		(Collection::ElementRangeCallback)[=](const Collection::Iterator& pos, size_t count)
+			RANGE_CALLBACK(postRowsRemoved_)
+		);
+
+#undef VALUE_CALLBACK
+#undef RANGE_CALLBACK
 }
 
 

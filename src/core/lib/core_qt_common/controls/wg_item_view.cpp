@@ -121,7 +121,7 @@ namespace
 			{
 				if (roleId == ItemRole::modelIndexId)
 				{
-					return modelIndex( index );
+					return index;
 				}
 				role = static_cast< int >( roleId );
 			}

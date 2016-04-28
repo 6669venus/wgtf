@@ -229,12 +229,116 @@ QItemSelection TreeExtension::itemSelection( const QModelIndex & first, const QM
 		return QItemSelection( first, first );
 	}
 
-	assert( first.column() == 0 && !first.parent().isValid() );
-	assert( last.column() == 0 && !last.parent().isValid() );
+	auto begin = first;
+	auto end = last;
 
-	if (first.row() > last.row())
+	auto parent = QModelIndex();
 	{
-		return QItemSelection( last, first );
+		auto __end = end;
+		while (__end.isValid())
+		{
+			if (begin == __end)
+			{
+				parent = begin;
+				break;
+			}
+			__end = __end.parent();
+		}
 	}
-	return QItemSelection( first, last );
+
+	if (!parent.isValid())
+	{
+		auto __begin = begin;
+		while (__begin.isValid())
+		{
+			if (__begin == end)
+			{
+				std::swap(begin, end);
+				parent = begin;
+				break;
+			}
+			__begin = __begin.parent();
+		}
+	}
+
+	if (!parent.isValid())
+	{
+		auto __begin = begin;
+		while (__begin.isValid())
+		{
+			auto beginParent = __begin.parent();
+			auto __end = end;
+			while (__end.isValid())
+			{
+				auto endParent = __end.parent();
+				if (beginParent == endParent)
+				{
+					if (__begin.row() > __end.row())
+					{
+						std::swap(begin, end);
+					}
+					parent = beginParent;
+					break;
+				}
+				__end = endParent;
+			}
+			if (parent.isValid())
+			{
+				break;
+			}
+			__begin = beginParent;
+		}
+	}
+
+	QItemSelection itemSelection;
+
+	auto it = begin;
+	while (true)
+	{
+		itemSelection.select(it, it);
+
+		if (it == end)
+		{
+			break;
+		}
+
+		// Move next
+		do
+		{
+			if (impl_->expanded(it) &&
+				it.model()->hasChildren( it ))
+			{
+				auto child = it.child(0, 0);
+				if (child.isValid())
+				{
+					it = child;
+					break;
+				}
+			}
+			auto sibling = QModelIndex();
+			while (it.isValid())
+			{
+				auto parent = it.parent();
+				auto row = it.row() + 1;
+				if (it.model()->rowCount( parent ) > row)
+				{
+					sibling = it.sibling(row, 0);
+					if (sibling.isValid())
+					{
+						break;
+					}
+				}
+				it = parent;
+			}
+			if (sibling.isValid())
+			{
+				it = sibling;
+				break;
+			}
+			assert( false );
+		} while (false);
+		//
+	}
+	
+	return itemSelection;
 }

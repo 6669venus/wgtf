@@ -33,9 +33,13 @@ QItemSelection ListExtension::itemSelection( const QModelIndex & first, const QM
 	assert( first.column() == 0 && !first.parent().isValid() );
 	assert( last.column() == 0 && !last.parent().isValid() );
 
-	if (first.row() > last.row())
+	auto begin = first;
+	auto end = last;
+
+	if (begin.row() > end.row())
 	{
-		return QItemSelection( last, first );
+		std::swap(begin, end);
 	}
-	return QItemSelection( first, last );
+
+	return QItemSelection( begin, end );
 }

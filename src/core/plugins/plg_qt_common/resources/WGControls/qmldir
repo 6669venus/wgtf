@@ -52,6 +52,7 @@ WGItemRow 2.0 WGItemRow.qml
 WGLabel 1.0 WGLabel.qml
 WGListView 1.0 WGListView1.qml
 WGListView 2.0 WGListView.qml
+WGListViewBase 2.0 WGListViewBase.qml
 WGListViewRowDelegate 1.0 WGListViewRowDelegate.qml
 WGLodSlider 1.0 WGLodSlider.qml
 WGMenu 1.0 WGMenu.qml
@@ -102,7 +103,7 @@ WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolButtonStyle 1.0 WGToolButtonStyle.qml
 WGTreeItem.qml 1.0 WGTreeItem1.qml
-WGTreeItem.qml 2.0 WGTreeItem.qml
+WGTreeViewBase.qml 2.0 WGTreeViewBase.qml
 WGTreeView 1.0 WGTreeView1.qml
 WGTreeView 2.0 WGTreeView.qml
 WGVector2 1.0 WGVector2.qml

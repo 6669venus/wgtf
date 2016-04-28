@@ -439,7 +439,7 @@ namespace collection_details
 
 			onPreErase_( pos, 1 );
 			auto r = container_.erase( ii->base() );
-			onPostErased_();
+			onPostErased_( makeIterator( r ), 1);
 			return makeIterator( r );
 		}
 
@@ -456,8 +456,8 @@ namespace collection_details
 			if( count > 0 )
 			{
 				onPreErase_( makeIterator( range.first ), count );
-				container_.erase( range.first, range.second );
-				onPostErased_();
+				auto r = container_.erase(range.first, range.second);
+				onPostErased_( makeIterator( r ), count);
 			}
 
 			return count;
@@ -477,7 +477,7 @@ namespace collection_details
 			{
 				onPreErase_( first, count );
 				auto r = container_.erase( ii_first->base(), ii_last->base() );
-				onPostErased_();
+				onPostErased_( makeIterator( r ), count);
 				return makeIterator( r );
 			}
 			else
@@ -506,7 +506,7 @@ namespace collection_details
 			return onPreErase_.connect( callback );
 		}
 
-		Connection connectPostErased( NotificationCallback callback ) override
+		Connection connectPostErased(ElementRangeCallback callback) override
 		{
 			return onPostErased_.connect( callback );
 		}
@@ -526,7 +526,7 @@ namespace collection_details
 		Signal< ElementRangeCallbackSignature > onPreInsert_;
 		Signal< ElementRangeCallbackSignature > onPostInserted_;
 		Signal< ElementRangeCallbackSignature > onPreErase_;
-		Signal< NotificationCallbackSignature > onPostErased_;
+		Signal< ElementRangeCallbackSignature > onPostErased_;
 		Signal< ElementPreChangeCallbackSignature > onPreChange_;
 		Signal< ElementPostChangedCallbackSignature > onPostChanged_;
 

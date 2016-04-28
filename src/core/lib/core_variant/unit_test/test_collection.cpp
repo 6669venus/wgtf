@@ -1062,12 +1062,14 @@ TEST(Collection_linear_notifications)
 		CHECK_EQUAL( 12, pos.value().cast< int >() );
 	} );
 
-	c.connectPostErased( [&]()
+	c.connectPostErased( [&]( Collection::Iterator pos, size_t count )
 	{
 		CHECK_EQUAL( 1, counter );
 		counter += 1;
 
+		CHECK_EQUAL( 1, count );
 		CHECK_EQUAL( 2, c.size() );
+		CHECK_EQUAL(c.end(), pos);
 	} );
 
 	c.connectPreInsert( [&]( Collection::Iterator pos, size_t count )
@@ -1147,12 +1149,16 @@ TEST(Collection_mapping_notifications)
 		CHECK_EQUAL( 1, pos.value().cast< int >() );
 	} );
 
-	c.connectPostErased( [&]()
+	c.connectPostErased( [&]( Collection::Iterator pos, size_t count )
 	{
 		CHECK_EQUAL( 1, counter );
 		counter += 1;
 
 		CHECK_EQUAL( 2, c.size() );
+		CHECK_EQUAL(1, count);
+
+		CHECK_EQUAL("2 two", pos.key().castRef< const std::string >());
+		CHECK_EQUAL(2, pos.value().cast< int >());
 	} );
 
 	c.connectPreInsert( [&]( Collection::Iterator pos, size_t count )

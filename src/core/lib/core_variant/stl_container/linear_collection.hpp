@@ -403,12 +403,12 @@ namespace collection_details
 			assert( ii );
 			assert( &ii->container() == &container_ );
 			assert( ii->index() < container_.size() );
-
+						
 			onPreErase_( pos, 1 );
 
 			auto r = container_.erase( container_.begin() + ii->index() );
 
-			onPostErased_();
+			onPostErased_(makeIterator(r - container_.begin()), 1);
 
 			return makeIterator( r - container_.begin() );
 		}
@@ -428,9 +428,9 @@ namespace collection_details
 
 			onPreErase_( makeIterator( i ), 1 );
 
-			container_.erase( container_.begin() + i );
+			auto r = container_.erase(container_.begin() + i);
 
-			onPostErased_();
+			onPostErased_(makeIterator(r - container_.begin()), 1);
 
 			return 1;
 		}
@@ -446,14 +446,14 @@ namespace collection_details
 			assert( &ii_last->container() == &container_ );
 			assert( ii_last->index() <= container_.size() );
 			assert( ii_first->index() <= ii_last->index() );
-
+			
 			auto count = ii_last->index() - ii_first->index();
 			onPreErase_( first, count );
 
 			auto r = container_.erase(
 				container_.begin() + ii_first->index(), container_.begin() + ii_last->index() );
 
-			onPostErased_();
+			onPostErased_(makeIterator(r - container_.begin()), count);
 
 			return makeIterator( r - container_.begin() );
 		}
@@ -481,7 +481,7 @@ namespace collection_details
 			return onPreErase_.connect( callback );
 		}
 
-		Connection connectPostErased( NotificationCallback callback ) override
+		Connection connectPostErased(ElementRangeCallback callback) override
 		{
 			return onPostErased_.connect( callback );
 		}
@@ -501,7 +501,7 @@ namespace collection_details
 		Signal< ElementRangeCallbackSignature > onPreInsert_;
 		Signal< ElementRangeCallbackSignature > onPostInserted_;
 		Signal< ElementRangeCallbackSignature > onPreErase_;
-		Signal< NotificationCallbackSignature > onPostErased_;
+		Signal< ElementRangeCallbackSignature > onPostErased_;
 		Signal< ElementPreChangeCallbackSignature > onPreChange_;
 		Signal< ElementPostChangedCallbackSignature > onPostChanged_;
 

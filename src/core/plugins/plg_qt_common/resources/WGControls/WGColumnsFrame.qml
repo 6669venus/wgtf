@@ -4,15 +4,14 @@ Row {
 	id: columnsFrame
 	width: childrenRect.width
 
-	property real columnCount: 1
-	property real columnWidth: 1
 	property var columnWidths: []
 	property real columnSpacing: 0
 
 	property real availableWidth: 0
 
 	onAvailableWidthChanged: {
-		if (columnWidths.length != columnCount) {
+		var columnCount = columnWidths.length
+		if (columnCount == 0) {
 			return
 		}
 
@@ -55,29 +54,30 @@ Row {
 	}
 
 	Component.onCompleted: {
-		var tmp = columnWidths
-		while (tmp.length < columnCount) {
-			tmp.push(columnWidth)
-		}
-		__initialColumnWidths = tmp
+		__initialColumnWidths = columnWidths
 	}
 
 	Repeater {
 		id: handles
 		model: __initialColumnWidths
 
-		Rectangle {
+		Item {
 			width: handle.x + handle.width
 			height: columnsFrame.height
-			color: "transparent"
 
-			Rectangle {
+			Item {
 				id: handle
 
 				x: __initialColumnWidths[index]
 				width: columnSpacing
 				height: columnsFrame.height
-				color: palette.darkColor
+
+				/* MOVE INTO STYLE*/
+				Rectangle {
+					anchors.fill: parent
+					color: palette.darkColor
+				}
+				/**/
 
 				MouseArea {
 					anchors.verticalCenter: parent.verticalCenter

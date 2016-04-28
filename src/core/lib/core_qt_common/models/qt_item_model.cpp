@@ -217,6 +217,11 @@ QModelIndex QtItemModel::parent( const QModelIndex &child ) const
 	}
 
 	auto parentItem = const_cast< AbstractItem * >( childIndex.parent_ );
+	if (parentItem == nullptr)
+	{
+		return QModelIndex();
+	}
+
 	AbstractItemModel::ItemIndex parentIndex;
 	impl_->source_.index( parentItem, parentIndex );
 	if (!parentIndex.isValid())

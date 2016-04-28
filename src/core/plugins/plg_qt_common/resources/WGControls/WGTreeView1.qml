@@ -431,7 +431,7 @@ Item {
         elide: Text.ElideRight
     }
 
-    WGTreeItem {
+    WGTreeItem1 {
         id: rootItem
         model: treeView.model
         clip: true

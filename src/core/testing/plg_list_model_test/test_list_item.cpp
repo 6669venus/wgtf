@@ -311,17 +311,6 @@ Variant TestListItem::getData( int column, size_t roleId ) const
 	{
 		return column == 0 ? impl_->name_.c_str() : "Value";
 	}
-	else if (roleId == ValueTypeRole::roleId_)
-	{
-		if (column == 0 || impl_->type_ == TestListItemType::STRING)
-		{
-			return typeid( std::string ).name();
-		}
-		else
-		{
-			return typeid( size_t ).name();
-		}
-	}
 	else if (roleId == ItemRole::valueId)
 	{
 		if (column == 0)
@@ -336,10 +325,6 @@ Variant TestListItem::getData( int column, size_t roleId ) const
 		{
 			return impl_->number_;
 		}
-	}
-	else if (roleId == IndexPathRole::roleId_)
-	{
-		return impl_->name_;
 	}
 
 	return Variant();

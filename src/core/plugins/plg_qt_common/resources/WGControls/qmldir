@@ -101,7 +101,8 @@ WGThumbnail 1.0 WGThumbnail.qml
 WGThumbnailButton 1.0 WGThumbnailButton.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolButtonStyle 1.0 WGToolButtonStyle.qml
-WGTreeItem.qml 1.0 WGTreeItem.qml
+WGTreeItem.qml 1.0 WGTreeItem1.qml
+WGTreeItem.qml 2.0 WGTreeItem.qml
 WGTreeView 1.0 WGTreeView1.qml
 WGTreeView 2.0 WGTreeView.qml
 WGVector2 1.0 WGVector2.qml

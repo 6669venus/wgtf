@@ -1,460 +1,70 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
-import QtQuick.Layouts 1.1
-import WGControls 1.0
-
-//TODO This needs to be tested with a tree with multiple root nodes
-
-/*!
-    \brief Items that make the rows in a WGTreeView.
-    Should only be used within a WGTreeView. Not intended to be used on its own.
-    The WGTreeItem is a ListView that loads further treeItems via a delegate loader.
-
-Example:
-\code{.js}
-    WGTreeItem {
-        id: rootItem
-        model: treeView.model
-        width: treeView.width
-        height: treeView.height
-    }
-\endcode
-*/
+import QtQml.Models 2.2
+import WGControls 2.0
 
 ListView {
-    id: treeItem
-    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
+	id: treeItem
 
-    property real columnSpacing: treeView.columnSpacing
-    property real selectionMargin: treeView.selectionMargin
-    property real minimumRowHeight: treeView.minimumRowHeight
+	property real depth: 0
 
-    property var selectionExtension: treeView.selectionExtension
-    property var treeExtension: treeView.treeExtension
+	property var columnDelegates: []
+	property var columnSequence: []
+	property var columnWidths: []
+	property real columnSpacing: 0
 
-    property int columnCount: treeView.columnCount
-    property var columnWidths: treeView.columnWidths
-    property var columnDelegates: treeView.columnDelegates
-    property var defaultColumnDelegate: treeView.defaultColumnDelegate
+	signal itemPressed(var mouse, var itemIndex)
+	signal itemClicked(var mouse, var itemIndex)
+    signal itemDoubleClicked(var mouse, var itemIndex)
 
-    property int depth: typeof(childItems) === "undefined" ? 0 : childItems.depth
-    property int parentListIndex: typeof(index) === "undefined" ? 0 : index
-    property real marginedWidth: width - leftMargin - rightMargin - minimumScrollbarWidth
+	interactive: false
 
-    // Local properties and methods for handling multiselection during keyboard navigation
-    property bool modifiedSelectionExtension: false;
-    property bool shiftKeyPressed: false
-
-    function handlePreNavigation() {
-        if (selectionExtension == null) {
-            return
-        }
-        if (selectionExtension.multiSelect && !shiftKeyPressed) {
-            selectionExtension.multiSelect = false;
-            modifiedSelectionExtension = true;
-        }
-    }
-
-    function handlePostNavigation() {
-        if (selectionExtension == null) {
-            return
-        }
-        if (modifiedSelectionExtension == true) {
-            selectionExtension.multiSelect = true;
-        }
-    }
-
-    function setCurrentIndex( modelIndexToSet ) {
-        if (treeExtension !== null)
-        {
-            treeExtension.currentIndex = modelIndexToSet
-        }
-        // Give the parent active focus, so it can handle keyboard inputs
-        if (typeof content !== "undefined")
-        {
-            content.forceActiveFocus()
-        }
-        else
-        {
-            forceActiveFocus()
-        }
-    }
-
-    Component.onCompleted: {
-        treeView.addDepthLevel(depth);
-    }
-
-    Component.onDestruction: {
-        treeView.removeDepthLevel(depth);
-    }
-
-    model: ChildModel
-    height: visible ? contentHeight + topMargin + bottomMargin : 0
-    leftMargin: 0
-    rightMargin: 0
-    topMargin: treeView.childListMargin
-    bottomMargin: treeView.childListMargin
-
-    //The rectangle for the entire row
     delegate: Item {
-        id: itemDelegate
+		height: childrenRect.height
+		width: childrenRect.width
 
-        property real actualIndentation: treeView.indentation * depth
-        property real verticalMargins: !HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin
-        readonly property bool oddDepth: depth % 2 !== 0
-        readonly property bool oddIndex: treeItem.parentListIndex % 2 !== 0
-        readonly property bool switchRowColours: oddDepth !== oddIndex
+		WGItemRow {
+			id: itemRow
+			columnDelegates: treeItem.columnDelegates
+			columnSequence: treeItem.columnSequence
+			columnWidths: treeItem.columnWidths
+			columnSpacing: treeItem.columnSpacing
+			selected: false
 
-        height: content.height + treeView.footerSpacing + verticalMargins
-        width: treeItem.marginedWidth
+			onItemPressed: treeItem.itemPressed(mouse, itemIndex)
+			onItemClicked: treeItem.itemClicked(mouse, itemIndex)
+			onItemDoubleClicked: treeItem.itemDoubleClicked(mouse, itemIndex)
+		}
 
-        Rectangle {
-            id: groupBackgroundColour
-            x: actualIndentation
-            width: treeItem.marginedWidth - x
-            height: parent.height
-            visible: treeView.backgroundColourMode === treeView.incrementalGroupBackgroundColours
-            color: visible ? Qt.lighter(treeView.backgroundColour, 1 + depth % treeView.backgroundColourIncrements / 10) : "transparent"
-        }
+		Item {
+			id: childItems
+			anchors.top: itemRow.bottom
 
-        Rectangle { // separator line between rows
-            id: topSeparator
-            width: parent.width
-            anchors.top: parent.top
-            anchors.horizontalCenterOffset: -(content.height + treeView.footerSpacing)
-            height: 1
-            color: Qt.darker(palette.midLightColor,1.2)
-            visible: treeView.lineSeparator && depth !== 0
-        }
+			Loader {
+				active: hasChildren && expanded
 
-        Item { // All content
-            id: content
-            objectName: "content"
-            height: childrenRect.height
-            y: HasChildren ? treeView.headerRowMargin : treeView.childRowMargin
-            anchors.left: parent.left
-            anchors.right: parent.right
+				Component.onCompleted: {
+					setSource("WGTreeItem.qml", {
+						"width": Qt.binding( function() { return treeItem.width - childItems.x } ),
+						"height": Qt.binding( function() { return treeItem.height - childItems.y + treeItem.contentY } ),
+						"depth": Qt.binding( function() { return treeItem.depth + 1 } ),
+						"testY": Qt.binding( function() { return testY } ),
 
-            property bool hasActiveFocus: false
+						"model": Qt.binding( function() { return childModel } ),
+						"columnDelegates": Qt.binding( function() { return treeItem.columnDelegates } ),
+						"columnSequence": Qt.binding( function() { return treeItem.columnSequence } ),
+						"columnWidths": Qt.binding( function() { return treeItem.columnWidths } ),
+						"columnSpacing": Qt.binding( function() { return treeItem.columnSpacing } ),
 
-            Component.onCompleted: {
-                if(treeItem.depth === 0)
-                {
-                    if (treeView.rootExpanded && HasChildren)
-                    {
-                        Expanded = true;
-                    }
-                }
-            }
+						"onItemPressed": Qt.binding( function(mouse, itemIndex) { treeItem.itemPressed(mouse, itemIndex) } ),
+						"onItemClicked": Qt.binding( function(mouse, itemIndex) { treeItem.itemClicked(mouse, itemIndex) } ),
+						"onItemDoubleClicked": Qt.binding( function(mouse, itemIndex) { treeItem.itemDoubleClicked(mouse, itemIndex) } )
+					})
 
-            Keys.onUpPressed: {
-                treeExtension.blockSelection = true;
-
-                treeItem.handlePreNavigation();
-                treeExtension.moveUp();
-                treeItem.handlePostNavigation();
-            }
-
-            Keys.onDownPressed: {
-                treeExtension.blockSelection = true;
-
-                treeItem.handlePreNavigation();
-                treeExtension.moveDown();
-                treeItem.handlePostNavigation();
-            }
-
-            Keys.onLeftPressed: {
-                treeExtension.blockSelection = true;
-
-                treeItem.handlePreNavigation();
-                treeExtension.moveLeft();
-                treeItem.handlePostNavigation();
-            }
-
-            Keys.onRightPressed: {
-                treeExtension.blockSelection = true;
-
-                treeItem.handlePreNavigation();
-                treeExtension.moveRight();
-                treeItem.handlePostNavigation();
-            }
-
-            Keys.onReturnPressed: {
-                if (treeExtension.blockSelection) {
-                    return;
-                }
-
-                // Select the current item in tree
-                treeExtension.blockSelection = false;
-                treeExtension.selectItem();
-            }
-
-            Keys.onSpacePressed: {
-                if (treeExtension.blockSelection) {
-                    return;
-                }
-
-                // Select the current item in tree
-                treeExtension.blockSelection = false;
-                treeExtension.selectItem();
-            }
-
-            Keys.onPressed: {
-                // Flag the shift key being pressed to allow multiselection via tree navigation
-                if (event.key == Qt.Key_Shift) {
-                    shiftKeyPressed = true;
-                }
-                event.accepted = false;
-            }
-
-            Keys.onReleased: {
-                // Flag the shift key being released to disallow multiselection via tree navigation
-                if (event.key == Qt.Key_Shift) {
-                    shiftKeyPressed = false;
-                }
-                event.accepted = false;
-            }
-
-            onActiveFocusChanged: {
-                if (content.activeFocus)
-                {
-                    hasActiveFocus = true
-                }
-                else
-                {
-                    hasActiveFocus = false
-                }
-            }
-
-            WGListViewRowDelegate { // The row
-                objectName: "WGListViewRowDelegate"
-                id: rowDelegate
-
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                columnWidths: treeView.columnWidths
-                columnSpacing: treeView.columnSpacing
-                defaultColumnDelegate: headerColumnDelegate
-                hasActiveFocusDelegate: content.hasActiveFocus
-                indentation: treeView.indentation * depth
-                showBackgroundColour:
-                    treeView.backgroundColourMode === treeView.uniformRowBackgroundColours ||
-                    treeView.backgroundColourMode === treeView.alternatingRowBackgroundColours
-                backgroundColour: itemDelegate.switchRowColours ? treeView.alternateBackgroundColour : treeView.backgroundColour
-                alternateBackgroundColour: itemDelegate.switchRowColours ? treeView.backgroundColour : treeView.alternateBackgroundColour
-
-                columnDelegates: []
-                selectionExtension: treeView.selectionExtension
-                modelIndex: treeView.model.index(rowIndex, 0, ParentIndex)
-
-                onClicked: {
-                    if (treeExtension && treeExtension.blockSelection) {
-                        return;
-                    }
-
-                    var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
-                    treeView.rowClicked(mouse, modelIndex);
-                    currentIndex = rowIndex;
-
-                    // Update the treeExtension's currentIndex
-                    if (treeExtension !== null)
-                    {
-                        treeExtension.currentIndex = modelIndex;
-                    }
-
-                    // Give the parent active focus, so it can handle keyboard inputs
-                    content.forceActiveFocus()
-                }
-
-                onDoubleClicked: {
-                    if (treeExtension && treeExtension.blockSelection) {
-                        return;
-                    }
-
-                    var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
-                    treeView.rowDoubleClicked(mouse, modelIndex);
-                    toggleExpandRow();
-                    currentIndex = rowIndex;
-
-                    // Update the treeExtension's currentIndex
-                    setCurrentIndex( modelIndex )
-                }
-
-                function isExpandable()
-                {
-                    return (HasChildren && typeof Expanded !== "undefined");
-                }
-
-
-                function toggleExpandRow()
-                {
-                    if (isExpandable())
-                    {
-                        Expanded = !Expanded;
-                    }
-                }
-
-                // return - true - if child tree is expanded
-                function expandRow()
-                {
-                    if (isExpandable() && !Expanded)
-                    {
-                        Expanded = true;
-
-                        // handled
-                        return true;
-                    }
-
-                    // No children, non expandable, or already expanded
-                    return false;
-                }
-
-                // return - true - if child tree is collapsed
-                function collapseRow()
-                {
-                    if (isExpandable() && Expanded)
-                    {
-                        Expanded = false;
-
-                        // handled
-                        return true;
-                    }
-
-                    // No children, non expandable, or collapsed
-                    return false;
-                }
-
-                Component { // Row contents, icons and columns
-                    id: headerColumnDelegate
-
-                    Item {
-                        id: header
-                        height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
-                        property var parentItemData: itemData
-                        property bool firstColumn: columnIndex === 0
-                        property bool showExpandIcon: firstColumn && HasChildren
-
-                        Rectangle {
-                            id: expandIconArea
-                            objectName: "expandIconArea"
-                            color: "transparent"
-                            width: firstColumn ? expandButton.x + expandButton.width + expandIconMargin : 0
-                            height: Math.max(minimumRowHeight, treeView.expandIconSize)
-
-                            onWidthChanged: treeView.setExpandIconWidth(width)
-
-                            Text {
-                                id: expandButton
-                                objectName: "expandButton"
-                                color:
-                                    !showExpandIcon ? "transparent" :
-                                    expandMouseArea.containsMouse ? palette.highlightColor :
-                                    Expanded ? palette.textColor :
-                                    palette.neutralTextColor
-
-                                width: firstColumn ? paintedWidth : 0
-                                font.family : "Marlett"
-                                font.pixelSize: treeView.expandIconSize
-                                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
-                                text : Expanded ? "\uF036" : "\uF034"
-                                x: expandIconMargin
-                                anchors.verticalCenter: parent.verticalCenter
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                            }
-
-                            MouseArea {
-                                id: expandMouseArea
-                                objectName: "expandMouseArea"
-                                anchors.left: parent.left
-                                anchors.top: parent.top
-                                anchors.bottom: parent.bottom
-                                width: showExpandIcon ? expandButton.x + expandButton.width + expandIconMargin : 0
-                                hoverEnabled: true
-                                enabled: showExpandIcon
-
-                                onPressed: {
-                                    rowDelegate.toggleExpandRow()
-                                }
-                            }
-                        }
-
-                        Loader {
-                            id: headerContent
-                            anchors.top: parent.top
-                            anchors.left: expandIconArea.right
-                            anchors.right: header.right
-                            property var itemData: parentItemData
-
-                            sourceComponent: // if a column delegate is defined use it, otherwise use default
-                                columnIndex < treeView.columnDelegates.length ? treeView.columnDelegates[columnIndex]
-                                : treeView.defaultColumnDelegate
-
-                            onLoaded: {
-                                height = Math.max(expandIconArea.height, item.height);
-                                rowDelegate.height = height;
-                            }
-                        }
-                    }
-                }
-
-                property var selected: typeof Selected != 'undefined' ? Selected : false
-                onSelectedChanged: {
-                    if (!selected) {
-                        return;
-                    }
-
-                    var listView = treeItem;
-                    while (listView != null &&
-                    (typeof listView.enableVerticalScrollBar == 'undefined' || listView.enableVerticalScrollBar == false)) {
-                        listView = listView.parent;
-                    }
-                    if (listView == null) {
-                        return;
-                    }
-
-                    var scrollBar = listView.verticalScrollBar.scrollFlickable;
-                    var scrollHeight = Math.floor(scrollBar.contentHeight * scrollBar.visibleArea.heightRatio);
-
-                    var item = rowDelegate;
-                    var itemY = scrollBar.contentY;
-                    var itemHeight = item.height;
-                    while (item != null && item != listView) {
-                        itemY += item.y;
-                        item = item.parent;
-                    }
-                    if (item == null) {
-                        return;
-                    }
-
-                    if (itemY < scrollBar.contentY) {
-                        scrollBar.contentY = itemY;
-                    }
-                    else if (itemY + itemHeight > scrollBar.contentY + scrollHeight) {
-                        scrollBar.contentY = itemY + itemHeight - scrollHeight;
-                    }
-                }
-            }
-
-            Item {
-                id: childItems
-                anchors.right: parent.right
-                anchors.left: parent.left
-                y: rowDelegate.y + rowDelegate.height + (HasChildren ? treeView.headerRowMargin : 0) + (Expanded ? childListMargin : 0)
-                height: visible ? subTree.height : 0
-                visible: !ancestorCollapsed
-
-                property int depth: treeItem.depth + 1
-                property bool ancestorCollapsed: !treeItem.visible || typeof Expanded === "undefined" || !Expanded || subTree.status !== Loader.Ready
-
-                Loader {
-                    id: subTree
-                    source: "WGTreeItem.qml"
-                    width: treeItem.marginedWidth
-                }
-            }
-        }
-    }
+					childItems.width = Qt.binding( function() { return active ? item.contentWidth : 0 } )
+					childItems.height = Qt.binding( function() { return active ? item.contentHeight : 0 } )
+				}
+			}
+		}
+	}
 }

@@ -1,13 +1,12 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
-import QtQuick.Layouts 1.0
 import QtQml.Models 2.2
 import WGControls 2.0
 
 ListView {
 	id: listView
 	clip: true
-	contentWidth: columnsFrame.width
+	contentWidth: itemView.width
 
 	property Component columnDelegate: Text {
 		text: itemData.display
@@ -15,7 +14,7 @@ ListView {
 	}
 	property var columnDelegates: []
 	property var columnSequence: []
-	property real columnWidth: 1
+	property real columnWidth: 0
 	property var columnWidths: []
 	property real columnSpacing: 0
 
@@ -31,14 +30,19 @@ ListView {
 			tmp.push(columnDelegate)
 		}
 		columnDelegates = tmp
+
+		var tmp = columnWidths
+		while (tmp.length < columnCount()) {
+			tmp.push(Math.max(columnWidth, 1))
+		}
+		columnWidths = tmp
 	}
 
     delegate: WGItemRow {
 		id: itemRow
-        columnDelegate: listView.columnDelegate
         columnDelegates: listView.columnDelegates
         columnSequence: listView.columnSequence
-		columnWidths: columnsFrame.columnWidths
+		columnWidths: listView.columnWidths
         columnSpacing: listView.columnSpacing
 		selected: selectionModel.isSelected(modelIndex)
 
@@ -70,21 +74,25 @@ ListView {
         onItemDoubleClicked: listView.itemDoubleClicked(mouse, itemIndex)
     }
 
-	WGColumnsFrame {
-		id: columnsFrame
-		x: listView.contentItem.x + listView.originX
-		y: listView.contentItem.y + listView.originY
-		height: listView.contentItem.height
-		columnCount: listView.columnCount()
-		columnWidth: listView.columnWidth
-		columnWidths: listView.columnWidths
-		columnSpacing: listView.columnSpacing
-		availableWidth: listView.width - Math.max(contentItem.x, 0)
-	}
-
 	WGItemView {
 		id: itemView
 		extensions: [listExtension, columnExtension]
+
+		width: columnsFrame.width
+
+		WGColumnsFrame {
+			id: columnsFrame
+			x: listView.contentItem.x + listView.originX
+			y: listView.contentItem.y + listView.originY
+			height: listView.contentItem.height
+			columnWidths: listView.columnWidths
+			columnSpacing: listView.columnSpacing
+			availableWidth: listView.width - Math.max(contentItem.x, 0)
+
+			Component.onCompleted: {
+				listView.columnWidths = Qt.binding( function() { return columnsFrame.columnWidths } )
+			}
+		}
 	}
 
 	ListExtension {

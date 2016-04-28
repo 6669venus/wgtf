@@ -60,6 +60,8 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/selection_extension.hpp
 	models/extensions/tree_extension.cpp
 	models/extensions/tree_extension.hpp
+	models/extensions/tree_extension_old.cpp
+	models/extensions/tree_extension_old.hpp
 	models/extensions/value_extension.cpp
 	models/extensions/value_extension.hpp
 	models/extensions/thumbnail_extension.cpp

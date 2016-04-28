@@ -231,7 +231,8 @@ ReflectedTreeItemNew * ReflectedGroupItemNew::getChild( size_t index ) const /* 
 
 	auto parent = const_cast< ReflectedGroupItemNew * >( this );
 	int skipChildren = static_cast< int >( impl_->children_.size() );
-	this->enumerateVisibleProperties( [ this, parent, &child, &skipChildren ] (
+	this->enumerateVisibleProperties(
+	[ this, parent, &child, &skipChildren, pDefinitionManager ] (
 		const IBasePropertyPtr & property,
 		const std::string & inPlacePath )
 	{

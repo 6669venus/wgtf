@@ -4,6 +4,8 @@
 
 #include "core_data_model/abstract_item.hpp"
 #include "core_dependency_system/di_ref.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 class AbstractTreeModel;
 
@@ -11,8 +13,6 @@ class IBaseProperty;
 typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
 
 class IClassDefinition;
-class IDefinitionManager;
-class IReflectionController;
 class ObjectHandle;
 class PropertyAccessor;
 

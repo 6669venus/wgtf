@@ -64,7 +64,7 @@ ReflectedObjectItemNew::Implementation::getGroups(
 		return groups_;
 	}
 
-	auto pDefinitionManager = this->getDefinitionManager();
+	auto pDefinitionManager = self.getDefinitionManager();
 	if (pDefinitionManager == nullptr)
 	{
 		return groups_;

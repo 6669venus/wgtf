@@ -263,7 +263,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		Variant variant = getMinValue( typeId );
 		auto minMaxObj =
 			findFirstMetaData< MetaMinMaxObj >( propertyAccessor, *pDefinitionManager );
-		if( minMaxObj != nullptr)
+		if (minMaxObj != nullptr)
 		{
 			const float & value = minMaxObj->getMin();
 			float minValue = .0f;
@@ -293,7 +293,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		Variant variant = getMaxValue( typeId );
 		auto minMaxObj =
 			findFirstMetaData< MetaMinMaxObj >( propertyAccessor, *pDefinitionManager );
-		if( minMaxObj != nullptr)
+		if (minMaxObj != nullptr)
 		{
 			const float & value = minMaxObj->getMax();
 			float maxValue = .0f;
@@ -378,7 +378,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		if (typeId.isPointer())
 		{
 			auto definition = pDefinitionManager->getDefinition( typeId.removePointer().getName() );
-			if(definition != nullptr)
+			if (definition != nullptr)
 			{
 				auto definitionModel = std::unique_ptr< AbstractListModel >(
 					new ClassDefinitionModelNew( definition, *pDefinitionManager ) );
@@ -391,7 +391,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		bool isAssetBrowserDlg = false;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager );
-		if( urlObj != nullptr)
+		if (urlObj != nullptr)
 		{
 			isAssetBrowserDlg = urlObj->isAssetBrowserDialog();
 		}
@@ -402,7 +402,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		const char * title;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager );
-		if( urlObj != nullptr)
+		if (urlObj != nullptr)
 		{
 			title = urlObj->getDialogTitle();
 		}
@@ -413,7 +413,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		const char * folder;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager );
-		if( urlObj != nullptr)
+		if (urlObj != nullptr)
 		{
 			folder = urlObj->getDialogDefaultFolder();
 		}
@@ -424,7 +424,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		const char * nameFilters;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager );
-		if( urlObj != nullptr)
+		if (urlObj != nullptr)
 		{
 			nameFilters = urlObj->getDialogNameFilters();
 		}
@@ -435,7 +435,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		const char * selectedFilter;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager );
-		if( urlObj != nullptr)
+		if (urlObj != nullptr)
 		{
 			selectedFilter = urlObj->getDialogSelectedNameFilter();
 		}
@@ -446,7 +446,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		int modality = 1;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager );
-		if( urlObj != nullptr)
+		if (urlObj != nullptr)
 		{
 			const int & value = urlObj->getDialogModality();
 			if (value >= 0 && value <= 2)
@@ -503,7 +503,7 @@ bool ReflectedPropertyItemNew::setData( int column, size_t roleId, const Variant
 
 		auto baseDefinition = pDefinitionManager->getDefinition(
 			typeId.removePointer().getName() );
-		if(baseDefinition == nullptr)
+		if (baseDefinition == nullptr)
 		{
 			return false;
 		}
@@ -623,7 +623,7 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 	child = new ReflectedObjectItemNew( impl_->contextManager_,
 		baseProvider ,
 		const_cast< ReflectedPropertyItemNew * >( this ) );
-	child->hidden( true );
+	child->isCollection( false );
 	impl_->children_[index] = std::unique_ptr< ReflectedTreeItemNew >( child );
 	return child;
 }
@@ -650,16 +650,18 @@ int ReflectedPropertyItemNew::rowCount() const
 	bool isCollection = value.tryCast( collection );
 	if (isCollection)
 	{
+		assert( this->isCollection() );
 		return static_cast< int >( collection.size() );
 	}
 
+	assert( !this->isCollection() );
 	ObjectHandle handle;
 	bool isObjectHandle = value.tryCast( handle );
-	if(isObjectHandle)
+	if (isObjectHandle)
 	{
 		handle = reflectedRoot( handle, *pDefinitionManager );
 		auto def = handle.getDefinition( *pDefinitionManager );
-		if(def != nullptr)
+		if (def != nullptr)
 		{
 			return 1;
 		}
@@ -755,7 +757,7 @@ bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor,
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			pDefinitionManager->getDefinition( typeId.removePointer().getName() ) != nullptr;
-		if(isReflectedObject)
+		if (isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;
 			ObjectHandle handle;

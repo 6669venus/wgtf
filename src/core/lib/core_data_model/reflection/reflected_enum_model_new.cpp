@@ -64,7 +64,7 @@ ReflectedEnumModelNew::ReflectedEnumModelNew( const PropertyAccessor & pA, const
 		int index = 0;
 		const wchar_t * start = enumString;
 		const wchar_t * enumStringEnd = start + wcslen( start );
-		while( start < enumStringEnd )
+		while (start < enumStringEnd)
 		{
 			const wchar_t * end = nullptr;
 			end = wcsstr( start, L"|" );
@@ -95,7 +95,7 @@ ReflectedEnumModelNew::ReflectedEnumModelNew( const PropertyAccessor & pA, const
 	Collection collection = enumObj->generateEnum( baseProvider, *pA.getDefinitionManager() );
 	auto it = collection.begin();
 	auto itEnd = collection.end();
-	for( ; it != itEnd; ++it )
+	for (; it != itEnd; ++it)
 	{
 		int index;
 		it.key().tryCast( index );

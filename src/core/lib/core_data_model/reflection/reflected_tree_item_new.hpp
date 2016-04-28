@@ -46,9 +46,11 @@ public:
 	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
 	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
 
-	// TODO remove this from the generic model and move into a filter
-	bool hidden() const;
-	void hidden( bool value );
+	/**
+	 *	Check if this item can be opened to show child rows.
+	 */
+	bool isCollection() const;
+	void isCollection( bool value );
 
 	/**
 	 *	Get data change/insert/remove signals from parent model.
@@ -90,7 +92,7 @@ private:
 	void setModel( const ReflectedTreeModelNew * pModel );
 	const ReflectedTreeModelNew * model_;
 
-	bool hidden_;
+	bool isCollection_;
 };
 
 #endif //_REFLECTED_TREE_ITEM_NEW_HPP

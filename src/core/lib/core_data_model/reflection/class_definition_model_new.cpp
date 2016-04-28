@@ -59,7 +59,7 @@ ClassDefinitionModelNew::ClassDefinitionModelNew( const IClassDefinition * defin
 	definitionManager.getDefinitionsOfType(
 		definition, definitions );
 
-	for( auto it = definitions.begin(); it != definitions.end(); ++it )
+	for (auto it = definitions.begin(); it != definitions.end(); ++it)
 	{
 		items_.push_back( new ClassDefinitionItem( *it ) );
 	}

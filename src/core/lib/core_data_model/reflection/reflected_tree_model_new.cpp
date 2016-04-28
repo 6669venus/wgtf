@@ -121,7 +121,7 @@ AbstractItem * ReflectedTreeModelNew::item(
 	for (int i = 0; i < itemCount; ++i)
 	{
 		auto item = impl_->getItemInternal( i, reflectedParent );
-		if (item != nullptr && item->hidden())
+		if (item != nullptr && !item->isCollection())
 		{
 			auto childItemCount = impl_->getChildCountInternal( item );
 			if (row < childItemCount)
@@ -161,11 +161,11 @@ AbstractTreeModel::ItemIndex ReflectedTreeModelNew::index(
 	for (size_t i = 0; i < indexInternal; ++i)
 	{
 		auto itemInternal = impl_->getItemInternal( i, parent );
-		row += itemInternal != nullptr && itemInternal->hidden() ? 
+		row += itemInternal != nullptr && !itemInternal->isCollection() ? 
 			this->rowCount( itemInternal ) : 1;
 	}
 
-	if (parent != nullptr && parent->hidden())
+	if (parent != nullptr && !parent->isCollection())
 	{
 		auto parentIndex = this->index( parent );
 		row += parentIndex.row_;
@@ -188,7 +188,7 @@ int ReflectedTreeModelNew::rowCount(
 	for (size_t i = 0; i < childCount; ++i)
 	{
 		auto childItem = impl_->getItemInternal( i, reflectedItem );
-		count += childItem != nullptr && childItem->hidden() ? this->rowCount( childItem ) : 1;
+		count += childItem != nullptr && !childItem->isCollection() ? this->rowCount( childItem ) : 1;
 	}
 	return count;
 }

@@ -12,7 +12,7 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
 	, model_( nullptr )
-	, hidden_( false )
+	, isCollection_( true )
 {
 }
 
@@ -25,7 +25,7 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
 	, model_( nullptr )
-	, hidden_( false )
+	, isCollection_( true )
 {
 }
 
@@ -100,15 +100,15 @@ ReflectedTreeItemNew * ReflectedTreeItemNew::getParent() const
 }
 
 
-bool ReflectedTreeItemNew::hidden() const
+bool ReflectedTreeItemNew::isCollection() const
 {
-	return hidden_;
+	return isCollection_;
 }
 
 
-void ReflectedTreeItemNew::hidden( bool value )
+void ReflectedTreeItemNew::isCollection( bool value )
 {
-	hidden_ = value;
+	isCollection_ = value;
 }
 
 

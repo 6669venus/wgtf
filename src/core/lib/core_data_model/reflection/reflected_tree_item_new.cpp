@@ -25,6 +25,7 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
 	, model_( nullptr )
+	, hidden_( false )
 {
 }
 
@@ -111,10 +112,16 @@ void ReflectedTreeItemNew::hidden( bool value )
 }
 
 
-//AbstractTreeModel * ReflectedTreeItemNew::getModel() const
-//{
-//	return model_ != nullptr ? model_ : this->getParent()->getModel();
-//}
+const ReflectedTreeModelNew * ReflectedTreeItemNew::getModel() const
+{
+	return model_ != nullptr ? model_ : this->getParent()->getModel();
+}
+
+
+void ReflectedTreeItemNew::setModel( const ReflectedTreeModelNew * pModel )
+{
+	model_ = pModel;
+}
 
 
 bool ReflectedTreeItemNew::enumerateVisibleProperties(

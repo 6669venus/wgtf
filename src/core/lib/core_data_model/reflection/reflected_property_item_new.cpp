@@ -1,8 +1,9 @@
 #include "reflected_property_item_new.hpp"
 
 #include "class_definition_model_new.hpp"
-#include "reflected_object_item_new.hpp"
 #include "reflected_enum_model_new.hpp"
+#include "reflected_object_item_new.hpp"
+#include "reflected_tree_model_new.hpp"
 
 //#include "core_data_model/generic_tree_model.hpp"
 #include "core_data_model/i_item_role.hpp"
@@ -687,7 +688,7 @@ bool ReflectedPropertyItemNew::preSetValue( const PropertyAccessor & accessor,
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			pDefinitionManager->getDefinition( typeId.removePointer().getName() ) != nullptr;
-		if(isReflectedObject)
+		if (isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;
 			ObjectHandle handle;
@@ -695,13 +696,27 @@ bool ReflectedPropertyItemNew::preSetValue( const PropertyAccessor & accessor,
 			{
 				definition = handle.getDefinition( *pDefinitionManager );
 			}
-			//getModel()->signalPreItemDataChanged( this, 1, DefinitionRole::roleId_,
-			//	ObjectHandle( definition ) );
+
+			const auto pModel = this->getModel();
+			if (pModel != nullptr)
+			{
+				const auto index = pModel->index( this );
+				const int column = 0;
+				const int role = DefinitionRole::roleId_;
+				const Variant variantDefinition( ObjectHandle( definition ) );
+				pModel->preItemDataChanged_( index, column, role, variantDefinition );
+			}
 			return true;
 		}
 
-		//getModel()->signalPreItemDataChanged( this, 1, ValueRole::roleId_,
-		//	value );
+		const auto pModel = this->getModel();
+		if (pModel != nullptr)
+		{
+			const auto index = pModel->index( this );
+			const int column = 0;
+			const int role = ValueRole::roleId_;
+			pModel->preItemDataChanged_( index, column, role, value );
+		}
 		return true;
 	}
 
@@ -749,13 +764,27 @@ bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor,
 				definition = handle.getDefinition( *pDefinitionManager );
 			}
 			impl_->children_.clear();
-			//getModel()->signalPostItemDataChanged( this, 1, DefinitionRole::roleId_,
-			//	ObjectHandle( definition ) );
+
+			const auto pModel = this->getModel();
+			if (pModel != nullptr)
+			{
+				const auto index = pModel->index( this );
+				const int column = 0;
+				const int role = DefinitionRole::roleId_;
+				const Variant variantDefinition( ObjectHandle( definition ) );
+				pModel->postItemDataChanged_( index, column, role, variantDefinition );
+			}
 			return true;
 		}
 
-		//getModel()->signalPostItemDataChanged( this, 1, ValueRole::roleId_,
-		//	value );
+		const auto pModel = this->getModel();
+		if (pModel != nullptr)
+		{
+			const auto index = pModel->index( this );
+			const int column = 0;
+			const int role = ValueRole::roleId_;
+			pModel->postItemDataChanged_( index, column, role, value );
+		}
 		return true;
 	}
 

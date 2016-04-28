@@ -17,15 +17,6 @@ public:
 	std::vector< ReflectedTreeItemNew * > rootItems_;
 	int columnCount_;
 
-	Signal< AbstractTreeModel::DataSignature > preItemDataChanged_;
-	Signal< AbstractTreeModel::DataSignature > postItemDataChanged_;
-
-	Signal< AbstractTreeModel::RangeSignature > preRowsInserted_; 
-	Signal< AbstractTreeModel::RangeSignature > postRowsInserted_;
-
-	Signal< AbstractTreeModel::RangeSignature > preRowsRemoved_;
-	Signal< AbstractTreeModel::RangeSignature > postRowsRemoved_; 
-
 	Connection connectPreChange_;
 	Connection connectPostChanged_;
 
@@ -214,8 +205,8 @@ void ReflectedTreeModelNew::addRootItem( AbstractItem * item )
 	auto reflectedItem = dynamic_cast< ReflectedTreeItemNew * >( item );
 	assert( reflectedItem != nullptr );
 	assert( reflectedItem->getParent() == nullptr );
-	//assert( reflectedItem->model_ == nullptr );
-	//reflectedItem->model_ = this;
+	assert( reflectedItem->getModel() == nullptr );
+	reflectedItem->setModel( this );
 
 	const int row = static_cast< int >( impl_->rootItems_.size() );
 	const AbstractItem * pParent = nullptr;
@@ -223,22 +214,23 @@ void ReflectedTreeModelNew::addRootItem( AbstractItem * item )
 	const int pos = 0; // TODO what is pos??
 	const int rowCount = reflectedItem != nullptr ? reflectedItem->rowCount() : 0;
 
-	impl_->preRowsInserted_( index, pos, rowCount );
+	preRowsInserted_( index, pos, rowCount );
 	impl_->rootItems_.emplace_back( reflectedItem );
-	impl_->postRowsInserted_( index, pos, rowCount );
+	postRowsInserted_( index, pos, rowCount );
 }
+
 
 void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
 {
 	auto reflectedItem = dynamic_cast< ReflectedTreeItemNew * >( item );
 	assert( reflectedItem != nullptr );
 	assert( reflectedItem != nullptr );
-	assert( reflectedItem->model_ == this );
+	assert( reflectedItem->getModel() == this );
 	const auto foundItr =
 		std::find( impl_->rootItems_.cbegin(), impl_->rootItems_.cend(), reflectedItem );
 	assert( foundItr != rootItems_.cend() );
 
-	//reflectedItem->model_ = nullptr;
+	reflectedItem->setModel( nullptr );
 	auto foundIter = std::find( impl_->rootItems_.cbegin(),
 		impl_->rootItems_.cend(),
 		reflectedItem );
@@ -255,9 +247,9 @@ void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
 	const int pos = 0; // TODO what is pos??
 	const int rowCount = pItem != nullptr ? pItem->rowCount() : 0;
 
-	impl_->preRowsRemoved_( index, pos, rowCount );
+	preRowsRemoved_( index, pos, rowCount );
 	impl_->rootItems_.erase( foundItr );
-	impl_->postRowsRemoved_( index, pos, rowCount );
+	postRowsRemoved_( index, pos, rowCount );
 }
 
 
@@ -268,13 +260,13 @@ Connection ReflectedTreeModelNew::method( \
 	return connection.connect( callback ); \
 } \
 
-CONNECT_METHOD( connectPreItemDataChanged, impl_->preItemDataChanged_, DataCallback )
-CONNECT_METHOD( connectPostItemDataChanged, impl_->postItemDataChanged_, DataCallback )
+CONNECT_METHOD( connectPreItemDataChanged, preItemDataChanged_, DataCallback )
+CONNECT_METHOD( connectPostItemDataChanged, postItemDataChanged_, DataCallback )
 
-CONNECT_METHOD( connectPreRowsInserted, impl_->preRowsInserted_, RangeCallback )
-CONNECT_METHOD( connectPostRowsInserted, impl_->postRowsInserted_, RangeCallback )
+CONNECT_METHOD( connectPreRowsInserted, preRowsInserted_, RangeCallback )
+CONNECT_METHOD( connectPostRowsInserted, postRowsInserted_, RangeCallback )
 
-CONNECT_METHOD( connectPreRowsRemoved, impl_->preRowsRemoved_, RangeCallback )
-CONNECT_METHOD( connectPostRowsRemoved, impl_->postRowsRemoved_, RangeCallback )
+CONNECT_METHOD( connectPreRowsRemoved, preRowsRemoved_, RangeCallback )
+CONNECT_METHOD( connectPostRowsRemoved, postRowsRemoved_, RangeCallback )
 
 #undef CONNECT_METHOD

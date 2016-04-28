@@ -28,6 +28,7 @@ namespace
 			beginResetModel();
 			model_ = model;
 			roleNames_.clear();
+			indexCache_.clear();
 			if (model_ != nullptr)
 			{
 				roleNames_ = model_->roleNames();
@@ -199,6 +200,7 @@ namespace
 			assert( extendedIndex.model() == this );
 			auto it = indexCache_.find( extendedIndex );
 			assert( it != indexCache_.end() );
+			assert( it->isValid() );
 			return *it;
 		}
 

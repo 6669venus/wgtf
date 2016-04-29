@@ -7,6 +7,7 @@
 #include "script_qt_type_converter.hpp"
 #include "wg_list_iterator.hpp"
 #include "collection_qt_type_converter.hpp"
+#include "core_qt_common/image_qt_type_converter.hpp"
 #include "core_qt_common/model_qt_type_converter.hpp"
 
 #include "core_reflection/base_property.hpp"
@@ -115,6 +116,7 @@ void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, I
 
 	// TODO: All but the scriptTypeConverter need to be moved to the qt app plugin.
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
+	qtTypeConverters_.emplace_back( new ImageQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new ModelQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );

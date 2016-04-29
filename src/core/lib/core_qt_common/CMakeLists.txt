@@ -120,6 +120,8 @@ SET( ALL_SRCS
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
 	i_qt_view.hpp
+	image_qt_type_converter.hpp
+	image_qt_type_converter.cpp
 	model_qt_type_converter.hpp
 	model_qt_type_converter.cpp
 	string_qt_type_converter.hpp

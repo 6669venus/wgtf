@@ -9,9 +9,9 @@ QtImageProvider::QtImageProvider()
 
 QString QtImageProvider::encode( const QColor &color )
 {
-	QPixmap pixmap(1, 1);
-	pixmap.fill( color );
-	return encode( pixmap );
+	QImage image( 1, 1, QImage::Format_ARGB32 );
+	image.fill( color );
+	return encode( image );
 }
 
 QString QtImageProvider::encode( const QIcon &icon )
@@ -23,11 +23,16 @@ QString QtImageProvider::encode( const QIcon &icon )
 
 QString QtImageProvider::encode( const QPixmap &pixmap )
 {
-	auto key = pixmap.cacheKey();
-	auto it = cache_.find( key );
-	if (it == cache_.end())
+	return encode( pixmap.toImage() );
+}
+
+QString QtImageProvider::encode( const QImage &image )
+{
+	auto key = image.cacheKey();
+	auto it = imageCache_.find( key );
+	if (it == imageCache_.end())
 	{
-		cache_[key] = pixmap;
+		imageCache_[key] = image;
 	}
 	return "image://" + QString( providerId() ) + "/" + key;
 }
@@ -40,14 +45,13 @@ QImage QtImageProvider::requestImage(const QString &id, QSize *size, const QSize
 	}
 
 	auto key = id.toLongLong();
-	auto it = cache_.find( key );
-	if (it == cache_.end())
+	auto it = imageCache_.find( key );
+	if (it == imageCache_.end())
 	{
 		return QImage( requestedSize.width(), requestedSize.height(), QImage::Format_ARGB32 );
 	}
 
-	auto pixmap = it.value().scaled( requestedSize );
-	return pixmap.toImage();
+	return it.value().scaled( requestedSize );
 }
 
 const char * QtImageProvider::providerId()

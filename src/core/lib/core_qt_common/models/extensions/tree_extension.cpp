@@ -234,62 +234,66 @@ QItemSelection TreeExtension::itemSelection( const QModelIndex & first, const QM
 
 	auto parent = QModelIndex();
 	{
-		auto __end = end;
-		while (__end.isValid())
+		// Check if end is a descendant of begin
+		auto endTmp = end;
+		while (endTmp.isValid())
 		{
-			if (begin == __end)
+			if (begin == endTmp)
 			{
 				parent = begin;
 				break;
 			}
-			__end = __end.parent();
+			endTmp = endTmp.parent();
 		}
 	}
 
 	if (!parent.isValid())
 	{
-		auto __begin = begin;
-		while (__begin.isValid())
+		// Check if begin is a descendant of end
+		auto beginTmp = begin;
+		while (beginTmp.isValid())
 		{
-			if (__begin == end)
+			if (beginTmp == end)
 			{
 				std::swap(begin, end);
 				parent = begin;
 				break;
 			}
-			__begin = __begin.parent();
+			beginTmp = beginTmp.parent();
 		}
 	}
 
 	if (!parent.isValid())
 	{
-		auto __begin = begin;
-		while (__begin.isValid())
+		// Check if begin comes before end or vice versa
+		auto beginTmp = begin;
+		while (beginTmp.isValid())
 		{
-			auto beginParent = __begin.parent();
-			auto __end = end;
-			while (__end.isValid())
+			auto beginParent = beginTmp.parent();
+			auto endTmp = end;
+			while (endTmp.isValid())
 			{
-				auto endParent = __end.parent();
+				auto endParent = endTmp.parent();
 				if (beginParent == endParent)
 				{
-					if (__begin.row() > __end.row())
+					if (beginTmp.row() > endTmp.row())
 					{
 						std::swap(begin, end);
 					}
 					parent = beginParent;
 					break;
 				}
-				__end = endParent;
+				endTmp = endParent;
 			}
 			if (parent.isValid())
 			{
 				break;
 			}
-			__begin = beginParent;
+			beginTmp = beginParent;
 		}
 	}
 
+	// Create an item selection from begin to end
 	QItemSelection itemSelection;
 
 	auto it = begin;

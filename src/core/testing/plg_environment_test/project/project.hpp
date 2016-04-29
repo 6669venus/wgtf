@@ -18,8 +18,11 @@ class Project
 public:
     Project();
     ~Project();
-    void init( IComponentContext& contextManager, const char * projectName );
+    void init( IComponentContext& contextManager, const char * projectName, const char * dataFile = nullptr );
     void fini( IComponentContext& contextManager );
+    void saveData( IComponentContext& contextManager, const char * dataFile );
+    const char * getProjectName() const;
+    const ObjectHandle & getProjectData() const;
 private:
     ObjectHandle projectData_;
     std::string projectName_;

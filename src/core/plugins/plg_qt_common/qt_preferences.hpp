@@ -7,6 +7,7 @@
 
 class ISerializationManager;
 class IFileSystem;
+class IQtFramework;
 
 class QtPreferences : public Implements< IPreferences >
 {
@@ -14,9 +15,14 @@ public:
 	QtPreferences( IDefinitionManager & definitionManger, 
 				   ISerializationManager & serializationManager, 
 				   IFileSystem & fileSystem,
-				   IMetaTypeManager & metaTypeManager );
+				   IMetaTypeManager & metaTypeManager, 
+                   IQtFramework & uiFramework);
 	~QtPreferences();
 	GenericObjectPtr & getPreference( const char * key ) override;
+    void registerPreferencesListener( std::shared_ptr< IPreferencesListener > & listener ) override;
+    void deregisterPreferencesListener( std::shared_ptr< IPreferencesListener > & listener ) override;
+    void savePreferenceToFile( const char * filePath ) override;
+    void loadPreferenceFromFile( const char * filePath ) override;
 
 	void savePrferences();
 	void loadPreferences();
@@ -26,7 +32,9 @@ private:
 	ISerializationManager & serializationManager_;
 	IFileSystem & fileSystem_;
 	IMetaTypeManager & metaTypeManager_;
+    IQtFramework & qtFramework_;
 	std::unordered_map< std::string, GenericObjectPtr > preferences_;
+    PreferencesListeners listeners_;
 };
 
 #endif//QT_PREFERENCES_HPP

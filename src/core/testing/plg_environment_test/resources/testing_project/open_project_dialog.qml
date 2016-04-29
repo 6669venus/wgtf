@@ -13,9 +13,11 @@ Item{
         id: fileDialogInstance
         folder: ""
         modality: Qt.WindowModal
-        nameFilters: "NGT Project files(*.ngtprj)"
+        nameFilters: ["NGT Project files(*.ngtprj)"]
         selectedNameFilter: "NGT Project files(*.ngtprj)"
         title: "Selected Project File"
+        selectMultiple: false
+        selectExisting: true
 
         onAccepted: {
             openProject(fileUrl);

@@ -1,10 +1,45 @@
 #include "project.hpp"
-#include "core_generic_plugin\interfaces\i_component_context.hpp"
-#include "core_reflection\i_definition_manager.hpp"
-#include "core_ui_framework\i_ui_framework.hpp"
-#include "core_ui_framework\i_ui_application.hpp"
-#include "core_data_model\reflection\reflected_tree_model.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/i_definition_manager.hpp"
+#include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/i_preferences.hpp"
+#include "core_data_model/reflection/reflected_tree_model.hpp"
+#include "core_serialization/resizing_memory_stream.hpp"
+#include "core_serialization/serializer/xml_serializer.hpp"
+#include "core_serialization/i_file_system.hpp"
 
+
+namespace {
+    static const char * s_projectVersion = "v0.";
+    static const char * s_projectFileExtension = "ngtprj";
+    static const char * s_projectDataExtension = "ngtprj_data";
+    static const char * s_projectPreferenceExtension = "ngtprj_setting";
+
+    std::string genProjectFileName( const char * projectName )
+    {
+        std::string s = projectName;
+        s += s_projectVersion;
+        s += s_projectFileExtension;
+        return s;
+    }
+
+    std::string genProjectDataFileName( const char * projectName )
+    {
+        std::string s = projectName;
+        s += s_projectVersion;
+        s += s_projectDataExtension;
+        return s;
+    }
+
+    std::string genProjectSettingFileName( const char * projectName )
+    {
+        std::string s = projectName;
+        s += s_projectVersion;
+        s += s_projectPreferenceExtension;
+        return s;
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////
 Project::Project()
@@ -17,16 +52,32 @@ Project::~Project()
 
 }
 
-void Project::init( IComponentContext& contextManager, const char * projectName )
+void Project::init( IComponentContext& contextManager, const char * projectName, const char * dataFile )
 {
     projectName_ = projectName;
     auto defManager = contextManager.queryInterface<IDefinitionManager>();
     auto controller = contextManager.queryInterface<IReflectionController>();
-    assert( defManager != nullptr && controller != nullptr );
-    auto pDefinition = defManager->getDefinition(
-        getClassIdentifier< ProjectData >() );
-    assert( pDefinition != nullptr );
-    projectData_ = pDefinition->create();
+    auto fileSystem = contextManager.queryInterface<IFileSystem>();
+    assert( defManager != nullptr && controller != nullptr && fileSystem != nullptr );
+    if( dataFile == nullptr || !fileSystem->exists(dataFile))
+    {
+        auto pDefinition = defManager->getDefinition(
+            getClassIdentifier< ProjectData >() );
+        assert( pDefinition != nullptr );
+        projectData_ = pDefinition->create();
+    }
+    else
+    {
+        IFileSystem::IStreamPtr fileStream = 
+            fileSystem->readFile( dataFile, std::ios::in | std::ios::binary );
+        XMLSerializer serializer( *fileStream, *defManager );
+        Variant variant;
+        bool br = serializer.deserialize( variant );
+        assert( br );
+        br = variant.tryCast( projectData_ );
+        assert( br );
+    }
+    
     auto model = std::unique_ptr< ITreeModel >(
         new ReflectedTreeModel( projectData_, *defManager, controller ) );
 
@@ -47,6 +98,31 @@ void Project::fini( IComponentContext& contextManager )
     projectData_ = nullptr;
 }
 
+void Project::saveData( IComponentContext& contextManager, const char * dataFile )
+{
+    auto defManager = contextManager.queryInterface<IDefinitionManager>();
+    auto fileSystem = contextManager.queryInterface<IFileSystem>();
+    assert( defManager && fileSystem );
+    ResizingMemoryStream stream;
+    XMLSerializer serializer( stream, *defManager );
+    defManager->serializeDefinitions( serializer );
+    serializer.serialize( projectData_ );
+    serializer.sync();
+    fileSystem->writeFile( 
+        dataFile, stream.buffer().c_str(), 
+        stream.buffer().size(), std::ios::out | std::ios::binary );
+}
+
+const char * Project::getProjectName() const
+{
+    return projectName_.c_str();
+}
+
+const ObjectHandle & Project::getProjectData() const
+{
+    return projectData_;
+}
+
  //////////////////////////////////////////////////////////////////////////
 ProjectManager::ProjectManager()
 {
@@ -65,11 +141,66 @@ void ProjectManager::createProject()
     curProject_.reset( new Project );
     curProject_->init( *contextManager_, newProjectName_.c_str() );
 }
-void ProjectManager::openProject( const Variant& strProjectName )
+void ProjectManager::openProject( const Variant& strProjectFile )
 {
+    auto defManager = contextManager_->queryInterface<IDefinitionManager>();
+    auto fileSystem = contextManager_->queryInterface<IFileSystem>();
+    auto uiFramework = contextManager_->queryInterface<IUIFramework>();
+    assert( defManager && fileSystem && uiFramework );
+    std::string projectFile;
+    bool isOk = strProjectFile.tryCast( projectFile );
+    assert( isOk );
+    IFileSystem::IStreamPtr fileStream = 
+        fileSystem->readFile( projectFile.c_str(), std::ios::in | std::ios::binary );
+    XMLSerializer serializer( *fileStream, *defManager );
+    std::string projectName;
+    std::string projectDataFile;
+    std::string projectSettingFile;
+    serializer.deserialize( projectName );
+    serializer.deserialize( projectDataFile );
+    serializer.deserialize( projectSettingFile );
+
+    // load preference
+    //uiFramework->getPreferences()->loadPreferenceFromFile( projectSettingFile.c_str() );
+
+    // load data
+    this->closeProject();
+    curProject_.reset( new Project );
+    curProject_->init( *contextManager_, newProjectName_.c_str(), projectDataFile.c_str() );
 }
 void ProjectManager::saveProject()
 {
+    
+    auto defManager = contextManager_->queryInterface<IDefinitionManager>();
+    auto fileSystem = contextManager_->queryInterface<IFileSystem>();
+    auto uiFramework = contextManager_->queryInterface<IUIFramework>();
+    if (uiFramework && defManager && fileSystem)
+    {
+        std::string projectFile = genProjectFileName( curProject_->getProjectName() );
+        std::string projectDataFile = genProjectDataFileName( curProject_->getProjectName() );
+        std::string projectSettingFile = genProjectSettingFileName( curProject_->getProjectName() );
+
+        //save project data
+        curProject_->saveData( *contextManager_, projectDataFile.c_str() );
+
+        //save project UI preferences
+        uiFramework->getPreferences()->savePreferenceToFile(projectSettingFile.c_str());
+
+        //save project itself
+        ResizingMemoryStream stream;
+        XMLSerializer serializer( stream, *defManager );
+        serializer.serialize( curProject_->getProjectName() );
+        serializer.serialize( projectDataFile );
+        serializer.serialize( projectSettingFile );
+        serializer.sync();
+        fileSystem->writeFile( 
+            projectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+    }
+    else
+    {
+        assert( false );
+    }
+    
 }
 void ProjectManager::closeProject()
 {

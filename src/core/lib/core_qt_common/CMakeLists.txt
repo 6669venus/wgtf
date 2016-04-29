@@ -56,6 +56,8 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/column_extension_old.hpp
 	models/extensions/component_extension.cpp
 	models/extensions/component_extension.hpp
+	models/extensions/component_extension_old.cpp
+	models/extensions/component_extension_old.hpp
 	models/extensions/list_extension.cpp
 	models/extensions/list_extension.hpp
 	models/extensions/selection_extension.cpp

@@ -62,8 +62,11 @@ public:
 	virtual void loadActionData( const char * resource, ResourceType type ) = 0;
 	virtual void registerComponent( const char * id, IComponent & component ) = 0;
 	virtual void registerComponentProvider( IComponentProvider & provider ) = 0;
+	// DEPRECATED //
 	virtual IComponent * findComponent( const TypeId & typeId, 
 		std::function< bool ( size_t ) > & predicate ) const = 0;
+	//
+	virtual IComponent * findComponent( std::function< Variant ( size_t ) > & dataPredicate ) const = 0;
 
 	virtual void setPluginPath( const std::string& path ) = 0;
 	virtual const std::string& getPluginPath() const = 0; 

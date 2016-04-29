@@ -73,8 +73,11 @@ public:
 	void loadActionData( const char * resource, ResourceType type ) override;
 	void registerComponent( const char * id, IComponent & component ) override;
 	void registerComponentProvider( IComponentProvider & provider ) override;
+	// DEPRECATED //
 	IComponent * findComponent( const TypeId & typeId, 
 		std::function< bool ( size_t ) > & predicate ) const override;
+	//
+	IComponent * findComponent( std::function< Variant ( size_t ) > & predicate ) const override;
 
 	virtual void setPluginPath( const std::string& path ) override;
 	virtual const std::string& getPluginPath() const override;

@@ -24,6 +24,7 @@
 #include "core_generic_plugin/interfaces/i_plugin_context_manager.hpp"
 
 #include "core_reflection/i_definition_manager.hpp"
+#include "core_reflection/metadata/meta_impl.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_serialization/i_file_system.hpp"
 #include "core_command_system/i_command_event_listener.hpp"
@@ -32,6 +33,7 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_component_provider.hpp"
 #include "core_ui_framework/generic_component_provider.hpp"
+#include "core_ui_framework/basic_component_provider.hpp"
 
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/i_list_model.hpp"
@@ -506,6 +508,27 @@ IComponent * QtFramework::findComponent( const TypeId & typeId,
 	return nullptr;
 }
 
+IComponent * QtFramework::findComponent( std::function< Variant ( size_t ) > & dataPredicate ) const
+{
+	for (auto componentProviderIt = componentProviders_.rbegin(); 
+		componentProviderIt != componentProviders_.rend(); 
+		++componentProviderIt)
+	{
+		auto id = ( *componentProviderIt )->component( dataPredicate );
+		if (id == nullptr)
+		{
+			continue;
+		}
+
+		auto componentIt = components_.find( id );
+		if (componentIt != components_.end())
+		{
+			return componentIt->second;
+		}
+	}
+	return nullptr;
+}
+
 void QtFramework::setPluginPath( const std::string& path )
 {
 	pluginPath_ = path;
@@ -541,6 +564,7 @@ void QtFramework::registerDefaultComponents()
 
 void QtFramework::registerDefaultComponentProviders()
 {
+	////////////////////// DEPRECATED //////////////////////////////////////////////
 	defaultComponentProviders_.emplace_back( 
 		new GenericComponentProvider<char>( "string" ) );
 	defaultComponentProviders_.emplace_back( 
@@ -603,6 +627,38 @@ void QtFramework::registerDefaultComponentProviders()
 	size_t urlRoles[] = { IsUrlRole::roleId_ };
 	defaultComponentProviders_.emplace_back( 
 		new SimpleComponentProvider( "file", urlRoles, sizeof( urlRoles )/sizeof( size_t ) ) );
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<char, void>( "string" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<unsigned char, void>( "string" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<short, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<unsigned short, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<int, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<unsigned int, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<long, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<unsigned long, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<long long, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<unsigned long long, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<float, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<double, void>( "number" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<const char *, void>( "string" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<const wchar_t *, void>( "string" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<std::string, void>( "string" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<std::wstring, void>( "string" ) );
+
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider<bool, void>( "boolean" ) );
+
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< void, MetaEnumObj >( "enum" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< void, MetaThumbnailObj >( "thumbnail" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< void, MetaSliderObj >( "slider" ) );
+
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< Vector2, void >( "vector2" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< Vector3, void >( "vector3" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< Vector4, void >( "vector4" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< Vector3, MetaColorObj >( "color3" ) );
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< Vector4, MetaColorObj >( "color4" ) );
+
+	defaultComponentProviders_.emplace_back( new BasicComponentProvider< void, MetaUrlObj >( "file" ) );
 
 	for (auto & defaultComponentProvider : defaultComponentProviders_)
 	{

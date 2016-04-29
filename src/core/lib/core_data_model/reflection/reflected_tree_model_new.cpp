@@ -50,7 +50,7 @@ size_t ReflectedTreeModelNew::Implementation::getIndexInternal(
 	if (parent != nullptr)
 	{
 		const auto count = parent->rowCount();
-		for (size_t i = 0; i < count; ++i)
+		for (int i = 0; i < count; ++i)
 		{
 			if (parent->getChild( i ) == item)
 			{
@@ -176,7 +176,7 @@ int ReflectedTreeModelNew::rowCount(
 
 	int count = 0;
 	auto childCount = impl_->getChildCountInternal( reflectedItem );
-	for (size_t i = 0; i < childCount; ++i)
+	for (int i = 0; i < childCount; ++i)
 	{
 		auto childItem = impl_->getItemInternal( i, reflectedItem );
 		count += childItem != nullptr && !childItem->isCollection() ? this->rowCount( childItem ) : 1;

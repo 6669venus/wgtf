@@ -32,6 +32,11 @@ public:
 	Q_INVOKABLE int rowCount( const QObject * parent ) const;
 	Q_INVOKABLE int columnCount( const QObject * parent ) const;
 
+	Q_INVOKABLE bool insertRow( int row, const QObject * parent );
+	Q_INVOKABLE bool insertColumn( int column, const QObject * parent );
+	Q_INVOKABLE bool removeRow( int row, const QObject * parent );
+	Q_INVOKABLE bool removeColumn( int column, const QObject * parent );
+
 	// QAbstractItemModel
 	Q_INVOKABLE QModelIndex index( int row, int column, const QModelIndex &parent ) const override;
 	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const override;

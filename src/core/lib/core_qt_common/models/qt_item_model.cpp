@@ -188,6 +188,30 @@ int QtItemModel::columnCount( const QObject * parent ) const
 	return columnCount( parentIndex );
 }
 
+bool QtItemModel::insertRow( int row, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::insertRow( row, parentIndex );
+}
+
+bool QtItemModel::insertColumn( int column, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::insertColumn( column, parentIndex );
+}
+
+bool QtItemModel::removeRow( int row, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::removeRow( row, parentIndex );
+}
+
+bool QtItemModel::removeColumn( int column, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::removeColumn( column, parentIndex );
+}
+
 QModelIndex QtItemModel::index( int row, int column, const QModelIndex &parent ) const
 {
 	auto parentItem = parent.isValid() ?
@@ -335,13 +359,13 @@ int QtListModel::count() const
 
 bool QtListModel::insertItem( int row )
 {
-	return QtItemModel::insertRow( row ); 
+	return QtItemModel::insertRow( row, nullptr ); 
 }
 
 
 bool QtListModel::removeItem( int row )
 {
-	return QtItemModel::removeRow( row ); 
+	return QtItemModel::removeRow( row, nullptr ); 
 }
 
 
@@ -372,15 +396,13 @@ int QtTreeModel::count( QObject * parent ) const
 
 bool QtTreeModel::insertItem( int row, QObject * parent )
 {
-	auto parentIndex = itemToIndex( parent );
-	return QtItemModel::insertRow( row, parentIndex ); 
+	return QtItemModel::insertRow( row, parent ); 
 }
 
 
 bool QtTreeModel::removeItem( int row, QObject * parent )
 {
-	auto parentIndex = itemToIndex( parent );
-	return QtItemModel::removeRow( row, parentIndex ); 
+	return QtItemModel::removeRow( row, parent ); 
 }
 
 
@@ -416,23 +438,23 @@ int QtTableModel::columnCount() const
 
 bool QtTableModel::insertRow( int row )
 {
-	return QtItemModel::insertRow( row ); 
+	return QtItemModel::insertRow( row, nullptr ); 
 }
 
 
 bool QtTableModel::insertColumn( int column )
 {
-	return QtItemModel::insertColumn( column ); 
+	return QtItemModel::insertColumn( column, nullptr ); 
 }
 
 
 bool QtTableModel::removeRow( int row )
 {
-	return QtItemModel::removeRow( row ); 
+	return QtItemModel::removeRow( row, nullptr ); 
 }
 
 
 bool QtTableModel::removeColumn( int column )
 {
-	return QtItemModel::removeColumn( column ); 
+	return QtItemModel::removeColumn( column, nullptr ); 
 }

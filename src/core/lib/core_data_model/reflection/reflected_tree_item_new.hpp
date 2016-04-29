@@ -35,16 +35,20 @@ public:
 	virtual const ObjectHandle & getObject() const = 0;
 	virtual const IClassDefinition * getDefinition() const;
 
+	virtual ReflectedTreeItemNew * getChild( size_t index ) const = 0;
+	virtual int rowCount() const = 0;
+
+	virtual bool preSetValue( const PropertyAccessor & accessor,
+		const Variant & value ) = 0;
+	virtual bool postSetValue( const PropertyAccessor & accessor,
+		const Variant & value ) = 0;
+
 	const std::string & getPath() const;
 	IReflectionController * getController() const;
 	IDefinitionManager * getDefinitionManager() const;
 
-	// AbstractTreeItem 
-	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
-	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
-
 	/**
-	 *	Check if this item can be opened to show child rows.
+	 *	Check if this item can be expanded to show child rows.
 	 */
 	bool isCollection() const;
 	void isCollection( bool value );
@@ -54,11 +58,7 @@ public:
 	 *	@return signals or nullptr if item has not been added to a model.
 	 */
 	const ReflectedTreeModelNew * getModel() const;
-
 	ReflectedTreeItemNew * getParent() const;
-	virtual ReflectedTreeItemNew * getChild( size_t index ) const = 0;
-
-	virtual int rowCount() const = 0;
 
 protected:
 	ReflectedTreeItemNew * parent_;

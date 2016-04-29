@@ -76,18 +76,6 @@ ReflectedGroupItemNew::~ReflectedGroupItemNew()
 }
 
 
-const ObjectHandle & ReflectedGroupItemNew::getRootObject() const /* override */
-{
-	return parent_->getRootObject();
-}
-
-
-const ObjectHandle & ReflectedGroupItemNew::getObject() const /* override */
-{
-	return parent_->getObject();
-}
-
-
 Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* override */
 {
 	auto obj = this->getRootObject();
@@ -213,6 +201,19 @@ bool ReflectedGroupItemNew::setData( int column,
 	return true;
 }
 
+
+const ObjectHandle & ReflectedGroupItemNew::getRootObject() const /* override */
+{
+	return parent_->getRootObject();
+}
+
+
+const ObjectHandle & ReflectedGroupItemNew::getObject() const /* override */
+{
+	return parent_->getObject();
+}
+
+
 ReflectedTreeItemNew * ReflectedGroupItemNew::getChild( size_t index ) const /* override */
 {
 	ReflectedTreeItemNew * child = nullptr;
@@ -283,6 +284,7 @@ int ReflectedGroupItemNew::rowCount() const /* override */
 
 	return count;
 }
+
 
 bool ReflectedGroupItemNew::preSetValue( const PropertyAccessor & accessor,
 	const Variant & value ) /* override */
@@ -355,7 +357,6 @@ void ReflectedGroupItemNew::getChildValues( Variants & outChildValues ) const
 			findFirstMetaData< MetaGroupObj >( *property, *pDefinitionManager );
 		if (isSameGroup( impl_->groupObj_, pFoundGroupObj ))
 		{
-			// TODO string allocs
 			auto path = inplacePath + property->getName();
 			auto propertyAccessor = definition->bindProperty( path.c_str(), object );
 			Variant value = controller_->getValue( propertyAccessor );

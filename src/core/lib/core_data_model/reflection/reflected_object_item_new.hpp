@@ -36,7 +36,6 @@ public:
 	virtual const IClassDefinition * getDefinition() const override;
 
 	virtual ReflectedTreeItemNew * getChild( size_t index ) const override;
-
 	virtual int rowCount() const override;
 
 	virtual bool preSetValue( const PropertyAccessor & accessor,

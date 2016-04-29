@@ -50,15 +50,15 @@ public:
 		ReflectedTreeItemNew * parent );
 	virtual ~ReflectedPropertyItemNew();
 
-	// ReflectedTreeItemNew
-	virtual const ObjectHandle & getRootObject() const override;
-	virtual const ObjectHandle & getObject() const override;
-	virtual ReflectedTreeItemNew * getChild( size_t index ) const override;
-
 	// AbstractItem
 	virtual Variant getData( int column, size_t roleId ) const override;
 	virtual bool setData( int column, size_t roleId, const Variant & data ) override;
 
+	// ReflectedTreeItemNew
+	virtual const ObjectHandle & getRootObject() const override;
+	virtual const ObjectHandle & getObject() const override;
+
+	virtual ReflectedTreeItemNew * getChild( size_t index ) const override;
 	virtual int rowCount() const override;
 
 	virtual bool preSetValue( const PropertyAccessor & accessor,

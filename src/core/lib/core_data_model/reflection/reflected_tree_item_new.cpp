@@ -36,7 +36,7 @@ ReflectedTreeItemNew::~ReflectedTreeItemNew()
 
 
 const IClassDefinition * ReflectedTreeItemNew::getDefinition() const 
-{ 
+{
 	auto parent = this->getParent();
 	if (parent == nullptr)
 	{
@@ -53,7 +53,7 @@ const std::string & ReflectedTreeItemNew::getPath() const
 
 
 IReflectionController * ReflectedTreeItemNew::getController() const 
-{ 
+{
 	if (controller_ != nullptr)
 	{
 		return controller_.get();
@@ -67,7 +67,7 @@ IReflectionController * ReflectedTreeItemNew::getController() const
 
 
 IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const 
-{ 
+{
 	if (definitionManager_ != nullptr)
 	{
 		return definitionManager_.get();
@@ -77,12 +77,6 @@ IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const
 		return parent_->getDefinitionManager();
 	}
 	return nullptr;
-}
-
-
-ReflectedTreeItemNew * ReflectedTreeItemNew::getParent() const
-{
-	return parent_;
 }
 
 
@@ -107,6 +101,12 @@ const ReflectedTreeModelNew * ReflectedTreeItemNew::getModel() const
 void ReflectedTreeItemNew::setModel( const ReflectedTreeModelNew * pModel )
 {
 	model_ = pModel;
+}
+
+
+ReflectedTreeItemNew * ReflectedTreeItemNew::getParent() const
+{
+	return parent_;
 }
 
 

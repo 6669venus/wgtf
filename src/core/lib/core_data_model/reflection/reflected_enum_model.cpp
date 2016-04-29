@@ -22,7 +22,7 @@ namespace
 
 		const char * getDisplayText( int column ) const 
 		{ 
-			return text_.c_str();
+			return text_.c_str(); 
 		}
 
 		ThumbnailData getThumbnail( int column ) const
@@ -45,7 +45,7 @@ namespace
 		
 		bool setData( int column, size_t roleId, const Variant & data ) 
 		{ 
-			return false;
+			return false; 
 		}
 
 	private:

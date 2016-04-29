@@ -206,18 +206,6 @@ ReflectedPropertyItemNew::~ReflectedPropertyItemNew()
 }
 
 
-const ObjectHandle & ReflectedPropertyItemNew::getRootObject() const /* override */
-{
-	return parent_->getRootObject();
-}
-
-
-const ObjectHandle & ReflectedPropertyItemNew::getObject() const /* override */
-{
-	return parent_->getObject();
-}
-
-
 Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 {
 	auto pDefinitionManager = this->getDefinitionManager();
@@ -581,6 +569,18 @@ bool ReflectedPropertyItemNew::setData( int column, size_t roleId, const Variant
 		return true;
 	}
 	return false;
+}
+
+
+const ObjectHandle & ReflectedPropertyItemNew::getRootObject() const /* override */
+{
+	return parent_->getRootObject();
+}
+
+
+const ObjectHandle & ReflectedPropertyItemNew::getObject() const /* override */
+{
+	return parent_->getObject();
 }
 
 

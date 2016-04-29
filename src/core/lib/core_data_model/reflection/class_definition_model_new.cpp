@@ -19,7 +19,7 @@ namespace
 		{}
 
 		Variant getData( int column, size_t roleId ) const override
-		{ 
+		{
 			if (roleId == ValueRole::roleId_)
 			{
 				return ObjectHandle(
@@ -45,7 +45,7 @@ namespace
 		}	
 		
 		bool setData( int column, size_t roleId, const Variant & data ) override
-		{ 
+		{
 			return false;
 		}
 
@@ -53,6 +53,7 @@ namespace
 		const IClassDefinition * definition_;
 	};
 }
+
 
 ClassDefinitionModelNew::ClassDefinitionModelNew( const IClassDefinition * definition,
 	const IDefinitionManager & definitionManager )
@@ -63,31 +64,34 @@ ClassDefinitionModelNew::ClassDefinitionModelNew( const IClassDefinition * defin
 
 	for (auto it = definitions.begin(); it != definitions.end(); ++it)
 	{
-		items_.push_back( new ClassDefinitionItem( *it ) );
+		items_.emplace_back( new ClassDefinitionItem( *it ) );
 	}
 }
 
+
 ClassDefinitionModelNew::~ClassDefinitionModelNew()
 {
-	for (auto it = items_.begin(); it != items_.end(); ++it)
-	{
-		delete *it;
-	}
 }
+
 
 AbstractItem * ClassDefinitionModelNew::item( int row ) const /* override */
 {
 	assert( row >= 0 );
 	const auto index = static_cast< std::vector< AbstractItem * >::size_type >( row );
 	assert( index < items_.size() );
-	return items_[ index ];
+	return items_.at( index ).get();
 }
+
 
 int ClassDefinitionModelNew::index( const AbstractItem * item ) const /* override */
 {
-	auto it = std::find( items_.begin(), items_.end(), item );
-	assert( it != items_.end() );
-	return static_cast< int >( std::distance( items_.begin(), it ) );
+	auto it = std::find_if( items_.cbegin(), items_.cend(),
+		[ item ]( const std::unique_ptr< AbstractItem > & next )
+		{
+			return next.get() == item;
+		} );
+	assert( it != items_.cend() );
+	return static_cast< int >( std::distance( items_.cbegin(), it ) );
 }
 
 

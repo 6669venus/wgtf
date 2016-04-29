@@ -106,29 +106,6 @@ ReflectedObjectItemNew::~ReflectedObjectItemNew()
 }
 
 
-const ObjectHandle & ReflectedObjectItemNew::getRootObject() const /* override */
-{
-	return parent_ ? parent_->getRootObject() : impl_->object_;
-}
-
-
-const ObjectHandle & ReflectedObjectItemNew::getObject() const /* override */
-{
-	return impl_->object_;
-}
-
-
-const IClassDefinition * ReflectedObjectItemNew::getDefinition() const 
-{
-	auto pDefinitionManager = this->getDefinitionManager();
-	if (pDefinitionManager == nullptr)
-	{
-		return nullptr;
-	}
-	return impl_->object_.getDefinition( *pDefinitionManager );
-}
-
-
 Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* override */
 {
 	// Only works for root items?
@@ -210,6 +187,7 @@ Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* ov
 	return Variant();
 }
 
+
 bool ReflectedObjectItemNew::setData( int column, size_t roleId,
 	const Variant & data ) /* override */
 {
@@ -256,6 +234,29 @@ bool ReflectedObjectItemNew::setData( int column, size_t roleId,
 	}
 
 	return true;
+}
+
+
+const ObjectHandle & ReflectedObjectItemNew::getRootObject() const /* override */
+{
+	return parent_ ? parent_->getRootObject() : impl_->object_;
+}
+
+
+const ObjectHandle & ReflectedObjectItemNew::getObject() const /* override */
+{
+	return impl_->object_;
+}
+
+
+const IClassDefinition * ReflectedObjectItemNew::getDefinition() const 
+{
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return nullptr;
+	}
+	return impl_->object_.getDefinition( *pDefinitionManager );
 }
 
 

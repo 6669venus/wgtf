@@ -22,7 +22,7 @@ namespace
 		{}
 
 		Variant getData( int column, size_t roleId ) const override
-		{ 
+		{
 			if (roleId == ValueRole::roleId_)
 			{
 				return Variant( index_ );
@@ -47,7 +47,7 @@ namespace
 		}
 		
 		bool setData( int column, size_t roleId, const Variant & data ) override
-		{ 
+		{
 			return false;
 		}
 

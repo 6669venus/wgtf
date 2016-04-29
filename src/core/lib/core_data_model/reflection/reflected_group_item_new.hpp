@@ -27,8 +27,8 @@ public:
 	// ReflectedTreeItemNew
 	virtual const ObjectHandle & getRootObject() const override;
 	virtual const ObjectHandle & getObject() const override;
-	virtual ReflectedTreeItemNew * getChild( size_t index ) const override;
 
+	virtual ReflectedTreeItemNew * getChild( size_t index ) const override;
 	virtual int rowCount() const override;
 
 	virtual bool preSetValue( const PropertyAccessor & accessor,

@@ -8,6 +8,9 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+ITEMROLE( display )
+ITEMROLE( decoration )
+
 namespace
 {
 	class ItemData : public QObject
@@ -219,6 +222,11 @@ QModelIndex QtItemModel::parent( const QModelIndex &child ) const
 	}
 
 	auto parentItem = const_cast< AbstractItem * >( childIndex.parent_ );
+	if (parentItem == nullptr)
+	{
+		return QModelIndex();
+	}
+
 	AbstractItemModel::ItemIndex parentIndex;
 	impl_->source_.index( parentItem, parentIndex );
 	if (!parentIndex.isValid())
@@ -254,19 +262,16 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 	{
 		return QVariant();
 	}
-
-	static size_t displayRole = ItemRole::compute( "display" );
-	static size_t decorationRole = ItemRole::compute( "decoration" );
 	
 	size_t roleId;
 	switch (role)
 	{
 	case Qt::DisplayRole:
-		roleId = displayRole;
+		roleId = ItemRole::displayId;
 		break;
 
 	case Qt::DecorationRole:
-		roleId = decorationRole;
+		roleId = ItemRole::decorationId;
 		break;
 
 	default:

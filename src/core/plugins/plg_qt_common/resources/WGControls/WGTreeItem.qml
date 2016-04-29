@@ -226,7 +226,7 @@ ListView {
                 }
             }
 
-            WGItemRow { // The row
+            WGListViewRowDelegate { // The row
                 objectName: "WGListViewRowDelegate"
                 id: rowDelegate
 

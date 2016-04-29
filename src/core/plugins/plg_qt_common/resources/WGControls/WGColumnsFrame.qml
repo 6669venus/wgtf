@@ -1,186 +1,106 @@
 import QtQuick 2.0
 
-/*!
- \brief WGColumnsFrame is used as a frame for listView and treeView columns
-*/
+Row {
+	id: columnsFrame
+	width: childrenRect.width
 
+	property var columnWidths: []
+	property real columnSpacing: 0
 
-Item {
-    id: columnsFrame
-    objectName: "WGColumnsFrame"
+	property real availableWidth: 0
 
-    property int columnCount: 0
-    property real firstColumnIndentation: 0
-    property real handleWidth: 2
-    property var initialColumnWidths: []
-    property real defaultInitialColumnWidth: 100
-    property real dragWidthIncrease: 2
-    property bool resizable: true
-    property bool resizableColumns: true
-    property bool drawHandles: true
-    property real minimumColumnSize: 0
-    property real maximumColumnSize: 10000
-    property var idealColumnSizeFunction: null
+	onAvailableWidthChanged: {
+		var columnCount = columnWidths.length
+		if (columnCount == 0) {
+			return
+		}
 
-    signal columnsChanged(var columnWidths);
+		var currentWidth = 0
+		for (var i = 0; i < columnCount; ++i) {
+			currentWidth += columnWidths[i] + columnSpacing
+		}
+		if (__previousAvailableWidth == 0) {
+			__previousAvailableWidth = currentWidth
+		}
+		var totalWidthDelta = availableWidth - __previousAvailableWidth
+		if (totalWidthDelta < 0 && availableWidth >= currentWidth) {
+			__previousAvailableWidth = availableWidth
+			return
+		}
 
-    function resizeColumnToIdealSize(index)
-    {
-        if (idealColumnSizeFunction === null)
-        {
-            return;
-        }
+		while (totalWidthDelta != 0) {
+			var resizeCount = columnCount
+			if (totalWidthDelta < 0) {
+				for (var i = 0; i < columnCount; ++i) {
+					if (columnWidths[i] == 1) {
+						--resizeCount
+					}
+				}
+			}
 
-        if (columns.children.length < 2)
-        {
-            return;
-        }
+			var desiredWidthDelta = totalWidthDelta / resizeCount
+			for (var i = 0; i < columnCount; ++i) {
+				var widthDelta = Math.max(1 - columnWidths[i], desiredWidthDelta)
+				if (widthDelta == 0) {
+					continue
+				}
 
-        columns.fixHandles();
-        var column = columns.children[index];
-        var handle = column.children[0];
-        var minimumSize = (index === 0 ? firstColumnIndentation + minimumColumnSize : minimumColumnSize);
-        handle.x = Math.max(minimumSize, idealColumnSizeFunction(index));
-    }
+				var handle = handles.itemAt(i).children[0]
+				handle.x += widthDelta
+				totalWidthDelta -= widthDelta
+			}
+		}
+		__previousAvailableWidth = availableWidth
+	}
 
-    visible: columnCount > 0
+	Component.onCompleted: {
+		__initialColumnWidths = columnWidths
+	}
 
-    Item {
-        id: columns
-        objectName: "columns"
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        width: 0
+	Repeater {
+		id: handles
+		model: __initialColumnWidths
 
-        function fixHandles()
-        {
-            var column = null;
+		Item {
+			width: handle.x + handle.width
+			height: columnsFrame.height
 
-            for (var i = 0; i < columns.children.length; ++i)
-            {
-                column = columns.children[i];
-                var handle = column.children[0];
-                if (typeof(handle) !== "undefined")
-                {
-                    handle.x = handle.x;
-                }
-            }
-        }
+			Item {
+				id: handle
 
-        function updateWidths()
-        {
-            var columnWidths = [];
-            var column = null;
-            var columnWidth = 0;
-            var totalWidth = 0;
+				x: __initialColumnWidths[index]
+				width: columnSpacing
+				height: columnsFrame.height
 
-            for (var i = 0; i < columns.children.length; ++i)
-            {
-                column = columns.children[i];
-                columnWidth = column.width;
-                columnWidths.push(columnWidth);
-                totalWidth += columnWidth + handleWidth;
-            }
+				/* MOVE INTO STYLE*/
+				Rectangle {
+					anchors.fill: parent
+					color: palette.darkColor
+				}
+				/**/
 
-            width = totalWidth;
+				MouseArea {
+					anchors.verticalCenter: parent.verticalCenter
+					width: handle.width + 1
+					height: handle.height
+					cursorShape: Qt.SplitHCursor
 
-            if (resizable)
-            {
-                columnsFrame.width = width;
-            }
+					drag.target: handle
+					drag.threshold: 0
+					drag.minimumX: 1
+					drag.axis: Drag.XAxis
+				}
 
-            columnsChanged(columnWidths);
-        }
+				onXChanged: {
+					var tmp = columnWidths
+					tmp[index] = x
+					columnWidths = tmp
+				}
+			}
+		}
+	}
 
-        function calculateMaxColumnSize(x, index)
-        {
-            var maxSize = width - x;
-
-            for (var i = index + 1; i < columnWidths.length; ++i)
-            {
-                maxSize -= (handleWidth + columnWidths[i]);
-            }
-
-            return maxSize;
-        }
-
-        Repeater {
-            id: columnSeries
-            model: columnCount
-            anchors.fill: parent
-
-            Rectangle {
-                id: column
-                color: "transparent"
-                property var previousColumn: index === 0 ? null : columns.children[index - 1]
-                y: 0
-                height: columns.height
-                x: index === 0 ? 0 : previousColumn.x + previousColumn.width + handleWidth
-                width: handle.x
-                onWidthChanged: columns.updateWidths()
-
-                Rectangle {
-                    id: handle
-                    objectName: "columnFrameHandle"
-                    property real initialWidth: initialColumnWidths.length > index ? initialColumnWidths[index] : defaultInitialColumnWidth
-                    x: initialWidth
-                    width: handleWidth
-                    y: 0
-                    height: parent.height
-                    color: drawHandles ? palette.darkColor : "transparent"
-
-                    MouseArea {
-                        id: columnHandleMouseArea
-                        enabled: resizableColumns
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width + dragWidthIncrease
-                        height: parent.height
-                        cursorShape: drawHandles ? Qt.SplitHCursor : Qt.ArrowCursor
-
-                        drag.target: handle
-                        drag.threshold: 0
-                        drag.axis: Drag.XAxis
-                        drag.minimumX: index === 0 ? firstColumnIndentation + minimumColumnSize : minimumColumnSize
-                        drag.maximumX: resizable ? maximumColumnSize : columns.calculateMaxColumnSize(column.x, index)
-
-                        onPositionChanged: {
-                            columns.fixHandles();
-                        }
-
-                        onDoubleClicked: {
-                            if (idealColumnSizeFunction !== null)
-                            {
-                                columns.fixHandles();
-                                parent.x = Math.max(drag.minimumX, idealColumnSizeFunction(index));
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        id: innerShade
-                        color: drawHandles ? palette.mainWindowColor : "transparent"
-                        visible: drawHandles && width > 0
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.left: handle.left
-                        anchors.right: rightSideShade.right
-                        anchors.leftMargin: 1
-                        anchors.rightMargin: 1
-                    }
-
-                    Rectangle {
-                        id: rightSideShade
-                        color: drawHandles ? palette.midLightColor : "transparent"
-                        visible: drawHandles && handleWidth > 1
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        anchors.right: parent.right
-                        width: 1
-                    }
-                }
-            }
-        }
-    }
+	property var __initialColumnWidths: []
+	property real  __previousAvailableWidth: 0
 }
 

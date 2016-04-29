@@ -371,7 +371,7 @@ Item {
         property real footerHeight: footerItemLoader.status === Loader.Ready ? listView.footerItem.height : 0
         property bool scrollable: contentHeight > height
 
-        delegate: WGItemRow {
+        delegate: WGListViewRowDelegate {
             anchors.left: parent.left
             width: Math.max(columnsFrame.width, minimumRowWidth)
             defaultColumnDelegate: listView.defaultColumnDelegate
@@ -456,7 +456,7 @@ Item {
         width: listView.width - listView.rightMargin - listView.leftMargin
     }
 
-    WGColumnsFrame {
+    WGColumnsFrame1 {
         id: columnsFrame
         columnCount: listView.columnCount
         y: listView.topMargin

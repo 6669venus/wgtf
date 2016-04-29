@@ -1,4 +1,5 @@
 #include "core_dependency_system/i_interface.hpp"
+#include "core_data_model/abstract_item_model.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_logging/logging.hpp"
@@ -16,7 +17,9 @@ class TreeModelTestPlugin
 {
 private:
 	std::vector<IInterface*> types_;
+	std::unique_ptr<IView> oldTreeView_;
 	std::unique_ptr<IView> treeView_;
+	std::shared_ptr<AbstractTreeModel> treeModel_;
 public:
 	//==========================================================================
 	TreeModelTestPlugin(IComponentContext & contextManager )
@@ -40,10 +43,24 @@ public:
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
-		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-		treeView_ = uiFramework->createView( 
-			"plg_tree_model_test/test_tree_panel.qml",
+		auto model = std::unique_ptr< ITreeModel >( new TestTreeModelOld() );
+		oldTreeView_ = uiFramework->createView( 
+			"plg_tree_model_test/test_tree_panel_old.qml",
 			IUIFramework::ResourceType::Url, std::move( model ) );
+
+		treeModel_ = std::make_shared<TestTreeModel>();
+		treeView_ = uiFramework->createView(
+			"plg_tree_model_test/test_tree_panel.qml",
+			IUIFramework::ResourceType::Url, treeModel_ );
+
+		if (oldTreeView_ != nullptr)
+		{
+			uiApplication->addView( *oldTreeView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 		if (treeView_ != nullptr)
 		{
@@ -62,8 +79,14 @@ public:
 		if (treeView_ != nullptr)
 		{
 			uiApplication->removeView( *treeView_ );
-			treeView_ = nullptr;
 		}
+		if (oldTreeView_ != nullptr)
+		{
+			uiApplication->removeView( *oldTreeView_ );
+		}
+		treeModel_ = nullptr;
+		treeView_ = nullptr;
+		oldTreeView_ = nullptr;
 		return true;
 	}
 	//==========================================================================

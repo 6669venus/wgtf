@@ -11,6 +11,12 @@ namespace ItemRole
 	}
 }
 
+#define ITEMROLE( ROLE )														\
+namespace ItemRole {															\
+	const char * ROLE##Name = #ROLE;											\
+	const unsigned int ROLE##Id = compute( #ROLE );								\
+};
+
 // DEPRECATED
 // Add new role types here
 #define ITEM_ROLES																\

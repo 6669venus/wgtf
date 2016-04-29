@@ -1,17 +1,14 @@
-#ifndef TREE_EXTENSION_HPP
-#define TREE_EXTENSION_HPP
+#ifndef COLUMN_EXTENSION_OLD_HPP
+#define COLUMN_EXTENSION_OLD_HPP
 
 #include "i_model_extension.hpp"
-#include <QItemSelection>
 #include <memory>
 
-class TreeExtension : public IModelExtension
+class ColumnExtensionOld : public IModelExtension
 {
-	Q_OBJECT
-
 public:
-	TreeExtension();
-	virtual ~TreeExtension();
+	ColumnExtensionOld();
+	virtual ~ColumnExtensionOld();
 
 	QHash< int, QByteArray > roleNames() const override;
 	QVariant data( const QModelIndex &index, int role ) const override;
@@ -30,11 +27,9 @@ public:
 	void onRowsRemoved( 
 		const QModelIndex & parent, int first, int last ) override;
 
-	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
-
 private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
 
-#endif // TREE_EXTENSION_HPP
+#endif // COLUMN_EXTENSION_OLD_HPP

@@ -5,6 +5,7 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
 BEGIN_EXPOSE(IConnection, MetaNone())
+    EXPOSE("id", Id, MetaNone())
     EXPOSE("input", Input, MetaNone())
     EXPOSE("output", Output, MetaNone())
 END_EXPOSE()

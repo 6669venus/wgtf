@@ -17,16 +17,17 @@ public:
     virtual ~CustomGraph(){}
 
     std::shared_ptr<INode> CreateNode(std::string nodeClass, float x = 0.0f, float y = 0.0f) override;
-    void DeleteNode(const std::string &nodeID) override;
+    void DeleteNode(size_t nodeID) override;
    
-    ObjectHandleT<IConnection> CreateConnection(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot) override;
-    void DeleteConnection(ObjectHandleT<IConnection> connection) override;
+    ObjectHandleT<IConnection> CreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo) override;
+    void DeleteConnection(size_t connectionId) override;
     
     bool Validate(std::string& errorMessage) override;
     void Save(std::string fileName) override;
     void Load(std::string fileName) override;
 
 private:
+    GenericListT<ObjectHandleT<INode>>::Iterator GetNodeIterById(size_t nodeId);
     const IListModel* GetNodesModel() const override { return &m_nodesModel; }
     const IListModel* GetConnectionsModel() const override { return &m_connectionsModel; }
 private:

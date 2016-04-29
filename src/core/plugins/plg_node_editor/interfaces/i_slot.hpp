@@ -22,6 +22,7 @@ public:
     ISlot(const ISlot&) = delete;
     ISlot& operator=(const ISlot&) = delete;
 
+    virtual size_t Id() const = 0;
     virtual bool IsInput() const = 0;
     virtual std::string Label() const = 0;
     virtual std::string Icon() const = 0;

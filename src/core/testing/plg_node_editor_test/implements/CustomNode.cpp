@@ -8,7 +8,7 @@ CustomNode::CustomNode(const std::string &nodeClass)
 , m_title(nodeClass)  //TODO: change to title (Was done for demo)
 , m_subTitle(nodeClass)  //TODO: change to subtitle (Was done for demo)
 {
-    m_id = std::to_string(reinterpret_cast<size_t>(this));
+    m_id = reinterpret_cast<size_t>(this);
 
     int i = 0;
     while (i < 2)
@@ -34,9 +34,26 @@ void CustomNode::SetPos(float x, float y)
     m_y = y;
 }
 
-ObjectHandleT<ISlot> CustomNode::GetSlotByLabel(std::string) const
+ObjectHandleT<ISlot> CustomNode::GetSlotById(size_t slotId) const
 {
-    //TODO: Need implementation
+    auto slotPos = std::find_if(m_inputSlotsModel.begin(), m_inputSlotsModel.end(), [slotId](const ObjectHandleT<ISlot> &slot) {
+        return slotId == slot->Id();
+    });
+
+    if (slotPos != m_inputSlotsModel.end())
+    {
+        return *slotPos;
+    }
+
+    slotPos = std::find_if(m_outputSlotsModel.begin(), m_outputSlotsModel.end(), [slotId](const ObjectHandleT<ISlot> &slot) {
+        return slotId == slot->Id();
+    });
+
+    if (slotPos != m_outputSlotsModel.end())
+    {
+        return *slotPos;
+    }
+
     return nullptr;
 }
 
@@ -70,8 +87,22 @@ bool CustomNode::Validate(std::string &errorMessage)
 
 bool CustomNode::CanConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot) 
 { 
-    //TODO: Need implementation
-    return true; 
+    bool result = false;
+
+    while (true)
+    {
+        ObjectHandleT<INode> otherNode = otherSlot->Node();
+        if (this == otherNode.get())
+            break;
+
+        if (!(mySlot->IsInput() ^ otherSlot->IsInput()))
+            break;
+
+        result = true;
+        break;
+    }
+
+    return result;
 }
 
 void CustomNode::OnConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot)

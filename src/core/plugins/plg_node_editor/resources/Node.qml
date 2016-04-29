@@ -32,7 +32,7 @@ Item
         for (var i = 0; i < size; ++i)
         {
             slotView = listModel.itemAt(i);
-            if (slotView.slotObj == slotObj)
+            if (slotView.slotObj.id == slotObj.id)
             {
                 return slotView;
             }
@@ -45,6 +45,12 @@ Item
     {
         var slotPos = mapToItem(inputSlotsLayout, Pos.x, Pos.y);
         var slot = inputSlotsLayout.childAt(slotPos.x, slotPos.y);
+
+        if (!slot)
+        {
+            slotPos = mapToItem(outputSlotsLayout, Pos.x, Pos.y);
+            slot = outputSlotsLayout.childAt(slotPos.x, slotPos.y);
+        }
 
         if (slot && slot.objectName == "Slot")
         {

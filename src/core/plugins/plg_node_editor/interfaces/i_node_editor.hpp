@@ -34,34 +34,12 @@ public:
     
 protected:
     virtual void onCreateNode(int x, int y, std::string nodeClass) = 0;
-    virtual void onDeleteNode(std::string nodeID) = 0;
+    virtual void onDeleteNode(size_t nodeID) = 0;
 
-    virtual void onCreateConnection(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot) = 0;
-    virtual void onDeleteConnection(ObjectHandleT<IConnection> connection) = 0;
+    virtual void onCreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo) = 0;
+    virtual void onDeleteConnection(size_t connectionId) = 0;
 
     virtual const IListModel* GetGraphModel() const = 0;
-
-private:
-    void onCreateConnectionInvoked()
-    {
-        assert(m_outputSlotNeedConnect != nullptr && m_inputSlotNeedConnect != nullptr);
-        onCreateConnection(m_outputSlotNeedConnect, m_inputSlotNeedConnect);
-
-        m_outputSlotNeedConnect = nullptr;
-        m_inputSlotNeedConnect = nullptr;
-    }
-
-    void onDeleteConnectionInvoked()
-    {
-        assert(m_connectionNeedDelete != nullptr);
-        onDeleteConnection(m_connectionNeedDelete);
-        m_connectionNeedDelete = nullptr;
-    }
-
-private:
-    ObjectHandleT<ISlot> m_outputSlotNeedConnect;
-    ObjectHandleT<ISlot> m_inputSlotNeedConnect;
-    ObjectHandleT<IConnection> m_connectionNeedDelete;
 };
 
 #endif // __I_NODE_EDITOR_H__

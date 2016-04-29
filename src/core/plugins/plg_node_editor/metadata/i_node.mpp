@@ -5,7 +5,7 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
 BEGIN_EXPOSE(INode, MetaNone())
-    EXPOSE("nodeID", Id, MetaNone())
+    EXPOSE("id", Id, MetaNone())
     EXPOSE("nodeTitle", Title, MetaNone())
     EXPOSE("nodeCoordX", X, MetaNone())
     EXPOSE("nodeCoordY", Y, MetaNone())

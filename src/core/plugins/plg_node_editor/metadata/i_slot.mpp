@@ -5,6 +5,7 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
 BEGIN_EXPOSE(ISlot, MetaNone())
+    EXPOSE("id", Id, MetaNone())
     EXPOSE("isInput", IsInput, MetaNone())
     EXPOSE("node", Node, MetaNone())
 END_EXPOSE()

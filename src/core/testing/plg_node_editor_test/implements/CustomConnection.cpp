@@ -14,7 +14,6 @@ ISlot* CustomConnection::Output() const
 bool CustomConnection::Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot)
 {
     bool result = false;
-
     if (outputSlot == nullptr || inputSlot == nullptr || m_isConnected)
     {
         return result;

@@ -18,10 +18,10 @@ public:
     virtual ~IGraph(){}
 
     virtual std::shared_ptr<INode> CreateNode(std::string, float x = 0.0f, float y = 0.0f) = 0;
-    virtual void DeleteNode(const std::string &nodeID) = 0;
+    virtual void DeleteNode(size_t nodeID) = 0;
 
-    virtual ObjectHandleT<IConnection> CreateConnection(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot) = 0;
-    virtual void DeleteConnection(ObjectHandleT<IConnection> connection) = 0;
+    virtual ObjectHandleT<IConnection> CreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo) = 0;
+    virtual void DeleteConnection(size_t connectionId) = 0;
     
     virtual bool Validate(std::string &errorMessage) = 0;
 

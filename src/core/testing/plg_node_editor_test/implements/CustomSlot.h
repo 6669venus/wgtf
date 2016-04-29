@@ -8,16 +8,10 @@ class CustomSlot : public Implements<ISlot>
 {
     DECLARE_REFLECTED
 public:
-    CustomSlot(ObjectHandleT<INode> node, bool isInput)
-        : m_isInput(isInput)
-        , m_pNode(node)
-    {}
-    
-    CustomSlot(const CustomSlot&) = delete;
-    CustomSlot& operator=(const CustomSlot&) = delete;
-
+    CustomSlot(ObjectHandleT<INode> node, bool isInput);
     virtual ~CustomSlot(){}
 
+    size_t Id() const override { return m_id; }
     bool IsInput() const override { return m_isInput; }
     std::string Label() const override;
     std::string Icon() const override;
@@ -32,6 +26,7 @@ public:
     bool Disconnect(ObjectHandleT<ISlot> slot) override;
 
 private:
+    size_t m_id;
     bool m_isInput;
 
     ObjectHandleT<INode> m_pNode;

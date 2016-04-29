@@ -27,19 +27,19 @@ void NodeEditor::onCreateNode(int x, int y, std::string nodeClass)
     std::shared_ptr<INode> node = graphModel.back()->CreateNode(nodeClass, x, y);
 }
 
-void NodeEditor::onDeleteNode(std::string nodeID)
+void NodeEditor::onDeleteNode(size_t nodeID)
 {
     graphModel.back()->DeleteNode(nodeID);
 }
 
-void NodeEditor::onCreateConnection(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot)
+void NodeEditor::onCreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo)
 {
-    graphModel.back()->CreateConnection(outputSlot, inputSlot);
+    graphModel.back()->CreateConnection(nodeIdFrom, slotIdFrom, nodeIdTo, slotIdTo);
 }
 
-void NodeEditor::onDeleteConnection(ObjectHandleT<IConnection> connection)
+void NodeEditor::onDeleteConnection(size_t connectionId)
 {
-    graphModel.back()->DeleteConnection(connection);
+    graphModel.back()->DeleteConnection(connectionId);
 }
 
 INode* NodeEditor::GetNode(std::string id)

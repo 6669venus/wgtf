@@ -20,14 +20,17 @@ Rectangle
 
     function startCreatingNewConnection(fromSlotObj)
     {
-        currentConnection = connectionComponent.createObject(nodeEditorView, {"inputSlot": (fromSlotObj.isInput) ? fromSlotObj : null,
-                                                                              "outputSlot": (fromSlotObj.isInput) ? null : fromSlotObj});
+        currentConnection = connectionComponent.createObject(nodeEditorView, {"firstSlot": fromSlotObj,
+                                                                              "secondSlot": null });
     }
 
     function finishCreatingNewConnection(endPos)
     {
-        var node = childAt(endPos.x, endPos.y);
-        if (node && node.objectName == "Node")
+
+        var nodePos = mapToItem(nodeLayout, endPos.x, endPos.y);
+        var node = nodeLayout.childAt(nodePos.x, nodePos.y);
+
+        if (node)
         {
             var endSlot = node.getSlotByPos(mapToItem(node, endPos.x, endPos.y))
             if (endSlot && endSlot.objectName == "Slot")
@@ -38,6 +41,22 @@ Rectangle
 
         currentConnection.destroy();
         currentConnection = null;
+    }
+
+    function getNodeViewById(nodeId)
+    {
+        var nodeView = null;
+        var size = nodeRepeater.count;
+        for (var i = 0; i < size; ++i)
+        {
+            nodeView = nodeRepeater.itemAt(i);
+            if (nodeView.nodeObj.id == nodeId)
+            {
+                return nodeView;
+            }
+        }
+
+        return null;
     }
 
     Image
@@ -67,30 +86,37 @@ Rectangle
     {
     }
 
+    Item
+    {
+        id: nodeLayout
+        anchors.fill: parent
+
+        Repeater
+        {
+            id: nodeRepeater
+            model: nodesListModel
+            delegate: Node
+            {
+                nodeObj: Value
+                nodeID: Value.nodeID
+                nodeTitle: Value.nodeTitle
+                inputSlotsModel: Value.inputSlotsModel
+                outputSlotsModel: Value.outputSlotsModel
+                x: Value.nodeCoordX
+                y: Value.nodeCoordY
+            }
+        }
+    }
+
     Repeater
     {
         id: connectionRepeater
         model: connectionsListModel
         delegate: ConnectionNodes
         {
-            inputSlot: Value.input
-            outputSlot: Value.output
+            connectionObj: Value
+            firstSlot: Value.input
+            secondSlot: Value.output
         }
     }
-
-	Repeater
-	{
-		id: nodeRepeater
-		model: nodesListModel
-		delegate: Node
-		{
-            nodeObj: Value
-            nodeID: Value.nodeID
-            nodeTitle: Value.nodeTitle
-            inputSlotsModel: Value.inputSlotsModel
-            outputSlotsModel: Value.outputSlotsModel
-            x: Value.nodeCoordX
-            y: Value.nodeCoordY            
-		}
-	}
 }

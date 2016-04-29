@@ -19,7 +19,7 @@ public:
     CustomNode(const std::string &nodeClass);
     virtual ~CustomNode();
 
-    std::string Id() const override         { return m_id; }
+    size_t Id() const override         { return m_id; }
     std::string Class() const override      { return m_class; }
     std::string Title() const override      { return m_title; }
     std::string SubTitle() const override   { return m_subTitle; }
@@ -31,7 +31,7 @@ public:
     float Y() const override                { return m_y; }
     void SetPos(float x, float y) override;
 
-    ObjectHandleT<ISlot> GetSlotByLabel(std::string) const override;
+    ObjectHandleT<ISlot> GetSlotById(size_t slotId) const override;
 
     bool Enabled() const override;
     void SetEnabled(bool) override;
@@ -53,7 +53,7 @@ private:
     float m_x;
     float m_y;   
 
-    std::string m_id;
+    size_t m_id;
     std::string m_class;
     std::string m_title;
     std::string m_subTitle;

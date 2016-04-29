@@ -19,7 +19,10 @@ public:
     INode() = default;
     virtual ~INode(){}
 
-    virtual std::string Id() const = 0;
+    INode(const INode&) = delete;
+    INode& operator=(const INode&) = delete;
+
+    virtual size_t Id() const = 0;
     virtual std::string Class() const = 0;
     virtual std::string Title() const = 0;
     virtual std::string SubTitle() const = 0;
@@ -32,7 +35,7 @@ public:
     virtual float Y() const = 0;
     virtual void SetPos(float x, float y) = 0;
     
-    virtual ObjectHandleT<ISlot> GetSlotByLabel(std::string) const = 0;
+    virtual ObjectHandleT<ISlot> GetSlotById(size_t slotId) const = 0;
 
     virtual bool Enabled() const = 0;
     virtual void SetEnabled(bool) = 0;

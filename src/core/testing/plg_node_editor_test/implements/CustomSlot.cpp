@@ -1,6 +1,13 @@
 
 #include "CustomSlot.h"
 
+CustomSlot::CustomSlot(ObjectHandleT<INode> node, bool isInput)
+: m_isInput(isInput)
+, m_pNode(node)
+{
+    m_id = reinterpret_cast<size_t>(this);
+}
+
 std::string CustomSlot::Label() const
 {
     //TODO: Need implementation

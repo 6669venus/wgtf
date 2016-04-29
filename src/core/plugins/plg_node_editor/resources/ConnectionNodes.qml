@@ -6,93 +6,69 @@ Canvas
     anchors.fill: parent
     antialiasing: true
 
+    property var connectionObj
     property color curveColor: "green"
 
-    property var inputSlot
-    property var outputSlot
+    property var firstSlot
+    property var secondSlot
 
-    property var inputNode:  (inputSlot)  ? inputSlot.node  : null
-    property var outputNode: (outputSlot) ? outputSlot.node : null
+    property var firstSlotView
+    property var secondSlotView
 
-    property var inputNodeView
-    property var outputNodeView
+    property var firstNode: (firstSlot) ? firstSlot.node : null
+    property var secondNode: (secondSlot) ? secondSlot.node : null
 
-    property var inputNodePos
-    property var outputNodePos
+    property var firstNodeView
+    property var secondNodeView
 
-    property var inputSlotView
-    property var outputSlotView
+    property var firstNodePos
+    property var secondNodePos
 
     property var endPos
 
-    onInputNodeChanged: initNodeView()
-    onOutputNodeChanged: initNodeView()
+    onFirstNodeChanged: initNodeView()
+    onSecondNodeChanged: initNodeView()
 
-    onInputNodeViewChanged: { inputSlotView = inputNodeView.getSlotViewBySlotObj(inputSlot)    }
-    onOutputNodeViewChanged:{ outputSlotView = outputNodeView.getSlotViewBySlotObj(outputSlot) }
+    onFirstNodeViewChanged: { firstSlotView = firstNodeView.getSlotViewBySlotObj(firstSlot)    }
+    onSecondNodeViewChanged:{ secondSlotView = secondNodeView.getSlotViewBySlotObj(secondSlot) }
 
-    onInputSlotViewChanged: requestPaint()
-    onOutputSlotViewChanged: requestPaint()
-    onInputNodePosChanged: requestPaint()
-    onOutputNodePosChanged: requestPaint()
+    onFirstSlotViewChanged: requestPaint()
+    onSecondSlotViewChanged: requestPaint()
+    onFirstNodePosChanged: requestPaint()
+    onSecondNodePosChanged: requestPaint()
     onEndPosChanged: requestPaint()
-
-    function findNodeByPos(view, nodePos)
-    {
-        var childPos = mapToItem(view, nodePos.x, nodePos.y);
-        var child = view.childAt(childPos.x, childPos.y);
-
-        if (!child)
-            return null;
-
-        if (child.objectName == "Node")
-            return child;
-
-        return findNodeByPos(child, nodePos);
-    }
+    onCurveColorChanged: requestPaint()
 
     function initNodeView()
     {
-        if (outputNode && !outputNodeView)
+        if (firstNode && !firstNodeView)
         {
-            var nodePos = Qt.point(outputNode.nodeCoordX, outputNode.nodeCoordY);
-            var node = findNodeByPos(graphView, nodePos);
+            var node = graphView.getNodeViewById(firstNode.id);
 
-            outputNodeView = node;
-            outputNodePos = Qt.binding(function() { return Qt.point(outputNodeView.x, outputNodeView.y) });
+            firstNodeView = node;
+            firstNodePos = Qt.binding(function() { return Qt.point(firstNodeView.x, firstNodeView.y) });
         }
 
-        if (inputNode && !inputNodeView)
+        if (secondNode && !secondNodeView)
         {
-            var nodePos = Qt.point(inputNode.nodeCoordX, inputNode.nodeCoordY);
-            var node = findNodeByPos(graphView, nodePos);
+            var node = graphView.getNodeViewById(secondNode.id);
 
-            inputNodeView = node;
-            inputNodePos = Qt.binding(function() { return Qt.point(inputNodeView.x, inputNodeView.y) });
+            secondNodeView = node;
+            secondNodePos = Qt.binding(function() { return Qt.point(secondNodeView.x, secondNodeView.y) });
         }
     }
 
     function tryConnectToSlot(slot)
     {
-        if (inputSlot && outputSlot)
+        if (firstSlot && secondSlot)
             return;
 
-        var slotObj = slot.slotObj
-
-        if (inputSlot)
+        if (firstSlot)
         {
-            inputSlotConnect = inputSlot;
-            outputSlotConnect = slotObj;
-            createConnection();
-        }
-        else if (outputSlot)
-        {
-            inputSlotConnect = slotObj;
-            outputSlotConnect = outputSlot;
-            createConnection();
+            var slotObj = slot.slotObj
+            createConnection(firstNode.id, firstSlot.id, slotObj.node.id, slotObj.id)
         }
     }
-
 
     onPaint:
     {
@@ -102,15 +78,10 @@ Canvas
         var _startPoint = null;
         var _endPoint = null;
 
-        if (inputSlotView)
+        if (firstSlotView)
         {
-            _startPoint = inputSlotView.getSlotAnchor();
-            _endPoint = (outputSlotView) ? outputSlotView.getSlotAnchor() : endPos;
-        }
-        else if (outputSlotView)
-        {
-            _startPoint = outputSlotView.getSlotAnchor();
-            _endPoint = (inputSlotView) ? inputSlotView.getSlotAnchor() : endPos;
+            _startPoint = firstSlotView.getSlotAnchor();
+            _endPoint = (secondSlotView) ? secondSlotView.getSlotAnchor() : endPos;
         }
 
         if (_startPoint == null || _endPoint == null)

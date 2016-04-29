@@ -13,6 +13,11 @@ class IConnection
 public:
     IConnection() = default;
     virtual ~IConnection(){}
+
+    IConnection(const IConnection&) = delete;
+    IConnection& operator=(const IConnection&) = delete;
+
+    virtual size_t Id() const = 0;
     virtual ISlot* Input() const = 0;
     virtual ISlot* Output() const = 0;
     virtual bool Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot) = 0;

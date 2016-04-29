@@ -27,10 +27,10 @@ public:
 
 private:
     void onCreateNode(int x, int y, std::string nodeClass) override;
-    void onDeleteNode(std::string nodeID) override;
+    void onDeleteNode(size_t nodeID) override;
 
-    void onCreateConnection(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot) override;
-    void onDeleteConnection(ObjectHandleT<IConnection> connection) override;
+    void onCreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo) override;
+    void onDeleteConnection(size_t connectionId) override;
 
     const IListModel* GetGraphModel() const override { return &graphModel; }
 

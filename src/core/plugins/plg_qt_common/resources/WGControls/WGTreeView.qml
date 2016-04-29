@@ -38,7 +38,6 @@ WGTreeViewBase {
 		Connections {
 			target: treeView
 			onItemPressed: {
-				console.log( "ITEM PRESSED: " + rowIndex )
 				if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
 					var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
 					itemView.selectionModel.select(selection, 0x0002) // Select

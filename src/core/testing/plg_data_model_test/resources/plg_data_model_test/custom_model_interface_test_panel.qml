@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import WGControls 1.0
+import WGControls 2.0 as WG2
 
 WGPanel {
 	title: "Custom Model Interface"
@@ -42,7 +43,7 @@ WGPanel {
 
 	property var folderModel : fileSystemModel
 
-	ListView {
+	WG2.WGTreeView {
 		id: testTreeView
 
 		anchors.top: clones.bottom
@@ -50,9 +51,5 @@ WGPanel {
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom
 		model: folderModel
-
-		delegate: Text {
-			text: display
-		}
 	}
 }

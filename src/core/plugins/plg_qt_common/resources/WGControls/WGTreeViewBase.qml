@@ -5,7 +5,6 @@ import WGControls 2.0
 
 ListView {
 	id: treeViewBase
-	interactive: false
 
 	property var view
 	property real depth: 0
@@ -55,6 +54,7 @@ ListView {
 
 				Component.onCompleted: {
 					setSource("WGTreeViewBase.qml", {
+						"interactive": false,
 						"width": Qt.binding( function() { return treeViewBase.width - childItems.x } ),
 						"height": Qt.binding( function() { return treeViewBase.height - childItems.y + treeViewBase.contentY } ),
 						

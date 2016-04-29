@@ -1,6 +1,8 @@
 #ifndef WG_ITEM_VIEW_HPP
 #define WG_ITEM_VIEW_HPP
 
+#include "core_qt_common/qt_new_handler.hpp"
+
 #include <memory>
 #include <QQuickItem>
 #include <QQmlListProperty>
@@ -21,6 +23,8 @@ class WGItemView : public QQuickItem
 	Q_PROPERTY( QAbstractItemModel * extendedModel READ getExtendedModel NOTIFY extendedModelChanged )
 	//Enable for headers once body works.
 	//Q_PROPERTY( QObject * headerData READ getHeaderData NOTIFY headerDataChanged )
+
+	DECLARE_QT_MEMORY_HANDLER
 
 public:
 	WGItemView();

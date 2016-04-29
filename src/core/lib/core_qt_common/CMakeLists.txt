@@ -68,6 +68,8 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/value_extension.hpp
 	models/extensions/thumbnail_extension.cpp
 	models/extensions/thumbnail_extension.hpp
+	models/extensions/image_extension.cpp
+	models/extensions/image_extension.hpp
 	models/extensions/i_model_extension.hpp
 	models/extensions/header_footer_text_extension.cpp
 	models/extensions/header_footer_text_extension.hpp
@@ -130,6 +132,8 @@ SET( ALL_SRCS
 	qt_action_manager.hpp
 	qt_image_provider.cpp
 	qt_image_provider.hpp
+	qt_image_provider_old.cpp
+	qt_image_provider_old.hpp
 	qt_connection_holder.hpp
 	qt_connection_holder.cpp
 	qt_new_handler.hpp

@@ -5,7 +5,7 @@
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/models/extensions/i_model_extension.hpp"
 #include "core_qt_common/qt_connection_holder.hpp"
-#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "qt_model_helpers.hpp"
 #include "core_reflection/object_handle.hpp"
 
@@ -337,8 +337,8 @@ QVariant WGTreeModel::data( const QModelIndex &index, int role ) const
 		auto thumbnail = item->getThumbnail( index.column() );
 		if (thumbnail != nullptr)
 		{
-			auto qtImageProvider = dynamic_cast< QtImageProvider * >(
-				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProvider::providerId() ) );
+			auto qtImageProvider = dynamic_cast< QtImageProviderOld * >(
+				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProviderOld::providerId() ) );
 			if (qtImageProvider != nullptr)
 			{
 				auto imagePath = qtImageProvider->encodeImage( thumbnail );

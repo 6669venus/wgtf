@@ -1,27 +1,25 @@
 #ifndef QT_IMAGE_PROVIDER_HPP
 #define QT_IMAGE_PROVIDER_HPP
 
-#include <memory>
-#include "wg_types/binary_block.hpp"
-
 #include <QQuickImageProvider>
 #include <QHash>
-#include <QString>
-#include <QImage>
 
 class QtImageProvider : public QQuickImageProvider
 {
 public:
 	QtImageProvider();
 
-	QString encodeImage( const std::shared_ptr< BinaryBlock > & image );
-	QImage requestImage( const QString &id, QSize *size, const QSize& requestedSize );
+	QString encode( const QColor &color );
+	QString encode( const QIcon &icon );
+	QString encode( const QPixmap &pixmap );
+
+	QImage requestImage( const QString &id, QSize *size, const QSize& requestedSize ) override;
 
 	static const char * providerId();
 
 private:
 	// TODO cap the size of this cache
-	QHash<QString, QImage> imageCache_;
+	QHash<qint64, QPixmap> cache_;
 };
 
 #endif

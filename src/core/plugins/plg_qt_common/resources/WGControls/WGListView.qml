@@ -25,7 +25,7 @@ WGListViewBase {
 	WGItemViewCommon {
 		id: itemView
 
-		extensions: [listExtension, columnExtension]
+		extensions: [listExtension, columnExtension, imageExtension]
 
 		ListExtension {
 			id: listExtension
@@ -33,6 +33,10 @@ WGListViewBase {
 
 		ColumnExtension {
 			id: columnExtension
+		}
+
+		ImageExtension {
+			id: imageExtension
 		}
 
 		Connections {

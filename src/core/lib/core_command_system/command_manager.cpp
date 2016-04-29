@@ -607,8 +607,8 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
         }
     }
 
-    currentIndex_.variantValue(currentIndexValue);
-    pCommandManager_->signalHistoryPostReset(historyState_->history_);
+	pCommandManager_->signalHistoryPostReset(historyState_->history_);
+	currentIndex_.variantValue(currentIndexValue);
     bindIndexCallbacks();
     bindHistoryCallbacks();
 }

@@ -199,15 +199,14 @@ void ReflectedTreeModelNew::addRootItem( AbstractItem * item )
 	assert( reflectedItem->getModel() == nullptr );
 	reflectedItem->setModel( this );
 
-	const int row = static_cast< int >( impl_->rootItems_.size() );
-	const AbstractItem * pParent = nullptr;
-	const ItemIndex index( row, pParent );
-	const int pos = 0; // TODO what is pos??
-	const int rowCount = reflectedItem != nullptr ? reflectedItem->rowCount() : 0;
+	// Root items have no parent item
+	const ItemIndex parentIndex;
+	const int startRow = static_cast< int >( impl_->rootItems_.size() );
+	const int rowCount = 1;
 
-	preRowsInserted_( index, pos, rowCount );
+	preRowsInserted_( parentIndex, startRow, rowCount );
 	impl_->rootItems_.emplace_back( reflectedItem );
-	postRowsInserted_( index, pos, rowCount );
+	postRowsInserted_( parentIndex, startRow, rowCount );
 }
 
 
@@ -231,16 +230,15 @@ void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
 	}
 	const auto pItem = (*foundIter);
 
-	const int row = static_cast< int >(
+	// Root items have no parent item
+	const ItemIndex parentIndex;
+	const int startRow = static_cast< int >(
 		std::distance( foundIter, impl_->rootItems_.cbegin() ) );
-	const AbstractItem * pParent = nullptr;
-	const ItemIndex index( row, pParent );
-	const int pos = 0; // TODO what is pos??
-	const int rowCount = pItem != nullptr ? pItem->rowCount() : 0;
+	const int rowCount = 1;
 
-	preRowsRemoved_( index, pos, rowCount );
+	preRowsRemoved_( parentIndex, startRow, rowCount );
 	impl_->rootItems_.erase( foundItr );
-	postRowsRemoved_( index, pos, rowCount );
+	postRowsRemoved_( parentIndex, startRow, rowCount );
 }
 
 

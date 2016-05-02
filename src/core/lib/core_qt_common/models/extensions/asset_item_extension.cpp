@@ -3,7 +3,7 @@
 #include "core_data_model/i_list_model.hpp"
 #include "core_data_model/asset_browser/i_asset_object_item.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
-#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/models/wg_list_model.hpp"
 #include "core_reflection/object_handle.hpp"
@@ -71,8 +71,8 @@ QVariant AssetItemExtension::data( const QModelIndex &index, int role ) const
 		auto status = assetObjectItem->getStatusIconData();
 		if (status != nullptr)
 		{
-			auto qtImageProvider = dynamic_cast< QtImageProvider * >(
-				qtFramework_->qmlEngine()->imageProvider( QtImageProvider::providerId() ) );
+			auto qtImageProvider = dynamic_cast< QtImageProviderOld * >(
+				qtFramework_->qmlEngine()->imageProvider( QtImageProviderOld::providerId() ) );
 			if (qtImageProvider != nullptr)
 			{
 				return qtImageProvider->encodeImage( status );

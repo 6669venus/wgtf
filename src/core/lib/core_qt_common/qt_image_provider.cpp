@@ -1,41 +1,57 @@
 #include "qt_image_provider.hpp"
 
-// TODO: Remove to platform string header
-#if defined( _WIN32 )
-#define snprintf sprintf_s
-#endif
+#include <QIcon>
 
 QtImageProvider::QtImageProvider()
 	: QQuickImageProvider( ImageType::Image )
 {
 }
 
-QString QtImageProvider::encodeImage( const std::shared_ptr< BinaryBlock > & image )
+QString QtImageProvider::encode( const QColor &color )
 {
-	char buffer[ 65535 ];
-	snprintf( buffer, sizeof(buffer), "%p", image->data() );
-	QString imagePath( buffer );
-	auto it = imageCache_.find( imagePath );
-	if (it == imageCache_.end())
-	{
-		QByteArray data;
-		data.setRawData( image->cdata(), ( uint )( image->length() ) );
-		imageCache_[ imagePath ] = QImage::fromData( data );
-	}
-	return "image://" + QString( providerId() ) + "/" + imagePath;
+	QImage image( 1, 1, QImage::Format_ARGB32 );
+	image.fill( color );
+	return encode( image );
 }
 
-QImage QtImageProvider::requestImage( 
-	const QString &id, QSize *size, const QSize& requestedSize )
+QString QtImageProvider::encode( const QIcon &icon )
 {
-	auto it = imageCache_.find( id );
-	if (it != imageCache_.end())
+	auto availableSizes = icon.availableSizes();
+	auto pixmap = icon.pixmap( availableSizes[0] );
+	return encode( pixmap );
+}
+
+QString QtImageProvider::encode( const QPixmap &pixmap )
+{
+	return encode( pixmap.toImage() );
+}
+
+QString QtImageProvider::encode( const QImage &image )
+{
+	auto key = image.cacheKey();
+	auto it = imageCache_.find( key );
+	if (it == imageCache_.end())
 	{
-		return it.value();
+		imageCache_[key] = image;
+	}
+	return "image://" + QString( providerId() ) + "/" + key;
+}
+
+QImage QtImageProvider::requestImage(const QString &id, QSize *size, const QSize& requestedSize)
+{
+	if (size != nullptr)
+	{
+		*size = requestedSize;
 	}
 
-	return QImage( 
-		requestedSize.width(), requestedSize.height(), QImage::Format_ARGB32 );
+	auto key = id.toLongLong();
+	auto it = imageCache_.find( key );
+	if (it == imageCache_.end())
+	{
+		return QImage( requestedSize.width(), requestedSize.height(), QImage::Format_ARGB32 );
+	}
+
+	return it.value().scaled( requestedSize );
 }
 
 const char * QtImageProvider::providerId()

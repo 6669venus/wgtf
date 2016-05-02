@@ -79,12 +79,12 @@ namespace NGTTestAutomation.Generic_app_demo
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.View' at Center.", repo.Generic_app.MainWindow.ViewInfo, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.View.Click();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.View' at 4;4.", repo.Generic_app.MainWindow.ViewInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.View.Click(new Location(View_Screenshot1, "4;4", View_Screenshot1_Options));
             Delay.Milliseconds(200);
             
             try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=196,Height=23}) on item 'Menu.View.PropertyTreeTest'.", repo.Menu.View.PropertyTreeTestInfo, new RecordItemIndex(1));
+                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot1' with region {X=24,Y=3,Width=101,Height=17}) on item 'Menu.View.PropertyTreeTest'.", repo.Menu.View.PropertyTreeTestInfo, new RecordItemIndex(1));
                 Validate.ContainsImage(repo.Menu.View.PropertyTreeTestInfo, PropertyTreeTest_Screenshot1, PropertyTreeTest_Screenshot1_Options, Validate.DefaultMessage, new Validate.Options(){ReportLevelOnFailure=ReportLevel.Success, ReportLevelOnSuccess=ReportLevel.Failure});
                 Delay.Milliseconds(0);
             } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(1)); }
@@ -92,11 +92,17 @@ namespace NGTTestAutomation.Generic_app_demo
         }
 
 #region Image Feature Data
+        CompressedImage View_Screenshot1
+        { get { return repo.Generic_app.MainWindow.ViewInfo.GetScreenshot1(new Rectangle(15, 5, 14, 9)); } }
+
+        Imaging.FindOptions View_Screenshot1_Options
+        { get { return Imaging.FindOptions.Default; } }
+
         CompressedImage PropertyTreeTest_Screenshot1
-        { get { return repo.Menu.View.PropertyTreeTestInfo.GetScreenshot1(new Rectangle(0, 0, 196, 23)); } }
+        { get { return repo.Menu.View.PropertyTreeTestInfo.GetScreenshot1(new Rectangle(24, 3, 101, 17)); } }
 
         Imaging.FindOptions PropertyTreeTest_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("0.95;EdgesSobel;0,0,196,23;True;10000000;0ms"); } }
+        { get { return Imaging.FindOptions.Parse("0.5;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
 
 #endregion
     }

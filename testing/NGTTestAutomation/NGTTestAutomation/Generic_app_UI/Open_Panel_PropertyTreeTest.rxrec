@@ -31,7 +31,7 @@ mode="Global">
 		enabled="True"
 		optional="False"
 		duration="500ms"
-		searchpropertyid="048b5ff7-610e-4ace-912f-8486495a95a9"
+		searchpropertyid="c10d7ece-29a1-4c97-b78e-5cc7e8cb575d"
 		action="Click"
 		button="Left"
 		movetime="300ms"
@@ -48,13 +48,6 @@ mode="Global">
 				</path>
 			</info>
 		</mouseitem>
-		<explicitdelayitem
-		enabled="True"
-		optional="False"
-		duration="10000ms">
-			<comment/>
-			<bindings/>
-		</explicitdelayitem>
 	</recorditems>
 	<repository
 	name="NGTTestAutomationRepository"

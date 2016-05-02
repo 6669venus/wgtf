@@ -91,18 +91,18 @@ namespace NGTTestAutomation.Generic_app_UI
             repo.MainWindow.LFT_panel.WGListViewRowDelegate4.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot7' with region {X=0,Y=0,Width=1174,Height=922}) on item 'MainWindow.LFT_panel.List'.", repo.MainWindow.LFT_panel.ListInfo, new RecordItemIndex(3));
-            Validate.CompareImage(repo.MainWindow.LFT_panel.ListInfo, List_Screenshot7, List_Screenshot7_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'LFT_selection1' with region {X=4,Y=0,Width=106,Height=175}) on item 'MainWindow.LFT_panel.List'.", repo.MainWindow.LFT_panel.ListInfo, new RecordItemIndex(3));
+            Validate.CompareImage(repo.MainWindow.LFT_panel.ListInfo, List_LFT_selection1, List_LFT_selection1_Options);
             Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
-        CompressedImage List_Screenshot7
-        { get { return repo.MainWindow.LFT_panel.ListInfo.GetScreenshot7(new Rectangle(0, 0, 1174, 922)); } }
+        CompressedImage List_LFT_selection1
+        { get { return repo.MainWindow.LFT_panel.ListInfo.GetLFT_selection1(new Rectangle(4, 0, 106, 175)); } }
 
-        Imaging.FindOptions List_Screenshot7_Options
-        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,1174,922;True;10000000;0ms"); } }
+        Imaging.FindOptions List_LFT_selection1_Options
+        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;4,0,106,175;True;10000000;0ms"); } }
 
 #endregion
     }

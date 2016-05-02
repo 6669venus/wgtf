@@ -84,7 +84,7 @@ namespace NGTTestAutomation.Generic_app_UI
             Delay.Milliseconds(200);
             
             try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating CompareImage (Screenshot: 'Screenshot2' with region {X=0,Y=0,Width=1174,Height=926}) on item 'Generic_app.MainWindow.ListModel_Test.List1'.", repo.Generic_app.MainWindow.ListModel_Test.List1Info, new RecordItemIndex(1));
+                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating CompareImage (Screenshot: 'Screenshot2' with region {X=11,Y=11,Width=752,Height=102}) on item 'Generic_app.MainWindow.ListModel_Test.List1'.", repo.Generic_app.MainWindow.ListModel_Test.List1Info, new RecordItemIndex(1));
                 Validate.CompareImage(repo.Generic_app.MainWindow.ListModel_Test.List1Info, List1_Screenshot2, List1_Screenshot2_Options, Validate.DefaultMessage, false);
                 Delay.Milliseconds(0);
             } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(1)); }
@@ -98,10 +98,10 @@ namespace NGTTestAutomation.Generic_app_UI
 
 #region Image Feature Data
         CompressedImage List1_Screenshot2
-        { get { return repo.Generic_app.MainWindow.ListModel_Test.List1Info.GetScreenshot2(new Rectangle(0, 0, 1174, 926)); } }
+        { get { return repo.Generic_app.MainWindow.ListModel_Test.List1Info.GetScreenshot2(new Rectangle(11, 11, 752, 102)); } }
 
         Imaging.FindOptions List1_Screenshot2_Options
-        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,1174,926;True;10000000;0ms"); } }
+        { get { return Imaging.FindOptions.Parse("0.5;EdgesSobel;11,11,752,102;True;10000000;0ms"); } }
 
 #endregion
     }

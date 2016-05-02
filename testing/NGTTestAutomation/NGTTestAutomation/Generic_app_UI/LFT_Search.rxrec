@@ -65,8 +65,8 @@ mode="Global">
 		screenshotguid="9d853f52-9df8-42d6-a858-56dd8a971660"
 		codegenpropertyname="List_Screenshot8"
 		searchpropertyid="e7e9ef35-112a-44ca-a64a-697ad83e5293"
-		imagerect="0,0,1174,922"
-		imageoptions="0.8;EdgesSobel;0,0,1174,922;True;10000000;0ms"
+		imagerect="0,0,72,22"
+		imageoptions="0.7;EdgesSobel;0,0,72,22;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>

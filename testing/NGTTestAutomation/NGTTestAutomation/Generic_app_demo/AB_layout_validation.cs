@@ -83,6 +83,9 @@ namespace NGTTestAutomation.Generic_app_demo
             Validate.ContainsImage(repo.Generic_app.MainWindow.AssetBrowserInfo, AssetBrowser_Screenshot5, AssetBrowser_Screenshot5_Options);
             Delay.Milliseconds(100);
             
+            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(1));
+            Delay.Duration(10000, false);
+            
         }
 
 #region Image Feature Data

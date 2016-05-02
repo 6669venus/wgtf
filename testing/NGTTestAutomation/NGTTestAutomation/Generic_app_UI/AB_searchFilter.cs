@@ -94,9 +94,11 @@ namespace NGTTestAutomation.Generic_app_UI
             Report.Log(ReportLevel.Info, "Delay", "Waiting for 500ms.", new RecordItemIndex(3));
             Delay.Duration(500, false);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot3' with region {X=0,Y=0,Width=904,Height=200}) on item 'Generic_app.MainWindow.AssetGrid'.", repo.Generic_app.MainWindow.AssetGridInfo, new RecordItemIndex(4));
-            Validate.CompareImage(repo.Generic_app.MainWindow.AssetGridInfo, AssetGrid_Screenshot3, AssetGrid_Screenshot3_Options);
-            Delay.Milliseconds(0);
+            try {
+                //Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating CompareImage (Screenshot: 'Screenshot5' with region {X=0,Y=0,Width=891,Height=246}) on item 'Generic_app.MainWindow.AssetGrid'.", repo.Generic_app.MainWindow.AssetGridInfo, new RecordItemIndex(4));
+                //Validate.CompareImage(repo.Generic_app.MainWindow.AssetGridInfo, AssetGrid_Screenshot5, AssetGrid_Screenshot5_Options, Validate.DefaultMessage, false);
+                //Delay.Milliseconds(0);
+            } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(4)); }
             
             Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.CloseButton' at Center.", repo.Generic_app.MainWindow.CloseButtonInfo, new RecordItemIndex(5));
             repo.Generic_app.MainWindow.CloseButton.Click();
@@ -105,18 +107,20 @@ namespace NGTTestAutomation.Generic_app_UI
             Report.Log(ReportLevel.Info, "Delay", "Waiting for 500ms.", new RecordItemIndex(6));
             Delay.Duration(500, false);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot4' with region {X=0,Y=0,Width=886,Height=510}) on item 'Generic_app.MainWindow.AssetGrid'.", repo.Generic_app.MainWindow.AssetGridInfo, new RecordItemIndex(7));
-            Validate.CompareImage(repo.Generic_app.MainWindow.AssetGridInfo, AssetGrid_Screenshot4, AssetGrid_Screenshot4_Options);
-            Delay.Milliseconds(0);
+            try {
+                //Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating CompareImage (Screenshot: 'Screenshot4' with region {X=0,Y=0,Width=886,Height=510}) on item 'Generic_app.MainWindow.AssetGrid'.", repo.Generic_app.MainWindow.AssetGridInfo, new RecordItemIndex(7));
+                //Validate.CompareImage(repo.Generic_app.MainWindow.AssetGridInfo, AssetGrid_Screenshot4, AssetGrid_Screenshot4_Options, Validate.DefaultMessage, false);
+                //Delay.Milliseconds(0);
+            } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(7)); }
             
         }
 
 #region Image Feature Data
-        CompressedImage AssetGrid_Screenshot3
-        { get { return repo.Generic_app.MainWindow.AssetGridInfo.GetScreenshot3(new Rectangle(0, 0, 904, 200)); } }
+        CompressedImage AssetGrid_Screenshot5
+        { get { return repo.Generic_app.MainWindow.AssetGridInfo.GetScreenshot5(new Rectangle(0, 0, 891, 246)); } }
 
-        Imaging.FindOptions AssetGrid_Screenshot3_Options
-        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,904,200;True;10000000;0ms"); } }
+        Imaging.FindOptions AssetGrid_Screenshot5_Options
+        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,891,246;True;10000000;0ms"); } }
 
         CompressedImage AssetGrid_Screenshot4
         { get { return repo.Generic_app.MainWindow.AssetGridInfo.GetScreenshot4(new Rectangle(0, 0, 886, 510)); } }

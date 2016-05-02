@@ -82,62 +82,26 @@ reportlevel="Info;20">
 					name="Minimise"
 					id="d55cf4fc-1bd1-4f13-8246-2fe4e36feca3"
 					ref="820ae111-c1b1-4287-ab1e-a12f1150a1ea"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							Maximise
+						</description>
+					</testmodule>
 					<testmodule
 					name="Restore"
 					id="0ea43405-a8a3-4c8e-b0ff-e12e78441942"
 					ref="cde9b760-a059-4738-95d8-1197bd51bccc"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							Restore
+						</description>
+					</testmodule>
 					<teardown
 					name="teardown"
 					id="beb37bbe-e788-48d9-9c71-33389b14ef37">
 						<testmodule
 						name="Close_GenericApp_demo"
 						id="22ffaffe-ceb8-446e-b99a-ec3906891856"
-						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
-						type="Recording"/>
-					</teardown>
-				</testcase>
-			</folder>
-			<folder
-			name="Panel_layout"
-			id="b78bcc74-8ef7-4a95-9d55-1b31aecdc779">
-				<testcase
-				name="Layout_assetBrowser"
-				id="ad4cce63-c4bc-4118-bd29-f76e5d69bfbe">
-					<setup
-					name="setup"
-					id="fe03f69b-1796-413e-96d7-c4b797d9a2ff">
-						<testmodule
-						name="Open_GenericApp_ui"
-						id="68ef5911-526b-4551-8fce-fefc917e8a41"
-						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
-						type="Recording">
-							<databinding>
-								<var
-								variablename="path"
-								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
-								dataname="path"
-								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
-							</databinding>
-						</testmodule>
-					</setup>
-					<testmodule
-					name="AB_layout_RHS"
-					id="09008e22-c74b-450f-b06f-daef698a629f"
-					ref="1427968f-49e2-4ae1-95b0-c3ef9b297360"
-					type="Recording"/>
-					<testmodule
-					name="AB_layout_validation"
-					id="eb132c94-b4b8-4f6f-902b-b4510168acde"
-					ref="cc3d5e49-cc6f-47b1-a6af-3c7f0c9874c0"
-					type="Recording"/>
-					<teardown
-					name="teardown"
-					id="ee507b05-223c-4b6f-a169-d85ac37393a7">
-						<testmodule
-						name="Close_GenericApp_demo"
-						id="f5beed8d-9186-4470-9e78-261c3d7de107"
 						ref="d99ac968-d85e-4092-9b1a-5a85aa8e9780"
 						type="Recording"/>
 					</teardown>
@@ -170,7 +134,11 @@ reportlevel="Info;20">
 					name="File_exit"
 					id="276394c9-8bc8-41c9-a7b8-8282df9e166e"
 					ref="959610e8-dc35-4fde-93de-1e632eead6f5"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							Exit from menu
+						</description>
+					</testmodule>
 					<teardown
 					name="teardown"
 					id="6b15f8a7-4a10-401d-85c0-b946a44c2309">
@@ -205,7 +173,11 @@ reportlevel="Info;20">
 					name="Showmodaldialog"
 					id="8fc7817a-6244-4ef7-8aa2-970d8fa3056c"
 					ref="c5adfba7-b506-4caf-ba72-7fd6b37705c9"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							Showmodialog testing
+						</description>
+					</testmodule>
 					<teardown
 					name="teardown"
 					id="b5876c05-3b70-4af7-9b27-d1e13bedcdf4">
@@ -245,6 +217,9 @@ reportlevel="Info;20">
 					name="Test__Data_menu"
 					id="ad92a68d-61e5-4e17-aed8-ef8dbd132600"
 					ref="fb901b06-1c7f-454d-a275-c328118dc79d">
+						<description>
+							Testdata/Property _Tree_Test menu validation
+						</description>
 						<databinding>
 							<var
 							variablename="ModuleGrouppath"
@@ -436,7 +411,8 @@ reportlevel="Info;20">
 					name="LFT_ScrollBar"
 					id="bde2e673-421e-493d-b6a3-f0dcc297e065"
 					ref="0cce184d-3ea9-46d8-91b7-56559d1f9d2e"
-					type="Recording">
+					type="Recording"
+					enabled="False">
 						<description>
 							Scroll bar testing
 						</description>
@@ -500,6 +476,51 @@ reportlevel="Info;20">
 				</testcase>
 			</folder>
 			<folder
+			name="Panel_layout"
+			id="b78bcc74-8ef7-4a95-9d55-1b31aecdc779">
+				<testcase
+				name="Layout_assetBrowser"
+				id="ad4cce63-c4bc-4118-bd29-f76e5d69bfbe"
+				errorbehavior="Stop">
+					<setup
+					name="setup"
+					id="fe03f69b-1796-413e-96d7-c4b797d9a2ff">
+						<testmodule
+						name="Open_GenericApp_ui"
+						id="68ef5911-526b-4551-8fce-fefc917e8a41"
+						ref="3a17130a-ec04-4660-a6a2-a4be9e4d2244"
+						type="Recording">
+							<databinding>
+								<var
+								variablename="path"
+								variableid="50d4a791-38d2-4dcf-b6a4-7ee327b91776"
+								dataname="path"
+								datasourceid="030bf048-9635-494c-a06c-ab2cd1728573"/>
+							</databinding>
+						</testmodule>
+					</setup>
+					<testmodule
+					name="AB_layout_RHS"
+					id="09008e22-c74b-450f-b06f-daef698a629f"
+					ref="1427968f-49e2-4ae1-95b0-c3ef9b297360"
+					type="Recording"/>
+					<testmodule
+					name="AB_layout_validation"
+					id="eb132c94-b4b8-4f6f-902b-b4510168acde"
+					ref="cc3d5e49-cc6f-47b1-a6af-3c7f0c9874c0"
+					type="Recording"/>
+					<teardown
+					name="teardown"
+					id="ee507b05-223c-4b6f-a169-d85ac37393a7">
+						<testmodule
+						name="Close_x_button"
+						id="6c4f0cef-7680-4193-af71-19002ba287f8"
+						ref="f29a2209-30d9-4427-8579-c36243238608"
+						type="Recording"/>
+					</teardown>
+				</testcase>
+			</folder>
+			<folder
 			name="Asset_Browser"
 			id="24ee083c-2eaa-48ba-b407-f2e3f802c1ea">
 				<testcase
@@ -532,22 +553,47 @@ reportlevel="Info;20">
 					name="AB_select_Asset_Browser_tab"
 					id="964be88f-8382-4118-ae3c-d9d0e62090ed"
 					ref="67107961-4469-4e80-9429-fc8fc90dde83"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							Select asset browser tab
+						</description>
+					</testmodule>
 					<testmodule
 					name="AB_expand"
 					id="0d03fbcf-7241-426a-843a-7645246b41c1"
 					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							expand win 64 folder
+						</description>
+					</testmodule>
 					<testmodule
 					name="AB_Select_folder_win64"
 					id="21ad144d-e94c-41ef-9ac4-c9343c8024cf"
 					ref="31a9081e-b797-4f3f-aea9-a3455e315dab"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							Select win 64 folder
+						</description>
+					</testmodule>
+					<testmodule
+					name="AB_selectItems"
+					id="a36e9579-706d-428c-872b-1a896ae46060"
+					ref="e72b5edd-e4d5-4155-ac74-5cb6a754403c"
+					type="Recording">
+						<description>
+							Item selection
+						</description>
+					</testmodule>
 					<testmodule
 					name="AB_shorcut"
 					id="dd874e7e-af88-4ddf-973b-c9d98454ed5d"
 					ref="7e5abe31-c3fb-454c-951a-e73d1e187c6d"
-					type="Recording"/>
+					type="Recording">
+						<description>
+							Shortcut key test
+						</description>
+					</testmodule>
 					<testmodule
 					name="AB_shortcut_crash"
 					id="3d493375-146b-4a28-98ee-1f3c731b0d71"
@@ -558,11 +604,6 @@ reportlevel="Info;20">
 							known crash to test if the automation test run can continue
 						</description>
 					</testmodule>
-					<testmodule
-					name="AB_selectItems"
-					id="a36e9579-706d-428c-872b-1a896ae46060"
-					ref="e72b5edd-e4d5-4155-ac74-5cb6a754403c"
-					type="Recording"/>
 					<teardown
 					name="teardown"
 					id="2f7c006b-3a13-4293-80a9-381ff1efb461">
@@ -702,11 +743,6 @@ reportlevel="Info;20">
 					name="AB_select_Asset_Browser_tab"
 					id="09a46535-aec7-456b-a9cf-7d8f59007bed"
 					ref="67107961-4469-4e80-9429-fc8fc90dde83"
-					type="Recording"/>
-					<testmodule
-					name="AB_expand"
-					id="a114ecd9-f138-4638-b207-dcfefde9d300"
-					ref="ce93ef25-0a18-46cd-98e1-00ebde4952a3"
 					type="Recording"/>
 					<testmodule
 					name="AB_Select_folder_win64"
@@ -908,6 +944,8 @@ properties, not selected items</P>]]>
 			<testcase
 			id="7488b862-8d43-48e2-b26c-d57659ab9c49"/>
 			<testcase
+			id="7f6715f1-b074-4f71-b465-3e3489485735"/>
+			<testcase
 			id="8919c9a0-abc7-492f-ad70-8c647ef85378"/>
 			<testcase
 			id="a003f6b1-712e-4dbd-87eb-8767afc6a4a0"/>
@@ -919,6 +957,8 @@ properties, not selected items</P>]]>
 			id="b78bcc74-8ef7-4a95-9d55-1b31aecdc779"/>
 			<testcase
 			id="b946ca30-95c6-42e4-b8ed-2c5e938dd9e7"/>
+			<testcase
+			id="c70774a5-911a-4fbf-8cfe-793e57682d95"/>
 			<testcase
 			id="e0c8a1c5-09e9-4155-a5ff-fca563957211"/>
 			<testcase

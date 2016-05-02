@@ -83,9 +83,6 @@ namespace NGTTestAutomation.Generic_app_UI
             repo.Generic_app.MainWindow.PropertyTreeTest.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(1));
-            Delay.Duration(10000, false);
-            
         }
 
 #region Image Feature Data

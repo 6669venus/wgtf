@@ -87,7 +87,7 @@ namespace NGTTestAutomation.Generic_app_UI
             Keyboard.Press("affine{Return}");
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot8' with region {X=0,Y=0,Width=1174,Height=922}) on item 'MainWindow.LFT_panel.List'.", repo.MainWindow.LFT_panel.ListInfo, new RecordItemIndex(2));
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot8' with region {X=0,Y=0,Width=72,Height=22}) on item 'MainWindow.LFT_panel.List'.", repo.MainWindow.LFT_panel.ListInfo, new RecordItemIndex(2));
             Validate.CompareImage(repo.MainWindow.LFT_panel.ListInfo, List_Screenshot8, List_Screenshot8_Options);
             Delay.Milliseconds(0);
             
@@ -95,10 +95,10 @@ namespace NGTTestAutomation.Generic_app_UI
 
 #region Image Feature Data
         CompressedImage List_Screenshot8
-        { get { return repo.MainWindow.LFT_panel.ListInfo.GetScreenshot8(new Rectangle(0, 0, 1174, 922)); } }
+        { get { return repo.MainWindow.LFT_panel.ListInfo.GetScreenshot8(new Rectangle(0, 0, 72, 22)); } }
 
         Imaging.FindOptions List_Screenshot8_Options
-        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,1174,922;True;10000000;0ms"); } }
+        { get { return Imaging.FindOptions.Parse("0.7;EdgesSobel;0,0,72,22;True;10000000;0ms"); } }
 
 #endregion
     }

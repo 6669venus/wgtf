@@ -417,6 +417,18 @@
       <UserCode>true</UserCode>
       <id>59a5c522-a5be-4dee-99ba-2d335a9270ba</id>
     </Compile>
+    <Compile Include="Generic_app_UI\Close_x_button.cs">
+      <BoundTo>5f6cdee1-4f72-4f70-a221-6f1e7c596143</BoundTo>
+      <DependentUpon>Close_x_button.rxrec</DependentUpon>
+      <RecorderCode>true</RecorderCode>
+      <id>ffe0ebee-9931-494b-b22d-87dbb135e5c9</id>
+    </Compile>
+    <Compile Include="Generic_app_UI\Close_x_button.UserCode.cs">
+      <BoundTo>5f6cdee1-4f72-4f70-a221-6f1e7c596143</BoundTo>
+      <DependentUpon>Close_x_button.rxrec</DependentUpon>
+      <UserCode>true</UserCode>
+      <id>e2816411-9c85-4088-8c9a-0b1ca747a974</id>
+    </Compile>
     <Compile Include="Generic_app_UI\Expand_SimpleCases.cs">
       <BoundTo>fd7e0f1c-801f-488a-9d8b-ee4a015bd1f9</BoundTo>
       <DependentUpon>Expand_SimpleCases.rxrec</DependentUpon>
@@ -905,6 +917,11 @@
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>0adbf1e5-1122-45f4-8573-d05625109e55</id>
       <recordtableid>557f6b4c-4aea-480e-986e-bc0acef4b971</recordtableid>
+    </None>
+    <None Include="Generic_app_UI\Close_x_button.rxrec">
+      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
+      <id>5f6cdee1-4f72-4f70-a221-6f1e7c596143</id>
+      <recordtableid>f29a2209-30d9-4427-8579-c36243238608</recordtableid>
     </None>
     <None Include="Generic_app_UI\Expand_SimpleCases.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>

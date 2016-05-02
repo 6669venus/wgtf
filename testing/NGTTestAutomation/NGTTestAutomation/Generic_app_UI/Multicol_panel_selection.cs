@@ -79,8 +79,8 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.MultiColumnListTestAardvark' at Center.", repo.MainWindow.MultiColumnListTestAardvarkInfo, new RecordItemIndex(0));
-            repo.MainWindow.MultiColumnListTestAardvark.Click();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.MultiColumnListTest1' at Center.", repo.MainWindow.MultiColumnListTest1Info, new RecordItemIndex(0));
+            repo.MainWindow.MultiColumnListTest1.Click();
             Delay.Milliseconds(200);
             
         }

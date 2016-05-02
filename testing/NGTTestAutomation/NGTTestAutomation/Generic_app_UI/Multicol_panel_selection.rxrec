@@ -42,9 +42,9 @@ mode="Global">
 			<bindings/>
 			<info
 			sourcename="RepositoryEditor"
-			id="7d74c732-a154-4465-9030-61e46892a63e">
+			id="257d17ac-ab47-4110-855a-2ad93db59ed9">
 				<path>
-					/form[@name='MainWindow']/?/?/tabpage[@title~'^MultiColumn\ List\ Test\ -\ a']
+					/form[@name='MainWindow']/?/?/tabpage[@title='MultiColumn List Test']
 				</path>
 			</info>
 		</mouseitem>

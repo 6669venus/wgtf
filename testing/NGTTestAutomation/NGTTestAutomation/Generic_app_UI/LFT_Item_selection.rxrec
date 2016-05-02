@@ -82,12 +82,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot7"
-		screenshotguid="40f67e7c-6ee5-485a-9a63-8337620bcd60"
-		codegenpropertyname="List_Screenshot7"
+		screenshotname="LFT_selection1"
+		screenshotguid="1a6af5f3-bd52-45b7-9497-dbb84cfe7b3f"
+		codegenpropertyname="List_LFT_selection1"
 		searchpropertyid="df630646-0224-49df-8070-14372c6da916"
-		imagerect="0,0,1174,922"
-		imageoptions="0.8;EdgesSobel;0,0,1174,922;True;10000000;0ms"
+		imagerect="4,0,106,175"
+		imageoptions="0.8;EdgesSobel;4,0,106,175;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>

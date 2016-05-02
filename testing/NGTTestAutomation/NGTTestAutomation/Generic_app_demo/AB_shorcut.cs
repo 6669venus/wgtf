@@ -91,18 +91,18 @@ namespace NGTTestAutomation.Generic_app_demo
             Keyboard.Press(System.Windows.Forms.Keys.Left, Keyboard.DefaultScanCode, Keyboard.DefaultKeyPressTime, 1, true);
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=241,Height=168}) on item 'Generic_app.MainWindow.Column1'.", repo.Generic_app.MainWindow.Column1Info, new RecordItemIndex(3));
-            Validate.CompareImage(repo.Generic_app.MainWindow.Column1Info, Column1_Screenshot1, Column1_Screenshot1_Options);
+            Report.Log(ReportLevel.Info, "Validation", "Validating CompareImage (Screenshot: 'Screenshot4' with region {X=0,Y=0,Width=233,Height=168}) on item 'Generic_app.MainWindow.Column1'.", repo.Generic_app.MainWindow.Column1Info, new RecordItemIndex(3));
+            Validate.CompareImage(repo.Generic_app.MainWindow.Column1Info, Column1_Screenshot4, Column1_Screenshot4_Options);
             Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
-        CompressedImage Column1_Screenshot1
-        { get { return repo.Generic_app.MainWindow.Column1Info.GetScreenshot1(new Rectangle(0, 0, 241, 168)); } }
+        CompressedImage Column1_Screenshot4
+        { get { return repo.Generic_app.MainWindow.Column1Info.GetScreenshot4(new Rectangle(0, 0, 233, 168)); } }
 
-        Imaging.FindOptions Column1_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,241,168;True;10000000;0ms"); } }
+        Imaging.FindOptions Column1_Screenshot4_Options
+        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,233,168;True;10000000;0ms"); } }
 
 #endregion
     }

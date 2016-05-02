@@ -194,7 +194,7 @@ Canvas {
         var countFromWhole = Math.floor((startX - nearStartWhole) / lineGap)
         startX = nearStartWhole + countFromWhole * lineGap;
 
-        if (useBoarders == true) {
+        if (useBoarders) {
             startX = Math.max(startX, 0)
             endX = Math.min(endX, 1)
         }

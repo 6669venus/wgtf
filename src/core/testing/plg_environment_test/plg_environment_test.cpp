@@ -135,8 +135,10 @@ public:
 
     void newProject()
     {
+        connections_.clear();
         if (newProjectDialog_ != nullptr)
         {
+            connections_ += newProjectDialog_->signalClose.connect( std::bind( &EnvrionmentTestPlugin::onNewDlgClose, this ) );
             newProjectDialog_->showModal();
         }
     }

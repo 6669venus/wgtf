@@ -66,10 +66,7 @@ void Project::init( const char * projectName, const char * dataFile )
     assert( defManager != nullptr && controller != nullptr && fileSystem != nullptr );
     if( dataFile == nullptr || !fileSystem->exists(dataFile))
     {
-        auto pDefinition = defManager->getDefinition(
-            getClassIdentifier< ProjectData >() );
-        assert( pDefinition != nullptr );
-        projectData_ = pDefinition->create();
+        projectData_ =  defManager->create< ProjectData >();
     }
     else
     {

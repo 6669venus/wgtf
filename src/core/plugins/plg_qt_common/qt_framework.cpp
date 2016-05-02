@@ -139,7 +139,6 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	auto fileSystem = contextManager.queryInterface< IFileSystem >();
 	auto metaTypeManager = contextManager.queryInterface<IMetaTypeManager>();
 	preferences_.reset( new QtPreferences( *definitionManager, *serializationManger, *fileSystem, *metaTypeManager, *this ) );
-	preferences_->loadPreferences();
 
 	SharedControls::initDefs( *definitionManager );
 }
@@ -154,7 +153,6 @@ void QtFramework::finalise()
 	unregisterResources();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
-	preferences_->savePrferences();
 	globalQmlSettings_ = nullptr;
 	defaultQmlSpacing_ = nullptr;
 	palette_ = nullptr;

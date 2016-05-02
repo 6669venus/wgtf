@@ -67,53 +67,6 @@ void QtPreferences::deregisterPreferencesListener( std::shared_ptr< IPreferences
     listeners_.erase( listener );
 }
 
-//------------------------------------------------------------------------------
-void QtPreferences::savePrferences()
-{
-	auto stream = fileSystem_.readFile( s_preferenceFile, std::ios::out | std::ios::binary );
-	if(stream)
-	{
-		XMLSerializer serializer( *stream, definitionManager_ );
-		size_t size = preferences_.size();
-		serializer.serialize( size );
-		for( auto& preferenceIter : preferences_ )
-		{
-			serializer.serialize( preferenceIter.first );
-			serializer.serialize( preferenceIter.second );
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-void QtPreferences::loadPreferences()
-{
-	if ((!fileSystem_.exists( s_definitionFile )) || (!fileSystem_.exists( s_preferenceFile )))
-	{
-		return;
-	}
-	preferences_.clear();
-
-	IFileSystem::IStreamPtr fileStream = 
-		fileSystem_.readFile( s_preferenceFile, std::ios::in | std::ios::binary );
-	XMLSerializer serializer( *fileStream, definitionManager_ );
-	size_t count = 0;
-	serializer.deserialize( count );
-	for (size_t i = 0; i < count; i++)
-	{
-		std::string key;
-		serializer.deserialize( key );
-
-		const MetaType * metaType = 
-			metaTypeManager_.findType( getClassIdentifier<ObjectHandle>() );
-		Variant value( metaType );
-		serializer.deserialize( value );
-		GenericObjectPtr obj;
-		bool isOk = value.tryCast( obj );
-		assert( isOk );
-		preferences_[ key ] = obj;
-	}
-}
-
 void QtPreferences::savePreferenceToFile( const char * filePath )
 {
     auto stream = fileSystem_.readFile( filePath, std::ios::out | std::ios::binary );

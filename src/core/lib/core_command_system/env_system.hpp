@@ -35,6 +35,7 @@ public:
 	virtual int addEnv( const char* description ) override;
 	virtual void removeEnv( int id ) override;
 	virtual void selectEnv( int id ) override;
+    virtual void saveEnv( int id ) override;
 
 private:
 	typedef std::unique_ptr<IEnvState> IEnvStatePtr;

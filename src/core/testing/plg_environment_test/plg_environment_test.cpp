@@ -27,6 +27,7 @@ private:
     std::unique_ptr< IWindow > openProjectDialog_;
     IComponentContext* contextManager_;
     ObjectHandle projectManager_;
+    ConnectionHolder connections_;
 public:
 	//==========================================================================
 	EnvrionmentTestPlugin(IComponentContext & contextManager )
@@ -91,7 +92,9 @@ public:
         newProjectDialog_ = uiFramework->createWindow( 
             "testing_project/new_project_dialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
+        connections_ += newProjectDialog_->signalClose.connect( std::bind( &EnvrionmentTestPlugin::onNewDlgClose, this ) );
         uiApplication->addWindow( *newProjectDialog_ );
+
 	}
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
@@ -105,6 +108,8 @@ public:
         uiApplication->removeAction( *saveProject_ );
         uiApplication->removeAction( *closeProject_ );
         uiApplication->removeWindow( *newProjectDialog_ );
+        uiApplication->removeWindow( *openProjectDialog_ );
+        connections_.clear();
         newProject_ = nullptr;
         openProject_ = nullptr;
         saveProject_ = nullptr;
@@ -135,13 +140,31 @@ public:
             newProjectDialog_->showModal();
         }
     }
+
+    void onNewDlgClose()
+    {
+        projectManager_.getBase< ProjectManager >()->createProject();
+    }
+
+    void onOpenDlgClose()
+    {
+        projectManager_.getBase< ProjectManager >()->openProject();
+    }
     void openProject()
     {
-        openProjectDialog_ = nullptr;
+        connections_.clear();
         auto uiFramework = contextManager_->queryInterface<IUIFramework>();
+        auto uiApplication = contextManager_->queryInterface<IUIApplication>();
+        if(openProjectDialog_ != nullptr)
+        {
+            uiApplication->removeWindow( *openProjectDialog_ );
+            openProjectDialog_ = nullptr;
+        }
         openProjectDialog_ = uiFramework->createWindow( 
             "testing_project/open_project_dialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
+        connections_ += openProjectDialog_->signalClose.connect( std::bind( &EnvrionmentTestPlugin::onOpenDlgClose, this ) );
+        uiApplication->addWindow( *openProjectDialog_ );
     }
     void saveProject()
     {

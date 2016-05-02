@@ -1,9 +1,12 @@
+
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 
 Item{
     id: root
+    property var id: "chooseProjectDlg"
+    property var title: "Choose a project"
     Component.onCompleted: {
         fileDialogInstance.open();
     }
@@ -20,10 +23,13 @@ Item{
         selectExisting: true
 
         onAccepted: {
-            openProject(fileUrl);
+            setOpenProjectFile(fileUrl);
+            closeWindow( id );
         }
 
         onRejected: {
+            setOpenProjectFile("");
+            closeWindow( id );
         }
     }
 }

@@ -24,9 +24,6 @@ public:
     void savePreferenceToFile( const char * filePath ) override;
     void loadPreferenceFromFile( const char * filePath ) override;
 
-	void savePrferences();
-	void loadPreferences();
-
 private:
 	IDefinitionManager & definitionManager_;
 	ISerializationManager & serializationManager_;

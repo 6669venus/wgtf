@@ -70,3 +70,13 @@ void EnvManager::selectEnv(int id)
 		l->onSelectEnv( it->second.get() );
 	}
 }
+
+void EnvManager::saveEnv( int id )
+{
+    auto it = find_if(stateVec_.begin(), stateVec_.end(), [=](const StateVec::value_type& x) { return x.first == id; });
+    assert(it != stateVec_.end());
+    for (auto& l : listeners_)
+    {
+        l->onSaveEnv( it->second.get() );
+    }
+}

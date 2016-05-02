@@ -56,10 +56,10 @@ Item {
                     checkable: false
                     enabled: false
                     onClicked: {
-                        closeWindow( id );
+                        setNewProjectName(textBox.text);
                         textBox.text = "";
                         okButton.enabled = false;
-                        createProject();
+                        closeWindow( id );
                     }
                 }
 
@@ -69,9 +69,10 @@ Item {
                     Layout.preferredWidth: 60
                     checkable: false
                     onClicked: {
-                        closeWindow( id );
+                        setNewProjectName("");
                         textBox.text = "";
                         okButton.enabled = false;
+                        closeWindow( id );
                     }
                 }
             }

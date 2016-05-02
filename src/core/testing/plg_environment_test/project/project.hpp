@@ -16,17 +16,20 @@ class IComponentContext;
 class Project
 {
 public:
-    Project();
+    Project( IComponentContext & contextManager );
     ~Project();
-    void init( IComponentContext& contextManager, const char * projectName, const char * dataFile = nullptr );
-    void fini( IComponentContext& contextManager );
-    void saveData( IComponentContext& contextManager, const char * dataFile );
+    void init( const char * projectName, const char * dataFile = nullptr );
+    void fini();
+    void saveData( const char * dataFile );
     const char * getProjectName() const;
     const ObjectHandle & getProjectData() const;
+
 private:
+    IComponentContext & contextManager_;
     ObjectHandle projectData_;
     std::string projectName_;
     std::unique_ptr<IView> view_;
+    int envId_;
 };
 
 class ProjectManager
@@ -37,7 +40,7 @@ public:
     void fini();
 
     void createProject();
-    void openProject( const Variant& strProjectName );
+    void openProject();
     void saveProject();
     void closeProject();
     bool canOpen();
@@ -45,12 +48,15 @@ public:
     bool canClose();
 
     bool isProjectNameOk( const Variant& strProjectName );
+    void setNewProjectName( const Variant& strProjectFile );
+    void setOpenProjectFile( const Variant& strProjectFile );
 
 private:
     IComponentContext* contextManager_;
     std::unordered_map<std::string, Project* > projects_;
     std::unique_ptr<Project> curProject_;
     std::string newProjectName_;
+    std::string openProjectFile_;
 };
 
 class ProjectData

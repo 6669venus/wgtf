@@ -8,6 +8,10 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
 #include "core_serialization/i_file_system.hpp"
+#include <QString>
+#include <QUrl>
+#include "core_command_system/i_env_system.hpp"
+#include "core_command_system/i_command_manager.hpp"
 
 
 namespace {
@@ -42,7 +46,8 @@ namespace {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Project::Project()
+Project::Project( IComponentContext & contextManager )
+    : contextManager_( contextManager )
 {
 
 }
@@ -52,12 +57,12 @@ Project::~Project()
 
 }
 
-void Project::init( IComponentContext& contextManager, const char * projectName, const char * dataFile )
+void Project::init( const char * projectName, const char * dataFile )
 {
     projectName_ = projectName;
-    auto defManager = contextManager.queryInterface<IDefinitionManager>();
-    auto controller = contextManager.queryInterface<IReflectionController>();
-    auto fileSystem = contextManager.queryInterface<IFileSystem>();
+    auto defManager = contextManager_.queryInterface<IDefinitionManager>();
+    auto controller = contextManager_.queryInterface<IReflectionController>();
+    auto fileSystem = contextManager_.queryInterface<IFileSystem>();
     assert( defManager != nullptr && controller != nullptr && fileSystem != nullptr );
     if( dataFile == nullptr || !fileSystem->exists(dataFile))
     {
@@ -71,6 +76,7 @@ void Project::init( IComponentContext& contextManager, const char * projectName,
         IFileSystem::IStreamPtr fileStream = 
             fileSystem->readFile( dataFile, std::ios::in | std::ios::binary );
         XMLSerializer serializer( *fileStream, *defManager );
+        defManager->deserializeDefinitions( serializer );
         Variant variant;
         bool br = serializer.deserialize( variant );
         assert( br );
@@ -81,28 +87,36 @@ void Project::init( IComponentContext& contextManager, const char * projectName,
     auto model = std::unique_ptr< ITreeModel >(
         new ReflectedTreeModel( projectData_, *defManager, controller ) );
 
-    auto uiFramework = contextManager.queryInterface<IUIFramework>();
-    auto uiApplication = contextManager.queryInterface<IUIApplication>();
+    auto em = contextManager_.queryInterface<IEnvManager>();
+    envId_ = em->addEnv( projectName_.c_str() );
+    em->selectEnv( envId_ );
+
+    auto uiFramework = contextManager_.queryInterface<IUIFramework>();
+    auto uiApplication = contextManager_.queryInterface<IUIApplication>();
     assert( uiFramework != nullptr && uiApplication != nullptr );
     view_ = uiFramework->createView( "testing_project/project_data_panel.qml", 
         IUIFramework::ResourceType::Url, std::move( model ) );
     uiApplication->addView( *view_ );
+
 }
 
-void Project::fini( IComponentContext& contextManager )
+void Project::fini()
 {
-    auto uiApplication = contextManager.queryInterface<IUIApplication>();
+    auto uiApplication = contextManager_.queryInterface<IUIApplication>();
     assert( uiApplication != nullptr );
     uiApplication->removeView( *view_ );
+    auto em = contextManager_.queryInterface<IEnvManager>();
+    em->removeEnv( envId_ );
     view_ = nullptr;
     projectData_ = nullptr;
 }
 
-void Project::saveData( IComponentContext& contextManager, const char * dataFile )
+void Project::saveData( const char * dataFile )
 {
-    auto defManager = contextManager.queryInterface<IDefinitionManager>();
-    auto fileSystem = contextManager.queryInterface<IFileSystem>();
-    assert( defManager && fileSystem );
+    auto defManager = contextManager_.queryInterface<IDefinitionManager>();
+    auto fileSystem = contextManager_.queryInterface<IFileSystem>();
+    auto cmdManager = contextManager_.queryInterface<ICommandManager>();
+    assert( defManager && fileSystem && cmdManager );
     ResizingMemoryStream stream;
     XMLSerializer serializer( stream, *defManager );
     defManager->serializeDefinitions( serializer );
@@ -111,6 +125,9 @@ void Project::saveData( IComponentContext& contextManager, const char * dataFile
     fileSystem->writeFile( 
         dataFile, stream.buffer().c_str(), 
         stream.buffer().size(), std::ios::out | std::ios::binary );
+
+    auto em = contextManager_.queryInterface<IEnvManager>();
+    em->saveEnv( envId_ );
 }
 
 const char * Project::getProjectName() const
@@ -122,6 +139,7 @@ const ObjectHandle & Project::getProjectData() const
 {
     return projectData_;
 }
+
 
  //////////////////////////////////////////////////////////////////////////
 ProjectManager::ProjectManager()
@@ -137,21 +155,30 @@ void ProjectManager::fini()
 
 void ProjectManager::createProject()
 {
+    if(newProjectName_ == "")
+    {
+        return;
+    }
     this->closeProject();
-    curProject_.reset( new Project );
-    curProject_->init( *contextManager_, newProjectName_.c_str() );
+    curProject_.reset( new Project( *contextManager_ ) );
+    curProject_->init( newProjectName_.c_str() );
 }
-void ProjectManager::openProject( const Variant& strProjectFile )
+void ProjectManager::openProject()
 {
+    if(openProjectFile_ == "")
+    {
+        return;
+    }
+
+    this->closeProject();
+
     auto defManager = contextManager_->queryInterface<IDefinitionManager>();
     auto fileSystem = contextManager_->queryInterface<IFileSystem>();
     auto uiFramework = contextManager_->queryInterface<IUIFramework>();
     assert( defManager && fileSystem && uiFramework );
-    std::string projectFile;
-    bool isOk = strProjectFile.tryCast( projectFile );
-    assert( isOk );
+
     IFileSystem::IStreamPtr fileStream = 
-        fileSystem->readFile( projectFile.c_str(), std::ios::in | std::ios::binary );
+        fileSystem->readFile( openProjectFile_.c_str(), std::ios::in | std::ios::binary );
     XMLSerializer serializer( *fileStream, *defManager );
     std::string projectName;
     std::string projectDataFile;
@@ -164,9 +191,8 @@ void ProjectManager::openProject( const Variant& strProjectFile )
     //uiFramework->getPreferences()->loadPreferenceFromFile( projectSettingFile.c_str() );
 
     // load data
-    this->closeProject();
-    curProject_.reset( new Project );
-    curProject_->init( *contextManager_, newProjectName_.c_str(), projectDataFile.c_str() );
+    curProject_.reset( new Project( *contextManager_ ) );
+    curProject_->init( projectName.c_str(), projectDataFile.c_str() );
 }
 void ProjectManager::saveProject()
 {
@@ -181,7 +207,7 @@ void ProjectManager::saveProject()
         std::string projectSettingFile = genProjectSettingFileName( curProject_->getProjectName() );
 
         //save project data
-        curProject_->saveData( *contextManager_, projectDataFile.c_str() );
+        curProject_->saveData( projectDataFile.c_str() );
 
         //save project UI preferences
         uiFramework->getPreferences()->savePreferenceToFile(projectSettingFile.c_str());
@@ -206,7 +232,7 @@ void ProjectManager::closeProject()
 {
     if(curProject_ != nullptr)
     {
-        curProject_->fini( *contextManager_ );
+        curProject_->fini();
         curProject_ = nullptr;
     }
 }
@@ -227,9 +253,30 @@ bool ProjectManager::canClose()
 
 bool ProjectManager::isProjectNameOk( const Variant& strProjectName )
 {
+    return true;
+}
+
+void ProjectManager::setNewProjectName( const Variant& strProjectName )
+{
     assert( strProjectName.canCast<std::string>());
     strProjectName.tryCast( newProjectName_ );
-    return true;
+}
+
+void ProjectManager::setOpenProjectFile( const Variant& strProjectFile )
+{
+    assert( strProjectFile.canCast<std::string>());
+    strProjectFile.tryCast( openProjectFile_ );
+    if(openProjectFile_ == "")
+    {
+        return;
+    }
+    // do this since qt filedialog return file path format like: file:///drivername://dir/file.ext
+    // which will cause file system open failed.
+    // TODO: remove this workaround code
+    QString qstrFile(openProjectFile_.c_str());
+    QUrl url(qstrFile);
+    qstrFile = url.toLocalFile();
+    openProjectFile_ = qstrFile.toUtf8().constData();
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -40,6 +40,7 @@ public:
 	virtual void onAddEnv( IEnvState* state ) = 0;
 	virtual void onRemoveEnv( IEnvState* state ) = 0;
 	virtual void onSelectEnv( IEnvState* state ) = 0;
+    virtual void onSaveEnv( IEnvState* state ) = 0;
 };
 
 class IEnvManager
@@ -52,6 +53,7 @@ public:
 	virtual int addEnv( const char* description ) = 0;
 	virtual void removeEnv( int id ) = 0;
 	virtual void selectEnv( int id ) = 0;
+    virtual void saveEnv( int id ) = 0;
 };
 
 #define DEFINE_EC_GUID public: static const ECGUID GUID; virtual const ECGUID& getGUID() const override { return GUID; }

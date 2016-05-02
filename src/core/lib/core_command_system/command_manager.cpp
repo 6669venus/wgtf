@@ -169,6 +169,7 @@ public:
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
+    virtual void onSaveEnv( IEnvState* state ) override;
 
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
@@ -1070,25 +1071,11 @@ void CommandManagerImpl::onAddEnv( IEnvState* state )
 
 void CommandManagerImpl::onRemoveEnv( IEnvState* state )
 {
-	ENV_STATE_REMOVE( HistoryEnvCom, ec );
-	if (ec == historyState_)
-	{
-		switchEnvContext( &nullHistoryState_ );
-	}
-
-	IDefinitionManager& defManager = pCommandManager_->getDefManager();
-	ResizingMemoryStream stream;
-	HistorySerializer serializer( stream, defManager );
-
-	serializer.serialize( s_historyVersion );
-
-	SaveCommandHistory( serializer, ec );
-
-	std::string file = state->description();
-	file += s_historyVersion;
-	IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
-	fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+    ENV_STATE_REMOVE( HistoryEnvCom, ec );
+    if (ec == historyState_)
+    {
+        switchEnvContext( &nullHistoryState_ );
+    }
 }
 
 void CommandManagerImpl::onSelectEnv( IEnvState* state )
@@ -1100,8 +1087,27 @@ void CommandManagerImpl::onSelectEnv( IEnvState* state )
 	}
 }
 
+void CommandManagerImpl::onSaveEnv( IEnvState* state )
+{
+    ENV_STATE_QUERY( HistoryEnvCom, ec );
+    IDefinitionManager& defManager = pCommandManager_->getDefManager();
+    ResizingMemoryStream stream;
+    HistorySerializer serializer( stream, defManager );
+
+    serializer.serialize( s_historyVersion );
+
+    SaveCommandHistory( serializer, ec );
+
+    std::string file = state->description();
+    file += s_historyVersion;
+    IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+    assert( fileSystem );
+    fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+}
+
 void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 {
+    flush();
 	unbindHistoryCallbacks();
 	unbindIndexCallbacks();
 	currentIndex_.value( NO_SELECTION );
@@ -1307,14 +1313,12 @@ IReflectionController * CommandManager::getReflectionController() const
 //==============================================================================
 bool CommandManager::SaveHistory( ISerializer & serializer )
 {
-	pImpl_->serializeMacroList( serializer );
 	return pImpl_->SaveCommandHistory( serializer, pImpl_->historyState_ );
 }
 
 //==============================================================================
 bool CommandManager::LoadHistory( ISerializer & serializer )
 {
-	pImpl_->deserializeMacroList( serializer );
 	return pImpl_->LoadCommandHistory( serializer, pImpl_->historyState_ );
 }
 

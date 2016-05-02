@@ -5,6 +5,7 @@
 #include <QQmlComponent>
 #include <QModelIndex>
 
+ITEMROLE( valueType )
 ITEMROLE( component )
 
 ComponentExtension::ComponentExtension()
@@ -19,6 +20,7 @@ ComponentExtension::~ComponentExtension()
 QHash< int, QByteArray > ComponentExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
+	registerRole( ItemRole::valueTypeName, roleNames );
 	registerRole( ItemRole::componentName, roleNames );
 	return roleNames;
 }
@@ -36,10 +38,13 @@ QVariant ComponentExtension::data( const QModelIndex &index, int role ) const
 		return QVariant( QVariant::Invalid );
 	}
 
-	std::function< Variant ( size_t ) > dataPredicate = [&] ( size_t role ) {
-		return index.model()->data( index, static_cast< int >( role ) );
+	auto data = index.model()->data( index, ItemRole::valueTypeId );
+	auto typeId = TypeId( data.toString().toUtf8().constData() );
+	std::function< bool ( size_t ) > predicate = [&] ( size_t role ) {
+		return index.model()->data( index, static_cast< int >( role ) ) == true;
 	};
-	auto component = qtFramework_->findComponent( dataPredicate );
+
+	auto component = qtFramework_->findComponent( typeId, predicate );
 	if (component == nullptr)
 	{
 		return QVariant( QVariant::Invalid );

@@ -25,7 +25,6 @@ SET( ALL_SRCS
 	layout_manager.hpp
 	layout_tags.hpp
 	simple_component_provider.hpp
-	basic_component_provider.hpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

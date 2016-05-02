@@ -11,10 +11,6 @@ class IComponentProvider
 public:
 	virtual ~IComponentProvider() {}
 
-	virtual const char * component( 
-		std::function< Variant ( size_t ) > & dataPredicate ) const { return nullptr; }
-
-	// DEPRECATED //
 	virtual const char * componentId( 
 		const TypeId & typeId, std::function< bool ( size_t ) > & predicate ) const { return nullptr; }
 };

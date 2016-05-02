@@ -25,7 +25,7 @@ WGTreeViewBase {
 	WGItemViewCommon {
 		id: itemView
 
-		extensions: [treeExtension, columnExtension]
+		extensions: [treeExtension, columnExtension, imageExtension]
 
 		TreeExtension {
 			id: treeExtension
@@ -33,6 +33,10 @@ WGTreeViewBase {
 
 		ColumnExtension {
 			id: columnExtension
+		}
+
+		ImageExtension {
+			id: imageExtension
 		}
 
 		Connections {

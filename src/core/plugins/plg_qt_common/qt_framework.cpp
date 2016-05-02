@@ -14,6 +14,7 @@
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
@@ -133,6 +134,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj ) );
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
+	qmlEngine_->addImageProvider( QtImageProviderOld::providerId(), new QtImageProviderOld() );
 
 	if (commandManager_ != nullptr)
 	{
@@ -158,6 +160,7 @@ void QtFramework::finalise()
 	}
 
 	unregisterResources();
+	qmlEngine_->removeImageProvider( QtImageProviderOld::providerId() );
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
 	preferences_->savePrferences();

@@ -23,6 +23,7 @@
 #include "models/extensions/tree_extension.hpp"
 #include "models/extensions/tree_extension_old.hpp"
 #include "models/extensions/value_extension.hpp"
+#include "models/extensions/image_extension.hpp"
 #include "models/extensions/header_footer_text_extension.hpp"
 #include "models/wg_list_model.hpp"
 #include "models/wg_tree_model.hpp"
@@ -76,6 +77,7 @@
 	qmlRegisterType< ColumnExtension, 1 >( "WGControls", 2, 0, "ColumnExtension" );
 	qmlRegisterType< ListExtension, 1 >( "WGControls", 2, 0, "ListExtension" );
 	qmlRegisterType< TreeExtension, 1 >( "WGControls", 2, 0, "TreeExtension" );
+	qmlRegisterType< ImageExtension, 1 >( "WGControls", 2, 0, "ImageExtension" );
 	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 2, 0, "ComponentExtension" );
 
 	qmlRegisterType< WGItemView, 1 >( "WGControls", 2, 0, "WGItemView" );

@@ -247,12 +247,12 @@ public:
 	 */
 	typedef void DataSignature( const ItemIndex & index, int column, size_t role, const Variant & value );
 	/**
-	 *	Insert/remove into the item at *parentIndex* from *startPos* to *startPos + count*.
+	 *	Insert/remove into the item at *parentIndex* from *startRow* to *startRow + count*.
 	 *	@param index item inside which to do the insertion/removal.
-	 *	@param startPos first row or column of insertion/removal under the parent.
-	 *	@param count number of rows or columns after startPos.
+	 *	@param startRow first row of insertion/removal under the parent.
+	 *	@param count number of rows after startRow.
 	 */
-	typedef void RangeSignature( const ItemIndex & parentIndex, int startPos, int count );
+	typedef void RangeSignature( const ItemIndex & parentIndex, int startRow, int count );
 	typedef std::function< DataSignature > DataCallback;
 	typedef std::function< RangeSignature > RangeCallback;
 
@@ -393,11 +393,11 @@ public:
 	 */
 	typedef void DataSignature( const ItemIndex & index, size_t role, const Variant & newValue );
 	/**
-	 *	Insert/remove from *startRow* to *startRow + count*.
-	 *	@param startRow first row of insertion/removal.
-	 *	@param count number of rows after startRow.
+	 *	Insert/remove from *startPos* to *startPos + count*.
+	 *	@param startPos first row or column of insertion/removal.
+	 *	@param count number of rows or columns after startPos.
 	 */
-	typedef void RangeSignature( int startRow, int count );
+	typedef void RangeSignature( int startPos, int count );
 	typedef std::function< DataSignature > DataCallback;
 	typedef std::function< RangeSignature > RangeCallback;
 

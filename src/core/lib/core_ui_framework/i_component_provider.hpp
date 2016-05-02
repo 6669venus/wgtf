@@ -2,7 +2,6 @@
 #define I_COMPONENT_PROVIDER_HPP
 
 #include "core_variant/type_id.hpp"
-#include "core_variant/variant.hpp"
 
 #include <vector>
 
@@ -12,7 +11,7 @@ public:
 	virtual ~IComponentProvider() {}
 
 	virtual const char * componentId( 
-		const TypeId & typeId, std::function< bool ( size_t ) > & predicate ) const { return nullptr; }
+		const TypeId & typeId, std::function< bool ( size_t ) > & predicate ) const = 0;
 };
 
 #endif//I_COMPONENT_PROVIDER_HPP

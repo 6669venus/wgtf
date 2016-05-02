@@ -3,9 +3,6 @@
 
 #include "core_ui_framework/i_component_provider.hpp"
 #include "core_reflection/i_definition_manager.hpp"
-#include "core_data_model/i_item_role.hpp"
-
-ITEMROLE( valueType )
 
 class ReflectionComponentProvider : public IComponentProvider
 {

@@ -16,6 +16,7 @@
 #include "models/extensions/column_extension.hpp"
 #include "models/extensions/column_extension_old.hpp"
 #include "models/extensions/component_extension.hpp"
+#include "models/extensions/component_extension_old.hpp"
 #include "models/extensions/list_extension.hpp"
 #include "models/extensions/selection_extension.hpp"
 #include "models/extensions/thumbnail_extension.hpp"
@@ -65,7 +66,7 @@
 	qmlRegisterType< WGTreeListAdapter, 1 >( "WGControls", 1, 0, "WGTreeListAdapter" );
 
 	qmlRegisterType< ColumnExtensionOld, 1 >( "WGControls", 1, 0, "ColumnExtension" );
-	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 1, 0, "ComponentExtension" );
+	qmlRegisterType< ComponentExtensionOld, 1 >( "WGControls", 1, 0, "ComponentExtension" );
 	qmlRegisterType< SelectionExtension, 1 >( "WGControls", 1, 0, "SelectionExtension" );
 	qmlRegisterType< ThumbnailExtension, 1 >( "WGControls", 1, 0, "ThumbnailExtension" );
 	qmlRegisterType< TreeExtensionOld, 1 >( "WGControls", 1, 0, "TreeExtension" );
@@ -77,6 +78,7 @@
 	qmlRegisterType< ListExtension, 1 >( "WGControls", 2, 0, "ListExtension" );
 	qmlRegisterType< TreeExtension, 1 >( "WGControls", 2, 0, "TreeExtension" );
 	qmlRegisterType< ImageExtension, 1 >( "WGControls", 2, 0, "ImageExtension" );
+	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 2, 0, "ComponentExtension" );
 
 	qmlRegisterType< WGItemView, 1 >( "WGControls", 2, 0, "WGItemView" );
 

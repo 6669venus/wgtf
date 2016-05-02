@@ -50,7 +50,7 @@ public:
 	typedef void DataSignature( const ItemIndex & index, size_t role, const Variant & newValue );
 	/**
 	 *	Insert/remove into *parentIndex* from *startPos* to *startPos + count*.
-	 *	@param index item inside which to do the insertion/removal.
+	 *	@param parentIndex item inside which to do the insertion/removal.
 	 *	@param startPos first row or column of insertion/removal under the parent.
 	 *	@param count number of rows or columns after startPos.
 	 */
@@ -248,7 +248,7 @@ public:
 	typedef void DataSignature( const ItemIndex & index, int column, size_t role, const Variant & value );
 	/**
 	 *	Insert/remove into the item at *parentIndex* from *startRow* to *startRow + count*.
-	 *	@param index item inside which to do the insertion/removal.
+	 *	@param parentIndex item inside which to do the insertion/removal.
 	 *	@param startRow first row of insertion/removal under the parent.
 	 *	@param count number of rows after startRow.
 	 */

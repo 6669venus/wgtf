@@ -216,7 +216,7 @@ Item {
         onModelReset: {
             updateColumnCount();
 
-            if (frameFrame)
+            if (showColumnsFrame)
             {
                 columnsFrame.initialColumnWidths = listView.columnWidths;
             }

@@ -25,7 +25,11 @@ namespace
 
 		for (size_t i = 0; i < max; ++i)
 		{
+#if ( _MSC_VER < 1900 )
 			sprintf(counterPointer, "%d", i);
+#else
+			sprintf(counterPointer, "%zd", i);
+#endif
 			object.set(parameterName, methodHelper->parameters_[i]);
 		}
 	}    

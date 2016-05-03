@@ -39,7 +39,8 @@ QVariant ComponentExtension::data( const QModelIndex &index, int role ) const
 	}
 
 	auto data = index.model()->data( index, ItemRole::valueTypeId );
-	auto typeId = TypeId( data.toString().toUtf8().constData() );
+	auto typeName = std::string( data.toString().toUtf8() );
+	auto typeId = TypeId( typeName.c_str() );
 	std::function< bool ( size_t ) > predicate = [&] ( size_t role ) {
 		return index.model()->data( index, static_cast< int >( role ) ) == true;
 	};

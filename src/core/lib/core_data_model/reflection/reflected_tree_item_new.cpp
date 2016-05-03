@@ -12,7 +12,6 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
 	, model_( nullptr )
-	, isCollection_( true )
 {
 }
 
@@ -25,7 +24,6 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
 	, model_( nullptr )
-	, isCollection_( true )
 {
 }
 
@@ -77,18 +75,6 @@ IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const
 		return parent_->getDefinitionManager();
 	}
 	return nullptr;
-}
-
-
-bool ReflectedTreeItemNew::isCollection() const
-{
-	return isCollection_;
-}
-
-
-void ReflectedTreeItemNew::isCollection( bool value )
-{
-	isCollection_ = value;
 }
 
 

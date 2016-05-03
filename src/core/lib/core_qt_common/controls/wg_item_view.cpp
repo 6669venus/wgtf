@@ -145,6 +145,12 @@ namespace
 				}
 			}
 
+			size_t roleId;
+			if (decodeRole( role, roleId ))
+			{
+				role = static_cast< int >( roleId );
+			}
+
 			return model_->setData( modelIndex( index ), value, role );
 		}
 

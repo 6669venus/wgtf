@@ -14,7 +14,7 @@ class QQmlEngine;
 
 namespace QtHelpers
 {
-	QVariant toQVariant( const Variant & variant );
+	QVariant toQVariant( const Variant & variant, QObject* parent = nullptr );
 	QVariant toQVariant( const ObjectHandle & object );
 	Variant toVariant( const QVariant & qVariant );
 

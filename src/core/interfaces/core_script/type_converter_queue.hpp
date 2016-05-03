@@ -39,21 +39,22 @@ public:
 	 */
 	void deregisterTypeConverter( ITypeConverter & converter );
 
-
+	
 	/**
-	 *	Convert the given Variant into a ScriptType by searching through the
-	 *	type converters.
-	 *	
-	 *	Search is performed from most-recently-added to first-added.
-	 *	
-	 *	@param inVariant the variant to be converted.
-	 *	@param outObject storage for the resulting object.
-	 *		Should not be modified if conversion fails.
-	 *	@return true on success.
-	 */
-	bool toScriptType( const Variant & inVariant,
-		ScriptType & outObject ) const;
-
+	*	Convert the given Variant into a ScriptType by searching through the
+	*	type converters.
+	*
+	*	Search is performed from most-recently-added to first-added.
+	*
+	*	@param inVariant the variant to be converted.
+	*	@param outObject storage for the resulting object.
+	*		Should not be modified if conversion fails.
+	*	@param userData arbitrary userdata used by implementations
+	*	@return true on success.
+	*/
+	template <typename UserDataType = void>
+	bool toScriptType(const Variant & inVariant,
+		ScriptType & outObject, UserDataType* userData = nullptr) const;
 
 	/**
 	 *	Convert the given ScriptType into a Variant by searching through the
@@ -141,19 +142,19 @@ void TypeConverterQueue< ITypeConverter, ScriptType >::deregisterTypeConverter(
 	typeConverters_.erase( foundItr );
 }
 
-
-template< typename ITypeConverter, typename ScriptType >
+template< typename ITypeConverter, typename ScriptType>
+template < typename UserDataType  >
 bool TypeConverterQueue< ITypeConverter, ScriptType >::toScriptType(
 	const Variant & inVariant,
-	ScriptType & outObject ) const
+	ScriptType & outObject, UserDataType* userData) const
 {
 	for (auto itr = typeConverters_.crbegin();
 		itr != typeConverters_.crend();
 		++itr)
 	{
 		const auto& pTypeConverter = (*itr);
-		assert( pTypeConverter != nullptr );
-		if (pTypeConverter->toScriptType( inVariant, outObject ))
+		assert(pTypeConverter != nullptr);
+		if (pTypeConverter->toScriptType(inVariant, outObject, userData))
 		{
 			return true;
 		}
@@ -161,7 +162,6 @@ bool TypeConverterQueue< ITypeConverter, ScriptType >::toScriptType(
 
 	return false;
 }
-
 
 template< typename ITypeConverter, typename ScriptType >
 bool TypeConverterQueue< ITypeConverter, ScriptType >::toVariant(

@@ -84,8 +84,8 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 		roleId == UrlDialogModalityRole::roleId_ ||
 		roleId == IsReadOnlyRole::roleId_)
 	{
-		return QtHelpers::toQVariant( 
-			item->getData( column, roleId ) );
+		return QtHelpers::toQVariant( item->getData( column, roleId ), const_cast<QAbstractItemModel*>(index.model()));
+																		//^^ well this is *really* dumb
 	}
 	return QVariant( QVariant::Invalid );
 }

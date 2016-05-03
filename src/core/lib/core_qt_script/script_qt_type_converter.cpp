@@ -28,7 +28,7 @@ bool ScriptQtTypeConverter::toVariant( const QVariant& qVariant,
 
 
 bool ScriptQtTypeConverter::toQVariant( const Variant& variant,
-	QVariant& o_qVariant ) const
+	QVariant& o_qVariant, QObject* parent ) const
 {
 	if (variant.typeIs< ObjectHandle >())
 	{

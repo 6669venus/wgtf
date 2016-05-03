@@ -145,7 +145,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 
 				if (c == QMetaObject::ReadProperty)
 				{
-					*value = QtHelpers::toQVariant( controller_->getValue( property ) );
+					*value = QtHelpers::toQVariant( controller_->getValue( property ), this );
 				}
 				else
 				{
@@ -298,7 +298,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 		}
 
 		Variant returnValue = controller_->invoke( pa, parameters );
-		*result = QtHelpers::toQVariant( returnValue );
+		*result = QtHelpers::toQVariant( returnValue, this );
 	}
 
 	return;

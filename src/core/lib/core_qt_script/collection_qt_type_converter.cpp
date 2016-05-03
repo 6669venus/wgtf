@@ -58,7 +58,7 @@ bool CollectionQtTypeConverter::toVariant( const QVariant & qVariant,
  *	A CollectionHolder needs to be used to perform a copy.
  */
 bool CollectionQtTypeConverter::toQVariant( const Variant& variant,
-	QVariant& o_qVariant ) const
+	QVariant& o_qVariant, QObject* parent ) const
 {
 	if (!variant.typeIs< Collection >())
 	{

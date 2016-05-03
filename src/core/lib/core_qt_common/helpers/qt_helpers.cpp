@@ -19,7 +19,7 @@ namespace QtHelpers
 static IQtFramework * s_qtFramework = nullptr;
 
 //==============================================================================
-QVariant toQVariant( const Variant & variant )
+QVariant toQVariant(const Variant & variant, QObject* parent)
 {
 	if (s_qtFramework == nullptr)
 	{
@@ -27,11 +27,12 @@ QVariant toQVariant( const Variant & variant )
 	}
 	if (s_qtFramework != nullptr)
 	{
-		return s_qtFramework->toQVariant( variant );
+		return s_qtFramework->toQVariant(variant, parent);
 	}
 
 	return QVariant( QVariant::Invalid );
 }
+
 
 //==============================================================================
 QVariant toQVariant( const ObjectHandle & object )

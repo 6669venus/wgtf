@@ -220,10 +220,10 @@ bool QtFramework::registerResourceData( const unsigned char * qrc_struct, const 
 	return true;
 }
 
-QVariant QtFramework::toQVariant( const Variant & variant ) const
+QVariant QtFramework::toQVariant(const Variant & variant, QObject* parent) const
 {
 	QVariant qVariant( QVariant::Invalid );
-	typeConverters_.toScriptType( variant, qVariant );
+	typeConverters_.toScriptType(variant, qVariant, parent);
 	return qVariant;
 }
 

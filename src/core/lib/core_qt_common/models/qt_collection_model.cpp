@@ -6,10 +6,9 @@
 
 
 QtCollectionModel::QtCollectionModel( CollectionModel & source ) 
-	: QtListModel( source ) 
+	: QtListModel( source ), model( &source )
 {
 }
-
 
 const CollectionModel & QtCollectionModel::source() const
 {

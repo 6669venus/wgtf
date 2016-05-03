@@ -65,6 +65,9 @@ public:
 	 *	@return true if at least one item was erased (may be more than one).
 	 */
 	Q_INVOKABLE bool removeItem( const QVariant & key );
+
+private:
+	std::unique_ptr<CollectionModel> model;
 };
 
 

@@ -86,6 +86,7 @@ void Project::init( const char * projectName, const char * dataFile )
 
     auto em = contextManager_.queryInterface<IEnvManager>();
     envId_ = em->addEnv( projectName_.c_str() );
+    em->loadEnvState( envId_ );
     em->selectEnv( envId_ );
 
     auto uiFramework = contextManager_.queryInterface<IUIFramework>();
@@ -124,7 +125,7 @@ void Project::saveData( const char * dataFile )
         stream.buffer().size(), std::ios::out | std::ios::binary );
 
     auto em = contextManager_.queryInterface<IEnvManager>();
-    em->saveEnv( envId_ );
+    em->saveEnvState( envId_ );
 }
 
 const char * Project::getProjectName() const
@@ -182,10 +183,6 @@ void ProjectManager::openProject()
     std::string projectSettingFile;
     serializer.deserialize( projectName );
     serializer.deserialize( projectDataFile );
-    serializer.deserialize( projectSettingFile );
-
-    // load preference
-    //uiFramework->getPreferences()->loadPreferenceFromFile( projectSettingFile.c_str() );
 
     // load data
     curProject_.reset( new Project( *contextManager_ ) );
@@ -206,15 +203,11 @@ void ProjectManager::saveProject()
         //save project data
         curProject_->saveData( projectDataFile.c_str() );
 
-        //save project UI preferences
-        uiFramework->getPreferences()->savePreferenceToFile(projectSettingFile.c_str());
-
         //save project itself
         ResizingMemoryStream stream;
         XMLSerializer serializer( stream, *defManager );
         serializer.serialize( curProject_->getProjectName() );
         serializer.serialize( projectDataFile );
-        serializer.serialize( projectSettingFile );
         serializer.sync();
         fileSystem->writeFile( 
             projectFile.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );

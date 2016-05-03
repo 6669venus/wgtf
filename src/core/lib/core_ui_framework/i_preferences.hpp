@@ -7,7 +7,9 @@
 class IPreferencesListener
 {
 public:
-    virtual void preferencesChanged() {}
+    virtual void prePreferencesChanged() {}
+    virtual void postPreferencesChanged() {}
+    virtual void prePreferenceSaved() {}
 };
 
 class IPreferences
@@ -23,7 +25,7 @@ public:
     virtual void deregisterPreferencesListener(
         std::shared_ptr< IPreferencesListener > & listener ) = 0;
 
-    virtual void savePreferenceToFile( const char * filePath ) {}
+    virtual void writePreferenceToFile( const char * filePath ) {}
     virtual void loadPreferenceFromFile( const char * filePath ) {}
 
 

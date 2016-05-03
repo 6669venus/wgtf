@@ -169,7 +169,8 @@ public:
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
-    virtual void onSaveEnv( IEnvState* state ) override;
+    virtual void onSaveEnvState( IEnvState* state ) override;
+    virtual void onLoadEnvState( IEnvState* state ) override;
 
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
@@ -1047,26 +1048,6 @@ void CommandManagerImpl::flush()
 void CommandManagerImpl::onAddEnv( IEnvState* state )
 {
 	ENV_STATE_ADD( HistoryEnvCom, ec );
-
-	std::string file = state->description();
-	file += s_historyVersion;
-
-	const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
-
-	if (fileSystem->exists( file.c_str() ))
-	{
-		IDefinitionManager& defManager = pCommandManager_->getDefManager();
-
-		IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
-		HistorySerializer serializer( *fileStream, defManager );
-		std::string version;
-		serializer.deserialize( version );
-		if( version == s_historyVersion)
-		{
-			LoadCommandHistory( serializer, ec );
-		}
-	}
 }
 
 void CommandManagerImpl::onRemoveEnv( IEnvState* state )
@@ -1087,7 +1068,30 @@ void CommandManagerImpl::onSelectEnv( IEnvState* state )
 	}
 }
 
-void CommandManagerImpl::onSaveEnv( IEnvState* state )
+void CommandManagerImpl::onLoadEnvState( IEnvState* state )
+{
+    ENV_STATE_QUERY( HistoryEnvCom, ec );
+    std::string file = state->description();
+    file += s_historyVersion;
+
+    const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+    assert( fileSystem );
+
+    if (fileSystem->exists( file.c_str() ))
+    {
+        IDefinitionManager& defManager = pCommandManager_->getDefManager();
+
+        IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+        HistorySerializer serializer( *fileStream, defManager );
+        std::string version;
+        serializer.deserialize( version );
+        if( version == s_historyVersion)
+        {
+            LoadCommandHistory( serializer, ec );
+        }
+    }
+}
+void CommandManagerImpl::onSaveEnvState( IEnvState* state )
 {
     ENV_STATE_QUERY( HistoryEnvCom, ec );
     IDefinitionManager& defManager = pCommandManager_->getDefManager();

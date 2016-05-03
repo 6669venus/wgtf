@@ -135,10 +135,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
-	auto serializationManger = contextManager.queryInterface< ISerializationManager >();
-	auto fileSystem = contextManager.queryInterface< IFileSystem >();
-	auto metaTypeManager = contextManager.queryInterface<IMetaTypeManager>();
-	preferences_.reset( new QtPreferences( *definitionManager, *serializationManger, *fileSystem, *metaTypeManager, *this ) );
+	preferences_.reset( new QtPreferences() );
+    preferences_->init( contextManager );
 
 	SharedControls::initDefs( *definitionManager );
 }
@@ -151,6 +149,7 @@ void QtFramework::finalise()
 	}
 
 	unregisterResources();
+    preferences_->fini();
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
 	globalQmlSettings_ = nullptr;

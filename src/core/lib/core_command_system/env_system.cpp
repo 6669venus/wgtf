@@ -71,12 +71,22 @@ void EnvManager::selectEnv(int id)
 	}
 }
 
-void EnvManager::saveEnv( int id )
+void EnvManager::saveEnvState( int id )
 {
     auto it = find_if(stateVec_.begin(), stateVec_.end(), [=](const StateVec::value_type& x) { return x.first == id; });
     assert(it != stateVec_.end());
     for (auto& l : listeners_)
     {
-        l->onSaveEnv( it->second.get() );
+        l->onSaveEnvState( it->second.get() );
+    }
+}
+
+void EnvManager::loadEnvState( int id )
+{
+    auto it = find_if(stateVec_.begin(), stateVec_.end(), [=](const StateVec::value_type& x) { return x.first == id; });
+    assert(it != stateVec_.end());
+    for (auto& l : listeners_)
+    {
+        l->onLoadEnvState( it->second.get() );
     }
 }

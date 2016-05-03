@@ -108,7 +108,11 @@ public:
         uiApplication->removeAction( *saveProject_ );
         uiApplication->removeAction( *closeProject_ );
         uiApplication->removeWindow( *newProjectDialog_ );
-        uiApplication->removeWindow( *openProjectDialog_ );
+        if(openProjectDialog_ != nullptr)
+        {
+            uiApplication->removeWindow( *openProjectDialog_ );
+            openProjectDialog_ = nullptr;
+        }
         connections_.clear();
         newProject_ = nullptr;
         openProject_ = nullptr;

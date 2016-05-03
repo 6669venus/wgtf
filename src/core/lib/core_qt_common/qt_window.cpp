@@ -55,7 +55,7 @@ namespace
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
     : qtFramework_( qtFramework )
     , application_(nullptr)
-    , isMaximizedInPreference_(true)
+    , isMaximizedInPreference_(false)
     , firstTimeShow_(true)
 {
 	QUiLoader loader;
@@ -81,7 +81,7 @@ QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && m
     : qtFramework_(qtFramework)
     , mainWindow_(std::move(mainWindow))
     , application_(nullptr)
-    , isMaximizedInPreference_(true)
+    , isMaximizedInPreference_(false)
     , firstTimeShow_(true)
 {
     if (mainWindow_== nullptr)
@@ -158,15 +158,12 @@ void QtWindow::show( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
-	if (firstTimeShow_ && isMaximizedInPreference_)
-	{
-		mainWindow_->showMaximized();
-		
-	}
-	else
-	{
-		mainWindow_->show();
-	}
+    if(isMaximizedInPreference_)
+    {
+        mainWindow_->setWindowState( Qt::WindowMaximized );
+    }
+    mainWindow_->show();
+	
 	if (firstTimeShow_)
 	{
 		emit windowReady();
@@ -187,15 +184,8 @@ void QtWindow::showMaximized( bool wait /* = false */)
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
 	
-	if (firstTimeShow_ && !isMaximizedInPreference_)
-	{
-		mainWindow_->show();
-		
-	}
-	else
-	{
-		mainWindow_->showMaximized();
-	}
+	mainWindow_->showMaximized();
+
 	if(firstTimeShow_)
 	{
 		emit windowReady();
@@ -214,15 +204,7 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
-	if (firstTimeShow_ && isMaximizedInPreference_)
-	{
-		mainWindow_->showMaximized();
-		
-	}
-	else
-	{
-		mainWindow_->show();
-	}
+	mainWindow_->show();
 	if (firstTimeShow_)
 	{
 		emit windowReady();
@@ -309,6 +291,12 @@ void QtWindow::init()
     if (idProperty.isValid())
     {
         id_ = idProperty.toString().toUtf8().operator const char *();
+    }
+
+    auto windowMaximizedProperty = mainWindow_->property("windowMaximized");
+    if (windowMaximizedProperty.isValid())
+    {
+        isMaximizedInPreference_ = windowMaximizedProperty.toBool();
     }
 
     auto menuBars = getChildren< QMenuBar >(*mainWindow_);

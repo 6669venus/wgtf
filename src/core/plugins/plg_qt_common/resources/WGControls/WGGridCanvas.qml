@@ -19,7 +19,7 @@ Canvas {
 
     /*! Determines if the zeroAxis(green) and oneAxis(yellow) border lines are drawn.
         Continues to draw grid lines beyond borders*/
-    property bool useBoarders: true
+    property bool useBorders: true
 
     // fake enums for useAxis
     readonly property int xyGrid: 0
@@ -194,7 +194,7 @@ Canvas {
         var countFromWhole = Math.floor((startX - nearStartWhole) / lineGap)
         startX = nearStartWhole + countFromWhole * lineGap;
 
-        if (useBoarders) {
+        if (useBorders) {
             startX = Math.max(startX, 0)
             endX = Math.min(endX, 1)
         }
@@ -266,7 +266,7 @@ Canvas {
         }
 
         // -- Green lines
-        if (useBoarders) {
+        if (useBorders) {
             ctx.beginPath();
             ctx.strokeStyle = zeroAxisColor
             var pos = viewTransform.transform(Qt.point(0,0));
@@ -306,7 +306,7 @@ Canvas {
                 ctx.lineTo(parent.width, pos.y)
             }
             ctx.stroke();
-        } // end if (useBoarders)
+        } // end if (useBorders)
     }
 
     function getWidth( startTime, endTime )

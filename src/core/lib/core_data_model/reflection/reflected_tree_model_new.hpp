@@ -4,6 +4,8 @@
 
 #include "core_data_model/abstract_item_model.hpp"
 
+class IComponentContext;
+class ObjectHandle;
 
 /**
  *	Construct a tree data model by reflecting over the given objects.
@@ -14,7 +16,7 @@ class ReflectedTreeModelNew
 {
 public:
 
-	ReflectedTreeModelNew( int columnCount = 1 );
+	ReflectedTreeModelNew( IComponentContext & contextManager, const ObjectHandle & object );
 	virtual ~ReflectedTreeModelNew();
 	
 
@@ -39,9 +41,6 @@ public:
 	 */
 	virtual int rowCount( const AbstractItem * item ) const override;
 	virtual int columnCount() const override;
-
-	virtual void addRootItem( AbstractItem * item );
-	virtual void removeRootItem( AbstractItem * item );
 
 	virtual Connection connectPreItemDataChanged(
 		AbstractTreeModel::DataCallback callback ) override;

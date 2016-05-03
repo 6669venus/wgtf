@@ -1,5 +1,5 @@
 #include "reflected_tree_model_new.hpp"
-#include "reflected_tree_item_new.hpp"
+#include "reflected_object_item_new.hpp"
 
 #include <vector>
 
@@ -7,20 +7,19 @@
 class ReflectedTreeModelNew::Implementation
 {
 public:
-	Implementation( int columnCount );
+	Implementation( IComponentContext & contextManager, const ObjectHandle & object );
 
 	ReflectedTreeItemNew * getItemInternal( size_t index,
 		const ReflectedTreeItemNew * parent ) const;
 	size_t getIndexInternal( const ReflectedTreeItemNew * item ) const;
 	int getChildCountInternal( const ReflectedTreeItemNew * item ) const;
 
-	std::vector< ReflectedTreeItemNew * > rootItems_;
-	int columnCount_;
+	std::unique_ptr< ReflectedTreeItemNew > rootItem_;
 };
 
 
-ReflectedTreeModelNew::Implementation::Implementation( int columnCount )
-	: columnCount_( columnCount )
+ReflectedTreeModelNew::Implementation::Implementation( IComponentContext & contextManager, const ObjectHandle & object )
+	: rootItem_( new ReflectedObjectItemNew( contextManager, object ) )
 {
 }
 
@@ -31,7 +30,7 @@ ReflectedTreeItemNew * ReflectedTreeModelNew::Implementation::getItemInternal(
 {
 	if (parent == nullptr)
 	{
-		return index < rootItems_.size() ? rootItems_[ index ] : nullptr;
+		return index == 0 ? rootItem_.get() : nullptr;
 	}
 
 	return parent->getChild( index );
@@ -59,9 +58,8 @@ size_t ReflectedTreeModelNew::Implementation::getIndexInternal(
 		}
 	}
 
-	auto findIt = std::find( rootItems_.begin(), rootItems_.end(), item );
-	assert( findIt != rootItems_.end() );
-	return findIt - rootItems_.begin();
+	assert( item == rootItem_.get() );
+	return 0;
 }
 
 
@@ -82,16 +80,16 @@ int ReflectedTreeModelNew::Implementation::getChildCountInternal(
 {
 	if (item == nullptr)
 	{
-		return static_cast< int >( rootItems_.size() );
+		return 1;
 	}
 
 	return item->rowCount();
 }
 
 
-ReflectedTreeModelNew::ReflectedTreeModelNew( int columnCount )
+ReflectedTreeModelNew::ReflectedTreeModelNew( IComponentContext & contextManager, const ObjectHandle & object )
 	: AbstractTreeModel()
-	, impl_( new Implementation( columnCount ) )
+	, impl_( new Implementation( contextManager, object ) )
 {
 }
 
@@ -112,9 +110,9 @@ AbstractItem * ReflectedTreeModelNew::item(
 	for (int i = 0; i < itemCount; ++i)
 	{
 		auto item = impl_->getItemInternal( i, reflectedParent );
-		if (item != nullptr && !item->isCollection())
+		if (item != nullptr && item->isInPlace())
 		{
-			auto childItemCount = impl_->getChildCountInternal( item );
+			auto childItemCount = rowCount( item );
 			if (row < childItemCount)
 			{
 				const AbstractTreeModel::ItemIndex parentIndex( row, item );
@@ -152,11 +150,11 @@ AbstractTreeModel::ItemIndex ReflectedTreeModelNew::index(
 	for (size_t i = 0; i < indexInternal; ++i)
 	{
 		auto itemInternal = impl_->getItemInternal( i, parent );
-		row += itemInternal != nullptr && !itemInternal->isCollection() ? 
+		row += itemInternal != nullptr && itemInternal->isInPlace() ? 
 			this->rowCount( itemInternal ) : 1;
 	}
 
-	if (parent != nullptr && !parent->isCollection())
+	if (parent != nullptr && parent->isInPlace())
 	{
 		auto parentIndex = this->index( parent );
 		row += parentIndex.row_;
@@ -179,7 +177,7 @@ int ReflectedTreeModelNew::rowCount(
 	for (int i = 0; i < childCount; ++i)
 	{
 		auto childItem = impl_->getItemInternal( i, reflectedItem );
-		count += childItem != nullptr && !childItem->isCollection() ? this->rowCount( childItem ) : 1;
+		count += childItem != nullptr && childItem->isInPlace() ? this->rowCount( childItem ) : 1;
 	}
 	return count;
 }
@@ -187,58 +185,7 @@ int ReflectedTreeModelNew::rowCount(
 
 int ReflectedTreeModelNew::columnCount() const /* override */
 {
-	return impl_->columnCount_;
-}
-
-
-void ReflectedTreeModelNew::addRootItem( AbstractItem * item )
-{
-	auto reflectedItem = dynamic_cast< ReflectedTreeItemNew * >( item );
-	assert( reflectedItem != nullptr );
-	assert( reflectedItem->getParent() == nullptr );
-	assert( reflectedItem->getModel() == nullptr );
-	reflectedItem->setModel( this );
-
-	// Root items have no parent item
-	const ItemIndex parentIndex;
-	const int startRow = static_cast< int >( impl_->rootItems_.size() );
-	const int rowCount = 1;
-
-	preRowsInserted_( parentIndex, startRow, rowCount );
-	impl_->rootItems_.emplace_back( reflectedItem );
-	postRowsInserted_( parentIndex, startRow, rowCount );
-}
-
-
-void ReflectedTreeModelNew::removeRootItem( AbstractItem * item )
-{
-	auto reflectedItem = dynamic_cast< ReflectedTreeItemNew * >( item );
-	assert( reflectedItem != nullptr );
-	assert( reflectedItem != nullptr );
-	assert( reflectedItem->getModel() == this );
-	const auto foundItr =
-		std::find( impl_->rootItems_.cbegin(), impl_->rootItems_.cend(), reflectedItem );
-	assert( foundItr != impl_->rootItems_.cend() );
-
-	reflectedItem->setModel( nullptr );
-	auto foundIter = std::find( impl_->rootItems_.cbegin(),
-		impl_->rootItems_.cend(),
-		reflectedItem );
-	if (foundIter == impl_->rootItems_.end())
-	{
-		return;
-	}
-	const auto pItem = (*foundIter);
-
-	// Root items have no parent item
-	const ItemIndex parentIndex;
-	const int startRow = static_cast< int >(
-		std::distance( foundIter, impl_->rootItems_.cbegin() ) );
-	const int rowCount = 1;
-
-	preRowsRemoved_( parentIndex, startRow, rowCount );
-	impl_->rootItems_.erase( foundItr );
-	postRowsRemoved_( parentIndex, startRow, rowCount );
+	return 1;
 }
 
 

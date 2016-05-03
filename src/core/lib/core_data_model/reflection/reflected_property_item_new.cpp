@@ -1,7 +1,7 @@
 #include "reflected_property_item_new.hpp"
 
-#include "class_definition_model_new.hpp"
-#include "reflected_enum_model_new.hpp"
+#include "class_definition_model.hpp"
+#include "reflected_enum_model.hpp"
 #include "reflected_object_item_new.hpp"
 #include "reflected_tree_model_new.hpp"
 
@@ -18,6 +18,9 @@
 #include <memory>
 #include <codecvt>
 #include <limits>
+
+ITEMROLE( display )
+ITEMROLE( valueType )
 
 namespace
 {
@@ -208,6 +211,8 @@ ReflectedPropertyItemNew::~ReflectedPropertyItemNew()
 
 Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 {
+	roleId = static_cast< unsigned int >( roleId );
+
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
 	{
@@ -217,6 +222,18 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *pDefinitionManager )->bindProperty(
 		path_.c_str(), obj );
+
+	if (roleId == ItemRole::displayId)
+	{
+		switch (column)
+		{
+		case 0:
+			return impl_->displayName_.c_str();
+
+		default:
+			return "Reflected Property";
+		}
+	}
 
 	if (roleId == IndexPathRole::roleId_)
 	{
@@ -258,7 +275,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		}
 		return propertyAccessor.getValue();
 	}
-	else if (roleId == ValueTypeRole::roleId_)
+	else if (roleId == ItemRole::valueTypeId)
 	{
 		return propertyAccessor.getType().getName();
 	}
@@ -395,8 +412,8 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 			{
 				return Variant();
 			}
-			auto enumModel = std::unique_ptr< AbstractListModel >( 
-				new ReflectedEnumModelNew( propertyAccessor, enumObj ) );
+			auto enumModel = std::unique_ptr< IListModel >( 
+				new ReflectedEnumModel( propertyAccessor, enumObj ) );
 			return ObjectHandle( std::move( enumModel ) );
 		}
 	}
@@ -423,8 +440,8 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 			auto definition = pDefinitionManager->getDefinition( typeId.removePointer().getName() );
 			if (definition != nullptr)
 			{
-				auto definitionModel = std::unique_ptr< AbstractListModel >(
-					new ClassDefinitionModelNew( definition, *pDefinitionManager ) );
+				auto definitionModel = std::unique_ptr< IListModel >(
+					new ClassDefinitionModel( definition, *pDefinitionManager ) );
 				return ObjectHandle( std::move( definitionModel ) );
 			}
 		}
@@ -678,7 +695,6 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 	child = new ReflectedObjectItemNew( impl_->contextManager_,
 		baseProvider ,
 		const_cast< ReflectedPropertyItemNew * >( this ) );
-	child->isCollection( false );
 	impl_->children_[index] = std::unique_ptr< ReflectedTreeItemNew >( child );
 	return child;
 }
@@ -705,11 +721,9 @@ int ReflectedPropertyItemNew::rowCount() const
 	bool isCollection = value.tryCast( collection );
 	if (isCollection)
 	{
-		assert( this->isCollection() );
 		return static_cast< int >( collection.size() );
 	}
 
-	assert( !this->isCollection() );
 	ObjectHandle handle;
 	bool isObjectHandle = value.tryCast( handle );
 	if (isObjectHandle)
@@ -760,8 +774,8 @@ bool ReflectedPropertyItemNew::preSetValue( const PropertyAccessor & accessor,
 				const auto index = pModel->index( this );
 				const int column = 0;
 				const int role = DefinitionRole::roleId_;
-				const Variant variantDefinition( ObjectHandle( definition ) );
-				pModel->preItemDataChanged_( index, column, role, variantDefinition );
+				const Variant value = ObjectHandle( definition );
+				pModel->preItemDataChanged_( index, column, role, value );
 			}
 			return true;
 		}
@@ -828,8 +842,8 @@ bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor,
 				const auto index = pModel->index( this );
 				const int column = 0;
 				const int role = DefinitionRole::roleId_;
-				const Variant variantDefinition( ObjectHandle( definition ) );
-				pModel->postItemDataChanged_( index, column, role, variantDefinition );
+				const Variant value = ObjectHandle( definition );
+				pModel->postItemDataChanged_( index, column, role, value );
 			}
 			return true;
 		}

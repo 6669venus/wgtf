@@ -19,16 +19,27 @@ WGItemView {
 	property var columnWidths: []
 	property real columnSpacing: 0
 
+	property var commonExtensions: [columnExtension, imageExtension]
+	extensions: commonExtensions
+
 	function rowCount() {
-		return __internalModel.rowCount()
+		return extendedModel.rowCount()
 	}
 
 	function columnCount() {
 		var count = columnSequence.length
 		if (count == 0) {
-			count = __internalModel.columnCount()
+			count = extendedModel.columnCount()
 		}
 		return count
+	}
+
+	ColumnExtension {
+		id: columnExtension
+	}
+
+	ImageExtension {
+		id: imageExtension
 	}
 
 	Component.onCompleted: {

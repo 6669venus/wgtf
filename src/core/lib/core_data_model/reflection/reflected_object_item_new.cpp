@@ -13,14 +13,14 @@
 #include <codecvt>
 #include <set>
 
+ITEMROLE( display )
 
 namespace
 {
-
-bool compareWStrings( const wchar_t * a, const wchar_t * b )
-{
-	return wcscmp( a, b ) < 0;
-}
+	bool compareWStrings( const wchar_t * a, const wchar_t * b )
+	{
+		return wcscmp( a, b ) < 0;
+	}
 
 } // namespace
 
@@ -108,8 +108,52 @@ ReflectedObjectItemNew::~ReflectedObjectItemNew()
 
 Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* override */
 {
-	// Only works for root items?
-	assert( parent_ == nullptr );
+	roleId = static_cast< unsigned int >( roleId );
+
+	if (roleId == ItemRole::displayId)
+	{
+		switch (column)
+		{
+		case 0:
+			if (impl_->displayName_.empty())
+			{
+				auto definition = this->getDefinition();
+				if (definition == nullptr)
+				{
+					return "";
+				}
+				auto pDefinitionManager = this->getDefinitionManager();
+				if (pDefinitionManager == nullptr)
+				{
+					return "";
+				}
+				const MetaDisplayNameObj * displayName =
+					findFirstMetaData< MetaDisplayNameObj >( *definition,
+					*pDefinitionManager );
+				if (displayName == nullptr)
+				{
+					impl_->displayName_ = definition->getName();
+				}
+				else
+				{
+					std::wstring_convert< Utf16to8Facet > conversion(
+						Utf16to8Facet::create() );
+					impl_->displayName_ = conversion.to_bytes(
+						displayName->getDisplayName() );
+				}
+			}
+			return impl_->displayName_.c_str();
+
+		default:
+			auto definition = getDefinition();
+			if (definition == nullptr)
+			{
+				return "";
+			}
+			return definition->getName();
+		}
+	}
+
 	if (roleId == ValueRole::roleId_)
 	{
 		return impl_->object_;
@@ -292,6 +336,12 @@ int ReflectedObjectItemNew::rowCount() const
 	} );
 
 	return count;
+}
+
+
+bool ReflectedObjectItemNew::isInPlace() const
+{
+	return parent_ != nullptr;
 }
 
 

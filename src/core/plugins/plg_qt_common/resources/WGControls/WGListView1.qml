@@ -216,7 +216,7 @@ Item {
         onModelReset: {
             updateColumnCount();
 
-            if (showColumnsFrame)
+            if (frameFrame)
             {
                 columnsFrame.initialColumnWidths = listView.columnWidths;
             }
@@ -232,7 +232,7 @@ Item {
     property var initialColumnWidths: []
 
     /*! This property determines if the column sizing handles are shown */
-    property bool showColumnsFrame: false
+    property bool showColumnsFrame: true
 
     readonly property real minimumScrollbarWidth:
         enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
@@ -467,7 +467,7 @@ Item {
         drawHandles: showColumnsFrame && listView.columnSpacing > 1
         resizableColumns: showColumnsFrame
         initialColumnWidths: listView.initialColumnWidths
-        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth 
+        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
 
         onColumnsChanged: {

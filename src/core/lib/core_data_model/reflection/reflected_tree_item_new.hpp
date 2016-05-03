@@ -38,7 +38,7 @@ public:
 	virtual ReflectedTreeItemNew * getChild( size_t index ) const = 0;
 	virtual int rowCount() const = 0;
 
-	virtual bool isInPlace() const { return false; }
+	virtual bool isInPlace() const;
 
 	virtual bool preSetValue( const PropertyAccessor & accessor,
 		const Variant & value ) = 0;

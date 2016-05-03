@@ -339,6 +339,12 @@ int ReflectedObjectItemNew::rowCount() const
 }
 
 
+bool ReflectedObjectItemNew::isInPlace() const
+{
+	return parent_ != nullptr;
+}
+
+
 bool ReflectedObjectItemNew::preSetValue( const PropertyAccessor & accessor,
 	const Variant & value )
 {

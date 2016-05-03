@@ -44,6 +44,12 @@ const IClassDefinition * ReflectedTreeItemNew::getDefinition() const
 }
 
 
+bool ReflectedTreeItemNew::isInPlace() const
+{
+	return false;
+}
+
+
 const std::string & ReflectedTreeItemNew::getPath() const
 {
 	return path_;

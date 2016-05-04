@@ -62,6 +62,12 @@ CMAKE_GENERATORS = dict(
 			dirsuffix = 'vc12_win64',
 			toolset = 'v120_xp',
 		),
+        dict(
+			label = 'Visual Studio 2015 Win64',
+			generator = 'Visual Studio 14 Win64',
+			dirsuffix = 'vc14_win64',
+			toolset = 'v140_xp',
+		),
 	],
 
 	Darwin = [

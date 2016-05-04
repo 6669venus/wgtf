@@ -17,7 +17,7 @@ class QtCollectionModel : public QtListModel
 	Q_OBJECT
 
 public:
-	QtCollectionModel( std::unique_ptr<CollectionModel>& source );
+	QtCollectionModel( std::unique_ptr<CollectionModel>&& source );
 
 	/**
 	 *	Get CollectionModel that is being adapted to be used by Qt.

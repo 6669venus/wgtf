@@ -63,7 +63,7 @@ public:
         auto uiApplication = contextManager.queryInterface<IUIApplication>();
         assert( uiFramework != nullptr && uiApplication != nullptr );
         uiFramework->loadActionData( 
-            ":/TestingProject/actions.xml", IUIFramework::ResourceType::File );
+            ":/TestingProjectControl/actions.xml", IUIFramework::ResourceType::File );
 
         newProject_ = uiFramework->createAction(
             "NewProject", 
@@ -90,7 +90,7 @@ public:
         uiApplication->addAction( *closeProject_ );
 
         newProjectDialog_ = uiFramework->createWindow( 
-            "TestingProject/new_project_dialog.qml", 
+            "TestingProjectControl/new_project_dialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
         if(newProjectDialog_ != nullptr)
         {
@@ -171,7 +171,7 @@ public:
             openProjectDialog_ = nullptr;
         }
         openProjectDialog_ = uiFramework->createWindow( 
-            "TestingProject/open_project_dialog.qml", 
+            "TestingProjectControl/open_project_dialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
         if(openProjectDialog_ != nullptr)
         {

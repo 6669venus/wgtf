@@ -21,7 +21,7 @@ SET( PROJECT_IMPL
 SOURCE_GROUP( "Project\\Impl" FILES ${PROJECT_IMPL} )
 
 
-BW_QT_ADD_QRC(TestingProject resources/testing_project)
+BW_QT_ADD_QRC(TestingProjectControl resources/TestingProjectControl)
 BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS

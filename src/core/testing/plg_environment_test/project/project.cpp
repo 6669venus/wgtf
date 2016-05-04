@@ -102,7 +102,7 @@ bool Project::init( const char * projectName, const char * dataFile )
     auto uiFramework = contextManager_.queryInterface<IUIFramework>();
     auto uiApplication = contextManager_.queryInterface<IUIApplication>();
     assert( uiFramework != nullptr && uiApplication != nullptr );
-    view_ = uiFramework->createView( "testing_project/project_data_panel.qml", 
+    view_ = uiFramework->createView( "TestingProjectControl/project_data_panel.qml", 
         IUIFramework::ResourceType::Url, std::move( model ) );
     if(view_ == nullptr)
     {

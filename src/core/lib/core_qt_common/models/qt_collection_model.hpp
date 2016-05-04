@@ -67,7 +67,7 @@ public:
 	Q_INVOKABLE bool removeItem( const QVariant & key );
 
 private:
-	std::unique_ptr<CollectionModel> model;
+	std::unique_ptr<CollectionModel> model_;
 };
 
 

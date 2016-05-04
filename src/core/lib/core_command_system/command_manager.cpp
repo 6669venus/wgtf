@@ -28,6 +28,9 @@
 #include "i_env_system.hpp"
 #include "core_serialization/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
+#include "wg_types/binary_block.hpp"
+#include "reflection_undo_redo_data.hpp"
+#include <memory>
 
 // TODO: Remove to platform string header
 #if defined( _WIN32 )
@@ -873,7 +876,12 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
 	serializer.serialize( count );
 	for (size_t i = 0; i < count; i++)
 	{
-		serializer.serialize( ec->history_[i] );
+        CommandInstancePtr& cmdIns = ec->history_[i].value<CommandInstancePtr>();
+		serializer.serialize( cmdIns );
+        auto& undoData = cmdIns->reflectionUndoRedoData_.getUndoData();
+        auto& redoData = cmdIns->reflectionUndoRedoData_.getRedoData();
+        serializer.serialize( undoData );
+        serializer.serialize( redoData );
 	}
 	// save history index
 	serializer.serialize( ec->index_ );
@@ -902,6 +910,12 @@ bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEn
 		bool isOk = variant.tryCast( ins );
 		assert( isOk );
 		assert( ins != nullptr );
+        std::shared_ptr<BinaryBlock> undoData;
+        std::shared_ptr<BinaryBlock> redoData;
+        serializer.deserialize( undoData );
+        serializer.deserialize( redoData );
+        ins->reflectionUndoRedoData_.setUndoData( undoData );
+        ins->reflectionUndoRedoData_.setRedoData( redoData );
 		ins->setCommandSystemProvider( pCommandManager_ );
 		ins->setDefinitionManager( pCommandManager_->getDefManager() );
 		ec->history_.emplace_back( std::move( variant ) );

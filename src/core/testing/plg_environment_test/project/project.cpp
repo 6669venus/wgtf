@@ -12,6 +12,7 @@
 #include <QUrl>
 #include "core_command_system/i_env_system.hpp"
 #include "core_command_system/i_command_manager.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 
 namespace {

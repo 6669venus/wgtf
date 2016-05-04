@@ -79,6 +79,8 @@ Rectangle {
                 playbackAnim.paused = false
                 timelineFrame.previewPlaying = false
                 timelineFrame.currentFrame = 0
+                timelineToolbar.playing = false
+                timelineToolbar.paused = false
             }
         }
     }
@@ -207,7 +209,7 @@ Rectangle {
                         anchors.top: parent.top
                         anchors.topMargin: -defaultSpacing.standardMargin
                         anchors.horizontalCenter: parent.horizontalCenter
-                        height: gridCanvas.height - gridCanvas.viewTransform.transformY(1) + defaultSpacing.doubleMargin + defaultSpacing.minimumRowHeight
+                        height: gridCanvas.height - defaultSpacing.minimumRowHeight * 3 + defaultSpacing.doubleMargin
                         z: -1
                         width: 2
                         color: "#77FF0000"

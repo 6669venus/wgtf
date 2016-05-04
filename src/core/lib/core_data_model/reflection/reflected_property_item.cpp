@@ -363,7 +363,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogTitleRole::roleId_)
 	{
-		const char * title;
+		const char * title = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -374,7 +374,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogDefaultFolderRole::roleId_)
 	{
-		const char * folder;
+		const char * folder = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -385,7 +385,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogNameFiltersRole::roleId_)
 	{
-		const char * nameFilters;
+		const char * nameFilters = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -396,7 +396,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogSelectedNameFilterRole::roleId_)
 	{
-		const char * selectedFilter;
+		const char * selectedFilter = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)

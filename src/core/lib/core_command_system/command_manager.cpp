@@ -110,6 +110,7 @@ public:
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
 		, envManager_( nullptr )
+        , historySerializationEnabled(true)
 	{
 	}
 
@@ -131,12 +132,14 @@ public:
 	void deregisterCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
+    void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const;
 	void updateSelected( const int & value );
 
 	void undo();
 	void redo();
 	bool canUndo() const;
 	bool canRedo() const;
+    void removeCommands(const ICommandManager::TRemoveFunctor & functor);
 	VariantList & getHistory();
 	ValueChangeNotifier< int > & getCurrentIndex();
 	IListModel & getMacros();
@@ -161,6 +164,7 @@ public:
 	void addToHistory( const CommandInstancePtr & instance );
 	void processCommands();
 	void flush();
+    void SetHistorySerializationEnabled(bool isEnabled);
 	bool SaveCommandHistory( ISerializer & serializer, const HistoryEnvCom* ec ) const;
 	bool LoadCommandHistory( ISerializer & serializer, HistoryEnvCom* ec ) const;
 	void threadFunc();
@@ -223,6 +227,7 @@ private:
 
 	IApplication *							application_;
 	IEnvManager *								envManager_;
+    bool historySerializationEnabled;
 
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
 	void onPreDataChanged();
@@ -366,7 +371,6 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setCommandId( command ->getId() );
 	instance->setArguments( arguments );
 	instance->setDefinitionManager( pCommandManager_->getDefManager() );
-	instance->init();
 	instance->setStatus( Queued );
 	queueCommand( instance );
 	return instance;
@@ -531,14 +535,26 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 }
 
 
+void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const
+{
+    EventListenerCollection::const_iterator it =
+        eventListenerCollection_.begin();
+    EventListenerCollection::const_iterator itEnd =
+        eventListenerCollection_.end();
+    for (; it != itEnd; ++it)
+    {
+        (*it)->commandExecuted(command, operation);
+    }
+}
+
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
 	unbindIndexCallbacks();
 
+    historyState_->index_ = value;
+    historyState_->previousSelectedIndex_ = value;
 	currentIndex_.value( value );
-	historyState_->index_ = value;
-	historyState_->previousSelectedIndex_ = value;
 
 	bindIndexCallbacks();
 }
@@ -563,6 +579,40 @@ bool CommandManagerImpl::canRedo() const
 		return true;
 	}
 	return false;
+}
+    
+void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & functor)
+{
+    flush();
+    std::unique_lock<std::mutex> lock( workerMutex_ );
+    unbindHistoryCallbacks();
+    unbindIndexCallbacks();
+    pCommandManager_->signalHistoryPreReset(historyState_->history_);
+
+    int currentIndexValue = currentIndex_.value();
+    int commandIndex = 0;
+    VariantList::Iterator iter = historyState_->history_.begin();
+    while(iter != historyState_->history_.end())
+    {
+        if (functor((*iter).value<CommandInstancePtr>()))
+        {
+            iter = historyState_->history_.erase(iter);
+            if (commandIndex < currentIndexValue)
+            {
+                currentIndexValue = std::max(currentIndexValue - 1, -1);
+            }
+        }
+        else
+        {
+            ++iter;
+            ++commandIndex;
+        }
+    }
+
+	pCommandManager_->signalHistoryPostReset(historyState_->history_);
+	currentIndex_.variantValue(currentIndexValue);
+    bindIndexCallbacks();
+    bindHistoryCallbacks();
 }
 
 //==============================================================================
@@ -766,7 +816,7 @@ void CommandManagerImpl::popFrame()
 		// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
 		instance->disconnectEvent();
 
-		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
+        if (instance->getErrorCode() == CommandErrorCode::COMMAND_NO_ERROR)
 		{
 			addToHistory( instance );
 			if (instance->isMultiCommand())
@@ -787,7 +837,7 @@ void CommandManagerImpl::popFrame()
 
 	// TODO: This does not actually work for sub commands. No undo data is stored
 	// for sub commands so calling undo does nothing.
-	if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
+    if (instance->getErrorCode() != CommandErrorCode::COMMAND_NO_ERROR)
 	{
 		instance->undo();
 		if (instance->isMultiCommand())
@@ -815,6 +865,9 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 //==============================================================================
 bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const HistoryEnvCom* ec ) const
 {
+    if (!historySerializationEnabled)
+        return true;
+
 	// save objects
 	size_t count = ec->history_.size();
 	serializer.serialize( count );
@@ -827,9 +880,17 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
 	return true;
 }
 
+void CommandManagerImpl::SetHistorySerializationEnabled(bool isEnabled)
+{
+    historySerializationEnabled = isEnabled;
+}
+
 //==============================================================================
 bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEnvCom* ec ) const
 {
+    if (!historySerializationEnabled)
+        return false;
+
 	// read history data
 	size_t count = 0;
 	serializer.deserialize( count );
@@ -907,100 +968,102 @@ void CommandManagerImpl::onPostItemsRemoved( size_t index, size_t count )
 //==============================================================================
 void CommandManagerImpl::processCommands()
 {
-	std::thread::id currentThreadId = std::this_thread::get_id();
+    {
+        std::thread::id currentThreadId = std::this_thread::get_id();
 
-	std::unique_lock<std::mutex> lock( workerMutex_ );
+        std::unique_lock<std::mutex> lock( workerMutex_ );
 
-	for (;;)
-	{
-		auto commandFrame = historyState_->commandFrames_.back();		
-		if (commandFrame->commandQueue_.empty())
-		{
-			break;
-		}
+        for (;;)
+        {
+            auto commandFrame = historyState_->commandFrames_.back();		
+            if (commandFrame->commandQueue_.empty())
+            {
+                break;
+            }
 
-		auto job = commandFrame->commandQueue_.front();
-		auto threadAffinity = job->getCommand()->threadAffinity();
-		if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
-			currentThreadId != ownerThreadId_)
-		{
-			// The next command in the queue needs to be run on the UI thread.
-			// Notify the owner thread
-			ownerWakeUp_ = true;
-			break;
-		}
-		else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
-			currentThreadId != workerThreadId_)
-		{
-			// The next command in the queue needs to be run on the command thread.
-			// Notify the worker thread
-			workerWakeUp_.notify_all();
-			break;
-		}
+            auto job = commandFrame->commandQueue_.front();
+            auto threadAffinity = job->getCommand()->threadAffinity();
+            if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
+                currentThreadId != ownerThreadId_)
+            {
+                // The next command in the queue needs to be run on the UI thread.
+                // Notify the owner thread
+                ownerWakeUp_ = true;
+                break;
+            }
+            else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
+                currentThreadId != workerThreadId_)
+            {
+                // The next command in the queue needs to be run on the command thread.
+                // Notify the worker thread
+                workerWakeUp_.notify_all();
+                break;
+            }
 
-		commandFrame->commandQueue_.pop_front();
+            commandFrame->commandQueue_.pop_front();
 
-		if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
-		{
-			//execute undo/redo
-			lock.unlock(); // release lock while running commands
-			job->setStatus( Running );
-			job->execute();
-			job->setStatus( Complete );
-			lock.lock();
-		}
-		else
-		{
-			// Push a command frame for this job
-			auto previousFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
-			pushFrame( job );
-			auto currentFrame = historyState_->commandFrames_.back();
-			THREAD_LOCAL_SET( historyState_->currentFrame_, currentFrame );
+            if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
+            {
+                //execute undo/redo
+                lock.unlock(); // release lock while running commands
+                job->setStatus( Running );
+                job->execute();
+                job->setStatus( Complete );
+                lock.lock();
+            }
+            else
+            {
+                // Push a command frame for this job
+                auto previousFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
+                pushFrame( job );
+                auto currentFrame = historyState_->commandFrames_.back();
+                THREAD_LOCAL_SET( historyState_->currentFrame_, currentFrame );
 
-			lock.unlock(); // release lock while running commands
-			job->execute();
-			lock.lock();
+                lock.unlock(); // release lock while running commands
+                job->execute();
+                lock.lock();
 
-			// Spin and process commands until all sub commands for this frame have been executed
-			while (!currentFrame->commandQueue_.empty() || historyState_->commandFrames_.back() != currentFrame )
-			{
-				lock.unlock();
-				processCommands();
-				lock.lock();
-			}
+                // Spin and process commands until all sub commands for this frame have been executed
+                while (!currentFrame->commandQueue_.empty() || historyState_->commandFrames_.back() != currentFrame )
+                {
+                    lock.unlock();
+                    processCommands();
+                    lock.lock();
+                }
 
-			// Pop the command frame
-			THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
-			popFrame();
-		}
-	}
+                // Pop the command frame
+                THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
+                popFrame();
+            }
+        }
 
-	if (currentThreadId != ownerThreadId_)
-	{
-		if (!historyState_->pendingHistory_.empty())
-		{
-			ownerWakeUp_ = true;
-		}
-		return;
-	}
+        if (currentThreadId != ownerThreadId_)
+        {
+            if (!historyState_->pendingHistory_.empty())
+            {
+                ownerWakeUp_ = true;
+            }
+            return;
+        }
 
-	if (historyState_->pendingHistory_.empty())
-	{
-		return;
-	}
+        if (historyState_->pendingHistory_.empty())
+        {
+            return;
+        }
 
-	if (static_cast<int>(historyState_->history_.size()) > currentIndex_.value() + 1)
-	{
-		// erase all history after the current index as we have pending
-		// history that will make this invalid
-		historyState_->history_.resize( currentIndex_.value() + 1 );
-	}
+        if (static_cast<int>(historyState_->history_.size()) > currentIndex_.value() + 1)
+        {
+            // erase all history after the current index as we have pending
+            // history that will make this invalid
+            historyState_->history_.resize( currentIndex_.value() + 1 );
+        }
 
-	while (!historyState_->pendingHistory_.empty())
-	{
-		historyState_->history_.push_back( historyState_->pendingHistory_.front() );
-		historyState_->pendingHistory_.pop_front();
-	}
+        while (!historyState_->pendingHistory_.empty())
+        {
+            historyState_->history_.push_back( historyState_->pendingHistory_.front() );
+            historyState_->pendingHistory_.pop_front();
+        }
+    }
 	updateSelected( static_cast< int >( historyState_->history_.size() - 1 ) );
 }
 
@@ -1021,7 +1084,6 @@ void CommandManagerImpl::flush()
 		lock.lock();
 	}
 }
-
 
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()
@@ -1249,6 +1311,11 @@ void CommandManager::fireProgressMade( const CommandInstance & command ) const
 }
 
 
+void CommandManager::fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const
+{
+    return pImpl_->fireCommandExecuted(command, operation);
+}
+
 //==============================================================================
 bool CommandManager::canUndo() const
 {
@@ -1260,6 +1327,11 @@ bool CommandManager::canUndo() const
 bool CommandManager::canRedo() const
 {
 	return pImpl_->canRedo();
+}
+
+void CommandManager::removeCommands(const TRemoveFunctor & functor)
+{
+    pImpl_->removeCommands(functor);
 }
 
 
@@ -1383,6 +1455,11 @@ void CommandManager::notifyHandleCommandQueued( const char * commandId )
 void CommandManager::notifyNonBlockingProcessExecution( const char * commandId )
 {
 	pImpl_->notifyNonBlockingProcessExecution( commandId );
+}
+
+void CommandManager::SetHistorySerializationEnabled(bool isEnabled)
+{
+    pImpl_->SetHistorySerializationEnabled(isEnabled);
 }
 
 //==============================================================================

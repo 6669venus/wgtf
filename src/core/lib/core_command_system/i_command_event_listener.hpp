@@ -5,6 +5,13 @@
 
 class CommandInstance;
 
+enum class CommandOperation
+{
+    EXECUTE,
+    UNDO,
+    REDO
+};
+
 class ICommandEventListener
 {
 public:
@@ -18,6 +25,7 @@ public:
 	virtual void statusChanged(
 		const CommandInstance & commandInstance ) const { }
 	virtual void progressMade( const CommandInstance & commandInstance ) const { }
+    virtual void commandExecuted(const CommandInstance & commandInstance, CommandOperation operation) {}
 	virtual void multiCommandStatusChanged( MultiCommandStatus multiCommandStatus ) const { }
 	virtual void handleCommandQueued( const char * commandId ) const { }
 	virtual void onNonBlockingProcessExecution( const char * commandId ) const { }

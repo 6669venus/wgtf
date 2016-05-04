@@ -172,13 +172,12 @@ WGTimelineBarSlider {
     WGContextArea {
         id: sliderContextMenu
 
-        anchors.fill: undefined
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        parent: barArea
+        anchors.fill: parent
+        anchors.leftMargin: 3
+        anchors.rightMargin: 3
 
-        x: barSlider.startFrame * (view.width / rootFrame.totalFrames) + 3
-        width: barSlider.endFrame * (view.width / rootFrame.totalFrames) - 6
-
+        //if within the bar, update selection and open context menu.
         onPressed: {
             view.selectedBars = [barSlider.barIndex]
             view.selectedHandles = []

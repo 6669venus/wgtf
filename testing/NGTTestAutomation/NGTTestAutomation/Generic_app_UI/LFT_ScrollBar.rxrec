@@ -1,0 +1,2354 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="0cce184d-3ea9-46d8-91b7-56559d1f9d2e"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		LFT_ScrollBar
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="LFT_ScrollBar"
+	namespace="NGTTestAutomation.Generic_app_UI"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="3523bc1b-1c5e-4a92-bb75-d2d794321d3d"
+		action="Down"
+		button="Left"
+		movetime="300ms"
+		sx="3831"
+		sy="142"
+		loc="6;16">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="da775374-1e2b-42b8-b321-a8a789d2d2e2">
+				<element
+				role="unknown"
+				prefcap="unknown"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="0"
+				rect="3825,126,13,970"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						WGScrollBar_QMLTYPE_699;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						460
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						verticalScrollBar
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						WGScrollBar
+					</attribute>
+					<dynamicattribute
+					name="__collapsedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__collapsedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="__expanded"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.__expanded property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="__expandedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__expandedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="__scrollBarWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__scrollBarWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGScrollBar_QMLTYPE_699.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="CollapsedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.collapsedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Expanded"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.expanded property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ExpandedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.expandedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt WGScrollBar_QMLTYPE_699.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Orientation"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.orientation property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PageSize"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.pageSize property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Position"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.position property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollBarStyle"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollBarStyle property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollBarWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollBarWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollFlickable"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollFlickable property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt WGScrollBar_QMLTYPE_699.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt WGScrollBar_QMLTYPE_699.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt WGScrollBar_QMLTYPE_699.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt WGScrollBar_QMLTYPE_699.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt WGScrollBar_QMLTYPE_699.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt WGScrollBar_QMLTYPE_699.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt WGScrollBar_QMLTYPE_699.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt WGScrollBar_QMLTYPE_699.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt WGScrollBar_QMLTYPE_699.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt WGScrollBar_QMLTYPE_699.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ResetBounds"
+					description="The Qt WGScrollBar_QMLTYPE_699.resetBounds() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt WGScrollBar_QMLTYPE_699.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_list_model_test/test_short_list_panel.qml']//element[@objectname='WGListView']/element[@objectname='verticalScrollBar']
+				</path>
+			</info>
+			<helperscreenshot
+			guid="61cf7fb5-6d3d-4b66-9a73-f4572008b8d5">
+				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
+60UgHUUu33/Sjb7/AKUwEopdvv8ApRt9/wBKAEopdvv+lG33/SgBKKXb7/pRt9/0oASil2+/6Ubf
+f9KAEopdvv8ApRt9/wBKAEopdvv+lG33/SgBKKXb7/pRt9/0oASil2+/6Ubff9KAEopdvv8ApRt9
+/wBKAEopdvv+lG33/SgBKKXb7/pRt9/0oASil2+/6Ubff9KAEopdvv8ApRt9/wBKAEopdvv+lG33
+/SgBKKlWIHGNxOM8DNKYMDJWQAf7Jqea+yNnRa3a+8rnrRU/lKecmip9pE0WEqNXQyiiitDlCiii
+gAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAt2f8A
+rR/uH+lWpv8AUSf7p/lVWz/1o/3D/Sp5ZUZZoww3qhyPwroofwvvIxn8f7vyRTX7oooX7oorzJbs
++io/w4+iIvxo/GkorrPAF/Gj8aSigBfxo/GkooAX8aPxpKKAF/Gj8aSigBfxo/GkooAX8aPxpKKA
+F/Gj8aSigBfxo/GkooAX8aPxpKKAF/Gj8aSigBfxo/GkooAX8aPxpKKAF/Gj8aSigBfxo/GkooAu
+Wn+tH+4f6VpWthHf2dwrnY6zHZIOqnYv6e1Zln/rR/uH+lXY9Qks4ZlihLuZN5LAhQoVe/cnBFaQ
+TdFW7jxDSxDv2X5IoSW91A5ie1mZlOCUQsp+hoq7PNrLzM9pIXt3+aM7UHB5xzz7UVzunF6nRHF1
+IpJGTRS4oxWhzCUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAl
+FLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQBYt3WOQFjgbfTPpU8txEYXAY5Kn+E1UU
+fMv+7/hTnHyN9DTpVXGFkXiaalVv6fkRrGm0fIv5UU9PuiiuOTd2e1ShH2cdOiI6KKK6zwgooooA
+KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAJF+8v8A
+u/4Ur/6tvoaRfvL/ALv+FK/+rb6GohsbYj+J935CJ90UUJ90UVzy3Z7NH+HH0RFmjNJRXWeALmjN
+JRQAuaM0lFAC5ozSUUALmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM
+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
+			</helperscreenshot>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="0a75e885-408d-4646-89d3-54fa7250e80f"
+		action="Up"
+		button="Left"
+		movetime="300ms"
+		sx="3831"
+		sy="1089"
+		loc="6;963">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="da775374-1e2b-42b8-b321-a8a789d2d2e2">
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_list_model_test/test_short_list_panel.qml']//element[@objectname='WGListView']/element[@objectname='verticalScrollBar']
+				</path>
+			</info>
+		</mouseitem>
+		<validationitem
+		enabled="True"
+		optional="True"
+		screenshotname="Screenshot3"
+		screenshotguid="38c648f3-14d8-4cf9-921d-85c6f9d387ad"
+		codegenpropertyname="List_Screenshot3"
+		searchpropertyid="2377725c-6804-46a2-9f86-578dd3705a4a"
+		imagerect="0,0,1174,922"
+		imageoptions="0.8;EdgesSobel;0,0,1174,922;True;10000000;0ms"
+		action="CompareImage">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="b6407aaf-66ed-419c-988b-399fdaca55f1">
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_list_model_test/test_short_list_panel.qml']//element[@objectname='WGListView']/list[@name='list']
+				</path>
+			</info>
+			<matchname>
+				(Choose)
+			</matchname>
+			<matchvalue>
+				yourValue
+			</matchvalue>
+		</validationitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="5b2664d4-f65b-47dd-bee1-ad482515b090"
+		action="Down"
+		button="Left"
+		movetime="300ms"
+		sx="3832"
+		sy="1079"
+		loc="7;953">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="da775374-1e2b-42b8-b321-a8a789d2d2e2">
+				<element
+				role="unknown"
+				prefcap="unknown"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="0"
+				rect="3825,126,13,970"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						WGScrollBar_QMLTYPE_699;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						460
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						verticalScrollBar
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						WGScrollBar
+					</attribute>
+					<dynamicattribute
+					name="__collapsedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__collapsedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="__expanded"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.__expanded property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="__expandedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__expandedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="__scrollBarWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__scrollBarWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGScrollBar_QMLTYPE_699.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="CollapsedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.collapsedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Expanded"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.expanded property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ExpandedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.expandedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt WGScrollBar_QMLTYPE_699.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Orientation"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.orientation property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PageSize"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.pageSize property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Position"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.position property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollBarStyle"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollBarStyle property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollBarWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollBarWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollFlickable"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollFlickable property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt WGScrollBar_QMLTYPE_699.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt WGScrollBar_QMLTYPE_699.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt WGScrollBar_QMLTYPE_699.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt WGScrollBar_QMLTYPE_699.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt WGScrollBar_QMLTYPE_699.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt WGScrollBar_QMLTYPE_699.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt WGScrollBar_QMLTYPE_699.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt WGScrollBar_QMLTYPE_699.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt WGScrollBar_QMLTYPE_699.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt WGScrollBar_QMLTYPE_699.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ResetBounds"
+					description="The Qt WGScrollBar_QMLTYPE_699.resetBounds() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt WGScrollBar_QMLTYPE_699.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_list_model_test/test_short_list_panel.qml']//element[@objectname='WGListView']/element[@objectname='verticalScrollBar']
+				</path>
+			</info>
+			<helperscreenshot
+			guid="caff8435-4453-4c39-bce6-1e922231b58a">
+				/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDABwTFRgVERwYFhgfHRwhKUUtKSYmKVQ8QDJFZFhpZ2JY
+YF9ufJ6GbnWWd19giruLlqOpsbOxa4TC0MGszp6usar/2wBDAR0fHykkKVEtLVGqcmByqqqqqqqq
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr/wAARCAFzAQIDASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDLooop
+gFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB
+Iv3z9B/WiX7h+o/nSr98/Qf1pJfuH6j+dRD4UbYj+LIUdBRQOgorme57cPhRFRTaK7D54dRTaKAH
+UU2igB1FNooAdRTaKAHUU2igB1FNooAdRTaKAHUU2igB1FNooAdRTaKAHUU2igB1FNooAdRTaKAH
+UU2igCZfvn6D+tEv3D9R/OgffP0H9aSX7h/D+dRD4UbYj+LIcOgooHQUVzPc9uHwogopcUYrsPnh
+KKXFGKAEopcUYoASilxRigBKKXFGKAEopcUYoASilxRigBKKXFGKAEopcUYoASilxRigBKKXFGKA
+EopcUYoASilxRigBKKXFGKAEopcUYoAlH3z9B/Wkl+4fw/nSj75+g/rSSj5D+H86iHwo2xH8WQ4d
+BRQOgorme57cPhRFRRRXYfPBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQ
+AUUUUAFFFFABRRRQAUUUUASr98/Qf1pJfuH6j+dKv3z9B/Wkl+4fqP51EPhRtiP4shR0FFA6CiuZ
+7ntw+FEOaM0lFdh88LmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM0l
+FAC5ozSUUALmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM0lFAEw++foP60kp+Q/h/OlH3z9B/Wkl+
+4fw/nUQ+FG2I/iyHDoKKB0FFcz3Pbh8KIKKdRXYfPDaKdRQA2inUUANop1FADaKdRQA2inUUANop
+1FADaKdRQA2inUUANop1FADaKdRQA2inUUANop1FADaKdRQA2inUUASD75+g/rSS/cP4fzpV++fo
+P60S/cP1H86iHwo2xH8WQo6CigdBRXM9z24fCiKiiiuw+eCiiigAooooAKKKKACiiigAooooAKKK
+KACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAlX75+g/rSS/cP1H86F++foP60S/cP1H
+86iHwo2xH8WQo6CigdBRXM9z24fCiCiiiuw+eCiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAmH3z9B/Wkl+4fw/nSj75+g/rSS/cP4fzqIfCjbEf
+xZDh0FFA6CiuZ7ntw+FEOKMUtFdh88JijFLRQAmKMUtFACYoxS0UAJijFLRQAmKMUtFACYoxS0UA
+JijFLRQAmKMUtFACYoxS0UAJijFLRQAmKMUtFACYoxS0UAJijFLRQAmKMUtFAEg++foP60ko+Q/h
+/OnL98/Qf1pJfuH6j+dRD4UbYj+LIUdBRQOgorme57cPhRFRSZozXYfPC0UmaM0ALRSZozQAtFJm
+jNAC0UmaM0ALRSZozQAtFJmjNAC0UmaM0ALRSZozQAtFJmjNAC0UmaM0ALRSZozQAtFJmjNAC0Um
+aM0ALRSZozQBMv3z9B/Wkl+4fqP50D75+g/rSSn5D+H86iHwo2xH8WQ4dBRQOgorme57cPhRBRRR
+XYfPBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUU
+UUATD75+g/rSS/cP4fzpR98/Qf1pJfuH8P51EPhRtiP4shw6CigdBRXM9z24fCiKiiiuw+eCiiig
+AooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAkX75+g
+/rRL9w/UfzpV++foP60kv3D9R/Ooh8KNsR/FkKOgooHQUVzPc9uHwoioptFdh88OoptFADqKbRQA
+6im0UAOoptFADqKbRQA6im0UAOoptFADqKbRQA6im0UAOoptFADqKbRQA6im0UAOoptFADqKbRQB
+Mv3z9B/WiX7h+o/nQPvn6D+tJL9w/h/Ooh8KNsR/FkOHQUUDoKK5nue3D4UQUUuKMV2HzwlFLijF
+ACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKMUAJRS4oxQAlFLijFACUUuKM
+UAJRS4oxQAlFLijFACUUuKMUASj75+g/rSS/cP4fzpR98/Qf1pJR8h/D+dRD4UbYj+LIcOgooHQU
+VzPc9uHwoiooorsPngooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKA
+CiiigAooooAKKKKALMEQkZskjAHT8adcQKkLMGY4x1x60tp95/oP61Jd/wDHs34fzralCLo3sTip
+P6y15lQdBRQOgorzXufRw+FEOaM0lFdh88LmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM0lFAC5oz
+SUUALmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM0lFAC5ozSUUALmjNJRQAuaM0lFAF60+8/0H9ak
+u/8Aj2b8P51Hafef6D+tOniuGtp5l+eFHCsoHKYCnPuOa3pySoK5OJTeJkVh0FFIvKj6UV5j3Po4
+fCiGil4o4rsPnhKKXijj3oASil4o4oASil4o4oASil4o4oASil496OKAEopeKOKAEopeKOKAEope
+KOKAEopeKOKAEopeKOKAEopeKOKAEopeKOKAEopePejigBKKXijigC7afef6D+tbGkyJHb3Bdgo8
+/GSfVVrAWRkJKSbc9elMk3SqVeYlS27bxjOAM/kKFVj7JR6nRVw85V5TVrPzRpzL4fWeRZBtcMQw
+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
+QAfZof7v/jxooooA/9k=
+			</helperscreenshot>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="8b9fa0a6-95f0-46a0-ac73-d3814ef03e99"
+		action="Move"
+		button="Left"
+		movetime="300ms"
+		sx="3832"
+		sy="1079"
+		loc="15;945">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="da775374-1e2b-42b8-b321-a8a789d2d2e2">
+				<element
+				role="unknown"
+				prefcap="unknown"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="0"
+				rect="3825,126,13,970"
+				snapElem="">
+					<attribute
+					name="basetype"
+					type="System.String">
+						WGScrollBar_QMLTYPE_699;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						460
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						verticalScrollBar
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						WGScrollBar
+					</attribute>
+					<dynamicattribute
+					name="__collapsedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__collapsedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="__expanded"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.__expanded property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="__expandedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__expandedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="__scrollBarWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.__scrollBarWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGScrollBar_QMLTYPE_699.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="CollapsedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.collapsedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Expanded"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.expanded property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ExpandedWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.expandedWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt WGScrollBar_QMLTYPE_699.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Orientation"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.orientation property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PageSize"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.pageSize property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Position"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.position property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollBarStyle"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollBarStyle property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollBarWidth"
+					type="System.Int32"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollBarWidth property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="ScrollFlickable"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.scrollFlickable property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt WGScrollBar_QMLTYPE_699.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt WGScrollBar_QMLTYPE_699.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt WGScrollBar_QMLTYPE_699.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGScrollBar_QMLTYPE_699.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt WGScrollBar_QMLTYPE_699.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt WGScrollBar_QMLTYPE_699.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt WGScrollBar_QMLTYPE_699.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt WGScrollBar_QMLTYPE_699.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt WGScrollBar_QMLTYPE_699.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt WGScrollBar_QMLTYPE_699.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt WGScrollBar_QMLTYPE_699.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt WGScrollBar_QMLTYPE_699.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt WGScrollBar_QMLTYPE_699.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ResetBounds"
+					description="The Qt WGScrollBar_QMLTYPE_699.resetBounds() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt WGScrollBar_QMLTYPE_699.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_list_model_test/test_short_list_panel.qml']//element[@objectname='WGListView']/element[@objectname='verticalScrollBar']
+				</path>
+			</info>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="d92ff9e9-ef75-40c6-a5b2-7cdcd6f08a95"
+		action="Up"
+		button="Left"
+		movetime="300ms"
+		sx="3839"
+		sy="110"
+		loc="1135;10">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="9597de70-7876-4022-9edc-d52c2a135dc4">
+				<element
+				role="text"
+				prefcap="text"
+				capabilities="qtelement"
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="1"
+				rect="2704,100,1136,24"
+				snapElem="">
+					<attribute
+					name="selectionlength"
+					type="System.Int32">
+						0
+					</attribute>
+					<attribute
+					name="selectionstart"
+					type="System.Int32">
+						0
+					</attribute>
+					<attribute
+					name="text"
+					type="System.String">
+					</attribute>
+					<attribute
+					name="accessiblename"
+					type="System.String">
+					</attribute>
+					<attribute
+					name="basetype"
+					type="System.String">
+						WGTextBox_QMLTYPE_731;TextField_QMLTYPE_726;Control_QMLTYPE_724;QQuickFocusScope;QQuickItem;QObject
+					</attribute>
+					<attribute
+					name="internalid"
+					type="System.Int64">
+						458
+					</attribute>
+					<attribute
+					name="name"
+					type="System.String">
+						WGTextBox
+					</attribute>
+					<attribute
+					name="type"
+					type="System.String">
+						WGTextBox
+					</attribute>
+					<dynamicattribute
+					name="__baselineOffset"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.__baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="__contentHeight"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.__contentHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="__contentWidth"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.__contentWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="__panel"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.__panel property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="__style"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.__style property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="__styleData"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.__styleData property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="AcceptableInput"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.acceptableInput property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocus"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.activeFocus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnPress"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.activeFocusOnPress property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ActiveFocusOnTab"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.activeFocusOnTab property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Anchors"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.anchors property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Antialiasing"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.antialiasing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="AssetBrowserContextMenu"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.assetBrowserContextMenu property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Baseline"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.baseline property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="BaselineOffset"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.baselineOffset property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Bottom"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.bottom property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="CanPaste"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.canPaste property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="CanRedo"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.canRedo property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="CanUndo"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.canUndo property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Children"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.children property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ChildrenRect"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGTextBox_QMLTYPE_731.childrenRect property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Clip"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.clip property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ContentWidth"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.contentWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="CursorPosition"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.cursorPosition property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="CursorRectangle"
+					type="System.Drawing.RectangleF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGTextBox_QMLTYPE_731.cursorRectangle property of type RectangleF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Data"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.data property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="DisplayText"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.displayText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="EchoMode"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.echoMode property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="EffectiveHorizontalAlignment"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.effectiveHorizontalAlignment property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Enabled"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.enabled property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="Focus"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.focus property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Font"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.font property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Height"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.height property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalAlignment"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.horizontalAlignment property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="HorizontalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.horizontalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Hovered"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.hovered property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitHeight"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.implicitHeight property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="ImplicitWidth"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.implicitWidth property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="InputMask"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.inputMask property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="InputMethodComposing"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.inputMethodComposing property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="InputMethodHints"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.inputMethodHints property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Label"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.label property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Label_"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.label_ property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Layer"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.layer property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Left"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.left property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Length"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.length property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="MaximumLength"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.maximumLength property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Menu"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.menu property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="ObjectName"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.objectName property of type String."
+					weight="999"
+					readonly="False"/>
+					<dynamicattribute
+					name="OldText"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.oldText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Opacity"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.opacity property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Parent"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.parent property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="PlaceholderText"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.placeholderText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="ReadOnly"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.readOnly property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="Resources"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.resources property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Right"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.right property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Rotation"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.rotation property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Scale"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.scale property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="SelectByMouse"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.selectByMouse property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="SelectedText"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.selectedText property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="SelectionEnd"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.selectionEnd property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="Smooth"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.smooth property of type Boolean."
+					readonly="False"/>
+					<dynamicattribute
+					name="State"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.state property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="States"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.states property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Style"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.style property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="StyleHints"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.styleHints property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TextColor"
+					type="System.String"
+					description="The Qt WGTextBox_QMLTYPE_731.textColor property of type String."
+					readonly="False"/>
+					<dynamicattribute
+					name="Top"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.top property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transform"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.transform property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="TransformOrigin"
+					type="System.Object"
+					description="The Qt WGTextBox_QMLTYPE_731.transformOrigin property of type Object."/>
+					<dynamicattribute
+					name="TransformOriginPoint"
+					type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+					description="The Qt WGTextBox_QMLTYPE_731.transformOriginPoint property of type PointF."
+					readonly="False"/>
+					<dynamicattribute
+					name="Transitions"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.transitions property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Validator"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.validator property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalAlignment"
+					type="System.Int32"
+					description="The Qt WGTextBox_QMLTYPE_731.verticalAlignment property of type Int32."
+					readonly="False"/>
+					<dynamicattribute
+					name="VerticalCenter"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.verticalCenter property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Visible"
+					type="System.Boolean"
+					description="The Qt WGTextBox_QMLTYPE_731.visible property of type Boolean."
+					readonly="False">
+						True
+					</dynamicattribute>
+					<dynamicattribute
+					name="VisibleChildren"
+					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
+					description="The Qt WGTextBox_QMLTYPE_731.visibleChildren property of type QRemoteObject."
+					readonly="False"/>
+					<dynamicattribute
+					name="Width"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.width property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="X"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.x property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Y"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.y property of type Double."
+					readonly="False"/>
+					<dynamicattribute
+					name="Z"
+					type="System.Double"
+					description="The Qt WGTextBox_QMLTYPE_731.z property of type Double."
+					readonly="False"/>
+					<dynamicaction
+					displayName="ChildAt"
+					description="The Qt WGTextBox_QMLTYPE_731.childAt(double,double) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Double."
+						type="System.Double"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Contains"
+					description="The Qt WGTextBox_QMLTYPE_731.contains(QPointF) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type PointF."
+						type="System.Drawing.PointF, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Copy"
+					description="The Qt WGTextBox_QMLTYPE_731.copy() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Cut"
+					description="The Qt WGTextBox_QMLTYPE_731.cut() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="DeleteLater"
+					description="The Qt WGTextBox_QMLTYPE_731.deleteLater() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Deselect"
+					description="The Qt WGTextBox_QMLTYPE_731.deselect() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="ForceActiveFocus"
+					description="The Qt WGTextBox_QMLTYPE_731.forceActiveFocus(Qt::FocusReason) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GetText"
+					description="The Qt WGTextBox_QMLTYPE_731.getText(QVariant,QVariant) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="GrabToImage"
+					description="The Qt WGTextBox_QMLTYPE_731.grabToImage(QJSValue,QSize) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type Size."
+						type="System.Drawing.Size, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.Boolean"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Insert"
+					description="The Qt WGTextBox_QMLTYPE_731.insert(QVariant,QVariant) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="IsRightToLeft"
+					description="The Qt WGTextBox_QMLTYPE_731.isRightToLeft(QVariant,QVariant) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapFromItem"
+					description="The Qt WGTextBox_QMLTYPE_731.mapFromItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="MapToItem"
+					description="The Qt WGTextBox_QMLTYPE_731.mapToItem(QQmlV4Function*) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="NextItemInFocusChain"
+					description="The Qt WGTextBox_QMLTYPE_731.nextItemInFocusChain(bool) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type Boolean."
+						type="System.Boolean"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Paste"
+					description="The Qt WGTextBox_QMLTYPE_731.paste() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Redo"
+					description="The Qt WGTextBox_QMLTYPE_731.redo() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Remove"
+					description="The Qt WGTextBox_QMLTYPE_731.remove(QVariant,QVariant) method.">
+						<argument
+						displayName="arg0"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<argument
+						displayName="arg1"
+						description="A method argument of type QRemoteObject."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SelectAll"
+					description="The Qt WGTextBox_QMLTYPE_731.selectAll() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="SelectWord"
+					description="The Qt WGTextBox_QMLTYPE_731.selectWord() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Undo"
+					description="The Qt WGTextBox_QMLTYPE_731.undo() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"/>
+					</dynamicaction>
+					<dynamicaction
+					displayName="Update"
+					description="The Qt WGTextBox_QMLTYPE_731.update() method.">
+						<returns
+						displayName="returns"
+						description="Return value."
+						type="System.String"/>
+					</dynamicaction>
+				</element>
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_list_model_test/test_short_list_panel.qml']//text[@objectname='WGTextBox']
+				</path>
+			</info>
+		</mouseitem>
+		<validationitem
+		enabled="True"
+		optional="True"
+		screenshotname="Screenshot6"
+		screenshotguid="b78a1d22-2aaa-4752-b122-e4b52cd778b8"
+		codegenpropertyname="List_Screenshot6"
+		searchpropertyid="2377725c-6804-46a2-9f86-578dd3705a4a"
+		imagerect="0,0,1174,922"
+		imageoptions="0.8;EdgesSobel;0,0,1174,922;True;10000000;0ms"
+		action="CompareImage">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="b6407aaf-66ed-419c-988b-399fdaca55f1">
+				<path>
+					/form[@name='MainWindow']/container[@objectname='plg_list_model_test/test_short_list_panel.qml']//element[@objectname='WGListView']/list[@name='list']
+				</path>
+			</info>
+			<matchname>
+				(Choose)
+			</matchname>
+			<matchvalue>
+				yourValue
+			</matchvalue>
+		</validationitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		LFT_ScrollBar.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

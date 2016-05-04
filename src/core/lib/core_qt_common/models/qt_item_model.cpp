@@ -8,6 +8,9 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+ITEMROLE( display )
+ITEMROLE( decoration )
+
 namespace
 {
 	class ItemData : public QObject
@@ -164,6 +167,11 @@ const AbstractItemModel & QtItemModel::source() const
 	return impl_->source_;
 }
 
+AbstractItemModel & QtItemModel::source()
+{
+	return impl_->source_;
+}
+
 QObject * QtItemModel::item( int row, int column, const QObject * parent ) const
 {
 	auto parentIndex = itemToIndex( parent );
@@ -181,6 +189,30 @@ int QtItemModel::columnCount( const QObject * parent ) const
 {
 	auto parentIndex = itemToIndex( parent );
 	return columnCount( parentIndex );
+}
+
+bool QtItemModel::insertRow( int row, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::insertRow( row, parentIndex );
+}
+
+bool QtItemModel::insertColumn( int column, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::insertColumn( column, parentIndex );
+}
+
+bool QtItemModel::removeRow( int row, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::removeRow( row, parentIndex );
+}
+
+bool QtItemModel::removeColumn( int column, const QObject * parent )
+{
+	auto parentIndex = itemToIndex( parent );
+	return QAbstractItemModel::removeColumn( column, parentIndex );
 }
 
 QModelIndex QtItemModel::index( int row, int column, const QModelIndex &parent ) const
@@ -214,6 +246,11 @@ QModelIndex QtItemModel::parent( const QModelIndex &child ) const
 	}
 
 	auto parentItem = const_cast< AbstractItem * >( childIndex.parent_ );
+	if (parentItem == nullptr)
+	{
+		return QModelIndex();
+	}
+
 	AbstractItemModel::ItemIndex parentIndex;
 	impl_->source_.index( parentItem, parentIndex );
 	if (!parentIndex.isValid())
@@ -249,19 +286,16 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 	{
 		return QVariant();
 	}
-
-	static size_t displayRole = ItemRole::compute( "display" );
-	static size_t decorationRole = ItemRole::compute( "decoration" );
 	
 	size_t roleId;
 	switch (role)
 	{
 	case Qt::DisplayRole:
-		roleId = displayRole;
+		roleId = ItemRole::displayId;
 		break;
 
 	case Qt::DecorationRole:
-		roleId = decorationRole;
+		roleId = ItemRole::decorationId;
 		break;
 
 	default:
@@ -281,6 +315,12 @@ bool QtItemModel::setData( const QModelIndex &index, const QVariant &value, int 
 	if (item == nullptr)
 	{
 		return false;
+	}
+
+	auto oldValue = QtHelpers::toQVariant( item->getData( index.row(), index.column(), role ) );
+	if (value == oldValue)
+	{
+		return true;
 	}
 
 	auto data = QtHelpers::toVariant( value );
@@ -312,6 +352,11 @@ const AbstractListModel & QtListModel::source() const
 	return static_cast< const AbstractListModel & >( QtItemModel::source() );
 }
 
+AbstractListModel & QtListModel::source()
+{
+	return static_cast< AbstractListModel & >( QtItemModel::source() );
+}
+
 QObject * QtListModel::item( int row ) const 
 {
 	return QtItemModel::item( row, 0, nullptr ); 
@@ -325,13 +370,13 @@ int QtListModel::count() const
 
 bool QtListModel::insertItem( int row )
 {
-	return QtItemModel::insertRow( row ); 
+	return QtItemModel::insertRow( row, nullptr ); 
 }
 
 
 bool QtListModel::removeItem( int row )
 {
-	return QtItemModel::removeRow( row ); 
+	return QtItemModel::removeRow( row, nullptr ); 
 }
 
 
@@ -342,6 +387,11 @@ QtTreeModel::QtTreeModel( AbstractTreeModel & source )
 const AbstractTreeModel & QtTreeModel::source() const
 {
 	return static_cast< const AbstractTreeModel & >( QtItemModel::source() );
+}
+
+AbstractTreeModel & QtTreeModel::source()
+{
+	return static_cast< AbstractTreeModel & >( QtItemModel::source() );
 }
 
 QObject * QtTreeModel::item( int row, QObject * parent ) const 
@@ -357,15 +407,13 @@ int QtTreeModel::count( QObject * parent ) const
 
 bool QtTreeModel::insertItem( int row, QObject * parent )
 {
-	auto parentIndex = itemToIndex( parent );
-	return QtItemModel::insertRow( row, parentIndex ); 
+	return QtItemModel::insertRow( row, parent ); 
 }
 
 
 bool QtTreeModel::removeItem( int row, QObject * parent )
 {
-	auto parentIndex = itemToIndex( parent );
-	return QtItemModel::removeRow( row, parentIndex ); 
+	return QtItemModel::removeRow( row, parent ); 
 }
 
 
@@ -376,6 +424,11 @@ QtTableModel::QtTableModel( AbstractTableModel & source )
 const AbstractTableModel & QtTableModel::source() const
 {
 	return static_cast< const AbstractTableModel & >( QtItemModel::source() );
+}
+
+AbstractTableModel & QtTableModel::source()
+{
+	return static_cast< AbstractTableModel & >( QtItemModel::source() );
 }
 
 QObject * QtTableModel::item( int row, int column ) const 
@@ -396,23 +449,23 @@ int QtTableModel::columnCount() const
 
 bool QtTableModel::insertRow( int row )
 {
-	return QtItemModel::insertRow( row ); 
+	return QtItemModel::insertRow( row, nullptr ); 
 }
 
 
 bool QtTableModel::insertColumn( int column )
 {
-	return QtItemModel::insertColumn( column ); 
+	return QtItemModel::insertColumn( column, nullptr ); 
 }
 
 
 bool QtTableModel::removeRow( int row )
 {
-	return QtItemModel::removeRow( row ); 
+	return QtItemModel::removeRow( row, nullptr ); 
 }
 
 
 bool QtTableModel::removeColumn( int column )
 {
-	return QtItemModel::removeColumn( column ); 
+	return QtItemModel::removeColumn( column, nullptr ); 
 }

@@ -9,6 +9,7 @@
 #include "interfaces/i_datasource.hpp"
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"
+#include "core_data_model/reflection/reflected_tree_model_new.hpp"
 
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
@@ -22,6 +23,7 @@
 //==============================================================================
 TestUI::TestUI( IComponentContext & context )
 	: DepsBase( context )
+	, context_( context )
 {
 }
 
@@ -74,21 +76,18 @@ void TestUI::createActions( IUIFramework & uiFramework )
 // =============================================================================
 void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx )
 {
+	test1Models_.emplace_back( new ReflectedTreeModelNew( context_, dataSrc->getTestPage() ) );
+
+	test1Views_.emplace_back( TestViews::value_type(
+		uiFramework.createView( "testing_ui_main/test_property_tree_panel.qml",
+		IUIFramework::ResourceType::Url, test1Models_.back().get() ), envIdx ) );
+
 	auto defManager = get<IDefinitionManager>(); 
 	assert( defManager != nullptr );
 	auto controller = get<IReflectionController>();
 	assert( controller != nullptr );
 
 	auto model = std::unique_ptr< ITreeModel >(
-		new ReflectedTreeModel( dataSrc->getTestPage(), *defManager, controller ) );
-
-	test1Views_.emplace_back( TestViews::value_type(
-		uiFramework.createView( "testing_ui_main/test_reflected_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
-
-	test1Views_.back().first->registerListener( this );
-
-	model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 
 	test2Views_.emplace_back( TestViews::value_type(
@@ -113,6 +112,7 @@ void TestUI::destroyViews( size_t idx )
 {
 	assert( test1Views_.size() == test2Views_.size() );
 	removeViews( idx );
+	test1Models_.erase( test1Models_.begin() + idx );
 	test1Views_.erase( test1Views_.begin() + idx );
 	test2Views_.erase( test2Views_.begin() + idx );
 }

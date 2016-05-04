@@ -16,6 +16,8 @@ ADD_DEFINITIONS( -DQT_QML_DEBUG )
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp
+	models/qt_collection_model.cpp
+	models/qt_collection_model.hpp
 	models/qt_item_model.cpp
 	models/qt_item_model.hpp
 	models/qt_model_helpers.cpp
@@ -50,16 +52,26 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
+	models/extensions/column_extension_old.cpp
+	models/extensions/column_extension_old.hpp
 	models/extensions/component_extension.cpp
 	models/extensions/component_extension.hpp
+	models/extensions/component_extension_old.cpp
+	models/extensions/component_extension_old.hpp
+	models/extensions/list_extension.cpp
+	models/extensions/list_extension.hpp
 	models/extensions/selection_extension.cpp
 	models/extensions/selection_extension.hpp
 	models/extensions/tree_extension.cpp
 	models/extensions/tree_extension.hpp
+	models/extensions/tree_extension_old.cpp
+	models/extensions/tree_extension_old.hpp
 	models/extensions/value_extension.cpp
 	models/extensions/value_extension.hpp
 	models/extensions/thumbnail_extension.cpp
 	models/extensions/thumbnail_extension.hpp
+	models/extensions/image_extension.cpp
+	models/extensions/image_extension.hpp
 	models/extensions/i_model_extension.hpp
 	models/extensions/header_footer_text_extension.cpp
 	models/extensions/header_footer_text_extension.hpp
@@ -110,6 +122,8 @@ SET( ALL_SRCS
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
 	i_qt_view.hpp
+	image_qt_type_converter.hpp
+	image_qt_type_converter.cpp
 	model_qt_type_converter.hpp
 	model_qt_type_converter.cpp
 	string_qt_type_converter.hpp
@@ -122,6 +136,8 @@ SET( ALL_SRCS
 	qt_action_manager.hpp
 	qt_image_provider.cpp
 	qt_image_provider.hpp
+	qt_image_provider_old.cpp
+	qt_image_provider_old.hpp
 	qt_connection_holder.hpp
 	qt_connection_holder.cpp
 	qt_new_handler.hpp

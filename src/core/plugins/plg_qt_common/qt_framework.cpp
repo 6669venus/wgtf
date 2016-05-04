@@ -14,6 +14,7 @@
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
@@ -32,6 +33,10 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_component_provider.hpp"
 #include "core_ui_framework/generic_component_provider.hpp"
+
+#include "core_data_model/i_tree_model.hpp"
+#include "core_data_model/i_list_model.hpp"
+#include "core_data_model/i_item.hpp"
 
 #include "wg_types/string_ref.hpp"
 #include "core_common/ngt_windows.hpp"
@@ -127,6 +132,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj ) );
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
+	qmlEngine_->addImageProvider( QtImageProviderOld::providerId(), new QtImageProviderOld() );
 
 	if (commandManager_ != nullptr)
 	{
@@ -150,6 +156,7 @@ void QtFramework::finalise()
 
 	unregisterResources();
     preferences_->fini();
+	qmlEngine_->removeImageProvider( QtImageProviderOld::providerId() );
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
 	globalQmlSettings_ = nullptr;
@@ -346,7 +353,37 @@ std::unique_ptr< IView > QtFramework::createView(
 		auto source = toQVariant( context );
 		view->setContextProperty( QString( "source" ), source );
 	}
-	if(!view->load( qUrl ))
+	const char* customTitle = 0;
+
+	//NOTE(aidan): Setting unique titles for views so ranorex can
+	//              can find them. It takes information from the 
+	//				attached model if there is one and appends it
+	//				to the title
+
+	if (context.isValid())
+	{
+		ITreeModel* treeModel = context.getBase<ITreeModel>();
+		IListModel* listModel = context.getBase<IListModel>();
+
+		if (treeModel)
+		{
+			IItem* item = treeModel->item(0, 0);
+			if (item)
+			{
+				customTitle = item->getDisplayText(0);
+			}
+		}
+		else if (listModel)
+		{
+			IItem* item = listModel->item(0);
+			if (item)
+			{
+				customTitle = item->getDisplayText(0);
+			}
+		}
+	}
+
+	if(!view->load( qUrl, customTitle ))
     {
         delete view;
         return nullptr;

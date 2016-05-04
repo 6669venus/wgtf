@@ -31,11 +31,13 @@ Item {
         }
 
         onAccepted: {
+            beginUndoFrame();
             startHandle.value = secondsTime.value * timelineFrame.framesPerSecond + framesTime.value
             if (endTime)
             {
                 endHandle.value = secondsEndTime.value * timelineFrame.framesPerSecond + framesEndTime.value
             }
+            endUndoFrame();
             endTime = false
             startHandle = fakeHandle
             endHandle = fakeHandle

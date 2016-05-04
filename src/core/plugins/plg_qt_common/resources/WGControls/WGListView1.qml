@@ -232,7 +232,7 @@ Item {
     property var initialColumnWidths: []
 
     /*! This property determines if the column sizing handles are shown */
-    property bool showColumnsFrame: false
+    property bool showColumnsFrame: true
 
     readonly property real minimumScrollbarWidth:
         enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
@@ -371,7 +371,7 @@ Item {
         property real footerHeight: footerItemLoader.status === Loader.Ready ? listView.footerItem.height : 0
         property bool scrollable: contentHeight > height
 
-        delegate: WGItemRow {
+        delegate: WGListViewRowDelegate {
             anchors.left: parent.left
             width: Math.max(columnsFrame.width, minimumRowWidth)
             defaultColumnDelegate: listView.defaultColumnDelegate
@@ -456,7 +456,7 @@ Item {
         width: listView.width - listView.rightMargin - listView.leftMargin
     }
 
-    WGColumnsFrame {
+    WGColumnsFrame1 {
         id: columnsFrame
         columnCount: listView.columnCount
         y: listView.topMargin
@@ -467,7 +467,7 @@ Item {
         drawHandles: showColumnsFrame && listView.columnSpacing > 1
         resizableColumns: showColumnsFrame
         initialColumnWidths: listView.initialColumnWidths
-        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth 
+        defaultInitialColumnWidth: listView.columnCount === 0 ? 0 : initialColumnsFrameWidth / listView.columnCount - handleWidth
         idealColumnSizeFunction: calculateMaxTextWidth
 
         onColumnsChanged: {

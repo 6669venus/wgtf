@@ -3,6 +3,7 @@
 #define _QT_COLLECTION_MODEL_HPP
 
 #include "qt_item_model.hpp"
+#include "core_data_model/collection_model.hpp"
 
 
 class CollectionModel;

@@ -2,7 +2,6 @@
 
 #include "helpers/qt_helpers.hpp"
 
-#include "core_data_model/collection_model.hpp"
 
 
 QtCollectionModel::QtCollectionModel( std::unique_ptr<CollectionModel>&& source )

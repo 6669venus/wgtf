@@ -205,7 +205,7 @@ TEST_ITEMS = (
 		"known issue" : "",
 		"args" : "",
 		"timeout" : 600
-	}
+	},
 	{
 		"target" : "generic_app_test",
 		"name" : "Project Test (Hybrid, win64)",

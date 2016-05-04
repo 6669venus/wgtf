@@ -92,6 +92,16 @@ ReflectedObjectItemNew::Implementation::getGroups(
 
 ReflectedObjectItemNew::ReflectedObjectItemNew( IComponentContext & contextManager,
 	const ObjectHandle & object,
+	const ReflectedTreeModelNew & model )
+	: ReflectedTreeItemNew( contextManager, nullptr /* parent */, "" /* path */ )
+	, impl_( new Implementation( contextManager, object ) )
+{
+	this->setModel( &model );
+}
+
+
+ReflectedObjectItemNew::ReflectedObjectItemNew( IComponentContext & contextManager,
+	const ObjectHandle & object,
 	ReflectedTreeItemNew * parent )
 	: ReflectedTreeItemNew( contextManager,
 		parent,

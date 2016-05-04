@@ -66,6 +66,12 @@ protected:
 		PropertyCallback;
 	bool enumerateVisibleProperties( const PropertyCallback & callback ) const;
 
+	/**
+	 *	Used by parent to add change/insert/remove signals when item is
+	 *	added/removed from the model.
+	 *	@param signals or nullptr if item is being removed from the model.
+	 */
+	void setModel( const ReflectedTreeModelNew * pModel );
 private:
 
 	/**
@@ -77,12 +83,6 @@ private:
 		const PropertyCallback & callback );
 
 	friend class ReflectedTreeModelNew;
-	/**
-	 *	Used by parent to add change/insert/remove signals when item is
-	 *	added/removed from the model.
-	 *	@param signals or nullptr if item is being removed from the model.
-	 */
-	void setModel( const ReflectedTreeModelNew * pModel );
 	const ReflectedTreeModelNew * model_;
 };
 

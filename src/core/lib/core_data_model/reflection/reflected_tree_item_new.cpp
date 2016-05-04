@@ -86,7 +86,17 @@ IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const
 
 const ReflectedTreeModelNew * ReflectedTreeItemNew::getModel() const
 {
-	return model_ != nullptr ? model_ : this->getParent()->getModel();
+	if (model_ != nullptr)
+	{
+		return model_;
+	}
+	if (parent_ != nullptr)
+	{
+		return parent_->getModel();
+	}
+
+	assert( false && "Tree item is not attached to model" );
+	return nullptr;
 }
 
 

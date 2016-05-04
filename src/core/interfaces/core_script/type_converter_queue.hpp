@@ -52,7 +52,7 @@ public:
 	*	@param userData arbitrary userdata used by implementations
 	*	@return true on success.
 	*/
-	template <typename UserDataType = void>
+	template <typename UserDataType>
 	bool toScriptType(const Variant & inVariant,
 		ScriptType & outObject, UserDataType* userData = nullptr) const;
 

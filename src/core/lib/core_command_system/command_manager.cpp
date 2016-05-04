@@ -141,7 +141,6 @@ public:
 	bool canRedo() const;
     void removeCommands(const ICommandManager::TRemoveFunctor & functor);
 	VariantList & getHistory();
-	ValueChangeNotifier< int > & getCurrentIndex();
 	IListModel & getMacros();
 
 	void beginBatchCommand();
@@ -549,11 +548,13 @@ void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, Co
 void CommandManagerImpl::updateSelected( const int & value )
 {
 	unbindIndexCallbacks();
+	pCommandManager_->signalPreCommandIndexChanged( currentIndex_.value() );
 
     historyState_->index_ = value;
     historyState_->previousSelectedIndex_ = value;
 	currentIndex_.value( value );
 
+	pCommandManager_->signalPostCommandIndexChanged( currentIndex_.value() );
 	bindIndexCallbacks();
 }
 
@@ -645,13 +646,6 @@ IListModel & CommandManagerImpl::getMacros()
 {
 	return macros_;
 }
-
-
-ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
-{
-	return currentIndex_;
-}
-
 
 //==============================================================================
 void CommandManagerImpl::beginBatchCommand()
@@ -924,6 +918,7 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 void CommandManagerImpl::onPreDataChanged()
 {
 	historyState_->previousSelectedIndex_ = currentIndex_.value();
+	pCommandManager_->signalPreCommandIndexChanged( historyState_->previousSelectedIndex_ );
 }
 
 //==============================================================================
@@ -934,6 +929,7 @@ void CommandManagerImpl::onPostDataChanged()
 	waitForInstance( instance );
 
 	historyState_->index_ = currentIndex_.value();
+	pCommandManager_->signalPostCommandIndexChanged( historyState_->index_ );
 }
 
 //==============================================================================
@@ -1172,6 +1168,7 @@ void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 {
 	unbindHistoryCallbacks();
 	unbindIndexCallbacks();
+	pCommandManager_->signalPreCommandIndexChanged( currentIndex_.value() );
 	currentIndex_.value( NO_SELECTION );
 	pCommandManager_->signalHistoryPreReset( historyState_->history_ );
 	{
@@ -1180,6 +1177,7 @@ void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 	}
 	pCommandManager_->signalHistoryPostReset( historyState_->history_ );
 	currentIndex_.value( historyState_->index_ );
+	pCommandManager_->signalPostCommandIndexChanged( currentIndex_.value() );
 	bindIndexCallbacks();
 	bindHistoryCallbacks();
 }
@@ -1357,12 +1355,15 @@ const IListModel & CommandManager::getMacros() const
 	return pImpl_->getMacros();
 }
 
-
-IValueChangeNotifier& CommandManager::currentIndex()
+const int CommandManager::commandIndex() const
 {
-	return pImpl_->getCurrentIndex();
+	return pImpl_->currentIndex_.value();
 }
 
+void CommandManager::moveCommandIndex( int newIndex )
+{
+	pImpl_->currentIndex_.value( newIndex );
+}
 
 //==============================================================================
 IDefinitionManager & CommandManager::getDefManager() const

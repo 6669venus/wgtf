@@ -120,6 +120,7 @@ namespace
     {
         std::unique_lock<std::mutex> lock( mutex_ );
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
+        assert( definitionManager != nullptr );
         auto findIt = preferenceState_->preferences_.find( key );
         if (findIt != preferenceState_->preferences_.end())
         {
@@ -143,6 +144,7 @@ namespace
     {
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
+        assert( definitionManager && fileSystem );
         auto stream = fileSystem->readFile( filePath, std::ios::out | std::ios::binary );
         if(stream)
         {
@@ -154,7 +156,6 @@ namespace
     void QtPreferencesImpl::loadCurrentPreferenceFromFile( const char * filePath )
     {
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
-        
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
         assert( definitionManager && fileSystem );
         if(!fileSystem->exists( filePath ))
@@ -187,6 +188,7 @@ namespace
 
         std::unique_lock<std::mutex> lock( mutex_ );
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
+        assert( definitionManager != nullptr );
         definitionManager->serializeDefinitions( serializer );
         size_t size = ec->preferences_.size();
         serializer.serialize( size );
@@ -201,6 +203,7 @@ namespace
          std::unique_lock<std::mutex> lock( mutex_ );
          auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
          auto metaTypeManager = contextManager_.queryInterface<IMetaTypeManager>();
+         assert( definitionManager && metaTypeManager );
          ec->preferences_.clear();
          definitionManager->deserializeDefinitions( serializer );
          size_t count = 0;
@@ -212,6 +215,7 @@ namespace
 
              const MetaType * metaType = 
                  metaTypeManager->findType( getClassIdentifier<ObjectHandle>() );
+             assert( metaType != nullptr );
              Variant value( metaType );
              serializer.deserialize( value );
              GenericObjectPtr obj;
@@ -250,6 +254,7 @@ namespace
         std::string settings = genProjectSettingName( state->description() );
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
+        assert( definitionManager && fileSystem );
         auto stream = fileSystem->readFile( settings.c_str(), std::ios::out | std::ios::binary );
         if(stream)
         {
@@ -264,6 +269,7 @@ namespace
         std::string settings = genProjectSettingName( state->description() );
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
+        assert( definitionManager && fileSystem );
         auto stream = fileSystem->readFile( settings.c_str(), std::ios::in | std::ios::binary );
         if(stream)
         {

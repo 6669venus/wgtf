@@ -18,9 +18,9 @@ class Project
 public:
     Project( IComponentContext & contextManager );
     ~Project();
-    void init( const char * projectName, const char * dataFile = nullptr );
+    bool init( const char * projectName, const char * dataFile = nullptr );
     void fini();
-    void saveData( const char * dataFile );
+    void saveData( const char * dataFile ) const;
     const char * getProjectName() const;
     const ObjectHandle & getProjectData() const;
 
@@ -41,12 +41,13 @@ public:
 
     void createProject();
     void openProject();
-    void saveProject();
+    void saveProject() const;
     void closeProject();
-    bool canOpen();
-    bool canSave();
-    bool canClose();
+    bool canOpen() const;
+    bool canSave() const;
+    bool canClose() const;
 
+    // exposed method
     bool isProjectNameOk( const Variant& strProjectName );
     void setNewProjectName( const Variant& strProjectFile );
     void setOpenProjectFile( const Variant& strProjectFile );

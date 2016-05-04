@@ -346,7 +346,11 @@ std::unique_ptr< IView > QtFramework::createView(
 		auto source = toQVariant( context );
 		view->setContextProperty( QString( "source" ), source );
 	}
-	view->load( qUrl );
+	if(!view->load( qUrl ))
+    {
+        delete view;
+        return nullptr;
+    }
 	return std::unique_ptr< IView >( view );
 }
 
@@ -394,7 +398,11 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 				qmlWindow->setContextProperty( QString( "source" ), source );
 			}
 
-			qmlWindow->load( qUrl );
+			if(!qmlWindow->load( qUrl ))
+            {
+                delete qmlWindow;
+                return nullptr;
+            }
 			window = qmlWindow;
 		}
 		break;

@@ -6,11 +6,6 @@ ADD_DEFINITIONS( -DNOMINMAX )
 INCLUDE( WGToolsCoreProject )
 find_package(QT5)
 
-REMOVE_DEFINITIONS( /WX )
-ADD_DEFINITIONS(
-	-D_CRT_SECURE_NO_WARNINGS
-)
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -26,7 +21,7 @@ SET( PROJECT_IMPL
 SOURCE_GROUP( "Project\\Impl" FILES ${PROJECT_IMPL} )
 
 
-BW_QT_ADD_QRC(testing_project resources/testing_project)
+BW_QT_ADD_QRC(TestingProject resources/testing_project)
 BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS

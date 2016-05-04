@@ -57,7 +57,7 @@ Project::~Project()
 
 }
 
-void Project::init( const char * projectName, const char * dataFile )
+bool Project::init( const char * projectName, const char * dataFile )
 {
     projectName_ = projectName;
     auto defManager = contextManager_.queryInterface<IDefinitionManager>();
@@ -77,8 +77,18 @@ void Project::init( const char * projectName, const char * dataFile )
         Variant variant;
         bool br = serializer.deserialize( variant );
         assert( br );
+        if(!br)
+        {
+            NGT_WARNING_MSG( "Error loading project data\n" );
+            return false;
+        }
         br = variant.tryCast( projectData_ );
         assert( br );
+        if(!br)
+        {
+            NGT_WARNING_MSG( "Error loading project data\n" );
+            return false;
+        }
     }
     
     auto model = std::unique_ptr< ITreeModel >(
@@ -94,22 +104,29 @@ void Project::init( const char * projectName, const char * dataFile )
     assert( uiFramework != nullptr && uiApplication != nullptr );
     view_ = uiFramework->createView( "testing_project/project_data_panel.qml", 
         IUIFramework::ResourceType::Url, std::move( model ) );
+    if(view_ == nullptr)
+    {
+        return false;
+    }
     uiApplication->addView( *view_ );
-
+    return true;
 }
 
 void Project::fini()
 {
     auto uiApplication = contextManager_.queryInterface<IUIApplication>();
     assert( uiApplication != nullptr );
-    uiApplication->removeView( *view_ );
+    if(view_ != nullptr)
+    {
+        uiApplication->removeView( *view_ );
+    }
     auto em = contextManager_.queryInterface<IEnvManager>();
     em->removeEnv( envId_ );
     view_ = nullptr;
     projectData_ = nullptr;
 }
 
-void Project::saveData( const char * dataFile )
+void Project::saveData( const char * dataFile ) const
 {
     auto defManager = contextManager_.queryInterface<IDefinitionManager>();
     auto fileSystem = contextManager_.queryInterface<IFileSystem>();
@@ -159,7 +176,10 @@ void ProjectManager::createProject()
     }
     this->closeProject();
     curProject_.reset( new Project( *contextManager_ ) );
-    curProject_->init( newProjectName_.c_str() );
+    if(!curProject_->init( newProjectName_.c_str() ))
+    {
+         this->closeProject();
+    }
 }
 void ProjectManager::openProject()
 {
@@ -186,9 +206,12 @@ void ProjectManager::openProject()
 
     // load data
     curProject_.reset( new Project( *contextManager_ ) );
-    curProject_->init( projectName.c_str(), projectDataFile.c_str() );
+    if(!curProject_->init( projectName.c_str(), projectDataFile.c_str() ))
+    {
+         this->closeProject();
+    }
 }
-void ProjectManager::saveProject()
+void ProjectManager::saveProject() const
 {
     
     auto defManager = contextManager_->queryInterface<IDefinitionManager>();
@@ -226,24 +249,30 @@ void ProjectManager::closeProject()
         curProject_ = nullptr;
     }
 }
-bool ProjectManager::canOpen()
+bool ProjectManager::canOpen() const
 {
     return true;
 }
 
-bool ProjectManager::canSave()
+bool ProjectManager::canSave() const
 {
     return curProject_ != nullptr;
 }
 
-bool ProjectManager::canClose()
+bool ProjectManager::canClose() const
 {
     return curProject_ != nullptr;
 }
 
 bool ProjectManager::isProjectNameOk( const Variant& strProjectName )
 {
-    return true;
+    assert( strProjectName.canCast<std::string>());
+    std::string projectName;
+    strProjectName.tryCast( projectName );
+    std::string projectFile = genProjectFileName( projectName.c_str() );
+    auto fileSystem = contextManager_->queryInterface<IFileSystem>();
+    assert( fileSystem != nullptr );
+    return !fileSystem->exists( projectFile.c_str());
 }
 
 void ProjectManager::setNewProjectName( const Variant& strProjectName )

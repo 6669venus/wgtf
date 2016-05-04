@@ -5,7 +5,7 @@ import BWControls 1.0
 import WGControls 1.0
 import WGCopyableFunctions 1.0
 
-Rectangle {
+WGPanel {
     color: palette.mainWindowColor
     property var title: "Project Data"
     property var layoutHints: { 'test': 0.1 }

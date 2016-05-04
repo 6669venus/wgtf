@@ -63,7 +63,7 @@ public:
         auto uiApplication = contextManager.queryInterface<IUIApplication>();
         assert( uiFramework != nullptr && uiApplication != nullptr );
         uiFramework->loadActionData( 
-            ":/testing_project/actions.xml", IUIFramework::ResourceType::File );
+            ":/TestingProject/actions.xml", IUIFramework::ResourceType::File );
 
         newProject_ = uiFramework->createAction(
             "NewProject", 
@@ -90,11 +90,13 @@ public:
         uiApplication->addAction( *closeProject_ );
 
         newProjectDialog_ = uiFramework->createWindow( 
-            "testing_project/new_project_dialog.qml", 
+            "TestingProject/new_project_dialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
-        connections_ += newProjectDialog_->signalClose.connect( std::bind( &EnvrionmentTestPlugin::onNewDlgClose, this ) );
-        uiApplication->addWindow( *newProjectDialog_ );
-
+        if(newProjectDialog_ != nullptr)
+        {
+            connections_ += newProjectDialog_->signalClose.connect( std::bind( &EnvrionmentTestPlugin::onNewDlgClose, this ) );
+            uiApplication->addWindow( *newProjectDialog_ );
+        }
 	}
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
@@ -107,7 +109,11 @@ public:
         uiApplication->removeAction( *openProject_ );
         uiApplication->removeAction( *saveProject_ );
         uiApplication->removeAction( *closeProject_ );
-        uiApplication->removeWindow( *newProjectDialog_ );
+        if(newProjectDialog_ != nullptr)
+        {
+            uiApplication->removeWindow( *newProjectDialog_ );
+            newProjectDialog_ = nullptr;
+        }
         if(openProjectDialog_ != nullptr)
         {
             uiApplication->removeWindow( *openProjectDialog_ );
@@ -118,8 +124,6 @@ public:
         openProject_ = nullptr;
         saveProject_ = nullptr;
         closeProject_ = nullptr;
-        newProjectDialog_ = nullptr;
-        openProjectDialog_ = nullptr;
 		return true;
 	}
 	//==========================================================================
@@ -167,10 +171,13 @@ public:
             openProjectDialog_ = nullptr;
         }
         openProjectDialog_ = uiFramework->createWindow( 
-            "testing_project/open_project_dialog.qml", 
+            "TestingProject/open_project_dialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
-        connections_ += openProjectDialog_->signalClose.connect( std::bind( &EnvrionmentTestPlugin::onOpenDlgClose, this ) );
-        uiApplication->addWindow( *openProjectDialog_ );
+        if(openProjectDialog_ != nullptr)
+        {
+            connections_ += openProjectDialog_->signalClose.connect( std::bind( &EnvrionmentTestPlugin::onOpenDlgClose, this ) );
+            uiApplication->addWindow( *openProjectDialog_ );
+        }
     }
     void saveProject()
     {

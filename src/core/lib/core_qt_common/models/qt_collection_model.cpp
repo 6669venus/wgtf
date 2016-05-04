@@ -5,10 +5,9 @@
 #include "core_data_model/collection_model.hpp"
 
 
-QtCollectionModel::QtCollectionModel( CollectionModel & source ) 
-	: QtListModel( source ), model( &source )
-{
-}
+QtCollectionModel::QtCollectionModel(std::unique_ptr<CollectionModel>& source)
+	: QtListModel(*source.get()), model(std::move(source))
+{}
 
 const CollectionModel & QtCollectionModel::source() const
 {

@@ -294,7 +294,7 @@ QVariant WGListModel::headerData(
 		return QVariant::Invalid;
 	}
 
-	return QtHelpers::toQVariant( model->getData( section, roleId ) );
+	return QtHelpers::toQVariant( model->getData( section, roleId ), const_cast<WGListModel*>(this) );
 }
 
 QVariant WGListModel::headerData( int column, QString roleName ) const
@@ -513,7 +513,7 @@ void WGListModel::onPreItemDataChanged( const IItem * item, int column, size_t r
 	}
 	
 	auto index = Impl::calculateModelIndex( *this, item, column );
-	auto value = QtHelpers::toQVariant( data );
+	auto value = QtHelpers::toQVariant( data, this );
 	this->beginChangeData( index, role, value );
 }
 	
@@ -533,7 +533,7 @@ void WGListModel::onPostItemDataChanged( const IItem * item, int column, size_t 
 	}
 	
 	auto index = Impl::calculateModelIndex( *this, item, column );
-	auto value = QtHelpers::toQVariant( data );
+	auto value = QtHelpers::toQVariant( data, this );
 	this->endChangeData( index, role, value );
 }
 

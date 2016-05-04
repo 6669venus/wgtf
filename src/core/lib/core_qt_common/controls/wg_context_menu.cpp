@@ -141,7 +141,8 @@ struct WGContextMenu::Implementation
 
 	QVariant getContextObject() const
 	{
-		return QtHelpers::toQVariant( contextObject_ );
+		
+		return QtHelpers::toQVariant(contextObject_, const_cast<WGContextMenu*>(&this->self_));
 	}
 
 	void setContextObject( const QVariant& object )

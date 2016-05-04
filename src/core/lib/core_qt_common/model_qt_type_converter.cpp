@@ -56,6 +56,7 @@ bool ModelQtTypeConverter::toQVariant(const Variant & variant, QVariant & o_qVar
 		auto source = provider.getBase< AbstractItemModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtItemModel( *source );
 			model->setParent( parent );
 			o_qVariant = QVariant::fromValue( model );
@@ -67,6 +68,7 @@ bool ModelQtTypeConverter::toQVariant(const Variant & variant, QVariant & o_qVar
 		auto source = provider.getBase< AbstractListModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtListModel( *source );
 			model->setParent( parent );
 			o_qVariant = QVariant::fromValue( model );
@@ -78,6 +80,7 @@ bool ModelQtTypeConverter::toQVariant(const Variant & variant, QVariant & o_qVar
 		auto source = provider.getBase< AbstractTreeModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtTreeModel( *source );
 			model->setParent( parent );
 			o_qVariant = QVariant::fromValue( model );
@@ -89,6 +92,7 @@ bool ModelQtTypeConverter::toQVariant(const Variant & variant, QVariant & o_qVar
 		auto source = provider.getBase< AbstractTableModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtTableModel( *source );
 			model->setParent(parent);
 			o_qVariant = QVariant::fromValue( model );

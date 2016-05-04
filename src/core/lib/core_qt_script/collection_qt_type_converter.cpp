@@ -134,11 +134,13 @@ bool CollectionQtTypeConverter::toQVariant(const Variant& variant,
 		return false;
 	}
 
+	assert( parent != nullptr );
+
 	// Create a new collection model
 	auto collectionModel = new CollectionModel();
 	collectionModel->setSource( value );
 
-	auto model = new QtCollectionModel( *collectionModel );
+	auto model = new QtCollectionModel( std::unique_ptr<CollectionModel>(collectionModel) );
 	model->setParent(parent);
 	o_qVariant = QVariant::fromValue( model );
 

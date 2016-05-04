@@ -304,7 +304,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 	}
 
 	auto data = item->getData( index.row(), index.column(), roleId );
-	return QtHelpers::toQVariant( data );
+	return QtHelpers::toQVariant( data, const_cast<QtItemModel*>(this) );
 }
 
 bool QtItemModel::setData( const QModelIndex &index, const QVariant &value, int role )
@@ -326,7 +326,7 @@ QVariant QtItemModel::headerData( int section, Qt::Orientation orientation, int 
 	auto row = orientation == Qt::Horizontal ? section : -1;
 	auto column = orientation == Qt::Vertical ? section : -1;
 	auto data = impl_->source_.getData( row, column, role );
-	return QtHelpers::toQVariant( data );
+	return QtHelpers::toQVariant( data, nullptr );
 }
 
 bool QtItemModel::setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role )

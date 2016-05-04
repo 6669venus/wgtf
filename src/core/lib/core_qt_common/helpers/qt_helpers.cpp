@@ -35,9 +35,9 @@ QVariant toQVariant(const Variant & variant, QObject* parent)
 
 
 //==============================================================================
-QVariant toQVariant( const ObjectHandle & object )
+QVariant toQVariant( const ObjectHandle & object, QObject* parent )
 {
-	return toQVariant( Variant( object ) );
+	return toQVariant( Variant( object ), parent );
 }
 
 

@@ -129,7 +129,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
 			
 	ObjectHandle obj = ObjectHandle( &contextManager );
-	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj ) );
+	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj, rootContext ) );
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 	qmlEngine_->addImageProvider( QtImageProviderOld::providerId(), new QtImageProviderOld() );
@@ -353,7 +353,7 @@ std::unique_ptr< IView > QtFramework::createView(
 	}
 	else
 	{
-		auto source = toQVariant( context );
+		auto source = toQVariant( context,  view->view() );
 		view->setContextProperty( QString( "source" ), source );
 	}
 
@@ -433,7 +433,7 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 			}
 			else
 			{
-				auto source = toQVariant( context );
+				auto source = toQVariant( context, qmlWindow->window() );
 				qmlWindow->setContextProperty( QString( "source" ), source );
 			}
 

@@ -149,7 +149,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 				}
 				else
 				{
-					auto oldValue = QtHelpers::toQVariant( controller_->getValue( property ) );
+					auto oldValue = QtHelpers::toQVariant( controller_->getValue( property ), this );
 
 					if (*value != oldValue)
 					{
@@ -174,7 +174,7 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 
 void QtScriptObject::firePropertySignal( const IBasePropertyPtr & property, const Variant& value )
 {
-	QVariant qvariant = QtHelpers::toQVariant( value );
+	QVariant qvariant = QtHelpers::toQVariant( value, this );
 	void *parameters[] = { nullptr, &qvariant };
 	int signalId = findPropertyId( *definitionManager_.get(), object_, property );
 	callMethod( signalId, parameters );
@@ -242,7 +242,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 				else
 				{
 					ObjectHandle handle = meta;
-					*result = QtHelpers::toQVariant( handle );
+					*result = QtHelpers::toQVariant( handle, this );
 				}
 
 				break;
@@ -258,7 +258,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 				else
 				{
 					ObjectHandle handle = meta;
-					*result = QtHelpers::toQVariant( handle );
+					*result = QtHelpers::toQVariant( handle, this );
 				}
 
 				break;
@@ -266,7 +266,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 		case 2:
 			{
 				bool found = getMetaObject( definition, *property, *metaType ) != nullptr;
-				*result = QtHelpers::toQVariant( Variant( found ) );
+				*result = QtHelpers::toQVariant( Variant( found ), this );
 				break;
 			}
 		}

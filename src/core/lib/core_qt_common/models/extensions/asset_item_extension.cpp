@@ -60,7 +60,7 @@ QVariant AssetItemExtension::data( const QModelIndex &index, int role ) const
 		roleId == IsReadOnlyRole::roleId_ ||
 		roleId == IsCompressedRole::roleId_)
 	{
-		return QtHelpers::toQVariant( item->getData( column, roleId ) );
+		return QtHelpers::toQVariant( item->getData( column, roleId ), const_cast<QAbstractItemModel*>(index.model()) );
 	}
 	else if (roleId == StatusIconRole::roleId_)
 	{		

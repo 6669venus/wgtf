@@ -108,7 +108,7 @@ bool ValueExtension::setData( const QModelIndex &index, const QVariant &value, i
 	if (roleId == ValueRole::roleId_ ||
 		roleId == DefinitionRole::roleId_)	{
 		auto oldValue = QtHelpers::toQVariant(
-			item->getData( column, roleId ) );
+			item->getData( column, roleId ), const_cast<QAbstractItemModel*>(index.model()));
 		if (value == oldValue)
 		{
 			return true;

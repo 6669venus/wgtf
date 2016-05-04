@@ -37,13 +37,13 @@ public:
 	}
 
 	//==========================================================================
-	bool PostLoad( IComponentContext & contextManager )
+	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		return true;
 	}
 
 	//==========================================================================
-	void Initialise( IComponentContext & contextManager )
+	void Initialise( IComponentContext & contextManager ) override
 	{
 		Variant::setMetaTypeManager( 
 			contextManager.queryInterface< IMetaTypeManager >() );
@@ -99,7 +99,7 @@ public:
         }
 	}
 	//==========================================================================
-	bool Finalise( IComponentContext & contextManager )
+	bool Finalise( IComponentContext & contextManager ) override
 	{
         projectManager_.getBase< ProjectManager >()->fini();
         projectManager_ = nullptr;
@@ -127,7 +127,7 @@ public:
 		return true;
 	}
 	//==========================================================================
-	void Unload( IComponentContext & contextManager )
+	void Unload( IComponentContext & contextManager ) override
 	{
 		for (auto type: types_)
 		{

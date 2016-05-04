@@ -317,7 +317,7 @@ bool QtItemModel::setData( const QModelIndex &index, const QVariant &value, int 
 		return false;
 	}
 
-	auto oldValue = QtHelpers::toQVariant( item->getData( index.row(), index.column(), role ) );
+	auto oldValue = QtHelpers::toQVariant( item->getData( index.row(), index.column(), role ), this );
 	if (value == oldValue)
 	{
 		return true;

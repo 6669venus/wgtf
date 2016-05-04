@@ -43,7 +43,7 @@ QVariant WGListIterator::getCurrent() const
 	}
 
 	auto data = currentItem_->getData( 0, ValueRole::roleId_ );
-	return QtHelpers::toQVariant( data );
+	return QtHelpers::toQVariant( data, const_cast<WGListIterator*>(this) );
 }
 
 void WGListIterator::setCurrent( QVariant & value )

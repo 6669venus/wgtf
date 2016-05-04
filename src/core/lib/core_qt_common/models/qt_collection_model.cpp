@@ -2,14 +2,11 @@
 
 #include "helpers/qt_helpers.hpp"
 
-#include "core_data_model/collection_model.hpp"
 
 
-QtCollectionModel::QtCollectionModel( CollectionModel & source ) 
-	: QtListModel( source ) 
-{
-}
-
+QtCollectionModel::QtCollectionModel( std::unique_ptr<CollectionModel>&& source )
+	: QtListModel( *source.get() ), model_( std::move( source ) )
+{}
 
 const CollectionModel & QtCollectionModel::source() const
 {

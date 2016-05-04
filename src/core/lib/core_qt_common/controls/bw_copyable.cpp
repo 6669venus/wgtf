@@ -59,7 +59,7 @@ const Variant & BWCopyable::getData()
 bool BWCopyable::setData( const Variant& value )
 {
 
-	auto data = QtHelpers::toQVariant( value);
+	auto data = QtHelpers::toQVariant( value, this );
 	if (data_ != data)
 	{
 		data_ = data;

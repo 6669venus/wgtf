@@ -129,7 +129,7 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
 			
 	ObjectHandle obj = ObjectHandle( &contextManager );
-	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj ) );
+	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj, rootContext ) );
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
 	qmlEngine_->addImageProvider( QtImageProviderOld::providerId(), new QtImageProviderOld() );
@@ -220,10 +220,10 @@ bool QtFramework::registerResourceData( const unsigned char * qrc_struct, const 
 	return true;
 }
 
-QVariant QtFramework::toQVariant( const Variant & variant ) const
+QVariant QtFramework::toQVariant(const Variant & variant, QObject* parent) const
 {
 	QVariant qVariant( QVariant::Invalid );
-	typeConverters_.toScriptType( variant, qVariant );
+	typeConverters_.toScriptType(variant, qVariant, parent);
 	return qVariant;
 }
 
@@ -353,7 +353,7 @@ std::unique_ptr< IView > QtFramework::createView(
 	}
 	else
 	{
-		auto source = toQVariant( context );
+		auto source = toQVariant( context,  view->view() );
 		view->setContextProperty( QString( "source" ), source );
 	}
 
@@ -433,7 +433,7 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 			}
 			else
 			{
-				auto source = toQVariant( context );
+				auto source = toQVariant( context, qmlWindow->window() );
 				qmlWindow->setContextProperty( QString( "source" ), source );
 			}
 

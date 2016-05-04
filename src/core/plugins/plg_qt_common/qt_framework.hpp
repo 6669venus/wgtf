@@ -50,7 +50,7 @@ public:
 	bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
 		const unsigned char * qrc_data ) override;
 	void deregisterTypeConverter( IQtTypeConverter & converter ) override;
-	QVariant toQVariant( const Variant & variant ) const override;
+	QVariant toQVariant( const Variant & variant, QObject* parent ) const override;
 	Variant toVariant( const QVariant & qVariant ) const override;
 
 	QQmlComponent * toQmlComponent( IComponent & component ) override;

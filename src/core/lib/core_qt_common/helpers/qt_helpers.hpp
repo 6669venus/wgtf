@@ -14,8 +14,8 @@ class QQmlEngine;
 
 namespace QtHelpers
 {
-	QVariant toQVariant( const Variant & variant );
-	QVariant toQVariant( const ObjectHandle & object );
+	QVariant toQVariant( const Variant & variant, QObject* parent );
+	QVariant toQVariant( const ObjectHandle & object, QObject* parent );
 	Variant toVariant( const QVariant & qVariant );
 
 	QVariant convertToQTTypeInstance( const TypeId & type, const void * data );

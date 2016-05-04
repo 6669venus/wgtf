@@ -90,7 +90,7 @@ public:
         uiApplication->addAction( *closeProject_ );
 
         newProjectDialog_ = uiFramework->createWindow( 
-            "TestingProjectControl/new_project_dialog.qml", 
+            "TestingProjectControl/NewProjectDialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
         if(newProjectDialog_ != nullptr)
         {
@@ -171,7 +171,7 @@ public:
             openProjectDialog_ = nullptr;
         }
         openProjectDialog_ = uiFramework->createWindow( 
-            "TestingProjectControl/open_project_dialog.qml", 
+            "TestingProjectControl/OpenProjectDialog.qml", 
             IUIFramework::ResourceType::Url, projectManager_ );
         if(openProjectDialog_ != nullptr)
         {

@@ -59,6 +59,7 @@ QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	, released_( false )
 	, application_( nullptr )
     , isMaximizedInPreference_( false )
+    , firstTimeShow_( true )
 {
 	mainWindow_->setMinimumSize( QSize( 100, 100 ) );
 	QQmlEngine::setContextForObject( mainWindow_, qmlContext_.get() );
@@ -136,7 +137,7 @@ void QmlWindow::setIcon(const char* path)
 void QmlWindow::show( bool wait /* = false */)
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
-    if(isMaximizedInPreference_)
+    if(firstTimeShow_ && isMaximizedInPreference_)
     {
         mainWindow_->setWindowState( Qt::WindowMaximized );
     }
@@ -145,6 +146,7 @@ void QmlWindow::show( bool wait /* = false */)
 	{
 		mainWindow_->setWindowTitle(title());
 	}
+    firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
@@ -156,6 +158,7 @@ void QmlWindow::showMaximized( bool wait /* = false */)
 	mainWindow_->setWindowModality( modalityFlag_ );
 	
 	mainWindow_->showMaximized();
+    firstTimeShow_ = false;
 	if (wait)
 	{
 		waitForWindowExposed();
@@ -169,11 +172,12 @@ void QmlWindow::showModal()
 	{
 		mainWindow_->setWindowTitle(title());
 	}
-    if(isMaximizedInPreference_)
+    if(firstTimeShow_ && isMaximizedInPreference_)
     {
         mainWindow_->setWindowState( Qt::WindowMaximized );
     }
 	mainWindow_->show();
+    firstTimeShow_ = false;
 }
 
 void QmlWindow::hide()

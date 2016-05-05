@@ -72,6 +72,7 @@ private:
 	Qt::WindowModality modalityFlag_;
 	IUIApplication * application_;
     bool isMaximizedInPreference_;
+    bool firstTimeShow_;
 };
 
 #endif//QML_WINDOW_HPP

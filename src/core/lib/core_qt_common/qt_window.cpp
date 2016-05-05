@@ -158,7 +158,7 @@ void QtWindow::show( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
-    if(isMaximizedInPreference_)
+    if(firstTimeShow_ && isMaximizedInPreference_)
     {
         mainWindow_->setWindowState( Qt::WindowMaximized );
     }
@@ -204,7 +204,7 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
-    if(isMaximizedInPreference_)
+    if(firstTimeShow_ && isMaximizedInPreference_)
     {
         mainWindow_->setWindowState( Qt::WindowMaximized );
     }

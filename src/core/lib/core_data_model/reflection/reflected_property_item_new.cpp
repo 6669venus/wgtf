@@ -747,13 +747,13 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 				// Try to cast the key to a string
 				const bool isString = it.key().tryCast( displayName );
 				if (isString)
-		{
-			// Strings must be quoted to work with TextStream
+				{
+					// Strings must be quoted to work with TextStream
 					propertyName = "[\"" + displayName + "\"]";
-		}
-		}
+				}
+			}
 
-		child = new ReflectedPropertyItemNew( impl_->contextManager_,
+			child = new ReflectedPropertyItemNew( impl_->contextManager_,
 				propertyName,
 				std::move( displayName ),
 				const_cast< ReflectedPropertyItemNew * >( this ) );

@@ -317,7 +317,7 @@ bool QmlWindow::load( QUrl & qUrl )
 
 	auto preferences = qtFramework_.getPreferences();
 	auto preference = preferences->getPreference( id_.c_str() );
-	auto value = qtFramework_.toQVariant( preference );
+	auto value = qtFramework_.toQVariant( preference, qmlContext_.get() );
 	this->setContextProperty( QString( "Preference" ), value );
 
 	mainWindow_->setContent( qUrl, qmlComponent.release(), content.release() );

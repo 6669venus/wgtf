@@ -353,42 +353,56 @@ std::unique_ptr< IView > QtFramework::createView(
 		auto source = toQVariant( context,  view->view() );
 		view->setContextProperty( QString( "source" ), source );
 	}
-	const char* customTitle = 0;
 
-	//NOTE(aidan): Setting unique titles for views so ranorex can
-	//              can find them. It takes information from the 
-	//				attached model if there is one and appends it
-	//				to the title
-
-	if (context.isValid())
-	{
-		ITreeModel* treeModel = context.getBase<ITreeModel>();
-		IListModel* listModel = context.getBase<IListModel>();
-
-		if (treeModel)
-		{
-			IItem* item = treeModel->item(0, 0);
-			if (item)
-			{
-				customTitle = item->getDisplayText(0);
-			}
-		}
-		else if (listModel)
-		{
-			IItem* item = listModel->item(0);
-			if (item)
-			{
-				customTitle = item->getDisplayText(0);
-			}
-		}
-	}
-
-	if(!view->load( qUrl, customTitle ))
+	if(!view->load( qUrl, nullptr ))
     {
         delete view;
         return nullptr;
     }
 	return std::unique_ptr< IView >( view );
+}
+
+std::unique_ptr< IView > QtFramework::createView( 
+    const char* uniqueName, const char * resource, 
+    ResourceType type, const ObjectHandle & context )
+{
+    // TODO: This function assumes the resource is a qml file
+
+    QUrl qUrl;
+
+    switch (type)
+    {
+    case IUIFramework::ResourceType::File:
+        qUrl = QUrl::fromLocalFile( resource );
+        break;
+
+    case IUIFramework::ResourceType::Url:
+        qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
+        break;
+
+    default:
+        return nullptr;
+    }
+
+    auto scriptObject = scriptingEngine_->createScriptObject( context );
+    auto view = new QmlView( resource, *this, *qmlEngine_ );
+
+    if (scriptObject)
+    {
+        view->setContextObject( scriptObject );
+    }
+    else
+    {
+        auto source = toQVariant( context,  view->view() );
+        view->setContextProperty( QString( "source" ), source );
+    }
+
+    if(!view->load( qUrl, uniqueName ))
+    {
+        delete view;
+        return nullptr;
+    }
+    return std::unique_ptr< IView >( view );
 }
 
 QmlWindow * QtFramework::createQmlWindow()

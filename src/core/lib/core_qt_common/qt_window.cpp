@@ -204,6 +204,10 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
+    if(isMaximizedInPreference_)
+    {
+        mainWindow_->setWindowState( Qt::WindowMaximized );
+    }
 	mainWindow_->show();
 	if (firstTimeShow_)
 	{

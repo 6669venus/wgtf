@@ -24,8 +24,10 @@ class ReflectedTreeItemNew : public AbstractTreeItem
 {
 public:
 	ReflectedTreeItemNew( IComponentContext & contextManager,
+		const ReflectedTreeModelNew & model );
+	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
-		const char * path ) ;
+		const char * path );
 	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
 		const std::string & path );
@@ -54,7 +56,8 @@ public:
 	 *	@return signals or nullptr if item has not been added to a model.
 	 */
 	const ReflectedTreeModelNew * getModel() const;
-	ReflectedTreeItemNew * getParent() const;
+	const ReflectedTreeItemNew * getParent() const;
+	ReflectedTreeItemNew * getParent();
 
 protected:
 	ReflectedTreeItemNew * parent_;
@@ -66,12 +69,6 @@ protected:
 		PropertyCallback;
 	bool enumerateVisibleProperties( const PropertyCallback & callback ) const;
 
-	/**
-	 *	Used by parent to add change/insert/remove signals when item is
-	 *	added/removed from the model.
-	 *	@param signals or nullptr if item is being removed from the model.
-	 */
-	void setModel( const ReflectedTreeModelNew * pModel );
 private:
 
 	/**
@@ -82,7 +79,6 @@ private:
 		const std::string & inPlacePath,
 		const PropertyCallback & callback );
 
-	friend class ReflectedTreeModelNew;
 	const ReflectedTreeModelNew * model_;
 };
 

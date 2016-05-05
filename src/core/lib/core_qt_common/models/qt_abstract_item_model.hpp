@@ -30,7 +30,7 @@ public:
 	Q_INVOKABLE bool removeRow( int row, QObject * parent );
 	Q_INVOKABLE bool removeColumn( int column, QObject * parent );
 
-	// QAbstractItemModel
+	// Explicitly declare virtual functions from QAbstractItemModel to prevent them from being hidden
 	virtual QModelIndex parent(const QModelIndex &child) const = 0;
 
 	virtual int rowCount(const QModelIndex &parent = QModelIndex()) const = 0;

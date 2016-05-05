@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGControls 2.0
 import WGColorPicker 1.0
 
 /*!
@@ -77,10 +78,39 @@ ColumnLayout {
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.rgba(1,0,0,1), Qt.rgba(1,1,0,1), Qt.rgba(0,1,0,1), Qt.rgba(0,1,1,1), Qt.rgba(0,0,1,1), Qt.rgba(1,0,1,1), Qt.rgba(1,0,0,1)]
-            positionData: [0, 0.167,0.333,0.5,0.667,0.833,1]
+
+            gradient: Gradient {
+                GradientStop {
+                    position: 0
+                    color: Qt.rgba(1,0,0,1)
+                }
+                GradientStop {
+                    position: 0.167
+                    color: Qt.rgba(1,1,0,1)
+                }
+                GradientStop {
+                    position: 0.333
+                    color: Qt.rgba(0,1,0,1)
+                }
+                GradientStop {
+                    position: 0.5
+                    color: Qt.rgba(0,1,1,1)
+                }
+                GradientStop {
+                    position: 0.667
+                    color: Qt.rgba(0,0,1,1)
+                }
+                GradientStop {
+                    position: 0.833
+                    color: Qt.rgba(1,0,1,1)
+                }
+                GradientStop {
+                    position: 1
+                    color: Qt.rgba(1,0,0,1)
+                }
+            }
+
             value: hslSlider.hueVal
-            linkColorsToHandles: false
 
             onValueChanged: {
                 if (value != hslSlider.hueVal)
@@ -126,10 +156,19 @@ ColumnLayout {
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.hsla(hueValue,0,lightVal,1), Qt.hsla(hueValue,1,lightVal,1)]
-            positionData: [0, 1]
+
+            gradient: Gradient {
+                GradientStop {
+                    position: 0
+                    color: Qt.hsla(hueValue,0,lightVal,1)
+                }
+                GradientStop {
+                    position: 1
+                    color: Qt.hsla(hueValue,1,lightVal,1)
+                }
+            }
+
             value: hslSlider.satVal
-            linkColorsToHandles: false
 
             onValueChanged: {
                 if (value != hslSlider.satVal)
@@ -175,10 +214,7 @@ ColumnLayout {
             minimumValue: 0
             maximumValue: 1.0
             stepSize: 0.001
-            colorData: [Qt.hsla(hueValue,satVal,0,1), Qt.hsla(hueValue,satVal,0.5,1),Qt.hsla(hueValue,satVal,1,1)]
-            positionData: [0,0.5, 1]
             value: hslSlider.lightVal
-            linkColorsToHandles: false
 
             onValueChanged: {
                 if (value != hslSlider.lightVal)

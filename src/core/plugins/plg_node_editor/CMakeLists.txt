@@ -38,6 +38,8 @@ SET(INTERFACE_SRCS
 SOURCE_GROUP("Interfaces" FILES ${INTERFACE_SRCS})
 
 SET( ALL_SRCS
+    src/connection_curve.hpp
+    src/connection_curve.cpp
 	src/node_editor.hpp
 	src/node_editor.cpp
 	plg_node_editor.hpp    

@@ -17,7 +17,7 @@ class CustomNode : public Implements<INode>
     DECLARE_REFLECTED
 public:
     CustomNode(const std::string &nodeClass);
-    virtual ~CustomNode();
+    virtual ~CustomNode(){}
 
     size_t Id() const override         { return m_id; }
     std::string Class() const override      { return m_class; }

@@ -17,6 +17,8 @@
 #include "metadata/i_connection.mpp"
 #include "metadata/i_node.mpp"
 
+#include "src\connection_curve.hpp"
+
 NodeEditorPlugin::NodeEditorPlugin(IComponentContext& context)
 {}
 
@@ -45,6 +47,8 @@ void NodeEditorPlugin::Initialise(IComponentContext& context)
     definitionManager->registerDefinition(new TypeClassDefinition<INode>);
     definitionManager->registerDefinition(new TypeClassDefinition<ISlot>);
     definitionManager->registerDefinition(new TypeClassDefinition<IConnection>);
+
+    qmlRegisterType<ConnectionCurve>("CustomConnection", 1, 0, "ConnectionCurve");
 
     nodeEditor = std::unique_ptr<INodeEditor>(new NodeEditor());
     context.registerInterface<INodeEditor>(nodeEditor.get(), false);   

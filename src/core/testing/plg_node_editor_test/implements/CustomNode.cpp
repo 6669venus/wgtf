@@ -13,20 +13,17 @@ CustomNode::CustomNode(const std::string &nodeClass)
     int i = 0;
     while (i < 2)
     {
-        m_inputSlotsModel.emplace_back(new CustomSlot(this, true));
+        m_inputSlotsModel.push_back(new CustomSlot(this, true));
         ++i;
     }
 
     i = 0;
     while (i < 1)
     {
-        m_outputSlotsModel.emplace_back(new CustomSlot(this, false));
+        m_outputSlotsModel.push_back(new CustomSlot(this, false));
         ++i;
     }
 }
-
-CustomNode::~CustomNode()
-{}
 
 void CustomNode::SetPos(float x, float y)
 {

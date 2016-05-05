@@ -14,7 +14,8 @@ class CustomGraph : public Implements<IGraph>
 {
     DECLARE_REFLECTED
 public:
-    virtual ~CustomGraph(){}
+    virtual ~CustomGraph()
+    {}
 
     std::shared_ptr<INode> CreateNode(std::string nodeClass, float x = 0.0f, float y = 0.0f) override;
     void DeleteNode(size_t nodeID) override;
@@ -30,6 +31,7 @@ private:
     GenericListT<ObjectHandleT<INode>>::Iterator GetNodeIterById(size_t nodeId);
     const IListModel* GetNodesModel() const override { return &m_nodesModel; }
     const IListModel* GetConnectionsModel() const override { return &m_connectionsModel; }
+
 private:
     GenericListT<ObjectHandleT<INode>> m_nodesModel;
     GenericListT<ObjectHandleT<IConnection>> m_connectionsModel;

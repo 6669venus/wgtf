@@ -61,7 +61,7 @@ bool CustomSlot::Connect(ObjectHandleT<ISlot> slot)
 
     if (result)
     {
-        m_connectedSlots.emplace_back(slot.get());
+        m_connectedSlots.push_back(slot);
         m_pNode->OnConnect(this, m_connectedSlots.back());
     }
 
@@ -73,14 +73,14 @@ bool CustomSlot::Disconnect(ObjectHandleT<ISlot> slot)
     assert(m_pNode != nullptr);
     bool result = false;
     auto slotPos = std::find_if(m_connectedSlots.begin(), m_connectedSlots.end(), [slot](ObjectHandleT<ISlot> connectedSlot) {
-        return slot.get() == connectedSlot.get();
+        return slot->Id() == connectedSlot->Id();
     });
 
     if (slotPos != m_connectedSlots.end())
     {
         result = true;
         m_connectedSlots.erase(slotPos);
-        m_pNode->OnDisconnect(this, slot.get());
+        m_pNode->OnDisconnect(this, slot);
     }
 
     return result;

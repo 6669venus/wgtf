@@ -3,11 +3,13 @@
 #include "CustomNode.h"
 #include "CustomConnection.h"
 
+#include "core_logging\logging.hpp"
+
 std::shared_ptr<INode> CustomGraph::CreateNode(std::string nodeClass, float x, float y)
 {  
     std::shared_ptr<INode> node(new CustomNode(nodeClass));
     node->SetPos(x, y);
-    m_nodesModel.emplace_back(node);
+    m_nodesModel.push_back(node);
     
     return node;
 }
@@ -15,10 +17,33 @@ std::shared_ptr<INode> CustomGraph::CreateNode(std::string nodeClass, float x, f
 void CustomGraph::DeleteNode(size_t nodeID)
 {
     auto nodeIter = GetNodeIterById(nodeID);
-    if (nodeIter != m_nodesModel.end())
+    if (nodeIter == m_nodesModel.end())
     {
-        m_nodesModel.erase(nodeIter);
+        NGT_ERROR_MSG("Failed to delete node with ID: %d", nodeID);
+        return;
     }        
+    
+    ObjectHandleT<INode> deleteNode = *nodeIter;
+    std::vector<size_t> deleteConnections;
+    deleteConnections.reserve(m_connectionsModel.size());
+
+    for (auto connection : m_connectionsModel)
+    {
+        size_t inputSlotID = connection->Input()->Id();
+        size_t outputSlotID = connection->Output()->Id();
+
+        if (deleteNode->GetSlotById(inputSlotID) != nullptr ||
+            deleteNode->GetSlotById(outputSlotID) != nullptr)
+        {
+            deleteConnections.push_back(connection->Id());
+        }
+    }
+
+    for (auto connId : deleteConnections)
+    {
+        DeleteConnection(connId);
+    }
+    m_nodesModel.erase(nodeIter);
 }
 
 GenericListT<ObjectHandleT<INode>>::Iterator CustomGraph::GetNodeIterById(size_t nodeId)
@@ -77,12 +102,12 @@ ObjectHandleT<IConnection> CustomGraph::CreateConnection(size_t nodeIdFrom, size
         return nullptr;
     }
 
-    std::shared_ptr<IConnection> connection(new CustomConnection());    
+    ObjectHandleT<IConnection> connection(new CustomConnection());    
     result = connection->Bind(slotFrom, slotTo);
 
     if (result)
     {
-        m_connectionsModel.emplace_back(connection);
+        m_connectionsModel.push_back(connection);
         return connection;
     }
 

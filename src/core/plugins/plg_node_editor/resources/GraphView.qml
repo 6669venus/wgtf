@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 
+
 Rectangle
 {
     id: graphView
@@ -98,7 +99,7 @@ Rectangle
             delegate: Node
             {
                 nodeObj: Value
-                nodeID: Value.nodeID
+                nodeID: Value.id
                 nodeTitle: Value.nodeTitle
                 inputSlotsModel: Value.inputSlotsModel
                 outputSlotsModel: Value.outputSlotsModel
@@ -114,7 +115,7 @@ Rectangle
         model: connectionsListModel
         delegate: ConnectionNodes
         {
-            connectionObj: Value
+            connectionID: Value.id
             firstSlot: Value.input
             secondSlot: Value.output
         }

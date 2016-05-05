@@ -13,7 +13,7 @@ void NodeEditor::SetGraph(std::shared_ptr<IGraph> graph)
         graphModel.clear();
     }
 
-    graphModel.emplace_back(graph);
+    graphModel.push_back(graph);
 }
 
 std::shared_ptr<INode> NodeEditor::CreateNode(std::string nodeClass, float x, float y)

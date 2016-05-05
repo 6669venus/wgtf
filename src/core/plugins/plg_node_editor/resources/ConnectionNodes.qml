@@ -1,13 +1,12 @@
 import QtQuick 2.3
+import CustomConnection 1.0
 
-Canvas
+ConnectionCurve
 {
     id: connectionNodes
     anchors.fill: parent
-    antialiasing: true
 
-    property var connectionObj
-    property color curveColor: "green"
+    property var connectionID
 
     property var firstSlot
     property var secondSlot
@@ -32,12 +31,13 @@ Canvas
     onFirstNodeViewChanged: { firstSlotView = firstNodeView.getSlotViewBySlotObj(firstSlot)    }
     onSecondNodeViewChanged:{ secondSlotView = secondNodeView.getSlotViewBySlotObj(secondSlot) }
 
-    onFirstSlotViewChanged: requestPaint()
-    onSecondSlotViewChanged: requestPaint()
-    onFirstNodePosChanged: requestPaint()
-    onSecondNodePosChanged: requestPaint()
-    onEndPosChanged: requestPaint()
-    onCurveColorChanged: requestPaint()
+    onFirstSlotViewChanged: updatePos()
+    onSecondSlotViewChanged: updatePos()
+    onFirstNodePosChanged: updatePos()
+    onSecondNodePosChanged: updatePos()
+    onEndPosChanged: updatePos()
+
+    onConnectionClicked: deleteConnection(connectionID)
 
     function initNodeView()
     {
@@ -65,35 +65,24 @@ Canvas
 
         if (firstSlot)
         {
-            var slotObj = slot.slotObj
-            createConnection(firstNode.id, firstSlot.id, slotObj.node.id, slotObj.id)
+            var slotObj = slot.slotObj;
+            var isInput = slot.isInput;
+
+            if (isInput)
+                createConnection(slotObj.node.id, slotObj.id, firstNode.id, firstSlot.id);
+            else
+                createConnection(firstNode.id, firstSlot.id, slotObj.node.id, slotObj.id);
         }
     }
 
-    onPaint:
+    function updatePos()
     {
-        var ctx = getContext('2d');
-        ctx.clearRect(0, 0, width, height);
+        fromNode = Qt.rect(firstNodeView.x, firstNodeView.y, firstNodeView.width, firstNodeView.height);
+        if (secondNodeView)
+            toNode = Qt.rect(secondNodeView.x, secondNodeView.y, secondNodeView.width, secondNodeView.height);
 
-        var _startPoint = null;
-        var _endPoint = null;
-
-        if (firstSlotView)
-        {
-            _startPoint = firstSlotView.getSlotAnchor();
-            _endPoint = (secondSlotView) ? secondSlotView.getSlotAnchor() : endPos;
-        }
-
-        if (_startPoint == null || _endPoint == null)
-            return;
-
-        ctx.lineWidth = 4.0;
-        ctx.lineCap = "round"
-        ctx.strokeStyle = curveColor
-
-        ctx.beginPath()
-        ctx.moveTo(_startPoint.x, _startPoint.y);
-        ctx.lineTo(_endPoint.x, _endPoint.y);
-        ctx.stroke();
+        fromPoint = firstSlotView.getSlotAnchor();
+        if (secondSlotView || endPos)
+            toPoint = (secondSlotView) ? secondSlotView.getSlotAnchor() : endPos;
     }
 }

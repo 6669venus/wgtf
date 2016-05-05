@@ -876,10 +876,10 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
 	serializer.serialize( count );
 	for (size_t i = 0; i < count; i++)
 	{
-        CommandInstancePtr& cmdIns = ec->history_[i].value<CommandInstancePtr>();
+        const CommandInstancePtr& cmdIns = ec->history_[i].value<CommandInstancePtr>();
 		serializer.serialize( cmdIns );
-        auto& undoData = cmdIns->reflectionUndoRedoData_.getUndoData();
-        auto& redoData = cmdIns->reflectionUndoRedoData_.getRedoData();
+        auto undoData = cmdIns->reflectionUndoRedoData_.getUndoData();
+        auto redoData = cmdIns->reflectionUndoRedoData_.getRedoData();
         serializer.serialize( undoData );
         serializer.serialize( redoData );
 	}

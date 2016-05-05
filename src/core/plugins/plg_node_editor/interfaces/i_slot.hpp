@@ -29,7 +29,7 @@ public:
     virtual QColor Color() const = 0;
     virtual MetaType* Type() const = 0;
     virtual bool Editable() const = 0;
-    virtual ObjectHandleT<INode> Node() const = 0;
+    virtual INode* Node() const = 0;
 
     virtual const IListModel* GetConnectedSlots() const = 0;
     virtual bool CanConnect(ObjectHandleT<ISlot> slot) = 0;

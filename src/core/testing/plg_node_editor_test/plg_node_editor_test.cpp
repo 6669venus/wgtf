@@ -26,7 +26,7 @@ public:
 
         std::shared_ptr<IGraph> graph(new CustomGraph());
         graph->CreateNode("Test Node From C++");
-        nodeEditor->SetGraph(graph);        
+        nodeEditor->SetGraph(graph);
     }
 };
 

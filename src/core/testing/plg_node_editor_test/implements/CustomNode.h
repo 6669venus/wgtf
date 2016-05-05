@@ -17,7 +17,7 @@ class CustomNode : public Implements<INode>
     DECLARE_REFLECTED
 public:
     CustomNode(const std::string &nodeClass);
-    virtual ~CustomNode(){}
+    ~CustomNode();
 
     size_t Id() const override         { return m_id; }
     std::string Class() const override      { return m_class; }
@@ -51,7 +51,7 @@ private:
 
 private:
     float m_x;
-    float m_y;   
+    float m_y;
 
     size_t m_id;
     std::string m_class;
@@ -60,7 +60,7 @@ private:
     std::string m_category;
     std::string m_icon;
 
-    QColor m_color;
+    QColor m_color;    
     GenericListT<ObjectHandleT<ISlot>> m_inputSlotsModel;
     GenericListT<ObjectHandleT<ISlot>> m_outputSlotsModel;
 };

@@ -14,45 +14,33 @@ std::shared_ptr<INode> CustomGraph::CreateNode(std::string nodeClass, float x, f
     return node;
 }
 
-void CustomGraph::DeleteNode(size_t nodeID)
+void CustomGraph::DeleteNode(size_t nodeId)
 {
-    auto nodeIter = GetNodeIterById(nodeID);
-    if (nodeIter == m_nodesModel.end())
-    {
-        NGT_ERROR_MSG("Failed to delete node with ID: %d", nodeID);
-        return;
-    }        
-    
-    ObjectHandleT<INode> deleteNode = *nodeIter;
-    std::vector<size_t> deleteConnections;
-    deleteConnections.reserve(m_connectionsModel.size());
-
-    for (auto connection : m_connectionsModel)
-    {
-        size_t inputSlotID = connection->Input()->Id();
-        size_t outputSlotID = connection->Output()->Id();
-
-        if (deleteNode->GetSlotById(inputSlotID) != nullptr ||
-            deleteNode->GetSlotById(outputSlotID) != nullptr)
-        {
-            deleteConnections.push_back(connection->Id());
-        }
-    }
-
-    for (auto connId : deleteConnections)
-    {
-        DeleteConnection(connId);
-    }
-    m_nodesModel.erase(nodeIter);
-}
-
-GenericListT<ObjectHandleT<INode>>::Iterator CustomGraph::GetNodeIterById(size_t nodeId)
-{
-    auto nodePos = std::find_if(m_nodesModel.begin(), m_nodesModel.end(), [nodeId](const ObjectHandleT<INode> &node) {
+    auto nodeIter = std::find_if(m_nodesModel.begin(), m_nodesModel.end(), [nodeId](const ObjectHandleT<INode> &node) {
         return nodeId == node->Id();
     });
 
-    return nodePos;
+    if (nodeIter == m_nodesModel.end())
+    {
+        NGT_ERROR_MSG("Failed to delete node with ID: %d", nodeId);
+        return;
+    }
+
+    //TODO: Need refactoring
+    //===============================================================================================
+    ObjectHandleT<INode> node = *nodeIter;
+    auto findConnectionBySlot = [&node](const ObjectHandleT<IConnection> &connection) {
+        return (node->GetSlotById(connection->Input()->Id()) != nullptr ||
+            node->GetSlotById(connection->Output()->Id()) != nullptr);
+    };
+
+    for (auto connectionPos = std::find_if(m_connectionsModel.begin(), m_connectionsModel.end(), findConnectionBySlot); connectionPos != m_connectionsModel.end();)
+    {
+        m_connectionsModel.erase(connectionPos);
+        connectionPos = std::find_if(m_connectionsModel.begin(), m_connectionsModel.end(), findConnectionBySlot);
+    }
+    //===============================================================================================
+    m_nodesModel.erase(nodeIter);
 }
 
 ObjectHandleT<IConnection> CustomGraph::CreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo)
@@ -62,38 +50,40 @@ ObjectHandleT<IConnection> CustomGraph::CreateConnection(size_t nodeIdFrom, size
     ObjectHandleT<INode> nodeTo;
     ObjectHandleT<ISlot> slotTo;
 
-    bool result = true;
+    bool result = false;
     while (true)
     {
-        auto nodeIterFrom = GetNodeIterById(nodeIdFrom);
+        auto nodeIterFrom = std::find_if(m_nodesModel.begin(), m_nodesModel.end(), [nodeIdFrom](const ObjectHandleT<INode> &node) {
+            return nodeIdFrom == node->Id();
+        });
         if (nodeIterFrom == m_nodesModel.end())
         {
-            result = false;
             break;
         }
-        nodeFrom = *nodeIterFrom;
 
+        nodeFrom = *nodeIterFrom;
         slotFrom = nodeFrom->GetSlotById(slotIdFrom);
         if (slotFrom == nullptr)
         {
-            result = false;
             break;
-        }
+        }            
 
-        auto nodeIterTo = GetNodeIterById(nodeIdTo);
+        auto nodeIterTo = std::find_if(m_nodesModel.begin(), m_nodesModel.end(), [nodeIdTo](const ObjectHandleT<INode> &node) {
+            return nodeIdTo == node->Id();
+        });
         if (nodeIterTo == m_nodesModel.end())
         {
-            result = false;
             break;
-        }
-        nodeTo = *nodeIterTo;
+        }            
 
+        nodeTo = *nodeIterTo;
         slotTo = nodeTo->GetSlotById(slotIdTo);
         if (slotTo == nullptr)
         {
-            result = false;
-        }
+            break;
+        }            
 
+        result = true;
         break;
     }
 
@@ -120,10 +110,12 @@ void CustomGraph::DeleteConnection(size_t connectionId)
         return connectionId == connection->Id();
     });
 
-    if (connectionPos != m_connectionsModel.end())
+    if (connectionPos == m_connectionsModel.end())
     {
-        m_connectionsModel.erase(connectionPos);
+        NGT_ERROR_MSG("Failed to delete connection with ID: %d", connectionId);
+        return;
     }
+    m_connectionsModel.erase(connectionPos);
 }
 
 bool CustomGraph::Validate(std::string& errorMessage)

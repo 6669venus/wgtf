@@ -1,7 +1,7 @@
 
 #include "CustomSlot.h"
 
-CustomSlot::CustomSlot(ObjectHandleT<INode> node, bool isInput)
+CustomSlot::CustomSlot(INode *node, bool isInput)
 : m_isInput(isInput)
 , m_pNode(node)
 {
@@ -38,7 +38,7 @@ bool CustomSlot::Editable() const
     return false;
 }
 
-ObjectHandleT<INode> CustomSlot::Node() const
+INode* CustomSlot::Node() const
 {
     return m_pNode;
 }
@@ -61,7 +61,7 @@ bool CustomSlot::Connect(ObjectHandleT<ISlot> slot)
 
     if (result)
     {
-        m_connectedSlots.push_back(slot);
+        m_connectedSlots.push_back(slot.get());
         m_pNode->OnConnect(this, m_connectedSlots.back());
     }
 

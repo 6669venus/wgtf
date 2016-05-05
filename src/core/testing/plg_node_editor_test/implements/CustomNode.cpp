@@ -25,6 +25,9 @@ CustomNode::CustomNode(const std::string &nodeClass)
     }
 }
 
+CustomNode::~CustomNode()
+{}
+
 void CustomNode::SetPos(float x, float y)
 {
     m_x = x;
@@ -33,25 +36,45 @@ void CustomNode::SetPos(float x, float y)
 
 ObjectHandleT<ISlot> CustomNode::GetSlotById(size_t slotId) const
 {
-    auto slotPos = std::find_if(m_inputSlotsModel.begin(), m_inputSlotsModel.end(), [slotId](const ObjectHandleT<ISlot> &slot) {
-        return slotId == slot->Id();
+    auto inputSlotPos = std::find_if(m_inputSlotsModel.begin(), m_inputSlotsModel.end(), [slotId](const ObjectHandleT<ISlot> &inputSlot) {
+        return slotId == inputSlot->Id();
     });
 
-    if (slotPos != m_inputSlotsModel.end())
+    if (inputSlotPos != m_inputSlotsModel.end())
     {
-        return *slotPos;
+        return *inputSlotPos;
     }
 
-    slotPos = std::find_if(m_outputSlotsModel.begin(), m_outputSlotsModel.end(), [slotId](const ObjectHandleT<ISlot> &slot) {
-        return slotId == slot->Id();
+    auto outputSlotPos = std::find_if(m_outputSlotsModel.begin(), m_outputSlotsModel.end(), [slotId](const ObjectHandleT<ISlot> &outputSlot) {
+        return slotId == outputSlot->Id();
     });
 
-    if (slotPos != m_outputSlotsModel.end())
+    if (outputSlotPos != m_outputSlotsModel.end())
     {
-        return *slotPos;
+        return *outputSlotPos;
     }
 
     return nullptr;
+}
+
+bool CustomNode::CanConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot)
+{
+    bool result = false;
+
+    while (true)
+    {
+        ObjectHandleT<INode> otherNode = otherSlot->Node();
+        if (this == otherNode.get())
+            break;
+
+        if (!(mySlot->IsInput() ^ otherSlot->IsInput()))
+            break;
+
+        result = true;
+        break;
+    }
+
+    return result;
 }
 
 bool CustomNode::Enabled() const
@@ -80,26 +103,6 @@ bool CustomNode::Validate(std::string &errorMessage)
 {
     //TODO: Need implementation
     return true;
-}
-
-bool CustomNode::CanConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot) 
-{ 
-    bool result = false;
-
-    while (true)
-    {
-        ObjectHandleT<INode> otherNode = otherSlot->Node();
-        if (this == otherNode.get())
-            break;
-
-        if (!(mySlot->IsInput() ^ otherSlot->IsInput()))
-            break;
-
-        result = true;
-        break;
-    }
-
-    return result;
 }
 
 void CustomNode::OnConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot)

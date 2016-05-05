@@ -18,7 +18,7 @@ public:
     {}
 
     std::shared_ptr<INode> CreateNode(std::string nodeClass, float x = 0.0f, float y = 0.0f) override;
-    void DeleteNode(size_t nodeID) override;
+    void DeleteNode(size_t nodeId) override;
    
     ObjectHandleT<IConnection> CreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo) override;
     void DeleteConnection(size_t connectionId) override;
@@ -28,7 +28,6 @@ public:
     void Load(std::string fileName) override;
 
 private:
-    GenericListT<ObjectHandleT<INode>>::Iterator GetNodeIterById(size_t nodeId);
     const IListModel* GetNodesModel() const override { return &m_nodesModel; }
     const IListModel* GetConnectionsModel() const override { return &m_connectionsModel; }
 

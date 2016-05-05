@@ -9,7 +9,6 @@ Rectangle
     id: graphView
     anchors.fill: parent
 
-    property var graph
 	property var nodesModel
     property var connectionsModel
 
@@ -67,13 +66,13 @@ Rectangle
         fillMode: Image.Tile
     }
 
-	WGListModel
-	{
-		id: nodesListModel
-		source: nodesModel
+    WGListModel
+    {
+        id: nodesListModel
+        source: nodesModel
 
-		ValueExtension {}
-	}
+        ValueExtension {}
+    }
 
     WGListModel
     {
@@ -99,12 +98,12 @@ Rectangle
             delegate: Node
             {
                 nodeObj: Value
-                nodeID: Value.id
-                nodeTitle: Value.nodeTitle
-                inputSlotsModel: Value.inputSlotsModel
-                outputSlotsModel: Value.outputSlotsModel
-                x: Value.nodeCoordX
-                y: Value.nodeCoordY
+                nodeID: nodeObj.id
+                nodeTitle: nodeObj.nodeTitle
+                inputSlotsModel: nodeObj.inputSlotsModel
+                outputSlotsModel: nodeObj.outputSlotsModel
+                x: nodeObj.nodeCoordX
+                y: nodeObj.nodeCoordY
             }
         }
     }

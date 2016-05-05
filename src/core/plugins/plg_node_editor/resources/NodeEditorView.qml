@@ -10,23 +10,22 @@ Rectangle
 
     property var title: "Node Editor"
 
-	WGListModel
-	{
-		id: graphListModel
-		source: graphModel
+    WGListModel
+    {
+        id: graphListModel
+        source: graphModel
 
-		ValueExtension {}
-	}
+        ValueExtension {}
+    }
 
-	Repeater
-	{
-		id: graphRender
-		model: graphListModel
-		delegate: GraphView
-		{
-            graph: Value
-			nodesModel : Value.nodesModel
+    Repeater
+    {
+        id: graphRender
+        model: graphListModel
+        delegate: GraphView
+        {
+            nodesModel : Value.nodesModel
             connectionsModel: Value.connectionsModel
-		}
-	}    
+        }
+    }
 }

@@ -487,6 +487,6 @@ bool QtWindow::loadPreference()
 		return true;
 
 	} while (false);
-	NGT_DEBUG_MSG( "Load Window Preferences Failed.\n" );
+	NGT_DEBUG_MSG( "Load Qt Window Preferences Failed.\n" );
 	return false;
 }

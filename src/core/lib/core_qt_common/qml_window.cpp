@@ -8,6 +8,7 @@
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_preferences.hpp"
+#include "core_reflection/property_accessor.hpp"
 #include "core_logging/logging.hpp"
 #include <cassert>
 #include <thread>
@@ -24,6 +25,8 @@
 #include <QApplication>
 #include <QWindow>
 #include <QElapsedTimer>
+#include "wg_types/binary_block.hpp"
+#include "wg_types/vector2.hpp"
 
 namespace
 {
@@ -44,6 +47,8 @@ namespace
 		}
 		return children;
 	}
+
+    const char * g_internalPreferenceId = "13CC6CD7-E935-488D-9E3D-8BED9454F554";
 }
 
 QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
@@ -53,6 +58,7 @@ QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	, mainWindow_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, released_( false )
 	, application_( nullptr )
+    , isMaximizedInPreference_( false )
 {
 	mainWindow_->setMinimumSize( QSize( 100, 100 ) );
 	QQmlEngine::setContextForObject( mainWindow_, qmlContext_.get() );
@@ -62,6 +68,7 @@ QmlWindow::~QmlWindow()
 {
 	if (!released_)
 	{
+        this->savePreference();
 		mainWindow_->removeEventFilter( this );
 		delete mainWindow_;
 	}
@@ -129,7 +136,10 @@ void QmlWindow::setIcon(const char* path)
 void QmlWindow::show( bool wait /* = false */)
 {
 	mainWindow_->setWindowModality( modalityFlag_ );
-
+    if(isMaximizedInPreference_)
+    {
+        mainWindow_->setWindowState( Qt::WindowMaximized );
+    }
 	mainWindow_->show();
 	if ( title() )
 	{
@@ -159,6 +169,10 @@ void QmlWindow::showModal()
 	{
 		mainWindow_->setWindowTitle(title());
 	}
+    if(isMaximizedInPreference_)
+    {
+        mainWindow_->setWindowState( Qt::WindowMaximized );
+    }
 	mainWindow_->show();
 }
 
@@ -253,6 +267,12 @@ bool QmlWindow::load( QUrl & qUrl )
 		id_ = windowProperty.toString().toUtf8().data();
 	}
 
+    auto windowMaximizedProperty = content->property("windowMaximized");
+    if (windowMaximizedProperty.isValid())
+    {
+        isMaximizedInPreference_ = windowMaximizedProperty.toBool();
+    }
+
 	QVariant titleProperty = content->property( "title" );
 	if (titleProperty.isValid())
 	{
@@ -305,6 +325,7 @@ bool QmlWindow::load( QUrl & qUrl )
 	QObject::connect( mainWindow_, SIGNAL(sceneGraphError(QQuickWindow::SceneGraphError, const QString&)),
 		this, SLOT(error(QQuickWindow::SceneGraphError, const QString&)) );
 	mainWindow_->installEventFilter( this );
+    loadPreference();
 	modalityFlag_ = mainWindow_->windowModality();
 	return true;
 }
@@ -320,4 +341,112 @@ bool QmlWindow::eventFilter( QObject * object, QEvent * event )
 		}
 	}
 	return QObject::eventFilter( object, event );
+}
+
+void QmlWindow::savePreference()
+{
+    auto preferences = qtFramework_.getPreferences();
+    if (preferences == nullptr)
+    {
+        return;
+    }
+    std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+    auto & preference = preferences->getPreference( key.c_str() );
+    QByteArray geometryData = mainWindow_->saveGeometry();
+    std::shared_ptr< BinaryBlock > geometry = 
+        std::make_shared< BinaryBlock >(geometryData.constData(), geometryData.size(), false );
+    preference->set( "geometry", geometry );
+    bool isMaximized = mainWindow_->isMaximized();
+    preference->set( "maximized", isMaximized );
+    if (!isMaximized)
+    {
+        auto pos = mainWindow_->pos();
+        auto size = mainWindow_->size();
+        preference->set( "pos",Vector2( pos.x(), pos.y() ) );
+        preference->set( "size",Vector2( size.width(), size.height() ) );
+    }
+}
+
+bool QmlWindow::loadPreference()
+{
+
+
+    //check the preference data first
+    do 
+    {
+        std::shared_ptr< BinaryBlock > geometry;
+        bool isMaximized = false;
+        Vector2 pos;
+        Vector2 size;
+        bool isOk = false;
+        auto preferences = qtFramework_.getPreferences();
+        if (preferences == nullptr)
+        {
+            break;
+        }
+        std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+        auto & preference = preferences->getPreference( key.c_str() );
+        // check the preferences
+        auto accessor = preference->findProperty( "geometry" );
+        if (!accessor.isValid())
+        {
+            break;
+        }
+        isOk = preference->get( "geometry", geometry );
+        if (!isOk)
+        {
+            break;
+        }
+        accessor = preference->findProperty( "maximized" );
+        if (!accessor.isValid())
+        {
+            break;
+        }
+        isOk = preference->get( "maximized", isMaximized );
+        if (!isOk)
+        {
+            break;
+        }
+        if (!isMaximized)
+        {
+            accessor = preference->findProperty( "pos" );
+            if (!accessor.isValid())
+            {
+                break;
+            }
+            isOk = preference->get( "pos", pos );
+            if (!isOk)
+            {
+                break;
+            }
+            accessor = preference->findProperty( "size" );
+            if (!accessor.isValid())
+            {
+                break;
+            }
+            isOk = preference->get( "size", size );
+            if (!isOk)
+            {
+                break;
+            }
+        }
+
+        // restore preferences
+        isMaximizedInPreference_ = isMaximized;
+        isOk = mainWindow_->restoreGeometry( QByteArray( geometry->cdata(), static_cast<int>(geometry->length()) ) );
+        if (!isOk)
+        {
+            break;
+        }
+        if (!isMaximized)
+        {
+            mainWindow_->move( QPoint( static_cast<int>( pos.x ), static_cast<int>( pos.y ) ) );
+            mainWindow_->resize( QSize( static_cast<int>( size.x ), static_cast<int>( size.y ) ) );
+        }
+
+        return true;
+
+    } while (false);
+    NGT_DEBUG_MSG( "Load Qml Window Preferences Failed.\n" );
+    return false;
 }

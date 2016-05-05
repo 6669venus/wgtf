@@ -141,11 +141,8 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
-	auto serializationManger = contextManager.queryInterface< ISerializationManager >();
-	auto fileSystem = contextManager.queryInterface< IFileSystem >();
-	auto metaTypeManager = contextManager.queryInterface<IMetaTypeManager>();
-	preferences_.reset( new QtPreferences( *definitionManager, *serializationManger, *fileSystem, *metaTypeManager ) );
-	preferences_->loadPreferences();
+	preferences_.reset( new QtPreferences() );
+    preferences_->init( contextManager );
 
 	SharedControls::initDefs( *definitionManager );
 }
@@ -158,10 +155,10 @@ void QtFramework::finalise()
 	}
 
 	unregisterResources();
+    preferences_->fini();
 	qmlEngine_->removeImageProvider( QtImageProviderOld::providerId() );
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
-	preferences_->savePrferences();
 	globalQmlSettings_ = nullptr;
 	defaultQmlSpacing_ = nullptr;
 	palette_ = nullptr;
@@ -356,9 +353,6 @@ std::unique_ptr< IView > QtFramework::createView(
 		auto source = toQVariant( context,  view->view() );
 		view->setContextProperty( QString( "source" ), source );
 	}
-
-
-
 	const char* customTitle = 0;
 
 	//NOTE(aidan): Setting unique titles for views so ranorex can
@@ -389,7 +383,11 @@ std::unique_ptr< IView > QtFramework::createView(
 		}
 	}
 
-	view->load( qUrl, customTitle );
+	if(!view->load( qUrl, customTitle ))
+    {
+        delete view;
+        return nullptr;
+    }
 	return std::unique_ptr< IView >( view );
 }
 
@@ -437,7 +435,11 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 				qmlWindow->setContextProperty( QString( "source" ), source );
 			}
 
-			qmlWindow->load( qUrl );
+			if(!qmlWindow->load( qUrl ))
+            {
+                delete qmlWindow;
+                return nullptr;
+            }
 			window = qmlWindow;
 		}
 		break;

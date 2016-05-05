@@ -20,7 +20,13 @@
 #include <limits>
 
 ITEMROLE( display )
+ITEMROLE( value )
 ITEMROLE( valueType )
+ITEMROLE( key )
+ITEMROLE( keyType )
+ITEMROLE( isCollection )
+ITEMROLE( elementValueType )
+ITEMROLE( elementKeyType )
 
 namespace
 {
@@ -234,6 +240,110 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 			return "Reflected Property";
 		}
 	}
+	else if (roleId == ItemRole::valueId ||
+		roleId == ValueRole::roleId_)
+	{
+		if (!propertyAccessor.canGetValue())
+		{
+			return Variant();
+		}
+		return propertyAccessor.getValue();
+	}
+	else if (roleId == ItemRole::valueTypeId ||
+		roleId == ValueTypeRole::roleId_)
+	{
+		return propertyAccessor.getType().getName();
+	}
+	else if (roleId == ItemRole::keyId ||
+		roleId == KeyRole::roleId_)
+	{
+		if (parent_ == nullptr)
+		{
+			return Variant();
+		}
+
+		Collection collection;
+		const bool parentIsCollection = parent_->getData(0, ItemRole::valueId).tryCast( collection );
+		if (!parentIsCollection)
+		{
+			return Variant();
+		}
+
+		auto index = getModel()->index( this ).row_;
+
+		size_t i = 0;
+		auto it = collection.begin();
+
+		for (; i < index && it != collection.end(); ++it)
+		{
+			++i;
+		}
+
+		if (it == collection.end())
+		{
+			return Variant();
+		}
+
+		return it.key();
+	}
+	else if (roleId == ItemRole::keyTypeId ||
+		roleId == KeyTypeRole::roleId_)
+	{
+		if (parent_ == nullptr)
+		{
+			return Variant();
+		}
+
+		Collection collection;
+		const bool parentIsCollection = parent_->getData(0, ItemRole::valueId).tryCast( collection );
+		if (!parentIsCollection)
+		{
+			return Variant();
+		}
+
+		auto index = getModel()->index( this ).row_;
+
+		size_t i = 0;
+		auto it = collection.begin();
+
+		for (; i < index && it != collection.end(); ++it)
+		{
+			++i;
+		}
+
+		if (it == collection.end())
+		{
+			return Variant();
+		}
+
+		return it.keyType().getName();
+	}
+	else if (roleId == ItemRole::isCollectionId)
+	{
+		Collection collection;
+		const bool isCollection = propertyAccessor.getValue().tryCast( collection );
+		return isCollection;
+	}
+	else if (roleId == ItemRole::elementValueTypeId)
+	{
+		Collection collection;
+		const bool isCollection = propertyAccessor.getValue().tryCast( collection );
+		if (!isCollection)
+		{
+			return Variant();
+		}
+		return collection.valueType().getName();
+	}
+	else if (roleId == ItemRole::elementKeyTypeId)
+	{
+		Collection collection;
+		const bool isCollection = propertyAccessor.getValue().tryCast( collection );
+		if (!isCollection)
+		{
+			return Variant();
+		}
+		return collection.keyType().getName();
+	}
 
 	if (roleId == IndexPathRole::roleId_)
 	{
@@ -266,37 +376,6 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 	else if (roleId == IsUrlRole::roleId_)
 	{
 		return findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager ) != nullptr;
-	}
-	else if (roleId == ValueRole::roleId_)
-	{
-		if (!propertyAccessor.canGetValue())
-		{
-			return Variant();
-		}
-		return propertyAccessor.getValue();
-	}
-	else if (roleId == ItemRole::valueTypeId)
-	{
-		return propertyAccessor.getType().getName();
-	}
-	else if (roleId == KeyRole::roleId_)
-	{
-		switch (column)
-		{
-		case 0:
-			return impl_->displayName_.c_str();
-
-		case 1:
-			return "Reflected Property";
-
-		default:
-			assert( false );
-			return "";
-		}
-	}
-	else if (roleId == KeyTypeRole::roleId_)
-	{
-		return TypeId::getType< const char * >().getName();
 	}
 	else if (roleId == ThumbnailRole::roleId_)
 	{
@@ -648,7 +727,7 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 		{
 			return nullptr;
 		}
-
+		
 		{
 			// FIXME NGT-1603: Change to actually get the proper key type
 
@@ -668,13 +747,13 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 				// Try to cast the key to a string
 				const bool isString = it.key().tryCast( displayName );
 				if (isString)
-				{
-					// Strings must be quoted to work with TextStream
+		{
+			// Strings must be quoted to work with TextStream
 					propertyName = "[\"" + displayName + "\"]";
-				}
-			}
+		}
+		}
 
-			child = new ReflectedPropertyItemNew( impl_->contextManager_,
+		child = new ReflectedPropertyItemNew( impl_->contextManager_,
 				propertyName,
 				std::move( displayName ),
 				const_cast< ReflectedPropertyItemNew * >( this ) );

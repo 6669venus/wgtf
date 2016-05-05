@@ -1,6 +1,7 @@
 #include "wg_item_view.hpp"
 #include "qt_connection_holder.hpp"
 #include "models/extensions/i_model_extension.hpp"
+#include "models/qt_abstract_item_model.hpp"
 
 #include <QAbstractItemModel>
 #include <QQmlListProperty>
@@ -13,7 +14,7 @@ ITEMROLE( modelIndex )
 
 namespace
 {
-	class ExtendedModel : public QAbstractItemModel, public RoleProvider
+	class ExtendedModel : public QtAbstractItemModel, public RoleProvider
 	{
 	public:
 		ExtendedModel( QStringList & roles, QList< IModelExtension * > & extensions )

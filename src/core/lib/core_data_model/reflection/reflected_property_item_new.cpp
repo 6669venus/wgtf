@@ -320,9 +320,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == ItemRole::isCollectionId)
 	{
-		Collection collection;
-		const bool isCollection = propertyAccessor.getValue().tryCast( collection );
-		return isCollection;
+		return propertyAccessor.getValue().canCast< Collection >();
 	}
 	else if (roleId == ItemRole::elementValueTypeId)
 	{

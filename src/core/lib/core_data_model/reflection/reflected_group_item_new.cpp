@@ -132,10 +132,6 @@ Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* ove
 	{
 		return TypeId::getType< Collection >().getName();
 	}
-	else if (roleId == KeyTypeRole::roleId_)
-	{
-		return TypeId::getType< const char * >().getName();
-	}
 	return Variant();
 }
 

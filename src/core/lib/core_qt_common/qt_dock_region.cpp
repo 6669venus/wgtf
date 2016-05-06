@@ -102,14 +102,10 @@ protected:
 		{
 		case QEvent::WindowActivate:
 			active_ = true;
-			//if (visible_)
-			//	view_->focusInEvent();
 			break;
 
 		case QEvent::WindowDeactivate:
 			active_ = false;
-			//if (visible_)
-			//	view_->focusOutEvent();
 			break;
 
 		case QEvent::ActivationChange:

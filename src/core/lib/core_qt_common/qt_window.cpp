@@ -58,6 +58,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
     , application_(nullptr)
     , isMaximizedInPreference_(true)
     , firstTimeShow_(true)
+    , loadingPreferences_( false )
 {
 	QUiLoader loader;
 
@@ -84,6 +85,7 @@ QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && m
     , application_(nullptr)
     , isMaximizedInPreference_(true)
     , firstTimeShow_(true)
+    , loadingPreferences_( false )
 {
     if (mainWindow_== nullptr)
     {
@@ -385,6 +387,10 @@ bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 
 void QtWindow::savePreference()
 {
+    if(!isReady())
+    {
+        return;
+    }
 	auto preferences = qtFramework_.getPreferences();
 	if (preferences == nullptr)
 	{
@@ -413,8 +419,10 @@ void QtWindow::savePreference()
 
 bool QtWindow::loadPreference()
 {
-	
-
+    if(!isReady())
+    {
+        return false;
+    }
 	//check the preference data first
 	do 
 	{
@@ -519,6 +527,7 @@ void QtWindow::onPrePreferencesChanged()
 
 void QtWindow::onPostPreferencesChanged()
 {
+    loadingPreferences_ = true;
     loadPreference();
     for(auto& region : regions_)
     {
@@ -528,9 +537,15 @@ void QtWindow::onPostPreferencesChanged()
             iRegion->restoreDockWidgets();
         }
     }
+    loadingPreferences_ = false;
 }
 
 void QtWindow::onPrePreferencesSaved()
 {
    savePreference();
+}
+
+bool QtWindow::isLoadingPreferences() const
+{
+    return loadingPreferences_;
 }

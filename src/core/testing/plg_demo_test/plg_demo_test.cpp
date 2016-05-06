@@ -97,6 +97,10 @@ DemoDoc::~DemoDoc()
 
 void DemoDoc::onFocusIn(IView* view)
 {
+    if(view != centralView_.get())
+    {
+        return;
+    }
 	envManager_->selectEnv( envId_ );
 }
 

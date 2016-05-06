@@ -35,6 +35,7 @@ namespace
 		}
 
 		std::unordered_map< std::string, GenericObjectPtr > preferences_;
+        std::string stateDescription_;
 	};
 
 	DECLARE_EC_GUID( PreferenceEnvCom, 0xe57cac3c, 0x44dc0793, 0x4a385655, 0xc18f231c );
@@ -226,6 +227,7 @@ namespace
     void QtPreferencesImpl::onAddEnv( IEnvState* state ) 
     {
         ENV_STATE_ADD( PreferenceEnvCom, ec );
+        ec->stateDescription_ = state->description();
     }
 
     void QtPreferencesImpl::onRemoveEnv( IEnvState* state )

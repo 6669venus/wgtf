@@ -102,19 +102,21 @@ protected:
 		{
 		case QEvent::WindowActivate:
 			active_ = true;
-			if (!isFloating() && visible_)
-				view_->focusInEvent();
+			//if (visible_)
+			//	view_->focusInEvent();
 			break;
 
 		case QEvent::WindowDeactivate:
 			active_ = false;
-			if (isFloating() || visible_)
-				view_->focusOutEvent();
+			//if (visible_)
+			//	view_->focusOutEvent();
 			break;
 
 		case QEvent::ActivationChange:
 			if (active_)
 				view_->focusInEvent();
+            else
+                view_->focusOutEvent();
 			break;
 		}
 		return QDockWidget::event(e);
@@ -212,7 +214,13 @@ void QtDockRegion::addView( IView & view )
 	dockWidgetMap_[ &view ] = std::make_pair( std::unique_ptr< QDockWidget >( qDockWidget ), std::move( action ) );
 
 	QObject::connect( qDockWidget, &QDockWidget::visibilityChanged,
-		[=](bool visible) { qDockWidget->visibilityChanged( visible ); } );
+		[=](bool visible) { 
+            if(qtWindow_.isLoadingPreferences())
+            {
+                return;
+            }
+        qDockWidget->visibilityChanged( visible ); 
+    } );
 }
 
 void QtDockRegion::removeView( IView & view )

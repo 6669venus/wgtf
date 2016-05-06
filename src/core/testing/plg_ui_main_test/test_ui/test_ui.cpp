@@ -94,6 +94,7 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int 
 		uiFramework.createView( "testing_ui_main/test_reflected_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
 
+    test1Views_.back().first->registerListener( this );
 	test2Views_.back().first->registerListener( this );
 }
 

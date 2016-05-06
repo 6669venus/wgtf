@@ -51,6 +51,7 @@ public:
 	QMainWindow * window() const;
     QMainWindow * releaseWindow();
 	bool isReady() const;
+    bool isLoadingPreferences() const;
 signals:
 	void windowReady();
 
@@ -80,6 +81,7 @@ private:
 	IUIApplication * application_;
 	bool isMaximizedInPreference_;
 	bool firstTimeShow_;
+    bool loadingPreferences_;
     QtConnectionHolder qtConnections_;
 };
 

@@ -79,6 +79,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_tree_to_list_test			core/testing/plg_tree_to_list_test
 	plg_custom_xml_serialization_test core/testing/plg_custom_xml_serialization_test
 	plg_timeline_panel				core/testing/plg_timeline_panel
+	plg_environment_test			core/testing/plg_environment_test
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

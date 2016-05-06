@@ -19,9 +19,27 @@ public:
 	Q_PROPERTY( bool wgCopyableEnabled MEMBER wgCopyableEnabled_ NOTIFY wgCopyableEnabledChanged )
 	Q_PROPERTY(bool wgNativeRendering MEMBER wgNativeRendering_ CONSTANT )
 
+    void firePrePreferenceChangeEvent()
+    {
+        emit prePreferencesChanged();
+    }
+
+    void firePostPreferenceChangeEvent()
+    {
+        emit postPreferencesChanged();
+    }
+
+    void firePrePreferenceSavedEvent()
+    {
+        emit prePreferencesSaved();
+    }
+
 signals:
 	void dragLockedChanged();
 	void wgCopyableEnabledChanged();
+    void prePreferencesChanged();
+    void postPreferencesChanged();
+    void prePreferencesSaved();
 
 private:
 	bool dragLocked_;

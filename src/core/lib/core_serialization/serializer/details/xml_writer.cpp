@@ -5,6 +5,9 @@
 #include "core_variant/variant.hpp"
 #include "core_variant/collection.hpp"
 #include "wg_types/binary_block.hpp"
+#include "wg_types/vector2.hpp"
+#include "wg_types/vector3.hpp"
+#include "wg_types/vector4.hpp"
 
 
 namespace
@@ -30,6 +33,9 @@ namespace
 		return
 			type == TypeId::getType<Variant>() ||
 			type == TypeId::getType<ObjectHandle>() ||
+            type == TypeId::getType<Vector2>() ||
+            type == TypeId::getType<Vector3>() ||
+            type == TypeId::getType<Vector4>() ||
 			type == TypeId::getType< std::shared_ptr< BinaryBlock > >();
 	}
 

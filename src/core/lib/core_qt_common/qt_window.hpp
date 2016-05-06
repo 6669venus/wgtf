@@ -54,9 +54,16 @@ public:
 signals:
 	void windowReady();
 
+
+
 protected:
     void init();
 	bool eventFilter( QObject * obj, QEvent * event );
+
+private slots:
+    void onPrePreferencesChanged();
+     void onPostPreferencesChanged();
+    void onPrePreferencesSaved();
 
 private:
 	void waitForWindowExposed();
@@ -73,6 +80,7 @@ private:
 	IUIApplication * application_;
 	bool isMaximizedInPreference_;
 	bool firstTimeShow_;
+    QtConnectionHolder qtConnections_;
 };
 
 #endif//QT_WINDOW_HPP

@@ -29,7 +29,7 @@ QModelIndex ColumnListAdapter::adaptedIndex(int row, int column, const QModelInd
 
 int ColumnListAdapter::rowCount(const QModelIndex &parent) const
 {
-	return model()->columnCount( index( 0 ) );
+	return model()->columnCount( adaptedIndex( 0, 0, QModelIndex() ) );
 }
 
 void ColumnListAdapter::onParentDataChanged(const QModelIndex &topLeft, 

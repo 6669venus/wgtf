@@ -1,5 +1,7 @@
 #include "wg_item_view.hpp"
+#include "qt_connection_holder.hpp"
 #include "models/extensions/i_model_extension.hpp"
+#include "models/qt_abstract_item_model.hpp"
 
 #include <QAbstractItemModel>
 #include <QQmlListProperty>
@@ -8,57 +10,105 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+ITEMROLE( modelIndex )
+
 namespace
 {
-	class ExtendedModel : public QAbstractItemModel
+	class ExtendedModel : public QtAbstractItemModel, public RoleProvider
 	{
 	public:
-		ExtendedModel( QAbstractItemModel & model, QList< IModelExtension * > & extensions )
-			: model_( model )
+		ExtendedModel( QStringList & roles, QList< IModelExtension * > & extensions )
+			: model_( nullptr )
+			, roles_( roles )
 			, extensions_( extensions )
 		{
-			roleNames_ = model_.roleNames();
-			for (auto & extension : extensions_)
+		}
+
+		void reset( QAbstractItemModel * model )
+		{
+			beginResetModel();
+			model_ = model;
+			roleNames_.clear();
+			indexCache_.clear();
+			if (model_ != nullptr)
 			{
-				QHashIterator<int, QByteArray> itr( extension->roleNames() );
-				while (itr.hasNext())
+				roleNames_ = model_->roleNames();
+				registerRole( ItemRole::modelIndexName, roleNames_ );
+				for (auto & role : roles_)
 				{
-					itr.next();
-					roleNames_.insert( itr.key(), itr.value() );
+					registerRole( role.toUtf8(), roleNames_ );
+				}
+				for (auto & extension : extensions_)
+				{
+					QHashIterator<int, QByteArray> itr( extension->roleNames() );
+					while (itr.hasNext())
+					{
+						itr.next();
+						registerRole( itr.value(), roleNames_ );
+					}
 				}
 			}
+			endResetModel();
 		}
 
 	private:
 		QModelIndex index( int row, int column, const QModelIndex &parent ) const override
 		{
-			auto index = model_.index( row, column, parent );
-			return createIndex( index.row(), index.column(), index.internalId() );
+			if (model_ == nullptr)
+			{
+				return QModelIndex();
+			}
+
+			return extendedIndex( model_->index( row, column, parent ) );
 		}
 
-		QModelIndex parent( const QModelIndex &child) const override
+		QModelIndex parent( const QModelIndex &child ) const override
 		{
-			auto parent = model_.parent( child );
-			return createIndex( parent.row(), parent.column(), parent.internalId() );
+			if (model_ == nullptr)
+			{
+				return QModelIndex();
+			}
+
+			return extendedIndex( model_->parent( child ) );
 		}
 
 		int rowCount( const QModelIndex &parent ) const override
 		{
-			return model_.rowCount( parent );
+			if (model_ == nullptr)
+			{
+				return 0;
+			}
+
+			return model_->rowCount( modelIndex( parent ) );
 		}
 
 		int columnCount( const QModelIndex &parent ) const override
 		{
-			return model_.columnCount( parent );
+			if (model_ == nullptr)
+			{
+				return 0;
+			}
+
+			return model_->columnCount( modelIndex( parent ) );
 		}
 
 		bool hasChildren( const QModelIndex &parent ) const override
 		{
-			return model_.hasChildren( parent );
+			if (model_ == nullptr)
+			{
+				return false;
+			}
+			
+			return model_->hasChildren( modelIndex( parent ) );
 		}
 
 		QVariant data( const QModelIndex &index, int role ) const override
 		{
+			if (model_ == nullptr)
+			{
+				return QVariant();
+			}
+
 			for (auto & extension : extensions_)
 			{
 				auto data = extension->data( index, role );
@@ -68,11 +118,26 @@ namespace
 				}
 			}
 
-			return model_.data( index, role );
+			size_t roleId;
+			if (decodeRole( role, roleId ))
+			{
+				if (roleId == ItemRole::modelIndexId)
+				{
+					return index;
+				}
+				role = static_cast< int >( roleId );
+			}
+
+			return model_->data( modelIndex( index ), role );
 		}
 
 		bool setData( const QModelIndex &index, const QVariant &value, int role ) override
 		{
+			if (model_ == nullptr)
+			{
+				return false;
+			}
+			
 			for (auto & extension : extensions_)
 			{
 				if (extension->setData( index, value, role ) )
@@ -81,11 +146,22 @@ namespace
 				}
 			}
 
-			return model_.setData( index, value, role );
+			size_t roleId;
+			if (decodeRole( role, roleId ))
+			{
+				role = static_cast< int >( roleId );
+			}
+
+			return model_->setData( modelIndex( index ), value, role );
 		}
 
 		QVariant headerData( int section, Qt::Orientation orientation, int role ) const override
-		{ 
+		{
+			if (model_ == nullptr)
+			{
+				return QVariant();
+			}
+
 			for (auto & extension : extensions_)
 			{
 				auto data = extension->headerData( section, orientation, role );
@@ -95,11 +171,16 @@ namespace
 				}
 			}
 
-			return model_.headerData( section, orientation, role );
+			return model_->headerData( section, orientation, role );
 		}
 
 		bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) override
 		{
+			if (model_ == nullptr)
+			{
+				return false;
+			}
+
 			for (auto & extension : extensions_)
 			{
 				if (extension->setHeaderData( section, orientation, value, role ) )
@@ -108,7 +189,7 @@ namespace
 				}
 			}
 
-			return model_.setHeaderData( section, orientation, value, role );
+			return model_->setHeaderData( section, orientation, value, role );
 		}
 
 		QHash< int, QByteArray > roleNames() const override
@@ -116,9 +197,46 @@ namespace
 			return roleNames_;
 		}
 
-		QAbstractItemModel & model_;
+		QModelIndex modelIndex( const QModelIndex & extendedIndex ) const
+		{
+			if (!extendedIndex.isValid())
+			{
+				return QModelIndex();
+			}
+
+			assert( extendedIndex.model() == this );
+			auto it = indexCache_.find( extendedIndex );
+			assert( it != indexCache_.end() );
+			assert( it->isValid() );
+			return *it;
+		}
+
+		QModelIndex extendedIndex( const QModelIndex & modelIndex ) const
+		{
+			if (!modelIndex.isValid())
+			{
+				return QModelIndex();
+			}
+
+			assert( modelIndex.model() == model_ );
+			QModelIndex index = createIndex( modelIndex.row(), modelIndex.column(), modelIndex.internalId() );
+			auto it = indexCache_.find( index );
+			if (it != indexCache_.end())
+			{
+				assert( *it == modelIndex );
+			}
+			else
+			{
+				indexCache_.insert( index, modelIndex );
+			}
+			return index;
+		}
+
+		QAbstractItemModel * model_;
+		QStringList & roles_;
 		QList< IModelExtension * > & extensions_;
 		QHash< int, QByteArray > roleNames_;
+		mutable QHash< QPersistentModelIndex, QPersistentModelIndex > indexCache_;
 	};
 
 	class HeaderData : public QObject
@@ -208,8 +326,11 @@ namespace
 
 struct WGItemView::Impl
 {
+	Impl() : model_( nullptr ) {}
+
 	QAbstractItemModel * model_;
 	QList< IModelExtension * > extensions_;
+	QStringList roles_;
 	std::unique_ptr< ExtendedModel > extendedModel_;
 	std::unique_ptr< HeaderData > headerData_;
 };
@@ -217,7 +338,7 @@ struct WGItemView::Impl
 WGItemView::WGItemView()
 	: impl_( new Impl() )
 {
-
+	impl_->extendedModel_.reset( new ExtendedModel( impl_->roles_, impl_->extensions_ ) );
 }
 
 WGItemView::~WGItemView()
@@ -234,6 +355,17 @@ void WGItemView::setModel( QAbstractItemModel * model )
 {
 	impl_->model_ = model;
 	emit modelChanged();
+	refresh();
+}
+
+QStringList WGItemView::getRoles() const
+{
+	return impl_->roles_;
+}
+
+void WGItemView::setRoles( const QStringList & roles )
+{
+	impl_->roles_ = roles;
 	refresh();
 }
 
@@ -306,17 +438,14 @@ QObject * WGItemView::getHeaderData() const
 
 void WGItemView::refresh()
 {
-	impl_->extendedModel_.reset();
-	if (impl_->model_ != nullptr)
-	{
-		impl_->extendedModel_.reset( new ExtendedModel( *impl_->model_, impl_->extensions_ ) );
-	}
-	emit extendedModelChanged();
+	impl_->extendedModel_->reset( impl_->model_ );
 
+	//Enable for headers once body works.
+	/*
 	impl_->headerData_.reset();
 	if (impl_->extendedModel_ != nullptr)
 	{
 		impl_->headerData_.reset( new HeaderData( *impl_->extendedModel_, 0, Qt::Horizontal ) );
 	}
-	emit headerDataChanged();
+	emit headerDataChanged();*/
 }

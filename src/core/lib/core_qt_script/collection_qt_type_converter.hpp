@@ -11,11 +11,11 @@
 class CollectionQtTypeConverter : public IQtTypeConverter
 {
 public:
-	bool toVariant( const QVariant & qVariant,
-		Variant & o_variant ) const override;
+	bool toVariant(const QVariant & qVariant,
+		Variant & o_variant) const override;
 
-	bool toQVariant( const Variant& variant,
-		QVariant& o_qVariant ) const override;
+	bool toQVariant(const Variant& variant,
+		QVariant& o_qVariant, QObject* parent = nullptr) const override;
 };
 
 

@@ -5,7 +5,7 @@
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/models/extensions/i_model_extension.hpp"
 #include "core_qt_common/qt_connection_holder.hpp"
-#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "qt_model_helpers.hpp"
 #include "core_reflection/object_handle.hpp"
 
@@ -281,7 +281,7 @@ QVariant WGTreeModel::headerData(
 		return QVariant::Invalid;
 	}
 
-	return QtHelpers::toQVariant( model->getData( section, roleId ) );
+	return QtHelpers::toQVariant( model->getData( section, roleId ), const_cast<WGTreeModel*>(this) );
 }
 
 QVariant WGTreeModel::headerData( int column, QString roleName ) const
@@ -337,8 +337,8 @@ QVariant WGTreeModel::data( const QModelIndex &index, int role ) const
 		auto thumbnail = item->getThumbnail( index.column() );
 		if (thumbnail != nullptr)
 		{
-			auto qtImageProvider = dynamic_cast< QtImageProvider * >(
-				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProvider::providerId() ) );
+			auto qtImageProvider = dynamic_cast< QtImageProviderOld * >(
+				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProviderOld::providerId() ) );
 			if (qtImageProvider != nullptr)
 			{
 				auto imagePath = qtImageProvider->encodeImage( thumbnail );
@@ -521,9 +521,9 @@ void WGTreeModel::onPreItemDataChanged( const IItem * item, int column, size_t r
 
 	auto index = Impl::calculateModelIndex( *this, item, column );
 	// NGT-1619 Temporary workaround from @s_yuan
-	//auto value = QtHelpers::toQVariant( data );
+	auto value = QtHelpers::toQVariant( data, this );
 	//this->beginChangeData( index, role, value );
-	this->beginChangeData( index, role, QVariant() );
+	this->beginChangeData(index, role, value);
 }
 
 void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
@@ -543,9 +543,9 @@ void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t 
 
 	auto index = Impl::calculateModelIndex( *this, item, column );
 	// NGT-1619 Temporary workaround from @s_yuan
-	//auto value = QtHelpers::toQVariant( data );
-	//this->endChangeData( index, role, value );
-	this->endChangeData( index, role, QVariant() );
+	auto value = QtHelpers::toQVariant( data, this );
+	this->endChangeData( index, role, value );
+	//this->endChangeData( index, role, QVariant() );
 }
 
 void WGTreeModel::onPreItemsInserted( const IItem * parent, size_t index, size_t count )

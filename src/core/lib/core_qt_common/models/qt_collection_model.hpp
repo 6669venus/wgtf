@@ -3,6 +3,7 @@
 #define _QT_COLLECTION_MODEL_HPP
 
 #include "qt_item_model.hpp"
+#include "core_data_model/collection_model.hpp"
 
 
 class CollectionModel;
@@ -17,7 +18,7 @@ class QtCollectionModel : public QtListModel
 	Q_OBJECT
 
 public:
-	QtCollectionModel( CollectionModel & source );
+	QtCollectionModel( std::unique_ptr<CollectionModel>&& source );
 
 	/**
 	 *	Get CollectionModel that is being adapted to be used by Qt.
@@ -65,6 +66,11 @@ public:
 	 *	@return true if at least one item was erased (may be more than one).
 	 */
 	Q_INVOKABLE bool removeItem( const QVariant & key );
+
+	Q_INVOKABLE bool isMapping() const;
+
+private:
+	std::unique_ptr<CollectionModel> model_;
 };
 
 

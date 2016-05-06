@@ -4,7 +4,7 @@
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/models/wg_list_model.hpp"
-#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 
 ThumbnailExtension::ThumbnailExtension()
 {
@@ -43,8 +43,8 @@ QVariant ThumbnailExtension::data( const QModelIndex &index, int role ) const
 		auto thumbnail = item->getThumbnail( column );
 		if (thumbnail != nullptr)
 		{
-			auto qtImageProvider = dynamic_cast< QtImageProvider * >(
-				qtFramework_->qmlEngine()->imageProvider( QtImageProvider::providerId() ) );
+			auto qtImageProvider = dynamic_cast< QtImageProviderOld * >(
+				qtFramework_->qmlEngine()->imageProvider( QtImageProviderOld::providerId() ) );
 			if (qtImageProvider != nullptr)
 			{
 				return qtImageProvider->encodeImage( thumbnail );

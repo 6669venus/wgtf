@@ -504,7 +504,7 @@ Item {
         width: treeView.width - treeView.rightMargin - treeView.leftMargin
     }
 
-    WGColumnsFrame {
+    WGColumnsFrame1 {
         id: columnsFrame
         columnCount: treeView.columnCount
         y: treeView.topMargin

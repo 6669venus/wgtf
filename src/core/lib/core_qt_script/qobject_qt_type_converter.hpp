@@ -19,7 +19,7 @@ public:
 		return true;
 	}
 
-	bool toQVariant( const Variant & variant, QVariant & o_qVariant ) const override
+	bool toQVariant( const Variant & variant, QVariant & o_qVariant, QObject* parent = nullptr ) const override
 	{
 		if (variant.typeIs< ObjectHandle >())
 		{

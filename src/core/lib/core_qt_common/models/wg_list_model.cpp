@@ -5,7 +5,7 @@
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/models/extensions/i_model_extension.hpp"
 #include "core_qt_common/qt_connection_holder.hpp"
-#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "qt_model_helpers.hpp"
 #include "core_reflection/object_handle.hpp"
 
@@ -294,7 +294,7 @@ QVariant WGListModel::headerData(
 		return QVariant::Invalid;
 	}
 
-	return QtHelpers::toQVariant( model->getData( section, roleId ) );
+	return QtHelpers::toQVariant( model->getData( section, roleId ), const_cast<WGListModel*>(this) );
 }
 
 QVariant WGListModel::headerData( int column, QString roleName ) const
@@ -329,8 +329,8 @@ QVariant WGListModel::data( const QModelIndex &index, int role ) const
 		auto thumbnail = item->getThumbnail( index.column() );
 		if (thumbnail != nullptr)
 		{
-			auto qtImageProvider = dynamic_cast< QtImageProvider * >(
-				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProvider::providerId() ) );
+			auto qtImageProvider = dynamic_cast< QtImageProviderOld * >(
+				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProviderOld::providerId() ) );
 			if (qtImageProvider != nullptr)
 			{
 				auto imagePath = qtImageProvider->encodeImage( thumbnail );
@@ -513,7 +513,7 @@ void WGListModel::onPreItemDataChanged( const IItem * item, int column, size_t r
 	}
 	
 	auto index = Impl::calculateModelIndex( *this, item, column );
-	auto value = QtHelpers::toQVariant( data );
+	auto value = QtHelpers::toQVariant( data, this );
 	this->beginChangeData( index, role, value );
 }
 	
@@ -533,7 +533,7 @@ void WGListModel::onPostItemDataChanged( const IItem * item, int column, size_t 
 	}
 	
 	auto index = Impl::calculateModelIndex( *this, item, column );
-	auto value = QtHelpers::toQVariant( data );
+	auto value = QtHelpers::toQVariant( data, this );
 	this->endChangeData( index, role, value );
 }
 

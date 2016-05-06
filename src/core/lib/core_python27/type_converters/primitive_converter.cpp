@@ -33,7 +33,7 @@ bool PrimitiveConverter< T >::toVariant( const PyScript::ScriptObject & inObject
 
 template< typename T >
 bool PrimitiveConverter< T >::toScriptType( const Variant & inVariant,
-	PyScript::ScriptObject & outObject ) /* override */
+	PyScript::ScriptObject & outObject, void* userData ) /* override */
 {
 	if (!inVariant.typeIs< Variant::traits< T >::storage_type >())
 	{

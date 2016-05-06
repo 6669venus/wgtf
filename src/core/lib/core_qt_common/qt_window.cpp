@@ -28,6 +28,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include "qt_global_settings.hpp"
 
 namespace
 {
@@ -360,6 +361,13 @@ void QtWindow::init()
 		"QMainWindow::separator:vertical{background: palette(dark); width: 4px; border-left: 1px solid palette(midlight);}"
 		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-bottom: 1px solid palette(midlight);}"
 		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-top: 1px solid palette(midlight);}");
+    auto globalSettings = qtFramework_.qtGlobalSettings();
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::prePreferencesChanged,
+        this, &QtWindow::onPrePreferencesChanged );
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::postPreferencesChanged,
+        this, &QtWindow::onPostPreferencesChanged );
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::prePreferencesSaved,
+        this, &QtWindow::onPrePreferencesSaved );
 }
 
 bool QtWindow::eventFilter(QObject * obj, QEvent * event)
@@ -501,4 +509,28 @@ bool QtWindow::loadPreference()
 	} while (false);
 	NGT_DEBUG_MSG( "Load Window Preferences Failed.\n" );
 	return false;
+}
+
+
+void QtWindow::onPrePreferencesChanged()
+{
+    savePreference();
+}
+
+void QtWindow::onPostPreferencesChanged()
+{
+    loadPreference();
+    for(auto& region : regions_)
+    {
+        QtDockRegion* iRegion = dynamic_cast<QtDockRegion*>(region.get());
+        if(iRegion != nullptr)
+        {
+            iRegion->restoreDockWidgets();
+        }
+    }
+}
+
+void QtWindow::onPrePreferencesSaved()
+{
+   savePreference();
 }

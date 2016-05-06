@@ -40,7 +40,7 @@ const SelectionHelper::SourceType* SelectionHelper::source() const
 QVariant SelectionHelper::getSource() const
 {
 	Variant variant = ObjectHandle( const_cast< SourceType* >( source_ ) );
-	return QtHelpers::toQVariant( variant );
+	return QtHelpers::toQVariant( variant, const_cast<SelectionHelper*>(this) );
 }
 
 

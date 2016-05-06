@@ -332,7 +332,7 @@ Connection Collection::connectPreErase( ElementRangeCallback callback )
 }
 
 
-Connection Collection::connectPostErased( NotificationCallback callback )
+Connection Collection::connectPostErased( ElementRangeCallback callback)
 {
 	if( impl_ )
 	{

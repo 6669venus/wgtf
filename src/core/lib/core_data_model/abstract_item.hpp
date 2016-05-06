@@ -4,6 +4,10 @@
 #include "core_common/signal.hpp"
 #include "core_variant/variant.hpp"
 
+
+/**
+ *	Stores data for an entry in a data model or on the data model itself.
+ */
 class AbstractItem
 {
 public:

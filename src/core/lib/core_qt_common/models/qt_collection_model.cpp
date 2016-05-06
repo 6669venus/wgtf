@@ -154,3 +154,11 @@ bool QtCollectionModel::removeItem( const QVariant & key )
 	const auto erasedCount = collection.erase( variantKey );
 	return (erasedCount > 0);
 }
+
+bool QtCollectionModel::isMapping() const
+{
+	auto & collectionModel = this->source();
+	auto & collection = collectionModel.getSource();
+	
+	return collection.isMapping();
+}

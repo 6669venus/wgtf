@@ -126,6 +126,24 @@ private:
 	bool visible_;
 };
 
+void QtDockRegion::restoreDockWidgets()
+{
+    auto qMainWindow = qtWindow_.window();
+    assert( qMainWindow != nullptr );
+    for( auto& it : dockWidgetMap_)
+    {
+        auto qDockWidget = it.second.first.get();
+        if (qtWindow_.isReady())
+        {
+            bool isOk = qMainWindow->restoreDockWidget( qDockWidget );
+        }
+        else
+        {
+            needToRestorePreference_.push_back( qDockWidget );
+        }
+    }
+}
+
 void QtDockRegion::setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget )
 {
 	auto qMainWindow = qtWindow_.window();

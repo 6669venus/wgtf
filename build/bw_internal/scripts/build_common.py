@@ -77,8 +77,8 @@ def stringToBuildType( buildTypeString ):
 
 
 def validateVisualStudioVersion( vsVersion ):
-	if vsVersion not in [ "2005", "2008", "2010", "2012", "2013" ]:
-		raise ValueError( "Expected 2005, 2008, 2010, 2012 or 2013" )
+	if vsVersion not in [ "2005", "2008", "2010", "2012", "2013", "2015" ]:
+		raise ValueError( "Expected 2005, 2008, 2010, 2012, 2013 or 2015" )
 
 
 #use to force running even if DEBUG_COMMANDS=1

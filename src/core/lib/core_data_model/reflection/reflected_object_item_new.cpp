@@ -13,14 +13,14 @@
 #include <codecvt>
 #include <set>
 
+ITEMROLE( display )
 
 namespace
 {
-
-bool compareWStrings( const wchar_t * a, const wchar_t * b )
-{
-	return wcscmp( a, b ) < 0;
-}
+	bool compareWStrings( const wchar_t * a, const wchar_t * b )
+	{
+		return wcscmp( a, b ) < 0;
+	}
 
 } // namespace
 
@@ -108,17 +108,9 @@ ReflectedObjectItemNew::~ReflectedObjectItemNew()
 
 Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* override */
 {
-	// Only works for root items?
-	assert( parent_ == nullptr );
-	if (roleId == ValueRole::roleId_)
-	{
-		return impl_->object_;
-	}
-	if (roleId == ValueTypeRole::roleId_)
-	{
-		return TypeId::getType< ObjectHandle >().getName();
-	}
-	else if (roleId == KeyRole::roleId_)
+	roleId = static_cast< unsigned int >( roleId );
+
+	if (roleId == ItemRole::displayId)
 	{
 		switch (column)
 		{
@@ -137,7 +129,7 @@ Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* ov
 				}
 				const MetaDisplayNameObj * displayName =
 					findFirstMetaData< MetaDisplayNameObj >( *definition,
-						*pDefinitionManager );
+					*pDefinitionManager );
 				if (displayName == nullptr)
 				{
 					impl_->displayName_ = definition->getName();
@@ -152,24 +144,23 @@ Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* ov
 			}
 			return impl_->displayName_.c_str();
 
-		case 1:
-			{
-				auto definition = getDefinition();
-				if (definition == nullptr)
-				{
-					return "";
-				}
-				return definition->getName();
-			}
-
 		default:
-			assert( false );
-			return "";
+			auto definition = getDefinition();
+			if (definition == nullptr)
+			{
+				return "";
+			}
+			return definition->getName();
 		}
 	}
-	if (roleId == KeyTypeRole::roleId_)
+
+	if (roleId == ValueRole::roleId_)
 	{
-		return TypeId::getType< const char * >().getName();
+		return impl_->object_;
+	}
+	if (roleId == ValueTypeRole::roleId_)
+	{
+		return TypeId::getType< ObjectHandle >().getName();
 	}
 	else if (roleId == IndexPathRole::roleId_)
 	{
@@ -292,6 +283,12 @@ int ReflectedObjectItemNew::rowCount() const
 	} );
 
 	return count;
+}
+
+
+bool ReflectedObjectItemNew::isInPlace() const
+{
+	return parent_ != nullptr;
 }
 
 

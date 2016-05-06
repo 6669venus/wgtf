@@ -17,27 +17,22 @@ WGListViewBase {
 	property alias columnWidths: itemView.columnWidths
 	property alias columnSpacing: itemView.columnSpacing
 
-	property alias __internalModel: listView.model
+	property alias internalModel: listView.model
 	property alias model: itemView.model
 
-	__internalModel: itemView.extendedModel
+	internalModel: itemView.extendedModel
+
+	property var extensions: []
 
 	WGItemViewCommon {
 		id: itemView
-
-		extensions: [listExtension, columnExtension, imageExtension]
 
 		ListExtension {
 			id: listExtension
 		}
 
-		ColumnExtension {
-			id: columnExtension
-		}
-
-		ImageExtension {
-			id: imageExtension
-		}
+		property var listExtensions: listView.extensions.concat(commonExtensions.concat([listExtension]))
+		extensions: listExtensions
 
 		Connections {
 			target: listView

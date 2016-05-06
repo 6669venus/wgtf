@@ -19,16 +19,17 @@ public:
 	 *	Interface required by TypeConverterQueue.
 	 */
 	virtual bool toVariant( const QVariant & qVariant, Variant & o_variant ) const = 0;
-
+	
 	/**
-	 *	Interface required by TypeConverterQueue.
-	 */
-	bool toScriptType( const Variant & variant, QVariant & o_qVariant ) const
+	*	 Interface required by TypeConverterQueue.
+	*/
+	bool toScriptType(const Variant & variant, QVariant & o_qVariant, QObject* parent = nullptr ) const
 	{
-		return this->toQVariant( variant, o_qVariant );
+		return this->toQVariant( variant, o_qVariant, parent );
 	}
 
-	virtual bool toQVariant( const Variant & variant, QVariant & o_qVariant ) const = 0;
+	virtual bool toQVariant(const Variant & variant, QVariant & o_qVariant, QObject* parent = nullptr ) const = 0;
+
 	virtual bool toQVariant( const ObjectHandle & object,
 		QVariant & o_qVariant ) const
 	{ return false; };
@@ -55,7 +56,7 @@ public:
 		return true;
 	}
 
-	bool toQVariant( const Variant & variant, QVariant & o_qVariant ) const override
+	bool toQVariant( const Variant & variant, QVariant & o_qVariant, QObject* parent = nullptr ) const override
 	{
 		if (variant.typeIs< T >() == false)
 		{

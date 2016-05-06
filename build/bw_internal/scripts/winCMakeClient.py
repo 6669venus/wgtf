@@ -340,7 +340,7 @@ def build( vsVersion,
 	# VS version
 	if vsVersion == "2015":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[0]
-	if vsVersion == "2013":
+	elif vsVersion == "2013":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[1]
 	elif vsVersion == "2012":
 		generatorName, generatorToken, generatorToolset = CMAKE_GENERATORS[2]

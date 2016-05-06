@@ -24,7 +24,7 @@ bool NoneConverter::toVariant( const PyScript::ScriptObject & inObject,
 
 
 bool NoneConverter::toScriptType( const Variant & inVariant,
-	PyScript::ScriptObject & outObject ) /* override */
+	PyScript::ScriptObject & outObject, void* userData ) /* override */
 {
 	// null void * -> None
 	if (!inVariant.typeIs< Variant::traits< void * >::storage_type >())

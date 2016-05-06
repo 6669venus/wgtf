@@ -39,12 +39,18 @@ public:
 	Variant getValue() const;
 
 	bool canSetValue() const;
-	bool setValue(const Variant & value ) const;
+	bool setValue( const Variant & value ) const;
 	bool setValueWithoutNotification( const Variant & value ) const;
 
 	bool canInvoke() const;
 	Variant invoke( const ReflectedMethodParameters & parameters ) const;
 	void invokeUndoRedo( const ReflectedMethodParameters & parameters, Variant result, bool undo ) const;
+
+	bool canInsert() const;
+	bool insert( const Variant & key, const Variant & value ) const;
+
+	bool canErase() const;
+	bool erase( const Variant & key ) const;
 
 	IBasePropertyPtr getProperty() const { return property_; }
 	const ObjectHandle & getObject() const { return object_; }

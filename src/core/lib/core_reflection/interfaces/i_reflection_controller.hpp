@@ -41,6 +41,10 @@ public:
 	 *	@return the result of the function.
 	 */
 	virtual Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters ) = 0;
+
+	virtual void insert( const PropertyAccessor & pa, const Variant & key, const Variant & value ) = 0;
+
+	virtual void erase( const PropertyAccessor & pa, const Variant & key ) = 0;
 };
 
 #endif//I_REFLECTION_CONTROLLER_HPP

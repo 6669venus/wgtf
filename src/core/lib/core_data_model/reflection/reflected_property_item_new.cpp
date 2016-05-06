@@ -1,4 +1,5 @@
 #include "reflected_property_item_new.hpp"
+#include "reflected_collection.hpp"
 
 #include "class_definition_model.hpp"
 #include "reflected_enum_model.hpp"
@@ -247,7 +248,12 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		{
 			return Variant();
 		}
-		return propertyAccessor.getValue();
+		auto value = propertyAccessor.getValue();
+		if (value.canCast< Collection >())
+		{
+			value = Collection( std::make_shared< ReflectedCollection >( propertyAccessor, getController() ) );
+		}
+		return value;
 	}
 	else if (roleId == ItemRole::valueTypeId ||
 		roleId == ValueTypeRole::roleId_)
@@ -263,7 +269,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		}
 
 		Collection collection;
-		const bool parentIsCollection = parent_->getData(0, ItemRole::valueId).tryCast( collection );
+		const bool parentIsCollection = parent_->getData(0, static_cast< int >( ItemRole::valueId )).tryCast( collection );
 		if (!parentIsCollection)
 		{
 			return Variant();
@@ -295,7 +301,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		}
 
 		Collection collection;
-		const bool parentIsCollection = parent_->getData(0, ItemRole::valueId).tryCast( collection );
+		const bool parentIsCollection = parent_->getData(0, static_cast< int >( ItemRole::valueId )).tryCast( collection );
 		if (!parentIsCollection)
 		{
 			return Variant();

@@ -204,6 +204,7 @@ void TestUI::open()
 
 	IEnvManager* em = get<IEnvManager>();
 	int envIdx = em->addEnv( dataSrc->description() );
+    em->loadEnvState( envIdx );
 
 	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
 	createViews( *fw_, dataSrc, envIdx );
@@ -221,6 +222,7 @@ void TestUI::close()
 	destroyViews( dataSrcEnvPairs_.size() );
 
 	IEnvManager* em = get<IEnvManager>();
+    em->saveEnvState( envIdx );
 	em->removeEnv( envIdx );
 
 	auto dataSrcMngr = get<IDataSourceManager>();

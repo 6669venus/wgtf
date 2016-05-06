@@ -35,7 +35,18 @@ QtItemModel::QtItemModel( AbstractItemModel & source )
 		size_t role,
 		const Variant & newValue )
 	{
-		// Do nothing
+		auto item = impl_->source_.item( index );
+		const QModelIndex modelIndex = createIndex( index.row_, index.column_, item );
+
+		//HACK: should not be explicitly referencing DefinitionRole here
+		if (role == DefinitionRole::roleId_)
+		{
+			QList<QPersistentModelIndex> parents;
+			parents.append( modelIndex );
+			this->layoutAboutToBeChanged( parents, QAbstractItemModel::VerticalSortHint );
+			return;
+		}
+		//END HACK
 	};
 	impl_->connectPreChange_ =
 		impl_->source_.connectPreItemDataChanged( preData );
@@ -46,10 +57,33 @@ QtItemModel::QtItemModel( AbstractItemModel & source )
 		const Variant & newValue )
 	{
 		auto item = impl_->source_.item( index );
-		const QModelIndex topLeft = createIndex( index.row_, index.column_, item );
-		const QModelIndex bottomRight = createIndex( index.row_, index.column_, item );
+		const QModelIndex modelIndex = createIndex( index.row_, index.column_, item );
+
+		//HACK: should not be explicitly referencing DefinitionRole here
+		if (role == DefinitionRole::roleId_)
+		{
+			QList<QPersistentModelIndex> parents;
+			parents.append( modelIndex );
+			this->layoutChanged( parents, QAbstractItemModel::VerticalSortHint );
+			return;
+		}
+		//END HACKs
+
+		const QModelIndex topLeft = modelIndex;
+		const QModelIndex bottomRight = modelIndex;
 		QVector< int > roles;
-		roles.append( static_cast< int >( role ) );
+		if (role == ItemRole::displayId)
+		{
+			roles.append( Qt::DisplayRole );
+		}
+		else if (role == ItemRole::decorationId)
+		{
+			roles.append( Qt::DecorationRole );
+		}
+		else
+		{
+			roles.append( static_cast< int >( role ) );
+		}
 		this->dataChanged( topLeft, bottomRight, roles );
 	};
 	impl_->connectPostChanged_ =

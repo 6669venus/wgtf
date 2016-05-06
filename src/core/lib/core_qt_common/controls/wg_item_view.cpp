@@ -28,10 +28,14 @@ namespace
 		{
 			beginResetModel();
 			model_ = model;
+			connections_.reset();
 			roleNames_.clear();
 			indexCache_.clear();
 			if (model_ != nullptr)
 			{
+				connections_ += QObject::connect( model, &QAbstractItemModel::dataChanged, this, &ExtendedModel::onDataChanged );
+				connections_ += QObject::connect( model, &QAbstractItemModel::layoutAboutToBeChanged, this, &ExtendedModel::onLayoutAboutToBeChanged );
+				connections_ += QObject::connect( model, &QAbstractItemModel::layoutChanged, this, &ExtendedModel::onLayoutChanged );
 				roleNames_ = model_->roleNames();
 				registerRole( ItemRole::modelIndexName, roleNames_ );
 				for (auto & role : roles_)
@@ -197,6 +201,37 @@ namespace
 			return roleNames_;
 		}
 
+		void onLayoutAboutToBeChanged( const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint )
+		{
+			QList<QPersistentModelIndex> extendedParents;
+			for (auto & parent : parents)
+			{
+				extendedParents.append( extendedIndex( parent ) );
+			}
+			layoutAboutToBeChanged( extendedParents, hint );
+		}
+
+		void onLayoutChanged( const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint )
+		{
+			QList<QPersistentModelIndex> extendedParents;
+			for (auto & parent : parents)
+			{
+				extendedParents.append( extendedIndex( parent ) );
+			}
+			layoutChanged( extendedParents, hint );
+		}
+
+		void onDataChanged( const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles )
+		{
+			QVector<int> encodedRoles;
+			for (auto & role : roles)
+			{
+				int encodedRole;
+				encodedRoles.append( encodeRole(role, encodedRole) ? encodedRole : role );
+			}
+			dataChanged( extendedIndex( topLeft ), extendedIndex( bottomRight ), encodedRoles );
+		}
+
 		QModelIndex modelIndex( const QModelIndex & extendedIndex ) const
 		{
 			if (!extendedIndex.isValid())
@@ -233,6 +268,7 @@ namespace
 		}
 
 		QAbstractItemModel * model_;
+		QtConnectionHolder connections_;
 		QStringList & roles_;
 		QList< IModelExtension * > & extensions_;
 		QHash< int, QByteArray > roleNames_;

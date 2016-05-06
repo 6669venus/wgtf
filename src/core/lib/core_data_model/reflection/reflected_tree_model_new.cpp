@@ -168,7 +168,6 @@ ReflectedTreeModelNew::ReflectedTreeModelNew( IComponentContext & contextManager
 	: AbstractTreeModel()
 	, impl_( new Implementation( *this, contextManager, object ) )
 {
-	impl_->rootItem_->setModel( this );
 }
 
 

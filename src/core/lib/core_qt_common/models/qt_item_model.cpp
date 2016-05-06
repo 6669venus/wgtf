@@ -15,15 +15,52 @@ struct QtItemModel::Impl
 	}
 
 	AbstractItemModel & source_;
+
+	Connection connectPreChange_;
+	Connection connectPostChanged_;
+
+	Connection connectPreInsert_;
+	Connection connectPostInserted_;
+
+	Connection connectPreErase_;
+	Connection connectPostErase_;
 };
 
 QtItemModel::QtItemModel( AbstractItemModel & source )
 	: impl_( new Impl( source ) )
 {
+	// @see AbstractItemModel::DataSignature
+	auto preData = 
+	[ this ]( const AbstractItemModel::ItemIndex & index,
+		size_t role,
+		const Variant & newValue )
+	{
+		// Do nothing
+	};
+	impl_->connectPreChange_ =
+		impl_->source_.connectPreItemDataChanged( preData );
+	
+	auto postData = 
+	[ this ]( const AbstractItemModel::ItemIndex & index,
+		size_t role,
+		const Variant & newValue )
+	{
+		auto item = impl_->source_.item( index );
+		const QModelIndex topLeft = createIndex( index.row_, index.column_, item );
+		const QModelIndex bottomRight = createIndex( index.row_, index.column_, item );
+		QVector< int > roles;
+		roles.append( static_cast< int >( role ) );
+		this->dataChanged( topLeft, bottomRight, roles );
+	};
+	impl_->connectPostChanged_ =
+		impl_->source_.connectPostItemDataChanged( postData );
 }
 
 QtItemModel::~QtItemModel()
 {
+	// TODO not removed from list??
+	impl_->connectPostChanged_.disconnect();
+	impl_->connectPreChange_.disconnect();
 }
 
 const AbstractItemModel & QtItemModel::source() const

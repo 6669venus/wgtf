@@ -36,6 +36,12 @@ void CustomGraph::DeleteNode(size_t nodeId)
 
     for (auto connectionPos = std::find_if(m_connectionsModel.begin(), m_connectionsModel.end(), findConnectionBySlot); connectionPos != m_connectionsModel.end();)
     {
+        ObjectHandleT<IConnection> connection = *connectionPos;
+        if (!connection->UnBind())
+        {
+            NGT_ERROR_MSG("Failed to unbind slots\n");
+        }
+
         m_connectionsModel.erase(connectionPos);
         connectionPos = std::find_if(m_connectionsModel.begin(), m_connectionsModel.end(), findConnectionBySlot);
     }
@@ -116,8 +122,14 @@ void CustomGraph::DeleteConnection(size_t connectionId)
 
     if (connectionPos == m_connectionsModel.end())
     {
-        NGT_ERROR_MSG("Failed to delete connection with ID: %d\n", connectionId);
+        NGT_ERROR_MSG("Failed to get connection with ID: %d\n", connectionId);
         return;
+    }
+
+    ObjectHandleT<IConnection> connection = *connectionPos;
+    if (!connection->UnBind())
+    {
+        NGT_ERROR_MSG("Failed to unbind slots\n");
     }
     m_connectionsModel.erase(connectionPos);
 }

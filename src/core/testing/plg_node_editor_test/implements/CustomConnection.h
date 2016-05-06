@@ -15,6 +15,7 @@ public:
     ISlot* Input() const override;
     ISlot* Output() const override;
     bool Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot) override;
+    bool UnBind() override;
 private:
     size_t m_id;
     ISlot *m_inputSlot;

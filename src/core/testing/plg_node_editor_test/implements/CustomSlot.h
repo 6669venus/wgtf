@@ -26,11 +26,13 @@ public:
     bool Connect(ObjectHandleT<ISlot> slot) override;
     bool Disconnect(ObjectHandleT<ISlot> slot) override;
 
+    bool isConnected() const { return !m_connectedSlots.empty(); }
 private:
     size_t m_id;
     bool m_isInput;
 
     INode *m_pNode;
+    IConnection *m_pConnection;
     GenericListT<ISlot*> m_connectedSlots;    
 };
 

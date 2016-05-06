@@ -12,15 +12,7 @@ CustomConnection::CustomConnection()
 
 CustomConnection::~CustomConnection()    
 {
-    if (m_inputSlot != nullptr && m_outputSlot != nullptr)
-    {
-        m_inputSlot->Disconnect(m_outputSlot);
-        m_outputSlot->Disconnect(m_inputSlot);
-    }
-    else if (m_inputSlot != nullptr || m_outputSlot != nullptr)
-    {
-        NGT_ERROR_MSG("Connection is corrupted\n");
-    }
+    UnBind();
 }
 
 ISlot* CustomConnection::Input() const
@@ -75,6 +67,41 @@ bool CustomConnection::Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot
             inputSlot->Disconnect(outputSlot);                        
         }
 
+        break;
+    }
+
+    return result;
+}
+
+bool CustomConnection::UnBind()
+{
+    bool result = true;
+
+    while (true)
+    {
+        if (!isConnected)
+        {
+            NGT_WARNING_MSG("Connection is not connected\n");
+            break;
+        }            
+
+        if (!m_inputSlot->Disconnect(m_outputSlot))
+        {
+            result = false;
+            NGT_ERROR_MSG("Failed to disconnect input slot with output slot\n");
+            break;
+        }            
+
+        if (!m_outputSlot->Disconnect(m_inputSlot))
+        {
+            result = false;
+            NGT_ERROR_MSG("Failed to disconnect output slot with input slot\n");
+            break;
+        }
+            
+        m_inputSlot = nullptr;
+        m_outputSlot = nullptr;
+        isConnected = false;
         break;
     }
 

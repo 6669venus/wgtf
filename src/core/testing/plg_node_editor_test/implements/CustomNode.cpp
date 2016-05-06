@@ -71,7 +71,8 @@ bool CustomNode::CanConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> ot
         if (!(mySlot->IsInput() ^ otherSlot->IsInput()))
             break;
 
-        result = true;
+        auto connectedSlots = mySlot->GetConnectedSlots();
+        result = (std::find_if(connectedSlots->begin(), connectedSlots->end(), [&otherSlot](const ISlot *slot){ return otherSlot->Id() == slot->Id(); }) == connectedSlots->end());
         break;
     }
 

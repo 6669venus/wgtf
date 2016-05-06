@@ -21,6 +21,7 @@ public:
     virtual ISlot* Input() const = 0;
     virtual ISlot* Output() const = 0;
     virtual bool Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot> inputSlot) = 0;
+    virtual bool UnBind() = 0;
 };
 
 #endif //__I_CONNECTION_H__

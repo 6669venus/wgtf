@@ -4,6 +4,7 @@
 CustomSlot::CustomSlot(INode *node, bool isInput)
 : m_isInput(isInput)
 , m_pNode(node)
+, m_pConnection(nullptr)
 {
     m_id = reinterpret_cast<size_t>(this);
 }
@@ -72,7 +73,7 @@ bool CustomSlot::Disconnect(ObjectHandleT<ISlot> slot)
 {
     assert(m_pNode != nullptr);
     bool result = false;
-    auto slotPos = std::find_if(m_connectedSlots.begin(), m_connectedSlots.end(), [slot](ObjectHandleT<ISlot> connectedSlot) {
+    auto slotPos = std::find_if(m_connectedSlots.begin(), m_connectedSlots.end(), [&slot](const ObjectHandleT<ISlot> &connectedSlot) {
         return slot->Id() == connectedSlot->Id();
     });
 

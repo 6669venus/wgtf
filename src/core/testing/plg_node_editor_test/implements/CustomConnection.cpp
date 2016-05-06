@@ -52,7 +52,7 @@ bool CustomConnection::Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot
         if (!result)
             break;
 
-        if (outputSlot->Connect(inputSlot) && inputSlot->Connect(outputSlot))
+        if (outputSlot->Connect(m_id, inputSlot) && inputSlot->Connect(m_id, outputSlot))
         {
             m_inputSlot = inputSlot.get();
             m_outputSlot = outputSlot.get();
@@ -63,8 +63,8 @@ bool CustomConnection::Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot
             result = false;
             NGT_ERROR_MSG("Failed to connect input and output slots\n");
 
-            outputSlot->Disconnect(inputSlot);
-            inputSlot->Disconnect(outputSlot);                        
+            outputSlot->Disconnect(m_id, inputSlot);
+            inputSlot->Disconnect(m_id, outputSlot);
         }
 
         break;
@@ -85,14 +85,14 @@ bool CustomConnection::UnBind()
             break;
         }            
 
-        if (!m_inputSlot->Disconnect(m_outputSlot))
+        if (!m_inputSlot->Disconnect(m_id, m_outputSlot))
         {
             result = false;
             NGT_ERROR_MSG("Failed to disconnect input slot with output slot\n");
             break;
         }            
 
-        if (!m_outputSlot->Disconnect(m_inputSlot))
+        if (!m_outputSlot->Disconnect(m_id, m_inputSlot))
         {
             result = false;
             NGT_ERROR_MSG("Failed to disconnect output slot with input slot\n");

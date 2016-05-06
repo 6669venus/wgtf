@@ -9,6 +9,7 @@
 #include "core_data_model/i_list_model.hpp"
 
 #include "i_node.hpp"
+#include <set>
 
 class MetaType;
 
@@ -31,10 +32,14 @@ public:
     virtual bool Editable() const = 0;
     virtual INode* Node() const = 0;
 
+    virtual bool isConnected() const = 0;
+    virtual const std::set<size_t>* GetConnectionIds() const = 0;
+
     virtual const GenericListT<ISlot*>* GetConnectedSlots() const = 0;
     virtual bool CanConnect(ObjectHandleT<ISlot> slot) = 0;
-    virtual bool Connect(ObjectHandleT<ISlot> slot) = 0;
-    virtual bool Disconnect(ObjectHandleT<ISlot> slot) = 0;
+
+    virtual bool Connect(size_t connectionId, ObjectHandleT<ISlot> slot) = 0;
+    virtual bool Disconnect(size_t connectionId, ObjectHandleT<ISlot> slot) = 0;
 };
 
 #endif //__I_SLOT_H__

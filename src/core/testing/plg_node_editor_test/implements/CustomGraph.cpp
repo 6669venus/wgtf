@@ -26,26 +26,33 @@ void CustomGraph::DeleteNode(size_t nodeId)
         return;
     }
 
-    //TODO: Need refactoring
-    //===============================================================================================
     ObjectHandleT<INode> node = *nodeIter;
-    auto findConnectionBySlot = [&node](const ObjectHandleT<IConnection> &connection) {
-        return (node->GetSlotById(connection->Input()->Id()) != nullptr ||
-            node->GetSlotById(connection->Output()->Id()) != nullptr);
-    };
+    auto inputSlots = node->GetInputSlots();
+    auto outputSlots = node->GetOutputSlots();
 
-    for (auto connectionPos = std::find_if(m_connectionsModel.begin(), m_connectionsModel.end(), findConnectionBySlot); connectionPos != m_connectionsModel.end();)
+    for (const auto &slot : *inputSlots)
     {
-        ObjectHandleT<IConnection> connection = *connectionPos;
-        if (!connection->UnBind())
-        {
-            NGT_ERROR_MSG("Failed to unbind slots\n");
-        }
+        if (!slot->isConnected())
+            continue;
 
-        m_connectionsModel.erase(connectionPos);
-        connectionPos = std::find_if(m_connectionsModel.begin(), m_connectionsModel.end(), findConnectionBySlot);
+        auto connections = *slot->GetConnectionIds();
+        for (auto &connectionId : connections)
+        {
+            DeleteConnection(connectionId);
+        }
     }
-    //===============================================================================================
+
+    for (const auto &slot : *outputSlots)
+    {
+        if (!slot->isConnected())
+            continue;
+
+        auto connections = *slot->GetConnectionIds();
+        for (auto &connectionId : connections)
+        {
+            DeleteConnection(connectionId);
+        }
+    }
     m_nodesModel.erase(nodeIter);
 }
 

@@ -4,7 +4,6 @@
 CustomSlot::CustomSlot(INode *node, bool isInput)
 : m_isInput(isInput)
 , m_pNode(node)
-, m_pConnection(nullptr)
 {
     m_id = reinterpret_cast<size_t>(this);
 }
@@ -55,7 +54,7 @@ bool CustomSlot::CanConnect(ObjectHandleT<ISlot> slot)
     return m_pNode->CanConnect(this, slot);
 }
 
-bool CustomSlot::Connect(ObjectHandleT<ISlot> slot)
+bool CustomSlot::Connect(size_t connectionID, ObjectHandleT<ISlot> slot)
 {
     assert(m_pNode != nullptr);
     bool result = m_pNode->CanConnect(this, slot);
@@ -63,13 +62,14 @@ bool CustomSlot::Connect(ObjectHandleT<ISlot> slot)
     if (result)
     {
         m_connectedSlots.push_back(slot.get());
+        m_connectionIds.insert(connectionID);
         m_pNode->OnConnect(this, m_connectedSlots.back());
     }
 
     return result;
 }
 
-bool CustomSlot::Disconnect(ObjectHandleT<ISlot> slot)
+bool CustomSlot::Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot)
 {
     assert(m_pNode != nullptr);
     bool result = false;
@@ -81,6 +81,7 @@ bool CustomSlot::Disconnect(ObjectHandleT<ISlot> slot)
     {
         result = true;
         m_connectedSlots.erase(slotPos);
+        m_connectionIds.erase(connectionID);
         m_pNode->OnDisconnect(this, slot);
     }
 

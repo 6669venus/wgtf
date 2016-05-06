@@ -2,11 +2,9 @@
 #define __PLG_NODE_EDITOR_H__
 
 #include <memory>
-
-#include "core_generic_plugin\generic_plugin.hpp"
+#include "core_generic_plugin/generic_plugin.hpp"
 
 class IView;
-class INodeEditor;
 class IComponentContext;
 
 class NodeEditorPlugin : public PluginMain

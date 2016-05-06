@@ -49,7 +49,11 @@ public:
     virtual void OnConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot) = 0;
     virtual void OnDisconnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot) = 0;
 
+    virtual const GenericListT<ObjectHandleT<ISlot>>* GetInputSlots() const = 0;
+    virtual const GenericListT<ObjectHandleT<ISlot>>* GetOutputSlots() const = 0;
+
 protected:
+    //Models for QML
     virtual const IListModel* GetInputSlotsModel() const = 0;
     virtual const IListModel* GetOutputSlotsModel() const = 0;
 };

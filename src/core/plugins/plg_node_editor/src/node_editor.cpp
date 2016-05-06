@@ -5,14 +5,11 @@ void NodeEditor::SetGraph(std::shared_ptr<IGraph> graph)
 {
     if (graph == nullptr)
     {
+        NGT_ERROR_MSG("Graph is Null");
         return;
     }
     
-    if (graphModel.canClear())
-    {
-        graphModel.clear();
-    }
-
+    graphModel.clear();
     graphModel.push_back(graph);
 }
 

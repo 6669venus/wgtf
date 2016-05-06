@@ -45,6 +45,9 @@ public:
     void OnConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot) override;
     void OnDisconnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot) override;
 
+    const GenericListT<ObjectHandleT<ISlot>>* GetInputSlots() const override { return &m_inputSlotsModel; }
+    const GenericListT<ObjectHandleT<ISlot>>* GetOutputSlots() const override { return &m_outputSlotsModel; }
+
 private:
     const IListModel* GetInputSlotsModel() const override { return &m_inputSlotsModel; }
     const IListModel* GetOutputSlotsModel() const override { return &m_outputSlotsModel; }

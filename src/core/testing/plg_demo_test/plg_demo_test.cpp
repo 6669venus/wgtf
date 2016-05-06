@@ -73,9 +73,10 @@ DemoDoc::DemoDoc(const char* name, IEnvManager* envManager, IUIFramework* uiFram
 	envManager_->selectEnv( envId_ );
 
 	centralView_ = uiFramework->createView( "plg_demo_test/demo.qml", IUIFramework::ResourceType::Url, demo );
-	centralView_->registerListener( this );
+	
 	if (centralView_ != nullptr)
 	{
+        centralView_->registerListener( this );
 		uiApplication->addView( *centralView_ );
 	}
 	else

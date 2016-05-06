@@ -271,7 +271,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 
 		auto index = getModel()->index( this ).row_;
 
-		size_t i = 0;
+		int i = 0;
 		auto it = collection.begin();
 
 		for (; i < index && it != collection.end(); ++it)
@@ -303,7 +303,7 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 
 		auto index = getModel()->index( this ).row_;
 
-		size_t i = 0;
+		int i = 0;
 		auto it = collection.begin();
 
 		for (; i < index && it != collection.end(); ++it)

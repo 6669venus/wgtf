@@ -8,6 +8,8 @@
 #include "core_qt_common/qt_image_provider_old.hpp"
 #include "qt_model_helpers.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_variant/collection.hpp"
+#include "core_data_model/collection_model_old.hpp"
 
 #include <QApplication>
 #include <QThread>
@@ -23,6 +25,7 @@ public:
 		int column );
 
 	IQtFramework* qtFramework_;
+	std::unique_ptr< IListModel > ownedModel_;
 	IListModel* model_;
 	QVariant source_;
 	QtModelHelpers::Extensions extensions_;
@@ -405,6 +408,7 @@ void WGListModel::setSource( const QVariant & source )
 void WGListModel::onSourceChanged()
 {
 	IListModel * source = nullptr;
+	impl_->ownedModel_.reset();
 	
 	Variant variant = QtHelpers::toVariant( getSource() );
 	if (variant.typeIs< ObjectHandle >())
@@ -414,6 +418,14 @@ void WGListModel::onSourceChanged()
 		{
 			source = provider.getBase< IListModel >();
 		}
+	}
+	else if (variant.typeIs< Collection >())
+	{
+		Collection collection = variant.cast< Collection >();
+		auto collectionModel = new CollectionModelOld();
+		collectionModel->setSource( collection );
+		impl_->ownedModel_.reset( collectionModel );
+		source = impl_->ownedModel_.get();
 	}
 
 	impl_->model_ = source;

@@ -17,7 +17,7 @@ bool ImageQtTypeConverter::toVariant( const QVariant & qVariant, Variant & o_var
 	return true;
 }
 
-bool ImageQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVariant ) const
+bool ImageQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVariant, QObject* parent ) const
 {
 	if (!variant.typeIs< ObjectHandle >())
 	{

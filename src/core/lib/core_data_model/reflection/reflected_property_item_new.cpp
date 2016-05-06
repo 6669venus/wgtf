@@ -1,7 +1,7 @@
 #include "reflected_property_item_new.hpp"
 
-#include "class_definition_model_new.hpp"
-#include "reflected_enum_model_new.hpp"
+#include "class_definition_model.hpp"
+#include "reflected_enum_model.hpp"
 #include "reflected_object_item_new.hpp"
 #include "reflected_tree_model_new.hpp"
 
@@ -18,6 +18,15 @@
 #include <memory>
 #include <codecvt>
 #include <limits>
+
+ITEMROLE( display )
+ITEMROLE( value )
+ITEMROLE( valueType )
+ITEMROLE( key )
+ITEMROLE( keyType )
+ITEMROLE( isCollection )
+ITEMROLE( elementValueType )
+ITEMROLE( elementKeyType )
 
 namespace
 {
@@ -208,6 +217,8 @@ ReflectedPropertyItemNew::~ReflectedPropertyItemNew()
 
 Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 {
+	roleId = static_cast< unsigned int >( roleId );
+
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
 	{
@@ -217,6 +228,120 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 	auto obj = getObject();
 	auto propertyAccessor = obj.getDefinition( *pDefinitionManager )->bindProperty(
 		path_.c_str(), obj );
+
+	if (roleId == ItemRole::displayId)
+	{
+		switch (column)
+		{
+		case 0:
+			return impl_->displayName_.c_str();
+
+		default:
+			return "Reflected Property";
+		}
+	}
+	else if (roleId == ItemRole::valueId ||
+		roleId == ValueRole::roleId_)
+	{
+		if (!propertyAccessor.canGetValue())
+		{
+			return Variant();
+		}
+		return propertyAccessor.getValue();
+	}
+	else if (roleId == ItemRole::valueTypeId ||
+		roleId == ValueTypeRole::roleId_)
+	{
+		return propertyAccessor.getType().getName();
+	}
+	else if (roleId == ItemRole::keyId ||
+		roleId == KeyRole::roleId_)
+	{
+		if (parent_ == nullptr)
+		{
+			return Variant();
+		}
+
+		Collection collection;
+		const bool parentIsCollection = parent_->getData(0, ItemRole::valueId).tryCast( collection );
+		if (!parentIsCollection)
+		{
+			return Variant();
+		}
+
+		auto index = getModel()->index( this ).row_;
+
+		size_t i = 0;
+		auto it = collection.begin();
+
+		for (; i < index && it != collection.end(); ++it)
+		{
+			++i;
+		}
+
+		if (it == collection.end())
+		{
+			return Variant();
+		}
+
+		return it.key();
+	}
+	else if (roleId == ItemRole::keyTypeId ||
+		roleId == KeyTypeRole::roleId_)
+	{
+		if (parent_ == nullptr)
+		{
+			return Variant();
+		}
+
+		Collection collection;
+		const bool parentIsCollection = parent_->getData(0, ItemRole::valueId).tryCast( collection );
+		if (!parentIsCollection)
+		{
+			return Variant();
+		}
+
+		auto index = getModel()->index( this ).row_;
+
+		size_t i = 0;
+		auto it = collection.begin();
+
+		for (; i < index && it != collection.end(); ++it)
+		{
+			++i;
+		}
+
+		if (it == collection.end())
+		{
+			return Variant();
+		}
+
+		return it.keyType().getName();
+	}
+	else if (roleId == ItemRole::isCollectionId)
+	{
+		return propertyAccessor.getValue().canCast< Collection >();
+	}
+	else if (roleId == ItemRole::elementValueTypeId)
+	{
+		Collection collection;
+		const bool isCollection = propertyAccessor.getValue().tryCast( collection );
+		if (!isCollection)
+		{
+			return Variant();
+		}
+		return collection.valueType().getName();
+	}
+	else if (roleId == ItemRole::elementKeyTypeId)
+	{
+		Collection collection;
+		const bool isCollection = propertyAccessor.getValue().tryCast( collection );
+		if (!isCollection)
+		{
+			return Variant();
+		}
+		return collection.keyType().getName();
+	}
 
 	if (roleId == IndexPathRole::roleId_)
 	{
@@ -249,37 +374,6 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 	else if (roleId == IsUrlRole::roleId_)
 	{
 		return findFirstMetaData< MetaUrlObj >( propertyAccessor, *pDefinitionManager ) != nullptr;
-	}
-	else if (roleId == ValueRole::roleId_)
-	{
-		if (!propertyAccessor.canGetValue())
-		{
-			return Variant();
-		}
-		return propertyAccessor.getValue();
-	}
-	else if (roleId == ValueTypeRole::roleId_)
-	{
-		return propertyAccessor.getType().getName();
-	}
-	else if (roleId == KeyRole::roleId_)
-	{
-		switch (column)
-		{
-		case 0:
-			return impl_->displayName_.c_str();
-
-		case 1:
-			return "Reflected Property";
-
-		default:
-			assert( false );
-			return "";
-		}
-	}
-	else if (roleId == KeyTypeRole::roleId_)
-	{
-		return TypeId::getType< const char * >().getName();
 	}
 	else if (roleId == ThumbnailRole::roleId_)
 	{
@@ -395,8 +489,8 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 			{
 				return Variant();
 			}
-			auto enumModel = std::unique_ptr< AbstractListModel >( 
-				new ReflectedEnumModelNew( propertyAccessor, enumObj ) );
+			auto enumModel = std::unique_ptr< IListModel >( 
+				new ReflectedEnumModel( propertyAccessor, enumObj ) );
 			return ObjectHandle( std::move( enumModel ) );
 		}
 	}
@@ -423,8 +517,8 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 			auto definition = pDefinitionManager->getDefinition( typeId.removePointer().getName() );
 			if (definition != nullptr)
 			{
-				auto definitionModel = std::unique_ptr< AbstractListModel >(
-					new ClassDefinitionModelNew( definition, *pDefinitionManager ) );
+				auto definitionModel = std::unique_ptr< IListModel >(
+					new ClassDefinitionModel( definition, *pDefinitionManager ) );
 				return ObjectHandle( std::move( definitionModel ) );
 			}
 		}
@@ -631,7 +725,7 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 		{
 			return nullptr;
 		}
-
+		
 		{
 			// FIXME NGT-1603: Change to actually get the proper key type
 
@@ -678,7 +772,6 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 	child = new ReflectedObjectItemNew( impl_->contextManager_,
 		baseProvider ,
 		const_cast< ReflectedPropertyItemNew * >( this ) );
-	child->isCollection( false );
 	impl_->children_[index] = std::unique_ptr< ReflectedTreeItemNew >( child );
 	return child;
 }
@@ -705,11 +798,9 @@ int ReflectedPropertyItemNew::rowCount() const
 	bool isCollection = value.tryCast( collection );
 	if (isCollection)
 	{
-		assert( this->isCollection() );
 		return static_cast< int >( collection.size() );
 	}
 
-	assert( !this->isCollection() );
 	ObjectHandle handle;
 	bool isObjectHandle = value.tryCast( handle );
 	if (isObjectHandle)
@@ -760,8 +851,8 @@ bool ReflectedPropertyItemNew::preSetValue( const PropertyAccessor & accessor,
 				const auto index = pModel->index( this );
 				const int column = 0;
 				const int role = DefinitionRole::roleId_;
-				const Variant variantDefinition( ObjectHandle( definition ) );
-				pModel->preItemDataChanged_( index, column, role, variantDefinition );
+				const Variant value = ObjectHandle( definition );
+				pModel->preItemDataChanged_( index, column, role, value );
 			}
 			return true;
 		}
@@ -828,8 +919,8 @@ bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor,
 				const auto index = pModel->index( this );
 				const int column = 0;
 				const int role = DefinitionRole::roleId_;
-				const Variant variantDefinition( ObjectHandle( definition ) );
-				pModel->postItemDataChanged_( index, column, role, variantDefinition );
+				const Variant value = ObjectHandle( definition );
+				pModel->postItemDataChanged_( index, column, role, value );
 			}
 			return true;
 		}

@@ -17,27 +17,22 @@ WGTreeViewBase {
 	property alias columnWidths: itemView.columnWidths
 	property alias columnSpacing: itemView.columnSpacing
 
-	property alias __internalModel: treeView.model
+	property alias internalModel: treeView.model
 	property alias model: itemView.model
 
-	__internalModel: itemView.extendedModel
+	internalModel: itemView.extendedModel
+
+	property var extensions: []
 
 	WGItemViewCommon {
 		id: itemView
-
-		extensions: [treeExtension, columnExtension, imageExtension]
 
 		TreeExtension {
 			id: treeExtension
 		}
 
-		ColumnExtension {
-			id: columnExtension
-		}
-
-		ImageExtension {
-			id: imageExtension
-		}
+		property var treeExtensions: treeView.extensions.concat(commonExtensions.concat([treeExtension]))
+		extensions: treeExtensions
 
 		Connections {
 			target: treeView

@@ -281,7 +281,7 @@ QVariant WGTreeModel::headerData(
 		return QVariant::Invalid;
 	}
 
-	return QtHelpers::toQVariant( model->getData( section, roleId ) );
+	return QtHelpers::toQVariant( model->getData( section, roleId ), const_cast<WGTreeModel*>(this) );
 }
 
 QVariant WGTreeModel::headerData( int column, QString roleName ) const
@@ -521,9 +521,9 @@ void WGTreeModel::onPreItemDataChanged( const IItem * item, int column, size_t r
 
 	auto index = Impl::calculateModelIndex( *this, item, column );
 	// NGT-1619 Temporary workaround from @s_yuan
-	//auto value = QtHelpers::toQVariant( data );
+	auto value = QtHelpers::toQVariant( data, this );
 	//this->beginChangeData( index, role, value );
-	this->beginChangeData( index, role, QVariant() );
+	this->beginChangeData(index, role, value);
 }
 
 void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
@@ -543,9 +543,9 @@ void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t 
 
 	auto index = Impl::calculateModelIndex( *this, item, column );
 	// NGT-1619 Temporary workaround from @s_yuan
-	//auto value = QtHelpers::toQVariant( data );
-	//this->endChangeData( index, role, value );
-	this->endChangeData( index, role, QVariant() );
+	auto value = QtHelpers::toQVariant( data, this );
+	this->endChangeData( index, role, value );
+	//this->endChangeData( index, role, QVariant() );
 }
 
 void WGTreeModel::onPreItemsInserted( const IItem * parent, size_t index, size_t count )

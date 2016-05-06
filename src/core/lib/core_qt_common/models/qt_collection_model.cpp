@@ -2,14 +2,11 @@
 
 #include "helpers/qt_helpers.hpp"
 
-#include "core_data_model/collection_model.hpp"
 
 
-QtCollectionModel::QtCollectionModel( CollectionModel & source ) 
-	: QtListModel( source ) 
-{
-}
-
+QtCollectionModel::QtCollectionModel( std::unique_ptr<CollectionModel>&& source )
+	: QtListModel( *source.get() ), model_( std::move( source ) )
+{}
 
 const CollectionModel & QtCollectionModel::source() const
 {
@@ -156,4 +153,12 @@ bool QtCollectionModel::removeItem( const QVariant & key )
 	const auto variantKey = QtHelpers::toVariant( key );
 	const auto erasedCount = collection.erase( variantKey );
 	return (erasedCount > 0);
+}
+
+bool QtCollectionModel::isMapping() const
+{
+	auto & collectionModel = this->source();
+	auto & collection = collectionModel.getSource();
+	
+	return collection.isMapping();
 }

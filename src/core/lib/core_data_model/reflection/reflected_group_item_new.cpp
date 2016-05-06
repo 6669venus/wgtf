@@ -12,18 +12,17 @@
 
 #include <codecvt>
 
+ITEMROLE( display )
 
 namespace
 {
-
-bool isSameGroup( const MetaGroupObj * pItemGroup,
-	const MetaGroupObj * pFoundGroup )
-{
-	return (pItemGroup != nullptr) &&
-		(pFoundGroup != nullptr) &&
-		(pFoundGroup == pItemGroup ||
-		(pFoundGroup->getGroupNameHash() == pItemGroup->getGroupNameHash()));
-}
+	bool isSameGroup( const MetaGroupObj * pItemGroup, const MetaGroupObj * pFoundGroup )
+	{
+		return (pItemGroup != nullptr) &&
+			(pFoundGroup != nullptr) &&
+			(pFoundGroup == pItemGroup ||
+			(pFoundGroup->getGroupNameHash() == pItemGroup->getGroupNameHash()));
+	}
 
 } // namespace
 
@@ -78,6 +77,8 @@ ReflectedGroupItemNew::~ReflectedGroupItemNew()
 
 Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* override */
 {
+	roleId = static_cast< unsigned int >( roleId );
+
 	auto obj = this->getRootObject();
 	if (obj == nullptr)
 	{
@@ -87,6 +88,18 @@ Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* ove
 	if (definition == nullptr)
 	{
 		return Variant();
+	}
+
+	if (roleId == ItemRole::displayId)
+	{
+		switch (column)
+		{
+		case 0:
+			return impl_->displayName_.c_str();
+
+		default:
+			return "Reflected Group";
+		}
 	}
 
 	if (roleId == IndexPathRole::roleId_)
@@ -118,25 +131,6 @@ Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* ove
 	else if (roleId == ValueTypeRole::roleId_)
 	{
 		return TypeId::getType< Collection >().getName();
-	}
-	else if (roleId == KeyRole::roleId_)
-	{
-		switch (column)
-		{
-		case 0:
-			return impl_->displayName_.c_str();
-
-		case 1:
-			return "Reflected Group";
-
-		default:
-			assert( false );
-			return "";
-		}
-	}
-	else if (roleId == KeyTypeRole::roleId_)
-	{
-		return TypeId::getType< const char * >().getName();
 	}
 	return Variant();
 }

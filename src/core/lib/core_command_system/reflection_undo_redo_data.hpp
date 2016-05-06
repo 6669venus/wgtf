@@ -6,6 +6,7 @@
 
 class CommandInstance;
 class PropertyAccessorListener;
+class BinaryBlock;
 
 class ReflectionUndoRedoData
 {
@@ -19,6 +20,11 @@ public:
 	void redo();
 
 	ObjectHandle getCommandDescription() const;
+
+    std::shared_ptr<BinaryBlock> getUndoData() const;
+    std::shared_ptr<BinaryBlock> getRedoData() const;
+    void setUndoData( const std::shared_ptr<BinaryBlock> & undoData );
+    void setRedoData( const std::shared_ptr<BinaryBlock> & redoData );
 
 private:
 	CommandInstance &			commandInstance_;

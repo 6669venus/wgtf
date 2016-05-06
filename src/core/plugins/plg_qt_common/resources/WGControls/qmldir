@@ -72,6 +72,7 @@ WGPanel 1.0 WGPanel.qml
 WGPerformanceBar 1.0 WGPerformanceBar.qml
 WGPlaceholder 1.0 WGPlaceholder.qml
 WGProgressControl 1.0 WGProgressControl.qml
+WGPropertyTreeView 2.0 WGPropertyTreeView.qml
 WGPushButton 1.0 WGPushButton.qml
 WGRadioButton 1.0 WGRadioButton.qml
 WGRadioStyle 1.0 WGRadioStyle.qml

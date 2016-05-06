@@ -38,6 +38,8 @@ public:
 	virtual ReflectedTreeItemNew * getChild( size_t index ) const = 0;
 	virtual int rowCount() const = 0;
 
+	virtual bool isInPlace() const;
+
 	virtual bool preSetValue( const PropertyAccessor & accessor,
 		const Variant & value ) = 0;
 	virtual bool postSetValue( const PropertyAccessor & accessor,
@@ -46,12 +48,6 @@ public:
 	const std::string & getPath() const;
 	IReflectionController * getController() const;
 	IDefinitionManager * getDefinitionManager() const;
-
-	/**
-	 *	Check if this item can be expanded to show child rows.
-	 */
-	bool isCollection() const;
-	void isCollection( bool value );
 
 	/**
 	 *	Get data change/insert/remove signals from parent model.
@@ -88,8 +84,6 @@ private:
 	 */
 	void setModel( const ReflectedTreeModelNew * pModel );
 	const ReflectedTreeModelNew * model_;
-
-	bool isCollection_;
 };
 
 #endif //_REFLECTED_TREE_ITEM_NEW_HPP

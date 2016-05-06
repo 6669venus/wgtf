@@ -443,16 +443,16 @@ Control {
                 if (val[i] < __handlePosList[indexToMove].minimumValue)
                 {
                     console.log("WARNING WGSlider: Tried to set the value of handle " + indexToMove + " to less than its minimum value")
-                    __handlePosList[indexToMove].value = __handlePosList[indexToMove].minimumValue
+                    setValueHelper(slider.__handlePosList[indexToMove], "value", __handlePosList[indexToMove].minimumValue);
                 }
                 else if ( val[i] > __handlePosList[indexToMove].maximumValue )
                 {
                     console.log("WARNING WGSlider: Tried to set the value of handle " + indexToMove + " to more than its maximum value")
-                    __handlePosList[indexToMove].value = __handlePosList[indexToMove].maximumValue
+                    setValueHelper(slider.__handlePosList[indexToMove], "value", __handlePosList[indexToMove].maximumValue);
                 }
                 else
                 {
-                    __handlePosList[indexToMove].value = val[i]
+                    setValueHelper(slider.__handlePosList[indexToMove], "value", val[i]);
                 }
             }
             else
@@ -483,6 +483,20 @@ Control {
         return -1
     }
 
+    onValueChanged: {
+        if (__handleCount == 1 && !__handleMoving)
+        {
+            setValueHelper(__handlePosList[0], "value", value);
+        }
+    }
+
+    onChangeValue: {
+        if (__handleCount == 1)
+        {
+            setValueHelper(slider, "value", val);
+        }
+    }
+
     onHoveredHandleChanged: {
         if (hoveredHandle == -1)
         {
@@ -495,7 +509,6 @@ Control {
     }
 
     Component.onCompleted: {
-
         //collect any child handles and put them in __handlePosList
         for (var i = 0; i < slider.children.length; i++)
         {
@@ -509,7 +522,6 @@ Control {
         if(__handlePosList.length == 0 && createInitialHandle)
         {
             var newHandle = createHandle(slider.value)
-            slider.value = Qt.binding(function() {return newHandle.value})
         }
     }
 
@@ -557,6 +569,7 @@ Control {
         }
 
         onPressed: {
+            preventStealing = true
             sliderPressed(__draggable, Qt.point(mouse.x,mouse.y))
             if (__draggable)
             {

@@ -7,7 +7,7 @@ import QtQuick.Controls.Private 1.0
 */
 
 WGSliderHandle {
-    objectName: "WGColorSliderHandle"
+    objectName: "SliderHandle"
     id: sliderHandle
 
     handleStyle: WGButtonFrame

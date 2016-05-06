@@ -108,14 +108,7 @@ Canvas {
     {
         if(index === -1)
             return null;
-        var pointIt = iterator(curve.points)
-        var count = 0;
-        while(pointIt.moveNext()){
-            if(count === index)
-                return pointIt.current;
-            ++count;
-        }
-        return null;
+        return pointRepeater.itemAt(index).point
     }
 
     function constrainHandles()

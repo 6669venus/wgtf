@@ -69,6 +69,7 @@ DemoDoc::DemoDoc(const char* name, IEnvManager* envManager, IUIFramework* uiFram
 	, uiApplication_(uiApplication)
 {
 	envId_ = envManager_->addEnv( name );
+    envManager_->loadEnvState( envId_ );
 	envManager_->selectEnv( envId_ );
 
 	centralView_ = uiFramework->createView( "plg_demo_test/demo.qml", IUIFramework::ResourceType::Url, demo );
@@ -90,7 +91,7 @@ DemoDoc::~DemoDoc()
 		uiApplication_->removeView( *centralView_ );
 		centralView_->deregisterListener( this );
 	}
-
+    envManager_->saveEnvState( envId_ );
 	envManager_->removeEnv( envId_ );
 }
 

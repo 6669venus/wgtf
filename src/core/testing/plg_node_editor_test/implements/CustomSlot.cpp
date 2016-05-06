@@ -10,31 +10,31 @@ CustomSlot::CustomSlot(INode *node, bool isInput)
 
 std::string CustomSlot::Label() const
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return std::string();
 }
 
 std::string CustomSlot::Icon() const
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return std::string();
 }
 
 QColor CustomSlot::Color() const
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return QColor();
 }
 
 MetaType* CustomSlot::Type() const
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return nullptr;
 }
 
 bool CustomSlot::Editable() const
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return false;
 }
 
@@ -43,7 +43,7 @@ INode* CustomSlot::Node() const
     return m_pNode;
 }
 
-const IListModel* CustomSlot::GetConnectedSlots() const
+const GenericListT<ISlot*>* CustomSlot::GetConnectedSlots() const
 {
     return &m_connectedSlots;
 }

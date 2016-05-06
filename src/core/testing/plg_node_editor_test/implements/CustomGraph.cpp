@@ -22,7 +22,7 @@ void CustomGraph::DeleteNode(size_t nodeId)
 
     if (nodeIter == m_nodesModel.end())
     {
-        NGT_ERROR_MSG("Failed to delete node with ID: %d", nodeId);
+        NGT_ERROR_MSG("Failed to get node with id: %d\n", nodeId);
         return;
     }
 
@@ -58,6 +58,7 @@ ObjectHandleT<IConnection> CustomGraph::CreateConnection(size_t nodeIdFrom, size
         });
         if (nodeIterFrom == m_nodesModel.end())
         {
+            NGT_ERROR_MSG("Failed to get node with id: %d\n", nodeIdFrom);
             break;
         }
 
@@ -65,6 +66,7 @@ ObjectHandleT<IConnection> CustomGraph::CreateConnection(size_t nodeIdFrom, size
         slotFrom = nodeFrom->GetSlotById(slotIdFrom);
         if (slotFrom == nullptr)
         {
+            NGT_ERROR_MSG("Failed to get slot with id: %d\n", slotIdFrom);
             break;
         }            
 
@@ -73,6 +75,7 @@ ObjectHandleT<IConnection> CustomGraph::CreateConnection(size_t nodeIdFrom, size
         });
         if (nodeIterTo == m_nodesModel.end())
         {
+            NGT_ERROR_MSG("Failed to get node with id: %d\n", nodeIdTo);
             break;
         }            
 
@@ -80,6 +83,7 @@ ObjectHandleT<IConnection> CustomGraph::CreateConnection(size_t nodeIdFrom, size
         slotTo = nodeTo->GetSlotById(slotIdTo);
         if (slotTo == nullptr)
         {
+            NGT_ERROR_MSG("Failed to get slot with id: %d\n", slotIdTo);
             break;
         }            
 
@@ -112,7 +116,7 @@ void CustomGraph::DeleteConnection(size_t connectionId)
 
     if (connectionPos == m_connectionsModel.end())
     {
-        NGT_ERROR_MSG("Failed to delete connection with ID: %d", connectionId);
+        NGT_ERROR_MSG("Failed to delete connection with ID: %d\n", connectionId);
         return;
     }
     m_connectionsModel.erase(connectionPos);
@@ -120,16 +124,16 @@ void CustomGraph::DeleteConnection(size_t connectionId)
 
 bool CustomGraph::Validate(std::string& errorMessage)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return true;
 }
 
 void CustomGraph::Save(std::string fileName)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
 
 void CustomGraph::Load(std::string fileName)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }

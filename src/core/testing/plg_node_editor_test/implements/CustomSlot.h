@@ -21,7 +21,7 @@ public:
     bool Editable() const override;
     INode* Node() const override;
 
-    const IListModel* GetConnectedSlots() const override;
+    const GenericListT<ISlot*>* GetConnectedSlots() const override;
     bool CanConnect(ObjectHandleT<ISlot> slot) override;
     bool Connect(ObjectHandleT<ISlot> slot) override;
     bool Disconnect(ObjectHandleT<ISlot> slot) override;

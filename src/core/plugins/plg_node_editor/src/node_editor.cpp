@@ -18,7 +18,7 @@ void NodeEditor::SetGraph(std::shared_ptr<IGraph> graph)
 
 std::shared_ptr<INode> NodeEditor::CreateNode(std::string nodeClass, float x, float y)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return nullptr;
 }
 
@@ -44,26 +44,26 @@ void NodeEditor::onDeleteConnection(size_t connectionId)
 
 INode* NodeEditor::GetNode(std::string id)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return nullptr;
 }
 
 bool NodeEditor::DeleteNode(std::string id)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 	return true;
 }
 
 bool NodeEditor::Connect(std::string nodeIdFrom, std::string slotLabelFrom,
 	std::string nodeIdTo, std::string slotLabelTo)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 	return true;
 }
 
 bool NodeEditor::Disconnect(std::string nodeIdFrom, std::string slotLabelFrom,
 	std::string nodeIdTo, std::string slotLabelTo)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 	return true;
 }

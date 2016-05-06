@@ -31,7 +31,7 @@ public:
     virtual bool Editable() const = 0;
     virtual INode* Node() const = 0;
 
-    virtual const IListModel* GetConnectedSlots() const = 0;
+    virtual const GenericListT<ISlot*>* GetConnectedSlots() const = 0;
     virtual bool CanConnect(ObjectHandleT<ISlot> slot) = 0;
     virtual bool Connect(ObjectHandleT<ISlot> slot) = 0;
     virtual bool Disconnect(ObjectHandleT<ISlot> slot) = 0;

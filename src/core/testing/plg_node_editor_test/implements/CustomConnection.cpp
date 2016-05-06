@@ -19,7 +19,7 @@ CustomConnection::~CustomConnection()
     }
     else if (m_inputSlot != nullptr || m_outputSlot != nullptr)
     {
-        NGT_ERROR_MSG("Connection is corrupted");
+        NGT_ERROR_MSG("Connection is corrupted\n");
     }
 }
 
@@ -38,13 +38,13 @@ bool CustomConnection::Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot
     bool result = false;
     if (outputSlot == nullptr || inputSlot == nullptr)
     {
-        NGT_WARNING_MSG("Input arguments are null");
+        NGT_ERROR_MSG("Input arguments are null\n");
         return result;
     }
 
     if (isConnected)
     {
-        NGT_WARNING_MSG("Connection is already connected");
+        NGT_ERROR_MSG("Connection is already connected\n");
         return result;
     }
 
@@ -68,9 +68,11 @@ bool CustomConnection::Bind(ObjectHandleT<ISlot> outputSlot, ObjectHandleT<ISlot
         }            
         else
         {
-            outputSlot->Disconnect(inputSlot);
-            inputSlot->Disconnect(outputSlot);
             result = false;
+            NGT_ERROR_MSG("Failed to connect input and output slots\n");
+
+            outputSlot->Disconnect(inputSlot);
+            inputSlot->Disconnect(outputSlot);                        
         }
 
         break;

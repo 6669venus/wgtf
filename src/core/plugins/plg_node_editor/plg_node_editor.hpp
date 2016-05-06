@@ -19,7 +19,6 @@ public:
 	void Unload(IComponentContext& context) override;
 
 private:
-    std::unique_ptr<INodeEditor> nodeEditor;
 	std::unique_ptr<IView> view;
 };
 

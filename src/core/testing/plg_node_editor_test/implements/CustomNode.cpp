@@ -54,6 +54,7 @@ ObjectHandleT<ISlot> CustomNode::GetSlotById(size_t slotId) const
         return *outputSlotPos;
     }
 
+    NGT_ERROR_MSG("Slot with id: %d not found\n", slotId);
     return nullptr;
 }
 
@@ -79,38 +80,38 @@ bool CustomNode::CanConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> ot
 
 bool CustomNode::Enabled() const
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return true;
 }
 
 void CustomNode::SetEnabled(bool)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
 
 bool CustomNode::Minimized() const
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return true;
 }
 
 void CustomNode::SetMinimized(bool)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
 
 bool CustomNode::Validate(std::string &errorMessage)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return true;
 }
 
 void CustomNode::OnConnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
 
 void CustomNode::OnDisconnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> otherSlot)
 {
-    //TODO: Need implementation
+    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }

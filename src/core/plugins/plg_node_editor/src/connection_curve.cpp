@@ -92,7 +92,6 @@ void ConnectionCurve::paint(QPainter *painter)
         }
     }
 
-
     if (useDefault)
     {
         qreal dx = m_toPoint.x() - m_fromPoint.x();
@@ -104,9 +103,18 @@ void ConnectionCurve::paint(QPainter *painter)
         path.cubicTo(ctr1, ctr2, m_toPoint);
     }
 
-    painter->setPen(QPen(QColor(79, 106, 25), 4, Qt::SolidLine,
+    QColor wireColor(79, 106, 25);
+    QColor maskColor = Qt::black;
+
+    painter->setPen(QPen(maskColor, 4, Qt::SolidLine,
         Qt::RoundCap, Qt::RoundJoin));
     painter->drawPath(path);
+    
+
+    painter->setPen(QPen(wireColor, 2, Qt::SolidLine,
+        Qt::RoundCap, Qt::RoundJoin));
+    painter->drawPath(path);
+
     m_path = path;
 }
 

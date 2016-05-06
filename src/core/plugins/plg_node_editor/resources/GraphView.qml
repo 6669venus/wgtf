@@ -114,9 +114,10 @@ Rectangle
         model: connectionsListModel
         delegate: ConnectionNodes
         {
-            connectionID: Value.id
-            firstSlot: Value.input
-            secondSlot: Value.output
+            connectionObj: Value
+            connectionID: connectionObj.id
+            firstSlot: connectionObj.input
+            secondSlot: connectionObj.output
         }
     }
 }

@@ -6,6 +6,7 @@ ConnectionCurve
     id: connectionNodes
     anchors.fill: parent
 
+    property var connectionObj
     property var connectionID
 
     property var firstSlot

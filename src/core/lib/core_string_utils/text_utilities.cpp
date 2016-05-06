@@ -64,7 +64,7 @@ void incrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 		{
 			targetDecimalPlaces++;
 		}
-#if ( _MSC_VER < 1900 )
+#if ( defined(_MSC_VER) && _MSC_VER < 1900 )
 		swprintf( formatStr, 1024, L"%%.%df", targetDecimalPlaces );
 #else
 		swprintf(formatStr, 1024, L"%%.%zd", targetDecimalPlaces);
@@ -101,7 +101,7 @@ void incrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 		}
 		if (floatTarget)
 		{
-#if ( _MSC_VER < 1900 )
+#if ( defined(_MSC_VER) && _MSC_VER < 1900 )
 			swprintf( formatStr, 1024, L"%%0%d.%df", formatLength, targetDecimalPlaces );
 #else
 			swprintf(formatStr, 1024, L"%%0%zd.%zd", formatLength, targetDecimalPlaces);
@@ -109,7 +109,7 @@ void incrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 		}
 		else
 		{
-#if ( _MSC_VER < 1900 )
+#if ( defined(_MSC_VER) && defined(_MSC_VER) && _MSC_VER < 1900 )
 			swprintf( formatStr, 1024, L"%%0%dd", formatLength );
 #else
 			swprintf(formatStr, 1024, L"%%0%zd", formatLength);
@@ -218,7 +218,7 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 		{
 			targetDecimalPlaces++;
 		}
-#if ( _MSC_VER < 1900 )
+#if ( defined(_MSC_VER) && _MSC_VER < 1900 )
 		swprintf( formatStr, 1024, L"%%.%df", targetDecimalPlaces );
 #else
 		swprintf(formatStr, 1024, L"%%.%zd", targetDecimalPlaces);
@@ -258,7 +258,7 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 			{
 				targetDecimalPlaces++;
 			}
-#if ( _MSC_VER < 1900 )
+#if ( defined(_MSC_VER) && _MSC_VER < 1900 )
 			swprintf( formatStr, 1024, L"%%0%d.%df", formatLength, targetDecimalPlaces );
 #else
 			swprintf(formatStr, 1024, L"%%0%zd.%zd", formatLength, targetDecimalPlaces);
@@ -266,7 +266,7 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 		}
 		else
 		{
-#if ( _MSC_VER < 1900 )
+#if ( defined(_MSC_VER) && defined(_MSC_VER) && _MSC_VER < 1900 )
 			swprintf( formatStr, 1024, L"%%0%dd", formatLength );
 #else
 			swprintf(formatStr, 1024, L"%%0%zd", formatLength);

@@ -61,7 +61,7 @@ Rectangle {
         beginUndoFrame()
         handle.point.pos.x = x;
         handle.point.pos.y = y;
-        parentCurve.constrainHandles();
+        parentCurve.constrainHandles(pointIndex);
         if(!Qt._updatingPosition)
         {
             Qt._updatingPosition = true

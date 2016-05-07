@@ -31,7 +31,7 @@ Rectangle {
         }
     }
 
-    function addPointsToCurves(mouse, updateGradient)
+    function addPointsToCurves(mouse)
     {
         var pos = timeline.viewTransform.inverseTransform(Qt.point(mouse.x, mouse.y))
         pos.x = Math.max(pos.x, 0)
@@ -42,10 +42,6 @@ Rectangle {
         var curveIt = iterator(curves)
         while(curveIt.moveNext()){
             curveIt.current.addAt( pos.x, true )
-        }
-        if(updateGradient)
-        {
-            colorGradient.createHandleAtPosition(pos.x)
         }
         endUndoFrame();
     }
@@ -76,23 +72,23 @@ Rectangle {
         selection = newSelection
     }
 
-    function deletePointsAt(valuesToDelete, updateGradient)
+    function deletePointsAt(valuesToDelete)
     {
         if(valuesToDelete.length > 0)
         {
-            beginUndoFrame();
+            // Can't group multi-selection deletions because commands get consolidated
+            //beginUndoFrame();
             for(var i = 0; i < valuesToDelete.length; ++i)
             {
                 var curveIt = iterator(curves)
+                // TODO: Remove this grouping when methods no longer get grouped for undo
+                beginUndoFrame();
                 while(curveIt.moveNext()){
                     curveIt.current.removeAt( valuesToDelete[i], true );
                 }
-                if(updateGradient)
-                {
-                    colorGradient.removeHandle(i)
-                }
+                endUndoFrame();
             }
-            endUndoFrame();
+            // endUndoFrame();
         }
     }
 
@@ -107,11 +103,15 @@ Rectangle {
                 var point = currentCurve.pointRepeater.itemAt(i);
                 if(point.selected){
                     point.selected = false;
-                    valuesToDelete.push(point.point.pos.x);
+                    var valueIndex = binarySearch(valuesToDelete, point.point.pos.x)
+                    if(valueIndex < 0)
+                    {
+                        valuesToDelete.splice(-valueIndex -1, 0, point.point.pos.x);
+                    }
                 }
             }
         }
-        deletePointsAt(valuesToDelete, true);
+        deletePointsAt(valuesToDelete);
     }
 
     function getColorAt(index)
@@ -197,7 +197,7 @@ Rectangle {
                 var index = binarySearch(modifiedIndexes, selectedPoint.pointIndex)
                 if (index < 0)
                 {
-                    modifiedIndexes.splice(-index - 1, selectedPoint.pointIndex)
+                    modifiedIndexes.splice(-index - 1, 0, selectedPoint.pointIndex)
                 }
 
                 selectedPoint.setPosition(newX, newY);
@@ -458,7 +458,7 @@ Rectangle {
                     {
                         if(mouse.modifiers & Qt.AltModifier)
                         {
-                            addPointsToCurves(mouse, true)
+                            addPointsToCurves(mouse)
                             mouse.accepted = true;
                         }
                         else if(!(mouse.modifiers & Qt.ControlModifier))
@@ -474,7 +474,7 @@ Rectangle {
                 id: curveRepeater
                 model: curvesModel
 
-                onCountChanged: colorGradient.updateHandles()
+                onCountChanged: colorGradient.syncHandles()
 
                 delegate: Curve{
                     objectName: index
@@ -499,7 +499,11 @@ Rectangle {
                             clearSelection();
                         }
                     }
-                    onPointReleased:{
+                    onPointAdded:{
+                        colorGradient.syncHandles()
+                    }
+                    onPointRemoved:{
+                        colorGradient.syncHandles()
                     }
                     onPointClicked:{
                         if(mouse.modifiers !== Qt.ControlModifier)
@@ -530,10 +534,8 @@ Rectangle {
                 maximumValue: 1.0
                 stepSize: .001
 
-                onVisibleChanged: updateHandles()
-
                 onChangeValue: {
-                    if(!Qt._updatingPosition)
+                    if(!Qt._updatingPosition && !Qt._updatingCurveGradient)
                     {
                         var red = curveRepeater.itemAt(0).getPoint(index);
                         var green = curveRepeater.itemAt(1).getPoint(index);
@@ -553,66 +555,84 @@ Rectangle {
                 }
 
                 onColorModified: {
-                    beginUndoFrame()
-                    var red = curveRepeater.itemAt(0).getPoint(index);
-                    var green = curveRepeater.itemAt(1).getPoint(index);
-                    var blue = curveRepeater.itemAt(2).getPoint(index);
-                    var alpha = curveRepeater.count == 4 ?
-                                curveRepeater.itemAt(3).getPoint(index) : null
+                    if(!Qt._updatingCurveGradient)
+                    {
+                        beginUndoFrame()
+                        var red = curveRepeater.itemAt(0).getPoint(index);
+                        var green = curveRepeater.itemAt(1).getPoint(index);
+                        var blue = curveRepeater.itemAt(2).getPoint(index);
+                        var alpha = curveRepeater.count == 4 ?
+                                    curveRepeater.itemAt(3).getPoint(index) : null
 
-                    red.pos.y = color.r
-                    green.pos.y = color.g
-                    blue.pos.y = color.b
-                    if(alpha){
-                        alpha.pos.y = color.a
+                        red.pos.y = color.r
+                        green.pos.y = color.g
+                        blue.pos.y = color.b
+                        if(alpha){
+                            alpha.pos.y = color.a
+                        }
+                        endUndoFrame()
+                        repaintCurves()
                     }
-                    endUndoFrame()
-                    repaintCurves()
                 }
 
                 onHandleAdded: {
                     console.assert(curveRepeater.count > 0)
-                    // Prevent adding new points if the addition of the point created this handle
-                    if(colorGradient.__handleCount === curveRepeater.itemAt(0).pointRepeater.count)
-                        return
-                    var color = colorGradient.getHandleColor[index]
-                    var relPos = colorGradient.getHandleValue[index]
-                    var mousePos = timeline.viewTransform.transformX(relPos)
-                    beginUndoFrame()
-                    curveEditor.addPointsToCurves(Qt.point(mousePos,0), false)
-                    var red = curveRepeater.itemAt(0).getPoint(index);
-                    var green = curveRepeater.itemAt(1).getPoint(index);
-                    var blue = curveRepeater.itemAt(2).getPoint(index);
-                    var alpha = curveRepeater.count == 4 ?
-                                curveRepeater.itemAt(3).getPoint(index) : null
+                    if(!Qt._updatingCurveGradient)
+                    {
+                        // Prevent adding new points if the addition of the point created this handle
+                        if(colorGradient.__handleCount === curveRepeater.itemAt(0).pointRepeater.count)
+                            return
+                        var color = colorGradient.getHandleColor(index)
+                        var relPos = colorGradient.getHandleValue(index)
+                        var mousePos = timeline.viewTransform.transformX(relPos)
+                        beginUndoFrame()
+                        curveEditor.addPointsToCurves(Qt.point(mousePos,0))
+                        var red = curveRepeater.itemAt(0).getPoint(index);
+                        var green = curveRepeater.itemAt(1).getPoint(index);
+                        var blue = curveRepeater.itemAt(2).getPoint(index);
+                        var alpha = curveRepeater.count == 4 ?
+                                    curveRepeater.itemAt(3).getPoint(index) : null
 
-                    red.pos.y = color.r
-                    green.pos.y = color.g
-                    blue.pos.y = color.b
-                    if(alpha){
-                        alpha.pos.y = color.a
+                        red.pos.y = color.r
+                        green.pos.y = color.g
+                        blue.pos.y = color.b
+                        if(alpha){
+                            alpha.pos.y = color.a
+                        }
+                        endUndoFrame()
                     }
-                    endUndoFrame()
                 }
 
                 onHandleRemoved: {
-                    var red = curveRepeater.itemAt(0).getPoint(index);
-                    curveEditor.deletePointsAt([red.pos.x], false);
+                    console.assert(curveRepeater.count > 0)
+                    if(!Qt._updatingCurveGradient)
+                    {
+                        var red = curveRepeater.itemAt(0).getPoint(index);
+                        curveEditor.deletePointsAt([red.pos.x]);
+                    }
                 }
 
-                function updateHandles()
+                function syncHandles()
                 {
                     if(!visible)
                         return
+                    // Ensure all curves have equal points
+                    var curveIndex = curveRepeater.count - 1
+                    var pointCount = curveRepeater.itemAt(curveIndex).pointRepeater.count
+                    while(--curveIndex >= 0)
+                    {
+                        if(pointCount !== curveRepeater.itemAt(curveIndex).pointRepeater.count)
+                        {
+                            return
+                        }
+                    }
 
                     if(!Qt._updatingCurveGradient)
                     {
                         Qt._updatingCurveGradient = true
 
-                        var count = curveRepeater.itemAt(curveRepeater.count - 1).pointRepeater.count
-
                         // Remove surplus handles
-                        while(__handleCount > count)
+                        while(__handleCount > pointCount)
                         {
                             colorGradient.removeHandle(__handleCount-1)
                         }
@@ -632,12 +652,12 @@ Rectangle {
                         colorGradient.setHandleColor(gradHandleColors, indexes);
 
                         // Create handles for all missing values
-                        while(__handleCount < count)
+                        while(__handleCount < pointCount)
                         {
                             var index = __handleCount
                             var point = curveRepeater.itemAt(curveRepeater.count - 1).pointRepeater.itemAt(index)
 
-                            var newColor = getColorAt(index)
+                            var newColor = curveEditor.getColorAt(index)
 
                             colorGradient.createColorHandle(point.point.pos.x, handleStyle, __handlePosList.length, newColor)
                         }

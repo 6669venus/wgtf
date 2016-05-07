@@ -394,6 +394,16 @@ Control {
         var handleToRemove = __handlePosList[index]
         if(__handleCount > 0)
         {
+            // Remove the bindings from the new head to the handle being removed
+            if(index === 0 && __handleCount > 1)
+            {
+                __handlePosList[index+1].minimumValue = handleToRemove.minimumValue
+            }
+            // Remove the bindings from the new tail to the handle being removed
+            if(index === (__handleCount - 1) && index > 0)
+            {
+                __handlePosList[index-1].maximumValue = handleToRemove.maximumValue
+            }
             __handlePosList.splice(index,1)
             __handleCount = __handlePosList.length
             handleRemoved(index)

@@ -285,29 +285,6 @@ Rectangle {
                     point.setPosition(point.point.pos.x, value)
                 }
             }
-            // HACK: Due to not currently getting change notifications when points are modified in C++
-            // We use this timer to update the text boxes periodically with the selected point's values
-            Timer
-            {
-                interval: 100
-                running: selection.length > 0
-                repeat: true
-                onTriggered: {
-                    if(selection.length > 0)
-                    {
-                        toolbar.time = selection[selection.length-1].point.pos.x;
-                        toolbar.value = selection[selection.length-1].point.pos.y;
-                    }
-                    else
-                    {
-                        toolbar.time = 0;
-                        toolbar.value = 0;
-                    }
-                }
-            }
-            // This makes the points update a lot better but seems to drastically affect performance
-            // and might be causing the app to lock up
-            // the points can still get out of synch too.
         }
 
         WGGridCanvas {

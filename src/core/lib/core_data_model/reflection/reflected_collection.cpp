@@ -40,7 +40,7 @@ namespace
 			reflectedCollection_.onPreInsert_( pos.impl(), count );
 		}
 
-		void postInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override 
+		void postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override 
 		{
 			if (object_ != accessor.getObject() || path_ != accessor.getFullPath())
 			{
@@ -61,7 +61,7 @@ namespace
 			reflectedCollection_.onPreErase_( pos.impl(), count );
 		}
 
-		void postErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override 
+		void postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override 
 		{
 			if (object_ != accessor.getObject() || path_ != accessor.getFullPath())
 			{

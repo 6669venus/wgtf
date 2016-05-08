@@ -19,10 +19,10 @@ public:
 		const PropertyAccessor & accessor, Variant result, bool undo ) {}
 
 	virtual void preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) {}
-	virtual void postInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) {}
+	virtual void postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) {}
 
 	virtual void preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) {}
-	virtual void postErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) {}
+	virtual void postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) {}
 };
 
 #endif // PROPERTY_ACCESSOR_LISTENER_HPP

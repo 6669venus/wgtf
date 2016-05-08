@@ -330,7 +330,7 @@ bool PropertyAccessor::insert( const Variant & key, const Variant & value ) cons
 		{
 			auto listener = it->lock();
 			assert( listener != nullptr );
-			listener->postInsert( *this, pos, count );
+			listener->postInserted( *this, pos, count );
 		}
 	} );
 
@@ -394,7 +394,7 @@ bool PropertyAccessor::erase( const Variant & key ) const
 		{
 			auto listener = it->lock();
 			assert( listener != nullptr );
-			listener->postErase( *this, pos, count );
+			listener->postErased( *this, pos, count );
 		}
 	} );
 

@@ -249,19 +249,12 @@ namespace
 
 		void onRowsAboutToBeInserted( const QModelIndex &parent, int first, int last )
 		{
-			//TODO fix the listadapters to correctly respond when items are added
-			//beginInsertRows( extendedIndex( parent ), first, last );
-			assert( modifiedParents_.isEmpty() );
-			modifiedParents_.append( extendedIndex( parent ) );
-			layoutAboutToBeChanged( modifiedParents_, QAbstractItemModel::VerticalSortHint );
+			beginInsertRows( extendedIndex( parent ), first, last );
 		}
 
 		void onRowsInserted()
 		{
-			//endInsertRows();
-			assert( !modifiedParents_.isEmpty() );
-			layoutChanged( modifiedParents_, QAbstractItemModel::VerticalSortHint );
-			modifiedParents_.clear();
+			endInsertRows();
 		}
 
 		void onRowsAboutToBeRemoved( const QModelIndex &parent, int first, int last )

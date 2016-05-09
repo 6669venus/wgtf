@@ -25,8 +25,7 @@ private:
 
 private:
 	const QAbstractItemModel * model_;
-	QPersistentModelIndex parent_;
-	int row_;
+	QPersistentModelIndex row_;
 };
 
 #endif // COLUMN_LIST_ADAPTER_HPP

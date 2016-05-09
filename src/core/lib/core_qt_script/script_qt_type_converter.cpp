@@ -16,12 +16,18 @@ ScriptQtTypeConverter::ScriptQtTypeConverter(
 bool ScriptQtTypeConverter::toVariant( const QVariant& qVariant,
 	Variant& o_variant ) const
 {
-	if (!qVariant.canConvert< QtScriptObject * >())
+	if (!qVariant.canConvert< QObject * >())
 	{
 		return false;
 	}
 
-	auto scriptObject = qVariant.value< QtScriptObject * >();
+	auto object = qVariant.value< QObject * >();
+	auto scriptObject = dynamic_cast< QtScriptObject * >( object );
+	if (scriptObject == nullptr)
+	{
+		return false;
+	}
+
 	o_variant = scriptObject->object();
 	return true;
 }

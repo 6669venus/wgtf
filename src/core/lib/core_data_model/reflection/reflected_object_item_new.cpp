@@ -162,59 +162,6 @@ Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* ov
 	{
 		return TypeId::getType< ObjectHandle >().getName();
 	}
-	else if (roleId == KeyRole::roleId_)
-	{
-		switch (column)
-		{
-		case 0:
-			if (impl_->displayName_.empty())
-			{
-				auto definition = this->getDefinition();
-				if (definition == nullptr)
-				{
-					return "";
-				}
-				auto pDefinitionManager = this->getDefinitionManager();
-				if (pDefinitionManager == nullptr)
-				{
-					return "";
-				}
-				const MetaDisplayNameObj * displayName =
-					findFirstMetaData< MetaDisplayNameObj >( *definition,
-						*pDefinitionManager );
-				if (displayName == nullptr)
-				{
-					impl_->displayName_ = definition->getName();
-				}
-				else
-				{
-					std::wstring_convert< Utf16to8Facet > conversion(
-						Utf16to8Facet::create() );
-					impl_->displayName_ = conversion.to_bytes(
-						displayName->getDisplayName() );
-				}
-			}
-			return impl_->displayName_.c_str();
-
-		case 1:
-			{
-				auto definition = getDefinition();
-				if (definition == nullptr)
-				{
-					return "";
-				}
-				return definition->getName();
-			}
-
-		default:
-			assert( false );
-			return "";
-		}
-	}
-	if (roleId == KeyTypeRole::roleId_)
-	{
-		return TypeId::getType< const char * >().getName();
-	}
 	else if (roleId == IndexPathRole::roleId_)
 	{
 		return this->getPath();

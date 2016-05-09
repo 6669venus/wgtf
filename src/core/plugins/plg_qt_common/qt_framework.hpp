@@ -70,6 +70,10 @@ public:
 		const char * resource, ResourceType type,
 		const ObjectHandle & context ) override;
 
+    std::unique_ptr< IView > createView( const char* uniqueName,
+        const char * resource, ResourceType type,
+        const ObjectHandle & context ) override;
+
 	void loadActionData( const char * resource, ResourceType type ) override;
 	void registerComponent( const char * id, IComponent & component ) override;
 	void registerComponentProvider( IComponentProvider & provider ) override;

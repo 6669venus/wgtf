@@ -6,6 +6,7 @@
 #include "core_dependency_system/di_ref.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_variant/collection.hpp"
 
 class ReflectedTreeModelNew;
 
@@ -42,10 +43,14 @@ public:
 
 	virtual bool isInPlace() const;
 
-	virtual bool preSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) = 0;
-	virtual bool postSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) = 0;
+	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
+	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
+
+	virtual bool preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) = 0;
+	virtual bool postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) = 0;
+
+	virtual bool preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) = 0;
+	virtual bool postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) = 0;
 
 	const std::string & getPath() const;
 	IReflectionController * getController() const;

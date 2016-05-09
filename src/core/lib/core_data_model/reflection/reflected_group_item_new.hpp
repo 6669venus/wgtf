@@ -31,10 +31,14 @@ public:
 	virtual ReflectedTreeItemNew * getChild( size_t index ) const override;
 	virtual int rowCount() const override;
 
-	virtual bool preSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) override;
-	virtual bool postSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) override;
+	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+
+	virtual bool preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+	virtual bool postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+
+	virtual bool preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+	virtual bool postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
 
 private:
 	class Implementation;

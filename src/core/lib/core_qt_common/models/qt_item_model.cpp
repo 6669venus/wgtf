@@ -23,7 +23,7 @@ struct QtItemModel::Impl
 	Connection connectPostInserted_;
 
 	Connection connectPreErase_;
-	Connection connectPostErase_;
+	Connection connectPostErased_;
 };
 
 QtItemModel::QtItemModel( AbstractItemModel & source )
@@ -88,6 +88,55 @@ QtItemModel::QtItemModel( AbstractItemModel & source )
 	};
 	impl_->connectPostChanged_ =
 		impl_->source_.connectPostItemDataChanged( postData );
+
+	// @see AbstractItemModel::RangeSignature
+	auto preInsert = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->beginInsertRows( modelIndex, startPos, startPos + count - 1 );
+	};
+	impl_->connectPreInsert_ =
+		impl_->source_.connectPreRowsInserted( preInsert );
+
+	auto postInserted = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->endInsertRows();
+	};
+	impl_->connectPostInserted_ =
+		impl_->source_.connectPostRowsInserted( postInserted );
+
+	auto preErase = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->beginRemoveRows( modelIndex, startPos, startPos + count - 1 );
+	};
+	impl_->connectPreErase_ =
+		impl_->source_.connectPreRowsRemoved( preErase );
+
+	auto postErased = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->endInsertRows();
+	};
+	impl_->connectPostErased_ =
+		impl_->source_.connectPostRowsRemoved( postErased );
 }
 
 QtItemModel::~QtItemModel()

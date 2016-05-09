@@ -36,6 +36,10 @@ namespace
 				connections_ += QObject::connect( model, &QAbstractItemModel::dataChanged, this, &ExtendedModel::onDataChanged );
 				connections_ += QObject::connect( model, &QAbstractItemModel::layoutAboutToBeChanged, this, &ExtendedModel::onLayoutAboutToBeChanged );
 				connections_ += QObject::connect( model, &QAbstractItemModel::layoutChanged, this, &ExtendedModel::onLayoutChanged );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsAboutToBeInserted, this, &ExtendedModel::onRowsAboutToBeInserted );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsInserted, this, &ExtendedModel::onRowsInserted );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsAboutToBeRemoved, this, &ExtendedModel::onRowsAboutToBeRemoved );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsRemoved, this, &ExtendedModel::onRowsRemoved );
 				roleNames_ = model_->roleNames();
 				registerRole( ItemRole::modelIndexName, roleNames_ );
 				for (auto & role : roles_)
@@ -201,6 +205,17 @@ namespace
 			return roleNames_;
 		}
 
+		void onDataChanged( const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles )
+		{
+			QVector<int> encodedRoles;
+			for (auto & role : roles)
+			{
+				int encodedRole;
+				encodedRoles.append( encodeRole(role, encodedRole) ? encodedRole : role );
+			}
+			dataChanged( extendedIndex( topLeft ), extendedIndex( bottomRight ), encodedRoles );
+		}
+
 		void onLayoutAboutToBeChanged( const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint )
 		{
 			QList<QPersistentModelIndex> extendedParents;
@@ -221,15 +236,24 @@ namespace
 			layoutChanged( extendedParents, hint );
 		}
 
-		void onDataChanged( const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles )
+		void onRowsAboutToBeInserted( const QModelIndex &parent, int first, int last )
 		{
-			QVector<int> encodedRoles;
-			for (auto & role : roles)
-			{
-				int encodedRole;
-				encodedRoles.append( encodeRole(role, encodedRole) ? encodedRole : role );
-			}
-			dataChanged( extendedIndex( topLeft ), extendedIndex( bottomRight ), encodedRoles );
+			beginInsertRows( extendedIndex( parent ), first, last );
+		}
+
+		void onRowsInserted()
+		{
+			endInsertRows();
+		}
+
+		void onRowsAboutToBeRemoved( const QModelIndex &parent, int first, int last )
+		{
+			beginRemoveRows( extendedIndex( parent ), first, last );
+		}
+
+		void onRowsRemoved()
+		{
+			endRemoveRows();
 		}
 
 		QModelIndex modelIndex( const QModelIndex & extendedIndex ) const

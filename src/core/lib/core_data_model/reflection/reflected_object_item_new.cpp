@@ -301,8 +301,7 @@ bool ReflectedObjectItemNew::isInPlace() const
 }
 
 
-bool ReflectedObjectItemNew::preSetValue( const PropertyAccessor & accessor,
-	const Variant & value )
+bool ReflectedObjectItemNew::preSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -320,8 +319,7 @@ bool ReflectedObjectItemNew::preSetValue( const PropertyAccessor & accessor,
 }
 
 
-bool ReflectedObjectItemNew::postSetValue( const PropertyAccessor & accessor,
-	const Variant & value )
+bool ReflectedObjectItemNew::postSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -331,6 +329,78 @@ bool ReflectedObjectItemNew::postSetValue( const PropertyAccessor & accessor,
 		}
 
 		if ((*it)->postSetValue( accessor, value ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preInsert( accessor, pos, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postInserted( accessor, pos, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preErase( accessor, pos, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postErased( accessor, pos, count ))
 		{
 			return true;
 		}

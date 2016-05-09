@@ -21,10 +21,14 @@ public:
 	ReflectedTreeModelPropertyListener( ReflectedTreeItemNew & item );
 
 	// PropertyAccessorListener
-	void preSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) override;
-	void postSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) override;
+	void preSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+	void postSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+
+	void preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+	void postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+
+	void preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+	void postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
 
 private:
 	ReflectedTreeItemNew & rootItem_;
@@ -38,19 +42,38 @@ ReflectedTreeModelPropertyListener::ReflectedTreeModelPropertyListener(
 }
 
 
-void ReflectedTreeModelPropertyListener::preSetValue(
-	const PropertyAccessor & accessor,
-	const Variant & value )
+void ReflectedTreeModelPropertyListener::preSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	rootItem_.preSetValue( accessor, value );
 }
 
 
-void ReflectedTreeModelPropertyListener::postSetValue(
-	const PropertyAccessor & accessor,
-	const Variant & value )
+void ReflectedTreeModelPropertyListener::postSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	rootItem_.postSetValue( accessor, value );
+}
+
+
+void ReflectedTreeModelPropertyListener::preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	rootItem_.preInsert( accessor, pos, count );
+}
+
+void ReflectedTreeModelPropertyListener::postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	rootItem_.postInserted( accessor, pos, count );
+}
+
+
+void ReflectedTreeModelPropertyListener::preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	rootItem_.preErase( accessor, pos, count );
+}
+
+
+void ReflectedTreeModelPropertyListener::postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+{
+	rootItem_.postErased( accessor, pos, count );
 }
 
 

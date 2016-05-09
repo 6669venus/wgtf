@@ -300,9 +300,6 @@ namespace
 		QList< IModelExtension * > & extensions_;
 		QHash< int, QByteArray > roleNames_;
 		mutable QHash< QPersistentModelIndex, QPersistentModelIndex > indexCache_;
-
-		// TEMPORARY
-		QList<QPersistentModelIndex> modifiedParents_;
 	};
 
 	class HeaderData : public QObject

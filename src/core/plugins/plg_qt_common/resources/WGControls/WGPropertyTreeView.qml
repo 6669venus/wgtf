@@ -100,7 +100,6 @@ WGTreeView {
 
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Push"
-			active: item != null && item.isCollection == true
 
 			onTriggered: {
 				var collection = item.value
@@ -120,11 +119,19 @@ WGTreeView {
 			}
 
 			property var item: contextMenu.contextItem
+			
+			onItemChanged: {
+				if (item != null && item.isCollection) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
 
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Pop"
-			active: item != null && item.isCollection == true && item.hasChildren
 
 			onTriggered: {
 				var collection = item.value
@@ -141,11 +148,19 @@ WGTreeView {
 			}
 
 			property var item: contextMenu.contextItem
+
+			onItemChanged: {
+				if (item != null && item.isCollection && item.hasChildren) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
 
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Insert"
-			active: parentItem != null && parentItem.isCollection == true
 
 			onTriggered: {
 				var collection = parentItem.value
@@ -164,11 +179,19 @@ WGTreeView {
 
 			property var item: contextMenu.contextItem
 			property var parentItem: propertyTreeView.internalModel.parent(item)
+
+			onParentItemChanged: {
+				if (parentItem != null && parentItem.isCollection == true) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
 
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Remove"
-			active: parentItem != null && parentItem.isCollection == true
 
 			onTriggered: {
 				var collection = parentItem.value
@@ -184,6 +207,15 @@ WGTreeView {
 
 			property var item: contextMenu.contextItem
 			property var parentItem: propertyTreeView.internalModel.parent(item)
+
+			onParentItemChanged: {
+				if (parentItem != null && parentItem.isCollection == true) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
     }
 

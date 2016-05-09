@@ -127,6 +127,7 @@ PropertyAccessor PropertyAccessor::getParent() const
 }
 
 
+//==============================================================================
 bool PropertyAccessor::canSetValue() const
 {
 	if (!this->isValid())
@@ -194,6 +195,7 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 }
 
 
+//==============================================================================
 bool PropertyAccessor::canInvoke() const
 {
 	if (!this->isValid())
@@ -275,6 +277,133 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 		assert( listener != nullptr );
 		listener->postInvoke( *this, result, undo );
 	}
+}
+
+
+//==============================================================================
+bool PropertyAccessor::canInsert() const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	return collection.canResize();
+}
+
+
+//==============================================================================
+bool PropertyAccessor::insert( const Variant & key, const Variant & value ) const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	if (!collection.canResize())
+	{
+		return false;
+	}
+
+	// Since "listeners" is a MutableVector, these iterators are safe to use
+	// while other listeners are registered/deregistered
+	auto& listeners = definitionManager_->getPropertyAccessorListeners();
+	auto itBegin = listeners.cbegin();
+	auto itEnd = listeners.cend();
+
+	auto preInsert = collection.connectPreInsert( [&]( Collection::Iterator pos, size_t count)
+	{
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->preInsert( *this, pos, count );
+		}
+	} );
+	auto postInserted = collection.connectPostInserted( [&]( Collection::Iterator pos, size_t count)
+	{
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->postInserted( *this, pos, count );
+		}
+	} );
+
+	auto it = collection.insert( key );
+	it.setValue( value );
+
+	preInsert.disconnect();
+	postInserted.disconnect();
+	
+	return it != collection.end();
+}
+
+
+//==============================================================================
+bool PropertyAccessor::canErase() const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	return collection.canResize();
+}
+
+
+//==============================================================================
+bool PropertyAccessor::erase( const Variant & key ) const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	if (!collection.canResize())
+	{
+		return false;
+	}
+
+	// Since "listeners" is a MutableVector, these iterators are safe to use
+	// while other listeners are registered/deregistered
+	auto& listeners = definitionManager_->getPropertyAccessorListeners();
+	auto itBegin = listeners.cbegin();
+	auto itEnd = listeners.cend();
+
+	auto preErase = collection.connectPreErase( [&]( Collection::Iterator pos, size_t count)
+	{
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->preErase( *this, pos, count );
+		}
+	} );
+	auto postErased = collection.connectPostErased( [&]( Collection::Iterator pos, size_t count)
+	{
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->postErased( *this, pos, count );
+		}
+	} );
+
+	auto count = collection.erase( key );
+
+	preErase.disconnect();
+	postErased.disconnect();
+
+	return count > 0;
 }
 
 

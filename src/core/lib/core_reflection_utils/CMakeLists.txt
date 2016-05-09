@@ -11,6 +11,10 @@ SET( COMMAND_SRCS
 	commands/invoke_reflected_method_command.cpp
 	commands/set_reflectedproperty_command.hpp
 	commands/set_reflectedproperty_command.cpp
+	commands/reflected_collection_insert_command.hpp
+	commands/reflected_collection_insert_command.cpp
+	commands/reflected_collection_erase_command.hpp
+	commands/reflected_collection_erase_command.cpp
 	commands/reflectedproperty_undoredo_helper.hpp
 	commands/reflectedproperty_undoredo_helper.cpp
 )
@@ -19,6 +23,8 @@ SOURCE_GROUP( "Commands" FILES ${COMMAND_SRCS} )
 SET( COMMAND_METADATA_SRCS
 	commands/metadata/invoke_reflected_method_command.mpp
 	commands/metadata/set_reflectedproperty_command.mpp
+	commands/metadata/reflected_collection_insert_command.mpp
+	commands/metadata/reflected_collection_erase_command.mpp
 )
 SOURCE_GROUP( "Commands\\MetaData" FILES ${COMMAND_METADATA_SRCS} )
 

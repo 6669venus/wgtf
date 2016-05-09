@@ -15,6 +15,7 @@ public:
 
 private:
 	Variant		value_;
+	bool		erased_;
 
 	friend class ReflectedCollectionEraseCommand;
 };
@@ -29,6 +30,7 @@ public:
 	ObjectHandle execute(const ObjectHandle & arguments) const override;
 	bool undo( const ObjectHandle & arguments ) const override;
 	bool redo( const ObjectHandle & arguments ) const override;
+	CommandThreadAffinity threadAffinity() const override;
 
 	ObjectHandle getCommandDescription(const ObjectHandle & arguments) const;
 

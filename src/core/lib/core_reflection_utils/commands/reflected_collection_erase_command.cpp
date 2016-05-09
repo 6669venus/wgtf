@@ -56,8 +56,8 @@ ObjectHandle ReflectedCollectionEraseCommand::execute(const ObjectHandle & argum
 	
 	commandArgs->value_ = *it;
 	
-	bool br = property.erase( commandArgs->key_ );
-	if (!br)
+	commandArgs->erased_ = property.erase( commandArgs->key_ );
+	if (!commandArgs->erased_)
 	{
 		return CommandErrorCode::INVALID_VALUE;
 	}
@@ -69,6 +69,10 @@ bool ReflectedCollectionEraseCommand::undo( const ObjectHandle & arguments ) con
 {
 	ReflectedCollectionEraseCommandParameters * commandArgs =
 		arguments.getBase< ReflectedCollectionEraseCommandParameters >();
+	if (!commandArgs->erased_)
+	{
+		return true;
+	}
 
 	auto objManager = definitionManager_.getObjectManager();
 	assert( objManager != nullptr );
@@ -101,4 +105,9 @@ ObjectHandle ReflectedCollectionEraseCommand::getCommandDescription(const Object
 	object->set("Name", "Erase");
 	object->set("Type", "Unknown");
 	return object;
+}
+
+CommandThreadAffinity ReflectedCollectionEraseCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::UI_THREAD;
 }

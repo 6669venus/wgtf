@@ -11,6 +11,11 @@ public:
 	std::string path_;
 	Variant		key_;
 	Variant		value_;
+
+private:
+	bool		inserted_;
+
+	friend class ReflectedCollectionInsertCommand;
 };
 
 class ReflectedCollectionInsertCommand : public Command
@@ -23,6 +28,7 @@ public:
 	ObjectHandle execute(const ObjectHandle & arguments) const override;
 	bool undo( const ObjectHandle & arguments ) const override;
 	bool redo( const ObjectHandle & arguments ) const override;
+	CommandThreadAffinity threadAffinity() const override;
 
 	ObjectHandle getCommandDescription(const ObjectHandle & arguments) const;
 

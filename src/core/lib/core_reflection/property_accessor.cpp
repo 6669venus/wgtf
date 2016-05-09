@@ -317,20 +317,22 @@ bool PropertyAccessor::insert( const Variant & key, const Variant & value ) cons
 
 	auto preInsert = collection.connectPreInsert( [&]( Collection::Iterator pos, size_t count)
 	{
+		auto index = std::distance( collection.begin(), pos );
 		for( auto it = itBegin; it != itEnd; ++it )
 		{
 			auto listener = it->lock();
 			assert( listener != nullptr );
-			listener->preInsert( *this, pos, count );
+			listener->preInsert( *this, index, count );
 		}
 	} );
 	auto postInserted = collection.connectPostInserted( [&]( Collection::Iterator pos, size_t count)
 	{
+		auto index = std::distance( collection.begin(), pos );
 		for( auto it = itBegin; it != itEnd; ++it )
 		{
 			auto listener = it->lock();
 			assert( listener != nullptr );
-			listener->postInserted( *this, pos, count );
+			listener->postInserted( *this, index, count );
 		}
 	} );
 
@@ -381,20 +383,22 @@ bool PropertyAccessor::erase( const Variant & key ) const
 
 	auto preErase = collection.connectPreErase( [&]( Collection::Iterator pos, size_t count)
 	{
+		auto index = std::distance( collection.begin(), pos );
 		for( auto it = itBegin; it != itEnd; ++it )
 		{
 			auto listener = it->lock();
 			assert( listener != nullptr );
-			listener->preErase( *this, pos, count );
+			listener->preErase( *this, index, count );
 		}
 	} );
 	auto postErased = collection.connectPostErased( [&]( Collection::Iterator pos, size_t count)
 	{
+		auto index = std::distance( collection.begin(), pos );
 		for( auto it = itBegin; it != itEnd; ++it )
 		{
 			auto listener = it->lock();
 			assert( listener != nullptr );
-			listener->postErased( *this, pos, count );
+			listener->postErased( *this, index, count );
 		}
 	} );
 

@@ -94,6 +94,7 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int 
 		uiFramework.createView( "testing_ui_main/test_reflected_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
 
+    test1Views_.back().first->registerListener( this );
 	test2Views_.back().first->registerListener( this );
 }
 
@@ -204,6 +205,7 @@ void TestUI::open()
 
 	IEnvManager* em = get<IEnvManager>();
 	int envIdx = em->addEnv( dataSrc->description() );
+    em->loadEnvState( envIdx );
 
 	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
 	createViews( *fw_, dataSrc, envIdx );
@@ -221,6 +223,7 @@ void TestUI::close()
 	destroyViews( dataSrcEnvPairs_.size() );
 
 	IEnvManager* em = get<IEnvManager>();
+    em->saveEnvState( envIdx );
 	em->removeEnv( envIdx );
 
 	auto dataSrcMngr = get<IDataSourceManager>();

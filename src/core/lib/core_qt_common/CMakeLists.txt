@@ -16,6 +16,8 @@ ADD_DEFINITIONS( -DQT_QML_DEBUG )
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp
+	models/qt_abstract_item_model.cpp
+	models/qt_abstract_item_model.hpp
 	models/qt_collection_model.cpp
 	models/qt_collection_model.hpp
 	models/qt_item_model.cpp

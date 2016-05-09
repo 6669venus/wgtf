@@ -152,6 +152,16 @@ void DemoObjects::onSelectEnv(IEnvState* state)
 	}
 }
 
+void DemoObjects::onSaveEnvState( IEnvState* state )
+{
+
+}
+
+void DemoObjects::onLoadEnvState( IEnvState* state )
+{
+
+}
+
 ObjectHandle DemoObjects::getTreeModel() const
 {
 	auto model = std::unique_ptr< ITreeModel >(

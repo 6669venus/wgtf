@@ -1,7 +1,7 @@
 #ifndef QT_ITEM_MODEL_HPP
 #define QT_ITEM_MODEL_HPP
 
-#include <QAbstractItemModel>
+#include "qt_abstract_item_model.hpp"
 #include <memory>
 
 class AbstractItemModel;
@@ -13,7 +13,7 @@ class AbstractTableModel;
 /**
  *	Adapter layer to allow any AbstractItemModel to be used by Qt and QML views.
  */
-class QtItemModel : public QAbstractItemModel
+class QtItemModel : public QtAbstractItemModel
 {
 	Q_OBJECT
 
@@ -27,27 +27,17 @@ public:
 	const AbstractItemModel & source() const;
 	AbstractItemModel & source();
 
-	Q_INVOKABLE QObject * item( int row, int column, const QObject * parent ) const;
-
-	Q_INVOKABLE int rowCount( const QObject * parent ) const;
-	Q_INVOKABLE int columnCount( const QObject * parent ) const;
-
-	Q_INVOKABLE bool insertRow( int row, const QObject * parent );
-	Q_INVOKABLE bool insertColumn( int column, const QObject * parent );
-	Q_INVOKABLE bool removeRow( int row, const QObject * parent );
-	Q_INVOKABLE bool removeColumn( int column, const QObject * parent );
-
 	// QAbstractItemModel
-	Q_INVOKABLE QModelIndex index( int row, int column, const QModelIndex &parent ) const override;
-	Q_INVOKABLE QModelIndex parent( const QModelIndex &child ) const override;
+	QModelIndex index( int row, int column, const QModelIndex &parent ) const override;
+	QModelIndex parent( const QModelIndex &child ) const override;
 
-	Q_INVOKABLE int rowCount( const QModelIndex &parent ) const override;
-	Q_INVOKABLE int columnCount( const QModelIndex &parent ) const override;
+	int rowCount( const QModelIndex &parent ) const override;
+	int columnCount( const QModelIndex &parent ) const override;
 
-	Q_INVOKABLE QVariant data( const QModelIndex &index, int role ) const override;
-	Q_INVOKABLE bool setData( const QModelIndex &index, const QVariant &value, int role ) override;
+	QVariant data( const QModelIndex &index, int role ) const override;
+	bool setData( const QModelIndex &index, const QVariant &value, int role ) override;
 
-	Q_INVOKABLE QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
+	QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
 	bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) override;
 
 private:

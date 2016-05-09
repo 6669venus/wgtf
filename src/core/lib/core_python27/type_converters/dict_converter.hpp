@@ -26,7 +26,7 @@ public:
 		const ObjectHandle & parentHandle,
 		const std::string & childPath ) override;
 	virtual bool toScriptType( const Variant & inVariant,
-		PyScript::ScriptObject & outObject ) override;
+		PyScript::ScriptObject & outObject, void *userData = nullptr ) override;
 private:
 	IComponentContext & context_;
 	const Converters & typeConverters_;

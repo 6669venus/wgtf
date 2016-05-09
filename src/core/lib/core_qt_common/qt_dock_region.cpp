@@ -102,19 +102,17 @@ protected:
 		{
 		case QEvent::WindowActivate:
 			active_ = true;
-			if (!isFloating() && visible_)
-				view_->focusInEvent();
 			break;
 
 		case QEvent::WindowDeactivate:
 			active_ = false;
-			if (isFloating() || visible_)
-				view_->focusOutEvent();
 			break;
 
 		case QEvent::ActivationChange:
 			if (active_)
 				view_->focusInEvent();
+            else
+                view_->focusOutEvent();
 			break;
 		}
 		return QDockWidget::event(e);
@@ -125,6 +123,24 @@ private:
 	bool active_;
 	bool visible_;
 };
+
+void QtDockRegion::restoreDockWidgets()
+{
+    auto qMainWindow = qtWindow_.window();
+    assert( qMainWindow != nullptr );
+    for( auto& it : dockWidgetMap_)
+    {
+        auto qDockWidget = it.second.first.get();
+        if (qtWindow_.isReady())
+        {
+            bool isOk = qMainWindow->restoreDockWidget( qDockWidget );
+        }
+        else
+        {
+            needToRestorePreference_.push_back( qDockWidget );
+        }
+    }
+}
 
 void QtDockRegion::setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget )
 {
@@ -194,7 +210,13 @@ void QtDockRegion::addView( IView & view )
 	dockWidgetMap_[ &view ] = std::make_pair( std::unique_ptr< QDockWidget >( qDockWidget ), std::move( action ) );
 
 	QObject::connect( qDockWidget, &QDockWidget::visibilityChanged,
-		[=](bool visible) { qDockWidget->visibilityChanged( visible ); } );
+		[=](bool visible) { 
+            if(qtWindow_.isLoadingPreferences())
+            {
+                return;
+            }
+        qDockWidget->visibilityChanged( visible ); 
+    } );
 }
 
 void QtDockRegion::removeView( IView & view )

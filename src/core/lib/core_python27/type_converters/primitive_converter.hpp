@@ -18,7 +18,7 @@ public:
 	bool toVariant( const PyScript::ScriptObject & inObject,
 		Variant & outVariant ) override;
 	bool toScriptType( const Variant & inVariant,
-		PyScript::ScriptObject & outObject ) override;
+		PyScript::ScriptObject & outObject, void* userData = nullptr) override;
 };
 
 

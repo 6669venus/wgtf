@@ -107,21 +107,25 @@ void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message
 		message.toLatin1().constData() );
 }
 
-bool QmlView::load( const QUrl & qUrl, const char * customTitle )
+bool QmlView::load( const QUrl & qUrl, const char * uniqueName )
 {
 	url_ = qUrl;
-
+    if(uniqueName)
+    {
+        id_ += uniqueName;
+    }
+  
 	auto preferences = qtFramework_.getPreferences();
 	auto preference = preferences->getPreference( id_.c_str() );
-	auto value = qtFramework_.toQVariant( preference );
+	auto value = qtFramework_.toQVariant( preference, qmlContext_.get() );
 	this->setContextProperty( QString( "preference" ), value );
 	this->setContextProperty( QString( "viewId" ), id_.c_str() );
 	this->setContextProperty( QString( "View" ), QVariant::fromValue( quickView_ ) );
 
-	return doLoad( qUrl, customTitle );
+	return doLoad( qUrl );
 }
 
-bool QmlView::doLoad( const QUrl & url, const char * customTitle )
+bool QmlView::doLoad( const QUrl & url )
 {
 	auto qmlEngine = qmlContext_->engine();
 	qmlEngine->clearComponentCache();
@@ -164,14 +168,6 @@ bool QmlView::doLoad( const QUrl & url, const char * customTitle )
 	if (titleProperty.isValid())
 	{
 		title_ = titleProperty.toString().toUtf8().data();
-
-		if (customTitle)
-		{
-			title_ += " - ";
-			title_ += customTitle;
-
-			content->setProperty("title", title_.c_str());
-		}
 	}
 
 	if (url_.scheme() == "file")

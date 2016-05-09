@@ -17,7 +17,7 @@ public:
 		Variant & outVariant ) override;
 
 	virtual bool toScriptType( const Variant & inVariant,
-		PyScript::ScriptObject & outObject ) override;
+		PyScript::ScriptObject & outObject, void* userData = nullptr ) override;
 };
 
 

@@ -31,14 +31,6 @@ namespace
 			{
 				return TypeId::getType< int >().getName();
 			}
-			else if (roleId == KeyRole::roleId_)
-			{
-				return text_.c_str();
-			}
-			else if (roleId == KeyTypeRole::roleId_)
-			{
-				return TypeId::getType< const char * >().getName();
-			}
 			else if (roleId == IndexPathRole::roleId_)
 			{
 				return text_ + std::to_string( index_ );

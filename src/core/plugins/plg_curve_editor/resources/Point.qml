@@ -12,6 +12,9 @@ Rectangle {
     x: viewTransform.transformX(handle.point.pos.x);
     y: viewTransform.transformY(handle.point.pos.y);
 
+    onXChanged: parentCurve.requestPaint()
+    onYChanged: parentCurve.requestPaint()
+
     property var _scaleX: viewTransform.xScale;
     property var _scaleY: viewTransform.yScale;
     property var _originX: viewTransform.origin.x;
@@ -58,7 +61,7 @@ Rectangle {
         beginUndoFrame()
         handle.point.pos.x = x;
         handle.point.pos.y = y;
-        parentCurve.constrainHandles();
+        parentCurve.constrainHandles(pointIndex);
         if(!Qt._updatingPosition)
         {
             Qt._updatingPosition = true

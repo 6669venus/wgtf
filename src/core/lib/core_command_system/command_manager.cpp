@@ -28,6 +28,9 @@
 #include "i_env_system.hpp"
 #include "core_serialization/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
+#include "wg_types/binary_block.hpp"
+#include "reflection_undo_redo_data.hpp"
+#include <memory>
 
 // TODO: Remove to platform string header
 #if defined( _WIN32 )
@@ -141,7 +144,6 @@ public:
 	bool canRedo() const;
     void removeCommands(const ICommandManager::TRemoveFunctor & functor);
 	VariantList & getHistory();
-	ValueChangeNotifier< int > & getCurrentIndex();
 	IListModel & getMacros();
 
 	void beginBatchCommand();
@@ -173,6 +175,8 @@ public:
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
+    virtual void onSaveEnvState( IEnvState* state ) override;
+    virtual void onLoadEnvState( IEnvState* state ) override;
 
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
@@ -549,11 +553,13 @@ void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, Co
 void CommandManagerImpl::updateSelected( const int & value )
 {
 	unbindIndexCallbacks();
+	pCommandManager_->signalPreCommandIndexChanged( currentIndex_.value() );
 
     historyState_->index_ = value;
     historyState_->previousSelectedIndex_ = value;
 	currentIndex_.value( value );
 
+	pCommandManager_->signalPostCommandIndexChanged( currentIndex_.value() );
 	bindIndexCallbacks();
 }
 
@@ -645,13 +651,6 @@ IListModel & CommandManagerImpl::getMacros()
 {
 	return macros_;
 }
-
-
-ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
-{
-	return currentIndex_;
-}
-
 
 //==============================================================================
 void CommandManagerImpl::beginBatchCommand()
@@ -871,7 +870,12 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
 	serializer.serialize( count );
 	for (size_t i = 0; i < count; i++)
 	{
-		serializer.serialize( ec->history_[i] );
+        const CommandInstancePtr& cmdIns = ec->history_[i].value<CommandInstancePtr>();
+		serializer.serialize( cmdIns );
+        auto undoData = cmdIns->reflectionUndoRedoData_.getUndoData();
+        auto redoData = cmdIns->reflectionUndoRedoData_.getRedoData();
+        serializer.serialize( undoData );
+        serializer.serialize( redoData );
 	}
 	// save history index
 	serializer.serialize( ec->index_ );
@@ -900,6 +904,12 @@ bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEn
 		bool isOk = variant.tryCast( ins );
 		assert( isOk );
 		assert( ins != nullptr );
+        std::shared_ptr<BinaryBlock> undoData;
+        std::shared_ptr<BinaryBlock> redoData;
+        serializer.deserialize( undoData );
+        serializer.deserialize( redoData );
+        ins->reflectionUndoRedoData_.setUndoData( undoData );
+        ins->reflectionUndoRedoData_.setRedoData( redoData );
 		ins->setCommandSystemProvider( pCommandManager_ );
 		ins->setDefinitionManager( pCommandManager_->getDefManager() );
 		ec->history_.emplace_back( std::move( variant ) );
@@ -924,6 +934,7 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 void CommandManagerImpl::onPreDataChanged()
 {
 	historyState_->previousSelectedIndex_ = currentIndex_.value();
+	pCommandManager_->signalPreCommandIndexChanged( historyState_->previousSelectedIndex_ );
 }
 
 //==============================================================================
@@ -934,6 +945,7 @@ void CommandManagerImpl::onPostDataChanged()
 	waitForInstance( instance );
 
 	historyState_->index_ = currentIndex_.value();
+	pCommandManager_->signalPostCommandIndexChanged( historyState_->index_ );
 }
 
 //==============================================================================
@@ -1108,55 +1120,15 @@ void CommandManagerImpl::flush()
 void CommandManagerImpl::onAddEnv( IEnvState* state )
 {
 	ENV_STATE_ADD( HistoryEnvCom, ec );
-
-    if (!historySerializationEnabled)
-        return;
-
-    std::string file = state->description();
-    file += s_historyVersion;
-
-    const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-    assert(fileSystem);
-
-    if (fileSystem->exists(file.c_str()))
-    {
-        IDefinitionManager& defManager = pCommandManager_->getDefManager();
-
-        IFileSystem::IStreamPtr fileStream = fileSystem->readFile(file.c_str(), std::ios::in | std::ios::binary);
-        HistorySerializer serializer(*fileStream, defManager);
-        std::string version;
-        serializer.deserialize(version);
-        if (version == s_historyVersion)
-        {
-            LoadCommandHistory(serializer, ec);
-        }
-    }
 }
 
 void CommandManagerImpl::onRemoveEnv( IEnvState* state )
 {
-	ENV_STATE_REMOVE( HistoryEnvCom, ec );
-	if (ec == historyState_)
-	{
-		switchEnvContext( &nullHistoryState_ );
-	}
-
-    if (!historySerializationEnabled)
-        return;
-
-	IDefinitionManager& defManager = pCommandManager_->getDefManager();
-	ResizingMemoryStream stream;
-	HistorySerializer serializer( stream, defManager );
-
-	serializer.serialize( s_historyVersion );
-
-	SaveCommandHistory( serializer, ec );
-
-	std::string file = state->description();
-	file += s_historyVersion;
-	IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
-	fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+    ENV_STATE_REMOVE( HistoryEnvCom, ec );
+    if (ec == historyState_)
+    {
+        switchEnvContext( &nullHistoryState_ );
+    }
 }
 
 void CommandManagerImpl::onSelectEnv( IEnvState* state )
@@ -1168,10 +1140,53 @@ void CommandManagerImpl::onSelectEnv( IEnvState* state )
 	}
 }
 
+void CommandManagerImpl::onLoadEnvState( IEnvState* state )
+{
+    ENV_STATE_QUERY( HistoryEnvCom, ec );
+    std::string file = state->description();
+    file += s_historyVersion;
+
+    const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+    assert( fileSystem );
+
+    if (fileSystem->exists( file.c_str() ))
+    {
+        IDefinitionManager& defManager = pCommandManager_->getDefManager();
+
+        IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+        HistorySerializer serializer( *fileStream, defManager );
+        std::string version;
+        serializer.deserialize( version );
+        if( version == s_historyVersion)
+        {
+            LoadCommandHistory( serializer, ec );
+        }
+    }
+}
+void CommandManagerImpl::onSaveEnvState( IEnvState* state )
+{
+    ENV_STATE_QUERY( HistoryEnvCom, ec );
+    IDefinitionManager& defManager = pCommandManager_->getDefManager();
+    ResizingMemoryStream stream;
+    HistorySerializer serializer( stream, defManager );
+
+    serializer.serialize( s_historyVersion );
+
+    SaveCommandHistory( serializer, ec );
+
+    std::string file = state->description();
+    file += s_historyVersion;
+    IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+    assert( fileSystem );
+    fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+}
+
 void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 {
+    flush();
 	unbindHistoryCallbacks();
 	unbindIndexCallbacks();
+	pCommandManager_->signalPreCommandIndexChanged( currentIndex_.value() );
 	currentIndex_.value( NO_SELECTION );
 	pCommandManager_->signalHistoryPreReset( historyState_->history_ );
 	{
@@ -1180,6 +1195,7 @@ void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 	}
 	pCommandManager_->signalHistoryPostReset( historyState_->history_ );
 	currentIndex_.value( historyState_->index_ );
+	pCommandManager_->signalPostCommandIndexChanged( currentIndex_.value() );
 	bindIndexCallbacks();
 	bindHistoryCallbacks();
 }
@@ -1357,12 +1373,15 @@ const IListModel & CommandManager::getMacros() const
 	return pImpl_->getMacros();
 }
 
-
-IValueChangeNotifier& CommandManager::currentIndex()
+const int CommandManager::commandIndex() const
 {
-	return pImpl_->getCurrentIndex();
+	return pImpl_->currentIndex_.value();
 }
 
+void CommandManager::moveCommandIndex( int newIndex )
+{
+	pImpl_->currentIndex_.value( newIndex );
+}
 
 //==============================================================================
 IDefinitionManager & CommandManager::getDefManager() const
@@ -1385,14 +1404,12 @@ IReflectionController * CommandManager::getReflectionController() const
 //==============================================================================
 bool CommandManager::SaveHistory( ISerializer & serializer )
 {
-	pImpl_->serializeMacroList( serializer );
 	return pImpl_->SaveCommandHistory( serializer, pImpl_->historyState_ );
 }
 
 //==============================================================================
 bool CommandManager::LoadHistory( ISerializer & serializer )
 {
-	pImpl_->deserializeMacroList( serializer );
 	return pImpl_->LoadCommandHistory( serializer, pImpl_->historyState_ );
 }
 

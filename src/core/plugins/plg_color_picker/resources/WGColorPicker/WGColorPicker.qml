@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGControls 2.0
 import WGColorPicker 1.0
 
 /*!
@@ -892,10 +893,19 @@ Rectangle {
                         minimumValue: 0
                         maximumValue: 1.0
                         stepSize: 0.001
-                        colorData: [Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0), Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)]
-                        positionData: [0, 1]
+
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 0
+                                color: Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0)
+                            }
+                            GradientStop {
+                                position: 1
+                                color: Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)
+                            }
+                        }
+
                         value: basePanel.alphaValue
-                        linkColorsToHandles: false
 
                         onValueChanged: {
                             if (value != basePanel.alphaValue)

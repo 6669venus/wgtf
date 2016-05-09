@@ -143,7 +143,7 @@ Item {
             }
             else if (sliderHandle.minimumValue > parentSlider.minimumValue)
             {
-                (sliderHandle.minimumValue * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
+                ((sliderHandle.minimumValue - parentSlider.minimumValue) * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
             }
         }
 
@@ -154,7 +154,7 @@ Item {
             }
             else if (sliderHandle.maximumValue < parentSlider.maximumValue)
             {
-                (sliderHandle.maximumValue * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
+                ((sliderHandle.maximumValue - parentSlider.minimumValue) * (parentSlider.__clampedLength / (parentSlider.maximumValue - parentSlider.minimumValue)))
             }
         }
     }

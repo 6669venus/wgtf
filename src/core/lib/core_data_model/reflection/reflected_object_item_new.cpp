@@ -337,7 +337,7 @@ bool ReflectedObjectItemNew::postSetValue( const PropertyAccessor & accessor, co
 }
 
 
-bool ReflectedObjectItemNew::preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedObjectItemNew::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -346,7 +346,7 @@ bool ReflectedObjectItemNew::preInsert( const PropertyAccessor & accessor, Colle
 			continue;
 		}
 
-		if ((*it)->preInsert( accessor, pos, count ))
+		if ((*it)->preInsert( accessor, index, count ))
 		{
 			return true;
 		}
@@ -355,7 +355,7 @@ bool ReflectedObjectItemNew::preInsert( const PropertyAccessor & accessor, Colle
 }
 
 
-bool ReflectedObjectItemNew::postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedObjectItemNew::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -364,7 +364,7 @@ bool ReflectedObjectItemNew::postInserted( const PropertyAccessor & accessor, Co
 			continue;
 		}
 
-		if ((*it)->postInserted( accessor, pos, count ))
+		if ((*it)->postInserted( accessor, index, count ))
 		{
 			return true;
 		}
@@ -373,7 +373,7 @@ bool ReflectedObjectItemNew::postInserted( const PropertyAccessor & accessor, Co
 }
 
 
-bool ReflectedObjectItemNew::preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedObjectItemNew::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -382,7 +382,7 @@ bool ReflectedObjectItemNew::preErase( const PropertyAccessor & accessor, Collec
 			continue;
 		}
 
-		if ((*it)->preErase( accessor, pos, count ))
+		if ((*it)->preErase( accessor, index, count ))
 		{
 			return true;
 		}
@@ -391,7 +391,7 @@ bool ReflectedObjectItemNew::preErase( const PropertyAccessor & accessor, Collec
 }
 
 
-bool ReflectedObjectItemNew::postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedObjectItemNew::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -400,7 +400,7 @@ bool ReflectedObjectItemNew::postErased( const PropertyAccessor & accessor, Coll
 			continue;
 		}
 
-		if ((*it)->postErased( accessor, pos, count ))
+		if ((*it)->postErased( accessor, index, count ))
 		{
 			return true;
 		}

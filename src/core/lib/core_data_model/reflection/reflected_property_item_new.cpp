@@ -956,7 +956,7 @@ bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor, 
 }
 
 
-bool ReflectedPropertyItemNew::preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedPropertyItemNew::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
@@ -970,20 +970,9 @@ bool ReflectedPropertyItemNew::preInsert( const PropertyAccessor & accessor, Col
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		Collection collection;
-		const bool isCollection = accessor.getValue().tryCast( collection );
-		if (!isCollection)
-		{
-			return true;
-		}
-
-		auto startPos = std::distance( collection.begin(), pos );
-
 		auto model = getModel();
 		assert( model != nullptr );
-		auto index = model->index( this );
-
-		model->preRowsInserted_( index, static_cast< int >( startPos ), static_cast< int >( count ) );
+		model->preRowsInserted_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
 		return true;
 	}
 
@@ -994,7 +983,7 @@ bool ReflectedPropertyItemNew::preInsert( const PropertyAccessor & accessor, Col
 			continue;
 		}
 
-		if ((*it)->preInsert( accessor, pos, count ))
+		if ((*it)->preInsert( accessor, index, count ))
 		{
 			return true;
 		}
@@ -1003,7 +992,7 @@ bool ReflectedPropertyItemNew::preInsert( const PropertyAccessor & accessor, Col
 }
 
 
-bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
@@ -1017,20 +1006,9 @@ bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, 
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		Collection collection;
-		const bool isCollection = accessor.getValue().tryCast( collection );
-		if (!isCollection)
-		{
-			return true;
-		}
-
-		auto startPos = std::distance( collection.begin(), pos );
-
 		auto model = getModel();
 		assert( model != nullptr );
-		auto index = model->index( this );
-
-		model->postRowsInserted_( index, static_cast< int >( startPos ), static_cast< int >( count ) );
+		model->postRowsInserted_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
 		return true;
 	}
 
@@ -1041,7 +1019,7 @@ bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, 
 			continue;
 		}
 
-		if ((*it)->postInserted( accessor, pos, count ))
+		if ((*it)->postInserted( accessor, index, count ))
 		{
 			return true;
 		}
@@ -1050,7 +1028,7 @@ bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, 
 }
 
 
-bool ReflectedPropertyItemNew::preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedPropertyItemNew::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
@@ -1064,20 +1042,9 @@ bool ReflectedPropertyItemNew::preErase( const PropertyAccessor & accessor, Coll
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		Collection collection;
-		const bool isCollection = accessor.getValue().tryCast( collection );
-		if (!isCollection)
-		{
-			return true;
-		}
-
-		auto startPos = std::distance( collection.begin(), pos );
-
 		auto model = getModel();
 		assert( model != nullptr );
-		auto index = model->index( this );
-
-		model->preRowsRemoved_( index, static_cast< int >( startPos ), static_cast< int >( count ) );
+		model->preRowsRemoved_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
 		return true;
 	}
 
@@ -1088,7 +1055,7 @@ bool ReflectedPropertyItemNew::preErase( const PropertyAccessor & accessor, Coll
 			continue;
 		}
 
-		if ((*it)->preErase( accessor, pos, count ))
+		if ((*it)->preErase( accessor, index, count ))
 		{
 			return true;
 		}
@@ -1097,7 +1064,7 @@ bool ReflectedPropertyItemNew::preErase( const PropertyAccessor & accessor, Coll
 }
 
 
-bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
@@ -1111,20 +1078,9 @@ bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, Co
 
 	if (obj == otherObj && path_ == otherPath)
 	{
-		Collection collection;
-		const bool isCollection = accessor.getValue().tryCast( collection );
-		if (!isCollection)
-		{
-			return true;
-		}
-
-		auto startPos = std::distance( collection.begin(), pos );
-
 		auto model = getModel();
 		assert( model != nullptr );
-		auto index = model->index( this );
-
-		model->postRowsRemoved_( index, static_cast< int >( startPos ), static_cast< int >( count ) );
+		model->postRowsRemoved_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
 		return true;
 	}
 
@@ -1135,7 +1091,7 @@ bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, Co
 			continue;
 		}
 
-		if ((*it)->postErased( accessor, pos, count ))
+		if ((*it)->postErased( accessor, index, count ))
 		{
 			return true;
 		}

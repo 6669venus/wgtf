@@ -30,17 +30,22 @@ namespace
 			}
 		}
 
-		void preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override
+		void preInsert( const PropertyAccessor & accessor, size_t index, size_t count ) override
 		{
 			if (object_ != accessor.getObject() || path_ != accessor.getFullPath())
 			{
 				return;
 			}
 
-			reflectedCollection_.onPreInsert_( pos.impl(), count );
+			auto it = reflectedCollection_.begin();
+			for (auto i = 0; i < index; ++i)
+			{
+				it->inc();
+			}
+			reflectedCollection_.onPreInsert_( it, count );
 		}
 
-		void postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override 
+		void postInserted( const PropertyAccessor & accessor, size_t index, size_t count ) override 
 		{
 			if (object_ != accessor.getObject() || path_ != accessor.getFullPath())
 			{
@@ -48,20 +53,30 @@ namespace
 			}
 
 			reflectedCollection_.reset();
-			reflectedCollection_.onPostInserted_( pos.impl(), count );
+			auto it = reflectedCollection_.begin();
+			for (auto i = 0; i < index; ++i)
+			{
+				it->inc();
+			}
+			reflectedCollection_.onPostInserted_( it, count );
 		}
 
-		void preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override 
+		void preErase( const PropertyAccessor & accessor, size_t index, size_t count ) override 
 		{
 			if (object_ != accessor.getObject() || path_ != accessor.getFullPath())
 			{
 				return;
 			}
 
-			reflectedCollection_.onPreErase_( pos.impl(), count );
+			auto it = reflectedCollection_.begin();
+			for (auto i = 0; i < index; ++i)
+			{
+				it->inc();
+			}
+			reflectedCollection_.onPreErase_( it, count );
 		}
 
-		void postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override 
+		void postErased( const PropertyAccessor & accessor, size_t index, size_t count ) override 
 		{
 			if (object_ != accessor.getObject() || path_ != accessor.getFullPath())
 			{
@@ -69,7 +84,12 @@ namespace
 			}
 
 			reflectedCollection_.reset();
-			reflectedCollection_.onPostErased_( pos.impl(), count );
+			auto it = reflectedCollection_.begin();
+			for (auto i = 0; i < index; ++i)
+			{
+				it->inc();
+			}
+			reflectedCollection_.onPostErased_( it, count );
 		}
 
 	private:

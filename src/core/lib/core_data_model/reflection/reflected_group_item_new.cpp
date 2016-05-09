@@ -316,7 +316,7 @@ bool ReflectedGroupItemNew::postSetValue( const PropertyAccessor & accessor, con
 }
 
 
-bool ReflectedGroupItemNew::preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedGroupItemNew::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -325,7 +325,7 @@ bool ReflectedGroupItemNew::preInsert( const PropertyAccessor & accessor, Collec
 			continue;
 		}
 
-		if ((*it)->preInsert( accessor, pos, count ))
+		if ((*it)->preInsert( accessor, index, count ))
 		{
 			return true;
 		}
@@ -334,7 +334,7 @@ bool ReflectedGroupItemNew::preInsert( const PropertyAccessor & accessor, Collec
 }
 
 
-bool ReflectedGroupItemNew::postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedGroupItemNew::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -343,7 +343,7 @@ bool ReflectedGroupItemNew::postInserted( const PropertyAccessor & accessor, Col
 			continue;
 		}
 
-		if ((*it)->postInserted( accessor, pos, count ))
+		if ((*it)->postInserted( accessor, index, count ))
 		{
 			return true;
 		}
@@ -352,7 +352,7 @@ bool ReflectedGroupItemNew::postInserted( const PropertyAccessor & accessor, Col
 }
 
 
-bool ReflectedGroupItemNew::preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedGroupItemNew::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -361,7 +361,7 @@ bool ReflectedGroupItemNew::preErase( const PropertyAccessor & accessor, Collect
 			continue;
 		}
 
-		if ((*it)->preErase( accessor, pos, count ))
+		if ((*it)->preErase( accessor, index, count ))
 		{
 			return true;
 		}
@@ -370,7 +370,7 @@ bool ReflectedGroupItemNew::preErase( const PropertyAccessor & accessor, Collect
 }
 
 
-bool ReflectedGroupItemNew::postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count )
+bool ReflectedGroupItemNew::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -379,7 +379,7 @@ bool ReflectedGroupItemNew::postErased( const PropertyAccessor & accessor, Colle
 			continue;
 		}
 
-		if ((*it)->postErased( accessor, pos, count ))
+		if ((*it)->postErased( accessor, index, count ))
 		{
 			return true;
 		}

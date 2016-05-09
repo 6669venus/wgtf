@@ -34,11 +34,11 @@ public:
 	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
 	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
 
-	virtual bool preInsert( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
-	virtual bool postInserted( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+	virtual bool preInsert( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+	virtual bool postInserted( const PropertyAccessor & accessor, size_t index, size_t count ) override;
 
-	virtual bool preErase( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
-	virtual bool postErased( const PropertyAccessor & accessor, Collection::Iterator pos, size_t count ) override;
+	virtual bool preErase( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+	virtual bool postErased( const PropertyAccessor & accessor, size_t index, size_t count ) override;
 
 private:
 	class Implementation;

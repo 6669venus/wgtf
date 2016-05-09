@@ -165,11 +165,13 @@ WGTreeView {
 			onTriggered: {
 				var collection = parentItem.value
 				if (collection.isMapping()) {
-					keyDialog.open()
-					if (keyDialog.key == "") {
-						return
+					keyDialog.onAcceptedFunc = function(key) {
+						if (key == "") {
+							return
+						}
+						collection.insertItem(key)
 					}
-					collection.insertItem(keyDialog.key)
+					keyDialog.open()
 				}
 				else {
 					var index = propertyTreeView.internalModel.rowIndex(item)

@@ -26,11 +26,11 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( core_qt_script ${BLOB_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( core_qt_script
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Quick
-    Qt5::Widgets
+BW_TARGET_LINK_LIBRARIES( core_qt_script PRIVATE
+	Qt5::Core
+	Qt5::Gui
+	Qt5::Quick
+	Qt5::Widgets
 )
 
 INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})

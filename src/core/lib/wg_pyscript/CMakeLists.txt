@@ -33,6 +33,8 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( wg_pyscript ${BLOB_SRCS} )
 
+WG_TARGET_LINK_PYTHON()
+
 BW_PRECOMPILED_HEADER( wg_pyscript pch.hpp )
 BW_PROJECT_CATEGORY( wg_pyscript "Wargaming Libs" )
 

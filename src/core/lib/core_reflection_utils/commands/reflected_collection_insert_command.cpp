@@ -42,8 +42,8 @@ ObjectHandle ReflectedCollectionInsertCommand::execute(const ObjectHandle & argu
 		return CommandErrorCode::INVALID_ARGUMENTS;
 	}
 
-	bool br = property.insert( commandArgs->key_, commandArgs->value_ );
-	if (!br)
+	commandArgs->inserted_ = property.insert( commandArgs->key_, commandArgs->value_ );
+	if (!commandArgs->inserted_)
 	{
 		return CommandErrorCode::INVALID_VALUE;
 	}
@@ -54,6 +54,10 @@ ObjectHandle ReflectedCollectionInsertCommand::execute(const ObjectHandle & argu
 bool ReflectedCollectionInsertCommand::undo( const ObjectHandle & arguments ) const
 {
 	auto commandArgs = arguments.getBase< ReflectedCollectionInsertCommandParameters >();
+	if (!commandArgs->inserted_)
+	{
+		return true;
+	}
 
 	auto objManager = definitionManager_.getObjectManager();
 	assert( objManager != nullptr );

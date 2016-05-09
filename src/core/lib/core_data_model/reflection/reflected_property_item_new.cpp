@@ -1006,9 +1006,52 @@ bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, 
 
 	if (obj == otherObj && path_ == otherPath)
 	{
+		Collection collection;
+		const Variant & value = accessor.getValue();
+		bool isCollection = value.tryCast( collection );
+		assert( isCollection );
+
+		for (auto i = 0; i < count; ++i)
+		{
+			impl_->children_.emplace( impl_->children_.begin() + index, nullptr );
+		}
+		if (!collection.isMapping())
+		{
+			for (auto i = index + count; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto oldPath = child->path_;
+				auto parentPath = oldPath.substr( 0, oldPath.length() - child->impl_->displayName_.length() );
+				child->path_ = parentPath + "[" + std::to_string( static_cast< int >( i ) ) + "]";
+			}
+		}
+
 		auto model = getModel();
 		assert( model != nullptr );
 		model->postRowsInserted_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
+
+		if (!collection.isMapping())
+		{
+			for (auto i = index + count; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto childIndex = model->index( child );
+				model->preItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+				child->impl_->displayName_ = "[" + std::to_string( static_cast< int >( i ) ) + "]";
+				model->postItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+			}
+		}
+
 		return true;
 	}
 
@@ -1078,9 +1121,49 @@ bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, si
 
 	if (obj == otherObj && path_ == otherPath)
 	{
+		Collection collection;
+		const Variant & value = accessor.getValue();
+		bool isCollection = value.tryCast( collection );
+		assert( isCollection );
+
+		impl_->children_.erase( impl_->children_.begin() + index, impl_->children_.begin() + index + count );
+		if (!collection.isMapping())
+		{
+			for (auto i = index; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto oldPath = child->path_;
+				auto parentPath = oldPath.substr( 0, oldPath.length() - child->impl_->displayName_.length() );
+				child->path_ = parentPath + "[" + std::to_string( static_cast< int >( i ) ) + "]";
+			}
+		}
+
 		auto model = getModel();
 		assert( model != nullptr );
 		model->postRowsRemoved_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
+
+		if (!collection.isMapping())
+		{
+			for (auto i = index; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto childIndex = model->index( child );
+				model->preItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+				child->impl_->displayName_ = "[" + std::to_string( static_cast< int >( i ) ) + "]";
+				model->postItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+			}
+		}
+
 		return true;
 	}
 

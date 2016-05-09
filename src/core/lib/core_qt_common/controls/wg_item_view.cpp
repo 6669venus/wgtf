@@ -40,6 +40,17 @@ namespace
 				connections_ += QObject::connect( model, &QAbstractItemModel::rowsInserted, this, &ExtendedModel::onRowsInserted );
 				connections_ += QObject::connect( model, &QAbstractItemModel::rowsAboutToBeRemoved, this, &ExtendedModel::onRowsAboutToBeRemoved );
 				connections_ += QObject::connect( model, &QAbstractItemModel::rowsRemoved, this, &ExtendedModel::onRowsRemoved );
+
+				for (auto & extension : extensions_)
+				{
+					connections_ += QObject::connect( this, &QAbstractItemModel::layoutAboutToBeChanged, extension, &IModelExtension::onLayoutAboutToBeChanged );
+					connections_ += QObject::connect( this, &QAbstractItemModel::layoutChanged, extension, &IModelExtension::onLayoutChanged );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsAboutToBeInserted, extension, &IModelExtension::onRowsAboutToBeInserted );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsInserted, extension, &IModelExtension::onRowsInserted );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsAboutToBeRemoved, extension, &IModelExtension::onRowsAboutToBeRemoved );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsRemoved, extension, &IModelExtension::onRowsRemoved );
+				}
+
 				roleNames_ = model_->roleNames();
 				registerRole( ItemRole::modelIndexName, roleNames_ );
 				for (auto & role : roles_)
@@ -238,12 +249,19 @@ namespace
 
 		void onRowsAboutToBeInserted( const QModelIndex &parent, int first, int last )
 		{
-			beginInsertRows( extendedIndex( parent ), first, last );
+			//TODO fix the listadapters to correctly respond when items are added
+			//beginInsertRows( extendedIndex( parent ), first, last );
+			assert( modifiedParents_.isEmpty() );
+			modifiedParents_.append( extendedIndex( parent ) );
+			layoutAboutToBeChanged( modifiedParents_, QAbstractItemModel::VerticalSortHint );
 		}
 
 		void onRowsInserted()
 		{
-			endInsertRows();
+			//endInsertRows();
+			assert( !modifiedParents_.isEmpty() );
+			layoutChanged( modifiedParents_, QAbstractItemModel::VerticalSortHint );
+			modifiedParents_.clear();
 		}
 
 		void onRowsAboutToBeRemoved( const QModelIndex &parent, int first, int last )
@@ -279,15 +297,7 @@ namespace
 
 			assert( modelIndex.model() == model_ );
 			QModelIndex index = createIndex( modelIndex.row(), modelIndex.column(), modelIndex.internalId() );
-			auto it = indexCache_.find( index );
-			if (it != indexCache_.end())
-			{
-				assert( *it == modelIndex );
-			}
-			else
-			{
-				indexCache_.insert( index, modelIndex );
-			}
+			indexCache_.insert( index, modelIndex );
 			return index;
 		}
 
@@ -297,6 +307,9 @@ namespace
 		QList< IModelExtension * > & extensions_;
 		QHash< int, QByteArray > roleNames_;
 		mutable QHash< QPersistentModelIndex, QPersistentModelIndex > indexCache_;
+
+		// TEMPORARY
+		QList<QPersistentModelIndex> modifiedParents_;
 	};
 
 	class HeaderData : public QObject

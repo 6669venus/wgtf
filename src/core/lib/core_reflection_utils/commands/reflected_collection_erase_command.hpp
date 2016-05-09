@@ -15,6 +15,7 @@ public:
 
 private:
 	Variant		value_;
+	bool		erased_;
 
 	friend class ReflectedCollectionEraseCommand;
 };

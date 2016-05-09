@@ -11,6 +11,11 @@ public:
 	std::string path_;
 	Variant		key_;
 	Variant		value_;
+
+private:
+	bool		inserted_;
+
+	friend class ReflectedCollectionInsertCommand;
 };
 
 class ReflectedCollectionInsertCommand : public Command

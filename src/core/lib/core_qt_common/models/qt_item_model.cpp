@@ -133,7 +133,7 @@ QtItemModel::QtItemModel( AbstractItemModel & source )
 	{
 		auto parentItem = impl_->source_.item( parentIndex );
 		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
-		this->endInsertRows();
+		this->endRemoveRows();
 	};
 	impl_->connectPostErased_ =
 		impl_->source_.connectPostRowsRemoved( postErased );

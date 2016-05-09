@@ -419,10 +419,6 @@ void QtWindow::savePreference()
 
 bool QtWindow::loadPreference()
 {
-    if(!isReady())
-    {
-        return false;
-    }
 	//check the preference data first
 	do 
 	{

@@ -73,6 +73,8 @@ SET( MODEL_REFLECTION_SRCS
 	reflection/reflected_tree_model_new.hpp
 	reflection/reflected_list.cpp
 	reflection/reflected_list.hpp
+	reflection/reflected_collection.cpp
+	reflection/reflected_collection.hpp
 )
 SOURCE_GROUP( "DataModel\\Reflection"
 	FILES ${MODEL_REFLECTION_SRCS} )

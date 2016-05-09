@@ -5,6 +5,8 @@
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "core_reflection_utils/commands/invoke_reflected_method_command.hpp"
+#include "core_reflection_utils/commands/reflected_collection_insert_command.hpp"
+#include "core_reflection_utils/commands/reflected_collection_erase_command.hpp"
 #include "core_reflection_utils/reflected_types.hpp"
 
 //==============================================================================
@@ -14,6 +16,8 @@ class EditorInteractionPlugin
 private:
 	std::unique_ptr< SetReflectedPropertyCommand > setReflectedPropertyCmd_;
 	std::unique_ptr< InvokeReflectedMethodCommand > invokeReflectedMethodCommand_;
+	std::unique_ptr< ReflectedCollectionInsertCommand > reflectedCollectionInsertCommand_;
+	std::unique_ptr< ReflectedCollectionEraseCommand > reflectedCollectionEraseCommand_;
 
 public:
 	//==========================================================================
@@ -52,6 +56,12 @@ public:
 
 			invokeReflectedMethodCommand_.reset( new InvokeReflectedMethodCommand( definitionManager ) );
 			commandSystemProvider->registerCommand( invokeReflectedMethodCommand_.get() );
+
+			reflectedCollectionInsertCommand_.reset( new ReflectedCollectionInsertCommand( definitionManager ) );
+			commandSystemProvider->registerCommand( reflectedCollectionInsertCommand_.get() );
+
+			reflectedCollectionEraseCommand_.reset( new ReflectedCollectionEraseCommand( definitionManager ) );
+			commandSystemProvider->registerCommand( reflectedCollectionEraseCommand_.get() );
 		}
 	}
 
@@ -67,6 +77,12 @@ public:
 
 			commandSystemProvider->deregisterCommand( invokeReflectedMethodCommand_->getId() );
 			invokeReflectedMethodCommand_ = nullptr;
+
+			commandSystemProvider->deregisterCommand( reflectedCollectionInsertCommand_->getId() );
+			reflectedCollectionInsertCommand_ = nullptr;
+
+			commandSystemProvider->deregisterCommand( reflectedCollectionEraseCommand_->getId() );
+			reflectedCollectionEraseCommand_ = nullptr;
 		}
 
 		return true;

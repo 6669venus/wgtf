@@ -87,3 +87,8 @@ ObjectHandle ReflectedCollectionInsertCommand::getCommandDescription(const Objec
 	object->set("Type", "Unknown");
 	return object;
 }
+
+CommandThreadAffinity ReflectedCollectionInsertCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::UI_THREAD;
+}

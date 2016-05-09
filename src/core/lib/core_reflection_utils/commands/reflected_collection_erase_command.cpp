@@ -102,3 +102,8 @@ ObjectHandle ReflectedCollectionEraseCommand::getCommandDescription(const Object
 	object->set("Type", "Unknown");
 	return object;
 }
+
+CommandThreadAffinity ReflectedCollectionEraseCommand::threadAffinity() const
+{
+	return CommandThreadAffinity::UI_THREAD;
+}

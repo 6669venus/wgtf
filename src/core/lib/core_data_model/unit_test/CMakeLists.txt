@@ -19,7 +19,7 @@ SET( ALL_SRCS
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 BW_ADD_EXECUTABLE( core_data_model_unit_test ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( core_data_model_unit_test INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_data_model_unit_test PRIVATE
 	core_data_model
 	core_unit_test
 )

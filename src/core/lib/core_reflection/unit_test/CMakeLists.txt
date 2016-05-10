@@ -25,7 +25,7 @@ SET( ALL_SRCS
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )
 BW_ADD_EXECUTABLE( reflection_unit_test ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( reflection_unit_test INTERFACE
+BW_TARGET_LINK_LIBRARIES( reflection_unit_test PRIVATE
 	core_reflection
 	reflection_objects_test
 	core_serialization

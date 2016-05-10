@@ -26,7 +26,11 @@ types.MemberDescriptorType
 types.StringTypes
 '''
 
-class CallableClassTest:
+class OldCallableClassTest:
+	def __call__( self, value ):
+		return "Callable class test " + value
+
+class NewCallableClassTest( object ):
 	def __call__( self, value ):
 		return "Callable class test " + value
 
@@ -47,9 +51,33 @@ def firstn(n):
 		yield num
 		num += 1
 
+class ValueObjectTest( object ):
+	'''
+	Test object for reflected property paths.
+
+	The reflection system can get a path for "childTest.tupleTest[0]" only if
+	the value type is a Python object.
+	Basic types like int and string do not have path info stored on them.
+	'''
+	def __init__( self, value ):
+		self.value = value
+
 class ChildObjectTest( object ):
 	def __init__( self ):
 		self.stringTest = "Child"
+		self.tupleTest = (ValueObjectTest( 0 ),
+			ValueObjectTest( 1 ),
+			ValueObjectTest( 2 ),
+			ValueObjectTest( 3 ) )
+		self.listTest = [ValueObjectTest( 0 ),
+			ValueObjectTest( 1 ),
+			ValueObjectTest( 2 ),
+			ValueObjectTest( 3 )]
+		self.dictTest = {ValueObjectTest( 'Bacon' ) : ValueObjectTest( 0 )}
+
+class BadComparison( object ):
+	def __cmp__( self, other ):
+		raise Exception( "Bad comparison" )
 
 class OldClassTest:
 	'''Test of old-style classes'''
@@ -95,8 +123,10 @@ class OldClassTest:
 		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
-		self.functionTest2 = CallableClassTest()
+		self.functionTest2 = OldCallableClassTest()
+		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
+		self.badComparison = BadComparison()
 
 		# Old-style classes only
 		self.typeTest1 = type( OldClassTest )
@@ -115,6 +145,13 @@ class OldClassTest:
 	@staticmethod
 	def staticMethodTest( testString ):
 		return "Static method test " + testString
+	
+	class ConstructorTest1:
+		def __init__( self, value ):
+			self.constructorTest = "Constructor class test " + value
+
+	class ConstructorTest2:
+		pass
 
 	def updateValues( self ):
 		OldClassTest.classIntTest = OldClassTest.classIntTest + 1
@@ -174,8 +211,10 @@ class NewClassTest( object ):
 		self.dictTest = {'Bacon': 1, 'Ham': 0}
 		self.functionTest1 = \
 			lambda testString: "Function test " + testString
-		self.functionTest2 = CallableClassTest()
+		self.functionTest2 = OldCallableClassTest()
+		self.functionTest3 = NewCallableClassTest()
 		#self.generatorTest = firstn
+		self.badComparison = BadComparison()
 
 		# New-style classes only
 		self.typeTest1 = type( NewClassTest )
@@ -207,6 +246,13 @@ class NewClassTest( object ):
 	@staticmethod
 	def staticMethodTest( testString ):
 		return "Static method test " + testString
+
+	class ConstructorTest1( object ):
+		def __init__( self, value ):
+			self.constructorTest = "Constructor class test " + value
+
+	class ConstructorTest2( object ):
+		pass
 
 	def updateValues( self ):
 		NewClassTest.classIntTest = NewClassTest.classIntTest + 1

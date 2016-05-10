@@ -1,4 +1,5 @@
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
 #include "core_variant/default_meta_type_manager.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
@@ -65,7 +66,14 @@ public:
 			return;
 		}
 
-		uiApplication->addView( *testView_ );
+		if (testView_ != nullptr)
+		{
+			uiApplication->addView( *testView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
@@ -76,8 +84,11 @@ public:
 			return true;
 		}
 
-		uiApplication->removeView( *testView_ );
-		testView_ = nullptr;
+		if (testView_ != nullptr)
+		{
+			uiApplication->removeView( *testView_ );
+			testView_ = nullptr;
+		}
 		return true;
 	}
 

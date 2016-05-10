@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import BWControls 1.0
-import WGControls 1.0
+import WGControls 1.0 as WGOne
+import WGControls 2.0
 
 Canvas {
     id: curve
@@ -14,6 +15,7 @@ Canvas {
     property alias pointRepeater: pointRepeater;
     property var points;
     property var curveModel;
+    property var curveIndex;
     property color color;
     property bool enabled: true;
     property bool showControlPoints: enabled && curveModel.showControlPoints
@@ -21,13 +23,14 @@ Canvas {
     property var _scaleY: viewTransform.yScale;
     property var _originX: viewTransform.origin.x;
     property var _originY: viewTransform.origin.y;
-    property var viewTransform: ViewTransform{
+    property var viewTransform: WGViewTransform{
         container: curve
     }
 
     signal pointSelectionChanged(Point point)
     signal pointPositionChanged(Point point, real xDelta, real yDelta)
     signal pointPressed(Point point, var mouse)
+    signal pointReleased(Point point, var mouse)
     signal pointClicked(Point point, var mouse)
     signal pointAdded(int index, var point)
     signal pointRemoved(int index, var point)
@@ -103,32 +106,30 @@ Canvas {
 
     function getPoint(index)
     {
-        if(index === -1)
+        if(index === -1 || index >= pointRepeater.count)
             return null;
-        var pointIt = iterator(curve.points)
-        var count = 0;
-        while(pointIt.moveNext()){
-            if(count === index)
-                return pointIt.current;
-            ++count;
-        }
-        return null;
+        return pointRepeater.itemAt(index).point
     }
 
-    function constrainHandles()
+    function constrainHandles(pointIndex)
     {
-        for(var i = 0; i < pointRepeater.count; ++i){
-            var point = pointRepeater.itemAt(i);
-            point.constrainHandles();
+        if(pointIndex > 0)
+        {
+            pointRepeater.itemAt(pointIndex-1).constrainHandles()
+        }
+        pointRepeater.itemAt(pointIndex).constrainHandles()
+        if((pointIndex + 1) < pointRepeater.count)
+        {
+            pointRepeater.itemAt(pointIndex+1).constrainHandles()
         }
     }
 
-    WGListModel
+    WGOne.WGListModel
     {
         id: pointModel
         source: points
 
-        ValueExtension {}
+        WGOne.ValueExtension {}
     }
 
     Repeater
@@ -142,11 +143,13 @@ Canvas {
             baseColor: curve.color;
             enabled: curve.enabled;
             viewTransform: curve.viewTransform;
+            pointIndex: index
             onSelectedChanged:{
                 pointSelectionChanged(this)
             }
             onPositionChanged: pointPositionChanged(point, xDelta, yDelta)
             onPressed: pointPressed(point, mouse)
+            onReleased: pointReleased(point, mouse)
             onClicked: pointClicked(point, mouse)
         }
         onItemAdded:

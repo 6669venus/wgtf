@@ -32,7 +32,11 @@ Item {
     id: scrollableFrame
     objectName: "WGScrollPanel"
 
-    property Component childObject
+    property Component childObject:
+        Text {
+            color: "orange"
+            text: "Warning: WGScrollPanel has no childObject"
+        }
 
     //TODO: This breaks the UI. Either fix or hide from user
     /*! \internal */
@@ -40,6 +44,7 @@ Item {
 
     //not anchors.fill because of inherited classes reassigning top & bottom
     anchors {left: parent.left; right: parent.right; top: parent.top; bottom: parent.bottom}
+
 
     Flickable {
         id: scrollPanel

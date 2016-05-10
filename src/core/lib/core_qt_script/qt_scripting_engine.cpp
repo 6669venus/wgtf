@@ -7,6 +7,7 @@
 #include "script_qt_type_converter.hpp"
 #include "wg_list_iterator.hpp"
 #include "collection_qt_type_converter.hpp"
+#include "core_qt_common/image_qt_type_converter.hpp"
 #include "core_qt_common/model_qt_type_converter.hpp"
 
 #include "core_reflection/base_property.hpp"
@@ -35,6 +36,7 @@
 
 Q_DECLARE_METATYPE( ObjectHandle );
 
+typedef std::vector< QPointer<QtScriptObject> > ScriptObjects;
 
 struct QtScriptingEngine::Implementation
 {
@@ -81,18 +83,18 @@ struct QtScriptingEngine::Implementation
 	std::mutex metaObjectsMutex_;
 	std::map<std::string, QMetaObject*> metaObjects_;
 	std::vector<std::unique_ptr< IQtTypeConverter>> qtTypeConverters_;
-	std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> > > scriptObjects_;
+	std::map<ObjectHandle, ScriptObjects > scriptObjects_;
 
 	struct PropertyListener: public PropertyAccessorListener
 	{
-		PropertyListener( const std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> > >& scriptObjects )
+		PropertyListener( const std::map<ObjectHandle, ScriptObjects >& scriptObjects )
 			: scriptObjects_( scriptObjects )
 		{}
 
 		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
 		void postInvoke( const PropertyAccessor & accessor, Variant result, bool undo ) override;
 
-		const std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> > >& scriptObjects_;
+		const std::map<ObjectHandle, ScriptObjects >& scriptObjects_;
 	};
 
 	std::shared_ptr<PropertyAccessorListener> propListener_;
@@ -115,9 +117,10 @@ void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, I
 
 	// TODO: All but the scriptTypeConverter need to be moved to the qt app plugin.
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
-	qtTypeConverters_.emplace_back( new ModelQtTypeConverter() );
-	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
+	qtTypeConverters_.emplace_back( new ImageQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
+	qtTypeConverters_.emplace_back( new ModelQtTypeConverter() );	
+	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( self_ ) );
 
 	QMetaType::registerComparators<ObjectHandle>();
@@ -199,14 +202,13 @@ QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const Obj
 	}
 
     auto itr = scriptObjects_.find( root );
+
     if (itr == scriptObjects_.end())
     {
-        std::vector< QPointer<QtScriptObject> > scriptObjects;
-        scriptObjects_.insert( std::make_pair( root, scriptObjects ) );
+		itr = scriptObjects_.insert(std::make_pair(root, ScriptObjects())).first;
     }
-    itr = scriptObjects_.find( root );
     assert( itr != scriptObjects_.end() );
-    auto & scriptObjects = itr->second;
+	auto& scriptObjects = itr->second;
 
 	assert( contextManager_ );
 	QtScriptObject* scriptObject = new QtScriptObject(
@@ -225,7 +227,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 
 	{
 		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
-		auto metaObjectIt = metaObjects_.find( definition );
+		const auto& metaObjectIt = metaObjects_.find( definition );
 		if ( metaObjectIt != metaObjects_.end() )
 		{
 			return metaObjectIt->second;
@@ -368,7 +370,7 @@ void QtScriptingEngine::finalise()
 
 void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
 {
-	std::map<ObjectHandle, std::vector< QPointer<QtScriptObject> >>::iterator findIt = 
+	std::map<ObjectHandle, ScriptObjects>::iterator findIt = 
 		impl_->scriptObjects_.find( scriptObject.object() );
 	assert (findIt != impl_->scriptObjects_.end());
     auto&& scriptObjects = findIt->second;

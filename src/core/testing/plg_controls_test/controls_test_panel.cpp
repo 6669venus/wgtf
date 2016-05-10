@@ -1,4 +1,5 @@
 #include "controls_test_panel.hpp"
+#include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
 #include "core_data_model/generic_list.hpp"
 #include "wg_types/vector4.hpp"
@@ -78,10 +79,17 @@ bool ControlsTestPanel::addPanel()
 	auto def = REGISTER_DEFINITION( ColorSliderDataModel );
 	controlData_ = def->create();
 	controlsView_ = uiFramework->createView(
-		"plg_controls_test/controls_test_panel.qml",
+		"WGControlsTest/WGControlsTestPanel.qml",
 		IUIFramework::ResourceType::Url, controlData_ );
 
-	uiApplication->addView( *controlsView_ );
+	if (controlsView_ != nullptr)
+	{
+		uiApplication->addView( *controlsView_ );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
 	return true;
 }
 
@@ -94,7 +102,10 @@ void ControlsTestPanel::removePanel()
 		return;
 	}
 
-	uiApplication->removeView( *controlsView_ );
-	controlsView_ = nullptr;
+	if (controlsView_ != nullptr)
+	{
+		uiApplication->removeView( *controlsView_ );
+		controlsView_ = nullptr;
+	}
 }
 

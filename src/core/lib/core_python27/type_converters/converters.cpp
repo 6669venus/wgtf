@@ -15,14 +15,14 @@ Converters::Converters( const BasicTypeConverters & basicTypeConverters,
 
 
 bool Converters::toScriptType( const Variant & inVariant,
-	PyScript::ScriptObject & outObject ) const
+	PyScript::ScriptObject & outObject, void* userData ) const
 {
-	const bool success = basicTypeConverters_.toScriptType( inVariant, outObject );
+	const bool success = basicTypeConverters_.toScriptType( inVariant, outObject, userData );
 	if (success)
 	{
 		return true;
 	}
-	return parentTypeConverters_.toScriptType( inVariant, outObject );
+	return parentTypeConverters_.toScriptType( inVariant, outObject, userData );
 }
 
 

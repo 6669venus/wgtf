@@ -4,6 +4,9 @@
 #include "metadata/history_object.mpp"
 #include "metadata/display_object.mpp"
 #include "core_command_system/i_command_manager.hpp"
+#include "core_command_system/i_history_panel.h"
+
+#include "core_logging/logging.hpp"
 
 #include "core_qt_common/i_qt_framework.hpp"
 
@@ -14,6 +17,38 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_action.hpp"
 
+class HistoryPanel : public IHistoryPanel
+{
+public:
+    void init(ObjectHandle object, IDefinitionManager& definitionManager)
+    {
+        const IClassDefinition* classDefinition = object.getDefinition(definitionManager);
+        clearButtonVisibility = classDefinition->bindProperty("IsClearButtonVisible", object);
+        makeMacroButtonVisibility = classDefinition->bindProperty("IsMakeMacroButtonVisible", object);
+        assert(clearButtonVisibility.isValid());
+        assert(makeMacroButtonVisibility.isValid());
+    }
+
+    void setClearButtonVisible(bool show) override
+    {
+        if (clearButtonVisibility.isValid())
+        {
+            clearButtonVisibility.setValue(show);
+        }
+    }
+
+    void setMakeMacroButtonVisible(bool show) override
+    {
+        if (makeMacroButtonVisibility.isValid())
+        {
+            makeMacroButtonVisibility.setValue(show);
+        }
+    }
+
+private:
+    PropertyAccessor clearButtonVisibility;
+    PropertyAccessor makeMacroButtonVisibility;
+};
 
 class HistoryUIPlugin
 	: public PluginMain
@@ -137,20 +172,36 @@ public:
 			return;
 		}
 
-		uiApplication->addView( *panel_ );
+		if (panel_ != nullptr)
+		{
+			uiApplication->addView( *panel_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 		createActions( *pQtFramework, *uiApplication );
+
+        HistoryPanel * historyPanelinterface = new HistoryPanel();
+        historyPanelinterface->init(history_, *pDefinitionManager);
+        historyPanelInterface_.reset(historyPanelinterface);
+        historyPanelInterfaceID = contextManager.registerInterface(historyPanelInterface_.get(), false);
 	}
 
 	bool Finalise( IComponentContext& contextManager ) override
 	{
+        contextManager.deregisterInterface(historyPanelInterfaceID);
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		if (uiApplication == nullptr)
 		{
 			return true;
 		}
-		uiApplication->removeView( *panel_ );
-		panel_ = nullptr;
+		if (panel_ != nullptr)
+		{
+			uiApplication->removeView( *panel_ );
+			panel_ = nullptr;
+		}
 		destroyActions( *uiApplication );
 		auto historyObject = history_.getBase< HistoryObject >();
 		assert( historyObject != nullptr );
@@ -161,6 +212,8 @@ public:
 private:
 	std::unique_ptr< IView > panel_;
 	ObjectHandle history_;
+    std::unique_ptr<IHistoryPanel> historyPanelInterface_;
+    IInterface * historyPanelInterfaceID;
 
 	ICommandManager * commandSystemProvider_;
 	std::unique_ptr< IAction > undo_;

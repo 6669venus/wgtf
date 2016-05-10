@@ -19,6 +19,7 @@ TestReflectionFixture::TestReflectionFixture()
 //==============================================================================
 TestReflectionFixture::~TestReflectionFixture()
 {
+	testObjects_.finiDefs( *definitionManager_ );
 	objectManager_.reset(); 
 	definitionManager_.reset();
 }

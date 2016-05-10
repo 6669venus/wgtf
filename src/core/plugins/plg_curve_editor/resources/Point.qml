@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import WGControls 2.0
 
 Rectangle {
     id: handle
@@ -11,18 +12,22 @@ Rectangle {
     x: viewTransform.transformX(handle.point.pos.x);
     y: viewTransform.transformY(handle.point.pos.y);
 
+    onXChanged: parentCurve.requestPaint()
+    onYChanged: parentCurve.requestPaint()
+
     property var _scaleX: viewTransform.xScale;
     property var _scaleY: viewTransform.yScale;
     property var _originX: viewTransform.origin.x;
     property var _originY: viewTransform.origin.y;
-	property var _prevX;
-	property var _prevY;
-	property var _nextX;
-	property var _nextY;
-	property var parentCurve;
+    property var _prevX;
+    property var _prevY;
+    property var _nextX;
+    property var _nextY;
+    property var parentCurve;
     property var prevPoint;
     property var nextPoint;
     property var point;
+    property var pointIndex;
     property bool enabled;
     property color baseColor;
     property string prevState;
@@ -30,32 +35,33 @@ Rectangle {
     property bool cp1Enabled: prevPoint !== undefined && parentCurve.showControlPoints;
     property bool cp2Enabled: nextPoint !== undefined && parentCurve.showControlPoints;
     property real minDistance: .001
-    property var viewTransform: ViewTransform{
+    property var viewTransform: WGViewTransform{
         container: parent
     }
 
     signal positionChanged(var point, real xDelta, real yDelta)
-	signal clicked(var point, var mouse)
-	signal pressed(var point, var mouse)
+    signal clicked(var point, var mouse)
+    signal pressed(var point, var mouse)
+    signal released(var point, var mouse)
 
     function setPosition(x, y) {
         if(x === handle.point.pos.x && y === handle.point.pos.y)
             return;
-		// Constrain to adjacent points
-		if(prevPoint)
-			x = Math.max(prevPoint.pos.x + minDistance, x)
-		if(nextPoint)
-			x = Math.min(nextPoint.pos.x - minDistance, x)
-		// Constrain to the timeline
-		x = Math.max(0, x)
-		x = Math.min(1, x)
+        // Constrain to adjacent points
+        if(prevPoint)
+            x = Math.max(prevPoint.pos.x + minDistance, x)
+        if(nextPoint)
+            x = Math.min(nextPoint.pos.x - minDistance, x)
+        // Constrain to the timeline
+        x = Math.max(0, x)
+        x = Math.min(1, x)
 
         var xDelta = x - handle.point.pos.x
         var yDelta = y - handle.point.pos.y
         beginUndoFrame()
-		handle.point.pos.x = x;
-		handle.point.pos.y = y;
-		parentCurve.constrainHandles();
+        handle.point.pos.x = x;
+        handle.point.pos.y = y;
+        parentCurve.constrainHandles(pointIndex);
         if(!Qt._updatingPosition)
         {
             Qt._updatingPosition = true
@@ -63,8 +69,8 @@ Rectangle {
             Qt._updatingPosition = false
         }
         endUndoFrame()
-		handle.parent.requestPaint();
-	}
+        handle.parent.requestPaint();
+    }
 
     on_ScaleXChanged: { updateHandlePositions() }
     on_ScaleYChanged: { updateHandlePositions() }
@@ -109,28 +115,28 @@ Rectangle {
         rightHandle.y = handle.point.cp2.y * viewTransform.yScale;
     }
 
-	function constrainHandles()
-	{
-		if(prevPoint){
-			var constrainedX = Math.max(prevPoint.pos.x - point.pos.x, handle.point.cp1.x)
+    function constrainHandles()
+    {
+        if(prevPoint){
+            var constrainedX = Math.max(prevPoint.pos.x - point.pos.x, handle.point.cp1.x)
             handle.point.cp1.y = constrainedX ? handle.point.cp1.y * constrainedX / handle.point.cp1.x : 0;
             handle.point.cp1.x = constrainedX;
             leftHandle.x = handle.point.cp1.x * viewTransform.xScale;
             leftHandle.y = handle.point.cp1.y * viewTransform.yScale;
-		}
+        }
         if (nextPoint) {
-			var constrainedX = Math.min(nextPoint.pos.x - point.pos.x, handle.point.cp2.x)
+            var constrainedX = Math.min(nextPoint.pos.x - point.pos.x, handle.point.cp2.x)
             handle.point.cp2.y = constrainedX ? handle.point.cp2.y * constrainedX / handle.point.cp2.x : 0;
             handle.point.cp2.x = constrainedX;
             rightHandle.x = handle.point.cp2.x * viewTransform.xScale;
             rightHandle.y = handle.point.cp2.y * viewTransform.yScale;
         }
-	}
+    }
 
     MouseArea {
-		id: handleDragArea
-		property bool dragging: false
-		property var startPos
+        id: handleDragArea
+        property bool dragging: false
+        property var startPos
         anchors.fill: parent
         drag.target: handle
         drag.minimumX: prevPoint ? viewTransform.transformX(prevPoint.pos.x + minDistance) : viewTransform.transformX(0)
@@ -140,35 +146,35 @@ Rectangle {
         drag.threshold: 1
         hoverEnabled: true
 
-		function constrainAxis(mouse)
-		{
-			var lockAxis = (mouse.modifiers & Qt.ShiftModifier);
-			
-			if(!lockAxis)
-			{
-				drag.axis = Drag.XAndYAxis;
-				handleDragArea.startPos = Qt.point(mouse.x, mouse.y)
-			}
-			else if(drag.axis == Drag.XAndYAxis)
-			{
-				if(Math.abs(mouse.x - handleDragArea.startPos.x) > Math.abs(mouse.y - handleDragArea.startPos.y))
-					drag.axis = Drag.XAxis;
-				else
-					drag.axis = Drag.YAxis;
-			}
-		}
+        function constrainAxis(mouse)
+        {
+            var lockAxis = (mouse.modifiers & Qt.ShiftModifier);
+
+            if(!lockAxis)
+            {
+                drag.axis = Drag.XAndYAxis;
+                handleDragArea.startPos = Qt.point(mouse.x, mouse.y)
+            }
+            else if(drag.axis == Drag.XAndYAxis)
+            {
+                if(Math.abs(mouse.x - handleDragArea.startPos.x) > Math.abs(mouse.y - handleDragArea.startPos.y))
+                    drag.axis = Drag.XAxis;
+                else
+                    drag.axis = Drag.YAxis;
+            }
+        }
 
         onPositionChanged: {
             if (drag.active) {
-				constrainAxis(mouse)
-				if(!dragging)
-				{
-					dragging = true
-					beginUndoFrame();
-				}
+                constrainAxis(mouse)
+                if(!dragging)
+                {
+                    dragging = true
+                    beginUndoFrame();
+                }
                 state = handle.selected ? "selected" : "hovered"
                 var pos = viewTransform.inverseTransform(Qt.point(handle.x, handle.y))
-				setPosition(pos.x, pos.y);
+                setPosition(pos.x, pos.y);
             }
         }
         onEntered: {
@@ -183,37 +189,38 @@ Rectangle {
             }
         }
         onClicked: {
-			handle.clicked(handle, mouse);
+            handle.clicked(handle, mouse);
             handle.selected = !handle.selected;
         }
-		onPressed: {
-			handle.pressed(handle, mouse);
+        onPressed: {
+            handle.pressed(handle, mouse);
             prevState = handle.state;
-			handleDragArea.startPos = Qt.point(mouse.x,mouse.y)
-		}
-		onReleased: {
-			if(dragging)
-			{
+            handleDragArea.startPos = Qt.point(mouse.x,mouse.y)
+        }
+        onReleased: {
+            if(dragging)
+            {
+                handle.released(handle, mouse);
                 handle.state = handle.selected ? "selected" : "unselected";
-				endUndoFrame();
-				dragging = false
-				drag.axis = Drag.XAndYAxis;
-			}
-		}
+                endUndoFrame();
+                dragging = false
+                drag.axis = Drag.XAndYAxis;
+            }
+        }
     }
 
-	Rectangle {
-		id: leftTangent
-		color: handle.color
-		x: handle.width/2
-		y: handle.height/2
-		visible: leftHandle.visible
-		width: Qt.vector2d(leftHandle.x, leftHandle.y).length()
-		height: 1
-		transform: Rotation {
-			angle: Math.acos(Qt.vector2d(leftHandle.x, leftHandle.y).normalized().dotProduct(Qt.vector2d(1,0))) * 180/Math.PI * ((leftHandle.y > 0) ? 1 : -1)
-		}
-	}
+    Rectangle {
+        id: leftTangent
+        color: handle.color
+        x: handle.width/2
+        y: handle.height/2
+        visible: leftHandle.visible
+        width: Qt.vector2d(leftHandle.x, leftHandle.y).length()
+        height: 1
+        transform: Rotation {
+            angle: Math.acos(Qt.vector2d(leftHandle.x, leftHandle.y).normalized().dotProduct(Qt.vector2d(1,0))) * 180/Math.PI * ((leftHandle.y > 0) ? 1 : -1)
+        }
+    }
 
     Rectangle {
         id: leftHandle
@@ -236,7 +243,7 @@ Rectangle {
         }
 
         MouseArea {
-			property bool dragging: false;
+            property bool dragging: false;
             anchors.fill: parent
             drag.target: leftHandle
             drag.threshold: 0
@@ -245,49 +252,49 @@ Rectangle {
             drag.maximumX: 0
             onPositionChanged: {
                 if (drag.active) {
-					if(!dragging)
-					{
-						dragging = true;
-						beginUndoFrame();
-					}
+                    if(!dragging)
+                    {
+                        dragging = true;
+                        beginUndoFrame();
+                    }
                     // -- Move the tangent
                     if (!rightHandle.children[1].drag.active) {
-						handle.point.cp1.x = leftHandle.x / viewTransform.xScale;
+                        handle.point.cp1.x = leftHandle.x / viewTransform.xScale;
                         handle.point.cp1.y = leftHandle.y / viewTransform.yScale;
                     }
 
                     // -- Force the opposite tangent to the inverse position
                     if (!(mouse.modifiers & Qt.ControlModifier) && nextPoint) {
-						handle.point.cp2.x = -handle.point.cp1.x;
+                        handle.point.cp2.x = -handle.point.cp1.x;
                         handle.point.cp2.y = -handle.point.cp1.y;
-						constrainHandles();
+                        constrainHandles();
                     }
 
                     handle.parent.requestPaint();
                 }
             }
-			onReleased: {
-				if(dragging)
-				{
-					endUndoFrame();
-					dragging = false;
-				}
-			}
+            onReleased: {
+                if(dragging)
+                {
+                    endUndoFrame();
+                    dragging = false;
+                }
+            }
         }
     }
 
-	Rectangle {
-		id: rightTangent
-		color: handle.color
-		x: handle.width/2
-		y: handle.height/2
-		visible: rightHandle.visible
-		width: Qt.vector2d(rightHandle.x, rightHandle.y).length()
-		height: 1
-		transform: Rotation {
-			angle: Math.acos(Qt.vector2d(rightHandle.x, rightHandle.y).normalized().dotProduct(Qt.vector2d(1,0))) * 180/Math.PI * ((rightHandle.y > 0) ? 1 : -1)
-		}
-	}
+    Rectangle {
+        id: rightTangent
+        color: handle.color
+        x: handle.width/2
+        y: handle.height/2
+        visible: rightHandle.visible
+        width: Qt.vector2d(rightHandle.x, rightHandle.y).length()
+        height: 1
+        transform: Rotation {
+            angle: Math.acos(Qt.vector2d(rightHandle.x, rightHandle.y).normalized().dotProduct(Qt.vector2d(1,0))) * 180/Math.PI * ((rightHandle.y > 0) ? 1 : -1)
+        }
+    }
 
     Rectangle {
         id: rightHandle
@@ -310,7 +317,7 @@ Rectangle {
         }
 
         MouseArea {
-			property bool dragging: false;
+            property bool dragging: false;
             anchors.fill: parent
             drag.target: rightHandle
             drag.threshold: 0
@@ -319,34 +326,34 @@ Rectangle {
                 viewTransform.xScale*(nextPoint.pos.x - point.pos.x) : Infinity
             onPositionChanged: {
                 if (drag.active) {
-					if(!dragging)
-					{
-						dragging = true;
-						beginUndoFrame();
-					}
+                    if(!dragging)
+                    {
+                        dragging = true;
+                        beginUndoFrame();
+                    }
                     // -- Move the tangent
                     if (!leftHandle.children[1].drag.active) {
-						handle.point.cp2.x = rightHandle.x / viewTransform.xScale;
+                        handle.point.cp2.x = rightHandle.x / viewTransform.xScale;
                         handle.point.cp2.y = rightHandle.y / viewTransform.yScale;
                     }
 
                     // -- Force the opposite tangent to the inverse position
                     if (!(mouse.modifiers & Qt.ControlModifier) && prevPoint) {
-						handle.point.cp1.x = -handle.point.cp2.x;
+                        handle.point.cp1.x = -handle.point.cp2.x;
                         handle.point.cp1.y = -handle.point.cp2.y;
-						constrainHandles();
+                        constrainHandles();
                     }
 
                     handle.parent.requestPaint();
                 }
             }
-			onReleased: {
-				if(dragging)
-				{
-					endUndoFrame();
-					dragging = false;
-				}
-			}
+            onReleased: {
+                if(dragging)
+                {
+                    endUndoFrame();
+                    dragging = false;
+                }
+            }
         }
     }
 }

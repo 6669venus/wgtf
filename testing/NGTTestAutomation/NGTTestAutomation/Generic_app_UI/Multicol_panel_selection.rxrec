@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="8603dc29-f13a-4f49-aef7-a3b4222db340"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		Multicol_panel_selection
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="Multicol_panel_selection"
+	namespace="NGTTestAutomation.Generic_app_UI"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="4cea82ec-de69-41ed-b3fa-0f8fe4e3a525"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="0"
+		sy="0"
+		loc="Center">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="7d74c732-a154-4465-9030-61e46892a63e">
+				<path>
+					/form[@name='MainWindow']/?/?/tabpage[@title~'^MultiColumn\ List\ Test\ -\ a']
+				</path>
+			</info>
+		</mouseitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="..\NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		Multicol_panel_selection.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

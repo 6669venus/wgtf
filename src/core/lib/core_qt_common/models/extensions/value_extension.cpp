@@ -84,8 +84,7 @@ QVariant ValueExtension::data( const QModelIndex &index, int role ) const
 		roleId == UrlDialogModalityRole::roleId_ ||
 		roleId == IsReadOnlyRole::roleId_)
 	{
-		return QtHelpers::toQVariant( 
-			item->getData( column, roleId ) );
+		return QtHelpers::toQVariant( item->getData( column, roleId ), const_cast<QAbstractItemModel*>(index.model()));
 	}
 	return QVariant( QVariant::Invalid );
 }
@@ -109,7 +108,7 @@ bool ValueExtension::setData( const QModelIndex &index, const QVariant &value, i
 	if (roleId == ValueRole::roleId_ ||
 		roleId == DefinitionRole::roleId_)	{
 		auto oldValue = QtHelpers::toQVariant(
-			item->getData( column, roleId ) );
+			item->getData( column, roleId ), const_cast<QAbstractItemModel*>(index.model()));
 		if (value == oldValue)
 		{
 			return true;

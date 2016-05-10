@@ -33,6 +33,8 @@ SET( ALL_SRCS
 	i_env_system.hpp
 	env_system.hpp
 	env_system.cpp
+	reflection_undo_redo_data.hpp
+	reflection_undo_redo_data.cpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 

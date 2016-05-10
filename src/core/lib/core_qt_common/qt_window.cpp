@@ -28,6 +28,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include "qt_global_settings.hpp"
 
 namespace
 {
@@ -57,6 +58,7 @@ QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
     , application_(nullptr)
     , isMaximizedInPreference_(true)
     , firstTimeShow_(true)
+    , loadingPreferences_( false )
 {
 	QUiLoader loader;
 
@@ -83,6 +85,7 @@ QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && m
     , application_(nullptr)
     , isMaximizedInPreference_(true)
     , firstTimeShow_(true)
+    , loadingPreferences_( false )
 {
     if (mainWindow_== nullptr)
     {
@@ -360,6 +363,13 @@ void QtWindow::init()
 		"QMainWindow::separator:vertical{background: palette(dark); width: 4px; border-left: 1px solid palette(midlight);}"
 		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-bottom: 1px solid palette(midlight);}"
 		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-top: 1px solid palette(midlight);}");
+    auto globalSettings = qtFramework_.qtGlobalSettings();
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::prePreferencesChanged,
+        this, &QtWindow::onPrePreferencesChanged );
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::postPreferencesChanged,
+        this, &QtWindow::onPostPreferencesChanged );
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::prePreferencesSaved,
+        this, &QtWindow::onPrePreferencesSaved );
 }
 
 bool QtWindow::eventFilter(QObject * obj, QEvent * event)
@@ -377,6 +387,10 @@ bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 
 void QtWindow::savePreference()
 {
+    if(!isReady())
+    {
+        return;
+    }
 	auto preferences = qtFramework_.getPreferences();
 	if (preferences == nullptr)
 	{
@@ -405,8 +419,6 @@ void QtWindow::savePreference()
 
 bool QtWindow::loadPreference()
 {
-	
-
 	//check the preference data first
 	do 
 	{
@@ -501,4 +513,35 @@ bool QtWindow::loadPreference()
 	} while (false);
 	NGT_DEBUG_MSG( "Load Window Preferences Failed.\n" );
 	return false;
+}
+
+
+void QtWindow::onPrePreferencesChanged()
+{
+    savePreference();
+}
+
+void QtWindow::onPostPreferencesChanged()
+{
+    loadingPreferences_ = true;
+    loadPreference();
+    for(auto& region : regions_)
+    {
+        QtDockRegion* iRegion = dynamic_cast<QtDockRegion*>(region.get());
+        if(iRegion != nullptr)
+        {
+            iRegion->restoreDockWidgets();
+        }
+    }
+    loadingPreferences_ = false;
+}
+
+void QtWindow::onPrePreferencesSaved()
+{
+   savePreference();
+}
+
+bool QtWindow::isLoadingPreferences() const
+{
+    return loadingPreferences_;
 }

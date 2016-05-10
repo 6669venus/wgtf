@@ -75,6 +75,8 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const IDefin
 	for ( const auto& property : definition->allProperties() )
 	{
 		assert(property != nullptr);
+		if(property->isMethod() && !property->isValue())
+			continue;
 		auto inPlace = findFirstMetaData< MetaInPlaceObj >(*property, definitionManager);
 		if ( inPlace != nullptr )
 		{

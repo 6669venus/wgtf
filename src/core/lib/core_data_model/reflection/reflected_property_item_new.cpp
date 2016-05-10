@@ -1011,7 +1011,7 @@ bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, 
 		bool isCollection = value.tryCast( collection );
 		assert( isCollection );
 
-		for (auto i = 0; i < count; ++i)
+		for (size_t i = 0; i < count; ++i)
 		{
 			impl_->children_.emplace( impl_->children_.begin() + index, nullptr );
 		}

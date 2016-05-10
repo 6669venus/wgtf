@@ -17,7 +17,7 @@
 #include "metadata/i_connection.mpp"
 #include "metadata/i_node.mpp"
 
-#include "src\connection_curve.hpp"
+#include "src/connection_curve.hpp"
 
 NodeEditorPlugin::NodeEditorPlugin(IComponentContext& context)
 {}

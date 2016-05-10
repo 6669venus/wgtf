@@ -7,7 +7,7 @@ import re
 import subprocess
 
 # Default branch root from this script
-ROOT_DIR = os.path.normpath(os.path.join(os.getcwd(), '../../..'))
+ROOT_DIR = os.path.normpath(os.path.join(os.getcwd(), '../../../..'))
 
 # Default source root directory
 SOURCE_ROOT_DIR = os.path.join(ROOT_DIR, 'programming', 'bigworld')

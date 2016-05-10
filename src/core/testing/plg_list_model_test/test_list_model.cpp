@@ -41,6 +41,198 @@ struct StringList2
 };
 
 
+struct OldTestListModel::Implementation
+{
+	Implementation( OldTestListModel& self, bool shortList );
+	~Implementation();
+
+	char* copyString( const std::string& s ) const;
+	void generateData();
+	void clear();
+	int columnCount();
+
+	OldTestListModel& self_;
+	std::vector<OldTestListItem*> items_;
+	StringList2 dataSource_;
+	bool shortList_;
+	std::vector<std::string> headerText_;
+	std::vector<std::string> footerText_;
+};
+
+
+OldTestListModel::Implementation::Implementation( OldTestListModel& self, bool shortList )
+	: self_( self )
+	, shortList_( shortList )
+{
+	generateData();
+
+	headerText_.push_back( "Random Words" );
+
+	if (columnCount() == 2)
+	{
+		headerText_.push_back( "Second Column" );
+		footerText_.push_back( "The" );
+		footerText_.push_back( "End" );
+	}
+	else
+	{
+		footerText_.push_back( "The End" );
+	}
+}
+
+
+OldTestListModel::Implementation::~Implementation()
+{
+	clear();
+}
+
+
+char* OldTestListModel::Implementation::copyString(
+	const std::string& s ) const
+{
+	char* itemData = new char[s.length() + 1];
+	memcpy( itemData, s.data(), s.length() );
+	itemData[s.length()] = 0;
+	return itemData;
+}
+
+
+void OldTestListModel::Implementation::generateData()
+{
+	std::string dataString = dataSource_.next();
+	std::random_device randomDevice;
+	std::default_random_engine randomEngine( randomDevice() );
+	std::uniform_int_distribution<size_t> uniformDistribution( 0, 999999 );
+	size_t max = shortList_ ? 1000 : 2000;
+
+	while (!dataString.empty())
+	{
+		if (!shortList_ && items_.size() % 3 == 0)
+		{
+			size_t colour = uniformDistribution( randomEngine );
+			items_.push_back( new OldTestListItem(
+				dataString.c_str(), colour ) );
+		}
+		else
+		{
+			items_.push_back( new OldTestListItem(
+				dataString.c_str(), dataString.c_str() ) );
+		}
+		
+		dataString = dataSource_.next();
+
+		if (--max == 0)
+		{
+			break;
+		}
+	}
+}
+
+
+void OldTestListModel::Implementation::clear()
+{
+	for (auto& item: items_)
+	{
+		delete item;
+	}
+
+	items_.clear();
+}
+
+
+int OldTestListModel::Implementation::columnCount()
+{
+	return shortList_ ? 1 : 2;
+}
+
+
+OldTestListModel::OldTestListModel( bool shortList )
+	: impl_( new Implementation( *this, shortList ) )
+{
+}
+
+
+OldTestListModel::OldTestListModel( const OldTestListModel& rhs )
+	: impl_( new Implementation( *this, rhs.impl_->shortList_ ) )
+{
+}
+
+
+OldTestListModel::~OldTestListModel()
+{
+}
+
+
+OldTestListModel& OldTestListModel::operator=( const OldTestListModel& rhs )
+{
+	if (this != &rhs)
+	{
+		impl_.reset( new Implementation( *this, rhs.impl_->shortList_ ) );
+	}
+
+	return *this;
+}
+
+
+IItem* OldTestListModel::item( size_t index ) const
+{
+	return impl_->items_.at( index );
+}
+
+
+size_t OldTestListModel::index( const IItem* item ) const
+{
+	auto& items = impl_->items_;
+	auto itr = std::find( items.begin(), items.end(), item );
+	return itr == items.end() ? -1 : itr - items.begin();
+}
+
+
+bool OldTestListModel::empty() const
+{
+	return impl_->items_.empty();
+}
+
+
+size_t OldTestListModel::size() const
+{
+	return impl_->items_.size();
+}
+
+
+int OldTestListModel::columnCount() const
+{
+	return impl_->columnCount();
+}
+
+
+Variant OldTestListModel::getData( int column, size_t roleId ) const
+{
+	if (column >= columnCount())
+	{
+		return Variant();
+	}
+
+	if (roleId == headerTextRole::roleId_)
+	{
+		return impl_->headerText_[column].c_str();
+	}
+	else if (roleId == footerTextRole::roleId_)
+	{
+		return impl_->footerText_[column].c_str();
+	}
+
+	return Variant();
+}
+
+
+bool OldTestListModel::setData( int column, size_t roleId, const Variant & data )
+{
+	return false;
+}
+
+
+/////////////////////////////////////////////////////////
 struct TestListModel::Implementation
 {
 	Implementation( TestListModel& self, bool shortList );
@@ -57,6 +249,8 @@ struct TestListModel::Implementation
 	bool shortList_;
 	std::vector<std::string> headerText_;
 	std::vector<std::string> footerText_;
+	//std::vector<TestListModel::DataCallback> preItemChangeHandlers;
+	//std::vector<TestListModel::DataCallback> postItemChangeHandlers;
 };
 
 
@@ -174,39 +368,7 @@ TestListModel& TestListModel::operator=( const TestListModel& rhs )
 }
 
 
-IItem* TestListModel::item( size_t index ) const
-{
-	return impl_->items_.at( index );
-}
-
-
-size_t TestListModel::index( const IItem* item ) const
-{
-	auto& items = impl_->items_;
-	auto itr = std::find( items.begin(), items.end(), item );
-	return itr == items.end() ? -1 : itr - items.begin();
-}
-
-
-bool TestListModel::empty() const
-{
-	return impl_->items_.empty();
-}
-
-
-size_t TestListModel::size() const
-{
-	return impl_->items_.size();
-}
-
-
-int TestListModel::columnCount() const
-{
-	return impl_->columnCount();
-}
-
-
-Variant TestListModel::getData( int column, size_t roleId ) const
+Variant TestListModel::getData( int row, int column, size_t roleId ) const
 {
 	if (column >= columnCount())
 	{
@@ -226,19 +388,45 @@ Variant TestListModel::getData( int column, size_t roleId ) const
 }
 
 
-bool TestListModel::setData( int column, size_t roleId, const Variant & data )
+bool TestListModel::setData( int row, int column, size_t roleId, const Variant & data )
 {
 	return false;
 }
 
 
-bool TestListModel::canClear() const
+AbstractItem * TestListModel::item( int row ) const
 {
-	return true;
+	return impl_->items_.at( size_t( row ) );
 }
 
 
-void TestListModel::clear()
+int TestListModel::index( const AbstractItem * item ) const
 {
-	return impl_->clear();
+	auto& items = impl_->items_;
+	auto itr = std::find( items.begin(), items.end(), item );
+	return itr == items.end() ? -1 : int( itr - items.begin() );
+}
+
+
+int TestListModel::rowCount() const
+{
+	return (int)impl_->items_.size();
+}
+
+
+int TestListModel::columnCount() const
+{
+	return impl_->columnCount();
+}
+
+
+Connection TestListModel::connectPreItemDataChanged( DataCallback callback )
+{
+	return Connection();
+}
+
+
+Connection TestListModel::connectPostItemDataChanged( DataCallback callback )
+{
+	return Connection();
 }

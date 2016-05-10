@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.2.3 )
 PROJECT( plg_python27_interface_test )
 
 INCLUDE( WGToolsCoreProject )
+INCLUDE( WGPython27Common )
 
 
 SET( PYTHON_SRCS
@@ -34,6 +35,8 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_reflection
 	core_unit_test
 )
+
+WG_DEPLOY_PYTHON( ${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/scripts scripts/${PROJECT_NAME} )
 
 BW_PRECOMPILED_HEADER( ${PROJECT_NAME} pch.hpp )
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

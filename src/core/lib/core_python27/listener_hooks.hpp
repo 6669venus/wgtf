@@ -18,54 +18,18 @@ namespace ReflectedPython
 
 
 /**
- *	Key compare less-than functor.
- *	Need to do a deep compare on PyScript::ScriptObject to prevent getting
- *	copies of the same object added to the map.
- */
-class ScriptObjectCompare
-{
-public:
-	bool operator()( const PyScript::ScriptObject & a,
-		const PyScript::ScriptObject & b ) const;
-};
-
-
-/**
- *	Structure for tracking the number of reflected Python objects that are using
- *	a given Python type.
- */
-struct HookInfo
-{
-	size_t hookCount_;
-	setattrofunc defaultHook_;
-};
-typedef std::map< PyScript::ScriptType, HookInfo, ScriptObjectCompare > HookLookup;
-
-
-/**
  *	Attach hooks for listening to setattr and delattr.
  *	So that the GUI can be notified when Python objects change.
  *	@param pythonObject attach hooks to this type of object.
  *		Note: that it will attach hooks to the *type* and not the *instance*.
- *	@param hookLookup map to keep track of how many instances are hooked for
- *		a given type.
  */
-void attachListenerHooks( PyScript::ScriptObject & pythonObject,
-	HookLookup & hookLookup );
+void attachListenerHooks( PyScript::ScriptObject & pythonObject );
 
 
 /**
  *	@see attachListenerHooks()
  */
-void detachListenerHooks( PyScript::ScriptObject & pythonObject,
-	HookLookup & hookLookup );
-
-
-/**
- *	Detach all listener hooks.
- *	@param hookLookup hooks to detach.
- */
-void cleanupListenerHooks( HookLookup & hookLookup );
+void detachListenerHooks( PyScript::ScriptObject & pythonObject );
 
 
 /**
@@ -93,5 +57,4 @@ private:
 // Needed to pass state to Python functions below
 class IComponentContext;
 extern IComponentContext * g_pHookContext;
-extern ReflectedPython::HookLookup * g_pHookLookup_;
-extern std::weak_ptr< ReflectedPython::HookListener > g_listener_;
+extern std::weak_ptr< ReflectedPython::HookListener > g_listener;

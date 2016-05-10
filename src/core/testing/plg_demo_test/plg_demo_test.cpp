@@ -1,5 +1,6 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
+#include "core_logging/logging.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 
 #include "core_ui_framework/i_ui_application.hpp"
@@ -68,23 +69,39 @@ DemoDoc::DemoDoc(const char* name, IEnvManager* envManager, IUIFramework* uiFram
 	, uiApplication_(uiApplication)
 {
 	envId_ = envManager_->addEnv( name );
+    envManager_->loadEnvState( envId_ );
 	envManager_->selectEnv( envId_ );
 
 	centralView_ = uiFramework->createView( "plg_demo_test/demo.qml", IUIFramework::ResourceType::Url, demo );
-	centralView_->registerListener( this );
-	uiApplication->addView( *centralView_ );
+	
+	if (centralView_ != nullptr)
+	{
+        centralView_->registerListener( this );
+		uiApplication->addView( *centralView_ );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
 }
 
 DemoDoc::~DemoDoc()
 {
-	uiApplication_->removeView( *centralView_ );
-	centralView_->deregisterListener( this );
-
+	if (centralView_ != nullptr)
+	{
+		uiApplication_->removeView( *centralView_ );
+		centralView_->deregisterListener( this );
+	}
+    envManager_->saveEnvState( envId_ );
 	envManager_->removeEnv( envId_ );
 }
 
 void DemoDoc::onFocusIn(IView* view)
 {
+    if(view != centralView_.get())
+    {
+        return;
+    }
 	envManager_->selectEnv( envId_ );
 }
 
@@ -152,19 +169,40 @@ public:
 			"plg_demo_test/demo_property_panel.qml", 
 			IUIFramework::ResourceType::Url, demoModel_ );
 
-		uiApplication->addView( *propertyView_ );
+		if (propertyView_ != nullptr)
+		{
+			uiApplication->addView( *propertyView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 		sceneBrowser_ = uiFramework->createView( 
 			"plg_demo_test/demo_list_panel.qml", 
 			IUIFramework::ResourceType::Url, demoModel_ );
 
-		uiApplication->addView( *sceneBrowser_ );
+		if (sceneBrowser_ != nullptr)
+		{
+			uiApplication->addView( *sceneBrowser_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 		viewport_ = uiFramework->createView(
 			"plg_demo_test/Framebuffer.qml",
 			IUIFramework::ResourceType::Url, demoModel_ );
 
-		uiApplication->addView( *viewport_ );
+		if (viewport_ != nullptr)
+		{
+			uiApplication->addView( *viewport_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 		createAction_ = uiFramework->createAction(
 			"New Object", 
@@ -182,9 +220,18 @@ public:
 		{
 			return false;
 		}
-		uiApplication->removeView( *propertyView_ );
-		uiApplication->removeView( *sceneBrowser_ );
-		uiApplication->removeView( *viewport_ );
+		if (propertyView_ != nullptr)
+		{
+			uiApplication->removeView( *propertyView_ );
+		}
+		if (sceneBrowser_ != nullptr)
+		{
+			uiApplication->removeView( *sceneBrowser_ );
+		}
+		if (viewport_ != nullptr)
+		{
+			uiApplication->removeView( *viewport_ );
+		}
 
 		propertyView_ = nullptr;
 		sceneBrowser_ = nullptr;

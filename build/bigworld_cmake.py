@@ -27,7 +27,7 @@ elif PLATFORM_MAC:
 	CMAKE_RUN_BAT = 'rerun_cmake.sh'
 	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
 
-DEFAULT_CONFIGS = [ 'Debug', 'Hybrid' ]
+DEFAULT_CONFIGS = [ 'Debug', 'Hybrid', 'Release' ]
 
 # Set up MSVC x86 environment with XP support, see
 # http://blogs.msdn.com/b/vcblog/archive/2012/10/08/windows-xp-targeting-with-c-in-visual-studio-2012.aspx
@@ -62,6 +62,12 @@ CMAKE_GENERATORS = dict(
 			dirsuffix = 'vc12_win64',
 			toolset = 'v120_xp',
 		),
+        dict(
+			label = 'Visual Studio 2015 Win64',
+			generator = 'Visual Studio 14 Win64',
+			dirsuffix = 'vc14_win64',
+			toolset = 'v140_xp',
+		),
 	],
 
 	Darwin = [
@@ -79,6 +85,15 @@ CMAKE_GENERATORS = dict(
 )
 
 CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ PLATFORM ]
+
+QT_VERSIONS = [
+	dict( label = 'Qt 5.3.1', version = '5.3.1' ),
+	dict( label = 'Qt 5.3.2', version = '5.3.2' ),
+	dict( label = 'Qt 5.4.2', version = '5.4.2' ),
+	dict( label = 'Qt 5.5.0', version = '5.5.0' ),
+	dict( label = 'Qt 5.5.1', version = '5.5.1' ),
+	dict( label = 'Qt 5.6.0 (default)', version = '5.6.0' ),
+]
 
 YES_NO_OPTION = [
 	dict( label = 'Yes', value = True ),
@@ -139,6 +154,14 @@ def generatorChoices():
 		generators.append( generator['dirsuffix'] )
 	generators.sort()
 	return generators
+
+
+def qtChoices():
+	qtVersions = []
+	for qtVersion in QT_VERSIONS:
+		qtVersions.append( qtVersion[ 'version' ] )
+	qtVersions.sort()
+	return qtVersions
 
 
 def chooseItem( prompt, items, deprecated = False, experimental = False, targets = None ):
@@ -221,14 +244,6 @@ def chooseMayaVersion():
 	return chooseItem( "Which Maya version you want to build with ?", MAYA_VERSIONS )['version']
 
 def chooseQtVersion():
-	QT_VERSIONS = [
-		dict( label = 'Qt 5.3.1', version = '5.3.1' ),
-		dict( label = 'Qt 5.3.2', version = '5.3.2' ),
-		dict( label = 'Qt 5.4.2', version = '5.4.2' ),
-		dict( label = 'Qt 5.5.0', version = '5.5.0' ),
-		dict( label = 'Qt 5.5.1', version = '5.5.1' ),
-		dict( label = 'Qt 5.6.0', version = '5.6.0' ),
-	]
 	return chooseItem( "Which Qt version you want to build with ?", QT_VERSIONS )['version']
 
 
@@ -385,6 +400,9 @@ def main():
 	parser.add_argument( '--generator', action='append',
 			choices=generatorChoices(),
 			help='use the specified generators' )
+	parser.add_argument( '--qt-version', type=str,
+			choices=qtChoices(),
+			help='use the specified Qt version' )
 	parser.add_argument( '--build', action='store_true',
 			help='build the generated targets' )
 	parser.add_argument( '--rebuild', action='store_true',
@@ -439,7 +457,10 @@ def main():
 	# write batch files
 	for generator in generators:
 		for target in targets:
-			generator[ 'qt' ] = chooseQtVersion()
+			if args.qt_version is None:
+				generator[ 'qt' ] = chooseQtVersion()
+			else:
+				generator[ 'qt' ] = args.qt_version
 			generator[ 'dirsuffix' ] += '_qt%s' % generator[ 'qt' ]
 			genBat = writeGenerateBat( target, generator, cmakeExe,
 					args.builddir, args.dry_run );

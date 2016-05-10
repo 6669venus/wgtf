@@ -1,3 +1,3 @@
-module plg_controls_test
+module WGControlsTest
 
-controls_test_panel 1.0 controls_test_panel.qml
+WGControlsTestPanel 1.0 WGControlsTestPanel.qml

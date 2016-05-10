@@ -134,19 +134,23 @@ struct WGContextMenu::Implementation
 	void setPath( const QString& path )
 	{
 		path_ = path.toUtf8().data();
+		emit self_.pathChanged();
+
 		destroyMenu();
 		createMenu();
 		prepareMenu();
 	}
 
 	QVariant getContextObject() const
-	{
-		return QtHelpers::toQVariant( contextObject_ );
+	{	
+		return QtHelpers::toQVariant(contextObject_, const_cast<WGContextMenu*>(&this->self_));
 	}
 
 	void setContextObject( const QVariant& object )
 	{
 		contextObject_ = QtHelpers::toVariant( object );
+		emit self_.contextObjectChanged();
+
 		prepareMenu();
 	}
 

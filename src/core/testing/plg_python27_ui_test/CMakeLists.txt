@@ -2,11 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.2.3 )
 PROJECT( plg_python27_ui_test )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( WGPython27Project )
-
-IF( NOT PYTHON_FOUND )
-	RETURN()
-ENDIF()
+INCLUDE( WGPython27Common )
 
 FIND_PACKAGE( QT5 )
 
@@ -24,7 +20,7 @@ SET( QML_FILES
 	resources/Python27UITest/PythonObjectTestPanel.qml
 )
 SOURCE_GROUP( "QML" FILES ${QML_FILES} )
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/Python27UITest )
+BW_QT_ADD_QRC( Python27UITest resources/Python27UITest )
 BW_GLOB_RESOURCE_FILES()
 
 SET( ALL_SRCS
@@ -55,5 +51,7 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_ui_framework
 	Qt5::Core
 )
+
+WG_DEPLOY_PYTHON( ${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/scripts scripts/${PROJECT_NAME} )
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

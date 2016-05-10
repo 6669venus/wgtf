@@ -11,6 +11,7 @@ class QtPalette;
 class QtGlobalSettings;
 class QVariant;
 class QWidget;
+class QObject;
 class Variant;
 
 class IQtFramework : public Implements< IUIFramework >
@@ -25,7 +26,7 @@ public:
 	virtual bool registerResourceData( const unsigned char * qrc_struct, const unsigned char * qrc_name,
 		const unsigned char * qrc_data ) = 0;
 	virtual void deregisterTypeConverter( IQtTypeConverter & converter ) = 0;
-	virtual QVariant toQVariant( const Variant & variant ) const = 0;
+	virtual QVariant toQVariant( const Variant & variant, QObject* parent = nullptr ) const = 0;
 	virtual Variant toVariant( const QVariant & qVariant ) const = 0;
 
 	// TODO: Move into a ui adaption system

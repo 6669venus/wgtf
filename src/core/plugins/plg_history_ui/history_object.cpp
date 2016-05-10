@@ -9,9 +9,73 @@
 #include <cassert>
 
 
+struct CurrentIndexNotifier: public IValueChangeNotifier
+{
+	CurrentIndexNotifier( ICommandManager& commandManager )
+		: commandManager_( commandManager )
+	{
+	}
+
+	~CurrentIndexNotifier()
+	{
+		disconnect();
+	}
+
+	void connect()
+	{
+		using namespace std::placeholders;
+		callbacks_ += commandManager_.signalPreCommandIndexChanged.connect( std::bind(
+			&CurrentIndexNotifier::onPreCommandIndexChanged, this, _1 ) );
+		callbacks_ += commandManager_.signalPostCommandIndexChanged.connect( std::bind(
+			&CurrentIndexNotifier::onPostCommandIndexChanged, this, _1 ) );
+	}
+
+	void disconnect()
+	{
+		callbacks_.clear();
+	}
+
+	void onPreCommandIndexChanged( int index )
+	{
+		signalPreDataChanged();
+	}
+
+	void onPostCommandIndexChanged( int index )
+	{
+		signalPostDataChanged();
+	}
+
+	Variant variantValue() const override
+	{
+		return commandManager_.commandIndex();
+	}
+
+	bool variantValue( const Variant& data ) override
+	{
+		int value;
+
+		if (!data.tryCast<int>( value ))
+		{
+			return false;
+		}
+
+		if (value != commandManager_.commandIndex())
+		{
+			commandManager_.moveCommandIndex( value );
+		}
+
+		return true;
+	}
+
+	ICommandManager& commandManager_;
+	ConnectionHolder callbacks_;
+};
+
 //==============================================================================
 HistoryObject::HistoryObject()
 	: commandSystem_( nullptr )
+    , clearButtonVisible(true)
+    , makeMacroButtonVisible(true)
 {
 }
 
@@ -21,6 +85,7 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 	commandSystem_ = &commandSystem;
 	defManager_ = &defManager;
 
+	currentIndexNotifier_.reset( new CurrentIndexNotifier( *commandSystem_ ) );
 	pushHistoryItems( commandSystem_->getHistory() );
 
 	using namespace std::placeholders;
@@ -41,11 +106,19 @@ void HistoryObject::bindCommandHistoryCallbacks()
 		&HistoryObject::onCommandHistoryPreReset, this, _1 ) );
 	historyCallbacks_ += commandSystem_->signalHistoryPostReset.connect( std::bind(
 		&HistoryObject::onCommandHistoryPostReset, this, _1 ) );
+
+	CurrentIndexNotifier* cin =
+		static_cast<CurrentIndexNotifier*>( currentIndexNotifier_.get() );
+	cin->connect();
 }
 
 //==============================================================================
 void HistoryObject::unbindCommandHistoryCallbacks()
 {
+	CurrentIndexNotifier* cin =
+		static_cast<CurrentIndexNotifier*>( currentIndexNotifier_.get() );
+	cin->disconnect();
+
 	historyCallbacks_.clear();
 }
 
@@ -80,7 +153,7 @@ const IListModel * HistoryObject::getHistory() const
 //==============================================================================
 const IValueChangeNotifier * HistoryObject::currentIndexSource() const
 {
-	return &commandSystem_->currentIndex();
+	return currentIndexNotifier_.get();
 }
 
 //==============================================================================
@@ -112,6 +185,26 @@ ObjectHandle HistoryObject::createMacro() const
 	}
 	commandSystem_->createMacro( commandList );
 	return nullptr;
+}
+
+void HistoryObject::setClearButtonVisible(const bool& isVisible)
+{
+    clearButtonVisible = isVisible;
+}
+
+bool HistoryObject::isClearButtonVisible() const
+{
+    return clearButtonVisible;
+}
+
+void HistoryObject::setMakeMacroButtonVisible(const bool& isVisible)
+{
+    makeMacroButtonVisible = isVisible;
+}
+
+bool HistoryObject::isMakeMacroButtonVisible() const
+{
+    return makeMacroButtonVisible;
 }
 
 //==============================================================================

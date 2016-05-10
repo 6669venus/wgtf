@@ -8,6 +8,8 @@
 #include "core_data_model/variant_list.hpp"
 #include "core_command_system/i_command_manager.hpp"
 
+#include <memory>
+
 class IDefinitionManager;
 class IValueChangeNotifier;
 
@@ -27,6 +29,12 @@ public:
 	const ISelectionHandler * selectionHandlerSource() const;
 	ObjectHandle createMacro() const;
 
+    void setClearButtonVisible(const bool& isVisible);
+    bool isClearButtonVisible() const;
+
+    void setMakeMacroButtonVisible(const bool& isVisible);
+    bool isMakeMacroButtonVisible() const;
+
 private:
 	void pushHistoryItems( const VariantList& history );
 	void bindCommandHistoryCallbacks();
@@ -39,7 +47,6 @@ private:
 
 	void onPostHistoryItemsRemoved( size_t index, size_t count );
 
-
 	ICommandManager* commandSystem_;
 	IDefinitionManager* defManager_;
 	// TODO: http://jira.bigworldtech.com/browse/NGT-849
@@ -48,6 +55,10 @@ private:
 	VariantList historyItems_;
 	Connection postHistoryItemsRemoved_;
 	ConnectionHolder historyCallbacks_;
+	std::unique_ptr<IValueChangeNotifier> currentIndexNotifier_;
+
+    bool clearButtonVisible;
+    bool makeMacroButtonVisible;
 };
 
 

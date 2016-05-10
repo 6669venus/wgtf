@@ -125,7 +125,6 @@ public:
 	typedef void ElementRangeCallbackSignature(
 		const CollectionIteratorImplPtr& pos,
 		size_t count );
-	typedef void NotificationCallbackSignature();
 	typedef void ElementPreChangeCallbackSignature(
 		const CollectionIteratorImplPtr& pos,
 		const Variant& newValue );
@@ -134,7 +133,6 @@ public:
 		const Variant& oldValue );
 
 	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
-	typedef std::function< NotificationCallbackSignature > NotificationCallback;
 	typedef std::function< ElementPreChangeCallbackSignature > ElementPreChangeCallback;
 	typedef std::function< ElementPostChangedCallbackSignature > ElementPostChangedCallback;
 
@@ -187,7 +185,7 @@ public:
 		return Connection();
 	}
 
-	virtual Connection connectPostErased( NotificationCallback callback )
+	virtual Connection connectPostErased( ElementRangeCallback callback)
 	{
 		return Connection();
 	}
@@ -500,7 +498,6 @@ public:
 	typedef void ElementRangeCallbackSignature(
 		const Iterator& pos,
 		size_t count );
-	typedef void NotificationCallbackSignature();
 	typedef void ElementPreChangeCallbackSignature(
 		const Iterator& pos,
 		const Variant& newValue );
@@ -509,7 +506,6 @@ public:
 		const Variant& oldValue );
 
 	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
-	typedef std::function< NotificationCallbackSignature > NotificationCallback;
 	typedef std::function< ElementPreChangeCallbackSignature > ElementPreChangeCallback;
 	typedef std::function< ElementPostChangedCallbackSignature > ElementPostChangedCallback;
 
@@ -711,7 +707,7 @@ public:
 	Connection connectPreInsert( ElementRangeCallback callback );
 	Connection connectPostInserted( ElementRangeCallback callback );
 	Connection connectPreErase( ElementRangeCallback callback );
-	Connection connectPostErased( NotificationCallback callback );
+	Connection connectPostErased( ElementRangeCallback callback);
 	Connection connectPreChange( ElementPreChangeCallback callback );
 	Connection connectPostChanged( ElementPostChangedCallback callback );
 

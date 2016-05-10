@@ -1,14 +1,12 @@
 #include "tree_extension.hpp"
-#include "selection_extension.hpp"
 #include "core_qt_common/models/adapters/child_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
-#include "core_data_model/i_item.hpp"
 #include "core_variant/variant.hpp"
-#include "core_logging/logging.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
-#include "core_ui_framework/i_preferences.hpp"
-#include "core_reflection/property_accessor.hpp"
-#include <QSettings>
+
+ITEMROLE( childModel )
+ITEMROLE( hasChildren )
+ITEMROLE( expanded )
 
 struct TreeExtension::Implementation
 {
@@ -17,185 +15,50 @@ struct TreeExtension::Implementation
 	void expand( const QModelIndex& index );
 	void collapse( const QModelIndex& index );
 	bool expanded( const QModelIndex& index ) const;
-	bool getIndexPath( const QModelIndex& index, std::string & path ) const;
-	void saveStates( const char * id );
-	void loadStates( const char * id );
 
 	TreeExtension& self_;
 	std::vector< IndexedAdapter< ChildListAdapter > > childModels_;
 	std::vector< std::unique_ptr< ChildListAdapter > > redundantChildModels_;
-	std::vector< std::string > expandedList_;
-	std::vector< IItem* >	memoryExpandedList_;
-
-	QModelIndex currentIndex_;
-	SelectionExtension * selectionExtension_;
-	bool blockSelection_;
+	std::vector< QPersistentModelIndex > expanded_;
 };
 
 TreeExtension::Implementation::Implementation( TreeExtension & self )
 	: self_( self )
-	, selectionExtension_( nullptr )
-	, blockSelection_( false )
 {
 
 }
 
 TreeExtension::Implementation::~Implementation()
 {
-	memoryExpandedList_.clear();
-}
-
-bool TreeExtension::Implementation::getIndexPath( const QModelIndex& index, std::string & path ) const
-{
-	auto item = reinterpret_cast< IItem * >( index.internalPointer() );
-	assert(item != nullptr);
-	Variant value = item->getData( 0, IndexPathRole::roleId_ );
-	bool isOk = value.tryCast( path );
-	if (!isOk || value.isVoid())
-	{
-		return false;
-	}
-	return true;
 }
 
 void TreeExtension::Implementation::expand( const QModelIndex& index )
 {
-	std::string indexPath("");
-	bool hasPath = getIndexPath( index, indexPath );
-	if (hasPath)
+	if (!expanded( index ))
 	{
-		if (!expanded( index ))
-		{
-			expandedList_.push_back( indexPath );
-		}
+		expanded_.push_back( index );
 	}
-	else
-	{
-		if (!expanded( index ))
-		{
-			auto item = reinterpret_cast< IItem * >( index.internalPointer() );
-			assert(item != nullptr);
-			memoryExpandedList_.push_back( item );
-		}
-	}
-	
 }
 
 
 void TreeExtension::Implementation::collapse( const QModelIndex& index )
 {
-	std::string path("");
-	bool hasPath = getIndexPath( index, path );
-	if (hasPath)
+	auto it = std::find( expanded_.begin(), expanded_.end(), index );
+	if (it != expanded_.end())
 	{
-		auto it = std::find( expandedList_.begin(), expandedList_.end(), path );
-		if (it != expandedList_.end())
-		{
-			std::swap( 
-				expandedList_[ it - expandedList_.begin() ], 
-				expandedList_[ expandedList_.size() - 1 ] );
-			expandedList_.pop_back();
-		}
-	}
-	else
-	{
-		auto item = reinterpret_cast< IItem * >( index.internalPointer() );
-		assert(item != nullptr);
-		auto it = std::find( memoryExpandedList_.begin(), memoryExpandedList_.end(), item );
-		if (it != memoryExpandedList_.end())
-		{
-			std::swap( 
-				memoryExpandedList_[ it - memoryExpandedList_.begin() ], 
-				memoryExpandedList_[ memoryExpandedList_.size() - 1 ] );
-			memoryExpandedList_.pop_back();
-		}
+		std::swap( 
+			expanded_[ it - expanded_.begin() ], 
+			expanded_[ expanded_.size() - 1 ] );
+		expanded_.pop_back();
 	}
 }
 
 
 bool TreeExtension::Implementation::expanded( const QModelIndex& index ) const
 {
-	std::string indexPath("");
-	bool hasPath = getIndexPath( index, indexPath );
-	if (hasPath)
-	{
-		return 
-			std::find( expandedList_.cbegin(), expandedList_.cend(), indexPath ) != 
-			expandedList_.cend();
-	}
-	else
-	{
-		auto item = reinterpret_cast< IItem * >( index.internalPointer() );
-		assert(item != nullptr);
-		return 
-			std::find( memoryExpandedList_.cbegin(), memoryExpandedList_.cend(), item ) != 
-			memoryExpandedList_.cend();
-	}
-}
-
-void TreeExtension::Implementation::saveStates( const char * id )
-{
-	if (id == nullptr || id == std::string( "" ))
-	{
-		NGT_WARNING_MSG( 
-			"Tree preference won't save: %s\n", "Please provide unique objectName for WGTreeModel in qml" );
-		return;
-	}
-	auto preferences = self_.qtFramework_->getPreferences();
-	if (preferences == nullptr)
-	{
-		return;
-	}
-	auto & preference = preferences->getPreference( id );
-	auto count = expandedList_.size();
-	preference->set( "treeNodeCount", count );
-	if (count == 0)
-	{
-        if (!memoryExpandedList_.empty())
-        {
-            NGT_WARNING_MSG( 
-                "Tree preference won't save for WGTreeModel: %s, %s\n",  id,
-                "please provide an unique path string for IndexPathRole of IItem." );
-        }
-		return;
-	}
-	int i = 0;
-	for (auto item : expandedList_)
-	{
-		preference->set( std::to_string( i++ ).c_str(), item );
-	}
-}
-
-void TreeExtension::Implementation::loadStates( const char * id )
-{
-	if (id == nullptr || id == std::string( "" ))
-	{
-		return;
-	}
-	auto preferences = self_.qtFramework_->getPreferences();
-	if (preferences == nullptr)
-	{
-		return;
-	}
-	auto & preference = preferences->getPreference( id );
-
-	auto accessor = preference->findProperty( "treeNodeCount" );
-	if (!accessor.isValid())
-	{
-		return;
-	}
-
-	size_t count = 0;
-	bool isOk = preference->get( "treeNodeCount", count );
-	assert( isOk );
-
-	std::string value( "" );
-	for (size_t i = 0; i < count; ++i)
-	{
-		bool isOk = preference->get( std::to_string( i ).c_str(), value );
-		assert( isOk );
-		expandedList_.push_back( value );
-	}
+	return 
+		std::find( expanded_.cbegin(), expanded_.cend(), index ) != 
+		expanded_.cend();
 }
 
 
@@ -209,24 +72,13 @@ TreeExtension::~TreeExtension()
 {
 }
 
-void TreeExtension::saveStates( const char * modelUniqueName )
-{
-	impl_->saveStates( modelUniqueName );
-}
-
-void TreeExtension::loadStates( const char * modelUniqueName )
-{
-	impl_->loadStates( modelUniqueName );
-}
-
 
 QHash< int, QByteArray > TreeExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	this->registerRole( ChildModelRole::roleName_, roleNames );
-	this->registerRole( HasChildrenRole::roleName_, roleNames );
-	this->registerRole( ExpandedRole::roleName_, roleNames );
-	this->registerRole( ParentIndexRole::roleName_, roleNames );
+	this->registerRole( ItemRole::childModelName, roleNames );
+	this->registerRole( ItemRole::hasChildrenName, roleNames );
+	this->registerRole( ItemRole::expandedName, roleNames );
 	return roleNames;
 }
 
@@ -242,7 +94,7 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 		return QVariant( QVariant::Invalid );
 	}
 
-	if (roleId == ChildModelRole::roleId_)
+	if (roleId == ItemRole::childModelId)
 	{
 		if (!model->hasChildren(index) ||
 			!impl_->expanded( index ))
@@ -263,18 +115,13 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 			return QVariant::fromValue< QAbstractItemModel* >( pChildModel );
 		}
 	}
-	else if (roleId == HasChildrenRole::roleId_)
+	else if (roleId == ItemRole::hasChildrenId)
 	{
 		return model->hasChildren( index );
 	}
-	else if (roleId == ExpandedRole::roleId_)
+	else if (roleId == ItemRole::expandedId)
 	{
 		return impl_->expanded( index );
-	}
-	else if (roleId == ParentIndexRole::roleId_)
-	{
-		QModelIndex parentIndex = model->parent( index );
-		return parentIndex;
 	}
 
 	return QVariant( QVariant::Invalid );
@@ -293,7 +140,7 @@ bool TreeExtension::setData(
 		return false;
 	}
 
-	if (roleId == ExpandedRole::roleId_)
+	if (roleId == ItemRole::expandedId)
 	{
 		// Change the data
 		auto expand = value.toBool();
@@ -306,10 +153,6 @@ bool TreeExtension::setData(
 
 		// Emit the data change
 		QVector< int > roles;
-		roles.append( role );
-		// The child model role is dependent on the expanded role
-		auto res = this->encodeRole( ChildModelRole::roleId_, role );
-		assert( res );
 		roles.append( role );
 		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 
@@ -340,10 +183,10 @@ void TreeExtension::onLayoutChanged(
 
 	QVector< int > roles;
 	int role;
-	auto res = this->encodeRole( ChildModelRole::roleId_, role );
+	auto res = this->encodeRole( ItemRole::childModelId, role );
 	assert( res );
 	roles.append( role );
-	res = this->encodeRole( HasChildrenRole::roleId_, role );
+	res = this->encodeRole( ItemRole::hasChildrenId, role );
 	assert( res );
 	roles.append( role );
 	for (auto it = parents.begin(); it != parents.end(); ++it)
@@ -371,229 +214,135 @@ void TreeExtension::onRowsRemoved(
 }
 
 
-/// Move to previous index
-bool TreeExtension::moveUp()
+QItemSelection TreeExtension::itemSelection( const QModelIndex & first, const QModelIndex & last ) const
 {
-	auto model = impl_->currentIndex_.model();
-	assert( model != nullptr );
-
-	int prevRow = impl_->currentIndex_.row() - 1;
-
-	if (0 <= prevRow)
+	if (!first.isValid() && !last.isValid())
 	{
-		QModelIndex prevIndex = impl_->currentIndex_.sibling( prevRow, 0 );
-		int prevIndexsBottomRow = 0;
-
-		do {
-			// Previous item's bottom row
-			prevIndexsBottomRow = model->rowCount( prevIndex ) - 1;
-
-			impl_->currentIndex_ = prevIndex;
-
-			if (model->hasChildren( impl_->currentIndex_ ))
-			{
-				// Keep search in child tree if the bottom item has child tree and expanded
-				prevIndexsBottomRow = model->rowCount( impl_->currentIndex_ ) - 1;
-
-				prevIndex = impl_->currentIndex_.child( prevIndexsBottomRow, 0 );
-			}
-		} while (model->hasChildren( impl_->currentIndex_ ) && impl_->expanded( impl_->currentIndex_ ));
-
-		return handleCurrentIndexChanged();
+		return QItemSelection();
 	}
-	else
+	if (!first.isValid() && last.isValid())
 	{
-		// We are the first child, move up to the parent
-		QModelIndex parent = impl_->currentIndex_.parent();
+		return QItemSelection( last, last );
+	}
+	if (first.isValid() && !last.isValid())
+	{
+		return QItemSelection( first, first );
+	}
 
-		if (parent.isValid())
+	auto begin = first;
+	auto end = last;
+
+	auto parent = QModelIndex();
+	{
+		// Check if end is a descendant of begin
+		auto endTmp = end;
+		while (endTmp.isValid())
 		{
-			// Update the current index if the parent is valid
-			impl_->currentIndex_ = parent;
-			return handleCurrentIndexChanged();
-		}
-	}
-
-	return false;
-}
-
-
-/// Move to next index
-bool TreeExtension::moveDown()
-{
-	auto model = impl_->currentIndex_.model();
-	assert( model != nullptr );
-
-	if (impl_->expanded( impl_->currentIndex_ ))
-	{
-		// Move to the first child item when the current item is expanded
-		impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
-		return handleCurrentIndexChanged();
-	}
-	else
-	{
-		QModelIndex parent = impl_->currentIndex_.parent();
-
-		int nextRow = impl_->currentIndex_.row() + 1;
-		while (parent.isValid())
-		{
-			if (nextRow < model->rowCount( parent ))
+			if (begin == endTmp)
 			{
-				// Update the current index if the next item is available
-				impl_->currentIndex_ = parent.child( nextRow, 0 );
-				return handleCurrentIndexChanged();
+				parent = begin;
 				break;
 			}
-			else
+			endTmp = endTmp.parent();
+		}
+	}
+
+	if (!parent.isValid())
+	{
+		// Check if begin is a descendant of end
+		auto beginTmp = begin;
+		while (beginTmp.isValid())
+		{
+			if (beginTmp == end)
 			{
-				// Reached the bottom, keep searching the parent
-				nextRow = parent.row() + 1;
-				if (!parent.parent().isValid())
+				std::swap(begin, end);
+				parent = begin;
+				break;
+			}
+			beginTmp = beginTmp.parent();
+		}
+	}
+
+	if (!parent.isValid())
+	{
+		// Check if begin comes before end or vice versa
+		auto beginTmp = begin;
+		while (beginTmp.isValid())
+		{
+			auto beginParent = beginTmp.parent();
+			auto endTmp = end;
+			while (endTmp.isValid())
+			{
+				auto endParent = endTmp.parent();
+				if (beginParent == endParent)
 				{
+					if (beginTmp.row() > endTmp.row())
+					{
+						std::swap(begin, end);
+					}
+					parent = beginParent;
 					break;
 				}
-				parent = parent.parent();
+				endTmp = endParent;
 			}
+			if (parent.isValid())
+			{
+				break;
+			}
+			beginTmp = beginParent;
+		}
+	}
+
+	// Create an item selection from begin to end
+	QItemSelection itemSelection;
+
+	auto it = begin;
+	while (true)
+	{
+		itemSelection.select(it, it);
+
+		if (it == end)
+		{
+			break;
 		}
 
-		parent = parent.isValid() ? parent : impl_->currentIndex_;
-		if (nextRow < model->rowCount( parent ))
+		// Move next
+		do
 		{
-			QModelIndex sibling = parent.sibling( nextRow, impl_->currentIndex_.column() );
+			if (impl_->expanded(it) &&
+				it.model()->hasChildren( it ))
+			{
+				auto child = it.child(0, 0);
+				if (child.isValid())
+				{
+					it = child;
+					break;
+				}
+			}
+			auto sibling = QModelIndex();
+			while (it.isValid())
+			{
+				auto parent = it.parent();
+				auto row = it.row() + 1;
+				if (it.model()->rowCount( parent ) > row)
+				{
+					sibling = it.sibling(row, 0);
+					if (sibling.isValid())
+					{
+						break;
+					}
+				}
+				it = parent;
+			}
 			if (sibling.isValid())
 			{
-				impl_->currentIndex_ = sibling;
-				return handleCurrentIndexChanged();
+				it = sibling;
+				break;
 			}
-		}
+			assert( false );
+		} while (false);
+		//
 	}
-
-	return false;
-}
-
-
-/// Collapse the current item if it is collapsible or move to the parent
-bool TreeExtension::moveLeft()
-{
-	auto model = impl_->currentIndex_.model();
-	assert( model != nullptr );
-
-	// Move up to the parent if there are no children or not expanded
-	if (!model->hasChildren( impl_->currentIndex_ ) || !impl_->expanded( impl_->currentIndex_ ))
-	{
-		// Move up to the parent
-		QModelIndex parent = impl_->currentIndex_.parent();
-
-		if (parent.isValid())
-		{
-			// Update the current index if the parent is valid
-			impl_->currentIndex_ = parent;
-			return handleCurrentIndexChanged();
-		}
-	}
-	else
-	{
-		// Collapse the current item
-		int expandedRole = -1;
-		this->encodeRole( ExpandedRole::roleId_, expandedRole );
-
-		setData( impl_->currentIndex_, QVariant( false ), expandedRole );
-	}
-
-	return false;
-}
-
-
-/// Expand the current item if it is expandable or move to the first child
-bool TreeExtension::moveRight()
-{
-	auto model = impl_->currentIndex_.model();
-	assert( model != nullptr );
-
-	// Make sure the current item has children
-	if (model->hasChildren( impl_->currentIndex_ ) )
-	{
-		if (impl_->expanded( impl_->currentIndex_ ))
-		{
-			// Select the first child if the current item is expanded
-			impl_->currentIndex_ = impl_->currentIndex_.child( 0, 0 );
-			return handleCurrentIndexChanged();
-		}
-		else
-		{
-			// Expand the current item
-			int expandedRole = -1;
-			this->encodeRole( ExpandedRole::roleId_, expandedRole );
-
-			setData( impl_->currentIndex_, QVariant( true ), expandedRole );
-		}
-	}
-
-	return false;
-}
-
-
-/// Select the current item by manipulating the SelectionExtension (where applicable)
-void TreeExtension::selectItem()
-{
-	if (impl_->selectionExtension_ == nullptr)
-	{
-		return;
-	}
-
-	impl_->selectionExtension_->setSelectedIndex( getCurrentIndex() );
-	impl_->selectionExtension_->selectionChanged();
-}
-
-
-bool TreeExtension::handleCurrentIndexChanged()
-{
-	if (impl_->selectionExtension_ != nullptr)
-	{
-		impl_->selectionExtension_->setSelectedIndex( getCurrentIndex() );
-	}
-
-	emit currentIndexChanged();
-	return true;
-}
-
-
-QVariant TreeExtension::getCurrentIndex() const
-{
-	return QVariant::fromValue( impl_->currentIndex_ );
-}
-
-
-void TreeExtension::setCurrentIndex( const QVariant& index )
-{
-	QModelIndex idx = index.toModelIndex();
-	impl_->currentIndex_ = idx;
-
-	emit currentIndexChanged();
-}
-
-
-bool TreeExtension::getBlockSelection() const
-{
-	return impl_->blockSelection_;
-}
-
-
-void TreeExtension::setBlockSelection( bool blockSelection )
-{
-	impl_->blockSelection_ = blockSelection;
-	emit blockSelectionChanged();
-}
-
-
-QObject * TreeExtension::getSelectionExtension() const
-{
-	return impl_->selectionExtension_;
-}
-
-
-void TreeExtension::setSelectionExtension( QObject * selectionExtension )
-{
-	impl_->selectionExtension_ = qobject_cast< SelectionExtension * >( selectionExtension );
-	emit selectionExtensionChanged();
+	
+	return itemSelection;
 }

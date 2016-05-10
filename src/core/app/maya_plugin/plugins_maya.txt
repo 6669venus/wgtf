@@ -9,7 +9,6 @@ plugins/plg_reflection_object_test
 plugins/plg_history_ui
 plugins/plg_macros_ui
 plugins/plg_ui_main_test
-plugins/plg_tree_expansion_status_test
 plugins/plg_list_model_test
 plugins/plg_tree_model_test
 plugins/plg_progress_manager

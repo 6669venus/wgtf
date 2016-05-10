@@ -52,7 +52,8 @@ Item {
                 cursorShape: Qt.PointingHandCursor
 
                 onClicked: {
-                    history.currentIndex = rowIndex;
+                    var modelIndex = history.model.index(rowIndex);
+                    history.rowDoubleClicked(mouse, modelIndex);
                 }
             }
         }

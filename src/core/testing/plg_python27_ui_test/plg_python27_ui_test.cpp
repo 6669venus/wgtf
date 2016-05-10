@@ -5,6 +5,7 @@
 
 #include "core_data_model/reflection/reflected_tree_model.hpp"
 #include "core_python_script/i_scripting_engine.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_variant/variant.hpp"
 
@@ -79,9 +80,14 @@ struct Python27TestUIPlugin
 		}
 		auto & scriptingEngine = (*pScriptingEngine);
 
-		auto module = scriptingEngine.appendPathAndImport(
-			L"..\\..\\..\\src\\core\\testing\\plg_python27_ui_test\\scripts",
-			"test_objects" );
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_ui_test/scripts";
+		const wchar_t * deployPath = L"./scripts/plg_python27_ui_test";
+		const char * moduleName = "test_objects";
+		const bool sourcePathSet = scriptingEngine.appendSourcePath( sourcePath );
+		assert( sourcePathSet );
+		const bool deployPathSet =  scriptingEngine.appendBinPath( deployPath );
+		assert( deployPathSet );
+		auto module = scriptingEngine.import( moduleName );
 		if (!module.isValid())
 		{
 			NGT_ERROR_MSG( "Could not load from scripts\n" );

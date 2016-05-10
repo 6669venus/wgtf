@@ -1,4 +1,5 @@
 #include "qt_action_manager.hpp"
+#include "core_logging/logging.hpp"
 #include "core_string_utils/string_utils.hpp"
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_action.hpp"
@@ -184,6 +185,49 @@ private:
 	QtActionManager & actionManager_;
 };
 
+
+/**
+ *	Sends Qt XML parsing errors to the NGT logging system.
+ */
+class QtActionErrorHandler : public QXmlErrorHandler
+{
+public:
+
+	virtual bool warning( const QXmlParseException & exception ) override
+	{
+		NGT_WARNING_MSG( "%d, %d: %s\n",
+			exception.lineNumber(),
+			exception.columnNumber(),
+			exception.message().toUtf8().constData() );
+		return true;
+	}
+
+	virtual bool error( const QXmlParseException & exception ) override
+	{
+		NGT_ERROR_MSG( "%d, %d: %s\n",
+			exception.lineNumber(),
+			exception.columnNumber(),
+			exception.message().toUtf8().constData() );
+		return true;
+	}
+
+	virtual bool fatalError( const QXmlParseException & exception ) override
+	{
+		NGT_ERROR_MSG( "%d, %d: %s\n",
+			exception.lineNumber(),
+			exception.columnNumber(),
+			exception.message().toUtf8().constData() );
+		assert( false && "Fatal error" );
+		return false;
+	}
+
+	virtual QString errorString() const override
+	{
+		return QString( "Error parsing XML" );
+	}
+};
+
+
 QtActionManager::QtActionManager()
 {
 
@@ -244,9 +288,15 @@ std::unique_ptr< IAction > QtActionManager::createAction(
 void QtActionManager::loadActionData( QIODevice & source )
 {
 	QXmlSimpleReader actions;
-	QtActionContentHandler handler( *this );
-	actions.setContentHandler( &handler );
-	actions.parse( QXmlInputSource( &source ) );
+	QtActionContentHandler contentHandler( *this );
+	actions.setContentHandler( &contentHandler );
+	QtActionErrorHandler errorHandler;
+	actions.setErrorHandler( &errorHandler );
+	const auto result = actions.parse( QXmlInputSource( &source ) );
+	if (!result)
+	{
+		NGT_ERROR_MSG( "Failed to parse actions\n" );
+	}
 }
 
 bool QtActionManager::registerActionData( const char * id, 

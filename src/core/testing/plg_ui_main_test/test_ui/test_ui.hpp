@@ -5,6 +5,7 @@
 #include "core_dependency_system/depends.hpp"
 #include "core_ui_framework/i_view.hpp"
 
+class AbstractTreeModel;
 class IAction;
 class IUIApplication;
 class IUIFramework;
@@ -65,6 +66,8 @@ private:
 	void createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx );
 	void removeViews( size_t idx );
 
+	IComponentContext & context_;
+
 	IUIApplication * app_;
 	IUIFramework* fw_;
 
@@ -73,6 +76,9 @@ private:
 
 	typedef std::vector< std::pair< IDataSource*, int > > DataSrcEnvPairs;
 	DataSrcEnvPairs dataSrcEnvPairs_;
+
+	typedef std::vector< std::unique_ptr<AbstractTreeModel> > TestModels;
+	TestModels test1Models_;
 
 	typedef std::vector< std::pair< std::unique_ptr<IView>, int > > TestViews;
 	TestViews test1Views_;

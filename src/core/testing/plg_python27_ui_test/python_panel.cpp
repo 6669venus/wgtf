@@ -1,4 +1,5 @@
 #include "python_panel.hpp"
+#include "core_logging/logging.hpp"
 #include "core_variant/default_meta_type_manager.hpp"
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/i_definition_manager.hpp"
@@ -40,9 +41,16 @@ bool PythonPanel::addPanel()
 	}
 
 	pythonView_ = uiFramework->createView(
-		"plg_python27_ui_test/PythonObjectTestPanel.qml", IUIFramework::ResourceType::Url, contextObject_ );
+		"Python27UITest/PythonObjectTestPanel.qml", IUIFramework::ResourceType::Url, contextObject_ );
 
-	uiApplication->addView( *pythonView_ );
+	if (pythonView_ != nullptr)
+	{
+		uiApplication->addView( *pythonView_ );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
 	return true;
 }
 
@@ -57,6 +65,9 @@ void PythonPanel::removePanel()
 		return;
 	}
 
-	uiApplication->removeView( *pythonView_ );
+	if (pythonView_ != nullptr)
+	{
+		uiApplication->removeView( *pythonView_ );
+	}
 }
 

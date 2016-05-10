@@ -1,5 +1,6 @@
 #include "generic_plugin_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
+#include "core_generic_plugin/env_context.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
 #include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
@@ -20,50 +21,6 @@
 #ifdef _WIN32
 #include <shlwapi.h>
 #endif // _WIN32
-
-namespace
-{
-
-	void setContext( IComponentContext* context )
-	{
-		const char ENV_VAR_NAME[] = "PLUGIN_CONTEXT_PTR";
-		if (context)
-		{
-			auto ptr = reinterpret_cast< uintptr_t >( context );
-			char buf[33] = {};
-			size_t i = sizeof(buf) - 2;
-			while (true)
-			{
-				char digit = ptr % 16;
-
-				if (digit < 10)
-				{
-					buf[i] = '0' + digit;
-				}
-				else
-				{
-					buf[i] = 'a' + digit - 10;
-				}
-
-				ptr = ptr / 16;
-
-				if (ptr == 0 || i == 0)
-				{
-					break;
-				}
-
-				--i;
-			}
-
-			Environment::setValue( ENV_VAR_NAME, buf + i );
-		}
-		else
-		{
-			Environment::unsetValue( ENV_VAR_NAME );
-		}
-	}
-}
-
 
 //==============================================================================
 GenericPluginManager::GenericPluginManager(bool applyDebugPostfix_)
@@ -176,9 +133,9 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
 	auto processedFileName = processPluginFilename( filename );
 
-	setContext( contextManager_->createContext( filename ) );
+	setEnvContext( contextManager_->createContext( filename ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
-	setContext( nullptr );
+	setEnvContext( nullptr );
 
 	if (hPlugin != nullptr)
 	{

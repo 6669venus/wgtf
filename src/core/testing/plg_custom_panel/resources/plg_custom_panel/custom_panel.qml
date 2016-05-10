@@ -40,6 +40,8 @@ WGPanel {
         }
     }
 
+
+
     WGScrollPanel { // Entire panel
         id: baseLayout
         anchors.top: parent.top
@@ -321,7 +323,6 @@ WGPanel {
                                                     checked: true
                                                 }
                                             }
-
                                             WGExpandingRowLayout {
                                                 Layout.fillWidth: true
                                                 Rectangle {
@@ -1229,4 +1230,6 @@ WGPanel {
             }
         }
     }
+
+
 }

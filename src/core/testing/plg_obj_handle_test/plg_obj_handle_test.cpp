@@ -1,5 +1,7 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
+#include "core_logging/logging.hpp"
+
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/function_property.hpp"
@@ -158,8 +160,22 @@ public:
 
 			if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
 			{
-				app->addView( *viewGL_ );
-				app->addView( *viewTest_ );
+				if (viewGL_ != nullptr)
+				{
+					app->addView( *viewGL_ );
+				}
+				else
+				{
+					NGT_ERROR_MSG( "Failed to load qml\n" );
+				}
+				if (viewTest_ != nullptr)
+				{
+					app->addView( *viewTest_ );
+				}
+				else
+				{
+					NGT_ERROR_MSG( "Failed to load qml\n" );
+				}
 			}
 		}
 	}
@@ -168,8 +184,14 @@ public:
 	{
 		if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
 		{
-			app->removeView( *viewGL_ );
-			app->removeView( *viewTest_ );
+			if (viewGL_ != nullptr)
+			{
+				app->removeView( *viewGL_ );
+			}
+			if (viewTest_ != nullptr)
+			{
+				app->removeView( *viewTest_ );
+			}
 		}
 		viewGL_.reset();
 		viewTest_.reset();

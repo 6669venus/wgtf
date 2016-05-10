@@ -2,6 +2,8 @@
 #include "core_qt_common/models/adapters/column_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
 
+ITEMROLE( columnModel )
+
 struct ColumnExtension::Implementation
 {
 	std::vector< IndexedAdapter< ColumnListAdapter > > columnModels_;
@@ -23,7 +25,7 @@ ColumnExtension::~ColumnExtension()
 QHash< int, QByteArray > ColumnExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	this->registerRole( ColumnModelRole::roleName_, roleNames );
+	this->registerRole( ItemRole::columnModelName, roleNames );
 	return roleNames;
 }
 
@@ -36,7 +38,7 @@ QVariant ColumnExtension::data( const QModelIndex &index, int role ) const
 		return QVariant( QVariant::Invalid );
 	}
 
-	if (roleId != ColumnModelRole::roleId_)
+	if (roleId != ItemRole::columnModelId)
 	{
 		return QVariant( QVariant::Invalid );
 	}

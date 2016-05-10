@@ -2,22 +2,27 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "commands/set_reflectedproperty_command.hpp"
 #include "commands/invoke_reflected_method_command.hpp"
+#include "commands/reflected_collection_insert_command.hpp"
+#include "commands/reflected_collection_erase_command.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 
+#include <map>
+
 class ReflectionController::Impl
+	: public ICommandEventListener
 {
 public:
 	Impl( ICommandManager & commandManager )
 		: commandManager_( commandManager )
 	{
-
+		commandManager_.registerCommandStatusListener( this );
 	}
 
 	~Impl()
 	{
-
+		commandManager_.deregisterCommandStatusListener( this );
 	}
 
 	Variant getValue( const PropertyAccessor & pa )
@@ -40,18 +45,13 @@ public:
 		}
 
 		// TODO: assert access is only on the main thread
-		auto it = commands_.find( key );
-		if (it != commands_.end())
+		auto range = commands_.equal_range( key );
+		for (auto it = range.first; it != range.second; ++it)
 		{
 			auto instance = it->second;
 			commandManager_.waitForInstance(instance);
-
-			it = commands_.find(key);
-			if (it != commands_.end())
-			{
-				commands_.erase(it);
-			}
 		}
+		commands_.erase( range.first, range.second );
 
 		return pa.getValue();
 	}
@@ -71,26 +71,25 @@ public:
 		args->setValue( data );
 		
 		// Access is only on the main thread
-		//assert(std::this_thread::get_id() == commandManager_.ownerThreadId());
+		assert( std::this_thread::get_id() == commandManager_.ownerThreadId() );
 
 		const auto commandId = getClassIdentifier< SetReflectedPropertyCommand >();
 		const auto pArgsDefinition =
 			pa.getDefinitionManager()->getDefinition< ReflectedPropertyCommandArgument >();
-		ObjectHandle commandArgs(std::move(args), pArgsDefinition);
-		auto command = commandManager_.queueCommand(commandId, commandArgs);
+		ObjectHandle commandArgs( std::move( args ), pArgsDefinition );
+		auto command = commandManager_.queueCommand( commandId, commandArgs );
 
 		// Queuing may cause it to execute straight away
 		// Based on the thread affinity of SetReflectedPropertyCommand
-		if ( !command->isComplete() )
+		if (!command->isComplete())
 		{
-			commands_.insert(std::pair< Key, CommandInstancePtr >(key, command));
+			commands_.emplace( std::pair< Key, CommandInstancePtr >( key, command ) );
 		}
 	}
 
 	Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters )
 	{
 		Key key;
-
 		if (!createKey( pa, key ))
 		{
 			return pa.invoke( parameters );
@@ -101,16 +100,83 @@ public:
 		commandParameters->setPath( key.second.c_str() );
 		commandParameters->setParameters( parameters );
 
-		commands_.insert( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
+		const auto itr = commands_.emplace( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
 			getClassIdentifier<InvokeReflectedMethodCommand>(), ObjectHandle( std::move( commandParameters ),
 			pa.getDefinitionManager()->getDefinition<ReflectedMethodCommandParameters>() ) ) ) );
 
-		commandManager_.waitForInstance( commands_[key] );
-		ObjectHandle returnValueObject = commands_[key].get()->getReturnValue();
-		commands_.erase( commands_.find( key ) );
+		commandManager_.waitForInstance( itr->second );
+		ObjectHandle returnValueObject = itr->second.get()->getReturnValue();
+		commands_.erase( itr );
 		Variant* returnValuePointer = returnValueObject.getBase<Variant>();
 		assert( returnValuePointer != nullptr );
 		return *returnValuePointer;
+	}
+
+	void insert( const PropertyAccessor & pa, const Variant & insertKey, const Variant & value )
+	{
+		Key key;
+		if (!createKey( pa, key ))
+		{
+			pa.insert( insertKey, value );
+			return;
+		}
+
+		std::unique_ptr<ReflectedCollectionInsertCommandParameters> commandParameters( new ReflectedCollectionInsertCommandParameters() );
+		commandParameters->id_ = key.first;
+		commandParameters->path_ = key.second;
+		commandParameters->key_ = insertKey;
+		commandParameters->value_ = value;
+
+		const auto itr = commands_.emplace( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
+			getClassIdentifier<ReflectedCollectionInsertCommand>(), ObjectHandle( std::move( commandParameters ) ) ) ) );
+
+		commandManager_.waitForInstance( itr->second );
+		commands_.erase( itr );
+	}
+
+	void erase( const PropertyAccessor & pa, const Variant & eraseKey )
+	{
+		Key key;
+		if (!createKey( pa, key ))
+		{
+			pa.erase( eraseKey );
+			return;
+		}
+
+		std::unique_ptr<ReflectedCollectionEraseCommandParameters> commandParameters( new ReflectedCollectionEraseCommandParameters() );
+		commandParameters->id_ = key.first;
+		commandParameters->path_ = key.second;
+		commandParameters->key_ = eraseKey;
+
+		const auto itr = commands_.emplace( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
+			getClassIdentifier<ReflectedCollectionEraseCommand>(), ObjectHandle( std::move( commandParameters ) ) ) ) );
+
+		commandManager_.waitForInstance( itr->second );
+		commands_.erase( itr );
+	}
+
+	virtual void statusChanged(
+		const CommandInstance & commandInstance ) const override
+	{
+		if (!commandInstance.isComplete())
+		{
+			return;
+		}
+		if (strcmp( commandInstance.getCommandId(),
+			getClassIdentifier< SetReflectedPropertyCommand >() ) != 0)
+		{
+			return;
+		}
+
+		// Unfortunately don't have key for map lookup
+		for (auto itr = commands_.cbegin(); itr != commands_.cend(); ++itr)
+		{
+			if (&commandInstance == itr->second.get())
+			{
+				commands_.erase( itr );
+				break;
+			}
+		}
 	}
 
 private:
@@ -138,7 +204,10 @@ private:
 	}
 
 	ICommandManager & commandManager_;
-	std::map< Key, CommandInstancePtr > commands_;
+
+	// commands_ must be mutable to satisfy ICommandEventListener
+	// Use a multimap in case multiple commands for the same key get queued
+	mutable std::multimap< Key, CommandInstancePtr > commands_;
 };
 
 ReflectionController::ReflectionController()
@@ -177,4 +246,16 @@ Variant ReflectionController::invoke( const PropertyAccessor & pa, const Reflect
 {
 	assert( impl_ != nullptr );
 	return impl_->invoke( pa, parameters );
+}
+
+void ReflectionController::insert( const PropertyAccessor & pa, const Variant & key, const Variant & value )
+{
+	assert( impl_ != nullptr );
+	impl_->insert( pa, key, value );
+}
+
+void ReflectionController::erase( const PropertyAccessor & pa, const Variant & key )
+{
+	assert( impl_ != nullptr );
+	impl_->erase( pa, key );
 }

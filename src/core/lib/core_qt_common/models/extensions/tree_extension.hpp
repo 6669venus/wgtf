@@ -2,26 +2,12 @@
 #define TREE_EXTENSION_HPP
 
 #include "i_model_extension.hpp"
+#include <QItemSelection>
 #include <memory>
 
 class TreeExtension : public IModelExtension
 {
 	Q_OBJECT
-
-	Q_PROPERTY( QVariant	currentIndex
-				READ		getCurrentIndex
-				WRITE		setCurrentIndex
-				NOTIFY		currentIndexChanged )
-
-	Q_PROPERTY( bool		blockSelection
-				READ		getBlockSelection
-				WRITE		setBlockSelection
-				NOTIFY		blockSelectionChanged )
-
-	Q_PROPERTY( QObject *	selectionExtension
-				READ		getSelectionExtension
-				WRITE		setSelectionExtension
-				NOTIFY		selectionExtensionChanged )
 
 public:
 	TreeExtension();
@@ -44,32 +30,9 @@ public:
 	void onRowsRemoved( 
 		const QModelIndex & parent, int first, int last ) override;
 
-	void saveStates( const char * modelUniqueName ) override;
-	void loadStates( const char * modelUniqueName ) override;
-
-	Q_INVOKABLE bool moveUp();
-	Q_INVOKABLE bool moveDown();
-	Q_INVOKABLE bool moveLeft();
-	Q_INVOKABLE bool moveRight();
-	Q_INVOKABLE void selectItem();
-
-signals:
-	void currentIndexChanged();
-	void selectionExtensionChanged();
-	void blockSelectionChanged();
+	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
 
 private:
-	QVariant getCurrentIndex() const;
-	void setCurrentIndex( const QVariant& index );
-
-	bool getBlockSelection() const;
-	void setBlockSelection( bool blockSelection );
-
-	QObject * getSelectionExtension() const;
-	void setSelectionExtension( QObject * selectionExtension );
-
-	bool handleCurrentIndexChanged();
-
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };

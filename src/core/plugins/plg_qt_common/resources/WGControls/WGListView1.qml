@@ -103,6 +103,10 @@ Item {
     */
     property var columnSequence: []
 
+    onColumnSequenceChanged: {
+        updateColumnCount();
+    }
+
     /*! This property defines the anchors.margins used by the selection highlight
         The default value is \c 0
     */
@@ -228,7 +232,7 @@ Item {
     property var initialColumnWidths: []
 
     /*! This property determines if the column sizing handles are shown */
-    property bool showColumnsFrame: false
+    property bool showColumnsFrame: true
 
     readonly property real minimumScrollbarWidth:
         enableVerticalScrollBar ? verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
@@ -249,10 +253,21 @@ Item {
         }
         else
         {
-            columnCount = model.columnCount();
+            if ( columnSequence.length !== 0 )
+            {
+                columnCount = columnSequence.length;
+            }
+            else
+            {
+                columnCount = model.columnCount();
+            }
         }
 
         headerDataChanged(0, columnCount - 1);
+
+        //TODO(aidan): check if there is a better way to do this NGT-2101
+        list.model = null;
+        list.model = listView.model;
     }
 
     function calculateMaxTextWidth(index)
@@ -356,7 +371,7 @@ Item {
         property real footerHeight: footerItemLoader.status === Loader.Ready ? listView.footerItem.height : 0
         property bool scrollable: contentHeight > height
 
-        delegate: WGItemRow {
+        delegate: WGListViewRowDelegate {
             anchors.left: parent.left
             width: Math.max(columnsFrame.width, minimumRowWidth)
             defaultColumnDelegate: listView.defaultColumnDelegate
@@ -441,7 +456,7 @@ Item {
         width: listView.width - listView.rightMargin - listView.leftMargin
     }
 
-    WGColumnsFrame {
+    WGColumnsFrame1 {
         id: columnsFrame
         columnCount: listView.columnCount
         y: listView.topMargin

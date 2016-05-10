@@ -3,7 +3,7 @@
 #include "CustomNode.h"
 #include "CustomConnection.h"
 
-#include "core_logging\logging.hpp"
+#include "core_logging/logging.hpp"
 
 std::shared_ptr<INode> CustomGraph::CreateNode(std::string nodeClass, float x, float y)
 {  

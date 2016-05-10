@@ -1,6 +1,6 @@
 
 #include "CustomConnection.h"
-#include "core_logging\logging.hpp"
+#include "core_logging/logging.hpp"
 
 CustomConnection::CustomConnection() 
 : m_inputSlot(nullptr)

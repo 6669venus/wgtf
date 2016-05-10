@@ -34,6 +34,7 @@ Canvas {
     signal pointClicked(Point point, var mouse)
     signal pointAdded(int index, var point)
     signal pointRemoved(int index, var point)
+    signal pointUpdated(Point point)
 
     on_OriginXChanged: { requestPaint() }
     on_OriginYChanged: { requestPaint() }
@@ -151,6 +152,7 @@ Canvas {
             onPressed: pointPressed(point, mouse)
             onReleased: pointReleased(point, mouse)
             onClicked: pointClicked(point, mouse)
+            onUpdated: pointUpdated(point)
         }
         onItemAdded:
         {

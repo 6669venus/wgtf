@@ -25,7 +25,7 @@ public:
         {
             BezierPointData pointData1 = { { 0.0f, 0.0f }, { -0.2f, 0.0f }, { 0.2f, 0.0f } };
             curve->add(pointData1);
-            BezierPointData pointData2 = { { 0.25f, 0.25f }, { -0.2f, 0.0f }, { 0.2f, 0.0f } };
+            BezierPointData pointData2 = { { 0.25f, 0.25f }, { -0.2f, 0.00f }, { 0.2f, 0.0f } };
             curve->add(pointData2);
             BezierPointData pointData3 = { { 0.75f, 0.50f }, { -0.1f, -0.2f }, { 0.1f, 0.2f } };
             curve->add(pointData3);
@@ -38,10 +38,10 @@ public:
             BezierPointData pointData1 = { { 0.0f, 0.0f }, { -0.1f, 0.0f }, { 0.1f, 0.1f } };
             curve->add(pointData1);
             BezierPointData pointData2 = { { 0.25f, 0.5f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
-            curve->add(pointData2);
-			BezierPointData pointData3 = { { 0.75f, 0.5f }, { -0.1f, -0.2f }, { 0.1f, 0.2f } };
+			curve->add(pointData2);
+			BezierPointData pointData3 = { { 0.75f, 0.50f }, { -0.1f, -0.2f }, { 0.1f, 0.2f } };
 			curve->add(pointData3);
-			BezierPointData pointData4 = { { 1.0f, 1.0f }, { -0.2f, 0.0f }, { 0.2f, 0.0f } };
+			BezierPointData pointData4 = { { 1.0f, 1.00f }, { -0.2f, 0.00f }, { 0.2f, 0.0f } };
 			curve->add(pointData4);
         }
 
@@ -61,7 +61,7 @@ public:
         {
             BezierPointData pointData1 = { { 0.0f, 0.75f }, { 0.00f, 0.00f }, { 0.1f, 0.1f } };
             curve->add(pointData1);
-			BezierPointData pointData2 = { { 0.25f, 0.25f }, { -0.1f, -0.1f }, { 0.0f, 0.0f } };
+            BezierPointData pointData2 = { { 0.25f, 0.25f }, { -0.1f, -0.1f }, { 0.0f, 0.0f } };
 			curve->add(pointData2);
 			BezierPointData pointData3 = { { 0.75f, 0.9f }, { -0.1f, -0.1f }, { 0.1f, 0.1f } };
 			curve->add(pointData3);

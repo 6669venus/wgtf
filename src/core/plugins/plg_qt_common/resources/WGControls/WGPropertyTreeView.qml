@@ -96,8 +96,6 @@ WGTreeView {
         id: contextMenu
         path: "WGPropertyTreeMenu"
 
-		property var contextItem: null
-
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Push"
 
@@ -118,7 +116,7 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
 			
 			onItemChanged: {
 				if (item != null && item.isCollection) {
@@ -147,7 +145,7 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
 
 			onItemChanged: {
 				if (item != null && item.isCollection && item.hasChildren) {
@@ -179,7 +177,7 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
 			property var parentItem: propertyTreeView.internalModel.parent(item)
 
 			onParentItemChanged: {
@@ -207,7 +205,7 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
 			property var parentItem: propertyTreeView.internalModel.parent(item)
 
 			onParentItemChanged: {
@@ -226,7 +224,7 @@ WGTreeView {
 			return
 		}
 
-		contextMenu.contextItem = internalModel.indexToItem(rowIndex)
+		contextMenu.contextObject = internalModel.indexToItem(rowIndex)
 		contextMenu.popup()
 	}
 }

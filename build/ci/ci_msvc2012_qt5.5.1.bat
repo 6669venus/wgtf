@@ -1,4 +1,4 @@
-cd ..
+cd ..\..
 
 REM clean up output folder
 rmdir /q /s out

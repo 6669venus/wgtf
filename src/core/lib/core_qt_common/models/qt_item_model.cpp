@@ -15,15 +15,135 @@ struct QtItemModel::Impl
 	}
 
 	AbstractItemModel & source_;
+
+	Connection connectPreChange_;
+	Connection connectPostChanged_;
+
+	Connection connectPreInsert_;
+	Connection connectPostInserted_;
+
+	Connection connectPreErase_;
+	Connection connectPostErased_;
 };
 
 QtItemModel::QtItemModel( AbstractItemModel & source )
 	: impl_( new Impl( source ) )
 {
+	// @see AbstractItemModel::DataSignature
+	auto preData = 
+	[ this ]( const AbstractItemModel::ItemIndex & index,
+		size_t role,
+		const Variant & newValue )
+	{
+		auto item = impl_->source_.item( index );
+		const QModelIndex modelIndex = createIndex( index.row_, index.column_, item );
+
+		//HACK: should not be explicitly referencing DefinitionRole here
+		if (role == DefinitionRole::roleId_)
+		{
+			QList<QPersistentModelIndex> parents;
+			parents.append( modelIndex );
+			this->layoutAboutToBeChanged( parents, QAbstractItemModel::VerticalSortHint );
+			return;
+		}
+		//END HACK
+	};
+	impl_->connectPreChange_ =
+		impl_->source_.connectPreItemDataChanged( preData );
+	
+	auto postData = 
+	[ this ]( const AbstractItemModel::ItemIndex & index,
+		size_t role,
+		const Variant & newValue )
+	{
+		auto item = impl_->source_.item( index );
+		const QModelIndex modelIndex = createIndex( index.row_, index.column_, item );
+
+		//HACK: should not be explicitly referencing DefinitionRole here
+		if (role == DefinitionRole::roleId_)
+		{
+			QList<QPersistentModelIndex> parents;
+			parents.append( modelIndex );
+			this->layoutChanged( parents, QAbstractItemModel::VerticalSortHint );
+			return;
+		}
+		//END HACKs
+
+		const QModelIndex topLeft = modelIndex;
+		const QModelIndex bottomRight = modelIndex;
+		QVector< int > roles;
+		if (role == ItemRole::displayId)
+		{
+			roles.append( Qt::DisplayRole );
+		}
+		else if (role == ItemRole::decorationId)
+		{
+			roles.append( Qt::DecorationRole );
+		}
+		else
+		{
+			roles.append( static_cast< int >( role ) );
+		}
+		this->dataChanged( topLeft, bottomRight, roles );
+	};
+	impl_->connectPostChanged_ =
+		impl_->source_.connectPostItemDataChanged( postData );
+
+	// @see AbstractItemModel::RangeSignature
+	auto preInsert = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->beginInsertRows( modelIndex, startPos, startPos + count - 1 );
+	};
+	impl_->connectPreInsert_ =
+		impl_->source_.connectPreRowsInserted( preInsert );
+
+	auto postInserted = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->endInsertRows();
+	};
+	impl_->connectPostInserted_ =
+		impl_->source_.connectPostRowsInserted( postInserted );
+
+	auto preErase = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->beginRemoveRows( modelIndex, startPos, startPos + count - 1 );
+	};
+	impl_->connectPreErase_ =
+		impl_->source_.connectPreRowsRemoved( preErase );
+
+	auto postErased = 
+		[ this ]( const AbstractItemModel::ItemIndex & parentIndex,
+		int startPos,
+		int count )
+	{
+		auto parentItem = impl_->source_.item( parentIndex );
+		const QModelIndex modelIndex = createIndex( parentIndex.row_, parentIndex.column_, parentItem );
+		this->endRemoveRows();
+	};
+	impl_->connectPostErased_ =
+		impl_->source_.connectPostRowsRemoved( postErased );
 }
 
 QtItemModel::~QtItemModel()
 {
+	// TODO not removed from list??
+	impl_->connectPostChanged_.disconnect();
+	impl_->connectPreChange_.disconnect();
 }
 
 const AbstractItemModel & QtItemModel::source() const

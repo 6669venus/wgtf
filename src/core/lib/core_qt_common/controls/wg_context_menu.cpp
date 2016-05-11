@@ -58,6 +58,7 @@ struct WGContextMenu::Implementation
 
 		destroyMenu();
 		createMenu();
+		prepareMenu();
 	}
 
 	void createMenu()
@@ -121,7 +122,6 @@ struct WGContextMenu::Implementation
 			return false;
 		}
 
-		prepareMenu();
 		qMenu_->popup( QCursor::pos() );
 		return true;
 	}
@@ -134,19 +134,24 @@ struct WGContextMenu::Implementation
 	void setPath( const QString& path )
 	{
 		path_ = path.toUtf8().data();
+		emit self_.pathChanged();
+
 		destroyMenu();
 		createMenu();
+		prepareMenu();
 	}
 
 	QVariant getContextObject() const
-	{
-		
+	{	
 		return QtHelpers::toQVariant(contextObject_, const_cast<WGContextMenu*>(&this->self_));
 	}
 
 	void setContextObject( const QVariant& object )
 	{
 		contextObject_ = QtHelpers::toVariant( object );
+		emit self_.contextObjectChanged();
+
+		prepareMenu();
 	}
 
 private:

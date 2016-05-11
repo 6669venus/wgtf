@@ -10,6 +10,7 @@
 #include <QMainWindow>
 #include <QVariant>
 #include <QEvent>
+#include <QCoreApplication>
 
 QtDockRegion::QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDockWidget & qDockWidget )
 	: qtFramework_( qtFramework )
@@ -88,10 +89,6 @@ public:
 
 	void visibilityChanged(bool visible)
 	{
-		if (!isFloating())
-		{
-			visible ? view_->focusInEvent() : view_->focusOutEvent();
-		}
 		visible_ = visible;
 	}
 
@@ -107,12 +104,21 @@ protected:
 		case QEvent::WindowDeactivate:
 			active_ = false;
 			break;
+        case QEvent::FocusIn:
+            if(visible_)
+            {
+                view_->focusInEvent();
+            }
+            break;
 
 		case QEvent::ActivationChange:
-			if (active_)
-				view_->focusInEvent();
-            else
-                view_->focusOutEvent();
+            if(isFloating())
+            {
+                if (active_)
+                    view_->focusInEvent();
+                else
+                    view_->focusOutEvent();
+            }
 			break;
 		}
 		return QDockWidget::event(e);
@@ -211,11 +217,16 @@ void QtDockRegion::addView( IView & view )
 
 	QObject::connect( qDockWidget, &QDockWidget::visibilityChanged,
 		[=](bool visible) { 
+        qDockWidget->visibilityChanged( visible ); 
+        if(visible)
+        {
             if(qtWindow_.isLoadingPreferences())
             {
                 return;
             }
-        qDockWidget->visibilityChanged( visible ); 
+            QCoreApplication::postEvent( qDockWidget, new QEvent(QEvent::FocusIn));
+        }
+        
     } );
 }
 

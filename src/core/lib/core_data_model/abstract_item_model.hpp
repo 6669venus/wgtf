@@ -121,6 +121,11 @@ private:
 
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
+		if (!index.isValid())
+		{
+			return nullptr;
+		}
+
 		if (index.parent_ != nullptr)
 		{
 			return nullptr;
@@ -277,6 +282,11 @@ private:
 
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
+		if (!index.isValid())
+		{
+			return nullptr;
+		}
+
 		return item( ItemIndex( index.row_, index.parent_ ) );
 	}
 
@@ -421,6 +431,11 @@ private:
 
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
+		if (!index.isValid())
+		{
+			return nullptr;
+		}
+
 		if (index.parent_ != nullptr)
 		{
 			return nullptr;

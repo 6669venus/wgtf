@@ -823,8 +823,7 @@ int ReflectedPropertyItemNew::rowCount() const
 }
 
 
-bool ReflectedPropertyItemNew::preSetValue( const PropertyAccessor & accessor,
-	const Variant & value )
+bool ReflectedPropertyItemNew::preSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
@@ -890,8 +889,7 @@ bool ReflectedPropertyItemNew::preSetValue( const PropertyAccessor & accessor,
 }
 
 
-bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor,
-	const Variant & value )
+bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	auto pDefinitionManager = this->getDefinitionManager();
 	if (pDefinitionManager == nullptr)
@@ -950,6 +948,233 @@ bool ReflectedPropertyItemNew::postSetValue( const PropertyAccessor & accessor,
 		}
 
 		if ((*it)->postSetValue( accessor, value ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedPropertyItemNew::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return false;
+	}
+
+	auto obj = getObject();
+	auto otherObj = accessor.getObject();
+	auto otherPath = accessor.getFullPath();
+
+	if (obj == otherObj && path_ == otherPath)
+	{
+		auto model = getModel();
+		assert( model != nullptr );
+		model->preRowsInserted_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
+		return true;
+	}
+
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preInsert( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return false;
+	}
+
+	auto obj = getObject();
+	auto otherObj = accessor.getObject();
+	auto otherPath = accessor.getFullPath();
+
+	if (obj == otherObj && path_ == otherPath)
+	{
+		Collection collection;
+		const Variant & value = accessor.getValue();
+		bool isCollection = value.tryCast( collection );
+		assert( isCollection );
+
+		for (size_t i = 0; i < count; ++i)
+		{
+			impl_->children_.emplace( impl_->children_.begin() + index, nullptr );
+		}
+		if (!collection.isMapping())
+		{
+			for (auto i = index + count; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto oldPath = child->path_;
+				auto parentPath = oldPath.substr( 0, oldPath.length() - child->impl_->displayName_.length() );
+				child->path_ = parentPath + "[" + std::to_string( static_cast< int >( i ) ) + "]";
+			}
+		}
+
+		auto model = getModel();
+		assert( model != nullptr );
+		model->postRowsInserted_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
+
+		if (!collection.isMapping())
+		{
+			for (auto i = index + count; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto childIndex = model->index( child );
+				model->preItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+				child->impl_->displayName_ = "[" + std::to_string( static_cast< int >( i ) ) + "]";
+				model->postItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+			}
+		}
+
+		return true;
+	}
+
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postInserted( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedPropertyItemNew::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return false;
+	}
+
+	auto obj = getObject();
+	auto otherObj = accessor.getObject();
+	auto otherPath = accessor.getFullPath();
+
+	if (obj == otherObj && path_ == otherPath)
+	{
+		auto model = getModel();
+		assert( model != nullptr );
+		model->preRowsRemoved_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
+		return true;
+	}
+
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preErase( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	auto pDefinitionManager = this->getDefinitionManager();
+	if (pDefinitionManager == nullptr)
+	{
+		return false;
+	}
+
+	auto obj = getObject();
+	auto otherObj = accessor.getObject();
+	auto otherPath = accessor.getFullPath();
+
+	if (obj == otherObj && path_ == otherPath)
+	{
+		Collection collection;
+		const Variant & value = accessor.getValue();
+		bool isCollection = value.tryCast( collection );
+		assert( isCollection );
+
+		impl_->children_.erase( impl_->children_.begin() + index, impl_->children_.begin() + index + count );
+		if (!collection.isMapping())
+		{
+			for (auto i = index; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto oldPath = child->path_;
+				auto parentPath = oldPath.substr( 0, oldPath.length() - child->impl_->displayName_.length() );
+				child->path_ = parentPath + "[" + std::to_string( static_cast< int >( i ) ) + "]";
+			}
+		}
+
+		auto model = getModel();
+		assert( model != nullptr );
+		model->postRowsRemoved_( model->index( this ), static_cast< int >( index ), static_cast< int >( count ) );
+
+		if (!collection.isMapping())
+		{
+			for (auto i = index; i < impl_->children_.size(); ++i)
+			{
+				auto child = static_cast< ReflectedPropertyItemNew * >( impl_->children_[i].get() );
+				if (child == nullptr)
+				{
+					continue;
+				}
+
+				auto childIndex = model->index( child );
+				model->preItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+				child->impl_->displayName_ = "[" + std::to_string( static_cast< int >( i ) ) + "]";
+				model->postItemDataChanged_( childIndex, 0, ItemRole::displayId, child->impl_->displayName_ );
+			}
+		}
+
+		return true;
+	}
+
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postErased( accessor, index, count ))
 		{
 			return true;
 		}

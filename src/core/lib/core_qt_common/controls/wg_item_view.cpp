@@ -28,10 +28,29 @@ namespace
 		{
 			beginResetModel();
 			model_ = model;
+			connections_.reset();
 			roleNames_.clear();
 			indexCache_.clear();
 			if (model_ != nullptr)
 			{
+				connections_ += QObject::connect( model, &QAbstractItemModel::dataChanged, this, &ExtendedModel::onDataChanged );
+				connections_ += QObject::connect( model, &QAbstractItemModel::layoutAboutToBeChanged, this, &ExtendedModel::onLayoutAboutToBeChanged );
+				connections_ += QObject::connect( model, &QAbstractItemModel::layoutChanged, this, &ExtendedModel::onLayoutChanged );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsAboutToBeInserted, this, &ExtendedModel::onRowsAboutToBeInserted );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsInserted, this, &ExtendedModel::onRowsInserted );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsAboutToBeRemoved, this, &ExtendedModel::onRowsAboutToBeRemoved );
+				connections_ += QObject::connect( model, &QAbstractItemModel::rowsRemoved, this, &ExtendedModel::onRowsRemoved );
+
+				for (auto & extension : extensions_)
+				{
+					connections_ += QObject::connect( this, &QAbstractItemModel::layoutAboutToBeChanged, extension, &IModelExtension::onLayoutAboutToBeChanged );
+					connections_ += QObject::connect( this, &QAbstractItemModel::layoutChanged, extension, &IModelExtension::onLayoutChanged );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsAboutToBeInserted, extension, &IModelExtension::onRowsAboutToBeInserted );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsInserted, extension, &IModelExtension::onRowsInserted );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsAboutToBeRemoved, extension, &IModelExtension::onRowsAboutToBeRemoved );
+					connections_ += QObject::connect( this, &QAbstractItemModel::rowsRemoved, extension, &IModelExtension::onRowsRemoved );
+				}
+
 				roleNames_ = model_->roleNames();
 				registerRole( ItemRole::modelIndexName, roleNames_ );
 				for (auto & role : roles_)
@@ -197,6 +216,57 @@ namespace
 			return roleNames_;
 		}
 
+		void onDataChanged( const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles )
+		{
+			QVector<int> encodedRoles;
+			for (auto & role : roles)
+			{
+				int encodedRole;
+				encodedRoles.append( encodeRole(role, encodedRole) ? encodedRole : role );
+			}
+			dataChanged( extendedIndex( topLeft ), extendedIndex( bottomRight ), encodedRoles );
+		}
+
+		void onLayoutAboutToBeChanged( const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint )
+		{
+			QList<QPersistentModelIndex> extendedParents;
+			for (auto & parent : parents)
+			{
+				extendedParents.append( extendedIndex( parent ) );
+			}
+			layoutAboutToBeChanged( extendedParents, hint );
+		}
+
+		void onLayoutChanged( const QList<QPersistentModelIndex> &parents, QAbstractItemModel::LayoutChangeHint hint )
+		{
+			QList<QPersistentModelIndex> extendedParents;
+			for (auto & parent : parents)
+			{
+				extendedParents.append( extendedIndex( parent ) );
+			}
+			layoutChanged( extendedParents, hint );
+		}
+
+		void onRowsAboutToBeInserted( const QModelIndex &parent, int first, int last )
+		{
+			beginInsertRows( extendedIndex( parent ), first, last );
+		}
+
+		void onRowsInserted()
+		{
+			endInsertRows();
+		}
+
+		void onRowsAboutToBeRemoved( const QModelIndex &parent, int first, int last )
+		{
+			beginRemoveRows( extendedIndex( parent ), first, last );
+		}
+
+		void onRowsRemoved()
+		{
+			endRemoveRows();
+		}
+
 		QModelIndex modelIndex( const QModelIndex & extendedIndex ) const
 		{
 			if (!extendedIndex.isValid())
@@ -220,19 +290,12 @@ namespace
 
 			assert( modelIndex.model() == model_ );
 			QModelIndex index = createIndex( modelIndex.row(), modelIndex.column(), modelIndex.internalId() );
-			auto it = indexCache_.find( index );
-			if (it != indexCache_.end())
-			{
-				assert( *it == modelIndex );
-			}
-			else
-			{
-				indexCache_.insert( index, modelIndex );
-			}
+			indexCache_.insert( index, modelIndex );
 			return index;
 		}
 
 		QAbstractItemModel * model_;
+		QtConnectionHolder connections_;
 		QStringList & roles_;
 		QList< IModelExtension * > & extensions_;
 		QHash< int, QByteArray > roleNames_;

@@ -5,8 +5,7 @@
 
 ColumnListAdapter::ColumnListAdapter( const QModelIndex & row )
 	: model_( row.model() )
-	, parent_( row.parent() )
-	, row_( row.row() )
+	, row_( row )
 {
 	assert( row.isValid() );
 	connect();
@@ -24,7 +23,7 @@ QAbstractItemModel * ColumnListAdapter::model() const
 
 QModelIndex ColumnListAdapter::adaptedIndex(int row, int column, const QModelIndex &parent) const
 {
-	return model()->index( row_, row, parent_ );
+	return model()->index( row_.row(), row, row_.parent() );
 }
 
 int ColumnListAdapter::rowCount(const QModelIndex &parent) const
@@ -35,10 +34,13 @@ int ColumnListAdapter::rowCount(const QModelIndex &parent) const
 void ColumnListAdapter::onParentDataChanged(const QModelIndex &topLeft, 
 	const QModelIndex &bottomRight, const QVector<int> &roles)
 {
-	if (topLeft.row() <= row_ &&
-		bottomRight.row() >= row_ &&
-		topLeft.parent() == parent_ &&
-		bottomRight.parent() == parent_)
+	auto row = row_.row();
+	auto parent = row_.parent();
+
+	if (topLeft.row() <= row &&
+		bottomRight.row() >= row &&
+		topLeft.parent() == parent &&
+		bottomRight.parent() == parent)
 	{
 		emit dataChanged( 
 			createIndex(topLeft.column(), 0, topLeft.internalPointer()), 

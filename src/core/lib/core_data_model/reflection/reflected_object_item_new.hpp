@@ -19,11 +19,22 @@ public:
 	 *	Construct a tree data model by reflecting over the given object.
 	 *	@param object the root of the tree.
 	 *		@warning the parent *must* correspond to the object.
-	 *	@param parent the parent of this property.
+	 *	@param parent the parent model of this property.
+	 *		In this case the item is the root of the model.
 	 */
 	ReflectedObjectItemNew( IComponentContext & contextManager,
 		const ObjectHandle & object,
-		ReflectedTreeItemNew * parent = nullptr );
+		const ReflectedTreeModelNew & model );
+	/**
+	 *	Construct a tree data model by reflecting over the given object.
+	 *	@param object the root of the tree.
+	 *		@warning the parent *must* correspond to the object.
+	 *	@param parent the parent item of this property.
+	 *		In this case the item is a child item.
+	 */
+	ReflectedObjectItemNew( IComponentContext & contextManager,
+		const ObjectHandle & object,
+		ReflectedTreeItemNew * parent );
 	virtual ~ReflectedObjectItemNew();
 
 	// AbstractItem
@@ -40,10 +51,14 @@ public:
 
 	virtual bool isInPlace() const override;
 
-	virtual bool preSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) override;
-	virtual bool postSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) override;
+	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+
+	virtual bool preInsert( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+	virtual bool postInserted( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+
+	virtual bool preErase( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+	virtual bool postErased( const PropertyAccessor & accessor, size_t index, size_t count ) override;
 
 private:
 	class Implementation;

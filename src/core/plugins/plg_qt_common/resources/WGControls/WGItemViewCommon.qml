@@ -29,7 +29,7 @@ WGItemView {
 	function columnCount() {
 		var count = columnSequence.length
 		if (count == 0) {
-			count = extendedModel.columnCount()
+			count = extendedModel.columnCount(null)
 		}
 		return count
 	}

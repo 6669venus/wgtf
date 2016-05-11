@@ -67,6 +67,8 @@ public:
 	 */
 	Q_INVOKABLE bool removeItem( const QVariant & key );
 
+	Q_INVOKABLE bool isMapping() const;
+
 private:
 	std::unique_ptr<CollectionModel> model_;
 };

@@ -77,9 +77,9 @@ void TestUI::createActions( IUIFramework & uiFramework )
 void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx )
 {
 	test1Models_.emplace_back( new ReflectedTreeModelNew( context_, dataSrc->getTestPage() ) );
-
+    std::string uniqueName1 = dataSrc->description() + std::string("testing_ui_main/test_property_tree_panel.qml");
 	test1Views_.emplace_back( TestViews::value_type(
-		uiFramework.createView( "testing_ui_main/test_property_tree_panel.qml",
+		uiFramework.createView( uniqueName1.c_str(), "testing_ui_main/test_property_tree_panel.qml",
 		IUIFramework::ResourceType::Url, test1Models_.back().get() ), envIdx ) );
 
 	auto defManager = get<IDefinitionManager>(); 
@@ -90,10 +90,12 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int 
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
 
+    std::string uniqueName2 = dataSrc->description() + std::string("testing_ui_main/test_reflected_tree_panel.qml");
 	test2Views_.emplace_back( TestViews::value_type(
-		uiFramework.createView( "testing_ui_main/test_reflected_tree_panel.qml",
+		uiFramework.createView( uniqueName2.c_str(), "testing_ui_main/test_reflected_tree_panel.qml",
 		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
 
+    test1Views_.back().first->registerListener( this );
 	test2Views_.back().first->registerListener( this );
 }
 
@@ -204,7 +206,7 @@ void TestUI::open()
 
 	IEnvManager* em = get<IEnvManager>();
 	int envIdx = em->addEnv( dataSrc->description() );
-
+    em->loadEnvState( envIdx );
 	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
 	createViews( *fw_, dataSrc, envIdx );
 	addViews( *app_ );
@@ -221,6 +223,7 @@ void TestUI::close()
 	destroyViews( dataSrcEnvPairs_.size() );
 
 	IEnvManager* em = get<IEnvManager>();
+    em->saveEnvState( envIdx );
 	em->removeEnv( envIdx );
 
 	auto dataSrcMngr = get<IDataSourceManager>();

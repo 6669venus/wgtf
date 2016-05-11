@@ -132,25 +132,6 @@ Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* ove
 	{
 		return TypeId::getType< Collection >().getName();
 	}
-	else if (roleId == KeyRole::roleId_)
-	{
-		switch (column)
-		{
-		case 0:
-			return impl_->displayName_.c_str();
-
-		case 1:
-			return "Reflected Group";
-
-		default:
-			assert( false );
-			return "";
-		}
-	}
-	else if (roleId == KeyTypeRole::roleId_)
-	{
-		return TypeId::getType< const char * >().getName();
-	}
 	return Variant();
 }
 
@@ -299,8 +280,7 @@ int ReflectedGroupItemNew::rowCount() const /* override */
 }
 
 
-bool ReflectedGroupItemNew::preSetValue( const PropertyAccessor & accessor,
-	const Variant & value ) /* override */
+bool ReflectedGroupItemNew::preSetValue( const PropertyAccessor & accessor, const Variant & value ) /* override */
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -318,8 +298,7 @@ bool ReflectedGroupItemNew::preSetValue( const PropertyAccessor & accessor,
 }
 
 
-bool ReflectedGroupItemNew::postSetValue( const PropertyAccessor & accessor,
-	const Variant & value ) /* override */
+bool ReflectedGroupItemNew::postSetValue( const PropertyAccessor & accessor, const Variant & value ) /* override */
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -332,6 +311,78 @@ bool ReflectedGroupItemNew::postSetValue( const PropertyAccessor & accessor,
 		{
 			return true;
 	}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preInsert( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postInserted( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preErase( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postErased( accessor, index, count ))
+		{
+			return true;
+		}
 	}
 	return false;
 }

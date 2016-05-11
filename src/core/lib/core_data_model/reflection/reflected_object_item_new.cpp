@@ -92,6 +92,15 @@ ReflectedObjectItemNew::Implementation::getGroups(
 
 ReflectedObjectItemNew::ReflectedObjectItemNew( IComponentContext & contextManager,
 	const ObjectHandle & object,
+	const ReflectedTreeModelNew & model )
+	: ReflectedTreeItemNew( contextManager, model )
+	, impl_( new Implementation( contextManager, object ) )
+{
+}
+
+
+ReflectedObjectItemNew::ReflectedObjectItemNew( IComponentContext & contextManager,
+	const ObjectHandle & object,
 	ReflectedTreeItemNew * parent )
 	: ReflectedTreeItemNew( contextManager,
 		parent,
@@ -161,59 +170,6 @@ Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* ov
 	if (roleId == ValueTypeRole::roleId_)
 	{
 		return TypeId::getType< ObjectHandle >().getName();
-	}
-	else if (roleId == KeyRole::roleId_)
-	{
-		switch (column)
-		{
-		case 0:
-			if (impl_->displayName_.empty())
-			{
-				auto definition = this->getDefinition();
-				if (definition == nullptr)
-				{
-					return "";
-				}
-				auto pDefinitionManager = this->getDefinitionManager();
-				if (pDefinitionManager == nullptr)
-				{
-					return "";
-				}
-				const MetaDisplayNameObj * displayName =
-					findFirstMetaData< MetaDisplayNameObj >( *definition,
-						*pDefinitionManager );
-				if (displayName == nullptr)
-				{
-					impl_->displayName_ = definition->getName();
-				}
-				else
-				{
-					std::wstring_convert< Utf16to8Facet > conversion(
-						Utf16to8Facet::create() );
-					impl_->displayName_ = conversion.to_bytes(
-						displayName->getDisplayName() );
-				}
-			}
-			return impl_->displayName_.c_str();
-
-		case 1:
-			{
-				auto definition = getDefinition();
-				if (definition == nullptr)
-				{
-					return "";
-				}
-				return definition->getName();
-			}
-
-		default:
-			assert( false );
-			return "";
-		}
-	}
-	if (roleId == KeyTypeRole::roleId_)
-	{
-		return TypeId::getType< const char * >().getName();
 	}
 	else if (roleId == IndexPathRole::roleId_)
 	{
@@ -345,8 +301,7 @@ bool ReflectedObjectItemNew::isInPlace() const
 }
 
 
-bool ReflectedObjectItemNew::preSetValue( const PropertyAccessor & accessor,
-	const Variant & value )
+bool ReflectedObjectItemNew::preSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -364,8 +319,7 @@ bool ReflectedObjectItemNew::preSetValue( const PropertyAccessor & accessor,
 }
 
 
-bool ReflectedObjectItemNew::postSetValue( const PropertyAccessor & accessor,
-	const Variant & value )
+bool ReflectedObjectItemNew::postSetValue( const PropertyAccessor & accessor, const Variant & value )
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -375,6 +329,78 @@ bool ReflectedObjectItemNew::postSetValue( const PropertyAccessor & accessor,
 		}
 
 		if ((*it)->postSetValue( accessor, value ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preInsert( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postInserted( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preErase( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedObjectItemNew::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postErased( accessor, index, count ))
 		{
 			return true;
 		}

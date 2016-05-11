@@ -29,14 +29,6 @@ namespace
 			{
 				return TypeId::getType< ObjectHandle >().getName();
 			}
-			else if (roleId == KeyRole::roleId_)
-			{
-				return definition_->getName();
-			}
-			else if (roleId == KeyTypeRole::roleId_)
-			{
-				return TypeId::getType< const char * >().getName();
-			}
 			else if (roleId == IndexPathRole::roleId_)
 			{
 				return definition_->getName();

@@ -2,6 +2,8 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "commands/set_reflectedproperty_command.hpp"
 #include "commands/invoke_reflected_method_command.hpp"
+#include "commands/reflected_collection_insert_command.hpp"
+#include "commands/reflected_collection_erase_command.hpp"
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/i_object_manager.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
@@ -88,7 +90,6 @@ public:
 	Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters )
 	{
 		Key key;
-
 		if (!createKey( pa, key ))
 		{
 			return pa.invoke( parameters );
@@ -109,6 +110,49 @@ public:
 		Variant* returnValuePointer = returnValueObject.getBase<Variant>();
 		assert( returnValuePointer != nullptr );
 		return *returnValuePointer;
+	}
+
+	void insert( const PropertyAccessor & pa, const Variant & insertKey, const Variant & value )
+	{
+		Key key;
+		if (!createKey( pa, key ))
+		{
+			pa.insert( insertKey, value );
+			return;
+		}
+
+		std::unique_ptr<ReflectedCollectionInsertCommandParameters> commandParameters( new ReflectedCollectionInsertCommandParameters() );
+		commandParameters->id_ = key.first;
+		commandParameters->path_ = key.second;
+		commandParameters->key_ = insertKey;
+		commandParameters->value_ = value;
+
+		const auto itr = commands_.emplace( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
+			getClassIdentifier<ReflectedCollectionInsertCommand>(), ObjectHandle( std::move( commandParameters ) ) ) ) );
+
+		commandManager_.waitForInstance( itr->second );
+		commands_.erase( itr );
+	}
+
+	void erase( const PropertyAccessor & pa, const Variant & eraseKey )
+	{
+		Key key;
+		if (!createKey( pa, key ))
+		{
+			pa.erase( eraseKey );
+			return;
+		}
+
+		std::unique_ptr<ReflectedCollectionEraseCommandParameters> commandParameters( new ReflectedCollectionEraseCommandParameters() );
+		commandParameters->id_ = key.first;
+		commandParameters->path_ = key.second;
+		commandParameters->key_ = eraseKey;
+
+		const auto itr = commands_.emplace( std::pair< Key, CommandInstancePtr >( key, commandManager_.queueCommand(
+			getClassIdentifier<ReflectedCollectionEraseCommand>(), ObjectHandle( std::move( commandParameters ) ) ) ) );
+
+		commandManager_.waitForInstance( itr->second );
+		commands_.erase( itr );
 	}
 
 	virtual void statusChanged(
@@ -202,4 +246,16 @@ Variant ReflectionController::invoke( const PropertyAccessor & pa, const Reflect
 {
 	assert( impl_ != nullptr );
 	return impl_->invoke( pa, parameters );
+}
+
+void ReflectionController::insert( const PropertyAccessor & pa, const Variant & key, const Variant & value )
+{
+	assert( impl_ != nullptr );
+	impl_->insert( pa, key, value );
+}
+
+void ReflectionController::erase( const PropertyAccessor & pa, const Variant & key )
+{
+	assert( impl_ != nullptr );
+	impl_->erase( pa, key );
 }

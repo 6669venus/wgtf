@@ -1,13 +1,92 @@
 #include "reflected_tree_model_new.hpp"
 #include "reflected_object_item_new.hpp"
 
+#include "core_reflection/property_accessor_listener.hpp"
+
 #include <vector>
+
+
+namespace
+{
+
+
+/**
+ *	Refreshes UI when properties are changed via undo/redo or by a control
+ *	on a different panel.
+ */
+class ReflectedTreeModelPropertyListener
+	: public PropertyAccessorListener
+{
+public:
+	ReflectedTreeModelPropertyListener( ReflectedTreeItemNew & item );
+
+	// PropertyAccessorListener
+	void preSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+	void postSetValue( const PropertyAccessor & accessor, const Variant & value ) override;
+
+	void preInsert( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+	void postInserted( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+
+	void preErase( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+	void postErased( const PropertyAccessor & accessor, size_t index, size_t count ) override;
+
+private:
+	ReflectedTreeItemNew & rootItem_;
+};
+
+
+ReflectedTreeModelPropertyListener::ReflectedTreeModelPropertyListener(
+	ReflectedTreeItemNew & item )
+	: rootItem_( item )
+{
+}
+
+
+void ReflectedTreeModelPropertyListener::preSetValue( const PropertyAccessor & accessor, const Variant & value )
+{
+	rootItem_.preSetValue( accessor, value );
+}
+
+
+void ReflectedTreeModelPropertyListener::postSetValue( const PropertyAccessor & accessor, const Variant & value )
+{
+	rootItem_.postSetValue( accessor, value );
+}
+
+
+void ReflectedTreeModelPropertyListener::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	rootItem_.preInsert( accessor, index, count );
+}
+
+void ReflectedTreeModelPropertyListener::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	rootItem_.postInserted( accessor, index, count );
+}
+
+
+void ReflectedTreeModelPropertyListener::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	rootItem_.preErase( accessor, index, count );
+}
+
+
+void ReflectedTreeModelPropertyListener::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	rootItem_.postErased( accessor, index, count );
+}
+
+
+} // namespace
 
 
 class ReflectedTreeModelNew::Implementation
 {
 public:
-	Implementation( IComponentContext & contextManager, const ObjectHandle & object );
+	Implementation( const ReflectedTreeModelNew & model,
+		IComponentContext & contextManager,
+		const ObjectHandle & object );
+	~Implementation();
 
 	ReflectedTreeItemNew * getItemInternal( size_t index,
 		const ReflectedTreeItemNew * parent ) const;
@@ -15,12 +94,33 @@ public:
 	int getChildCountInternal( const ReflectedTreeItemNew * item ) const;
 
 	std::unique_ptr< ReflectedTreeItemNew > rootItem_;
+
+	DIRef< IDefinitionManager > definitionManager_;
+	std::shared_ptr< PropertyAccessorListener > listener_;
 };
 
 
-ReflectedTreeModelNew::Implementation::Implementation( IComponentContext & contextManager, const ObjectHandle & object )
-	: rootItem_( new ReflectedObjectItemNew( contextManager, object ) )
+ReflectedTreeModelNew::Implementation::Implementation(
+	const ReflectedTreeModelNew & model,
+	IComponentContext & contextManager,
+	const ObjectHandle & object )
+	: rootItem_( new ReflectedObjectItemNew( contextManager, object, model ) )
+	, definitionManager_( contextManager )
+	, listener_( new ReflectedTreeModelPropertyListener( *rootItem_.get() ) )
 {
+	if (definitionManager_ != nullptr)
+	{
+		definitionManager_->registerPropertyAccessorListener( listener_ );
+	}
+}
+
+
+ReflectedTreeModelNew::Implementation::~Implementation()
+{
+	if (definitionManager_ != nullptr)
+	{
+		definitionManager_->deregisterPropertyAccessorListener( listener_ );
+	}
 }
 
 
@@ -89,7 +189,7 @@ int ReflectedTreeModelNew::Implementation::getChildCountInternal(
 
 ReflectedTreeModelNew::ReflectedTreeModelNew( IComponentContext & contextManager, const ObjectHandle & object )
 	: AbstractTreeModel()
-	, impl_( new Implementation( contextManager, object ) )
+	, impl_( new Implementation( *this, contextManager, object ) )
 {
 }
 

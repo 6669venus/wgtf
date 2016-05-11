@@ -149,6 +149,7 @@ Item {
     onValueChanged: {
         setValueHelper(slider, "value", sliderFrame.value);
         setValueHelper(sliderValue, "value", sliderFrame.value);
+        setValueHelper(slider.__handlePosList[0], "value", sliderFrame.value);
     }
 
     // support copy&paste
@@ -271,16 +272,6 @@ Item {
         onValueChanged: {
             if ( __handleMoving ) {
                 setValueHelper(sliderFrame, "value", value);
-            }
-        }
-
-        Connections {
-            target: sliderFrame
-            onValueChanged: {
-                if(!slider.__handleMoving)
-                {
-                    slider.__handlePosList[0].value = sliderFrame.value
-                }
             }
         }
 

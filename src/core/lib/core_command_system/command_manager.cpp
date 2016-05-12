@@ -590,7 +590,9 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
     flush();
     std::unique_lock<std::mutex> lock( workerMutex_ );
     unbindHistoryCallbacks();
-    unbindIndexCallbacks();
+	unbindIndexCallbacks();
+
+	pCommandManager_->signalPreCommandIndexChanged( historyState_->previousSelectedIndex_ );
     pCommandManager_->signalHistoryPreReset(historyState_->history_);
 
     int currentIndexValue = currentIndex_.value();
@@ -623,12 +625,12 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
         }
     }
 
-	pCommandManager_->signalHistoryPostReset(historyState_->history_);
 
 	historyState_->previousSelectedIndex_ = prevSelecetedIndexValue;
-	pCommandManager_->signalPreCommandIndexChanged( historyState_->previousSelectedIndex_ );
 	currentIndex_.variantValue( currentIndexValue );
 	historyState_->index_ = currentIndexValue;
+
+	pCommandManager_->signalHistoryPostReset( historyState_->history_ );
 	pCommandManager_->signalPostCommandIndexChanged( currentIndexValue );
 
     bindIndexCallbacks();

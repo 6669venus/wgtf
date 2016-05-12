@@ -50,6 +50,7 @@
 #include <QString>
 #include <QWidget>
 #include <QDir>
+#include <QMessageBox>
 
 #ifdef QT_NAMESPACE
 namespace QT_NAMESPACE {
@@ -534,6 +535,51 @@ const std::string& QtFramework::getPluginPath() const
 {
 	return pluginPath_;
 }
+
+int QtFramework::displayMessageBox( const char* title, const char* message, int buttons ) 
+{
+	int qButtons = 0;
+
+#define CHECK_BUTTON( button ) \
+	if (buttons & button) \
+	{\
+		qButtons |= QMessageBox::StandardButton::button;\
+	}
+
+	CHECK_BUTTON( Ok );
+	CHECK_BUTTON( Cancel );
+	CHECK_BUTTON( Save );
+	CHECK_BUTTON( SaveAll );
+	CHECK_BUTTON( Yes );
+	CHECK_BUTTON( No );
+	
+#undef CHECK_BUTTON
+
+	assert( qButtons != 0 );
+
+	QMessageBox messageBox( QMessageBox::Icon::NoIcon, title, message, (QMessageBox::StandardButton)qButtons);
+
+	int retValue = messageBox.exec();
+
+	int result = 0;
+
+	switch (retValue)
+	{
+		case QMessageBox::StandardButton::Ok:		result = Ok; break;
+		case QMessageBox::StandardButton::Cancel:	result = Cancel; break;
+		case QMessageBox::StandardButton::Save:		result = Save; break;
+		case QMessageBox::StandardButton::SaveAll:	result = SaveAll; break;
+		case QMessageBox::StandardButton::Yes:		result = Yes; break;
+		case QMessageBox::StandardButton::No:		result = No; break;
+
+		default:
+			assert( !"invalid return from messageBox.exec" );
+			break;
+	}
+
+	return result;
+}
+
 
 void QtFramework::registerDefaultComponents()
 {

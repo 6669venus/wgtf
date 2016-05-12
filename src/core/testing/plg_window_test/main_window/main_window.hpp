@@ -23,6 +23,7 @@ private:
 	void destroyActions();
 
 	void close( IAction * action );
+	void onTryClose( bool& shouldClose );
 	void onClose();
 
 	void onStartUp();
@@ -31,6 +32,7 @@ private:
 
 private:
 	IUIApplication*			   app_;
+	IUIFramework*			   uiFramework_;
 	std::unique_ptr< IWindow > mainWindow_;
 	std::unique_ptr< IAction > testExit_;
 	ConnectionHolder connections_;

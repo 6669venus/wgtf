@@ -11,12 +11,13 @@ import WGControls 1.0
     1. The drop down will not always draw above other neighboring components
     Z  height is unfortunately only relative to siblings. This is fine for custom controls where height can be
     manually set for all components but it will cause problems for property panels that are generated dynamically.
-    3. Dropdown should disapear if anywhere else is clicked. This can be done with a proper floating window implementation
+    2. Dropdown should disapear if anywhere else is clicked. This can be done with a proper floating window implementation
     It cannot be done with focusScope in its current form
-    4. Fix the scrollbar stealing hover and thus trigering timer
-
-    5. Can we do a press on main button and hold release?
-    6. Can we do a press pan on drop down drag/scroll
+    3. The scrollbar in WGScrollPanel steals hover and thus trigers the timer.
+    This can probably be fixed by using a Flickable with a custom scrollbar.
+    4. It would be nice to add press on collapsed button button and hold, drag to target then release.
+    5. Implement showPath
+    6. Warning, data when no data is given
 */
 
 /*!
@@ -32,10 +33,11 @@ Item {
     id: comboboximage
     z: 10
     implicitWidth: textMetricsCreator.maxWidth + defaultSpacing.standardMargin * 4 + height + 16
+
     height: defaultSpacing.minimumRowHeight * 2
 
     /*! This property limits the number of list items shown in the drop down*/
-    property int showXItems: 0
+    property int showXItems: 5
 
     // Ugly hack for creation purposes. Do not use this.
     /*Component.onCompleted: {
@@ -75,7 +77,7 @@ Item {
 
     property ListModel model: ListModel {
         id: comboboximageModel
-        ListElement {path: "example/path3"; img: "icons/modelThumbnail.png"}
+        ListElement {path: "example/path1"; img: "icons/modelThumbnail.png"}
         ListElement {path: "example/path2"; img: "icons/diffuse3.png"}
         ListElement {path: "example/path3"; img: "icons/modelThumbnail.png"}
         ListElement {path: "example/a/long/really really long/path4"; img: "icons/proxyThumbnail.png"}
@@ -104,7 +106,7 @@ Item {
             checkable: true
             checked: comboboximage.dropdownChecked
             iconSource: model.get(dropDownCurrentIndex).img
-            text: model.get(dropDownCurrentIndex).path
+            text: showPath ? model.get(dropDownCurrentIndex).path : ""
             onActiveFocusChanged: {
                 if(!activeFocus)
                 {
@@ -149,7 +151,7 @@ Item {
         width: comboboximage.width
         visible: dropdownChecked
 
-        MouseArea {// TODO I might need cut this in two to provide click for uncheck on the pushbutton...
+        MouseArea {
             // Triggers the timer when the mouse leaves the control
             id: timerMouseArea
             anchors.fill: parent
@@ -199,6 +201,7 @@ Item {
         }
 
         Rectangle {
+            id: droprect
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
@@ -208,23 +211,20 @@ Item {
             border.width: defaultSpacing.standardBorderSize
             border.color: palette.darkColor
 
-            ScrollView {
-                anchors.fill: parent
-                verticalScrollBarPolicy : Qt.ScrollBarAsNeeded
-
-                // Iconsize Pulldown Buttons
-                // The listview scrollbar steals mouse over events :( triggering timer
-                ListView {
-                    id: combolistview
-                    height: parent.height
-                    width: parent.width
-                    anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
-                    model: comboboximageModel
-                    delegate: defaultPullDownListViewDelegate
-                }
-            }
+            WGScrollPanel {
+                childObject: ListView {
+                            id: combolistview
+                            height: droprect.height
+                            width: droprect.width
+                            clip: true
+                            anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
+                            model: comboboximageModel
+                            delegate: defaultPullDownListViewDelegate
+                            }
+                        }
         }
     }
+
 
     property Component defaultPullDownListViewDelegate: Item {
         id: defaultListViewDeletgate
@@ -263,7 +263,7 @@ Item {
                     id: dropdownhighlight
                     anchors.left: dropmousearea.left
                     anchors.right: dropmousearea.right
-                    anchors.rightMargin: defaultSpacing.standardMargin * 2
+                    anchors.rightMargin: defaultSpacing.standardMargin
                     height: comboboximage.height
                     visible: false
                 }

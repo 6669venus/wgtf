@@ -1,23 +1,22 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.3
+
 import BWControls 1.0
 import QtQml.Models 2.2
 import WGControls 1.0
 
 /*  TODO
     1. The drop down will not always draw above other neighboring components
-    Z  height is unfortunately only relative to siblings. This is fine for custom controls where
-    Z  height can be manually set for all components but it will cause problems for property panels.
-    2. Try to get mouse over dropdown highlight working
-    3. Limit the list size
-    4. Provide a scrollbar?
-    5. Base width on the largest text path
-    6. Dropdown should disappear on focus change
-    7. Is this control data compliant?
-    8. Check for disabled state
-    9. What about lists of size 1, disable drop down arrow in style?
+    Z  height is unfortunately only relative to siblings. This is fine for custom controls where height can be
+    manually set for all components but it will cause problems for property panels that are generated dynamically.
+    3. Dropdown should disapear if anywhere else is clicked. This can be done with a proper floating window implementation
+    It cannot be done with focusScope in its current form
+    4. Fix the scrollbar stealing hover and thus trigering timer
+
+    5. Can we do a press on main button and hold release?
+    6. Can we do a press pan on drop down drag/scroll
 */
 
 /*!
@@ -31,8 +30,44 @@ WGComboBoxImage {
 
 Item {
     id: comboboximage
-    width: 200 + 2 * defaultSpacing.standardMargin
+    z: 10
+    implicitWidth: textMetricsCreator.maxWidth + defaultSpacing.standardMargin * 4 + height + 16
     height: defaultSpacing.minimumRowHeight * 2
+
+    /*! This property limits the number of list items shown in the drop down*/
+    property int showXItems: 0
+
+    // Ugly hack for creation purposes. Do not use this.
+    /*Component.onCompleted: {
+        parent.z = 9
+        parent.parent.z = 8
+        parent.parent.parent.z = 7
+        parent.parent.parent.parent.z = 6
+        parent.parent.parent.parent.parent.z = 5
+        parent.parent.parent.parent.parent.parent.z = 4
+        parent.parent.parent.parent.parent.parent.parent.z = 3
+        parent.parent.parent.parent.parent.parent.parent.parent.z = 2
+        parent.parent.parent.parent.parent.parent.parent.parent.parent.z = 1
+     }*/
+
+    //find the widest text in model to help set control width
+    Repeater {
+        id: textMetricsCreator
+        model: comboboximage.model
+        property real maxWidth: 0
+
+        Item {
+            id:itemWrapper
+
+            TextMetrics {
+                id: fakeText
+                text: model.path
+                onTextChanged: {
+                    textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
+                }
+            }
+        }
+    }
 
     property bool showpath: true
     property int dropDownCurrentIndex: 0
@@ -40,9 +75,10 @@ Item {
 
     property ListModel model: ListModel {
         id: comboboximageModel
-        ListElement {path: "example/path1"; img: "icons/proxyThumbnail.png"}
+        ListElement {path: "example/path3"; img: "icons/modelThumbnail.png"}
         ListElement {path: "example/path2"; img: "icons/diffuse3.png"}
         ListElement {path: "example/path3"; img: "icons/modelThumbnail.png"}
+        ListElement {path: "example/a/long/really really long/path4"; img: "icons/proxyThumbnail.png"}
     }
 
     Timer {
@@ -69,7 +105,6 @@ Item {
             checked: comboboximage.dropdownChecked
             iconSource: model.get(dropDownCurrentIndex).img
             text: model.get(dropDownCurrentIndex).path
-
             onActiveFocusChanged: {
                 if(!activeFocus)
                 {
@@ -96,7 +131,7 @@ Item {
         sourceComponent: defaultCollapsedViewDelegate
     }
 
-    // ToDo. Limit the size of the drop down and provide a scroll
+    // This item covers the button and the drop down
     Item {
         id: pulldownMenu
         z: 5
@@ -104,21 +139,22 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         // pulldownMenu Component coveres entire control to capture mouse leaving pulldown
-        height: comboboximage.height * model.count + comboboximage.height
+        height: {
+            if (showXItems == 0) {
+                return comboboximage.height * model.count + comboboximage.height
+            }
+            else
+                return (comboboximage.height * Math.min(showXItems, model.count)) + comboboximage.height
+        }
         width: comboboximage.width
         visible: dropdownChecked
 
-        // WE MIGHT NEED TWO MOUSE AREAS.. ONE FOR TIMER OVER ENTIRE FIELD
-        // ONE FOR STOPPING SELECTION OF CONTROLS UNDER
-
-        MouseArea {
-            // Triggers the timeer when the mouse leaves the control
+        MouseArea {// TODO I might need cut this in two to provide click for uncheck on the pushbutton...
+            // Triggers the timer when the mouse leaves the control
             id: timerMouseArea
             anchors.fill: parent
             propagateComposedEvents: true
-
             hoverEnabled: true
-            preventStealing: true
 
             onEntered: {
                 fadeTimer.stop()
@@ -126,6 +162,11 @@ Item {
 
             onExited: {
                 fadeTimer.restart()
+            }
+
+            //Required to turn the checked state off if the pushbutton is pressed again.
+            onClicked: {
+                dropdownChecked = false
             }
         }
 
@@ -136,34 +177,51 @@ Item {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            height: comboboximage.height * model.count
+            height: pulldownMenu.height - comboboximage.height
 
-            propagateComposedEvents: false //This should stop them escaping
-
-            /*onClicked: {
-                console.log("STOPPED")
-            }*/
+            //This should stop them escaping
+            propagateComposedEvents: false
         }
 
-        //ORIGINAL LOCATION OF LISTVIEW
+        Rectangle {
+            id: dropdowndropshadow
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 2
+            anchors.topMargin: 2
+            anchors.rightMargin: -2
+            anchors.bottomMargin: -2
+            radius: 3
+            visible: true
+            height: pulldownMenu.height - comboboximage.height
+            color: "#80000000"
+        }
+
         Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            height: comboboximage.height * model.count
+            height: pulldownMenu.height - comboboximage.height
+
             color: palette.mainWindowColor
             border.width: defaultSpacing.standardBorderSize
             border.color: palette.darkColor
-            visible: true
 
-            // Iconsize Pulldown Buttons
-            ListView {
-                id: combolistview
-                height: parent.height
-                width: parent.width
-                anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
-                model: comboboximageModel
-                delegate: defaultPullDownListViewDelegate
+            ScrollView {
+                anchors.fill: parent
+                verticalScrollBarPolicy : Qt.ScrollBarAsNeeded
+
+                // Iconsize Pulldown Buttons
+                // The listview scrollbar steals mouse over events :( triggering timer
+                ListView {
+                    id: combolistview
+                    height: parent.height
+                    width: parent.width
+                    anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
+                    model: comboboximageModel
+                    delegate: defaultPullDownListViewDelegate
+                }
             }
         }
     }
@@ -184,22 +242,30 @@ Item {
                 Layout.preferredHeight: comboboximage.height
                 Layout.preferredWidth: comboboximage.width
 
-                //Todo: using hoverEnabled here causes timerMouseArea to onExit and triggers the timer resulting
-                //in the drop down disappearing.
-                //hoverEnabled: true
+                hoverEnabled: true
 
                 onClicked: {
                     dropDownCurrentIndex = index
                     comboboximage.dropdownChecked = false
                 }
 
-                //todo
                 onEntered: {
+                    fadeTimer.stop()
                     dropdownhighlight.visible = true
                 }
 
                 onExited: {
+                    fadeTimer.restart()
                     dropdownhighlight.visible = false
+                }
+
+                WGHighlightFrame {
+                    id: dropdownhighlight
+                    anchors.left: dropmousearea.left
+                    anchors.right: dropmousearea.right
+                    anchors.rightMargin: defaultSpacing.standardMargin * 2
+                    height: comboboximage.height
+                    visible: false
                 }
 
                 RowLayout {
@@ -214,22 +280,11 @@ Item {
                     Text {
                         id: text
                         visible: showpath
-                        Layout.alignment: Qt.AlignHCenter
                         text: model.path
                     }
-                }
-
-                Rectangle { //NOTE: the position of this highlight is incorrect for now
-                    id: dropdownhighlight
-                    anchors.left: dropmousearea.left
-                    anchors.right: dropmousearea.right
-                    height: comboboximage.height
-                    border.color: palette.highlightColor
-                    border.width: 1
-                    radius: defaultSpacing.standardRadius
-                    color: "transparent"
-                    // Todo. Switched off for now until highlight sorted out
-                    visible: false
+                    Item {
+                        Layout.fillWidth: true
+                    }
                 }
             }
         }

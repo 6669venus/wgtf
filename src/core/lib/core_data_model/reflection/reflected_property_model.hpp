@@ -33,6 +33,8 @@ public:
     IBasePropertyPtr getProperty() const;
     Variant getValue() const;
 
+    const std::vector<const PropertyNode*>& getObjects() const { return nodes; }
+
 private:
     friend class ReflectedPropertyModel;
     RefPropertyItem * getParent() const;
@@ -46,7 +48,11 @@ private:
 
     void addObject(const PropertyNode* node);
     void removeObject(const PropertyNode* node);
+    void removeObjects();
+    bool hasObjects() const;
+
     Variant evalValue(IDefinitionManager & definitionManager) const;
+    void setValue(Variant&& newValue);
 
     RefPropertyItem(RefPropertyItem * parent, size_t position);
 
@@ -70,8 +76,6 @@ public:
     void update();
 
     void setObjects(const std::vector<ObjectHandle>& objects);
-    void addObjects(const std::vector<ObjectHandle>& objects);
-    void removeObjects(const std::vector<ObjectHandle>& objects);
 
     IItem * item(size_t index, const IItem * parent) const override;
     ItemIndex index(const IItem * item) const override;
@@ -84,11 +88,13 @@ public:
     void registerExtension(SetterExtension * extension);
     void unregisterExtension(SetterExtension * extension);
 
+    void registerExtension(MergeValuesExtension * extension);
+    void unregisterExtension(MergeValuesExtension * extension);
+
     void registerExtension(ChildCreatorExtension * extension);
     void unregisterExtension(ChildCreatorExtension * extension);
 
 private:
-    void childPositionChanged(const PropertyNode* node, size_t childPosition);
     void childAdded(const PropertyNode* parent, const PropertyNode* node, size_t childPosition);
     void childRemoved(const PropertyNode* node);
 
@@ -110,8 +116,9 @@ private:
     std::unique_ptr<RefPropertyItem> rootItem;
     std::map<const PropertyNode*, RefPropertyItem*> nodeToItem;
 
-    GetterExtension * getterExtension = nullptr;
-    SetterExtension * setterExtension = nullptr;
+    GetterExtension * getterExtension;
+    SetterExtension * setterExtension;
+    MergeValuesExtension * mergeExtension;
     ChildCreator childCreator;
 };
 

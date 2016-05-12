@@ -99,6 +99,11 @@ Variant RefPropertyItem::evalValue(IDefinitionManager & definitionManager) const
     return result;
 }
 
+void RefPropertyItem::setValue(Variant && newValue)
+{
+    itemValue = std::move(newValue);
+}
+
 RefPropertyItem* RefPropertyItem::getParent() const
 {
     return parent;
@@ -144,6 +149,13 @@ void RefPropertyItem::removeChildren()
 
 void RefPropertyItem::addObject(const PropertyNode* node)
 {
+#ifdef _DEBUG
+    if (!nodes.empty())
+    {
+        assert(nodes.front()->propertyInstance == node->propertyInstance);
+    }
+#endif
+
     nodes.push_back(node);
 }
 
@@ -156,6 +168,16 @@ void RefPropertyItem::removeObject(const PropertyNode* object)
     nodes.erase(iter);
 }
 
+void RefPropertyItem::removeObjects()
+{
+    nodes.clear();
+}
+
+bool RefPropertyItem::hasObjects() const
+{
+    return !nodes.empty();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 ReflectedPropertyModel::ReflectedPropertyModel(IDefinitionManager & definitionManager_,
@@ -164,18 +186,19 @@ ReflectedPropertyModel::ReflectedPropertyModel(IDefinitionManager & definitionMa
     , commandManager(commandManager_)
     , getterExtension(GetterExtension::createDummy())
     , setterExtension(SetterExtension::createDummy())
+    , mergeExtension(MergeValuesExtension::createDummy())
     , childCreator(definitionManager_)
 {
     rootItem.reset(new RefPropertyItem(*this));
 
     using namespace std::placeholders;
-    childCreator.nodePositionChanged.connect(std::bind(&ReflectedPropertyModel::childPositionChanged, this, _1, _2));
     childCreator.nodeCreated.connect(std::bind(&ReflectedPropertyModel::childAdded, this, _1, _2, _3));
     childCreator.nodeRemoved.connect(std::bind(&ReflectedPropertyModel::childRemoved, this, _1));
 
     registerExtension(new DefaultGetterExtension());
     registerExtension(new UrlGetterExtension());
     registerExtension(new DefaultChildCheatorExtension());
+    registerExtension(new DefaultMergeValueExtension());
 }
 
 ReflectedPropertyModel::~ReflectedPropertyModel()
@@ -183,6 +206,7 @@ ReflectedPropertyModel::~ReflectedPropertyModel()
     rootItem.reset();
     GetterExtension::deleteExtensionChain(getterExtension);
     SetterExtension::deleteExtensionChain(setterExtension);
+    MergeValuesExtension::deleteExtensionChain(mergeExtension);
 }
 
 void ReflectedPropertyModel::update()
@@ -209,7 +233,7 @@ void ReflectedPropertyModel::update(RefPropertyItem* item)
     if (value != item->itemValue)
     {
         notifyPreDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
-        item->itemValue = value;
+        item->setValue(std::move(value));
         notifyPostDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
     }
 }
@@ -223,7 +247,7 @@ void ReflectedPropertyModel::setObjects(const std::vector<ObjectHandle>& objects
         notifyPreItemsRemoved(nullptr, 0, childCount);
         rootItem->removeChildren();
         notifyPostItemsRemoved(nullptr, 0, childCount);
-        rootItem->nodes.clear();
+        rootItem->removeObjects();
         childCreator.clear();
     }
 
@@ -235,14 +259,6 @@ void ReflectedPropertyModel::setObjects(const std::vector<ObjectHandle>& objects
     }
 
     update();
-}
-
-void ReflectedPropertyModel::addObjects(const std::vector<ObjectHandle>& object)
-{
-}
-
-void ReflectedPropertyModel::removeObjects(const std::vector<ObjectHandle>& object)
-{
 }
 
 IItem * ReflectedPropertyModel::item(size_t index, const IItem * parent) const
@@ -287,6 +303,16 @@ void ReflectedPropertyModel::unregisterExtension(SetterExtension * extension)
     setterExtension = setterExtension->removeExtension(extension);
 }
 
+void ReflectedPropertyModel::registerExtension(MergeValuesExtension * extension)
+{
+    mergeExtension = mergeExtension->addExtension(extension);
+}
+
+void ReflectedPropertyModel::unregisterExtension(MergeValuesExtension * extension)
+{
+    mergeExtension = mergeExtension->removeExtension(extension);
+}
+
 void ReflectedPropertyModel::registerExtension(ChildCreatorExtension * extension)
 {
     childCreator.registerExtension(extension);
@@ -297,25 +323,31 @@ void ReflectedPropertyModel::unregisterExtension(ChildCreatorExtension * extensi
     childCreator.unregisterExtension(extension);
 }
 
-void ReflectedPropertyModel::childPositionChanged(const PropertyNode* node, size_t childPosition)
-{
-}
-
 void ReflectedPropertyModel::childAdded(const PropertyNode* parent, const PropertyNode* node, size_t childPosition)
 {
     auto iter = nodeToItem.find(parent);
     assert(iter != nodeToItem.end());
 
-    RefPropertyItem* item = iter->second;
-    size_t childCount = item->getChildCount();
-    const IItem* modelParent = getModelParent(item);
+    RefPropertyItem* parentItem = iter->second;
 
-    notifyPreItemsInserted(modelParent, childCount, 1);
-    RefPropertyItem * child = item->createChild();
-    child->addObject(node);
-    auto newNode = nodeToItem.emplace(node, child);
+    RefPropertyItem* childItem = mergeExtension->lookUpItem(node, parentItem->children, definitionManager);
+    if (childItem != nullptr)
+    {
+        childItem->addObject(node);
+    }
+    else
+    {
+        size_t childCount = parentItem->getChildCount();
+        const IItem* modelParent = getModelParent(parentItem);
+
+        notifyPreItemsInserted(modelParent, childCount, 1);
+        childItem = parentItem->createChild();
+        childItem->addObject(node);
+        notifyPostItemsInserted(modelParent, childCount, 1);
+    }
+
+    auto newNode = nodeToItem.emplace(node, childItem);
     assert(newNode.second);
-    notifyPostItemsInserted(modelParent, childCount, 1);
 }
 
 void ReflectedPropertyModel::childRemoved(const PropertyNode* node)
@@ -324,14 +356,18 @@ void ReflectedPropertyModel::childRemoved(const PropertyNode* node)
     assert(iter != nodeToItem.end());
     
     RefPropertyItem* item = iter->second;
-    RefPropertyItem* parent = item->getParent();
-    size_t positionIndex = item->getPosition();
-    const IItem* modelParent = getModelParent(parent);
-
-    notifyPreItemsRemoved(modelParent, positionIndex, 1);
-    parent->removeChild(positionIndex);
+    item->removeObject(node);
     nodeToItem.erase(node);
-    notifyPostItemsRemoved(modelParent, positionIndex, 1);
+
+    if (!item->hasObjects())
+    {
+        RefPropertyItem* parent = item->getParent();
+        size_t positionIndex = item->getPosition();
+        const IItem* modelParent = getModelParent(parent);
+        notifyPreItemsRemoved(modelParent, positionIndex, 1);
+        parent->removeChild(positionIndex);
+        notifyPostItemsRemoved(modelParent, positionIndex, 1);
+    }
 }
 
 const RefPropertyItem* ReflectedPropertyModel::getEffectiveParent(const IItem* modelParent) const

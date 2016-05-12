@@ -128,4 +128,12 @@ public:
     static SetterExtension* createDummy();
 };
 
+class MergeValuesExtension: public ExtensionChain<MergeValuesExtension>
+{
+public:
+    virtual RefPropertyItem* lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+                                        IDefinitionManager & definitionManager) const;
+    static MergeValuesExtension* createDummy();
+};
+
 #endif

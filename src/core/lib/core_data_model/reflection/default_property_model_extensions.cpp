@@ -424,3 +424,36 @@ std::shared_ptr<IChildAllocator> createDefaultAllocator()
 {
     return std::make_shared<DefaultAllocator>();
 }
+
+RefPropertyItem * DefaultMergeValueExtension::lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+                                                         IDefinitionManager & definitionManager) const
+{
+    RefPropertyItem* result = nullptr;
+    Variant nodeValue = node->propertyInstance->get(node->object, definitionManager);
+    ObjectHandle nodeHandle;
+    nodeValue.tryCast(nodeHandle);
+    for (const std::unique_ptr<RefPropertyItem>& item : items)
+    {
+        IBasePropertyPtr itemProperty = item->getProperty();
+        if (node->propertyInstance == itemProperty)
+        {
+            Variant itemValue = itemProperty->get(item->getObjects().front()->object, definitionManager);
+            ObjectHandle itemHandle;
+            if (nodeHandle.isValid() && itemValue.tryCast(itemHandle))
+            {
+                if (nodeHandle.type() == itemHandle.type())
+                {
+                    result = item.get();
+                    break;
+                }
+            }
+            else if (nodeValue.type() == itemValue.type())
+            {
+                result = item.get();
+                break;
+            }
+        }
+    }
+
+    return result;
+}

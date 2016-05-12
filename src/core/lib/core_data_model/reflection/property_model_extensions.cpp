@@ -86,6 +86,16 @@ public:
     }
 };
 
+class DummyMerger: public MergeValuesExtension
+{
+public:
+    RefPropertyItem* lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+                                IDefinitionManager & definitionManager) const override
+    {
+        return nullptr;
+    }
+};
+
 IBasePropertyPtr selfRootProperty = std::make_shared<SelfProperty>();
 }
 
@@ -168,4 +178,16 @@ bool SetterExtension::setValue(RefPropertyItem* item, int column, size_t roleId,
 SetterExtension * SetterExtension::createDummy()
 {
     return new PMEDetails::DummySetter();
+}
+
+RefPropertyItem * MergeValuesExtension::lookUpItem(const PropertyNode * node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+                                                   IDefinitionManager & definitionManager) const
+{
+    assert(nextExtension != nullptr);
+    return nextExtension->lookUpItem(node, items, definitionManager);
+}
+
+MergeValuesExtension * MergeValuesExtension::createDummy()
+{
+    return new PMEDetails::DummyMerger();
 }

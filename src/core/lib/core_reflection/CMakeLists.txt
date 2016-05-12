@@ -91,7 +91,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_reflection ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( core_reflection INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_reflection PRIVATE
 	core_variant
 	core_logging
 	wg_types

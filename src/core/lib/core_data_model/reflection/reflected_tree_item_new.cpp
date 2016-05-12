@@ -5,13 +5,24 @@
 
 
 ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
+	const ReflectedTreeModelNew & model )
+	: parent_( nullptr )
+	, path_( "" )
+	, controller_( contextManager )
+	, definitionManager_( contextManager )
+	, model_( &model )
+{
+}
+
+
+ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	ReflectedTreeItemNew * parent,
 	const char * path ) 
 	: parent_( parent )
 	, path_( path )
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
-	, model_( nullptr )
+	, model_( parent != nullptr ? parent->getModel() : nullptr )
 {
 }
 
@@ -23,7 +34,7 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	, path_( path )
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
-	, model_( nullptr )
+	, model_( parent != nullptr ? parent->getModel() : nullptr )
 {
 }
 
@@ -86,17 +97,18 @@ IDefinitionManager * ReflectedTreeItemNew::getDefinitionManager() const
 
 const ReflectedTreeModelNew * ReflectedTreeItemNew::getModel() const
 {
-	return model_ != nullptr ? model_ : this->getParent()->getModel();
+	assert( (model_ != nullptr) && "Tree item is not attached to model" );
+	return model_;
 }
 
 
-void ReflectedTreeItemNew::setModel( const ReflectedTreeModelNew * pModel )
+const ReflectedTreeItemNew * ReflectedTreeItemNew::getParent() const
 {
-	model_ = pModel;
+	return parent_;
 }
 
 
-ReflectedTreeItemNew * ReflectedTreeItemNew::getParent() const
+ReflectedTreeItemNew * ReflectedTreeItemNew::getParent()
 {
 	return parent_;
 }

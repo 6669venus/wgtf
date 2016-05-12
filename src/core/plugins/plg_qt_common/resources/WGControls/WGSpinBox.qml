@@ -684,6 +684,8 @@ Control {
         drag.target: dragBar
         drag.axis: Drag.YAxis
 
+        property real tempUndoValue: 0.0
+
         //start changing the value via dragging dragBar
         // reset the value before and after drag
         drag.onActiveChanged: {
@@ -733,6 +735,7 @@ Control {
         onPressed: {
             // must give spinbox focus to capture control key events
             spinbox.forceActiveFocus()
+            tempUndoValue = value
             beginUndoFrame();
             if (!input.readOnly)
             {
@@ -809,7 +812,14 @@ Control {
             //prevents __fastDrag getting stuck if mouse is released before key event
             __fastDrag = false
             pressAndHoldTimer.stop()
-            endUndoFrame();
+            if (tempUndoValue !== value)
+            {
+                endUndoFrame();
+            }
+            else
+            {
+                abortUndoFrame();
+            }
         }
     }
 

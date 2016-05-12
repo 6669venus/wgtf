@@ -24,8 +24,10 @@ class ReflectedTreeItemNew : public AbstractTreeItem
 {
 public:
 	ReflectedTreeItemNew( IComponentContext & contextManager,
+		const ReflectedTreeModelNew & model );
+	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
-		const char * path ) ;
+		const char * path );
 	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
 		const std::string & path );
@@ -40,10 +42,14 @@ public:
 
 	virtual bool isInPlace() const;
 
-	virtual bool preSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) = 0;
-	virtual bool postSetValue( const PropertyAccessor & accessor,
-		const Variant & value ) = 0;
+	virtual bool preSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
+	virtual bool postSetValue( const PropertyAccessor & accessor, const Variant & value ) = 0;
+
+	virtual bool preInsert( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
+	virtual bool postInserted( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
+
+	virtual bool preErase( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
+	virtual bool postErased( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
 
 	const std::string & getPath() const;
 	IReflectionController * getController() const;
@@ -54,7 +60,8 @@ public:
 	 *	@return signals or nullptr if item has not been added to a model.
 	 */
 	const ReflectedTreeModelNew * getModel() const;
-	ReflectedTreeItemNew * getParent() const;
+	const ReflectedTreeItemNew * getParent() const;
+	ReflectedTreeItemNew * getParent();
 
 protected:
 	ReflectedTreeItemNew * parent_;
@@ -76,13 +83,6 @@ private:
 		const std::string & inPlacePath,
 		const PropertyCallback & callback );
 
-	friend class ReflectedTreeModelNew;
-	/**
-	 *	Used by parent to add change/insert/remove signals when item is
-	 *	added/removed from the model.
-	 *	@param signals or nullptr if item is being removed from the model.
-	 */
-	void setModel( const ReflectedTreeModelNew * pModel );
 	const ReflectedTreeModelNew * model_;
 };
 

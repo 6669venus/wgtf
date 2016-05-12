@@ -131,7 +131,6 @@ Item {
         objectName: "SliderRange"
         id: range
         stepSize: parentSlider.stepSize
-        value: parentSlider.value
 
         minimumValue: parentSlider.minimumValue
         maximumValue: parentSlider.maximumValue

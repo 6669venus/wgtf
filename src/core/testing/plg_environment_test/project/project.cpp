@@ -167,6 +167,7 @@ void ProjectManager::init( IComponentContext& contextManager )
 }
 void ProjectManager::fini()
 {
+    this->closeProject();
 }
 
 void ProjectManager::createProject()

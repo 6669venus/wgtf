@@ -77,7 +77,7 @@ set(LIBPYTHON_SOURCES
     ${SRC_DIR}/Python/compile.c
     ${SRC_DIR}/Python/dtoa.c
     ${SRC_DIR}/Python/errors.c
-	${SRC_DIR}/Python/fileutils.c
+    ${SRC_DIR}/Python/fileutils.c
     ${SRC_DIR}/Python/formatter_string.c
     ${SRC_DIR}/Python/formatter_unicode.c
     ${SRC_DIR}/Python/frozen.c
@@ -298,8 +298,8 @@ SET_SOURCE_FILES_PROPERTIES( ${SRC_DIR}/Python/marshal.c
 
 # NGT: Deploy *.pycs from Lib directory to <deployment_dir>/scripts/common/Lib
 if(BUILD_STATIC)
-	WG_DEPLOY_PYTHON( libpython ${PYTHON_LIB_DIR} scripts/common/Lib )
+	WG_DEPLOY_PYTHON( libpython ${CORE_PYTHON_LIB_DIR} scripts/common/Lib )
 elseif(BUILD_SHARED)
-	WG_DEPLOY_PYTHON( libpython-shared ${PYTHON_LIB_DIR} scripts/common/Lib )
+	WG_DEPLOY_PYTHON( libpython-shared ${CORE_PYTHON_LIB_DIR} scripts/common/Lib )
 endif(BUILD_STATIC)
 

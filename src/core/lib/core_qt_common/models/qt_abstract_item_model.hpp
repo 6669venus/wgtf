@@ -5,6 +5,11 @@
 
 #include <memory>
 
+
+/**
+ *	Adapter layer to allow AbstractItemModels or ExtendedModels to be used by
+ *	Qt and QML views.
+ */
 class QtAbstractItemModel : public QAbstractItemModel
 {
 	Q_OBJECT

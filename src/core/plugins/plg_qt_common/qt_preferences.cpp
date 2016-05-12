@@ -57,7 +57,6 @@ namespace
                 IFileSystem::IStreamPtr fileStream = 
                     fileSystem->readFile( s_globalPreference, std::ios::in | std::ios::binary );
                 XMLSerializer serializer( *fileStream, *definitionManager );
-                definitionManager->deserializeDefinitions( serializer );
                 loadPreferenceState( serializer, preferenceState_ );
             }
             auto em = contextManager_.queryInterface<IEnvManager>();
@@ -75,7 +74,6 @@ namespace
                 auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
                 assert( definitionManager != nullptr );
                 XMLSerializer serializer( *stream, *definitionManager );
-                definitionManager->serializeDefinitions( serializer );
                 savePreferenceState( serializer, preferenceState_ );
             }
             auto em = contextManager_.queryInterface<IEnvManager>();

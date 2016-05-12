@@ -38,6 +38,8 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_qt_common
 	core_ui_framework
 	Qt5::Core
+	Qt5::Gui
+	Qt5::QuickWidgets
 )
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

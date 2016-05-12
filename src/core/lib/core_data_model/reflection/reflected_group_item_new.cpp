@@ -280,8 +280,7 @@ int ReflectedGroupItemNew::rowCount() const /* override */
 }
 
 
-bool ReflectedGroupItemNew::preSetValue( const PropertyAccessor & accessor,
-	const Variant & value ) /* override */
+bool ReflectedGroupItemNew::preSetValue( const PropertyAccessor & accessor, const Variant & value ) /* override */
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -299,8 +298,7 @@ bool ReflectedGroupItemNew::preSetValue( const PropertyAccessor & accessor,
 }
 
 
-bool ReflectedGroupItemNew::postSetValue( const PropertyAccessor & accessor,
-	const Variant & value ) /* override */
+bool ReflectedGroupItemNew::postSetValue( const PropertyAccessor & accessor, const Variant & value ) /* override */
 {
 	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
 	{
@@ -313,6 +311,78 @@ bool ReflectedGroupItemNew::postSetValue( const PropertyAccessor & accessor,
 		{
 			return true;
 	}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::preInsert( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preInsert( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::postInserted( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postInserted( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::preErase( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->preErase( accessor, index, count ))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool ReflectedGroupItemNew::postErased( const PropertyAccessor & accessor, size_t index, size_t count )
+{
+	for (auto it = impl_->children_.begin(); it != impl_->children_.end(); ++it)
+	{
+		if ((*it) == nullptr)
+		{
+			continue;
+		}
+
+		if ((*it)->postErased( accessor, index, count ))
+		{
+			return true;
+		}
 	}
 	return false;
 }

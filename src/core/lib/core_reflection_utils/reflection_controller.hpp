@@ -18,6 +18,8 @@ public:
 	Variant getValue( const PropertyAccessor & pa ) override;
 	void setValue( const PropertyAccessor & pa, const Variant & data ) override;
 	Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters ) override;
+	void insert( const PropertyAccessor & pa, const Variant & key, const Variant & value ) override;
+	void erase( const PropertyAccessor & pa, const Variant & key ) override;
 
 private:
 	class Impl;

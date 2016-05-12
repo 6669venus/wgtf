@@ -96,11 +96,8 @@ WGTreeView {
         id: contextMenu
         path: "WGPropertyTreeMenu"
 
-		property var contextItem: null
-
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Push"
-			active: item != null && item.isCollection == true
 
 			onTriggered: {
 				var collection = item.value
@@ -119,12 +116,20 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
+			
+			onItemChanged: {
+				if (item != null && item.isCollection) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
 
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Pop"
-			active: item != null && item.isCollection == true && item.hasChildren
 
 			onTriggered: {
 				var collection = item.value
@@ -140,21 +145,31 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
+
+			onItemChanged: {
+				if (item != null && item.isCollection && item.hasChildren) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
 
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Insert"
-			active: parentItem != null && parentItem.isCollection == true
 
 			onTriggered: {
 				var collection = parentItem.value
 				if (collection.isMapping()) {
-					keyDialog.open()
-					if (keyDialog.key == "") {
-						return
+					keyDialog.onAcceptedFunc = function(key) {
+						if (key == "") {
+							return
+						}
+						collection.insertItem(key)
 					}
-					collection.insertItem(keyDialog.key)
+					keyDialog.open()
 				}
 				else {
 					var index = propertyTreeView.internalModel.rowIndex(item)
@@ -162,13 +177,21 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
 			property var parentItem: propertyTreeView.internalModel.parent(item)
+
+			onParentItemChanged: {
+				if (parentItem != null && parentItem.isCollection == true) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
 
 		WG1.WGAction {
 			actionId: "WGPropertyTreeMenu|.Remove"
-			active: parentItem != null && parentItem.isCollection == true
 
 			onTriggered: {
 				var collection = parentItem.value
@@ -182,8 +205,17 @@ WGTreeView {
 				}
 			}
 
-			property var item: contextMenu.contextItem
+			property var item: contextMenu.contextObject
 			property var parentItem: propertyTreeView.internalModel.parent(item)
+
+			onParentItemChanged: {
+				if (parentItem != null && parentItem.isCollection == true) {
+					active = true
+				}
+				else {
+					active = false
+				}
+			}
 		}
     }
 
@@ -192,7 +224,7 @@ WGTreeView {
 			return
 		}
 
-		contextMenu.contextItem = internalModel.indexToItem(rowIndex)
+		contextMenu.contextObject = internalModel.indexToItem(rowIndex)
 		contextMenu.popup()
 	}
 }

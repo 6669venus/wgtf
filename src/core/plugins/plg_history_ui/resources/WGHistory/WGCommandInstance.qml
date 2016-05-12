@@ -20,7 +20,7 @@ WGExpandingRowLayout {
 
 	WGHistoryImage {
 		id: commandImage
-		type: parent.displayObject ? parent.displayObject.Type : null
+        type: parent.displayObject ? (parent.displayObject.Type ? parent.displayObject.Type : "") : ""
 		isApplied: parent.isApplied
 		visible: (parent.columnIndex == 0)
 	}

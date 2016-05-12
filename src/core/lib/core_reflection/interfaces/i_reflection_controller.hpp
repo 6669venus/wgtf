@@ -41,6 +41,23 @@ public:
 	 *	@return the result of the function.
 	 */
 	virtual Variant invoke( const PropertyAccessor & pa, const ReflectedMethodParameters & parameters ) = 0;
+	/**
+	 *	Insert an element into a reflected property.
+	 *  Only valid for reflected properties that are collections
+	 *	This will block
+	 *	@param pa the property for which to insert the element.
+	 *	@param key the key of the element to insert.
+	 *	@param value the value of the element to insert.
+	 */
+	virtual void insert( const PropertyAccessor & pa, const Variant & key, const Variant & value ) = 0;
+	/**
+	 *	Erase an element from a reflected property.
+	 *  Only valid for reflected properties that are collections
+	 *	This will block
+	 *	@param pa the property from which to erase the element.
+	 *	@param key the key of the element to erase.
+	 */
+	virtual void erase( const PropertyAccessor & pa, const Variant & key ) = 0;
 };
 
 #endif//I_REFLECTION_CONTROLLER_HPP

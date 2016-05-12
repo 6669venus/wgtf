@@ -80,5 +80,5 @@ void MainWindow::addMenuBar( IUIApplication & uiApplication )
 
 void MainWindow::onStartUp()
 {
-	mainWindow_->showMaximized( true );
+	mainWindow_->show( true );
 }

@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import WGControls 1.0
 
-Item
+Rectangle
 {
     id: nodeContainer
     objectName: "Node"
@@ -14,18 +14,33 @@ Item
     property var outputSlotsModel
     property var position: Qt.point(x, y)
 
-    property int margin: 10
+    property bool nodeIsExpanded: true
 
-    width: nodeSlotsBackground.width
-    height: nodeSlotsBackground.height + nodeTitleBackground.height
+    // TODO link to data
+    property string nodeSubTitle: ""
+
+    // TODO link to Data
+    property color nodeColor: "blue"
+
+    // TODO link to data
+    property string nodeIcon: "images/model_16x16.png"
+
+    color: palette.darkerShade
+
+    radius: defaultSpacing.standardRadius
+
+    width : mainLayout.width + defaultSpacing.doubleBorderSize + defaultSpacing.doubleMargin
+    height : mainLayout.height + defaultSpacing.doubleBorderSize + defaultSpacing.doubleBorderSize
+
+    border.width: defaultSpacing.standardBorderSize
+    border.color: palette.darkestShade
 
     onPositionChanged: { nodeObj.setPos(x, y); }
-
 
     function getSlotViewBySlotObj(slotObj)
     {
         var isInput = slotObj.isInput;
-        var listModel = (isInput) ? inputSlotRepeater : outputSlotRepeater;
+        var listModel = (isInput) ? inputSlotsRepeater : outputSlotsRepeater;
         var slotView = null;
 
         var size = listModel.count;
@@ -60,126 +75,184 @@ Item
         return null;
     }
 
-    Rectangle
-    {
-        id: nodeSlotsBackground
+    Rectangle {
+        color: nodeColor
 
-        width: Math.max(slotsLayout.width + margin, nodeTextTitle.contentWidth + margin)
-        height: slotsLayout.height + margin
-
-        anchors.top: nodeTitleBackground.bottom
-
-        color: "black"
-        opacity: 0.35
-        radius: 3
-        border.color: "black"
-        border.width: 4
-    }
-
-    MouseArea
-    {
-        anchors.fill: parent
-        drag.target: parent
-        drag.axis: Drag.XAndYAxis
-    }
-
-    Row
-    {
-        id: slotsLayout
-
-        anchors.top: nodeTitleBackground.bottom
-        anchors.horizontalCenter: nodeTitleBackground.horizontalCenter
-        anchors.topMargin: margin / 2
-        spacing: 50
-
-        Column
-        {
-            id: inputSlotsLayout
-            spacing: 10
-
-            WGListModel
-            {
-                id: inputSlotsListModel
-                source: inputSlotsModel
-
-                ValueExtension {}
-            }
-
-            Repeater
-            {
-                id: inputSlotRepeater
-                model: inputSlotsListModel
-                delegate: Slot
-                {
-                    slotObj: Value
-                    isInput: Value.isInput
-                }
-            }
-        }
-
-        Column
-        {
-            id: outputSlotsLayout
-            spacing: 10
-
-            WGListModel
-            {
-                id: outputSlotsListModel
-                source: outputSlotsModel
-
-                ValueExtension {}
-            }
-
-            Repeater
-            {
-                id: outputSlotRepeater
-                model: outputSlotsListModel
-                delegate: Slot
-                {
-                    slotObj: Value
-                    isInput: Value.isInput
-                }
-            }
-        }
-    }
-
-    Rectangle
-    {
-        id: nodeTitleBackground
-
-        height: 20
-        width: parent.width
         anchors.top: parent.top
-        anchors.leftMargin: margin / 2
-        anchors.rightMargin: margin / 2
-
-        radius: 5
-
-        border.color: "black"
-        border.width: 0.5
-
+        anchors.margins: defaultSpacing.standardBorderSize
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: defaultSpacing.minimumRowHeight
 
         LinearGradient {
             anchors.fill: parent
             start: Qt.point(0, 0)
-            end: Qt.point(70, 0)
+            end: Qt.point(parent.width * 0.8, 0)
             opacity: 0.8
             source: parent
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "blue" }
+                GradientStop { position: 0.0; color: nodeColor }
                 GradientStop { position: 1.0; color: "black" }
             }
         }
 
-        Text
+        radius: defaultSpacing.halfRadius
+        z: -2
+
+        MouseArea
         {
-            id: nodeTextTitle
-            text: nodeTitle
-            color: "white"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.fill: parent
+            drag.target: nodeContainer
+            drag.axis: Drag.XAndYAxis
+            acceptedButtons: Qt.LeftButton
+            preventStealing: true
+
+            onDoubleClicked: {
+                nodeIsExpanded = !nodeIsExpanded
+            }
+        }
+    }
+
+    ColumnLayout
+    {
+        id : mainLayout
+        anchors.centerIn: parent
+
+        WGExpandingRowLayout {
+            id: headerBox
+            Layout.fillWidth: true
+
+            Item {
+                Layout.preferredHeight: 20
+                Layout.preferredWidth: 20
+
+                Image
+                {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: -defaultSpacing.rowSpacing
+                    source: nodeIcon
+                    visible: nodeIcon != ""
+                }
+            }
+
+            WGLabel
+            {
+                id : header
+                Layout.fillHeight : true
+                Layout.alignment : Qt.AlignHCenter | Qt.AlignVCenter
+                text : nodeTitle
+                font.bold: true
+
+                // Text.QtRendering looks a bit fuzzier sometimes but is much better for arbitrary scaling
+                renderType: Text.QtRendering
+            }
+
+            Item {
+                Layout.preferredHeight: 20
+                Layout.preferredWidth: 20
+
+                // This could be replaced by a popup menu button?
+                WGToolButton
+                {
+                    id: nodeExpandedBox
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.horizontalCenterOffset: defaultSpacing.rowSpacing
+                    width: 20
+                    height: 20
+                    iconSource: nodeIsExpanded ? "images/arrow_down_small_16x16.png" : "images/arrow_right_small_16x16.png"
+                    onClicked: {
+                        nodeIsExpanded = !nodeIsExpanded
+                    }
+                }
+
+            }
+
+        }
+        // Placeholder subtitle
+        WGMultiLineText
+        {
+            id : subHeader
+            Layout.fillHeight : true
+            Layout.preferredWidth: header.width
+            Layout.alignment : Qt.AlignLeft | Qt.AlignVCenter
+            text : nodeSubTitle
+            color: palette.DisabledTextColor
+
+            visible: nodeIsExpanded && nodeSubTitle != ""
+
+            // Text.QtRendering looks a bit fuzzier but is much better for arbitrary scaling
+            renderType: Text.QtRendering
         }
 
+        // Feels like a slot should be one object with an input and/or output and potentially an edit control in the middle rather than two separate slots.
+        // This would make it easier to line everything up into three columns as well.
+
+        WGExpandingRowLayout {
+            id: nodes
+            visible: nodeIsExpanded
+
+            ColumnLayout
+            {
+                id: inputSlotsLayout
+                Layout.alignment : Qt.AlignTop | Qt.AlignLeft
+
+                WGListModel
+                {
+                    id : inputSlotsListModel
+                    source : inputSlotsModel
+
+                    ValueExtension {}
+                }
+
+                Repeater
+                {
+                    id : inputSlotsRepeater
+                    model : inputSlotsListModel
+                    delegate : Slot
+                    {
+                        z : nodeContainer.z + 10
+                        slotObj: Value
+                        isInput: Value.isInput
+                    }
+                }
+            }
+            // TODO Loader for an edit control?
+            Item
+            {
+                Layout.fillWidth: true
+            }
+
+            ColumnLayout
+            {
+                id: outputSlotsLayout
+                Layout.alignment : Qt.AlignTop | Qt.AlignRight
+
+                WGListModel
+                {
+                    id: outputSlotsListModel
+                    source: outputSlotsModel
+
+                    ValueExtension {}
+                }
+
+
+                Repeater
+                {
+                    id : outputSlotsRepeater
+                    model : outputSlotsListModel
+                    Layout.alignment : Qt.AlignTop | Qt.AlignRight
+                    delegate : Slot
+                    {
+                        z : nodeContainer.z + 10
+                        slotObj: Value
+                        isInput: Value.isInput
+                        Layout.alignment : Qt.AlignTop | Qt.AlignRight
+                    }
+                }
+            }
+        }
     }
 
     NodeContextMenu

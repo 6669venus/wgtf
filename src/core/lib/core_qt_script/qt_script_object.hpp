@@ -24,19 +24,39 @@ class Variant;
 class IBaseProperty;
 class QtScriptingEngine;
 
-class QtScriptObject
-	: public QObject
-	, public Depends< IDefinitionManager, IReflectionController >
+struct QtScriptObjectData
+	: public Depends< IDefinitionManager, IReflectionController >
 {
-public:
-	QtScriptObject(
-		QObject * parent,
+	QtScriptObjectData(
 		IComponentContext & context,
 		QtScriptingEngine & engine,
 		const QMetaObject & metaObject,
-		const ObjectHandle & object );
+		const ObjectHandle & object )
+		: Depends(context)
+		, scriptEngine_( engine )
+		, metaObject_( metaObject )
+		, object_( object )
+	{
+	}
+
+	QtScriptingEngine& scriptEngine_;
+	const QMetaObject & metaObject_;
+	ObjectHandle object_;
+};
+
+
+class QtScriptObject : public QObject
+{
+public:
+	QtScriptObject( std::shared_ptr< QtScriptObjectData > & data, QObject * parent = nullptr )
+		: QObject( parent )
+		, data_( data )
+	{
+	}
 
 	virtual ~QtScriptObject();
+
+	std::shared_ptr< QtScriptObjectData > getData() const { return data_; }
 
 	const ObjectHandle & object() const;
 	const QMetaObject * metaObject() const override;
@@ -44,6 +64,9 @@ public:
 
 	void firePropertySignal( const IBasePropertyPtr & property, const Variant& value );
 	void fireMethodSignal( const IBasePropertyPtr & method, bool undo = false );
+
+	//This is shadowed on purpose, as QtScriptObjects need to know what their parents are.
+	void setParent( QObject * parent );
 
 private:
 	QtScriptObject( const QtScriptObject & );
@@ -57,9 +80,7 @@ private:
 		const QString& property,
 		const QString& metaType ) const;
 
-	QtScriptingEngine& scriptEngine_;
-	const QMetaObject & metaObject_;
-	ObjectHandle object_;
+	std::shared_ptr< QtScriptObjectData > data_;
 };
 
 #endif//QT_SCRIPT_OBJECT_HPP

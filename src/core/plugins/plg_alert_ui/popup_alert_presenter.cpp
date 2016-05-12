@@ -16,7 +16,8 @@
 #include <QQuickView>
 
 PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
-	: contextManager_( &contextManager )
+	: Depends( contextManager )
+	, contextManager_( &contextManager )
 	, alertCounter_( 0 )
 {		
 	// Setup the alert page model
@@ -36,10 +37,13 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	IUIFramework* qtFramework = contextManager.queryInterface<IUIFramework>();
 	assert( qtFramework != nullptr );
 
-	alertWindow_ = qtFramework->createView(
-		"plg_alert_ui/alert_window.qml",
-		IUIFramework::ResourceType::Url, alertPageModel_ );
-	uiApplication->addView( *alertWindow_ );
+	auto viewCreator = get< wgt::IViewCreator >();
+	if (viewCreator)
+	{
+		viewCreator->createView(
+			"plg_alert_ui/alert_window.qml",
+			alertPageModel_, alertWindow_ );
+	}
 
 	ILoggingSystem* loggingSystem = 
 		contextManager.queryInterface< ILoggingSystem >();

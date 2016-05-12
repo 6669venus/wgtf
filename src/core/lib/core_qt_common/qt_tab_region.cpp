@@ -81,7 +81,7 @@ void QtTabRegion::addView( IView & view )
 	}
 
 	qTabWidget_.setVisible( true );
-	qTabWidget_.setCurrentIndex( id );
+	//qTabWidget_.setCurrentIndex( id );
 }
 
 void QtTabRegion::removeView( IView & view )

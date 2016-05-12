@@ -2,14 +2,21 @@
 #define CUSTOM_MODEL_INTERFACE_TEST__HPP
 
 #include <memory>
+#include "core_dependency_system/depends.hpp"
 
 class IComponentContext;
 class IView;
 
+namespace wgt
+{
+	class IViewCreator;
+};
+
 class CustomModelInterfaceTest
+	: public Depends< wgt::IViewCreator >
 {
 public:
-	CustomModelInterfaceTest();
+	CustomModelInterfaceTest(IComponentContext & );
 	~CustomModelInterfaceTest();
 
 	void initialise( IComponentContext & contextManager );

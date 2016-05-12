@@ -42,8 +42,9 @@ public:
 
 	void finalise();
 
-	QtScriptObject * createScriptObject( const ObjectHandle & object, QObject* parent = nullptr  );
+	QtScriptObject * createScriptObject( const ObjectHandle & object, QObject* parent );
 	void deregisterScriptObject( QtScriptObject & scriptObject );
+	void swapParent( QtScriptObject & scriptObject, QObject * parent );
 
 protected:
 	// TODO: These invokables need to be refactored into different modules to

@@ -5,17 +5,19 @@
 #include "core_ui_framework/i_view.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_dependency_system/depends.hpp"
-#include "core_ui_framework/i_ui_framework.hpp"
-#include "core_ui_framework/i_ui_application.hpp"
 
 #include <memory>
 
+class IUIApplication;
+
+namespace wgt
+{
+	class IViewCreator;
+}
 
 class CustomPanel
-	: Depends< IUIFramework, IUIApplication >
+	: Depends< IUIApplication, wgt::IViewCreator >
 {
-	typedef Depends< IUIFramework, IUIApplication > DepsBase;
-
 public:
 	CustomPanel( IComponentContext & context );
 

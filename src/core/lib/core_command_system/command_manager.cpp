@@ -595,6 +595,10 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
 
     int currentIndexValue = currentIndex_.value();
     int commandIndex = 0;
+
+	int prevSelecetedIndexValue = historyState_->previousSelectedIndex_;
+	int prevSelecetedIndex = 0;
+
     VariantList::Iterator iter = historyState_->history_.begin();
     while(iter != historyState_->history_.end())
     {
@@ -605,16 +609,23 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
             {
                 currentIndexValue = std::max(currentIndexValue - 1, -1);
             }
+
+			if (prevSelecetedIndex < prevSelecetedIndexValue)
+			{
+				prevSelecetedIndexValue = std::max( prevSelecetedIndexValue - 1, -1 );
+			}
         }
         else
         {
             ++iter;
             ++commandIndex;
+			++prevSelecetedIndex;
         }
     }
 
 	pCommandManager_->signalHistoryPostReset(historyState_->history_);
 
+	historyState_->previousSelectedIndex_ = prevSelecetedIndexValue;
 	pCommandManager_->signalPreCommandIndexChanged( historyState_->previousSelectedIndex_ );
 	currentIndex_.variantValue( currentIndexValue );
 	historyState_->index_ = currentIndexValue;

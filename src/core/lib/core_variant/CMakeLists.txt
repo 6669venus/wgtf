@@ -38,7 +38,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_variant ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( core_variant INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_variant PRIVATE
 	wg_types
 	core_serialization
 )

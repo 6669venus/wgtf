@@ -1,14 +1,17 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
+PROJECT( plg_perforce )
+INCLUDE( WGToolsProject )
 
 FIND_PACKAGE( Perforce "15.2" )
 
 IF( NOT PERFORCE_FOUND )
+	MESSAGE( STATUS "Disabled ${PROJECT_NAME}. Perforce not found in ${PERFORCE_DIR}." )
+	# Use ADD_CUSTOM_TARGET because this target has no cpp files
+	ADD_CUSTOM_TARGET( ${PROJECT_NAME} COMMENT "${PROJECT_NAME} disabled." )
+	BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Disabled" )
 	RETURN()
 ENDIF()
 
-PROJECT( plg_perforce )
-
-INCLUDE( WGToolsProject )
 INCLUDE_DIRECTORIES( ${WG_TOOLS_SOURCE_DIR}/core/interfaces )
 
 SET( PERFORCE_DIR ${PERFORCE_DIR}$<$<CONFIG:Debug>:_debug> )

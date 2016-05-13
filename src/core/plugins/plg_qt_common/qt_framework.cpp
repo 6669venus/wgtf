@@ -544,7 +544,7 @@ int QtFramework::displayMessageBox( const char* title, const char* message, int 
 		QMessageBox::StandardButton qtButton;
 	};
 
-	MessageBoxQtMapping buttonMappings[] = 
+	static MessageBoxQtMapping buttonMappings[] = 
 	{
 		{ Ok, QMessageBox::StandardButton::Ok },
 		{ Cancel, QMessageBox::StandardButton::Cancel },
@@ -554,7 +554,7 @@ int QtFramework::displayMessageBox( const char* title, const char* message, int 
 		{ No, QMessageBox::StandardButton::No },
 	};
 
-	size_t count = sizeof( buttonMappings ) / sizeof( buttonMappings[0] );
+	static size_t count = sizeof( buttonMappings ) / sizeof( buttonMappings[0] );
 	
 	int desiredButtons = 0;
 

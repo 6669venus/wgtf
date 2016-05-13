@@ -92,8 +92,8 @@ namespace NGTTestAutomation.Open_Close
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(0));
-            Delay.Duration(10000, false);
+            Report.Log(ReportLevel.Info, "Delay", "Waiting for 100ms.", new RecordItemIndex(0));
+            Delay.Duration(100, false);
             
             Report.Log(ReportLevel.Info, "Application", "Run application 'generic_app.exe' with arguments '--config plugins_ui.txt' in normal mode.", new RecordItemIndex(1));
             Host.Local.RunApplication("generic_app.exe", "--config plugins_ui.txt", path, false);

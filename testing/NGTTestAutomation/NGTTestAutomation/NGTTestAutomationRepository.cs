@@ -300,6 +300,8 @@ namespace NGTTestAutomation
             RepoItemInfo _custommodelinterface1Info;
             RepoItemInfo _propertytreetestclasstestpageInfo;
             WGTreeViewInfoClass _wgtreeviewInfo;
+            RepoItemInfo _aardwolfInfo;
+            RepoItemInfo _abdicateInfo;
 
             /// <summary>
             /// Creates a new MainWindow  folder.
@@ -376,6 +378,8 @@ namespace NGTTestAutomation
                 _custommodelinterface1Info = new RepoItemInfo(this, "CustomModelInterface1", "container[@objectname='plg_data_model_test/custom_model_interface_test_panel.qml']", 30000, null, "a35d6320-10fc-4cb3-981a-7498ecb9d9bf");
                 _propertytreetestclasstestpageInfo = new RepoItemInfo(this, "PropertyTreeTestClassTestPage", "?/?/tabpage[@index='12']", 30000, null, "15e56967-327d-4fb0-ae43-b6ad0c5bfa87");
                 _wgtreeviewInfo = new WGTreeViewInfoClass(this);
+                _aardwolfInfo = new RepoItemInfo(this, "Aardwolf", "container[@objectname='plg_list_model_test/test_list_panel_old.qml']//list[@type='WGListView']/element[2]/list/list[2]/text[@caption='aardwolf']", 30000, null, "a67c2b30-5e16-4bf7-bc06-220296287dbc");
+                _abdicateInfo = new RepoItemInfo(this, "Abdicate", "container[@objectname='plg_list_model_test/test_list_panel_old.qml']//list[@type='WGListView']/element[35]/list/list[2]/text[@caption='abdicate']", 30000, null, "583e56c8-21fa-411d-97e1-ca9b9122b33b");
             }
 
             /// <summary>
@@ -2964,6 +2968,54 @@ namespace NGTTestAutomation
             }
 
             /// <summary>
+            /// The Aardwolf item.
+            /// </summary>
+            [RepositoryItem("a67c2b30-5e16-4bf7-bc06-220296287dbc")]
+            public virtual Ranorex.Text Aardwolf
+            {
+                get
+                {
+                    return _aardwolfInfo.CreateAdapter<Ranorex.Text>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Aardwolf item info.
+            /// </summary>
+            [RepositoryItemInfo("a67c2b30-5e16-4bf7-bc06-220296287dbc")]
+            public virtual RepoItemInfo AardwolfInfo
+            {
+                get
+                {
+                    return _aardwolfInfo;
+                }
+            }
+
+            /// <summary>
+            /// The Abdicate item.
+            /// </summary>
+            [RepositoryItem("583e56c8-21fa-411d-97e1-ca9b9122b33b")]
+            public virtual Ranorex.Text Abdicate
+            {
+                get
+                {
+                    return _abdicateInfo.CreateAdapter<Ranorex.Text>(true);
+                }
+            }
+
+            /// <summary>
+            /// The Abdicate item info.
+            /// </summary>
+            [RepositoryItemInfo("583e56c8-21fa-411d-97e1-ca9b9122b33b")]
+            public virtual RepoItemInfo AbdicateInfo
+            {
+                get
+                {
+                    return _abdicateInfo;
+                }
+            }
+
+            /// <summary>
             /// The WGListView folder.
             /// </summary>
             [RepositoryFolder("42a637e0-024f-4a7f-8b3d-944655bd0321")]
@@ -4114,6 +4166,8 @@ namespace NGTTestAutomation
             PythonTest2InfoClass _pythontest2Info;
             PrototypeCustomPanelInfoClass _prototypecustompanelInfo;
             PropertyTreeTestInfoClass _propertytreetestInfo;
+            RepoItemInfo _propertytreetest1Info;
+            RepoItemInfo _propertytreetest2Info;
 
             /// <summary>
             /// Creates a new View  folder.
@@ -4134,6 +4188,8 @@ namespace NGTTestAutomation
                 _pythontest2Info = new PythonTest2InfoClass(this);
                 _prototypecustompanelInfo = new PrototypeCustomPanelInfoClass(this);
                 _propertytreetestInfo = new PropertyTreeTestInfoClass(this);
+                _propertytreetest1Info = new RepoItemInfo(this, "PropertyTreeTest1", "menuitem[@text='PropertyTree Test']", 10000, null, "cafd7335-7c36-4d70-9d55-d2d23e0e6bac");
+                _propertytreetest2Info = new RepoItemInfo(this, "PropertyTreeTest2", "menuitem[19]", 30000, null, "76d072ae-12de-4af1-9af4-043cf19f8fa9");
             }
 
             /// <summary>
@@ -4566,7 +4622,7 @@ namespace NGTTestAutomation
                 /// PropertyTreeTestInfoClass class constructor.
                 /// </summary>
                 public PropertyTreeTestInfoClass(RepoGenBaseFolder parentFolder)
-                    : base(parentFolder, "PropertyTreeTest", "menuitem[17]", 30000, null, "3816c80f-36ab-4a58-ac93-a0d3fe9b2042")
+                    : base(parentFolder, "PropertyTreeTest", "menuitem[@text=null()]", 30000, null, "3816c80f-36ab-4a58-ac93-a0d3fe9b2042")
                 { }
 
                 /// <summary>
@@ -4945,6 +5001,54 @@ namespace NGTTestAutomation
                 get
                 {
                     return _propertytreetestInfo;
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest1 item.
+            /// </summary>
+            [RepositoryItem("cafd7335-7c36-4d70-9d55-d2d23e0e6bac")]
+            public virtual Ranorex.MenuItem PropertyTreeTest1
+            {
+                get
+                {
+                    return _propertytreetest1Info.CreateAdapter<Ranorex.MenuItem>(true);
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest1 item info.
+            /// </summary>
+            [RepositoryItemInfo("cafd7335-7c36-4d70-9d55-d2d23e0e6bac")]
+            public virtual RepoItemInfo PropertyTreeTest1Info
+            {
+                get
+                {
+                    return _propertytreetest1Info;
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest2 item.
+            /// </summary>
+            [RepositoryItem("76d072ae-12de-4af1-9af4-043cf19f8fa9")]
+            public virtual Ranorex.MenuItem PropertyTreeTest2
+            {
+                get
+                {
+                    return _propertytreetest2Info.CreateAdapter<Ranorex.MenuItem>(true);
+                }
+            }
+
+            /// <summary>
+            /// The PropertyTreeTest2 item info.
+            /// </summary>
+            [RepositoryItemInfo("76d072ae-12de-4af1-9af4-043cf19f8fa9")]
+            public virtual RepoItemInfo PropertyTreeTest2Info
+            {
+                get
+                {
+                    return _propertytreetest2Info;
                 }
             }
         }
@@ -6736,6 +6840,7 @@ namespace NGTTestAutomation
             RepoItemInfo _demoInfo;
             RepoItemInfo _propertytreetestInfo;
             RepoItemInfo _closeInfo;
+            RepoItemInfo _sometextInfo;
 
             /// <summary>
             /// Creates a new MainWindow  folder.
@@ -6753,6 +6858,7 @@ namespace NGTTestAutomation
                 _demoInfo = new RepoItemInfo(this, "Demo", "?/?/tabpage[@title='Demo']", 30000, null, "1b2549f8-c0bb-4f97-b7bc-8c267d9f5f86");
                 _propertytreetestInfo = new RepoItemInfo(this, "PropertyTreeTest", "?/?/tabpage[@index='11']", 30000, null, "4b5ef02a-79b6-45c6-8f1d-e939edb950fb");
                 _closeInfo = new RepoItemInfo(this, "Close", "?/?/button[@accessiblename='Close' and @accessiblerole='PushButton']", 30000, null, "8a83a707-d6ff-4ba7-94c5-5e481c026d2d");
+                _sometextInfo = new RepoItemInfo(this, "SomeText", "container[@objectname='testing_ui_main/test_property_tree_panel.qmlTestDataSource_0testing_ui_main/test_property_tree_panel.qml']//element[@objectname='WGItemRow']/list/list[2]/list[@name='iconArea']/text[@caption='' and @text='expandClasstestpage']", 30000, null, "5d683b4f-6b44-4ebd-9040-f617ac6a4fb6");
             }
 
             /// <summary>
@@ -7060,6 +7166,30 @@ namespace NGTTestAutomation
                 get
                 {
                     return _closeInfo;
+                }
+            }
+
+            /// <summary>
+            /// The SomeText item.
+            /// </summary>
+            [RepositoryItem("5d683b4f-6b44-4ebd-9040-f617ac6a4fb6")]
+            public virtual Ranorex.Text SomeText
+            {
+                get
+                {
+                    return _sometextInfo.CreateAdapter<Ranorex.Text>(true);
+                }
+            }
+
+            /// <summary>
+            /// The SomeText item info.
+            /// </summary>
+            [RepositoryItemInfo("5d683b4f-6b44-4ebd-9040-f617ac6a4fb6")]
+            public virtual RepoItemInfo SomeTextInfo
+            {
+                get
+                {
+                    return _sometextInfo;
                 }
             }
 

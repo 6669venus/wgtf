@@ -7,6 +7,9 @@ mode="Global">
 	<name>
 		TestDataOpen_doubleclick
 	</name>
+	<description>
+		The TestDataOpen_doubleclick recording.
+	</description>
 	<repeatcount>
 		1
 	</repeatcount>
@@ -32,7 +35,28 @@ mode="Global">
 		optional="False"
 		duration="500ms"
 		searchpropertyid="fccde050-3c12-4b6f-86c0-b14ade584434"
-		action="DoubleClick"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="0"
+		sy="0"
+		loc="Center">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="91503505-5f33-42cc-9189-b522f7670e1d">
+				<path>
+					/form[@objectname='MainWindow']/?/?/menuitem[@text='TestData']
+				</path>
+			</info>
+		</mouseitem>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="fccde050-3c12-4b6f-86c0-b14ade584434"
+		action="Down"
 		button="Left"
 		movetime="300ms"
 		sx="0"

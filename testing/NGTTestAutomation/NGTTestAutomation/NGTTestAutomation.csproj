@@ -177,39 +177,27 @@
       <DependentUpon>PositionPropertieChanges.rxrec</DependentUpon>
       <BoundTo>52d4aefb-51c3-48f7-9c34-9c4fb5100814</BoundTo>
     </Compile>
-    <Compile Include="Generic_app_demo\ViewMenTestDada_validation_fail.cs">
+    <Compile Include="Generic_app_demo\ViewMenTestDada_validation_true.cs">
       <BoundTo>78514889-d3d1-4baf-acbf-2300647fee38</BoundTo>
-      <DependentUpon>ViewMenTestDada_validation_fail.rxrec</DependentUpon>
+      <DependentUpon>ViewMenTestDada_validation_true.rxrec</DependentUpon>
       <RecorderCode>true</RecorderCode>
       <id>dc21bad4-9360-4a96-808a-f2e3e16b0931</id>
     </Compile>
-    <Compile Include="Generic_app_demo\ViewMenTestDada_validation_fail.UserCode.cs">
+    <Compile Include="Generic_app_demo\ViewMenTestDada_validation_true.UserCode.cs">
       <BoundTo>78514889-d3d1-4baf-acbf-2300647fee38</BoundTo>
-      <DependentUpon>ViewMenTestDada_validation_fail.rxrec</DependentUpon>
+      <DependentUpon>ViewMenTestDada_validation_true.rxrec</DependentUpon>
       <UserCode>true</UserCode>
       <id>a202e1e7-2358-49d5-a81b-655b2e24fb2e</id>
     </Compile>
-    <Compile Include="Generic_app_demo\ViewMenTestData_Validation.cs">
-      <BoundTo>d2c1f03d-6170-4756-8eb4-8ec9f7da9bf0</BoundTo>
-      <DependentUpon>ViewMenTestData_Validation.rxrec</DependentUpon>
-      <RecorderCode>true</RecorderCode>
-      <id>7c9a87cc-ed31-434d-b287-5493cf8dfe0a</id>
-    </Compile>
-    <Compile Include="Generic_app_demo\ViewMenTestData_Validation.UserCode.cs">
-      <BoundTo>d2c1f03d-6170-4756-8eb4-8ec9f7da9bf0</BoundTo>
-      <DependentUpon>ViewMenTestData_Validation.rxrec</DependentUpon>
-      <UserCode>true</UserCode>
-      <id>a6939341-cf19-48b2-b3a5-7c9c6b4f9889</id>
-    </Compile>
-    <Compile Include="Generic_app_demo\View_Menu_selection.cs">
+    <Compile Include="Generic_app_demo\View_Menu_Validation_excl_propertytree.cs">
       <BoundTo>416b6337-5554-4244-a0c2-8e5317f2c8d5</BoundTo>
-      <DependentUpon>View_Menu_selection.rxrec</DependentUpon>
+      <DependentUpon>View_Menu_Validation_excl_propertytree.rxrec</DependentUpon>
       <RecorderCode>true</RecorderCode>
       <id>eb9added-07df-45fc-a049-14be34ae0816</id>
     </Compile>
-    <Compile Include="Generic_app_demo\View_Menu_selection.UserCode.cs">
+    <Compile Include="Generic_app_demo\View_Menu_Validation_excl_propertytree.UserCode.cs">
       <BoundTo>416b6337-5554-4244-a0c2-8e5317f2c8d5</BoundTo>
-      <DependentUpon>View_Menu_selection.rxrec</DependentUpon>
+      <DependentUpon>View_Menu_Validation_excl_propertytree.rxrec</DependentUpon>
       <UserCode>true</UserCode>
       <id>e29f42be-5fc8-42c0-9d57-5ba032b5f491</id>
     </Compile>
@@ -818,17 +806,12 @@
       <id>52d4aefb-51c3-48f7-9c34-9c4fb5100814</id>
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
     </None>
-    <None Include="Generic_app_demo\ViewMenTestDada_validation_fail.rxrec">
+    <None Include="Generic_app_demo\ViewMenTestDada_validation_true.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>78514889-d3d1-4baf-acbf-2300647fee38</id>
       <recordtableid>ec8f7523-c091-4e50-9425-b9b13f6d787e</recordtableid>
     </None>
-    <None Include="Generic_app_demo\ViewMenTestData_Validation.rxrec">
-      <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
-      <id>d2c1f03d-6170-4756-8eb4-8ec9f7da9bf0</id>
-      <recordtableid>736f7a13-94d4-47f8-8620-42a54c1e6e0b</recordtableid>
-    </None>
-    <None Include="Generic_app_demo\View_Menu_selection.rxrec">
+    <None Include="Generic_app_demo\View_Menu_Validation_excl_propertytree.rxrec">
       <BoundTo>49172274-ed44-471e-93c8-f446bb147c29</BoundTo>
       <id>416b6337-5554-4244-a0c2-8e5317f2c8d5</id>
       <recordtableid>0057bfca-3540-48d9-ba3c-bbfd887e62df</recordtableid>

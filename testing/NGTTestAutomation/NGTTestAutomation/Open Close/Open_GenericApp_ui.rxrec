@@ -38,7 +38,7 @@ mode="Global">
 		<explicitdelayitem
 		enabled="True"
 		optional="False"
-		duration="10000ms">
+		duration="100ms">
 			<comment/>
 			<bindings/>
 		</explicitdelayitem>

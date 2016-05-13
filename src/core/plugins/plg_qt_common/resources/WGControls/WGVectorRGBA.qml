@@ -9,9 +9,9 @@ import BWControls 1.0
 WGVector4 {
     objectName: "WGVectorRGBA"
     vectorLabels: ["R:", "G:", "B:", "A:"]
-    minimumValue: 0
-    maximumValue: 255
-    decimals: 0
-    stepsize: 1
+    minimumValues: [0, 0, 0, 0]
+    maximumValues: [255, 255, 255, 255]
+    decimals: [0, 0, 0, 0]
+    stepSizes: [1, 1, 1, 1]
 }
 

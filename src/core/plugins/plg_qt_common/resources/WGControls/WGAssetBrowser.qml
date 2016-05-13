@@ -206,6 +206,12 @@ Rectangle {
         }
     }
 
+	// We need to update the asset manager view
+    function onRefresh( ) {
+
+		rootFrame.viewModel.refreshData;
+    }
+
     // Handles a history menu item being clicked
     function historyMenuItemClicked( index ) {
         // Don't navigate if we're actively filtering assets
@@ -500,6 +506,18 @@ Rectangle {
 
                             onClicked: {
                                 onNavigate( true );
+                            }
+                        },
+						WGToolButton {
+                            id: btnAssetBrowserRefresh
+                            objectName: "refreshButton"
+                            iconSource: "icons/loop_16x16.png"
+                            tooltip: "Refresh"
+                            width: 16
+
+
+                            onClicked: {						
+                                onRefresh();
                             }
                         },
                         WGToolButton {

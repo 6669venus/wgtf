@@ -488,6 +488,9 @@ Rectangle {
                             clearSelection();
                         }
                     }
+                    onPointUpdated:{
+                        updateGradientTimer.restart()
+                    }
                 }
 
                 onItemRemoved:
@@ -643,5 +646,14 @@ Rectangle {
                 }
             }
         }
+    }
+
+    // Support Undo/Redo and update the gradient slider when the points are updated
+    // Only run on update once pooling all requests into a single update
+    Timer
+    {
+        id: updateGradientTimer
+        interval: 1
+        onTriggered: { colorGradient.syncHandles() }
     }
 }

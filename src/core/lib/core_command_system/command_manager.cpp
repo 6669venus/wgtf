@@ -592,14 +592,15 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
     unbindHistoryCallbacks();
 	unbindIndexCallbacks();
 
-	pCommandManager_->signalPreCommandIndexChanged( historyState_->previousSelectedIndex_ );
-    pCommandManager_->signalHistoryPreReset(historyState_->history_);
 
     int currentIndexValue = currentIndex_.value();
     int commandIndex = 0;
 
 	int prevSelecetedIndexValue = historyState_->previousSelectedIndex_;
 	int prevSelecetedIndex = 0;
+
+	pCommandManager_->signalPreCommandIndexChanged( currentIndexValue );
+	pCommandManager_->signalHistoryPreReset( historyState_->history_ );
 
     VariantList::Iterator iter = historyState_->history_.begin();
     while(iter != historyState_->history_.end())

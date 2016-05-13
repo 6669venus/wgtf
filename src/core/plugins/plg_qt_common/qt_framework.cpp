@@ -538,44 +538,52 @@ const std::string& QtFramework::getPluginPath() const
 
 int QtFramework::displayMessageBox( const char* title, const char* message, int buttons ) 
 {
-	int qButtons = 0;
+	struct MessageBoxQtMapping
+	{
+		MessageBoxButtons uiButton;
+		QMessageBox::StandardButton qtButton;
+	};
 
-#define CHECK_BUTTON( button ) \
-	if (buttons & button) \
-	{\
-		qButtons |= QMessageBox::StandardButton::button;\
+	MessageBoxQtMapping buttonMappings[] = 
+	{
+		{ Ok, QMessageBox::StandardButton::Ok },
+		{ Cancel, QMessageBox::StandardButton::Cancel },
+		{ Save, QMessageBox::StandardButton::Save },
+		{ SaveAll, QMessageBox::StandardButton::SaveAll },
+		{ Yes, QMessageBox::StandardButton::Yes },
+		{ No, QMessageBox::StandardButton::No },
+	};
+
+	size_t count = sizeof( buttonMappings ) / sizeof( buttonMappings[0] );
+	
+	int desiredButtons = 0;
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		if (buttons & buttonMappings[i].uiButton)
+		{
+			desiredButtons |= buttonMappings[i].qtButton;
+		}
 	}
 
-	CHECK_BUTTON( Ok );
-	CHECK_BUTTON( Cancel );
-	CHECK_BUTTON( Save );
-	CHECK_BUTTON( SaveAll );
-	CHECK_BUTTON( Yes );
-	CHECK_BUTTON( No );
-	
-#undef CHECK_BUTTON
+	assert( desiredButtons != 0 );
 
-	assert( qButtons != 0 );
-
-	QMessageBox messageBox( QMessageBox::Icon::NoIcon, title, message, (QMessageBox::StandardButton)qButtons);
+	QMessageBox messageBox( QMessageBox::Icon::NoIcon, title, message, (QMessageBox::StandardButton)desiredButtons );
 
 	int retValue = messageBox.exec();
 
 	int result = 0;
 
-	switch (retValue)
+	for (size_t i = 0; i < count; ++i)
 	{
-		case QMessageBox::StandardButton::Ok:		result = Ok; break;
-		case QMessageBox::StandardButton::Cancel:	result = Cancel; break;
-		case QMessageBox::StandardButton::Save:		result = Save; break;
-		case QMessageBox::StandardButton::SaveAll:	result = SaveAll; break;
-		case QMessageBox::StandardButton::Yes:		result = Yes; break;
-		case QMessageBox::StandardButton::No:		result = No; break;
-
-		default:
-			assert( !"invalid return from messageBox.exec" );
+		if (retValue == buttonMappings[i].qtButton)
+		{
+			result = buttonMappings[i].uiButton;
 			break;
+		}
 	}
+
+	assert( reset != 0 );
 
 	return result;
 }

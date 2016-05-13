@@ -17,7 +17,7 @@ typedef std::vector< std::unique_ptr<IRegion> > Regions;
 class IWindow
 {
 	typedef Signal<void( void )> SignalVoid;
-	typedef Signal<void( bool& )> SignalBool;
+	typedef Signal<void( bool& )> SignalConfirm;
 
 public:
 	virtual ~IWindow() {}
@@ -42,7 +42,7 @@ public:
 	virtual IUIApplication * getApplication() const = 0;
 
 	SignalVoid signalClose;
-	SignalBool signalTryClose;
+	SignalConfirm signalTryClose;
 };
 
 #endif //I_WINDOW_HPP

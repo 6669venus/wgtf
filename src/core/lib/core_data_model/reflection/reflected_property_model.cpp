@@ -19,6 +19,11 @@ RefPropertyItem::RefPropertyItem(RefPropertyItem * parent_, size_t position_)
 {
 }
 
+void RefPropertyItem::injectData(size_t roleId, const Variant& value)
+{
+    injectedData[roleId] = value;
+}
+
 const char * RefPropertyItem::getDisplayText(int column) const
 {
     return getProperty()->getName();
@@ -31,6 +36,15 @@ ThumbnailData RefPropertyItem::getThumbnail(int column) const
 
 Variant RefPropertyItem::getData(int column, size_t roleId) const
 {
+    if (column == 1)
+    {
+        auto iter = injectedData.find(roleId);
+        if (iter != injectedData.end())
+        {
+            return iter->second;
+        }
+    }
+
     return model.getData(this, column, roleId);
 }
 
@@ -55,6 +69,8 @@ const std::string & RefPropertyItem::getIndexPath() const
 
             item = static_cast<const RefPropertyItem*>(item->getParent());
         }
+
+        indexPath.shrink_to_fit();
     }
     return indexPath;
 }
@@ -181,12 +197,13 @@ bool RefPropertyItem::hasObjects() const
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 ReflectedPropertyModel::ReflectedPropertyModel(IDefinitionManager & definitionManager_,
-    ICommandManager & commandManager_)
+    ICommandManager & commandManager_, IReflectionController& refController)
     : definitionManager(definitionManager_)
     , commandManager(commandManager_)
     , getterExtension(GetterExtension::createDummy())
     , setterExtension(SetterExtension::createDummy())
     , mergeExtension(MergeValuesExtension::createDummy())
+    , injectExtension(InjectDataExtension::createDummy())
     , childCreator(definitionManager_)
 {
     rootItem.reset(new RefPropertyItem(*this));
@@ -196,6 +213,7 @@ ReflectedPropertyModel::ReflectedPropertyModel(IDefinitionManager & definitionMa
     childCreator.nodeRemoved.connect(std::bind(&ReflectedPropertyModel::childRemoved, this, _1));
 
     registerExtension(new DefaultGetterExtension());
+    registerExtension(new DefaultSetterExtension(refController));
     registerExtension(new UrlGetterExtension());
     registerExtension(new DefaultChildCheatorExtension());
     registerExtension(new DefaultMergeValueExtension());
@@ -207,6 +225,7 @@ ReflectedPropertyModel::~ReflectedPropertyModel()
     GetterExtension::deleteExtensionChain(getterExtension);
     SetterExtension::deleteExtensionChain(setterExtension);
     MergeValuesExtension::deleteExtensionChain(mergeExtension);
+    InjectDataExtension::deleteExtensionChain(injectExtension);
 }
 
 void ReflectedPropertyModel::update()
@@ -323,6 +342,16 @@ void ReflectedPropertyModel::unregisterExtension(ChildCreatorExtension * extensi
     childCreator.unregisterExtension(extension);
 }
 
+void ReflectedPropertyModel::registerExtension(InjectDataExtension* extension)
+{
+    injectExtension = injectExtension->addExtension(extension);
+}
+
+void ReflectedPropertyModel::unregisterExtension(InjectDataExtension* extension)
+{
+    injectExtension = injectExtension->removeExtension(extension);
+}
+
 void ReflectedPropertyModel::childAdded(const PropertyNode* parent, const PropertyNode* node, size_t childPosition)
 {
     auto iter = nodeToItem.find(parent);
@@ -344,6 +373,8 @@ void ReflectedPropertyModel::childAdded(const PropertyNode* parent, const Proper
         childItem = parentItem->createChild();
         childItem->addObject(node);
         notifyPostItemsInserted(modelParent, childCount, 1);
+        using namespace std::placeholders;
+        injectExtension->inject(childItem, std::bind(&RefPropertyItem::injectData, childItem, _1, _2));
     }
 
     auto newNode = nodeToItem.emplace(node, childItem);

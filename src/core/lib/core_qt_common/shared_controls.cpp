@@ -22,6 +22,8 @@
 #include "models/extensions/thumbnail_extension.hpp"
 #include "models/extensions/tree_extension.hpp"
 #include "models/extensions/value_extension.hpp"
+#include "models/extensions/buttons_definition_extension.hpp"
+#include "models/extensions/buttons_model_extension.hpp"
 #include "models/wg_list_model.hpp"
 #include "models/wg_tree_model.hpp"
 #include "models/wg_tree_list_adapter.hpp"
@@ -38,10 +40,6 @@
 #include "core_data_model/i_breadcrumbs_model.hpp"
 #include "core_data_model/i_breadcrumbs_model.mpp"
 #include <QtQuick>
-
-#include "core_reflection/i_definition_manager.hpp"
-#include "core_reflection/reflection_macros.hpp"
-
 
 //==============================================================================
 /*static */void SharedControls::init()
@@ -74,6 +72,9 @@
 	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );
 	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );
 	qmlRegisterType< WGTokenizedStringFilter, 1 >( "WGControls", 1, 0, "WGTokenizedStringFilter" );
+
+    qmlRegisterType< ButtonsDefinitionExtension, 1 >("WGControls", 1, 0, "ButtonsDefinitionExtension");
+    qmlRegisterType< ButtonsModelExtension, 1 >("WGControls", 1, 0, "ButtonsModelExtension");
 }
 
 

@@ -4,6 +4,7 @@
 #include "property_model_extensions.hpp"
 
 class IDefinitionManager;
+class IReflectionController;
 class DefaultGetterExtension : public GetterExtension
 {
 public:
@@ -14,6 +15,18 @@ class UrlGetterExtension: public GetterExtension
 {
 public:
     Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager& defMng) const override;
+};
+
+class DefaultSetterExtension: public SetterExtension
+{
+public:
+    DefaultSetterExtension(IReflectionController& reflectionController);
+
+    bool setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
+                  IDefinitionManager & definitionManager, ICommandManager & commandManager) const;
+
+private:
+    IReflectionController& controller;
 };
 
 class DefaultChildCheatorExtension: public ChildCreatorExtension

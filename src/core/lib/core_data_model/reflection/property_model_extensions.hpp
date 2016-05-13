@@ -98,7 +98,7 @@ protected:
     T * nextExtension = nullptr;
 };
 
-class ChildCreatorExtension : public ExtensionChain<ChildCreatorExtension>
+class ChildCreatorExtension: public ExtensionChain<ChildCreatorExtension>
 {
 public:
 
@@ -113,14 +113,14 @@ protected:
     std::shared_ptr<IChildAllocator> allocator;
 };
 
-class GetterExtension : public ExtensionChain<GetterExtension>
+class GetterExtension: public ExtensionChain<GetterExtension>
 {
 public:
     virtual Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager & definitionManager) const;
     static GetterExtension* createDummy();
 };
 
-class SetterExtension : public ExtensionChain<SetterExtension>
+class SetterExtension: public ExtensionChain<SetterExtension>
 {
 public:
     virtual bool setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
@@ -134,6 +134,13 @@ public:
     virtual RefPropertyItem* lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                         IDefinitionManager & definitionManager) const;
     static MergeValuesExtension* createDummy();
+};
+
+class InjectDataExtension: public ExtensionChain<InjectDataExtension>
+{
+public:
+    virtual void inject(const RefPropertyItem* item, const std::function<void(size_t, const Variant&)>& injector);
+    static InjectDataExtension* createDummy();
 };
 
 #endif

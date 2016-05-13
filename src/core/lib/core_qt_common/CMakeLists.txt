@@ -27,6 +27,8 @@ SET( DATA_MODEL_SRCS
 	models/wg_list_model.hpp
 	models/role_provider.cpp
 	models/role_provider.hpp
+	models/buttons_model.hpp
+	models/buttons_model.cpp
 )
 SOURCE_GROUP( "DataModel" FILES ${DATA_MODEL_SRCS} )
 
@@ -59,6 +61,11 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/thumbnail_extension.cpp
 	models/extensions/thumbnail_extension.hpp
 	models/extensions/i_model_extension.hpp
+	models/extensions/i_model_extension.hpp
+	models/extensions/buttons_model_extension.hpp
+	models/extensions/buttons_model_extension.cpp
+	models/extensions/buttons_definition_extension.hpp
+	models/extensions/buttons_definition_extension.cpp
 )
 SOURCE_GROUP( "DataModel\\Extensions" FILES ${DATA_MODEL_EXTENSIONS_SRCS} )
 

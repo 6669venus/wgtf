@@ -12,6 +12,7 @@
 
 class ICommandManager;
 class IDefinitionManager;
+class IReflectionController;
 
 class ReflectedPropertyModel;
 class RefPropertyItem: public IItem
@@ -56,6 +57,8 @@ private:
 
     RefPropertyItem(RefPropertyItem * parent, size_t position);
 
+    void injectData(size_t roleId, const Variant& value);
+
 private:
     ReflectedPropertyModel & model;
     RefPropertyItem * parent = nullptr;
@@ -64,13 +67,15 @@ private:
     std::vector<const PropertyNode*> nodes;
     Variant itemValue;
     mutable std::string indexPath;
+
+    std::unordered_map<size_t, Variant> injectedData;
 };
 
 class ReflectedPropertyModel: public ITreeModel
 {
 public:
     ReflectedPropertyModel(IDefinitionManager & definitionManager,
-                           ICommandManager & commandManager);
+                           ICommandManager & commandManager, IReflectionController& refController);
     ~ReflectedPropertyModel();
 
     void update();
@@ -82,17 +87,20 @@ public:
     size_t size(const IItem * item) const override;
     int columnCount() const override;
 
-    void registerExtension(GetterExtension * extension);
-    void unregisterExtension(GetterExtension * extension);
+    void registerExtension(GetterExtension* extension);
+    void unregisterExtension(GetterExtension* extension);
 
-    void registerExtension(SetterExtension * extension);
-    void unregisterExtension(SetterExtension * extension);
+    void registerExtension(SetterExtension* extension);
+    void unregisterExtension(SetterExtension* extension);
 
-    void registerExtension(MergeValuesExtension * extension);
-    void unregisterExtension(MergeValuesExtension * extension);
+    void registerExtension(MergeValuesExtension* extension);
+    void unregisterExtension(MergeValuesExtension* extension);
 
-    void registerExtension(ChildCreatorExtension * extension);
-    void unregisterExtension(ChildCreatorExtension * extension);
+    void registerExtension(ChildCreatorExtension* extension);
+    void unregisterExtension(ChildCreatorExtension* extension);
+
+    void registerExtension(InjectDataExtension* extension);
+    void unregisterExtension(InjectDataExtension* extension);
 
 private:
     void childAdded(const PropertyNode* parent, const PropertyNode* node, size_t childPosition);
@@ -116,9 +124,10 @@ private:
     std::unique_ptr<RefPropertyItem> rootItem;
     std::map<const PropertyNode*, RefPropertyItem*> nodeToItem;
 
-    GetterExtension * getterExtension;
-    SetterExtension * setterExtension;
-    MergeValuesExtension * mergeExtension;
+    GetterExtension* getterExtension;
+    SetterExtension* setterExtension;
+    MergeValuesExtension* mergeExtension;
+    InjectDataExtension* injectExtension;
     ChildCreator childCreator;
 };
 

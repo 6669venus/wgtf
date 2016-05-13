@@ -6,11 +6,11 @@
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/reflection/reflected_property_model.hpp"
 
+#include "core_command_system/i_command_manager.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/base_property.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
-
-#include "core_logging/logging.hpp"
 
 namespace DPMEDetails
 {
@@ -456,4 +456,75 @@ RefPropertyItem * DefaultMergeValueExtension::lookUpItem(const PropertyNode* nod
     }
 
     return result;
+}
+
+DefaultSetterExtension::DefaultSetterExtension(IReflectionController& reflectionController_)
+    : controller(reflectionController_)
+{
+}
+
+bool DefaultSetterExtension::setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
+                                      IDefinitionManager & definitionManager, ICommandManager & commandManager) const
+{
+    if (roleId != ValueRole::roleId_ &&
+        roleId != DefinitionRole::roleId_)
+    {
+        return SetterExtension::setValue(item, column, roleId, data, definitionManager, commandManager);
+    }
+
+    const std::vector<const PropertyNode*> objects = item->getObjects();
+    if (objects.size() > 1)
+    {
+        commandManager.beginBatchCommand();
+    }
+
+    for (const PropertyNode* object : objects)
+    {
+        ObjectHandle obj = object->object;
+        if (obj.getDefinition(definitionManager) == nullptr)
+        {
+            continue;
+        }
+        auto propertyAccessor = obj.getDefinition(definitionManager)->bindProperty(object->propertyInstance->getName(), obj);
+
+        if (roleId == ValueRole::roleId_)
+        {
+            controller.setValue(propertyAccessor, data);
+        }
+        else if (roleId == DefinitionRole::roleId_)
+        {
+            TypeId typeId = propertyAccessor.getType();
+            if (!typeId.isPointer())
+            {
+                return false;
+            }
+
+            auto baseDefinition = definitionManager.getDefinition(typeId.removePointer().getName());
+            if (baseDefinition == nullptr)
+            {
+                return false;
+            }
+
+            ObjectHandle provider;
+            if (!data.tryCast< ObjectHandle >(provider))
+            {
+                return false;
+            }
+
+            auto valueDefinition = provider.getBase< IClassDefinition >();
+            if (valueDefinition == nullptr)
+            {
+                return false;
+            }
+
+            ObjectHandle value;
+            value = valueDefinition->create();
+            controller.setValue(propertyAccessor, value);
+        }
+    }
+
+    if (objects.size() > 1)
+    {
+        commandManager.endBatchCommand();
+    }
 }

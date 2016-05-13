@@ -1,0 +1,68 @@
+# Use FIND_PACKAGE( Perforce ) to run this script.
+INCLUDE( FindPackageHandleStandardArgs )
+INCLUDE( WGToolsProject )
+
+IF( NOT Perforce_FIND_VERSION )
+	SET( Perforce_FIND_VERSION "15.2" )
+ENDIF()
+
+IF( BW_PLATFORM_WINDOWS )
+	SET( PLATFORM_SUFFIX w )
+ELSE()
+	MESSAGE( "Skipping 'plg_perforce', currently only windows libraries are available" )
+	RETURN()
+ENDIF()
+
+SET( PERFORCE_DIR ${WG_TOOLS_THIRD_PARTY_DIR}/perforce/r${Perforce_FIND_VERSION} )
+
+IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+	SET( PERFORCE_DIR ${PERFORCE_DIR}/bin.ntx64 )
+	SET( BITNESS_SUFFIX 64 )
+ELSE()
+	SET( PERFORCE_DIR ${PERFORCE_DIR}/bin.ntx86 )
+ENDIF()
+
+SET( OPENSSL_DIR ${WG_TOOLS_THIRD_PARTY_DIR}/perforce/OpenSSL )
+
+# Same checks as BWQtCommon
+IF( CMAKE_GENERATOR_TOOLSET STREQUAL "v110_xp" )
+	SET( PERFORCE_DIR ${PERFORCE_DIR}/vs2012 )
+ELSEIF( CMAKE_GENERATOR_TOOLSET STREQUAL "v120_xp" )
+	SET( PERFORCE_DIR ${PERFORCE_DIR}/vs2013 )
+	SET( OPENSSL_DIR ${OPENSSL_DIR}/vs2013 )
+ELSEIF( CMAKE_GENERATOR_TOOLSET STREQUAL "v140_xp" )
+	SET( PERFORCE_DIR ${PERFORCE_DIR}/vs2015 )
+	SET( OPENSSL_DIR ${OPENSSL_DIR}/vs2015 )
+ENDIF()
+
+SET( PERFORCE_DIR ${PERFORCE_DIR}_dyn )
+
+IF( EXISTS "${PERFORCE_DIR}" )
+	SET( PERFORCE_EXISTS TRUE )
+ELSE()
+	SET( PERFORCE_EXISTS FALSE )
+ENDIF()
+
+# Handle the QUIETLY and REQUIRED arguments and set PERFORCE_FOUND to TRUE
+# if all listed variables are TRUE
+FIND_PACKAGE_HANDLE_STANDARD_ARGS( Perforce
+	DEFAULT_MSG
+	PERFORCE_EXISTS
+)
+
+# Definitions, libraries and include dirs should be output for each FIND_PACKAGE script
+# No definitions
+SET( PERFORCE_DEFINITIONS )
+# No dependencies
+SET( PERFORCE_LIBRARIES )
+# Includes
+SET( PERFORCE_INCLUDE_DIRS ${PERFORCE_DIR}/Include )
+
+MARK_AS_ADVANCED( PERFORCE_EXISTS )
+
+IF( PERFORCE_FOUND )
+	MESSAGE( STATUS "Enabled ${PROJECT_NAME}. Perforce found in ${PERFORCE_DIR}." )
+ELSE()
+	MESSAGE( STATUS "Disabled ${PROJECT_NAME}. Perforce not found in ${PERFORCE_DIR}." )
+ENDIF()
+

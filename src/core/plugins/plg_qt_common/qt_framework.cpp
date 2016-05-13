@@ -583,7 +583,7 @@ int QtFramework::displayMessageBox( const char* title, const char* message, int 
 		}
 	}
 
-	assert( reset != 0 );
+	assert( result != 0 );
 
 	return result;
 }

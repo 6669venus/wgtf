@@ -11,7 +11,7 @@ Row
     property var slotObj
 
     spacing: 2
-    height: 10
+    height: defaultSpacing.minimumRowHeight
     width: slotIcon.width + slotText.width
     layoutDirection: (isInput) ? Qt.LeftToRight : Qt.RightToLeft
 
@@ -20,13 +20,25 @@ Row
         return mapToItem(graphView, slotIcon.x + slotIcon.width / 2, slotIcon.y + slotIcon.height / 2);
     }
 
-    Image
+    Rectangle
     {
         id: slotIcon
-        height: parent.height
+        height: parent.height - defaultSpacing.standardMargin
+        width: parent.height - defaultSpacing.standardMargin
         anchors.verticalCenter: parent.verticalCenter
-        fillMode: Image.PreserveAspectFit
-        source: (isInput) ? "images/greenSlot.png" : "images/blueSlot.png"
+
+        radius: width / 2
+
+        color: isInput ? "#7AC943" : "#3FA9F5"
+
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: 2
+            radius: width / 2
+
+            //TODO: Turn this off (or maybe very transparent white) if slot is connected to remove 'hole'
+            color: "#66000000"
+        }
 
         MouseArea
         {
@@ -52,11 +64,10 @@ Row
         }
     }
 
-    Text
+    WGLabel
     {
         id: slotText
         text: (isInput) ? "input Slot" : "output Slot"
-        color: "white"
 
         anchors.verticalCenter: parent.verticalCenter
     }

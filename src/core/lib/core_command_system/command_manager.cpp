@@ -708,56 +708,6 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 }
 
 //==============================================================================
-void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
-{
-	assert( !historyState_->commandFrames_.empty() );
-	assert( instance != nullptr );
-
-	instance->setStatus( Running );
-
-	if (historyState_->commandFrames_.size() == 1 &&
-		historyState_->commandFrames_.front()->commandStack_.size() == 1)
-	{
-		// If the frame we are pushing is a root frame, we need to prep it
-		// to monitor changes to the reflection data
-		assert( instance != nullptr );
-		instance->connectEvent();
-	}
-	else
-	{
-		auto currentFrame = historyState_->commandFrames_.back();
-		auto parentInstance = currentFrame->commandStack_.back();
-
-		// TODO: support for custom undo
-		/*if (instance->customUndo() || parentInstance->customUndo())
-		{
-			parentInstance->disconnectEvent();
-			instance->connectEvent();
-		}*/
-
-		if (parentInstance != nullptr)
-		{
-			parentInstance->children_.push_back( instance );
-		}
-	}
-
-	if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
-	{
-		auto stage = instance->getArguments().getBase<BatchCommandStage>();
-		assert( stage != nullptr );
-		if (*stage == BatchCommandStage::Begin)
-		{
-			// The command stack represents BatchCommand groups within a frame.
-			// On BeginBatchCommand we need to add a group to the stack
-			historyState_->commandFrames_.back()->commandStack_.push_back( instance );
-		}
-	}
-
-	historyState_->commandFrames_.push_back( new CommandFrame( instance ) );
-}
-
-
-//==============================================================================
 namespace
 {
 	bool isBatchCommand(const ObjectHandleT<CommandInstance>& cmd)
@@ -766,6 +716,38 @@ namespace
 	}
 }
 
+//==============================================================================
+void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
+{
+	assert( instance != nullptr );
+	assert( !historyState_->commandFrames_.empty() );
+	auto currentFrame = historyState_->commandFrames_.back();
+	assert ( !currentFrame->commandStack_.empty() );
+	auto parentInstance = currentFrame->commandStack_.back();
+
+	instance->setStatus( Running );
+
+	historyState_->commandFrames_.push_back( new CommandFrame( instance ) );
+
+	if (isBatchCommand( instance ))
+	{
+		auto stage = instance->getArguments().getBase<BatchCommandStage>();
+		assert( stage != nullptr );
+		if (*stage != BatchCommandStage::Begin)
+		{
+			return;
+		}
+
+		// The command stack represents BatchCommand groups within a frame.
+		// On BeginBatchCommand we need to add a group to the stack
+		currentFrame->commandStack_.push_back( instance );
+	}
+
+	if (parentInstance != nullptr)
+	{
+		parentInstance->children_.push_back( instance );
+	}
+}
 
 //==============================================================================
 void CommandManagerImpl::popFrame()
@@ -781,6 +763,7 @@ void CommandManagerImpl::popFrame()
 	historyState_->commandFrames_.pop_back();
 	assert( !historyState_->commandFrames_.empty() );
 	currentFrame = historyState_->commandFrames_.back();
+	auto parentInstance = currentFrame->commandStack_.back();
 
 	if (isBatchCommand( instance ))
 	{
@@ -789,61 +772,46 @@ void CommandManagerImpl::popFrame()
 		// Set the arguments to nullptr since there is no need to serialize BatchCommand arguments
 		instance->setArguments( nullptr );
 
-		if (*stage != BatchCommandStage::Begin)
+		if (*stage == BatchCommandStage::Begin)
 		{
-			// If we are ending or aborting a BatchCommand, we need to remove its group from the stack
-			assert ( !currentFrame->commandStack_.empty() );
-			auto group = currentFrame->commandStack_.back();
-			if ( group != nullptr )
-			{
-				currentFrame->commandStack_.pop_back();
-				instance = group;
-			}
-			else
-			{
-				NGT_WARNING_MSG( "Remmoving from an empty batch command group\n" );
-			}
-			assert ( !currentFrame->commandStack_.empty() );
+			return;
+		}
+
+		// If we are ending or aborting a BatchCommand, we need to remove its group from the stack
+		if ( parentInstance != nullptr )
+		{
+			currentFrame->commandStack_.pop_back();
+			auto errorCode = instance->errorCode_;
+			instance = parentInstance;
+			instance->errorCode_ = errorCode;
+			parentInstance = currentFrame->commandStack_.back();
+		}
+		else
+		{
+			NGT_WARNING_MSG( "Remmoving from an empty batch command group\n" );
 		}
 	}
 
-	if (historyState_->commandFrames_.size() == 1 &&
-		historyState_->commandFrames_.front()->commandStack_.size() == 1)
-	{
-		// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
-		instance->disconnectEvent();
-
-        if (instance->getErrorCode() == CommandErrorCode::COMMAND_NO_ERROR)
-		{
-			addToHistory( instance );
-			if (instance->isMultiCommand())
-			{
-				notifyCompleteMultiCommand();
-			}
-		}
-	}
-	else
-	{
-		auto parentInstance = currentFrame->commandStack_.back();
-		/*if (instance->customUndo() || parentInstance->customUndo())
-		{
-			instance->disconnectEvent();
-			parentInstance->connectEvent();
-		}*/
-	}
-
-	// TODO: This does not actually work for sub commands. No undo data is stored
-	// for sub commands so calling undo does nothing.
     if (instance->getErrorCode() != CommandErrorCode::COMMAND_NO_ERROR)
 	{
+		instance->consolidateUndoRedoData( nullptr );
 		instance->undo();
 		if (instance->isMultiCommand())
 		{
 			notifyCancelMultiCommand();
 		}
-		if (!isBatchCommand( instance ) || instance->getErrorCode() != CommandErrorCode::ABORTED)
+	}
+	else
+	{
+		instance->consolidateUndoRedoData( parentInstance.get() );
+		if (parentInstance == nullptr)
 		{
-			NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
+			// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
+			addToHistory( instance );
+			if (instance->isMultiCommand())
+			{
+				notifyCompleteMultiCommand();
+			}
 		}
 	}
 
@@ -865,8 +833,9 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
     if (!historySerializationEnabled)
         return true;
 
+	NGT_WARNING_MSG( "History serialization functionality temporarily disabled" );
 	// save objects
-	size_t count = ec->history_.size();
+	/*size_t count = ec->history_.size();
 	serializer.serialize( count );
 	for (size_t i = 0; i < count; i++)
 	{
@@ -878,7 +847,7 @@ bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const His
         serializer.serialize( redoData );
 	}
 	// save history index
-	serializer.serialize( ec->index_ );
+	serializer.serialize( ec->index_ );*/
 	return true;
 }
 
@@ -893,8 +862,9 @@ bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEn
     if (!historySerializationEnabled)
         return false;
 
+	NGT_WARNING_MSG( "History serialization functionality temporarily disabled" );
 	// read history data
-	size_t count = 0;
+	/*size_t count = 0;
 	serializer.deserialize( count );
 	for(size_t i = 0; i < count; i++)
 	{
@@ -916,8 +886,7 @@ bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEn
 	}
 	int index = NO_SELECTION;
 	serializer.deserialize( ec->index_ );
-	ec->previousSelectedIndex_ = ec->index_;
-
+	ec->previousSelectedIndex_ = ec->index_;*/
 	return true;
 }
 

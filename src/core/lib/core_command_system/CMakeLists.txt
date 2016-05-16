@@ -33,6 +33,9 @@ SET( ALL_SRCS
 	i_env_system.hpp
 	env_system.hpp
 	env_system.cpp
+	undo_redo_data.hpp
+	custom_undo_redo_data.hpp
+	custom_undo_redo_data.cpp
 	reflection_undo_redo_data.hpp
 	reflection_undo_redo_data.cpp
 )

@@ -104,6 +104,39 @@ TEST_F( TestCommandFixture, runBatchCommand )
 		CHECK(variantText.tryCast( text_value ));
 		CHECK_EQUAL(TEST_TEXT, text_value);
 	}
+
+	{
+		Variant variantValue;
+		int value = 0;
+		auto & commandSystemProvider = getCommandSystemProvider();
+		commandSystemProvider.beginBatchCommand();
+		controller.setValue( counter, 0 );
+		commandSystemProvider.beginBatchCommand();
+		controller.setValue( counter, 1 );
+		commandSystemProvider.beginBatchCommand();
+		controller.setValue( counter, 2 );
+		commandSystemProvider.beginBatchCommand();
+		controller.setValue( counter, 3 );
+		variantValue = controller.getValue( counter );
+		CHECK( variantValue.tryCast( value ) );
+		CHECK( value == 3 );
+		commandSystemProvider.abortBatchCommand();
+		variantValue = controller.getValue( counter );
+		CHECK( variantValue.tryCast( value ) );
+		CHECK( value == 2 );
+		commandSystemProvider.abortBatchCommand();
+		variantValue = controller.getValue( counter );
+		CHECK( variantValue.tryCast( value ) );
+		CHECK( value == 1);
+		commandSystemProvider.abortBatchCommand();
+		variantValue = controller.getValue( counter );
+		CHECK( variantValue.tryCast( value ) );
+		CHECK( value == 0);
+		commandSystemProvider.endBatchCommand();
+		variantValue = controller.getValue( counter );
+		CHECK( variantValue.tryCast( value ) );
+		CHECK( value == 0);
+	}
 }
 
 TEST_F( TestCommandFixture, undo_redo )

@@ -20,6 +20,19 @@
 namespace
 {
 
+//PlatformHelpers until we upgrade to VS 2015
+namespace PlatformHelpers
+{
+	void sprintfSize_t(char * buffer, size_t value)
+	{
+#if _MSC_VER >= 1900
+		sprintf(buffer, "%zd", value);
+#elif
+		sprintf(buffer, "%d", value);
+#endif /*_MSC_VER >= 1900 */
+	}
+}
+
 /// State storage for static functions attached to Python
 static ReflectionTestModule * g_module = nullptr;
 
@@ -764,7 +777,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t erasureId = originalSize - 1;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", erasureId );
+		PlatformHelpers::sprintfSize_t(buffer, erasureId);
 		Variant key( buffer );
 		auto erasureCount = listResult.erase( key );
 		CHECK( erasureCount == 1 );
@@ -809,7 +822,8 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		{
 			const size_t maxDigits = 10;
 			char buffer[ maxDigits ];
-			sprintf( buffer, "%d", erasureId );
+
+			PlatformHelpers::sprintfSize_t(buffer, erasureId);
 			const Variant key( buffer );
 			auto itr = listResult.find( key );
 			CHECK( itr != listResult.end() );
@@ -1904,7 +1918,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t insertionId = originalSize;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", insertionId );
+		PlatformHelpers::sprintfSize_t(buffer, insertionId);
 		Variant key( buffer );
 		auto insertionItr = dictResult.insert( key );
 		CHECK( insertionItr != dictResult.end() );
@@ -1943,7 +1957,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t erasureId = originalSize - 1;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", erasureId );
+		PlatformHelpers::sprintfSize_t(buffer, erasureId);
 		Variant key( buffer );
 		auto erasureCount = dictResult.erase( key );
 		CHECK( erasureCount == 1 );
@@ -1988,7 +2002,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		{
 			const size_t maxDigits = 10;
 			char buffer[ maxDigits ];
-			sprintf( buffer, "%d", erasureId );
+			PlatformHelpers::sprintfSize_t( buffer, erasureId );
 			const Variant key( buffer );
 			auto itr = dictResult.find( key );
 			CHECK( itr != dictResult.end() );
@@ -2067,9 +2081,9 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t endId = 3;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", startId );
+		PlatformHelpers::sprintfSize_t( buffer, startId );
 		const Variant startKey( buffer );
-		sprintf( buffer, "%d", endId );
+		PlatformHelpers::sprintfSize_t(buffer, endId );
 		const Variant endKey( buffer );
 
 		const auto startItr = dictResult.find( startKey );
@@ -2103,7 +2117,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t erasureId = 1;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", erasureId );
+		PlatformHelpers::sprintfSize_t(buffer, erasureId );
 		const Variant erasureKey( buffer );
 
 		const auto startItr = dictResult.find( erasureKey );

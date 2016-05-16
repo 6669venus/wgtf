@@ -35,6 +35,8 @@ VC11_X86_XP_ENV = '@call %s vc11 x86\n' % (VC_XP_VARS_BAT)
 VC12_X86_XP_ENV = '@call %s vc12 x86\n' % (VC_XP_VARS_BAT)
 VC11_X86_64_XP_ENV = '@call %s vc11 x64\n' % (VC_XP_VARS_BAT)
 VC12_X86_64_XP_ENV = '@call %s vc12 x64\n' % (VC_XP_VARS_BAT)
+VC14_X86_XP_ENV = '@call %s vc14 x86\n' % (VC_XP_VARS_BAT)
+VC14_X86_64_XP_ENV = '@call %s vc14 x64\n' % (VC_XP_VARS_BAT)
 
 CMAKE_GENERATORS = dict(
 	Windows = [
@@ -62,12 +64,18 @@ CMAKE_GENERATORS = dict(
 			dirsuffix = 'vc12_win64',
 			toolset = 'v120_xp',
 		),
-        dict(
+		dict(
+			label = 'Visual Studio 2015 Win32',
+			generator = 'Visual Studio 14 Win32',
+			dirsuffix = 'vc14_win32',
+			toolset = 'v140_xp',
+		),
+		dict(
 			label = 'Visual Studio 2015 Win64',
 			generator = 'Visual Studio 14 Win64',
 			dirsuffix = 'vc14_win64',
 			toolset = 'v140_xp',
-		),
+		)
 	],
 
 	Darwin = [
@@ -87,8 +95,6 @@ CMAKE_GENERATORS = dict(
 CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ PLATFORM ]
 
 QT_VERSIONS = [
-	dict( label = 'Qt 5.3.1', version = '5.3.1' ),
-	dict( label = 'Qt 5.3.2', version = '5.3.2' ),
 	dict( label = 'Qt 5.4.2', version = '5.4.2' ),
 	dict( label = 'Qt 5.5.0', version = '5.5.0' ),
 	dict( label = 'Qt 5.5.1', version = '5.5.1' ),

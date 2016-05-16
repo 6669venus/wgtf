@@ -347,7 +347,7 @@ ListView {
 
                             Text {
                                 id: expandButton
-                                objectName: "expandButton"
+                                objectName: typeof(itemData) != "undefined" ? "expandButton_" + itemData.Value : "expandButton"
                                 color:
                                     !showExpandIcon ? "transparent" :
                                     expandMouseArea.containsMouse ? palette.highlightColor :

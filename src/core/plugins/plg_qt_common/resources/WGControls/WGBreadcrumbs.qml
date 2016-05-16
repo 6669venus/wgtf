@@ -135,8 +135,8 @@ Rectangle {
 
                     MouseArea {
                         id: breadcrumbMouseArea
-                        objectName: typeof Value.displayValue != "undefined" ? "breadcrumbMouseArea"
-                                                                               + Value.displayValue : "breadcrumbMouseArea"
+                        objectName: typeof Value.displayValue != "undefined" ? "breadcrumbMouseArea" + Value.displayValue
+                                                                             : "breadcrumbMouseArea"
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true

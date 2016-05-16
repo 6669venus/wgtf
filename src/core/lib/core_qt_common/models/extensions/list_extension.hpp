@@ -16,6 +16,9 @@ public:
 	QHash< int, QByteArray > roleNames() const override;
 
 	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
+	Q_INVOKABLE QModelIndex incIndex( const QModelIndex & index ) const;
+	Q_INVOKABLE QModelIndex decIndex( const QModelIndex & index ) const;
+	Q_INVOKABLE int indexToRow( const QModelIndex & index ) const;
 };
 
 #endif // LIST_EXTENSION_HPP

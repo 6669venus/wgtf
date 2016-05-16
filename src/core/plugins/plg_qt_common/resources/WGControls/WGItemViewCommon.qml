@@ -40,10 +40,12 @@ WGItemView {
         return count
     }
 
+    // WGControls.ColumnExtension C++
     ColumnExtension {
         id: columnExtension
     }
 
+    // WGControls.ImageExtension C++
     ImageExtension {
         id: imageExtension
     }
@@ -66,6 +68,7 @@ WGItemView {
         root.view.contentWidth = Qt.binding( function() { return columnsFrame.width } )
     }
 
+    // WGControls.WGColumnsFrame QML
     // Add resizable column handles
     WGColumnsFrame {
         id: columnsFrame
@@ -81,6 +84,7 @@ WGItemView {
         }
     }
 
+    // QML Type
     ItemSelectionModel {
         id: itemSelectionModel
         model: extendedModel

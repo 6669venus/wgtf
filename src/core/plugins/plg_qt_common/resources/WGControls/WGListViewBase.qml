@@ -17,6 +17,13 @@ ListView {
     signal itemClicked(var mouse, var itemIndex, var rowIndex)
     signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
 
+    /*! Stores which item is currently in focus by the keyboard.
+        Often this will correspond to the selected item, but not always.
+        E.g. pressing ctrl+up will move the current index, but not the selected index.
+        The default value is the same as the selection (modelIndex).
+    */
+    property var currentModelIndex: view.selectionModel.currentIndex
+
     delegate: WGItemRow {
         id: itemRow
         columnDelegates: view.columnDelegates
@@ -24,7 +31,8 @@ ListView {
         columnWidths: view.columnWidths
         columnSpacing: view.columnSpacing
         selected: view.selectionModel.isSelected(modelIndex)
-        isCurrent: ListView.isCurrentItem //(modelIndex === currentIndex)
+        isCurrent: ListView.isCurrentItem
+        //isCurrent: (modelIndex === currentModelIndex)
 
         Connections {
             target: view.selectionModel
@@ -40,26 +48,30 @@ ListView {
         onItemDoubleClicked: listViewBase.itemDoubleClicked(mouse, itemIndex, modelIndex)
     }
 
-    Keys.forwardTo: [keyHandler]
+    /*Keys.forwardTo: [keyHandler]
     // Only Item types can have Keys (not ListView)
     Item {
         id: keyHandler
         Keys.onUpPressed: {
-            if (currentIndex > 0) {
-                --currentIndex;
-            }
+            //if (currentIndex > 0) {
+            //    --currentIndex;
+            //}
+            currentModelIndex = listExtension.decIndex(currentModelIndex);
+            currentIndex = listExtension.indexToRow(currentModelIndex);
             console.log("base up pressed", currentIndex);
         }
 
         Keys.onDownPressed: {
-            if (currentIndex < count) {
-                ++currentIndex;
-            }
+            //if (currentIndex < count) {
+            //    ++currentIndex;
+            //}
+            currentModelIndex = listExtension.incIndex(currentModelIndex);
+            currentIndex = listExtension.indexToRow(currentModelIndex);
             console.log("base down pressed", currentIndex);
         }
 
         Keys.onReturnPressed: {
             console.log("base return pressed", currentIndex);
         }
-    }
+    }*/
 }

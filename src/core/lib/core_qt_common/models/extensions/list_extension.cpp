@@ -1,4 +1,5 @@
 #include "list_extension.hpp"
+#include "core_qt_common/models/qt_abstract_item_model.hpp"
 
 ListExtension::ListExtension()
 {
@@ -42,4 +43,39 @@ QItemSelection ListExtension::itemSelection( const QModelIndex & first, const QM
 	}
 
 	return QItemSelection( begin, end );
+}
+
+QModelIndex ListExtension::incIndex( const QModelIndex & index ) const
+{
+	const auto pModel = dynamic_cast< const QtAbstractItemModel * >( index.model() );
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+	if (index.row() >= pModel->rowCount( index.parent() ))
+	{
+		return index;
+	}
+	return pModel->index( index.row() + 1, index.column(), index.parent() );
+}
+
+
+QModelIndex ListExtension::decIndex( const QModelIndex & index ) const
+{
+	const auto pModel = dynamic_cast< const QtAbstractItemModel * >( index.model() );
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+	if (index.row() <= 0)
+	{
+		return index;
+	}
+	return pModel->index( index.row() - 1, index.column(), index.parent() );
+}
+
+
+int ListExtension::indexToRow( const QModelIndex & index ) const
+{
+	return index.row();
 }

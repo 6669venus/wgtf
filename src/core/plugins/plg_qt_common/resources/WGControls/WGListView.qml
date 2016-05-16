@@ -88,6 +88,7 @@ WGListViewBase {
     WGItemViewCommon {
         id: itemView
 
+        // WGControls.ListExtension C++
         ListExtension {
             id: listExtension
         }
@@ -99,20 +100,69 @@ WGListViewBase {
             target: listView
             onItemPressed: {
                 if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
-                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-                    itemView.selectionModel.select(selection, 0x0002) // Select
+                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
+                    itemView.selectionModel.select(selection,
+                        ItemSelectionModel.Select);
                 }
                 else if (mouse.modifiers & Qt.ShiftModifier) {
-                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-                    itemView.selectionModel.select(selection, 0x0001 | 0x0002) // Clear || Select
+                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
+                    itemView.selectionModel.select(selection,
+                        itemView.selectionModel.Clear | ItemSelectionModel.Select);
                 }
                 else if (mouse.modifiers & Qt.ControlModifier) {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0008) // Toggle
+                    itemView.selectionModel.setCurrentIndex(rowIndex,
+                        ItemSelectionModel.Toggle);
                 }
                 else {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0001 | 0x0002) // Clear | Select
+                    itemView.selectionModel.setCurrentIndex(rowIndex,
+                        ItemSelectionModel.Clear | ItemSelectionModel.Select);
                 }
-                //listView.currentIndex = rowIndex
+                listView.currentModelIndex = rowIndex/*itemView.selectionModel.currentIndex*/;
+                listView.currentIndex = listExtension.indexToRow(rowIndex/*listView.currentModelIndex*/);
+            }
+        }
+    }
+
+    /*! Stores which item is currently in focus by the keyboard.
+        Often this will correspond to the selected item, but not always.
+        E.g. pressing ctrl+up will move the current index, but not the selected index.
+        The default value is the same as the selection (modelIndex).
+    */
+    property var currentModelIndex: itemView.selectionModel.currentIndex
+
+    // Only Item types can have Keys (not ListView)
+    Keys.forwardTo: [keyHandler] // Keys??
+    Item {
+        id: keyHandler
+        Keys.onUpPressed: {
+            console.log("base up pressed", currentIndex);
+
+            // Move keyboard highlight
+            currentModelIndex = listExtension.decIndex(currentModelIndex);
+            
+            // Synchronize with the index in Qt's ListView
+            currentIndex = listExtension.indexToRow(currentModelIndex);
+
+            // Move selection with keyboard highlight
+            if (!(event.modifiers & Qt.ControlModifier)) {
+                itemView.selectionModel.setCurrentIndex(currentModelIndex,
+                    ItemSelectionModel.Clear | ItemSelectionModel.Select);
+            }
+        }
+
+        Keys.onDownPressed: {
+            console.log("base down pressed", currentIndex);
+
+            // Move keyboard highlight
+            currentModelIndex = listExtension.incIndex(currentModelIndex);
+
+            // Synchronize with the index in Qt's ListView
+            currentIndex = listExtension.indexToRow(currentModelIndex);
+
+            // Move selection with keyboard highlight
+            if (!(event.modifiers & Qt.ControlModifier)) {
+                itemView.selectionModel.setCurrentIndex(currentModelIndex,
+                    ItemSelectionModel.Clear | ItemSelectionModel.Select);
             }
         }
     }

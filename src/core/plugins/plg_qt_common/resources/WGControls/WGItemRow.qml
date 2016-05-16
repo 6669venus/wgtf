@@ -31,6 +31,7 @@ Item {
     property alias columnSpacing: row.spacing
     property bool selected: false
 
+
     /*! Stores which item is currently in focus by the keyboard.
         Often this will correspond to the selected item, but not always.
         E.g. pressing ctrl+up will move the current index, but not the selected index.
@@ -44,12 +45,26 @@ Item {
     signal itemDoubleClicked(var mouse, var itemIndex)
 
     /* MOVE INTO STYLE*/
+    // Current selection, mouse hover and keyboard focus highlight
     Rectangle {
         id: backgroundArea
         anchors.fill: row
         color: palette.highlightShade
-        opacity: selected ? 1 : 0.5 
-        visible: hoverArea.containsMouse || selected
+        opacity: {
+            if (selected) {
+                return 1.0;
+            }
+            else if (hoverArea.containsMouse) {
+                return 0.5;
+            }
+            else if (isCurrent) {
+                return 0.25;
+            }
+            return 0.0;
+        }
+        border.color: "red" //palette.highlightShade
+        border.width: 2 // defaultSpacing.standardBorderSize
+        visible: hoverArea.containsMouse || selected || isCurrent
     }
 
     MouseArea {

@@ -45,7 +45,7 @@ QItemSelection ListExtension::itemSelection( const QModelIndex & first, const QM
 	return QItemSelection( begin, end );
 }
 
-QModelIndex ListExtension::incIndex( const QModelIndex & index ) const
+QModelIndex ListExtension::getDownOneRow( const QModelIndex & index ) const
 {
 	const auto pModel = dynamic_cast< const QtAbstractItemModel * >( index.model() );
 	if (pModel == nullptr)
@@ -60,7 +60,7 @@ QModelIndex ListExtension::incIndex( const QModelIndex & index ) const
 }
 
 
-QModelIndex ListExtension::decIndex( const QModelIndex & index ) const
+QModelIndex ListExtension::getUpOneRow( const QModelIndex & index ) const
 {
 	const auto pModel = dynamic_cast< const QtAbstractItemModel * >( index.model() );
 	if (pModel == nullptr)

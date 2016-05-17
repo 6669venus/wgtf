@@ -22,8 +22,28 @@ public:
 	 *	@return area covered inbetween first and last.
 	 */
 	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
-	Q_INVOKABLE QModelIndex incIndex( const QModelIndex & index ) const;
-	Q_INVOKABLE QModelIndex decIndex( const QModelIndex & index ) const;
+
+	/**
+	 *	Move index down one row in the list.
+	 *	Index will not be moved past the end of the list.
+	 *	@param index to be moved.
+	 *	@return new position.
+	 */
+	Q_INVOKABLE QModelIndex getDownOneRow( const QModelIndex & index ) const;
+
+	/**
+	 *	Move index up one row in the list.
+	 *	Index will not be moved past the start of the list.
+	 *	@param index to be moved.
+	 *	@return new position.
+	 */
+	Q_INVOKABLE QModelIndex getUpOneRow( const QModelIndex & index ) const;
+
+	/**
+	 *	Convert list model index to a row number.
+	 *	@param index.
+	 *	@return row.
+	 */
 	Q_INVOKABLE int indexToRow( const QModelIndex & index ) const;
 };
 

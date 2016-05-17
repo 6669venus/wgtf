@@ -113,6 +113,7 @@ WGListViewBase {
                 else {
                     itemView.selectionModel.setCurrentIndex(rowIndex, 0x0001 | 0x0002) // Clear | Select
                 }
+            }
         }
     }
 }

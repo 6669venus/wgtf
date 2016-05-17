@@ -28,6 +28,10 @@ public:
 	void setText( const std::string & value ) { text_ = value; }
 	const std::string & getText() const { return text_; }
 
+	void incrementCounter() { ++counter_; }
+	void undo( const ObjectHandle& handle, Variant variant ) { --counter_; }
+	void redo( const ObjectHandle& handle, Variant variant ) { ++counter_; }
+
 	TestCommandObject();
 	bool operator==( const TestCommandObject& tdo ) const;
 	bool operator!=( const TestCommandObject& tdo ) const;

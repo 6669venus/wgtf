@@ -6,6 +6,8 @@ out/
 *.swp
 .DS_Store
 *.user
+src/core/third_party/cmake/
+src/core/third_party/perforce/
 src/core/third_party/python/Python-*
 src/core/third_party/python/.gitattributes
 build-*/

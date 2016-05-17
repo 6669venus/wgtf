@@ -17,10 +17,10 @@ SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 
 # Use ADD_CUSTOM_TARGET because this target has no cpp files
-ADD_CUSTOM_TARGET( core_python_script SOURCES
+ADD_CUSTOM_TARGET( ${PROJECT_NAME} SOURCES
 	${V0_INTERFACES}
 	${ALL_SRCS}
 )
  
-BW_PROJECT_CATEGORY( core_python_script "NGT Libs" )
+BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Interfaces" )
 

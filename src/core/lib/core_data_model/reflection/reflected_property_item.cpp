@@ -232,17 +232,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			const float & value = minMaxObj->getMin();
 			float minValue = .0f;
 			bool isOk = variant.tryCast( minValue );
-			assert( isOk );
-			if (!isOk)
+			if (isOk)
 			{
-				return variant;
-			}
-			float diff = minValue - value;
-			float epsilon = std::numeric_limits<float>::epsilon();
-			if (diff > epsilon )
-			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
-				return variant;
+				float diff = minValue - value;
+				float epsilon = std::numeric_limits<float>::epsilon();
+				if (diff > epsilon )
+				{
+					NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
+					return variant;
+				}
 			}
 			return value;
 		}
@@ -262,17 +260,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			const float & value = minMaxObj->getMax();
 			float maxValue = .0f;
 			bool isOk = variant.tryCast( maxValue );
-			assert( isOk );
-			if (!isOk)
+			if (isOk)
 			{
-				return variant;
-			}
-			float diff = value - maxValue;
-			float epsilon = std::numeric_limits<float>::epsilon();
-			if (diff > epsilon)
-			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
-				return variant;
+				float diff = value - maxValue;
+				float epsilon = std::numeric_limits<float>::epsilon();
+				if (diff > epsilon)
+				{
+					NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
+					return variant;
+				}
 			}
 			return value;
 		}

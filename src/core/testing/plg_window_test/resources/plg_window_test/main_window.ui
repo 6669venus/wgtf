@@ -10,6 +10,9 @@
     <height>900</height>
    </rect>
   </property>
+  <property name="windowMaximized">
+   <bool>true</bool>
+  </property>
   <property name="contextMenuPolicy">
    <enum>Qt::PreventContextMenu</enum>
   </property>

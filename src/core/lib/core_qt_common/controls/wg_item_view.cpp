@@ -3,6 +3,8 @@
 #include "models/extensions/i_model_extension.hpp"
 #include "models/qt_abstract_item_model.hpp"
 
+#include <functional>
+
 #include <QAbstractItemModel>
 #include <QQmlListProperty>
 #include <QString>
@@ -30,7 +32,6 @@ namespace
 			model_ = model;
 			connections_.reset();
 			roleNames_.clear();
-			indexCache_.clear();
 			if (model_ != nullptr)
 			{
 				connections_ += QObject::connect( model, &QAbstractItemModel::dataChanged, this, &ExtendedModel::onDataChanged );
@@ -78,7 +79,7 @@ namespace
 				return QModelIndex();
 			}
 
-			return extendedIndex( model_->index( row, column, parent ) );
+			return extendedIndex( model_->index( row, column, modelIndex( parent ) ) );
 		}
 
 		QModelIndex parent( const QModelIndex &child ) const override
@@ -88,7 +89,7 @@ namespace
 				return QModelIndex();
 			}
 
-			return extendedIndex( model_->parent( child ) );
+			return extendedIndex( model_->parent( modelIndex( child ) ) );
 		}
 
 		int rowCount( const QModelIndex &parent ) const override
@@ -275,10 +276,28 @@ namespace
 			}
 
 			assert( extendedIndex.model() == this );
-			auto it = indexCache_.find( extendedIndex );
-			assert( it != indexCache_.end() );
-			assert( it->isValid() );
-			return *it;
+			// To convert from an extended modelIndex to an internal modelIndex we have 2 options -
+			// 1. Use the public index functions on model_ using the row and column of the extended modelIndex.
+			//    The problem with this however is that this requires the parent of the extended modelIndex,
+			//    however to calculate the parent of the extended modelIndex we first need to convert the 
+			//    extended modelIndex to an internal modelIndex and we get stuck in a loop
+			// 2. Create a map of internal persistentModelIndices to extended persistentModelIndices that is 
+			//    populated by calls to extendedIndex and used as a lookup in modelIndex.
+			//    The problem with this is that extendedIndex is called by the index function of the extended model
+			//    and the index function is called whenever a remap of persistent indices is required (eg a call to
+			//    beginRemoveRows/endRemoveRows). Instantiating a persistent index during a remap of a models
+			//    persistent indices results in a corruption of the persistent index table and asserts during destruction
+			// As such we need to resort to a third option -
+			// 3. Access the protected createIndex function of model_ and call it directly.
+			//    This is actually the most performant of all options and is completely safe with the current implementation
+			//    of the QAbstractItemModel classes. All the createIndex function does is invoke the private constructor
+			//    of QModelIndex, passing the models this pointer in as an argument.
+			//    To do this we take the address of the extended models createIndex function and bind the this pointer
+			//    to model_. Dodgy but necessary.
+			QModelIndex (QAbstractItemModel::*createIndexFunc)(int, int, void*) const = &ExtendedModel::createIndex;
+			using namespace std::placeholders;
+			auto createIndex = std::bind( createIndexFunc, model_, _1, _2, _3 );
+			return createIndex( extendedIndex.row(), extendedIndex.column(), extendedIndex.internalPointer() );
 		}
 
 		QModelIndex extendedIndex( const QModelIndex & modelIndex ) const
@@ -289,9 +308,7 @@ namespace
 			}
 
 			assert( modelIndex.model() == model_ );
-			QModelIndex index = createIndex( modelIndex.row(), modelIndex.column(), modelIndex.internalId() );
-			indexCache_.insert( index, modelIndex );
-			return index;
+			return createIndex( modelIndex.row(), modelIndex.column(), modelIndex.internalId() );
 		}
 
 		QAbstractItemModel * model_;
@@ -299,7 +316,6 @@ namespace
 		QStringList & roles_;
 		QList< IModelExtension * > & extensions_;
 		QHash< int, QByteArray > roleNames_;
-		mutable QHash< QPersistentModelIndex, QPersistentModelIndex > indexCache_;
 	};
 
 	class HeaderData : public QObject

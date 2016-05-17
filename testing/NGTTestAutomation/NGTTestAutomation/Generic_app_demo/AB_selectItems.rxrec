@@ -48,13 +48,6 @@ mode="Global">
 				</path>
 			</info>
 		</mouseitem>
-		<explicitdelayitem
-		enabled="True"
-		optional="False"
-		duration="100ms">
-			<comment/>
-			<bindings/>
-		</explicitdelayitem>
 		<mouseitem
 		enabled="True"
 		optional="False"
@@ -76,13 +69,6 @@ mode="Global">
 				</path>
 			</info>
 		</mouseitem>
-		<explicitdelayitem
-		enabled="True"
-		optional="False"
-		duration="100ms">
-			<comment/>
-			<bindings/>
-		</explicitdelayitem>
 		<mouseitem
 		enabled="True"
 		optional="False"
@@ -104,13 +90,6 @@ mode="Global">
 				</path>
 			</info>
 		</mouseitem>
-		<explicitdelayitem
-		enabled="True"
-		optional="False"
-		duration="100ms">
-			<comment/>
-			<bindings/>
-		</explicitdelayitem>
 	</recorditems>
 	<repository
 	name="NGTTestAutomationRepository"

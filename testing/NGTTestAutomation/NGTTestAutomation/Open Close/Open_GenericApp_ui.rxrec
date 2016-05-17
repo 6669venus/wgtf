@@ -35,6 +35,13 @@ mode="Global">
 		</var>
 	</variables>
 	<recorditems>
+		<explicitdelayitem
+		enabled="True"
+		optional="False"
+		duration="100ms">
+			<comment/>
+			<bindings/>
+		</explicitdelayitem>
 		<runapprecorditem
 		enabled="True"
 		optional="False"

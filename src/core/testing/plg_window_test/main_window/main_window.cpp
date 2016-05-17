@@ -34,8 +34,10 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
 	app_ = &uiApplication;
+	uiFramework_ = &uiFramework;
 
 	connections_ += mainWindow_->signalClose.connect( std::bind( &MainWindow::onClose, this ) );
+	connections_ += mainWindow_->signalTryClose.connect( std::bind( &MainWindow::onTryClose, this, std::placeholders::_1 ) );
 	connections_ += uiApplication.signalStartUp.connect( std::bind( &MainWindow::onStartUp, this ) );
 }
 
@@ -60,6 +62,21 @@ void MainWindow::onClose()
 	app_->quitApplication();
 }
 
+void MainWindow::onTryClose( bool& shouldClose )
+{
+	if (shouldClose)
+	{
+		int result = uiFramework_->displayMessageBox( "Do you want to close?", 
+														"Are you sure you want to close the Generic App?",
+														IUIFramework::Cancel| IUIFramework::Ok );
+
+		if ( result == IUIFramework::Cancel )
+		{
+			shouldClose = false;
+		}
+	}
+}
+
 void MainWindow::createActions( IUIFramework & uiFramework )
 {
 	// hook application exit
@@ -80,5 +97,5 @@ void MainWindow::addMenuBar( IUIApplication & uiApplication )
 
 void MainWindow::onStartUp()
 {
-	mainWindow_->showMaximized( true );
+	mainWindow_->show( true );
 }

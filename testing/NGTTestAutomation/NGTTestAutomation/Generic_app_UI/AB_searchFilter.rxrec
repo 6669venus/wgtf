@@ -87,14 +87,14 @@ mode="Global">
 			<bindings/>
 		</explicitdelayitem>
 		<validationitem
-		enabled="True"
-		optional="False"
-		screenshotname="Screenshot3"
-		screenshotguid="9ea60776-e27c-46ae-b995-c48ec998afb0"
-		codegenpropertyname="AssetGrid_Screenshot3"
+		enabled="False"
+		optional="True"
+		screenshotname="Screenshot5"
+		screenshotguid="a2cf5064-e54f-4f5e-aa52-a832c4cfc145"
+		codegenpropertyname="AssetGrid_Screenshot5"
 		searchpropertyid="307346b8-3aeb-4785-882d-9f018fb30ed9"
-		imagerect="0,0,904,200"
-		imageoptions="0.8;EdgesSobel;0,0,904,200;True;10000000;0ms"
+		imagerect="0,0,891,246"
+		imageoptions="0.8;EdgesSobel;0,0,891,246;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>
@@ -141,8 +141,8 @@ mode="Global">
 			<bindings/>
 		</explicitdelayitem>
 		<validationitem
-		enabled="True"
-		optional="False"
+		enabled="False"
+		optional="True"
 		screenshotname="Screenshot4"
 		screenshotguid="0605befd-b487-4041-93e0-57afb62b8e7a"
 		codegenpropertyname="AssetGrid_Screenshot4"

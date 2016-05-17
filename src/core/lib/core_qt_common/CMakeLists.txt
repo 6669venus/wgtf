@@ -182,17 +182,19 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( core_qt_common
-    core_reflection
+BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
+	core_reflection
 	core_data_model
 	core_logging
 	core_string_utils
-    Qt5::Core
-    Qt5::Gui
-    Qt5::QuickWidgets
-    Qt5::Quick
-    Qt5::UiTools
-    Qt5::Xml
+)
+BW_TARGET_LINK_LIBRARIES( core_qt_common PRIVATE
+	Qt5::Core
+	Qt5::Gui
+	Qt5::QuickWidgets
+	Qt5::Quick
+	Qt5::UiTools
+	Qt5::Xml
 )
 
 INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})

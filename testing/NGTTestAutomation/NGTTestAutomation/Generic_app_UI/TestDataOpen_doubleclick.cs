@@ -79,11 +79,16 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left DoubleClick item 'Generic_app.MainWindow.TestData' at Center.", repo.Generic_app.MainWindow.TestDataInfo, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.TestData.DoubleClick();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.TestData' at Center.", repo.Generic_app.MainWindow.TestDataInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.TestData.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.TestData.Open' at Center.", repo.Menu.TestData.OpenInfo, new RecordItemIndex(1));
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Down item 'Generic_app.MainWindow.TestData' at Center.", repo.Generic_app.MainWindow.TestDataInfo, new RecordItemIndex(1));
+            repo.Generic_app.MainWindow.TestData.MoveTo();
+            Mouse.ButtonDown(System.Windows.Forms.MouseButtons.Left);
+            Delay.Milliseconds(200);
+            
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Menu.TestData.Open' at Center.", repo.Menu.TestData.OpenInfo, new RecordItemIndex(2));
             repo.Menu.TestData.Open.Click();
             Delay.Milliseconds(200);
             

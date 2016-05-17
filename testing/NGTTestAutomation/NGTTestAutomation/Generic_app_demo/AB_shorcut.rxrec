@@ -69,12 +69,12 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="False"
-		screenshotname="Screenshot1"
-		screenshotguid="94eac44c-0b72-4b62-8089-02f7c4a11d87"
-		codegenpropertyname="Column1_Screenshot1"
+		screenshotname="Screenshot4"
+		screenshotguid="e2e556cd-a6e2-4790-82b2-5544b1d157bc"
+		codegenpropertyname="Column1_Screenshot4"
 		searchpropertyid="8bdc3829-50bb-4032-9327-7c3af3366b27"
-		imagerect="0,0,241,168"
-		imageoptions="0.85;EdgesSobel;0,0,241,168;True;10000000;0ms"
+		imagerect="0,0,233,168"
+		imageoptions="0.8;EdgesSobel;0,0,233,168;True;10000000;0ms"
 		action="CompareImage">
 			<comment/>
 			<bindings/>

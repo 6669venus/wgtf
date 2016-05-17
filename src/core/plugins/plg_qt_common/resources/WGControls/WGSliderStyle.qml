@@ -64,7 +64,7 @@ Style {
     id: styleitem
 
     /*! The \l Slider this style is attached to. */
-    readonly property WGSlider control: __control
+    readonly property QtObject control: __control
 
     property bool __horizontal: control.__horizontal
 

@@ -206,6 +206,12 @@ Rectangle {
         }
     }
 
+    // We need to update the asset manager view
+    function onRefresh( ) {
+
+        rootFrame.viewModel.refreshData;
+    }
+
     // Handles a history menu item being clicked
     function historyMenuItemClicked( index ) {
         // Don't navigate if we're actively filtering assets
@@ -492,7 +498,7 @@ Rectangle {
                         },
                         WGToolButton {
                             id: btnAssetBrowserForward
-                            objectName: "backButton"
+                            objectName: "forwardButton"
                             iconSource: "icons/fwd_16x16.png"
                             tooltip: "Forward"
                             enabled: (__currentFolderHistoryIndex < __folderHistoryIndices.length - 1)
@@ -500,6 +506,18 @@ Rectangle {
 
                             onClicked: {
                                 onNavigate( true );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserRefresh
+                            objectName: "refreshButton"
+                            iconSource: "icons/loop_16x16.png"
+                            tooltip: "Refresh"
+                            width: 16
+
+
+                            onClicked: {
+                                onRefresh();
                             }
                         },
                         WGToolButton {
@@ -532,7 +550,6 @@ Rectangle {
 
                 WGBreadcrumbs {
                     id: breadcrumbControl
-                    objectName: "breadCrumbs"
                     dataModel: rootFrame.viewModel.breadcrumbsModel
 
                     onBreadcrumbClicked: {

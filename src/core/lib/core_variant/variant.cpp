@@ -376,7 +376,11 @@ void Variant::detach( bool copy )
 void Variant::castError()
 {
 #ifdef _WIN32
+#if ( _MSC_VER >= 1900 )
+	throw std::bad_cast::__construct_from_string_literal("Variant cast failed");
+#else
 	throw std::bad_cast("Variant cast failed");
+#endif
 #else
 	throw std::bad_cast();
 #endif
@@ -386,7 +390,11 @@ void Variant::castError()
 void Variant::typeInitError()
 {
 #ifdef _WIN32
+#if ( _MSC_VER >= 1900 )
+	throw std::bad_cast::__construct_from_string_literal("type is not registered in Variant");
+#else
 	throw std::bad_cast("type is not registered in Variant");
+#endif
 #else
 	throw std::bad_cast();
 #endif

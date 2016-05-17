@@ -27,6 +27,27 @@ mode="Global">
 	namespace="NGTTestAutomation.Generic_app_UI"/>
 	<variables/>
 	<recorditems>
+		<validationitem
+		enabled="True"
+		optional="False"
+		searchpropertyid="951d7e71-d0f7-4c10-99c3-7ac9c8c3f175"
+		action="AttributeEqual">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="RepositoryEditor"
+			id="a67c2b30-5e16-4bf7-bc06-220296287dbc">
+				<path>
+					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel_old.qml']//list[@type='WGListView']/element[2]/list/list[2]/text[@caption='aardwolf']
+				</path>
+			</info>
+			<matchname>
+				Visible
+			</matchname>
+			<matchvalue>
+				True
+			</matchvalue>
+		</validationitem>
 		<mouseitem
 		enabled="True"
 		optional="False"
@@ -50,53 +71,25 @@ mode="Global">
 		</mouseitem>
 		<validationitem
 		enabled="True"
-		optional="True"
-		screenshotname="Screenshot2"
-		screenshotguid="1d515964-3c09-4b0c-bab6-d4dbe1b3547b"
-		codegenpropertyname="List1_Screenshot2"
-		searchpropertyid="73361fb1-86a8-44e0-8e73-6f15bd03a3a4"
-		imagerect="0,0,1174,926"
-		imageoptions="0.8;EdgesSobel;0,0,1174,926;True;10000000;0ms"
-		action="CompareImage">
+		optional="False"
+		searchpropertyid="951d7e71-d0f7-4c10-99c3-7ac9c8c3f175"
+		action="AttributeEqual">
 			<comment/>
 			<bindings/>
 			<info
 			sourcename="RepositoryEditor"
-			id="d25ec456-0b46-462a-85b9-5c4cba288b40">
+			id="a67c2b30-5e16-4bf7-bc06-220296287dbc">
 				<path>
-					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel.qml']/element[@type='QQuickWidget']//list[@name='list']
+					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel_old.qml']//list[@type='WGListView']/element[2]/list/list[2]/text[@caption='aardwolf']
 				</path>
 			</info>
 			<matchname>
-				(Choose)
+				Visible
 			</matchname>
 			<matchvalue>
-				yourValue
+				False
 			</matchvalue>
 		</validationitem>
-		<mouseitem
-		enabled="False"
-		optional="False"
-		duration="500ms"
-		searchpropertyid="ae8b3b1d-774d-418b-ab55-2c737086fcbd"
-		action="Click"
-		button="Left"
-		movetime="300ms"
-		sx="0"
-		sy="0"
-		loc="Center">
-			<comment>
-				Disable because of crash jira#
-			</comment>
-			<bindings/>
-			<info
-			sourcename="RepositoryEditor"
-			id="e0aee596-fe6e-4e54-8236-70eea42dac0b">
-				<path>
-					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel.qml']//button[@text='Switch Model Off']
-				</path>
-			</info>
-		</mouseitem>
 	</recorditems>
 	<repository
 	name="NGTTestAutomationRepository"

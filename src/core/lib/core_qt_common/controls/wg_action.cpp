@@ -8,6 +8,8 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 
+namespace wgt
+{
 struct WGAction::Implementation
 {
 	Implementation()
@@ -164,4 +166,5 @@ QString WGAction::getActionId() const
 void WGAction::setActionId( const QString& actionId )
 {
 	impl_->setActionId( actionId );
+}
 }

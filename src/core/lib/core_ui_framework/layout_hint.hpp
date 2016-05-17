@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+namespace wgt
+{
 struct LayoutTags;
 
 struct LayoutHint
@@ -20,4 +22,5 @@ private:
 	std::map< std::string, float > hints_;
 };
 
+}
 #endif//LAYOUT_HINT_HPP

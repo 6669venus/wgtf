@@ -3,6 +3,8 @@
 #include <codecvt>
 
 //==============================================================================
+namespace wgt
+{
 CommandLineParser::CommandLineParser(int argc, char** argv)
 	: argc_( argc )
 	, argv_( argv )
@@ -72,4 +74,5 @@ std::wstring CommandLineParser::getParamStrW( const char * arg ) const
 		return conv.from_bytes( param );
 	}
 	return L"";
+}
 }

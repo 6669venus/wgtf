@@ -3,6 +3,8 @@
 
 #include "../generic/generic_object.hpp"
 
+namespace wgt
+{
 class PropertyAccessor;
 
 class IReflectionPropertySetter
@@ -11,4 +13,5 @@ public:
 	virtual void setDataValue( const PropertyAccessor & pa, const Variant & data ) = 0;
 };
 
+}
 #endif //I_REFLECTION_PRO	PERTY_SETTER

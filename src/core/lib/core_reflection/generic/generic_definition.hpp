@@ -7,6 +7,8 @@
 #include "core_reflection/property_storage.hpp"
 #include <string>
 
+namespace wgt
+{
 class IDefinitionManager;
 
 /**
@@ -40,4 +42,5 @@ private:
 	PropertyStorage properties_;
 };
 
+}
 #endif //GENERIC_DEFINITION_HPP

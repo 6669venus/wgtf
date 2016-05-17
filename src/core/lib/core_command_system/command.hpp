@@ -5,6 +5,8 @@
 
 #include "i_command_event_listener.hpp"
 #include "command_instance.hpp"
+namespace wgt
+{
 class IDataStream;
 class ICommandManager;
 
@@ -70,4 +72,6 @@ private:
 	ICommandManager * commandSystemProvider_;
 };
 
+}
 #endif //COMMAND_HPP
+

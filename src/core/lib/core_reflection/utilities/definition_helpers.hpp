@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <type_traits>
 
+namespace wgt
+{
 class IClassDefinition;
 class MetaBase;
 
@@ -74,4 +76,5 @@ struct CreateHelper : public CreateHelperBase<T, IsAbstract>
 };
 
 
+}
 #endif

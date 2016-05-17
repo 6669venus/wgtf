@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace wgt
+{
 class Variant;
 
 class IAction
@@ -26,4 +28,5 @@ public:
 	virtual const Variant& getData() const = 0;
 };
 
+}
 #endif//I_ACTION_HPP

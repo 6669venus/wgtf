@@ -6,6 +6,8 @@
 #include <memory>
 #include <vector>
 
+namespace wgt
+{
 class UnitTestTreeModel;
 
 class TestStringData
@@ -71,4 +73,6 @@ Models
 		model_dinosaur
 */
 
+}
 #endif //TEST_STRING_DATA_HPP
+

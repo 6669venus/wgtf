@@ -1,6 +1,8 @@
 #include "wg_read_write_lock.hpp"
 
 
+namespace wgt
+{
 wg_read_write_lock::wg_read_write_lock()
 	: writer_( false )
 	, readers_( 0 )
@@ -67,3 +69,5 @@ void wg_read_write_lock::write_unlock()
 	unlocked_.notify_all();
 }
 
+
+}

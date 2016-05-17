@@ -3,6 +3,8 @@
 
 #include "wg_types/hash_utilities.hpp"
 
+namespace wgt
+{
 namespace ItemRole
 {
 	inline unsigned int compute( const char * roleName )
@@ -81,5 +83,6 @@ namespace ItemRole {															\
 	};
 	ITEM_ROLES
 #undef X
+}
 
 #endif //I_ITEM_ROLE_HPP

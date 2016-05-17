@@ -6,6 +6,8 @@
 
 #include <functional>
 
+namespace wgt
+{
 class IApplication;
 class IDefinitionManager;
 class BatchCommand;
@@ -131,4 +133,5 @@ private:
     }
 };
 
+}
 #endif //COMMAND_MANAGER_HPP

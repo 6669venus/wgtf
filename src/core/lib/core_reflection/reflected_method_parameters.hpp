@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace wgt
+{
 class Variant;
 
 class ReflectedMethodParameters
@@ -83,4 +85,6 @@ private:
 	Implementation* impl_;
 };
 
+}
 #endif //REFLECTED_METHOD_PARAMETERS_HPP
+

@@ -7,6 +7,8 @@
 
 #include <cstdint>
 
+namespace wgt
+{
 namespace
 {
 	class DefaultMemoryAllocator : public IMemoryAllocator
@@ -288,4 +290,6 @@ EXPORT bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
 		break;
 	}
 	return false;
+}
+
 }

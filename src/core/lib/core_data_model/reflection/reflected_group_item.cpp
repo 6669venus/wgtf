@@ -12,6 +12,8 @@
 #include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 
+namespace wgt
+{
 ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath )
 	: ReflectedItem( parent, inplacePath )
 	, groupObj_( groupObj )
@@ -275,4 +277,5 @@ bool ReflectedGroupItem::postSetValue(
 	}
 	}
 	return false;
+}
 }

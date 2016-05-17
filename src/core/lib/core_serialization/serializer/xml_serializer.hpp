@@ -6,6 +6,8 @@
 
 #include "core_serialization/text_stream.hpp"
 #include <string>
+namespace wgt
+{
 class IDefinitionManager;
 
 class XMLSerializer:
@@ -104,4 +106,6 @@ private:
 };
 
 
+}
 #endif
+

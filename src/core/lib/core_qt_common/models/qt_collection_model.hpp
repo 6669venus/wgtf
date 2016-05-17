@@ -6,6 +6,8 @@
 #include "core_data_model/collection_model.hpp"
 
 
+namespace wgt
+{
 class CollectionModel;
 
 
@@ -74,5 +76,7 @@ private:
 };
 
 
+}
 #endif // _QT_COLLECTION_MODEL_HPP
+
 

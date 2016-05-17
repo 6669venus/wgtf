@@ -8,6 +8,8 @@
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 
 //==============================================================================
+namespace wgt
+{
 class CopyPastePlugin
 	: public PluginMain
 {
@@ -146,3 +148,5 @@ public:
 };
 
 PLG_CALLBACK_FUNC( CopyPastePlugin )
+
+}

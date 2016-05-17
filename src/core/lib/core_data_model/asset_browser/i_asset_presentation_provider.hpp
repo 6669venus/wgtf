@@ -3,6 +3,8 @@
 
 #include "core_data_model/i_item.hpp"
 
+namespace wgt
+{
 class IAssetObjectItem;
 
 /**
@@ -25,4 +27,5 @@ public:
 	virtual const char* getTypeIconResourceString( const IAssetObjectItem * asset ) const = 0;
 };
 
+}
 #endif // I_ASSET_PRESENTATION_PROVIDER_HPP

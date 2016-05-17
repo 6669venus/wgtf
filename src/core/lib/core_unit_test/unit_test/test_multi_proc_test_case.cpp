@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+namespace wgt
+{
 BW_BEGIN_NAMESPACE
 
 // -----------------------------------------------------------------------------
@@ -103,3 +105,5 @@ TEST( multiProc )
 BW_END_NAMESPACE
 
 // test_multi_proc_test_case.cpp
+
+}

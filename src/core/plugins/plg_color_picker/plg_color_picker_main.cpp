@@ -22,6 +22,8 @@
 #include <memory>
  
  
+namespace wgt
+{
 class ColorPickerPlugin
     : public PluginMain
 {
@@ -71,3 +73,5 @@ private:
  
  
 PLG_CALLBACK_FUNC( ColorPickerPlugin )
+
+}

@@ -9,6 +9,8 @@
 /**
  *	Test reflection system.
  */
+namespace wgt
+{
 class TestPluginReflection
 	: public PluginMain
 {
@@ -170,3 +172,5 @@ public:
 };
 
 PLG_CALLBACK_FUNC( TestPluginReflection )
+
+}

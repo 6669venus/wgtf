@@ -3,6 +3,8 @@
 
 #include <cstddef>
 
+namespace wgt
+{
 class BinaryBlock
 {
 public:
@@ -20,4 +22,5 @@ private:
 	bool    externallyOwned_;
 };
 
+}
 #endif //BINARY_BLOCK_HPP

@@ -7,6 +7,8 @@
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 class ISerializer;
 class IDataStream;
 /**
@@ -31,4 +33,6 @@ private:
 
 
 
+}
 #endif // SERIALIZATION_MANAGER_HPP
+

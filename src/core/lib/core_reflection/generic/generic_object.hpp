@@ -7,6 +7,8 @@
 
 #include <unordered_map>
 
+namespace wgt
+{
 class GenericObject;
 typedef ObjectHandleT<GenericObject> GenericObjectPtr;
 
@@ -43,4 +45,5 @@ private:
 	friend class GenericProperty;
 };
 
+}
 #endif //GENERIC_OBJECT_HPP

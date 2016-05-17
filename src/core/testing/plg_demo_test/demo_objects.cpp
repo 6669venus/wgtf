@@ -21,6 +21,8 @@
 #include <codecvt>
 
 
+namespace wgt
+{
 namespace
 {
 	enum class ModelPropertyValueType : uint8_t
@@ -361,4 +363,6 @@ void DemoObjects::automationUpdate()
 			}
 		}
 	}
+}
+
 }

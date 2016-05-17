@@ -5,6 +5,8 @@
 
 /// Interface class for the QtListFilter's custom filter
 
+namespace wgt
+{
 class IItem;
 class QString;
 
@@ -15,4 +17,5 @@ public:
 	virtual bool checkFilter( const IItem * item, const std::vector<QString> & filters ) = 0;
 };
 
+}
 #endif // I_CHECK_FILTER_HPP

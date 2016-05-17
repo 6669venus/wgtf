@@ -1,6 +1,8 @@
 #ifndef SHARED_CONTROLS_HPP
 #define SHARED_CONTROLS_HPP
 
+namespace wgt
+{
 class IDefinitionManager;
 class ICommandManager;
 
@@ -12,4 +14,5 @@ public:
 		IDefinitionManager & definitionManager );
 };
 
+}
 #endif //SHARED_CONTROLS_HPP

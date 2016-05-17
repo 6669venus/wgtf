@@ -6,6 +6,8 @@
 #include <QQmlEngine>
 
 //==============================================================================
+namespace wgt
+{
 BWCopyable::BWCopyable( QObject * parent )
 	: QObject( parent )
 	, valueHint_( "" )
@@ -71,3 +73,5 @@ bool BWCopyable::setData( const Variant& value )
 }
 
 
+
+}

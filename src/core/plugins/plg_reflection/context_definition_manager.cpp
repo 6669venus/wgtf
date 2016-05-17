@@ -11,6 +11,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 ContextDefinitionManager::ContextDefinitionManager( const wchar_t * contextName )
 	: pBaseManager_ ( NULL )
 	, contextName_( contextName )
@@ -289,4 +291,6 @@ IClassDefinitionDetails * ContextDefinitionManager::createGenericDefinition( con
 {
 	assert( pBaseManager_ );
 	return pBaseManager_->createGenericDefinition( name );
+}
+
 }

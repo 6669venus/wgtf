@@ -16,6 +16,8 @@
 #include <memory>
 #include <vector>
 
+namespace wgt
+{
 namespace internal
 {
 	// Base class of the callback function holder
@@ -225,4 +227,6 @@ private:
 	Signal(const Signal &);
 	Signal & operator=(const Signal &);
 };
+}
 #endif // SIGNAL_H_
+

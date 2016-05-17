@@ -3,6 +3,8 @@
 
 #include "core_common/signal.hpp"
 
+namespace wgt
+{
 class IItem;
 
 /**
@@ -27,4 +29,6 @@ public:
 	SignalVoid signalFilterChanged;
 };
 
+}
 #endif // I_ITEM_FILTER_HPP
+

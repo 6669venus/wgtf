@@ -4,14 +4,17 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 
-class IQtTypeConverter;
 class QQmlComponent;
 class QQmlEngine;
-class QtPalette;
-class QtGlobalSettings;
 class QVariant;
 class QWidget;
 class QObject;
+
+namespace wgt
+{
+class IQtTypeConverter;
+class QtGlobalSettings;
+class QtPalette;
 class Variant;
 
 class IQtFramework : public Implements< IUIFramework >
@@ -35,4 +38,6 @@ public:
 	virtual void retainQWidget( IView & view ) = 0;
 };
 
+}
 #endif//I_QT_FRAMEWORK
+

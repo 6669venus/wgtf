@@ -5,6 +5,8 @@
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include <memory>
 
+namespace wgt
+{
 class IAction;
 class IUIApplication;
 class IUIFramework;
@@ -39,4 +41,6 @@ private:
 };
 
 
+}
 #endif // MAINWINDOW_H
+

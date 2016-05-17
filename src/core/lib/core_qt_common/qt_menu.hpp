@@ -12,6 +12,8 @@
 
 class QMenu;
 
+namespace wgt
+{
 typedef std::map< IAction *, QSharedPointer< QAction > > Actions;
 typedef std::map< IAction *, QWeakPointer< QAction > > SharedActions;
 
@@ -50,4 +52,5 @@ private:
 	std::string windowId_;
 };
 
+}
 #endif//QT_MENU_BAR_HPP

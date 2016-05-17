@@ -4,6 +4,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 HistorySelectionHandler::HistorySelectionHandler()
 {
 }
@@ -26,4 +28,6 @@ void HistorySelectionHandler::setSelection( const HistorySelectionHandler::Selec
 const HistorySelectionHandler::Selection & HistorySelectionHandler::getSelection() const
 {
 	return selectionSet_;
+}
+
 }

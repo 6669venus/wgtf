@@ -14,6 +14,8 @@
 
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
 
+namespace wgt
+{
 typedef std::vector<std::string> AssetPaths;
 typedef std::vector<std::string> CustomContentFilters;
 
@@ -82,4 +84,5 @@ private:
 	std::unique_ptr<FileSystemAssetBrowserModelImplementation> impl_;
 };
 
+}
 #endif // ASSET_BROWSER_MODEL_H_

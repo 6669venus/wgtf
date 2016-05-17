@@ -13,6 +13,8 @@
 
 #include "test_objects.hpp"
 
+namespace wgt
+{
 BW_BEGIN_NAMESPACE
 
 REFLECTED_BEGIN_EXPOSE(TestDefinitionObject, ReflectedObject, MetaNone())
@@ -46,3 +48,5 @@ private:
 static InitReflectedTypes s_refTypesInitializer;
 
 BW_END_NAMESPACE
+
+}

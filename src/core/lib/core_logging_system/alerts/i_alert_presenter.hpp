@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+namespace wgt
+{
 class IAlertPresenter
 {
 public:
@@ -11,4 +13,5 @@ public:
 	virtual void show( const char* text ) = 0;
 };
 
+}
 #endif // I_ALERT_PRESENTER_HPP

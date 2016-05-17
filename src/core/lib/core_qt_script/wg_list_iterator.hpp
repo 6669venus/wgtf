@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QVariant>
 
+namespace wgt
+{
 class IListModel;
 class IItem;
 
@@ -34,4 +36,5 @@ private:
 	IItem * currentItem_;
 };
 
+}
 #endif

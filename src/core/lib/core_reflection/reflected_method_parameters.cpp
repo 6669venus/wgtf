@@ -5,6 +5,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 struct ReflectedMethodParameters::Implementation
 {
 	Implementation( ReflectedMethodParameters& self ): self_( self ) {}
@@ -222,4 +224,6 @@ ReflectedMethodParameters::iterator ReflectedMethodParameters::begin()
 ReflectedMethodParameters::iterator ReflectedMethodParameters::end()
 {
 	return ReflectedMethodParameters::iterator( *this, size() );
+}
+
 }

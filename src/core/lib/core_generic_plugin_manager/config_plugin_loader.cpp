@@ -4,6 +4,8 @@
 #include <iterator>
 #include <codecvt>
 
+namespace wgt
+{
 namespace ConfigPluginLoader
 {
 typedef std::istream_iterator< std::wstring, wchar_t, std::char_traits< wchar_t > >
@@ -28,6 +30,8 @@ bool getPlugins( std::vector< std::wstring >& plugins, const std::wstring& confi
 	}
 
 	return false;
+}
+
 }
 
 }

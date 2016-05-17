@@ -8,6 +8,8 @@
 #include <utility>
 
 
+namespace wgt
+{
 namespace collection_details
 {
 
@@ -731,6 +733,6 @@ namespace collection_details
 	LinearCollectionImpl< const std::array< T, N >, false > deduceCollectionImplType( const std::array< T, N >& );
 
 }
-
+}
 #endif
 

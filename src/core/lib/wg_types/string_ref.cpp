@@ -2,6 +2,8 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 StringRef::StringRef( const char * str )
 	: pStart_( str )
 	, length_( strlen( pStart_ ) )
@@ -48,4 +50,5 @@ bool StringRef::operator == ( const StringRef & other ) const
 		return false;
 	}
 	return strcmp( pStart_, other.pStart_ ) == 0;
+}
 }

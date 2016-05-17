@@ -8,6 +8,8 @@
 #include "variant_list.hpp"
 #include <string>
 
+namespace wgt
+{
 class IListModel;
 
 //------------------------------------------------------------------------------
@@ -111,4 +113,5 @@ public:
 	virtual size_t size() const { return 0; }
 };
 
+}
 #endif //I_BREADCRUMBS_MODEL_HPP

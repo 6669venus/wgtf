@@ -5,6 +5,8 @@
 #include <streambuf>
 
 
+namespace wgt
+{
 template< typename Char >
 class BasicStdDataStream:
 	public IDataStream
@@ -58,5 +60,7 @@ typedef BasicStdDataStream< char > StdDataStream;
 typedef BasicStdDataStream< wchar_t > WStdDataStream;
 
 
+}
 #endif // STD_DATA_STREAM_HPP_INCLUDED
+
 

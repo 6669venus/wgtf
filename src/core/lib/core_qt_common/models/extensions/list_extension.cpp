@@ -1,5 +1,7 @@
 #include "list_extension.hpp"
 
+namespace wgt
+{
 ListExtension::ListExtension()
 {
 
@@ -42,4 +44,5 @@ QItemSelection ListExtension::itemSelection( const QModelIndex & first, const QM
 	}
 
 	return QItemSelection( begin, end );
+}
 }

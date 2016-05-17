@@ -9,6 +9,8 @@
 #include "core_reflection/base_property_with_metadata.hpp"
 #include "generic_property.hpp"
 
+namespace wgt
+{
 const char * GenericDefinition::getName() const
 {
 	return name_.c_str();
@@ -49,4 +51,5 @@ IBasePropertyPtr GenericDefinition::addProperty( const char * name, const TypeId
 	}
 	properties_.addProperty( property );
 	return property;
+}
 }

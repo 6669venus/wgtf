@@ -7,9 +7,12 @@
 #include <QQuickItem>
 #include <QQmlListProperty>
 
-class IModelExtension;
 class QAbstractItemModel;
 class QString;
+
+namespace wgt
+{
+class IModelExtension;
 
 class WGItemView : public QQuickItem
 {
@@ -57,4 +60,5 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
+}
 #endif//WG_ITEM_VIEW_HPP

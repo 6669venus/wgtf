@@ -4,6 +4,8 @@
 //#include "dependency_system/i_interface.hpp"
 #include <string>
 
+namespace wgt
+{
 class IComponentContext;
 
 class IPluginContextManager
@@ -21,4 +23,6 @@ public:
 	virtual const char* getExecutablePath() const = 0;
 };
 
+}
 #endif ///I_PLUGIN_CONTEXT_MANAGER_HPP
+

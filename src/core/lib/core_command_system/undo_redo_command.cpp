@@ -6,6 +6,8 @@
 
 
 //--------------------------------------------------------------------------
+namespace wgt
+{
 UndoRedoCommand::UndoRedoCommand( CommandManager * pCommandManager )
     : pCommandManager_( pCommandManager )
 {
@@ -43,4 +45,6 @@ ObjectHandle UndoRedoCommand::execute( const ObjectHandle & arguments ) const
 CommandThreadAffinity UndoRedoCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
+}
+
 }

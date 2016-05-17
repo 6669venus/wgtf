@@ -15,6 +15,8 @@
 #include "std_data_stream.hpp"
 #include <fstream>
 
+namespace wgt
+{
 class FileDataStream:
 	public StdDataStream
 {
@@ -31,4 +33,5 @@ private:
 
 };
 
+}
 #endif // FILE_DATA_STREAM_H_

@@ -31,6 +31,8 @@
 
 // =============================================================================
 
+namespace wgt
+{
 class TestPropertyFixture
 	: public TestReflectionFixture
 {
@@ -612,3 +614,5 @@ TEST_F(TestCollectionFixture, int_map)
 	}
 }
 
+
+}

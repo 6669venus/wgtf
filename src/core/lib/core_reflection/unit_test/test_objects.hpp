@@ -19,6 +19,8 @@
 
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 struct TestStructure2
 {
 	bool operator==( const TestStructure2& tps ) const
@@ -191,4 +193,6 @@ public:
 	IClassDefinition * derived_klass_;
 };
 
+}
 #endif //TEST_OBJECTS2_HPP
+

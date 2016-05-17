@@ -1,6 +1,8 @@
 #ifndef I_ASSET_LISTENER_HPP
 #define I_ASSET_LISTENER_HPP
 
+namespace wgt
+{
 class IAssetListener
 {
 public:
@@ -11,4 +13,5 @@ public:
 	virtual void useAsset( const char* assetPath ) = 0;
 };
 
+}
 #endif // I_ASSET_LISTENER_HPP

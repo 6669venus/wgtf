@@ -6,6 +6,8 @@
 #include <sstream>
 #include "core_common/ngt_windows.hpp"
 
+namespace wgt
+{
 void WindowsDebugLogger::out( LogMessage* message )
 {
 	if (message != nullptr)
@@ -22,4 +24,6 @@ void WindowsDebugLogger::out( LogMessage* message )
 
 		OutputDebugStringA( ss.str().c_str() );
 	}
+}
+
 }

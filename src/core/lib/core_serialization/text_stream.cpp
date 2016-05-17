@@ -4,6 +4,8 @@
 #include <cctype> // for isspace
 
 
+namespace wgt
+{
 void TextStream::skipWhiteSpace()
 {
 	while (true)
@@ -187,3 +189,5 @@ TextStream& operator>>( TextStream& stream, void*& value )
 }
 
 
+
+}

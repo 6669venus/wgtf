@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <vector>
 
+namespace wgt
+{
 static const size_t NO_SELECTION = SIZE_MAX;
 
 struct AssetBrowserViewModel::AssetBrowserViewModelImplementation
@@ -192,4 +194,6 @@ ISelectionHandler * AssetBrowserViewModel::getFolderSelectionHandler() const
 ISelectionHandler * AssetBrowserViewModel::getFolderContentSelectionHandler() const
 {
 	return &impl_->folderContentSelectionHandler_;
+}
+
 }

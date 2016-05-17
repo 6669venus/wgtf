@@ -10,6 +10,8 @@
 //add #include "i_class_member.hpp"
 //inherit from IClassMember and make IMethod inherit from it as well.
 
+namespace wgt
+{
 class TypeId;
 class ObjectHandle;
 class MetaBase;
@@ -134,4 +136,6 @@ public:
 	virtual size_t parameterCount() const = 0;
 };
 
+}
 #endif // I_BASE_REFLECTED_PROPERTY_HPP
+

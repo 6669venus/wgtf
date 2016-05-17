@@ -13,6 +13,8 @@
 #include "qt_scripting_engine.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 namespace
 {
 	PropertyAccessor bindProperty( ObjectHandle & object, int propertyIndex, IDefinitionManager & definitionManager, bool method = false )
@@ -349,4 +351,6 @@ MetaHandle QtScriptObject::getMetaObject(
 const ObjectHandle & QtScriptObject::object() const
 { 
 	return object_; 
+}
+
 }

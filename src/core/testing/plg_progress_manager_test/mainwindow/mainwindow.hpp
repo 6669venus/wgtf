@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IAction;
 class IUIApplication;
 class IComponentContext;
@@ -29,4 +31,6 @@ private:
 };
 
 
+}
 #endif // MAINWINDOW_H
+

@@ -6,11 +6,14 @@
 #include <QVariant>
 
 class QObject;
-class ObjectHandle;
-class TypeId;
 class QQuickItem;
 class QUrl;
 class QQmlEngine;
+
+namespace wgt
+{
+class ObjectHandle;
+class TypeId;
 
 namespace QtHelpers
 {
@@ -25,4 +28,5 @@ namespace QtHelpers
 	QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const char * relativePath );
 };
 
+}
 #endif //QT_HELPERS_HPP

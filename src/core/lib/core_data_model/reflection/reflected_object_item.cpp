@@ -10,6 +10,8 @@
 
 #include <codecvt>
 
+namespace wgt
+{
 bool CompareWStrings(const wchar_t * a, const wchar_t * b)
 {
 	return wcscmp(a, b) < 0;
@@ -260,4 +262,5 @@ ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups() const
 		return true;
 	});
 	return groups_;
+}
 }

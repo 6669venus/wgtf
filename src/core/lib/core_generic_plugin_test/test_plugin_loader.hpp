@@ -11,6 +11,8 @@
 /**
  *	Plugin loader to be used by unit tests.
  */
+namespace wgt
+{
 class TestPluginLoader
 {
 public:
@@ -28,5 +30,7 @@ public:
 	PluginList plugins_;
 };
 
+}
 #endif // TEST_PLUGIN_LOADER_HPP
+
 

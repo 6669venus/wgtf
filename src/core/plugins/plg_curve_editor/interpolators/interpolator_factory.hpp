@@ -14,6 +14,9 @@
 #include "interfaces/curve_types.hpp"
 #include "interfaces/i_curve_interpolator.hpp"
 
+namespace wgt
+{
 ICurveInterpolatorPtr createInterpolator(CurveTypes::CurveType);
 
+}
 #endif //INTERPOLATOR_FACTORY_

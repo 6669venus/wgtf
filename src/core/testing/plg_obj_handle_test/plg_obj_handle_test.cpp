@@ -16,6 +16,10 @@
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 
+#include <vector>
+
+namespace wgt
+{
 class Test1
 {
 	DECLARE_REFLECTED
@@ -215,3 +219,5 @@ private:
 
 PLG_CALLBACK_FUNC( TestObjHandlePlugin )
 
+
+}

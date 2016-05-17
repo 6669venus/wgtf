@@ -1,6 +1,8 @@
 #include "shared_library.hpp"
 
 
+namespace wgt
+{
 SharedLibrary::SharedLibrary():
 	lib_(nullptr)
 {
@@ -46,3 +48,5 @@ bool SharedLibrary::isValid() const
 }
 
 
+
+}

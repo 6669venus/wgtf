@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QQuickItem>
 
+namespace wgt
+{
 class ConnectionItem : public QQuickItem
 {
     Q_OBJECT
@@ -66,4 +68,5 @@ private:
     QPointF endPt;
 };
 
+}
 #endif // __GRAPHEDITOR_CONNECTIONITEM_H__

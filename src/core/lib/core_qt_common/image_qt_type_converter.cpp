@@ -4,6 +4,8 @@
 
 #include <QPixmap>
 
+namespace wgt
+{
 bool ImageQtTypeConverter::toVariant( const QVariant & qVariant, Variant & o_variant ) const
 {
 	if (!qVariant.canConvert<QImage>())
@@ -40,4 +42,5 @@ bool ImageQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVa
 	image.loadFromData( reinterpret_cast<uchar*>( data->cdata() ), static_cast<uint>( data->length() ) );
 	o_qVariant = image;
 	return true;
+}
 }

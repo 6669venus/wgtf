@@ -1,6 +1,8 @@
 #ifndef I_STATUS_BAR_HPP
 #define I_STATUS_BAR_HPP
 
+namespace wgt
+{
 class IStatusBar
 {
 public:
@@ -18,4 +20,5 @@ public:
 	virtual void clearMessage() = 0;
 };
 
+}
 #endif // I_STATUS_BAR_HPP

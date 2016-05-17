@@ -2,6 +2,8 @@
 #include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
  
+namespace wgt
+{
 CustomPanel::CustomPanel( IComponentContext & context )
 	: Depends( context )
 {
@@ -48,4 +50,5 @@ void CustomPanel::removePanel()
 		uiApplication->removeView( *customView_ );
 		customView_ = nullptr;
 	}
+}
 }

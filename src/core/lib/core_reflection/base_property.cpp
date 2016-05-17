@@ -3,6 +3,8 @@
 #include <stddef.h>
 
 //==============================================================================
+namespace wgt
+{
 BaseProperty::BaseProperty( const char * name, const TypeId & type )
 	: name_( name )
 	, type_( type )
@@ -101,4 +103,5 @@ void BaseProperty::setName( const char * name )
 {
 	name_ = name;
 	hash_ = HashUtilities::compute( name_ );
+}
 }

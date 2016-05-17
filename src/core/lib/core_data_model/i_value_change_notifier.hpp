@@ -5,6 +5,8 @@
 #include "core_common/signal.hpp"
 
 
+namespace wgt
+{
 class Variant;
 
 
@@ -29,5 +31,7 @@ public:
 };
 
 
+}
 #endif // I_VALUE_CHANGE_NOTIFIER_HPP
+
 

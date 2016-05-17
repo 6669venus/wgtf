@@ -14,6 +14,8 @@
 #include <QFileSystemWatcher>
 #include <QApplication>
 
+namespace wgt
+{
 QmlView::QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	: id_( id )
 	, qtFramework_( qtFramework )
@@ -235,4 +237,6 @@ void QmlView::deregisterListener(IViewEventListener* listener)
 	auto it = std::find( listeners_.begin(), listeners_.end(), listener );
 	assert( it != listeners_.end() );
 	listeners_.erase( it );
+}
+
 }

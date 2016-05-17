@@ -3,6 +3,8 @@
 
 #include "../reflected_property.hpp"
 
+namespace wgt
+{
 class GenericObject;
 
 class GenericProperty : public BaseProperty
@@ -35,4 +37,5 @@ private:
 	const std::string typeName_;
 };
 
+}
 #endif //GENERIC_PROPERTY_HPP

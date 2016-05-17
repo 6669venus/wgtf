@@ -5,6 +5,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class TestTreeModel: public ITreeModel
 {
 public:
@@ -25,4 +27,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif
+

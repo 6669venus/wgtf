@@ -20,6 +20,8 @@
 #include "p4/spec.h"
 #pragma warning(pop)
 
+namespace wgt
+{
 template<class TCollection>
 std::string join(const TCollection& col)
 {
@@ -519,4 +521,6 @@ std::string PerforceDepotView::EscapeRevisionPaths(const PathList& filePaths, co
 		escapedPaths << '"' << ReplaceChars(toPath(path)) << "#" << revision << '"';
 	}
 	return escapedPaths.str();
+}
+
 }

@@ -6,6 +6,8 @@
 #include "core_reflection/property_accessor.hpp"
 
 
+namespace wgt
+{
 BaseGenericObject::BaseGenericObject()
 	: definition_( nullptr )
 {
@@ -108,3 +110,5 @@ bool BaseGenericObject::setProperty( const char * name, const Variant & value )
 	return property->set( provider, value, *definition.getDefinitionManager() );
 }
 
+
+}

@@ -3,6 +3,8 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/base_property.hpp"
 
+namespace wgt
+{
 TestPolyCheckBox::TestPolyCheckBox()
 	: checked_( false )
 {
@@ -66,4 +68,6 @@ void TestPolyColor3::getSelected( int * select ) const
 void TestPolyColor3::setSelected( const int & select )
 {
 	seletColor_ = select;
+}
+
 }

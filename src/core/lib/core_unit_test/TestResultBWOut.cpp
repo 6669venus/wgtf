@@ -9,6 +9,8 @@
 
 
 
+namespace wgt
+{
 TestResultBWOut::TestResultBWOut( const std::string & name, 
 								 bool useXML /*= false*/ ) :
 	TestResult(),
@@ -119,3 +121,5 @@ void TestResultBWOut::EndTestsTXT()
 
 // TestResultBWOut.cpp
 
+
+}

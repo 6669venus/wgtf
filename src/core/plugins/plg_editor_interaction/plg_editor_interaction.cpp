@@ -10,6 +10,8 @@
 #include "core_reflection_utils/reflected_types.hpp"
 
 //==============================================================================
+namespace wgt
+{
 class EditorInteractionPlugin
 	: public PluginMain
 {
@@ -95,3 +97,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( EditorInteractionPlugin )
+}

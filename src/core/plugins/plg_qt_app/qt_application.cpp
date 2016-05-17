@@ -21,6 +21,8 @@
 #include <QTimer>
 #include <QSplashScreen>
 
+namespace wgt
+{
 namespace
 {
 	class IdleLoop : public QObject
@@ -286,3 +288,5 @@ bool QtApplication::whiteSpace(char c)
 }
 */
 
+
+}

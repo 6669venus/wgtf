@@ -9,6 +9,8 @@
 #include "core_command_system/i_env_system.hpp"
 #include "core_data_model/value_change_notifier.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 class IDefinitionManager;
 class IReflectionController;
@@ -64,4 +66,6 @@ private:
 	DemoObjectsEnvCom* objects_;
 };
 
+}
 #endif //DEMO_OBJECTS_HPP
+

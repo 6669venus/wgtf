@@ -3,6 +3,8 @@
 
 #include "command.hpp"
 
+namespace wgt
+{
 class ObjectHandle;
 class IDataStream;
 class CommandManager;
@@ -25,4 +27,6 @@ private:
 	CommandManager * pCommandManager_;
 };
 
+}
 #endif//UNDO_REDO_COMMAND_HPP
+

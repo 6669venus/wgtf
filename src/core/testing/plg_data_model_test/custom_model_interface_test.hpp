@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IComponentContext;
 class IView;
 
@@ -19,4 +21,5 @@ private:
 	std::unique_ptr< IView > testView_;
 };
 
+}
 #endif//CUSTOM_MODEL_INTERFACE_TEST__HPP

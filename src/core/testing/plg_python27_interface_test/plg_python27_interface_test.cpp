@@ -5,6 +5,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 class Python27TestPlugin
 	: public PluginMain
 {
@@ -40,3 +42,5 @@ public:
 
 PLG_CALLBACK_FUNC( Python27TestPlugin )
 
+
+}

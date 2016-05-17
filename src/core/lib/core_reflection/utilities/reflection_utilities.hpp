@@ -4,6 +4,8 @@
 #include "core_variant/variant.hpp"
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 class IDefinitionManager;
 
 namespace ReflectionUtilities
@@ -157,4 +159,6 @@ bool extract(const Variant & variant, ObjectHandleT< T > & value, const IDefinit
 
 
 }
+}
 #endif //REFLECTION_UTILITIES_HPP
+

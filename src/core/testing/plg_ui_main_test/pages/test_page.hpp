@@ -10,6 +10,8 @@
 #include <vector>
 #include <memory>
 
+namespace wgt
+{
 class TestPolyStruct;
 
 typedef ObjectHandleT< TestPolyStruct >  TestPolyStructPtr;
@@ -124,4 +126,6 @@ private:
 };
 
 
+}
 #endif // TEST_PAGE_IMPL_HPP
+

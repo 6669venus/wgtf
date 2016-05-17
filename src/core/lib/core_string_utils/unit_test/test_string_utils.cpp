@@ -4,6 +4,8 @@
 
 #include "core_string_utils/file_path.hpp"
 
+namespace wgt
+{
 const char FilePath::kNativeDirectorySeparator;
 const char FilePath::kAltDirectorySeparator;
 const char FilePath::kDirectorySeparator;
@@ -80,4 +82,5 @@ TEST( filePathMembers )
 	CHECK(fullPath.getFileWithExtension() == file + FilePath::kExtensionSeparator + ext);
 	CHECK(fullPath.getExtension() == ext);
 
+}
 }

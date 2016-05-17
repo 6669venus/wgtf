@@ -8,6 +8,8 @@
 #include <fstream>
 
 
+namespace wgt
+{
 namespace {
 	static const char * s_objectVersion = "ui_main_ver_1_0_14.";
 	static const char * s_objectFile = "generic_app_test_";
@@ -312,4 +314,6 @@ void TestDataSourceManager::closeDataSource(IDataSource* data)
 	assert( it != sources_.end() );
 	it->second->fini(*contextManager_, it->first);
 	sources_.erase(it);
+}
+
 }

@@ -9,6 +9,8 @@
 #include <vector>
 #include <unordered_map>
 
+namespace wgt
+{
 class ConnectionSlot;
 class Connector;
 class GraphNode;
@@ -101,4 +103,5 @@ private:
     std::unique_ptr<ContextMenuModel> slotContextMenuModel;
 };
 
+}
 #endif // __GRAPHEDITOR_CONNECTIONMANAGER_H__

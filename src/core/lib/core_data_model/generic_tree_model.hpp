@@ -3,6 +3,8 @@
 
 #include "i_tree_model.hpp"
 
+namespace wgt
+{
 class GenericTreeItem;
 
 
@@ -35,4 +37,5 @@ private:
 	int columnCount_;
 };
 
+}
 #endif

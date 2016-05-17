@@ -8,6 +8,8 @@
 #include "core_dependency_system/i_interface.hpp"
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 class TestPlugin2TestObject
 {
 	DECLARE_REFLECTED
@@ -76,4 +78,6 @@ private:
 
 typedef ObjectHandleT< TestPlugin2Interface > TestPlugin2InterfacePtr;
 
+}
 #endif // PLUGIN2_OBJECTS_HPP
+

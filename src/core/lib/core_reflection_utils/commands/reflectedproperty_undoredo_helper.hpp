@@ -7,7 +7,10 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
+namespace wgt
+{
 class IObjectManager;
 class PropertyAccessor;
 class ObjectHandle;
@@ -121,4 +124,5 @@ namespace ReflectedPropertyUndoRedoUtility
 
 }
 
+}
 #endif //REFLECTEDPROPERTY_UNDOREDO_HELPER_HPP

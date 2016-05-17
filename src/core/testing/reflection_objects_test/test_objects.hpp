@@ -3,6 +3,8 @@
 
 #include "test_structure.hpp"
 
+namespace wgt
+{
 class TestObjects
 {
 public:
@@ -16,4 +18,5 @@ private:
 };
 
 
+}
 #endif //TEST_OBJECTS_HPP

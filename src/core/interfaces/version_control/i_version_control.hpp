@@ -13,6 +13,8 @@
 
 #include "version_control/i_result.hpp"
 
+namespace wgt
+{
 class IDepotView;
 
 class IVersionControl
@@ -27,4 +29,5 @@ public:
 
 typedef std::unique_ptr<IVersionControl> IVersionControlPtr;
 
+}
 #endif // I_VERSION_CONTROL_H_

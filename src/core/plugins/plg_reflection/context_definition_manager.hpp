@@ -6,6 +6,8 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 class GenericProperty;
 
 class ContextDefinitionManager
@@ -58,4 +60,6 @@ private:
 	const std::wstring contextName_;
 };
 
+}
 #endif // CONTEXT_DEFINITION_MANAGER_HPP
+

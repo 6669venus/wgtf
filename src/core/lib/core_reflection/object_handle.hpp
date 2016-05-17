@@ -38,6 +38,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <map>
 #include <unordered_map>
 
+namespace wgt
+{
 template<typename T> class ObjectHandleT;
 
 class TextStream;
@@ -389,4 +391,6 @@ bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 }
 
 
+}
 #endif //OBJECT_HANDLE_HPP
+

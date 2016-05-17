@@ -8,6 +8,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 MainApplication::MainApplication( IComponentContext & contextManager )
 	: contextManager_( contextManager )
 {
@@ -33,3 +35,5 @@ void MainApplication::quitApplication() /* override */
 {
 }
 
+
+}

@@ -4,6 +4,8 @@
 #include "core_command_system/command.hpp"
 
 /// Base class for TestCommand classes
+namespace wgt
+{
 class TestCommandBase
 	: public Command
 {
@@ -45,4 +47,5 @@ public:
 };
 
 
+}
 #endif //TEST_COMMAND_HPP

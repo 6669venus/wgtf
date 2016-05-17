@@ -21,6 +21,8 @@
 #include <QTimer>
 
 
+namespace wgt
+{
 ProgressManager::ProgressManager()
 	: rootObject_( nullptr )
 	, progressValue_( 0 )
@@ -449,4 +451,6 @@ void ProgressManager::timedUpdate()
 			view_->hide();
 		}
 	}
+}
+
 }

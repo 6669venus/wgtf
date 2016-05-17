@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class TestTreeItemOld: public IItem
 {
 public:
@@ -45,4 +47,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif
+

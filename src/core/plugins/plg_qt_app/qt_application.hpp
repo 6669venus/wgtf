@@ -6,9 +6,12 @@
 
 #include <memory>
 
-class IQtFramework;
 class QApplication;
 class QSplashScreen;
+
+namespace wgt
+{
+class IQtFramework;
 
 class QtApplication : public Implements< IUIApplication >
 {
@@ -51,4 +54,6 @@ private:
 	bool bQuit_;
 };
 
+}
 #endif//QT_APPLICATION_HPP
+

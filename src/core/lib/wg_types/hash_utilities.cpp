@@ -3,6 +3,8 @@
 #include "core_common/ngt_windows.hpp"
 
 
+namespace wgt
+{
 namespace HashUtilities
 {
 
@@ -87,6 +89,8 @@ uint64_t compute( int64_t value )
 uint64_t compute( uint64_t value )
 {
 	return compute( ( const void* )&value, sizeof( uint64_t ) );
+}
+
 }
 
 }

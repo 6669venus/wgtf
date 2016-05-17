@@ -15,6 +15,8 @@
 
 #include <functional>
 
+namespace wgt
+{
 class IAssetObjectItem;
 
 typedef std::function<void(const Variant&)> VariantCallback;
@@ -38,4 +40,5 @@ public:
 	virtual void connectUseSelectedAsset(AssetCallback) {}
 };
 
+}
 #endif // I_ASSET_BROWSER_EVENT_MODEL_H_

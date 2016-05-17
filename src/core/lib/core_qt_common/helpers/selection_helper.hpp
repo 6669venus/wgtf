@@ -6,6 +6,8 @@
 #include <QVariant>
 #include "core_qt_common/qt_new_handler.hpp"
 
+namespace wgt
+{
 class ISelectionHandler;
 
 
@@ -48,4 +50,6 @@ private:
 };
 
 
+}
 #endif //SELECTION_HELPER_HPP
+

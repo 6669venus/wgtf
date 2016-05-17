@@ -1,6 +1,8 @@
 #ifndef I_MENU_HPP
 #define I_MENU_HPP
 
+namespace wgt
+{
 class IAction;
 
 class IMenu
@@ -17,4 +19,5 @@ public:
 	virtual void removeAction( IAction & action ) = 0;
 };
 
+}
 #endif//I_MENU_HPP

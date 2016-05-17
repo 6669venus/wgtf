@@ -4,6 +4,8 @@
 #include "core_reflection/metadata/meta_impl.hpp"
 
 
+namespace wgt
+{
 ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	const ReflectedTreeModelNew & model )
 	: parent_( nullptr )
@@ -200,4 +202,6 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 		}
 	}
 	return true;
+}
+
 }

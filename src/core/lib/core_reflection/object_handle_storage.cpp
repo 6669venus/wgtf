@@ -1,6 +1,8 @@
 #include "object_handle_storage.hpp"
 #include "object_handle.hpp"
 
+namespace wgt
+{
 ObjectHandleStorageReflectedCast::ObjectHandleStorageReflectedCast(
 	const std::shared_ptr< IObjectHandleStorage > & storage,
 	const TypeId & typeId,
@@ -47,4 +49,5 @@ bool ObjectHandleStorageReflectedCast::getId( RefObjectId & id ) const
 	}
 
 	return storage_->getId( id );
+}
 }

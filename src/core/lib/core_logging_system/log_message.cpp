@@ -2,6 +2,8 @@
 #include <cstdarg>
 #include <cstdio>
 
+namespace wgt
+{
 LogMessage::LogMessage( LogLevel level, const char* format, ... )
 	: level_( level )
 {
@@ -107,4 +109,6 @@ bool LogMessage::hasTag( const char* needle )
 	}
 
 	return false;
+}
+
 }

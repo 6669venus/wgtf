@@ -1,6 +1,8 @@
 #ifndef VECTOR2_HPP
 #define VECTOR2_HPP
 
+namespace wgt
+{
 class Vector2
 {
 public:
@@ -16,5 +18,7 @@ public:
 	}
 };
 
+}
 #endif // VECTOR2_HPP
+
 

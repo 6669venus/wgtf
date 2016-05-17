@@ -3,6 +3,8 @@
 
 #include <cstddef>
 
+namespace wgt
+{
 class ObjectHandle;
 class ReflectedMethodParameters;
 class Variant;
@@ -16,4 +18,6 @@ public:
 	virtual std::size_t parameterCount() const = 0;
 };
 
+}
 #endif // I_METHOD_HPP
+

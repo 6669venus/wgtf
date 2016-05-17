@@ -3,6 +3,8 @@
 
 #include "i_qt_type_converter.hpp"
 
+namespace wgt
+{
 class ImageQtTypeConverter : public IQtTypeConverter
 {
 public:
@@ -10,4 +12,5 @@ public:
 	bool toQVariant( const Variant & variant, QVariant & o_qVariant, QObject* parent = nullptr ) const override;
 };
 
+}
 #endif // IMAGE_QT_TYPE_CONVERTER_HPP

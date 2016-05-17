@@ -5,8 +5,11 @@
 #include "i_window_adapter.hpp"
 #include "i_window_listener.hpp"
 
-class IQtFramework;
 class QIODevice;
+
+namespace wgt
+{
+class IQtFramework;
 
 class QtWindowAdapter : public QtWindow, public IWindowAdapter
 {
@@ -25,4 +28,5 @@ private:
 };
 
 
+}
 #endif//QML_WINDOW_ADAPTER_HPP

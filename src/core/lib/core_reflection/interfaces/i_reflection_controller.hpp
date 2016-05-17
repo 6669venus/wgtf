@@ -3,6 +3,8 @@
 
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 class PropertyAccessor;
 class ReflectedMethodParameters;
 
@@ -60,4 +62,5 @@ public:
 	virtual void erase( const PropertyAccessor & pa, const Variant & key ) = 0;
 };
 
+}
 #endif//I_REFLECTION_CONTROLLER_HPP

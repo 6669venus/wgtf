@@ -11,6 +11,8 @@
 
 #pragma once
 
+namespace wgt
+{
 namespace CurveTypes
 {
 	enum CurveType
@@ -20,4 +22,6 @@ namespace CurveTypes
 	};
 }
 
+}
 #endif // CURVE_TYPES_H_
+

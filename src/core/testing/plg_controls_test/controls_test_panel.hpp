@@ -12,6 +12,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 class ControlsTestPanel
 	: Depends< IUIFramework, IUIApplication, IDefinitionManager >
 {
@@ -29,5 +31,7 @@ private:
 };
 
 
+}
 #endif // _CONTROLS_TEST_PANEL_HPP
+
 

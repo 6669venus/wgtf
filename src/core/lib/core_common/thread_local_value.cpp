@@ -6,6 +6,8 @@
 #include <windows.h>
 #endif
 
+namespace wgt
+{
 const int kMaxThreadLocalBases = 2048;
 
 namespace
@@ -91,4 +93,6 @@ void* ThreadLocalBase::GetTlsValue(TLIndexType id)
 #else
 	return TlsGetValue(id);
 #endif
+}
+
 }

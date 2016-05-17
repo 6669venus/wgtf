@@ -2,6 +2,8 @@
 #include "core_common/platform_dbg.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 #define STR( X ) #X	
 #define PLUGIN_GET_PROC_ADDRESS( hPlugin, func ) \
 	::GetProcAddress( hPlugin, STR( func ) )
@@ -57,3 +59,4 @@ bool NotifyPluginPostLoad::operator()(HMODULE hPlugin)
 
 #undef PLUGIN_GET_PROC_ADDRESS
 #undef STR
+}

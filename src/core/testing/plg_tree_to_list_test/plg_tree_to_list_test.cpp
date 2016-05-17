@@ -13,6 +13,8 @@
 #include "test_tree_model.hpp"
 
 //==============================================================================
+namespace wgt
+{
 class TreeToListTest
 	: public PluginMain
 {
@@ -75,3 +77,5 @@ private:
 
 PLG_CALLBACK_FUNC( TreeToListTest )
 
+
+}

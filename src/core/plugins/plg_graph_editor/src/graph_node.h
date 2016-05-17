@@ -10,6 +10,8 @@
 #include <string>
 #include <QPointF>
 
+namespace wgt
+{
 class ConnectionSlot;
 class GraphNode
 {
@@ -67,4 +69,5 @@ private:
     std::string typeId;
 };
 
+}
 #endif // __GRAPHEDITOR_GRAPHNODE_H__

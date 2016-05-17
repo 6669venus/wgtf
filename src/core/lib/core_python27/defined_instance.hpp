@@ -9,6 +9,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 class IComponentContext;
 
 
@@ -108,4 +110,6 @@ private:
 
 } // namespace ReflectedPython
 
+}
 #endif // PYTHON_DEFINED_INSTANCE_HPP
+

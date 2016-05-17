@@ -24,6 +24,8 @@
 /*                                                                      */
 /************************************************************************/
 
+namespace wgt
+{
 static_assert(QT_VERSION < QT_VERSION_CHECK(6,0,0), "Are QList<> specializations still needed this version of Qt?");
 
 #define SPECIALIZE_QLIST(TNode) template <> \
@@ -69,4 +71,5 @@ Q_INLINE_TEMPLATE void QList<TNode>::node_destruct(Node *from, Node *to) \
 		reinterpret_cast<TNode*>( to->v )->~TNode(); \
 		::free(to->v); \
 	} \
+}
 }

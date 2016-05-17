@@ -7,6 +7,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 GenericObjectPtr GenericObject::create(
 	IDefinitionManager & definitionManager, 
 	const RefObjectId & id, 
@@ -32,4 +34,6 @@ ObjectHandle GenericObject::getDerivedType()
 	// MUST pass this as a pointer and NOT (*this) as a reference or
 	// ObjectHandleT will make a copy
 	return ObjectHandleT< GenericObject >( this );
+}
+
 }

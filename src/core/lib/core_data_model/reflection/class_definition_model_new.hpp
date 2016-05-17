@@ -7,6 +7,8 @@
 #include <memory>
 #include <vector>
 
+namespace wgt
+{
 class IClassDefinition;
 class IDefinitionManager;
 
@@ -31,4 +33,5 @@ private:
 	std::vector< std::unique_ptr< AbstractItem > > items_;
 };
 
+}
 #endif // _CLASS_DEFINITION_MODEL_NEW_HPP

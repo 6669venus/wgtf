@@ -12,6 +12,8 @@
 #include "plugin_objects.hpp"
 
 
+namespace wgt
+{
 class TestPlugin1
 	: public PluginMain
 {
@@ -111,3 +113,5 @@ private:
 
 PLG_CALLBACK_FUNC( TestPlugin1 )
 
+
+}

@@ -3,6 +3,8 @@
 
 #include "core_common/signal.hpp"
 
+namespace wgt
+{
 class IItem;
 class Variant;
 
@@ -59,4 +61,6 @@ public:
 	SignalVoid signalDestructing;
 };
 
+}
 #endif // I_LIST_MODEL_HPP
+

@@ -7,6 +7,8 @@
 #include <vector>
 #include <set>
 
+namespace wgt
+{
 class IAction;
 class IMenu;
 class IRegion;
@@ -58,4 +60,5 @@ private:
 	Windows windows_;
 };
 
+}
 #endif//LAYOUT_MANAGER_HPP

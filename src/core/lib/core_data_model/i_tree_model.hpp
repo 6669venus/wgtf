@@ -3,6 +3,8 @@
 
 #include "core_common/signal.hpp"
 
+namespace wgt
+{
 class IItem;
 class Variant;
 
@@ -50,4 +52,6 @@ public:
 
 };
 
+}
 #endif // I_TREE_MODEL_HPP
+

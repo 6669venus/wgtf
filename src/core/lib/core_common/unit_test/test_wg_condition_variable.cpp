@@ -8,6 +8,8 @@
 #include <atomic>
 
 
+namespace wgt
+{
 TEST(wg_condition_variable)
 {
 	std::mutex mutex;
@@ -131,3 +133,5 @@ TEST(wg_condition_variable)
 	CHECK_EQUAL( consumers.size() * 2, wakeUps );
 }
 
+
+}

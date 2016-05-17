@@ -4,6 +4,8 @@
 #include "core_serialization/file_system.hpp"
 #include <unistd.h>
 
+namespace wgt
+{
 TEST(file_sytem)
 {
 	FileSystem fileSystem;
@@ -70,4 +72,6 @@ TEST(file_sytem)
 	CHECK(fileSystem.remove(filePath));
 
 	free(readedData);
+}
+
 }

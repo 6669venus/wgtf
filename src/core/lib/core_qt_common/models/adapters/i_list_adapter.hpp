@@ -5,6 +5,8 @@
 
 #include "core_qt_common/qt_connection_holder.hpp"
 
+namespace wgt
+{
 class IListAdapter : public QAbstractListModel
 {
 	Q_OBJECT
@@ -43,5 +45,7 @@ private:
 	QtConnectionHolder connections_;
 };
 
+}
 #endif // I_LIST_ADAPTER_HPP
+
 

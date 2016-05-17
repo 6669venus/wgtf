@@ -5,6 +5,8 @@
 #include "core_dependency_system/depends.hpp"
 #include "core_ui_framework/i_view.hpp"
 
+namespace wgt
+{
 class AbstractTreeModel;
 class IAction;
 class IUIApplication;
@@ -86,4 +88,6 @@ private:
 };
 
 
+}
 #endif // TEST_UI_H
+

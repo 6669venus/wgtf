@@ -13,6 +13,8 @@
 #include "core_ui_framework/i_ui_application.hpp"
 
 
+namespace wgt
+{
 PythonPanel::PythonPanel( IComponentContext & context,
 	ObjectHandle & contextObject )
 	: Depends( context )
@@ -71,3 +73,5 @@ void PythonPanel::removePanel()
 	}
 }
 
+
+}

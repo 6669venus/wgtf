@@ -1,6 +1,8 @@
 #include "test_methods_object.hpp"
 
 
+namespace wgt
+{
 void TestMethodsObject::testMethod1()
 {
 }
@@ -46,4 +48,6 @@ int TestMethodsObject::testMethod7( int parameter )
 double TestMethodsObject::testMethod8( double parameter )
 {
 	return parameter;
+}
+
 }

@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IObjectManager;
 class IDefinitionManager;
 class ObjectManager;
@@ -20,4 +22,6 @@ private:
 	std::unique_ptr< ObjectManager > objectManager_;
 	std::unique_ptr< DefinitionManager > definitionManager_;
 };
+}
 #endif //TEST_DATA_MODEL_FIXTURE_HPP
+

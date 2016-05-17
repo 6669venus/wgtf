@@ -12,6 +12,8 @@
 
 /*! Computes the Cubic Bezier position for the specified positions and control points at the given time t
 */
+namespace wgt
+{
 template<class TVal>
 TVal computeValueAtT(float t, TVal p1, TVal c1, TVal c2, TVal p2)
 {
@@ -103,4 +105,5 @@ void CubicBezierInterpolator::updateControlPoints(BezierPoint& point, BezierPoin
 		nextPoint->cp1->setX(( point.pos->getX() - nextPoint->pos->getX() ) / 2.f);
 		nextPoint->cp1->setY(0);
 	}
+}
 }

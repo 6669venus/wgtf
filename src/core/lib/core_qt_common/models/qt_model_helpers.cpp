@@ -3,6 +3,8 @@
 #include "core_qt_common/models/extensions/i_model_extension.hpp"
 
 
+namespace wgt
+{
 namespace QtModelHelpers
 {
 
@@ -34,3 +36,5 @@ int calculateLast( const size_t start, const size_t count )
 
 
 } // namespace QtModelHelpers
+
+}

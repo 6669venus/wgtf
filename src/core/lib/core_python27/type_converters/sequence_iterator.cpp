@@ -11,6 +11,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -189,3 +191,5 @@ template class SequenceIterator< PyScript::ScriptTuple >;
 
 
 } // namespace PythonType
+
+}

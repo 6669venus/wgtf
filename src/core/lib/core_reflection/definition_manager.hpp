@@ -11,6 +11,8 @@
 /**
  * DefinitionManager
  */
+namespace wgt
+{
 class DefinitionManager 
 	: public Implements< IDefinitionManager >
 { 
@@ -63,4 +65,6 @@ private:
 };
 
 
+}
 #endif // DEFINITION_MANAGER_HPP
+

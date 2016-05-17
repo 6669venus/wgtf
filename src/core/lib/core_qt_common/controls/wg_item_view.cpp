@@ -12,6 +12,8 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+namespace wgt
+{
 ITEMROLE( modelIndex )
 
 namespace
@@ -527,4 +529,5 @@ void WGItemView::refresh()
 		impl_->headerData_.reset( new HeaderData( *impl_->extendedModel_, 0, Qt::Horizontal ) );
 	}
 	emit headerDataChanged();*/
+}
 }

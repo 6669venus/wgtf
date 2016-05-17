@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <assert.h>
 
+namespace wgt
+{
 LoggingSystem::LoggingSystem()
 	: alertManager_( new AlertManager() )
 	, basicAlertLogger_( nullptr )
@@ -167,4 +169,6 @@ void LoggingSystem::process()
 			processorCV_.wait( lock, [this](){ return !running_ || !messages_.empty(); } );
 		}
 	}
+}
+
 }

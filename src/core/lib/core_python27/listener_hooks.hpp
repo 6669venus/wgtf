@@ -13,6 +13,8 @@
 // child path + child object
 #define ENABLE_FULL_PATH_PYTHON_LISTENER_HOOKS 0
 
+namespace wgt
+{
 namespace ReflectedPython
 {
 
@@ -58,3 +60,5 @@ private:
 class IComponentContext;
 extern IComponentContext * g_pHookContext;
 extern std::weak_ptr< ReflectedPython::HookListener > g_listener;
+
+}

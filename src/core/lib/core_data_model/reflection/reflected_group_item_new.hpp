@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class MetaGroupObj;
 
 /**
@@ -51,4 +53,5 @@ private:
 	void enumerateChildren( const ReflectedItemCallback & callback ) const;
 };
 
+}
 #endif //_REFLECTED_GROUP_ITEM_NEW_HPP

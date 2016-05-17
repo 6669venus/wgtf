@@ -9,6 +9,8 @@
 /**
  *	Item to be used by CollectionListModel.
  */
+namespace wgt
+{
 class CollectionListItem : public IItem
 {
 public:
@@ -33,4 +35,6 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
+}
 #endif // COLLECTION_LIST_ITEM_HPP
+

@@ -19,6 +19,8 @@
 #define EXTRA_ARGS result_, m_name
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -736,3 +738,5 @@ TEST( Variant_ptr_castPtr )
 }
 
 
+
+}

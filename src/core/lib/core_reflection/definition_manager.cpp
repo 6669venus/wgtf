@@ -11,6 +11,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 DefinitionManager::DefinitionManager( IObjectManager & objectManager )
 	: objectManager_ ( objectManager )
 {
@@ -215,4 +217,6 @@ bool DefinitionManager::serializeDefinitions( ISerializer & serializer )
 bool DefinitionManager::deserializeDefinitions( ISerializer & serializer )
 {
 	return false;
+}
+
 }

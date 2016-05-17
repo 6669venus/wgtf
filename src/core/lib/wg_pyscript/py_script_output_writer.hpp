@@ -5,6 +5,8 @@
 
 #include <string>
 
+namespace wgt
+{
 namespace PyScript
 {
 
@@ -31,5 +33,7 @@ PyMODINIT_FUNC PyInit_ScriptOutputWriter();
 } // namespace PyScript
 
 
+}
 #endif // PYTHON_OUTPUT_WRITER_HPP
+
 

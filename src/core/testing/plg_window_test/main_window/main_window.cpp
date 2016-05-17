@@ -11,6 +11,8 @@
 #include "core_ui_framework/i_window.hpp"
 
 //==============================================================================
+namespace wgt
+{
 MainWindow::MainWindow()
 	: app_( nullptr )
 {
@@ -98,4 +100,6 @@ void MainWindow::addMenuBar( IUIApplication & uiApplication )
 void MainWindow::onStartUp()
 {
 	mainWindow_->show( true );
+}
+
 }

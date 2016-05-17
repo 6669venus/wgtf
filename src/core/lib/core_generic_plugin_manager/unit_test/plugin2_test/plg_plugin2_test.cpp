@@ -8,6 +8,8 @@
 
 #include "plugin_objects.hpp"
 
+namespace wgt
+{
 class TestPlugin2
 	: public PluginMain
 {
@@ -51,3 +53,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestPlugin2 )
+
+}

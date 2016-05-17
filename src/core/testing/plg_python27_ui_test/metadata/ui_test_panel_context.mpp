@@ -4,9 +4,13 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "core_reflection/property_accessor_listener.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE( PanelContext, MetaNone() )
 	EXPOSE( "pythonObjects", treeModel, MetaNoSerialization() )
 	EXPOSE( "panelName", panelName, MetaNoSerialization() )
 	EXPOSE_METHOD( "runTestScript", updateValues )
 END_EXPOSE()
 
+
+}

@@ -3,6 +3,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 const char * GenericProperty::getName() const
 {
 	return propertyName_.c_str();
@@ -28,4 +30,5 @@ Variant GenericProperty::get( const ObjectHandle & pBase, const IDefinitionManag
 	assert( this->isValue() );
 	auto pObject = reflectedCast< GenericObject >( pBase.data(), pBase.type(), definitionManager );
 	return pObject->properties_[this];
+}
 }

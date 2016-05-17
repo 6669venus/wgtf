@@ -5,6 +5,8 @@
 #include <windows.h>
 #endif
 
+namespace wgt
+{
 #ifdef __APPLE__
 
 typedef void* HMODULE;
@@ -27,4 +29,6 @@ bool FreeLibrary(HMODULE hModule);
 
 #endif // __APPLE__
 
+}
 #endif // __PLATFORM_DLL_HPP__
+

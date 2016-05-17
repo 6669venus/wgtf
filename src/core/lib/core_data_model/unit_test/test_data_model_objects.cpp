@@ -10,6 +10,8 @@
 // Test Fixture Class
 //---------------------------------------------------------------------------
 
+namespace wgt
+{
 void TestFixture::initialise( TestStringData::State state )
 {
 	testStringData_.initialise( state );
@@ -484,4 +486,6 @@ bool TestFixture::verifyTreeItemMatch( IItem * item, const char * value, bool ex
 	}
 
 	return false;
+}
+
 }

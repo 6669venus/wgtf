@@ -6,6 +6,8 @@
 #include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -299,3 +301,5 @@ int Mapping::flags() const /* override */
 
 
 } // namespace PythonType
+
+}

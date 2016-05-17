@@ -7,6 +7,8 @@
 #include <QQmlEngine>
 
 //==============================================================================
+namespace wgt
+{
 BWFileDialogQI::BWFileDialogQI( QObject * parent )
 	: QObject( parent )
 	, fileDialog_( NULL )
@@ -113,3 +115,5 @@ void BWFileDialogQI::createFileDialog()
 	fileDialog_->setFileMode( static_cast< QFileDialog::FileMode >( fileModeFlag_ ) );
 }
 
+
+}

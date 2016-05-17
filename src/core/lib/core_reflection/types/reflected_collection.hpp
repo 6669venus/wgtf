@@ -7,6 +7,8 @@
 
 //TODO Move this into a CPP instead
 // ==============================================================================
+namespace wgt
+{
 class ReflectedCollectionImpl
 	: public IEnumGenerator
 {
@@ -35,6 +37,8 @@ private:
 	IBasePropertyPtr baseProperty_;
 };
 
+}
 #endif // REFLECTED_COLLECTION_IMPL_HPP
+
 
 

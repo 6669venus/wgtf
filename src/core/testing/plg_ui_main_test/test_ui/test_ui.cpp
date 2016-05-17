@@ -21,6 +21,8 @@
 #include "core_logging/logging.hpp"
 
 //==============================================================================
+namespace wgt
+{
 TestUI::TestUI( IComponentContext & context )
 	: DepsBase( context )
 	, context_( context )
@@ -242,3 +244,5 @@ bool TestUI::canClose() const
 	return test1Views_.size() > 0;
 }
 
+
+}

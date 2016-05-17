@@ -8,6 +8,8 @@
 //---------------------------------------------------------------------------
 // List Model Tests
 //---------------------------------------------------------------------------
+namespace wgt
+{
 TEST_F( TestFixture, refreshFilteredList )
 {
 	initialise( TestStringData::STATE_LIST );
@@ -612,4 +614,6 @@ TEST_F( TestFixture, changeTreeItem )
 		size = filteredTestTree_.size( nullptr );
 		CHECK( size == oldSize );
 	}
+}
+
 }

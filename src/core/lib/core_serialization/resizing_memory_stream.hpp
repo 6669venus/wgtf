@@ -4,6 +4,8 @@
 #include "i_datastream.hpp"
 #include <string>
 
+namespace wgt
+{
 class ResizingMemoryStream
 	: public IDataStream
 {
@@ -32,5 +34,7 @@ private:
 
 };
 
+}
 #endif //RESIZING_MEMORY_STREAM_HPP
+
 

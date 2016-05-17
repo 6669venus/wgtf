@@ -19,6 +19,8 @@
 #include <core_data_model/i_list_model.hpp>
 #include <core_data_model/value_change_notifier.hpp>
 
+namespace wgt
+{
 struct PointUpdateData
 {
 	unsigned int index;
@@ -122,4 +124,5 @@ private:
 	}
 };
 
+}
 #endif // I_CURVE_H_

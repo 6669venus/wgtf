@@ -12,6 +12,8 @@ Access process environment variables.
 
 Currently just basic access to individual variables is implemented.
 */
+namespace wgt
+{
 class Environment
 {
 public:
@@ -56,4 +58,6 @@ public:
 };
 
 
+}
 #endif
+

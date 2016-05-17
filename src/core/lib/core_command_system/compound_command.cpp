@@ -6,6 +6,8 @@
 #include "core_reflection/i_definition_manager.hpp"
 
 //==============================================================================
+namespace wgt
+{
 CompoundCommand::CompoundCommand()
 	: id_( "" )
 	, macroObject_( nullptr )
@@ -159,4 +161,6 @@ void CompoundCommand::deserialize(ISerializer & serializer)
 		addCommand( id.c_str(), ObjectHandle() );
 	}
 	getMacroObject().getBase<MacroObject>()->deserialize( serializer );
+}
+
 }

@@ -12,6 +12,8 @@
 	additional IDEs. At this time it supports Windows/Visual Studio output.
  */
 
+namespace wgt
+{
 class IDEDebugLoggerPlugin
 	: public PluginMain
 {
@@ -79,3 +81,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( IDEDebugLoggerPlugin )
+}

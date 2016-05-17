@@ -15,6 +15,8 @@
 #include <codecvt>
 #include <limits>
 
+namespace wgt
+{
 namespace
 {
 	struct MaxMinValuePair
@@ -737,4 +739,5 @@ bool ReflectedPropertyItem::postSetValue(
 		}
 	}
 	return false;
+}
 }

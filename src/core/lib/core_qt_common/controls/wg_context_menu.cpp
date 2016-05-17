@@ -14,6 +14,8 @@
 #include <QVariant>
 #include <QQuickWidget>
 
+namespace wgt
+{
 struct WGContextMenu::Implementation
 {
 	Implementation( WGContextMenu & self )
@@ -211,4 +213,6 @@ QVariant WGContextMenu::getContextObject() const
 void WGContextMenu::setContextObject( const QVariant& object )
 {
 	impl_->setContextObject( object );
+}
+
 }

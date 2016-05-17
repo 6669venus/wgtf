@@ -13,6 +13,8 @@
 #include "core_data_model/i_item_role.hpp"
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 template<class Type>
 Type* get( const Variant & selectedAsset )
 {
@@ -67,3 +69,5 @@ void AssetBrowserEventModel::connectUseSelectedAsset( AssetCallback callback )
 	signalUseSelectedAsset.connect( callback );
 }
 
+
+}

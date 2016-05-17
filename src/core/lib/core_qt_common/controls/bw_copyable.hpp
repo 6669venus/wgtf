@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QVariant>
 
+namespace wgt
+{
 class BWCopyable
 	: public QObject
 	, public ICopyableObject
@@ -41,4 +43,5 @@ private:
 	bool bPasted_;
 };
 
+}
 #endif //BW_COPYABLE_HPP

@@ -4,6 +4,8 @@
 #include "qt_abstract_item_model.hpp"
 #include <memory>
 
+namespace wgt
+{
 class AbstractItemModel;
 class AbstractListModel;
 class AbstractTreeModel;
@@ -214,4 +216,5 @@ private:
 	using QtItemModel::columnCount;
 };
 
+}
 #endif//QT_ITEM_MODEL_HPP

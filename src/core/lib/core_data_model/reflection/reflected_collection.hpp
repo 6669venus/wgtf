@@ -4,6 +4,8 @@
 #include "core_variant/collection.hpp"
 #include "core_reflection/property_accessor.hpp"
 
+namespace wgt
+{
 class IReflectionController;
 
 class ReflectedCollection : public CollectionImplBase
@@ -82,4 +84,5 @@ public:
 	Signal< ElementPostChangedCallbackSignature > onPostChanged_;
 };
 
+}
 #endif // REFLECTED_COLLECTION_HPP

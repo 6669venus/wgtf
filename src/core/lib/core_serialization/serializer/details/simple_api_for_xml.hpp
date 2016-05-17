@@ -6,6 +6,8 @@
 #include <string>
 #include <expat.h>
 
+namespace wgt
+{
 class SimpleApiForXml
 {
 public:
@@ -36,4 +38,6 @@ private:
 };
 
 
+}
 #endif
+

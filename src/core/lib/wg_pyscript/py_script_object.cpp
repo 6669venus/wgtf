@@ -3,6 +3,8 @@
 #include "core_common/ngt_windows.hpp"
 #include "py_script_object.hpp"
 
+namespace wgt
+{
 namespace PyScript
 {
 
@@ -34,3 +36,5 @@ namespace PyScript
 } // namespace PyScript
 
 // py_script_object.cpp
+
+}

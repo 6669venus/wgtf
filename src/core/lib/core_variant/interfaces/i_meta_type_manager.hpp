@@ -5,6 +5,8 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 class MetaType;
 
 class IMetaTypeManager
@@ -69,4 +71,6 @@ public:
 
 };
 
+}
 #endif // I_META_TYPE_MANAGER_HPP
+

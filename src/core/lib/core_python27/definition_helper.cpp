@@ -3,6 +3,8 @@
 #include "defined_instance.hpp"
 #include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 namespace ReflectedPython
 {
 	TypeId DefinitionHelper::typeId() const
@@ -17,4 +19,5 @@ namespace ReflectedPython
 		assert( instance != nullptr );
 		return instance->getDefinition();
 	}
+}
 }

@@ -9,6 +9,8 @@
 #include "qt_model_macros.hpp"
 #include <memory>
 
+namespace wgt
+{
 class IModelExtension;
 
 /**
@@ -99,4 +101,5 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
+}
 #endif // WG_TREE_LIST_ADAPTER_HPP

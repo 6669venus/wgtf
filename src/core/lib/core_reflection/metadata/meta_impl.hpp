@@ -8,6 +8,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 
 #include "meta_base.hpp"
 
+namespace wgt
+{
 class Collection;
 
 //==============================================================================
@@ -592,4 +594,6 @@ class MetaMultilineObj : public MetaBase
 };
 
 
+}
 #endif //META_IMPL_HPP
+

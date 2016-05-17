@@ -4,6 +4,8 @@
 #include <shlwapi.h>
 #endif
 
+namespace wgt
+{
 void AddDllExtension(wchar_t* file)
 {
 #ifdef _WIN32
@@ -12,7 +14,7 @@ void AddDllExtension(wchar_t* file)
 	PathAddExtension(file, L".dylib");
 #endif
 }
-
+}
 #ifdef __APPLE__
 
 #include <codecvt>
@@ -21,6 +23,8 @@ void AddDllExtension(wchar_t* file)
 #include <assert.h>
 #include <stdlib.h>
 
+namespace wgt
+{
 bool PathIsRelative(const char* path)
 {
 	assert(path);
@@ -114,6 +118,8 @@ void PathFileName(wchar_t* file, const wchar_t* path)
 	while (wchar_t* p =  wcschr(f, L'/'))
 		f = p + 1;
 	wcscpy(file, f);
+}
+
 }
 
 #endif // __APPLE__

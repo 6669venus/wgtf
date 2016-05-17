@@ -2,6 +2,8 @@
 #include "test_string_data.hpp"
 #include "test_data_model_objects.hpp"
 
+namespace wgt
+{
 struct TestStringData::Implementation
 {
 	Implementation( TestStringData & self ) 
@@ -118,4 +120,5 @@ UnitTestTreeModel & TestStringData::getTreeModel()
 std::string TestStringData::getNextString()
 {
 	return impl_->getNextString();
+}
 }

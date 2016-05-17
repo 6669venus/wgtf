@@ -6,6 +6,8 @@
 #include "test_macros.hpp"
 #include <vector>
 
+namespace wgt
+{
 class IDefinitionManager;
 
 class TestPolyStruct
@@ -33,4 +35,5 @@ private:
 	DEFINE_INHERITS_TEST_DATA_TYPES()
 };
 
+}
 #endif //TEST_POLYSTRUCTURE_HPP

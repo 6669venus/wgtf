@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace wgt
+{
 namespace TextUtilities
 {
 	void incrementNumber(
@@ -11,4 +13,5 @@ namespace TextUtilities
 		std::wstring & text, int & currentPos, wchar_t decimalChar = L'.' );
 };
 
+}
 #endif

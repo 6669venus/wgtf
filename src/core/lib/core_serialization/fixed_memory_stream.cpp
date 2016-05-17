@@ -3,6 +3,8 @@
 #include <algorithm>
 
 
+namespace wgt
+{
 FixedMemoryStream::FixedMemoryStream( void* buffer, std::streamsize size ):
 	buffer_( static_cast<char*>( buffer ) ),
 	readOnly_( false ),
@@ -101,3 +103,5 @@ bool FixedMemoryStream::sync()
 }
 
 
+
+}

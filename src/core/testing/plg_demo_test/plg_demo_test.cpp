@@ -30,6 +30,8 @@
 #include "core_command_system/i_env_system.hpp"
 #include "core_serialization/i_file_system.hpp"
 
+namespace wgt
+{
 namespace
 {
 	enum class ModelPropertyValueType : uint8_t
@@ -282,3 +284,5 @@ private:
 
 PLG_CALLBACK_FUNC(DemoTestPlugin)
 
+
+}

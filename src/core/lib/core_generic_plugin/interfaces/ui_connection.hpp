@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class UIConnection
 {
 public:
@@ -38,4 +40,5 @@ private:
 	std::unique_ptr< UIConnection > pImpl_;
 };
 
+}
 #endif //UI_CONNECTION_HPP

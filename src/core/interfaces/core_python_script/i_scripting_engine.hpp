@@ -10,7 +10,11 @@
  *	Interface for calling into the Python interpreter.
  *	Can have different implementations for each version of Python.
  */
+namespace wgt
+{
 DECLARE_LATEST_VERSION( IPythonScriptingEngine, 0, 0 )
 
+}
 #endif // I_PYTHON_SCRIPTING_ENGINE_HPP
+
 

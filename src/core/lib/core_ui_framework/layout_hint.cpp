@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <vector>
 
+namespace wgt
+{
 LayoutHint::LayoutHint()
 {
 
@@ -65,4 +67,5 @@ float LayoutHint::match( const LayoutTags & tags ) const
 		return matched / total;
 	}
 	return 0.f;
+}
 }

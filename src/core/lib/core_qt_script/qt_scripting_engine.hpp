@@ -17,6 +17,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <QObject>
 #include <QVariant>
 
+namespace wgt
+{
 class IClassDefinition;
 class IDefinitionManager;
 class IUIApplication;
@@ -75,4 +77,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif//QT_SCRIPTING_ENGINE_HPP

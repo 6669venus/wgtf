@@ -9,6 +9,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include "../reflected_object.hpp"
 #include "../object_handle.hpp"
 
+namespace wgt
+{
 typedef ObjectHandleT< MetaBase > MetaHandle;
 
 namespace MetaParamTypes
@@ -49,4 +51,5 @@ private:
 
 const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & right );
 
+}
 #endif

@@ -6,6 +6,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class TestProgressManagerPlugin
 	: public PluginMain
 {
@@ -80,3 +82,5 @@ public:
 
 
 PLG_CALLBACK_FUNC( TestProgressManagerPlugin )
+
+}

@@ -11,6 +11,8 @@
 #include "core_variant/variant.hpp"
 
 //==============================================================================
+namespace wgt
+{
 class ContextMenuTest
 	: public PluginMain
 {
@@ -134,3 +136,5 @@ private:
 
 PLG_CALLBACK_FUNC( ContextMenuTest )
 
+
+}

@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class FilteredTreeModel : public ITreeModel
 {
 public:
@@ -37,4 +39,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif
+

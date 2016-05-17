@@ -4,6 +4,8 @@
 #include "i_list_adapter.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 
+namespace wgt
+{
 class ChildListAdapter : public IListAdapter
 {
 	Q_OBJECT
@@ -36,5 +38,7 @@ private:
 	QModelIndex removedParent_;
 };
 
+}
 #endif // CHILD_LIST_ADAPTER_HPP
+
 

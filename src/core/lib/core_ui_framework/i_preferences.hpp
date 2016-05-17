@@ -4,6 +4,8 @@
 #include "core_reflection/generic/generic_object.hpp"
 #include "core_reflection/mutable_vector.hpp"
 
+namespace wgt
+{
 class IPreferencesListener
 {
 public:
@@ -33,4 +35,5 @@ public:
 
 
 
+}
 #endif //I_PREFERENCE_HPP

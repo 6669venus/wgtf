@@ -5,6 +5,8 @@
 
 // TODO: http://jira.bigworldtech.com/browse/NGT-849
 // Eventually, we need to remove this class
+namespace wgt
+{
 class SelectionHandler
 	: public ISelectionHandler
 {
@@ -24,4 +26,6 @@ private:
 };
 
 
+}
 #endif //HISTORY_SELECTION_HANDLER_HPP
+

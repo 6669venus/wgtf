@@ -10,6 +10,8 @@
 #include <typeinfo>
 
 
+namespace wgt
+{
 class RefObjectId;
 class IParticleEffectTreeModel;
 	 
@@ -265,4 +267,6 @@ private:
 	const IDefinitionManager & definitionManager_;
 };
 
+}
 #endif // OBJECT_HANDLE_STORAGE_HPP
+

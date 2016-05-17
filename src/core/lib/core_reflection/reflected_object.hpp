@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <typeinfo>
 
+namespace wgt
+{
 class IClassDefinition;
 
 template< typename T >
@@ -19,7 +21,9 @@ const char * getClassIdentifier()
 
 #define DECLARE_REFLECTED \
 	template< typename T >\
-	friend class TypeClassDefinition;\
+	friend class TypeClassDefinition;
 
 
+}
 #endif // REFLECTED_OBJECT_HPP
+

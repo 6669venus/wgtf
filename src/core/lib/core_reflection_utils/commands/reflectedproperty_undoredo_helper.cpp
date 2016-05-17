@@ -10,6 +10,8 @@
 #include "core_logging/logging.hpp"
 #include <thread>
 
+namespace wgt
+{
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
 {
@@ -646,4 +648,6 @@ void RPURU::saveRedoData(
 	}
 
 	serializer.serialize( helper.result_ );
+}
+
 }

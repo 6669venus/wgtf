@@ -6,10 +6,13 @@
 #include <QtQml>
 #include <memory>
 
-class IListModel;
 class QString;
-class QtContextMenu;
 class QVariant;
+
+namespace wgt
+{
+class IListModel;
+class QtContextMenu;
 
 class WGContextMenu : public QQuickItem
 {
@@ -71,4 +74,5 @@ private:
 
 QML_DECLARE_TYPE( WGContextMenu )
 
+}
 #endif // WG_CONTEXT_MENU_HPP

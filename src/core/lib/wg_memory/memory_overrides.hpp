@@ -13,6 +13,8 @@
 
 #ifdef NGT_ALLOCATOR
 
+namespace wgt
+{
 void * operator new( std::size_t size )
 {																			
 	return NGTAllocator::allocate( size );
@@ -55,4 +57,5 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 
 #endif //NGT_ALLOCATOR
 
+}
 #endif // BW_MEMORY_OPERATIONS_HPP

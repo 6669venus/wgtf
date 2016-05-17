@@ -4,9 +4,12 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "interfaces/i_object_manager.hpp"
 
+namespace wgt
+{
 class ObjectManager : public Implements< IObjectManagerNew >
 {
 public:
 };
 
+}
 #endif //OBJECT_MANAGER_HPP

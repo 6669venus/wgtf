@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IDefinitionManager;
 
 class ReflectedMethodCommandParameters
@@ -56,4 +58,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif //INVOKE_REFLECTED_METHOD_COMMAND_HPP
+

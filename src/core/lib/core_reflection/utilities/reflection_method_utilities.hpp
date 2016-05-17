@@ -5,6 +5,7 @@
 #include "core_reflection/reflected_method.hpp"
 #include "core_reflection/reflected_method_parameters.hpp"
 
+#include <functional>
 
 /*
 The utilities consist of ReflectedMethodSpecialisation template classes, MethodReturnSplitter and the
@@ -62,6 +63,8 @@ static ReflectedMethod* create( const char* name, ReturnType ( ClassType::*metho
 */
 
 
+namespace wgt
+{
 const size_t MAX_REFLECTED_METHOD_PARAMETER_COUNT = 10;
 
 
@@ -382,4 +385,6 @@ struct ReflectedMethodFactory
 	RM_FACTORY_CREATE_METHOD( NONE )
 };
 
+}
 #endif //REFLECTION_METHOD_UTILITIES_HPP
+

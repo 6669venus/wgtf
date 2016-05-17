@@ -6,6 +6,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 DataChangeNotifier::DataChangeNotifier()
 	: QObject()
 	, source_( nullptr )
@@ -100,3 +102,5 @@ void DataChangeNotifier::onDestructing()
 	source( nullptr );
 }
 
+
+}

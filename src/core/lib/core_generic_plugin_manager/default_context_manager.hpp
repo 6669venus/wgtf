@@ -7,6 +7,8 @@
 #include <set>
 #include <map>
 
+namespace wgt
+{
 class RTTIHelper;
 
 class DefaultComponentContext
@@ -42,4 +44,6 @@ private:
 	std::vector< IComponentContextListener * >			listeners_;
 };
 
+}
 #endif
+

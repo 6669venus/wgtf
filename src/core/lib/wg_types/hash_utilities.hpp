@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string>
 
+namespace wgt
+{
 namespace HashUtilities
 {
 
@@ -29,4 +31,6 @@ namespace HashUtilities
 	}
 }
 
+}
 #endif // HASH_UTILITIES_HPP
+

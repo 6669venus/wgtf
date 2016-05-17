@@ -7,6 +7,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class CurveEditorTestPlugin
 	: public PluginMain
 {
@@ -73,3 +75,5 @@ public:
 
 PLG_CALLBACK_FUNC( CurveEditorTestPlugin )
 
+
+}

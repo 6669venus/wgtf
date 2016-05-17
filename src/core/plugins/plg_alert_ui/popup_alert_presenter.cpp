@@ -15,6 +15,8 @@
 #include <QQmlEngine>
 #include <QQuickView>
 
+namespace wgt
+{
 PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	: contextManager_( &contextManager )
 	, alertCounter_( 0 )
@@ -91,3 +93,5 @@ void PopupAlertPresenter::addTestAlert( IAction * action )
 	}
 }
 
+
+}

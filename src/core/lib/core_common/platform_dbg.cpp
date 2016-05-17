@@ -2,6 +2,8 @@
 
 #if defined( _WIN32 )
 
+namespace wgt
+{
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
 	static const size_t errorMsgLength = 4096;
@@ -17,7 +19,7 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 	}
 	return hadError;
 }
-
+}
 #endif
 
 #ifdef __APPLE__
@@ -27,6 +29,8 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 #include <dlfcn.h>
 #include <string.h>
 
+namespace wgt
+{
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
 	const char* dlerr = dlerror();
@@ -56,6 +60,8 @@ void OutputDebugString(const wchar_t* s)
 void OutputDebugStringA(const char* s)
 {
 	printf("%s", s);
+}
+
 }
 
 #endif // __APPLE__

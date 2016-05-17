@@ -10,6 +10,8 @@
 
 #include <QPoint>
 
+namespace wgt
+{
 class ColorPickerContext
 {
 	DECLARE_REFLECTED
@@ -22,4 +24,5 @@ public:
 };
 
 
+}
 #endif // COLOR_PICKER_CONTEXT_HPP

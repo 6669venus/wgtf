@@ -7,6 +7,8 @@
 #include "core_serialization/serializer/i_serializer.hpp"
 
 
+namespace wgt
+{
 class ObjectHandle;
 
 /**
@@ -50,4 +52,6 @@ private:
 	ObjLinks objLinks_;
 };
 
+}
 #endif // REFLECTION_SERIALIZER_HPP
+

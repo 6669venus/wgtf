@@ -10,6 +10,8 @@
 #include "ref_object_id.hpp"
 #include "core_serialization/serializer/i_serializer.hpp"
 
+namespace wgt
+{
 struct ObjectMetaData;
 
 typedef std::unordered_set< ObjectMetaData * > ObjIdSet;
@@ -95,4 +97,6 @@ private:
 	mutable std::mutex objLinkLock_;
 };
 
+}
 #endif // OBJECT_MANAGER_HPP
+

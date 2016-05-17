@@ -6,6 +6,8 @@
 #include "core_serialization/i_datastream.hpp"
 #include "core_common/deprecated.hpp"
 
+namespace wgt
+{
 class IDataStream;
 class DEPRECATED ISerializationManager
 {
@@ -50,4 +52,6 @@ private:
 };
 
 
+}
 #endif // I_SERIALIZATION_MANAGER_HPP
+

@@ -2,6 +2,8 @@
 #include "meta_impl.hpp"
 #include "../utilities/definition_helpers.hpp"
 
+namespace wgt
+{
 #define SET_UP_OBJECT( type, ctor_parameters ) \
 	ObjectHandleT< type > handle( std::move( new type ctor_parameters ) ); \
 	return staticCast< MetaBase, type >( handle );
@@ -226,4 +228,5 @@ MetaHandle MetaPassword()
 MetaHandle MetaMultiline()
 {
 	SET_UP_OBJECT(MetaMultilineObj, ( ));
+}
 }

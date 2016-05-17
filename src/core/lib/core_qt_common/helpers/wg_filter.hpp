@@ -9,6 +9,8 @@
 #include <QString>
 #include <memory>
 
+namespace wgt
+{
 class IItemFilter;
 
 /**
@@ -54,4 +56,6 @@ protected:
 
 QML_DECLARE_TYPE( WGFilter )
 
+}
 #endif // WG_FILTER_HPP
+

@@ -5,6 +5,8 @@
 
 #include <QObject>
 
+namespace wgt
+{
 class QObjectQtTypeConverter : public IQtTypeConverter
 {
 public:
@@ -41,4 +43,5 @@ public:
 	}
 };
 
+}
 #endif

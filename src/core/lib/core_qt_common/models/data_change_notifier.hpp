@@ -11,6 +11,8 @@
 /**
  *	Qt interface for dataAboutToBeChanged() and dataChanged() events.
  */
+namespace wgt
+{
 class DataChangeNotifier
 	: public QObject
 {
@@ -59,5 +61,7 @@ private:
 };
 
 
+}
 #endif // DATA_CHANGE_NOTIFIER_HPP
+
 

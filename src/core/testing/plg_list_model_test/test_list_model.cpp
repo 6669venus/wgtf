@@ -12,6 +12,8 @@
 #include <thread>
 #include <random>
 
+namespace wgt
+{
 struct StringList2
 {
 	StringList2()
@@ -429,4 +431,6 @@ Connection TestListModel::connectPreItemDataChanged( DataCallback callback )
 Connection TestListModel::connectPostItemDataChanged( DataCallback callback )
 {
 	return Connection();
+}
+
 }

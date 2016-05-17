@@ -8,6 +8,8 @@
 #include <string>
 #include "core_ui_framework/i_view.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 
 
@@ -113,4 +115,6 @@ private:
 
 
 
+}
 #endif // PROJECT_HPP
+

@@ -8,6 +8,8 @@
 #include "core_variant/variant.hpp"
 #include <vector>
 
+namespace wgt
+{
 class PanelManagerPlugin
 	: public PluginMain
 {
@@ -59,3 +61,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( PanelManagerPlugin )
+}

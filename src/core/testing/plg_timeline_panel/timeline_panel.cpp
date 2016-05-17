@@ -2,6 +2,8 @@
 #include "core_variant/variant.hpp"
  
  
+namespace wgt
+{
 TimelinePanel::TimelinePanel( IComponentContext & context )
     : Depends( context )
 {
@@ -34,4 +36,5 @@ void TimelinePanel::removePanel()
         return;
     }
     uiApplication->removeView( *timelineView_ );
+}
 }

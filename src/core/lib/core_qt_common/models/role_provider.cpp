@@ -1,6 +1,8 @@
 #include "role_provider.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 void RoleProvider::registerRole( const char * roleName, 
 	QHash< int, QByteArray > & o_RoleNames ) const
 {
@@ -64,4 +66,5 @@ bool RoleProvider::decodeRole( int role, size_t & o_RoleId ) const
 
 	o_RoleId = roleIt->second;
 	return true;
+}
 }

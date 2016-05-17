@@ -38,6 +38,8 @@
 #endif
 
 
+namespace wgt
+{
 namespace
 {
 	static const char * s_historyVersion = "_ui_main_ver_1_0_14";
@@ -1705,4 +1707,6 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 		}
 	}
 	return true;
+}
+
 }

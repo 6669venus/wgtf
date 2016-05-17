@@ -3,6 +3,8 @@
 
 #include "simple_component_provider.hpp"
 
+namespace wgt
+{
 template< typename T >
 class GenericComponentProvider : public SimpleComponentProvider
 {
@@ -30,4 +32,5 @@ public:
 	}
 };
 
+}
 #endif

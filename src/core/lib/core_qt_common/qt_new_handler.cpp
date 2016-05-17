@@ -1,6 +1,8 @@
 #include "qt_new_handler.hpp"
 #include <assert.h>
 
+namespace wgt
+{
 static std::set< void * > * s_QtInPlaceNewed = nullptr;
 
 std::set< void * > & getQtInPlaceNewCollection()
@@ -17,4 +19,5 @@ void releaseQtInPlaceNewCollection()
 	assert(s_QtInPlaceNewed && s_QtInPlaceNewed->empty());
 	delete s_QtInPlaceNewed;
 	s_QtInPlaceNewed = nullptr;
+}
 }

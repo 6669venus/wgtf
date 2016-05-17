@@ -2,6 +2,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 bool IListModel::empty() const
 {
 	return this->size() == 0;
@@ -17,4 +19,6 @@ Variant IListModel::getData( int column, size_t roleId ) const
 bool IListModel::setData( int column, size_t roleId, const Variant & data )
 {
 	return false;
+}
+
 }

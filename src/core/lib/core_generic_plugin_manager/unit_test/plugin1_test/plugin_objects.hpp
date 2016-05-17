@@ -8,6 +8,8 @@
 
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 class TestPlugin1TestObject
 {
 	DECLARE_REFLECTED
@@ -93,4 +95,6 @@ private:
 
 typedef ObjectHandleT< TestPlugin1Interface > TestPlugin1InterfacePtr;
 
+}
 #endif // PLUGIN1_OBJECTS_HPP
+

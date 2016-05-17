@@ -1,6 +1,8 @@
 #ifndef I_COMPONENT_CONTEXT_CREATOR_HPP
 #define I_COMPONENT_CONTEXT_CREATOR_HPP
 
+namespace wgt
+{
 class IInterface;
 
 class IComponentContextCreator
@@ -11,4 +13,6 @@ public:
 	virtual IInterface * createContext( const wchar_t * contextId ) = 0;
 };
 
+}
 #endif ///I_COMPONENT_CONTEXT_CREATOR_HPP
+

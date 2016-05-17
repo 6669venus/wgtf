@@ -15,6 +15,8 @@
  *
  * A plugin used to enumerate and manipulate the underlying file system
  */
+namespace wgt
+{
 class FileSystemPlugin
 	: public PluginMain
 {
@@ -53,3 +55,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC( FileSystemPlugin )
+
+}

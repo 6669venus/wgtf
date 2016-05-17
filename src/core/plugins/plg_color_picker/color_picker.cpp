@@ -4,6 +4,8 @@
 #include "color_picker_context.hpp"
 #include "core_reflection/property_accessor.hpp"
 
+namespace wgt
+{
 ColorPicker::ColorPicker( IComponentContext & context )
 	: Depends( context )
 {
@@ -55,3 +57,5 @@ void ColorPicker::removePanel()
 }
 
 
+
+}

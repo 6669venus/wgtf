@@ -5,6 +5,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 class IAssetObjectItem;
 class IActiveFiltersModel;
 class IComponentContext;
@@ -91,4 +93,5 @@ public:
 	virtual void setIconSize(const int&) = 0;
 };
 
+}
 #endif // I_ASSET_BROWSER_MODEL_HPP

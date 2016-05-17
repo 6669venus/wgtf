@@ -13,6 +13,8 @@
 //==============================================================================
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 ObjectHandle::ObjectHandle()
 	: storage_( nullptr )
 {
@@ -393,3 +395,5 @@ BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value )
 }
 
 
+
+}

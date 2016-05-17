@@ -11,6 +11,8 @@
  *	Create an item in a ReflectedTreeModel from an ObjectHandle.
  *	Can be a root or child item.
  */
+namespace wgt
+{
 class ReflectedObjectItemNew : public ReflectedTreeItemNew
 {
 public:
@@ -68,5 +70,7 @@ private:
 	void enumerateChildren( const ReflectedItemCallback & callback ) const;
 };
 
+}
 #endif // _REFLECTED_OBJECT_ITEM_NEW_HPP
+
 

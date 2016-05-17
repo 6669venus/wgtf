@@ -1,6 +1,8 @@
 #include "child_list_adapter.hpp"
 #include <QPersistentModelIndex>
 
+namespace wgt
+{
 ChildListAdapter::ChildListAdapter( const QModelIndex & parent )
 	: parent_( parent )
 {
@@ -143,3 +145,5 @@ void ChildListAdapter::onParentRowsRemoved(const QModelIndex & parent, int first
 	endRemoveRows();
 }
 
+
+}

@@ -4,6 +4,8 @@
 #include "qt_framework.hpp"
 
 
+namespace wgt
+{
 class QtFrameworkAdapter
 	: public QtFramework
 {
@@ -13,4 +15,6 @@ public:
 	virtual QtWindow * createQtWindow( QIODevice & source ) override;
 };
 
+}
 #endif
+

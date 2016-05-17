@@ -4,6 +4,8 @@
 #include <utility>
 
 
+namespace wgt
+{
 ResizingMemoryStream::ResizingMemoryStream():
 	buffer_(),
 	pos_( 0 )
@@ -140,3 +142,5 @@ bool ResizingMemoryStream::sync()
 }
 
 
+
+}

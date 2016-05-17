@@ -2,6 +2,8 @@
 #include "quick_items_manager.h"
 #include "connection_item.h"
 
+namespace wgt
+{
 QuickItemsManager& QuickItemsManager::Instance()
 {
     static QuickItemsManager mng;
@@ -23,4 +25,5 @@ void QuickItemsManager::RepaintItem(size_t uid)
     auto iter = items.find(uid);
     if (iter != items.end())
         iter->second->update();
+}
 }

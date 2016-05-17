@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <algorithm>
 
+namespace wgt
+{
 void EnvState::add(IEnvState::IEnvComponentPtr ec)
 {
 	assert(std::find_if(components_.begin(), components_.end(), 
@@ -89,4 +91,6 @@ void EnvManager::loadEnvState( int id )
     {
         l->onLoadEnvState( it->second.get() );
     }
+}
+
 }

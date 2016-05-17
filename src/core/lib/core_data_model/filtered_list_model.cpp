@@ -69,6 +69,8 @@ This is to tell the view to update its data.
 #include <thread>
 #include <vector>
 
+namespace wgt
+{
 struct FilteredListModel::Implementation
 {
 	enum class FilterUpdateType
@@ -654,4 +656,6 @@ void FilteredListModel::refresh( bool waitToFinish )
 	void (FilteredListModel::Implementation::*refreshMethod)() = &FilteredListModel::Implementation::remapIndices;
 	std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
 	nextRefresh.detach();
+}
+
 }

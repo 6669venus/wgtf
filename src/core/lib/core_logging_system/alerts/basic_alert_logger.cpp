@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 
+namespace wgt
+{
 BasicAlertLogger::BasicAlertLogger( AlertManager & alertManager )
 	: alertManager_( alertManager )
 {
@@ -21,4 +23,6 @@ void BasicAlertLogger::out( LogMessage* message )
 	{
 		alertManager_.add( message->c_str() );
 	}
+}
+
 }

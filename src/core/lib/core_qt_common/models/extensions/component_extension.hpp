@@ -3,6 +3,8 @@
 
 #include "i_model_extension.hpp"
 
+namespace wgt
+{
 class IQtFramework;
 
 class ComponentExtension : public IModelExtension
@@ -21,4 +23,5 @@ private:
 	IQtFramework * qtFramework_;
 };
 
+}
 #endif // COMPONENT_EXTENSION_HPP

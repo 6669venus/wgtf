@@ -15,6 +15,8 @@
 #include <cwchar>
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -163,19 +165,19 @@ void Python27ScriptingEngine::fini()
 
 bool Python27ScriptingEngine::appendSourcePath( const wchar_t * path )
 {
-	return ::appendPath( path );
+	return wgt::appendPath( path );
 }
 
 
 bool Python27ScriptingEngine::appendBinPath( const wchar_t * path )
 {
-	return ::appendPath( path );
+	return wgt::appendPath( path );
 }
 
 
 ObjectHandle Python27ScriptingEngine::import( const char * moduleName )
 {
-	return ::import( context_, moduleName );
+	return wgt::import( context_, moduleName );
 }
 
 
@@ -189,4 +191,6 @@ bool Python27ScriptingEngine::checkErrors()
 	}
 
 	return false;
+}
+
 }

@@ -9,6 +9,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 class IUIFramework;
 class IUIApplication;
 
@@ -52,3 +54,5 @@ private:
 	ObjectHandle contextObject_;
 };
 
+
+}

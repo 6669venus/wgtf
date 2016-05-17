@@ -14,6 +14,8 @@
 #include "wg_types/hash_utilities.hpp"
 
 
+namespace wgt
+{
 namespace ReflectedPython
 {
 
@@ -427,3 +429,5 @@ size_t Property::parameterCount() const /* override */
 
 } // namespace ReflectedPython
 
+
+}

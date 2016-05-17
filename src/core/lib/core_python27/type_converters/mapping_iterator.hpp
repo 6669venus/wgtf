@@ -12,6 +12,8 @@
 #include <type_traits>
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -68,4 +70,6 @@ private:
 } // namespace PythonType
 
 
+}
 #endif // _PYTHON_MAPPING_ITERATOR_HPP
+

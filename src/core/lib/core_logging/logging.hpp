@@ -3,6 +3,8 @@
 
 // NGT-276 TODO: Replace with a logging plugin instead
 
+namespace wgt
+{
 #define NGT_MSG( format, ... ) \
 NGT::logMessage( format, ## __VA_ARGS__ )
 
@@ -33,4 +35,6 @@ int logMessage( const char* format, ... );
 } // namespace NGT
 
 
+}
 #endif // LOGGING_HPP
+

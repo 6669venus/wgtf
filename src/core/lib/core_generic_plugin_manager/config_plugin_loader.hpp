@@ -4,10 +4,14 @@
 #include <string>
 #include <vector>
 
+namespace wgt
+{
 namespace ConfigPluginLoader
 {
 	bool getPlugins( std::vector< std::wstring >& plugins, 
 					 const std::wstring& configFileName );
 }
 
+}
 #endif // CONFIG_PLUGIN_LOADER_HPP
+

@@ -28,6 +28,8 @@
 #include "wg_types/binary_block.hpp"
 #include "wg_types/vector2.hpp"
 
+namespace wgt
+{
 namespace
 {
 	template< typename T >
@@ -465,4 +467,6 @@ bool QmlWindow::loadPreference()
     } while (false);
     NGT_DEBUG_MSG( "Load Qml Window Preferences Failed.\n" );
     return false;
+}
+
 }

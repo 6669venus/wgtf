@@ -8,6 +8,8 @@
 /**
  *	Converts between QVariant and Collection.
  */
+namespace wgt
+{
 class CollectionQtTypeConverter : public IQtTypeConverter
 {
 public:
@@ -19,5 +21,7 @@ public:
 };
 
 
+}
 #endif // COLLECTION_QT_TYPE_CONVERTER_HPP
+
 

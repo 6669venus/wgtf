@@ -4,6 +4,8 @@
 #include "i_asset_object_item.hpp"
 #include "core_serialization/i_file_system.hpp"
 
+namespace wgt
+{
 class BaseAssetObjectItem : public IAssetObjectItem
 {
 public:
@@ -54,4 +56,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // BASE_ASSET_OBJECT_ITEM_HPP

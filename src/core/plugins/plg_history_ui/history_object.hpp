@@ -10,6 +10,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IDefinitionManager;
 class IValueChangeNotifier;
 
@@ -62,4 +64,6 @@ private:
 };
 
 
+}
 #endif // HISTORY_OBJECT_HPP
+

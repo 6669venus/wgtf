@@ -11,6 +11,8 @@
 
 #include <algorithm>
 
+namespace wgt
+{
 struct QtActionData
 {
 	std::string text_;
@@ -310,4 +312,5 @@ bool QtActionManager::registerActionData( const char * id,
 
 	actionData_[ id ] = std::unique_ptr< QtActionData >( actionData.release() );
 	return true;
+}
 }

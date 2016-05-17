@@ -10,6 +10,8 @@
 
 #include <QStatusBar>
 
+namespace wgt
+{
 QtStatusBar::QtStatusBar(QStatusBar & qStatusBar) : qStatusBar_(qStatusBar)
 {
 }
@@ -24,3 +26,5 @@ void QtStatusBar::clearMessage()
 	qStatusBar_.clearMessage();
 }
 
+
+}

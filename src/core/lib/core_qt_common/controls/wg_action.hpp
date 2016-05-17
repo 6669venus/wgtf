@@ -7,6 +7,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class WGAction : public QQuickItem
 {
 	Q_OBJECT
@@ -37,4 +39,5 @@ private:
 	std::unique_ptr< Implementation > impl_;
 };
 
+}
 #endif //WG_ACTION_HPP

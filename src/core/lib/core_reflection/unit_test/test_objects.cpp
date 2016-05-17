@@ -15,6 +15,8 @@
 #include "test_objects.hpp"
 
 
+namespace wgt
+{
 BEGIN_EXPOSE( TestDefinitionObject, MetaNone() )
 	EXPOSE( "counter", counter_ )
 	EXPOSE( "text", text_ )
@@ -180,4 +182,6 @@ bool TestDefinitionObject::operator==( const TestDefinitionObject& tdo ) const
 bool TestDefinitionObject::operator!=( const TestDefinitionObject & tdo ) const
 {
 	return !operator==( tdo );
+}
+
 }

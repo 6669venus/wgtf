@@ -13,6 +13,8 @@
 #include <codecvt>
 #include <set>
 
+namespace wgt
+{
 ITEMROLE( display )
 
 namespace
@@ -453,4 +455,6 @@ void ReflectedObjectItemNew::enumerateChildren(
 		}
 		return true;
 	} );
+}
+
 }

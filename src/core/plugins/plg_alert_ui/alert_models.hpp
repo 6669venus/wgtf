@@ -6,6 +6,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_data_model/i_list_model.hpp"
 
+namespace wgt
+{
 class AlertObjectModel
 {
 public:
@@ -54,4 +56,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // ALERT_MODELS_HPP

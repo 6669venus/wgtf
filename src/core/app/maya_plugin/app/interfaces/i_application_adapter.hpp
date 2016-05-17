@@ -4,6 +4,8 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "i_application_listener.hpp"
 
+namespace wgt
+{
 class IApplicationAdapter
 {
 public:
@@ -13,4 +15,6 @@ public:
 	virtual void removeListener( IApplicationListener * listener ) = 0;
 };
 
+}
 #endif//I_APPLICATION_ADAPTER_HPP
+

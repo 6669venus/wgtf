@@ -11,6 +11,8 @@
 #include <memory>
 #include <thread>
 
+namespace wgt
+{
 AssetListModel::AssetListModel()
 {
 }
@@ -160,4 +162,6 @@ IAssetObjectItem & AssetListModel::operator[](size_t index)
 const IAssetObjectItem & AssetListModel::operator[](size_t index) const
 {
 	return *items_[index].get();
+}
+
 }

@@ -9,9 +9,6 @@
 #include <vector>
 #include <QObject>
 
-struct LayoutHint;
-class IUIApplication;
-class IQtFramework;
 class QAction;
 class QDockWidget;
 class QIODevice;
@@ -21,6 +18,12 @@ class QTabWidget;
 class QToolBar;
 class QWidget;
 class QEvent;
+
+namespace wgt
+{
+struct LayoutHint;
+class IUIApplication;
+class IQtFramework;
 
 class QtWindow : public QObject, public IWindow
 {
@@ -85,4 +88,5 @@ private:
     QtConnectionHolder qtConnections_;
 };
 
+}
 #endif//QT_WINDOW_HPP

@@ -11,6 +11,8 @@
 #include <memory>
 #include <vector>
 
+namespace wgt
+{
 class TestStringFilter: public StringFilter
 {
 public:
@@ -136,4 +138,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif //TEST_DATA_MODEL_OBJECTS_HPP
+

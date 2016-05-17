@@ -3,6 +3,8 @@
 
 #include "core_reflection/utilities/reflection_utilities.hpp"
 
+namespace wgt
+{
 class IClassDefinition;
 class ReflectedMethodParameters;
 class Variant;
@@ -134,4 +136,6 @@ bool BaseGenericObject::set( const char * name, const T & value )
 }
 
 
+}
 #endif // BASE_GENERIC_OBJECT_HPP
+

@@ -5,6 +5,8 @@
 
 #include <string>
 
+namespace wgt
+{
 class StringQtTypeConverter : public IQtTypeConverter
 {
 public:
@@ -52,4 +54,5 @@ public:
 	}
 };
 
+}
 #endif

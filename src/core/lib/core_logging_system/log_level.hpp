@@ -1,6 +1,8 @@
 #ifndef LOG_LEVEL_HPP
 #define LOG_LEVEL_HPP
 
+namespace wgt
+{
 enum LogLevel
 {
 	LOG_FATAL = 0,
@@ -11,4 +13,5 @@ enum LogLevel
 	LOG_DEBUG,
 };
 
+}
 #endif // LOG_LEVEL_HPP

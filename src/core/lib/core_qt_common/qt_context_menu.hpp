@@ -5,6 +5,8 @@
 
 class QMenu;
 
+namespace wgt
+{
 class QtContextMenu : public QtMenu
 {
 public:
@@ -18,4 +20,5 @@ private:
 	QWidget * qView_;
 };
 
+}
 #endif // QT_CONTEXT_MENU

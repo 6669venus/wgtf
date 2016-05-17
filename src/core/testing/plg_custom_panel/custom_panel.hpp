@@ -11,6 +11,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 class CustomPanel
 	: Depends< IUIFramework, IUIApplication >
 {
@@ -27,4 +29,5 @@ private:
 };
  
  
+}
 #endif // _CUSTOM_PANEL_HPP

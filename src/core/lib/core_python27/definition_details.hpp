@@ -11,6 +11,8 @@
 #include <string>
 
 
+namespace wgt
+{
 class IComponentContext;
 
 
@@ -70,3 +72,5 @@ private:
 
 } // namespace ReflectedPython
 
+
+}

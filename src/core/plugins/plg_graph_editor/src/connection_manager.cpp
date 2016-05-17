@@ -14,6 +14,8 @@
 #include <QFile>
 #include <QTextStream>
 
+namespace wgt
+{
 namespace
 {
 typedef std::function<ObjectHandleT<ConnectionSlot>(ObjectHandleT<GraphNode> const&,
@@ -465,4 +467,6 @@ ObjectHandleT<ConnectionSlot> ConnectionManager::GetSlot(size_t slotUID)
         return iter->second;
 
     return TSlotPtr();
+}
+
 }

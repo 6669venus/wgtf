@@ -3,6 +3,8 @@
 #include <string>
 #include "wg_types/vector3.hpp"
 
+namespace wgt
+{
 struct CustomXmlData
 {
 	std::string name_;
@@ -14,4 +16,6 @@ struct CustomXmlData
 	bool operator==( const CustomXmlData& tdo ) const;
 };
 
+}
 #endif //CUSTOM_XML_DATA_HPP
+

@@ -6,6 +6,8 @@
 
 #include "core_generic_plugin/interfaces/i_application.hpp"
 
+namespace wgt
+{
 class TestApplication : public IApplication
 {
 public:
@@ -20,4 +22,5 @@ private:
 	std::thread thread_;
 };
 
+}
 #endif

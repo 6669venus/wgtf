@@ -7,6 +7,8 @@
 
 #include <array>
 
+namespace wgt
+{
 class ConnectionSlot;
 
 class Connector
@@ -31,4 +33,5 @@ private:
     size_t intputSlotID;
 };
 
+}
 #endif // __GRAPHEDITOR_CONNECTION_H__

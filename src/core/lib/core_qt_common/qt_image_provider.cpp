@@ -2,6 +2,8 @@
 
 #include <QIcon>
 
+namespace wgt
+{
 QtImageProvider::QtImageProvider()
 	: QQuickImageProvider( ImageType::Image )
 {
@@ -57,4 +59,5 @@ QImage QtImageProvider::requestImage(const QString &id, QSize *size, const QSize
 const char * QtImageProvider::providerId()
 {
 	return "QtImageProvider";
+}
 }

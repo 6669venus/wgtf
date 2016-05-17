@@ -3,6 +3,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class SerializationSystemHolder
 {
 public:
@@ -56,3 +58,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( SerializationPlugin )
+}

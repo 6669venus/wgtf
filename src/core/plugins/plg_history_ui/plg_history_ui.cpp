@@ -17,6 +17,8 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_action.hpp"
 
+namespace wgt
+{
 class HistoryPanel : public IHistoryPanel
 {
 public:
@@ -223,3 +225,5 @@ private:
 
 PLG_CALLBACK_FUNC( HistoryUIPlugin )
 
+
+}

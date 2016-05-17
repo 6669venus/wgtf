@@ -5,6 +5,8 @@
 #include "core_reflection/object_handle.hpp"
 #include <string>
 
+namespace wgt
+{
 class IListModel;
 
 //------------------------------------------------------------------------------
@@ -113,4 +115,5 @@ public:
 	virtual void clearSavedFilters() {}
 };
 
+}
 #endif //I_ACTIVE_FILTERS_MODEL_HPP

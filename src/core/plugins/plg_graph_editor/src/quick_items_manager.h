@@ -4,6 +4,8 @@
 
 #include <unordered_map>
 
+namespace wgt
+{
 class ConnectionItem;
 class QuickItemsManager
 {
@@ -18,4 +20,5 @@ private:
     std::unordered_map<size_t, ConnectionItem*> items;
 };
 
+}
 #endif // __GRAPHEDITOR_QUICKITEMSMANAGER_H__

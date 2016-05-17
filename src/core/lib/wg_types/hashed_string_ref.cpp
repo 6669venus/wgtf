@@ -3,6 +3,8 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 HashedStringRef::HashedStringRef( const char * str )
 	: hash_( static_cast<size_t>( HashUtilities::compute( str ) ) )
 	, pStart_( str )
@@ -30,4 +32,5 @@ bool HashedStringRef::operator == ( const HashedStringRef & other ) const
 		return false;
 	}
 	return strcmp( pStart_, other.pStart_ ) == 0;
+}
 }

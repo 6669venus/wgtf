@@ -10,6 +10,8 @@
 #include "cubic_bezier_interpolator.hpp"
 #include "linear_interpolator.hpp"
 
+namespace wgt
+{
 ICurveInterpolatorPtr createInterpolator(CurveTypes::CurveType curveType)
 {
 	switch (curveType)
@@ -20,4 +22,5 @@ ICurveInterpolatorPtr createInterpolator(CurveTypes::CurveType curveType)
 		return ICurveInterpolatorPtr(new LinearInterpolator());
 	}
 	return nullptr;
+}
 }

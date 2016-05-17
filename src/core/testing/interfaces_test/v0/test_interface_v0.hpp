@@ -3,8 +3,11 @@
 
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 DECLARE_INTERFACE_BEGIN( TestInterface, 0, 0 )
 	virtual void test() = 0;
 DECLARE_INTERFACE_END()
 
+}
 #endif //V0_TEST_INTERFACE_V0_HPP

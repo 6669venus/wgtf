@@ -9,6 +9,8 @@
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 
+namespace wgt
+{
 class AlertManager;
 class BasicAlertLogger;
 
@@ -51,4 +53,6 @@ private:
 	bool running_;
 };
 
+}
 #endif // LOGGING_SYSTEM_HPP
+

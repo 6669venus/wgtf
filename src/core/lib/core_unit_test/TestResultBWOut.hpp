@@ -5,6 +5,8 @@
 #include <string>
 
 
+namespace wgt
+{
 class TestResultBWOut : public TestResult
 {
 public:
@@ -28,5 +30,7 @@ private:
 };
 
 
+}
 #endif // TESTRESULTBWOUT_H
+
 

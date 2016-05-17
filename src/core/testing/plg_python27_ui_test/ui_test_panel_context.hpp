@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 
+namespace wgt
+{
 class IComponentContext;
 class ITreeModel;
 
@@ -30,3 +32,5 @@ public:
 	std::unique_ptr< ITreeModel > treeModel_;
 };
 
+
+}

@@ -3,6 +3,8 @@
 
 #include "testing/reflection_objects_test/test_objects.hpp"
 
+namespace wgt
+{
 class ObjectManager;
 class DefinitionManager;
 
@@ -21,4 +23,6 @@ private:
 
 	TestObjects testObjects_;
 };
+}
 #endif //TEST_REFLECTION_FIXTURE_HPP
+

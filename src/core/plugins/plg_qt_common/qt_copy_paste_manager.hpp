@@ -7,6 +7,9 @@
 #include <vector>
 
 class QClipboard;
+
+namespace wgt
+{
 class ISerializer;
 class ICommandManager;
 
@@ -41,4 +44,6 @@ private:
 
 
 
+}
 #endif // QT_COPY_PASTE_MANAGER_HPP
+

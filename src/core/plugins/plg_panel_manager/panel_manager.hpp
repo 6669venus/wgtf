@@ -6,6 +6,8 @@
 #include "interfaces/panel_manager/i_panel_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 class PanelManager : public Implements<IPanelManager>
 {
 public:
@@ -22,4 +24,5 @@ private:
 	std::vector< IInterface * > types_;
 };
 
+}
 #endif // ASSET_BROWSER_VIEW_HPP

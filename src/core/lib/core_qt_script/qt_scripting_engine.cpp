@@ -34,6 +34,8 @@
 #include <QQmlContext>
 #include <QPointer>
 
+namespace wgt
+{
 Q_DECLARE_METATYPE( ObjectHandle );
 
 typedef std::vector< QPointer<QtScriptObject> > ScriptObjects;
@@ -539,4 +541,6 @@ void QtScriptingEngine::addPreference( const QString & preferenceId, const QStri
 	std::string data = value.toString().toUtf8().constData();
 	auto preference = impl_->uiFramework_->getPreferences()->getPreference( id.c_str() );
 	preference->set( name.c_str(), data );
+}
+
 }

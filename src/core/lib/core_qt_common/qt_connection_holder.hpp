@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+namespace wgt
+{
 class QtConnectionHolder
 {
 public:
@@ -18,4 +20,5 @@ private:
 	std::vector< QMetaObject::Connection > connections_;
 };
 
+}
 #endif//QT_CONNECTION_HOLDER_HPP

@@ -9,6 +9,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 namespace PyScript
 {
 
@@ -177,5 +179,7 @@ namespace Script
 } // namespace PyScript
 
 
+}
 #endif // TYPE_CONVERTER_HPP
+
 

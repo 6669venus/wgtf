@@ -3,6 +3,8 @@
 #include "reflection/reflected_object.hpp"
 #include "reflection/serializer/base_serializer.hpp"
 
+namespace wgt
+{
 BW_BEGIN_NAMESPACE
 
 //------------------------------------------------------------------------------
@@ -79,3 +81,5 @@ public:
 };
 
 BW_END_NAMESPACE
+
+}

@@ -5,6 +5,10 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
+#include <memory>
+
+namespace wgt
+{
 class CommandInstance;
 class PropertyAccessorListener;
 class BinaryBlock;
@@ -38,4 +42,5 @@ private:
 	ReflectedPropertyUndoRedoUtility::UndoRedoHelperList	undoRedoHelperList_;
 };
 
+}
 #endif

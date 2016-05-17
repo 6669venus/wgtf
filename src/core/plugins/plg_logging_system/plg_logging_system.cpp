@@ -10,6 +10,8 @@
  * A plugin used to expose the core logging system for NGT.
  */
 
+namespace wgt
+{
 class LoggingSystemPlugin
 	: public PluginMain
 {
@@ -56,3 +58,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC( LoggingSystemPlugin )
+
+}

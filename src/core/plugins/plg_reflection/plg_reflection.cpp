@@ -16,6 +16,8 @@
 #include "core_string_utils/string_utils.hpp"
 
 //==============================================================================
+namespace wgt
+{
 class ReflectionSystemContextManager
 	: public Implements< IComponentContextCreator >
 {
@@ -311,3 +313,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC(ReflectionPlugin)
+}

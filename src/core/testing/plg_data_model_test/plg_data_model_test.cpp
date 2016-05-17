@@ -4,6 +4,8 @@
 #include "core_variant/default_meta_type_manager.hpp"
 
 //==============================================================================
+namespace wgt
+{
 class TestDataModelPlugin
 	: public PluginMain
 {
@@ -33,3 +35,5 @@ private:
 
 PLG_CALLBACK_FUNC( TestDataModelPlugin )
 
+
+}

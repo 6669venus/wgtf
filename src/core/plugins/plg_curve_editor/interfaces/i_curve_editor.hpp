@@ -22,6 +22,8 @@
 #include <core_reflection/i_definition_manager.hpp>
 #include <core_reflection/property_accessor.hpp>
 
+namespace wgt
+{
 class ICurve;
 typedef std::shared_ptr<ICurve> ICurvePtr;
 
@@ -95,4 +97,5 @@ private:
 
 };
 
+}
 #endif // i_curve_editor_H_

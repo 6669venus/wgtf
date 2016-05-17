@@ -4,6 +4,8 @@
 
 
 //--------------------------------------------------------------------------
+namespace wgt
+{
 BatchCommand::BatchCommand( CommandManager * pCommandManager )
     : pCommandManager_( pCommandManager )
 {
@@ -45,4 +47,6 @@ ObjectHandle BatchCommand::execute( const ObjectHandle & arguments ) const
 CommandThreadAffinity BatchCommand::threadAffinity() const
 { 
 	return CommandThreadAffinity::ANY_THREAD;
+}
+
 }

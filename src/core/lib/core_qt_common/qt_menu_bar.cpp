@@ -6,6 +6,8 @@
 #include <QMenuBar>
 #include <assert.h>
 
+namespace wgt
+{
 QtMenuBar::QtMenuBar( QMenuBar & qMenuBar, const char * windowId )
 	: QtMenu( qMenuBar, windowId )
 	, qMenuBar_( qMenuBar )
@@ -61,4 +63,6 @@ void QtMenuBar::removeAction( IAction & action )
 	}
 
 	destroyQAction( action );
+}
+
 }

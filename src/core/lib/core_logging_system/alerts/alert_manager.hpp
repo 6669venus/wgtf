@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdint.h>
 
+namespace wgt
+{
 class IAlertPresenter;
 
 class AlertManager
@@ -28,4 +30,5 @@ private:
 	tPresenterVector presenters_;
 };
 
+}
 #endif // ALERT_MANAGER_HPP

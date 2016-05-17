@@ -3,6 +3,8 @@
 
 #include <vector>
 #include "core_common/signal.hpp"
+namespace wgt
+{
 class IItem;
 
 // TODO: http://jira.bigworldtech.com/browse/NGT-849
@@ -25,4 +27,6 @@ public:
 };
 
 
+}
 #endif //I_SELECTION_HANDLER_HPP
+

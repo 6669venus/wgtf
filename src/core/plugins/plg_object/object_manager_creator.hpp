@@ -5,6 +5,8 @@
 #include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
 #include <memory>
 
+namespace wgt
+{
 class IComponentContext;
 
 class ObjectManagerCreator : public Implements< IComponentContextCreator >
@@ -21,4 +23,5 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
+}
 #endif //OBJECT_MANAGER_CREATOR_HPP

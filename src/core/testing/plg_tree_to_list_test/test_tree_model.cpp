@@ -11,6 +11,8 @@
 #include <memory>
 #include <thread>
 
+namespace wgt
+{
 struct StringList
 {
 	StringList()
@@ -278,4 +280,6 @@ size_t TestTreeModel::size( const IItem* parent ) const
 int TestTreeModel::columnCount() const
 {
 	return 1;
+}
+
 }

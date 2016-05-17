@@ -1,6 +1,8 @@
 ﻿#ifndef I_CLASS_MEMBER_HPP
 #define I_CLASS_MEMBER_HPP
 
+namespace wgt
+{
 class TypeId;
 
 class IClassMember
@@ -11,4 +13,6 @@ public:
 	virtual const char* getName() const = 0;
 };
 
+}
 #endif // I_CLASS_MEMBER_HPP
+

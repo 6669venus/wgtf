@@ -1,6 +1,8 @@
 #ifndef NGT_ALLOCATOR_HPP
 #define NGT_ALLOCATOR_HPP
 
+namespace wgt
+{
 namespace NGTAllocator
 {
 	void * allocate( size_t size );
@@ -15,4 +17,6 @@ namespace NGTAllocator
 	void enableStackTraces( bool enable );
 }
 
+}
 #endif // NGT_ALLOCATOR_HPP
+

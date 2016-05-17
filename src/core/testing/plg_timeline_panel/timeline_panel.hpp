@@ -10,6 +10,8 @@
  
 #include <memory>
  
+namespace wgt
+{
 class TimelinePanel
     : Depends< IUIFramework, IUIApplication >
 {
@@ -25,4 +27,5 @@ private:
     std::unique_ptr< IView > timelineView_;
 };
  
+}
 #endif // _TIMELINE_PANEL_HPP

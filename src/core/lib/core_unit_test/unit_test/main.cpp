@@ -5,6 +5,8 @@
 #include "unit_test_lib/unit_test.cpp"
 #endif
 
+namespace wgt
+{
 BW_USE_NAMESPACE
 
 int main( int argc, char* argv[] )
@@ -17,3 +19,5 @@ int main( int argc, char* argv[] )
 }
 
 // main.cpp
+
+}

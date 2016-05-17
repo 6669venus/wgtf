@@ -3,6 +3,8 @@
 
 #include "i_datastream.hpp"
 
+namespace wgt
+{
 class FixedMemoryStream:
 	public IDataStream
 {
@@ -23,4 +25,6 @@ private:
 	std::streamsize size_;
 };
 
+}
 #endif //FIXED_MEMORY_STREAM_HPP
+

@@ -12,6 +12,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 MacrosObject::MacrosObject()
 	: commandSystem_( nullptr )
 	, currentIndex_( -1 )
@@ -60,4 +62,6 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 		return nullptr;
 	}
 	return macro;
+}
+
 }

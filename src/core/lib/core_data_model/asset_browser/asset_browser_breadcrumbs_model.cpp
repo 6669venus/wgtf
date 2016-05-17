@@ -5,6 +5,8 @@
 
 //------------------------------------------------------------------------------
 
+namespace wgt
+{
 struct AssetBrowserBreadcrumbsModel::Implementation
 {
 	Implementation( AssetBrowserBreadcrumbsModel& self, IDefinitionManager & definitionManager );
@@ -184,4 +186,6 @@ void AssetBrowserBreadcrumbsModel::generateBreadcrumbs( const IItem * item, cons
 			impl_->addBreadcrumb( assetItem );
 		}
 	}
+}
+
 }

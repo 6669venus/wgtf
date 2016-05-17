@@ -26,6 +26,8 @@
 
 
 
+namespace wgt
+{
 class CurveEditorPlugin
 	: public PluginMain
 {
@@ -104,3 +106,5 @@ private:
 
 PLG_CALLBACK_FUNC(CurveEditorPlugin)
 
+
+}

@@ -9,6 +9,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class TestWindowPlugin
 	: public PluginMain
 {
@@ -54,3 +56,5 @@ public:
 
 PLG_CALLBACK_FUNC(TestWindowPlugin)
 
+
+}

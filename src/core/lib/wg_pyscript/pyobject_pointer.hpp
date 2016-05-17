@@ -2,6 +2,8 @@
 #define PYOBJECT_POINTER_HPP
 
 
+namespace wgt
+{
 namespace PyScript
 {
 
@@ -248,4 +250,6 @@ protected:
 
 } // namespace PyScript
 
+}
 #endif // PYOBJECT_POINTER_HPP
+

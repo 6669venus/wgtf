@@ -5,6 +5,8 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 
 
+namespace wgt
+{
 namespace
 {
 	class CollectionItemOld : public IItem
@@ -161,4 +163,6 @@ size_t CollectionModelOld::size() const
 int CollectionModelOld::columnCount() const
 {
 	return 1;
+}
+
 }

@@ -3,6 +3,8 @@
 
 #include "vector3.hpp"
 
+namespace wgt
+{
 class Vector4
 {
 public:
@@ -26,5 +28,7 @@ public:
 	}
 };
 
+}
 #endif // VECTOR3_HPP
+
 

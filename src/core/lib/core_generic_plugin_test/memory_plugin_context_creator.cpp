@@ -4,6 +4,8 @@
 #include <typeinfo>
 
 //==============================================================================
+namespace wgt
+{
 IInterface * MemoryPluginContextCreator::createContext(
 	const wchar_t * contextId )
 {
@@ -15,4 +17,6 @@ IInterface * MemoryPluginContextCreator::createContext(
 const char * MemoryPluginContextCreator::getType() const
 {
 	return typeid( IMemoryAllocator ).name();
+}
+
 }

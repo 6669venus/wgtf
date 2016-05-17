@@ -5,6 +5,8 @@
 #include <string>
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -130,3 +132,5 @@ void* MetaType::castPtr( const std::type_info& type, void* value, bool const_val
 
 #endif // FAST_RUNTIME_POINTER_CAST
 
+
+}

@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <cassert>
 
+namespace wgt
+{
 namespace 
 {
 	const char * safe_str( const char * str )
@@ -407,4 +409,6 @@ void LayoutManager::setWindowIcon(const char* path, const char* windowId)
 const Windows & LayoutManager::windows() const
 {
 	return windows_;
+}
+
 }

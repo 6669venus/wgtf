@@ -4,7 +4,11 @@
 #include "core_common/signal.hpp"
 #include "core_variant/variant.hpp"
 
+#include <functional>
 
+
+namespace wgt
+{
 /**
  *	Stores data for an entry in a data model or on the data model itself.
  */
@@ -109,4 +113,6 @@ private:
 	}
 };
 
+}
 #endif//ABSTRACT_ITEM_HPP
+

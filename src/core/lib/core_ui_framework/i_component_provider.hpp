@@ -5,6 +5,8 @@
 
 #include <vector>
 
+namespace wgt
+{
 class IComponentProvider
 {
 public:
@@ -14,4 +16,5 @@ public:
 		std::function< bool ( size_t ) > & predicate ) const = 0;
 };
 
+}
 #endif//I_COMPONENT_PROVIDER_HPP

@@ -1,5 +1,7 @@
 #include "sequence_list_adapter.hpp"
 
+namespace wgt
+{
 SequenceListAdapter::SequenceListAdapter()
 	: model_( nullptr )
 {
@@ -102,4 +104,6 @@ void SequenceListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 			++index;
 		}
 	}
+}
+
 }

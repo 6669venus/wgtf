@@ -1,10 +1,13 @@
 #ifndef I_QT_TYPE_CONVERTER_HPP
 #define I_QT_TYPE_CONVERTER_HPP
+
 #include "wg_types/binary_block.hpp"
 #include <core_variant/variant.hpp>
 #include <QVariant>
 
 
+namespace wgt
+{
 class ObjectHandle;
 
 Q_DECLARE_METATYPE( std::shared_ptr< BinaryBlock > );
@@ -71,4 +74,5 @@ public:
 	}
 };
 
+}
 #endif

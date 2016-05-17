@@ -18,6 +18,8 @@
 #include "core_common/ngt_windows.hpp"
 #include "core_command_system/env_system.hpp"
 
+namespace wgt
+{
 class CommandSystemPlugin
 	: public PluginMain
 {
@@ -100,3 +102,5 @@ public:
 
 
 PLG_CALLBACK_FUNC( CommandSystemPlugin )
+
+}

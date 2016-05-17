@@ -5,6 +5,8 @@
 #include "reflected_item.hpp"
 #include "core_reflection/property_accessor.hpp"
 
+namespace wgt
+{
 class IBaseProperty;
 
 
@@ -71,4 +73,6 @@ private:
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
 };
 
+}
 #endif
+

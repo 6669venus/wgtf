@@ -6,6 +6,8 @@
 
 SPECIALIZE_QLIST(QVariant)
 
+namespace wgt
+{
 struct SelectionExtension::Implementation
 {
 	Implementation( SelectionExtension& self );
@@ -744,4 +746,6 @@ void SelectionExtension::selectCurrentIndex( bool select )
 	int selectedRole = -1;
 	this->encodeRole( SelectedRole::roleId_, selectedRole );
 	setData( impl_->currentIndex_, QVariant( select ), selectedRole );
+}
+
 }

@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <cstring>
 
+namespace wgt
+{
 class TextStream;
 class BinaryStream;
 
@@ -290,4 +292,6 @@ private:
 
 };
 
+}
 #endif //META_TYPE_HPP
+

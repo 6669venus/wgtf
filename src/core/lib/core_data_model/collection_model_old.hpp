@@ -8,6 +8,8 @@
 /**
  *	Data model for displaying a Collection as a list.
  */
+namespace wgt
+{
 class CollectionModelOld
 	: public IListModel
 {
@@ -31,4 +33,6 @@ protected:
 	mutable std::vector< std::unique_ptr< IItem > > items_;
 };
 
+}
 #endif // COLLECTION_LIST_MODEL_HPP
+

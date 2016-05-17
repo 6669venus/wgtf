@@ -18,6 +18,8 @@
  *	subclasses of MultiProcTestCase to use in their test cases for spawning
  *	multiple child processes.
  */
+namespace wgt
+{
 void MultiProcTestCase::runChildren( int num,
 		MultiProcTestCase::ChildProcessFactory * pFactory )
 {
@@ -123,3 +125,5 @@ bool MultiProcTestCase::checkAllChildrenPass()
 }
 
 // multiproc_test_case.cpp
+
+}

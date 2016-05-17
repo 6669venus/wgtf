@@ -2,6 +2,8 @@
 #include "converters.hpp"
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -45,3 +47,5 @@ bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 
 } // namespace PythonType
 
+
+}

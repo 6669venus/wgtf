@@ -5,6 +5,8 @@
 
 #include <QItemSelection>
 
+namespace wgt
+{
 class ListExtension : public IModelExtension
 {
 	Q_OBJECT
@@ -18,4 +20,5 @@ public:
 	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
 };
 
+}
 #endif // LIST_EXTENSION_HPP

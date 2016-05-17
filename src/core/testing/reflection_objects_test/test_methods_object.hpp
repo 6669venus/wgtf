@@ -4,6 +4,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 class TestMethodsObject
 {
 	DECLARE_REFLECTED
@@ -19,4 +21,6 @@ public:
 	double testMethod8( double parameter );
 };
 
+}
 #endif //TEST_METHODS_OBJECT
+

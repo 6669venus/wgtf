@@ -16,6 +16,8 @@
 
 
 #ifndef _DUMMY_
+namespace wgt
+{
 namespace
 {
 
@@ -971,5 +973,6 @@ std::istream& operator>>( std::istream& stream, Variant& value )
 	return stream;
 }
 
+}
 
 #endif

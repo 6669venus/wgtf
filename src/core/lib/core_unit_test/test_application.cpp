@@ -3,6 +3,8 @@
 
 #include <chrono>
 
+namespace wgt
+{
 TestApplication::TestApplication()
 	: exiting_( false )
 {
@@ -32,4 +34,5 @@ int TestApplication::startApplication()
 void TestApplication::quitApplication()
 {
 	exiting_ = true;
+}
 }

@@ -6,6 +6,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 class IModelExtension;
 
 namespace QtModelHelpers
@@ -20,4 +22,6 @@ int calculateLast( const size_t start, const size_t count );
 } // namespace QtModelHelpers
 
 
+}
 #endif // QT_MODEL_HELPERS_HPP
+

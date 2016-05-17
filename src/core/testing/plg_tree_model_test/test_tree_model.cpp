@@ -11,6 +11,8 @@
 #include <memory>
 #include <thread>
 
+namespace wgt
+{
 struct StringList
 {
 	StringList()
@@ -536,4 +538,5 @@ int TestTreeModel::rowCount( const AbstractItem * item ) const
 int TestTreeModel::columnCount() const
 {
 	return 1;
+}
 }

@@ -3,6 +3,8 @@
 
 #include <set>
 
+namespace wgt
+{
 std::set< void * > & getQtInPlaceNewCollection();
 void releaseQtInPlaceNewCollection();
 
@@ -15,13 +17,13 @@ void *	operator new( size_t s )\
 \
 void operator delete( void* ptr )\
 {\
-	auto findIt = getQtInPlaceNewCollection().find( ptr );\
-	if (findIt != getQtInPlaceNewCollection().end())\
+	auto findIt = wgt::getQtInPlaceNewCollection().find( ptr );\
+	if (findIt != wgt::getQtInPlaceNewCollection().end())\
 	{\
-		getQtInPlaceNewCollection().erase( findIt );\
-		if (getQtInPlaceNewCollection().empty())\
+		wgt::getQtInPlaceNewCollection().erase( findIt );\
+		if (wgt::getQtInPlaceNewCollection().empty())\
 		{\
-			releaseQtInPlaceNewCollection();\
+			wgt::releaseQtInPlaceNewCollection();\
 		}\
 		return;\
 	}\
@@ -30,17 +32,18 @@ void operator delete( void* ptr )\
 \
 void *	operator new( size_t s, void * at )\
 {\
-	getQtInPlaceNewCollection().insert( at );\
+	wgt::getQtInPlaceNewCollection().insert( at );\
 	return at;\
 }\
 \
 void operator delete( void* p, void * )\
 {\
-	getQtInPlaceNewCollection().erase( p );\
-	if (getQtInPlaceNewCollection().empty())\
+	wgt::getQtInPlaceNewCollection().erase( p );\
+	if (wgt::getQtInPlaceNewCollection().empty())\
 	{\
-		releaseQtInPlaceNewCollection();\
+		wgt::releaseQtInPlaceNewCollection();\
 	}\
 };\
 
+}
 #endif //QT_NEW_HANDLER

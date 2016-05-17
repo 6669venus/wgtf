@@ -7,6 +7,8 @@
 #include "core_data_model/variant_list.hpp"
 #include "command_instance.hpp"
 
+namespace wgt
+{
 class ICommandManager;
 class IDefinitionManager;
 class MacroObject;
@@ -140,4 +142,6 @@ private:
 
 	ObjectHandle argsEdit_;
 };
+}
 #endif // MACRO_OBJECT_HPP
+

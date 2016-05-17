@@ -4,6 +4,8 @@
 #include "base_property.hpp"
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 class ReflectedMethod
 	: public BaseProperty
 {
@@ -33,4 +35,6 @@ public:
 	typedef ReflectedMethod SelfType;
 };
 
+}
 #endif // REFLECTED_METHOD_HPP
+

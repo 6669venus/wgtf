@@ -9,6 +9,8 @@
 #include <QString>
 #include <QImage>
 
+namespace wgt
+{
 class QtImageProviderOld : public QQuickImageProvider
 {
 public:
@@ -24,4 +26,5 @@ private:
 	QHash<QString, QImage> imageCache_;
 };
 
+}
 #endif // QT_IMAGE_PROVIDER_OLD_HPP

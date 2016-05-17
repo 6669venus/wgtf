@@ -3,6 +3,8 @@
 #include "details/xml_reader.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 namespace
 {
 
@@ -87,3 +89,5 @@ bool XMLSerializer::sync()
 }
 
 
+
+}

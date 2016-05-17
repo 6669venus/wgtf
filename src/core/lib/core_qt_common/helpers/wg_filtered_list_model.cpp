@@ -10,6 +10,8 @@
 
 #include <QRegExp>
 
+namespace wgt
+{
 struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
@@ -138,4 +140,6 @@ void WGFilteredListModel::setFilter( QObject * filter )
 bool WGFilteredListModel::getIsFiltering() const
 {
 	return impl_->filteredModel_.isFiltering();
+}
+
 }

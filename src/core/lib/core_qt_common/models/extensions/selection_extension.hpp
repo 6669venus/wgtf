@@ -4,6 +4,8 @@
 #include "i_model_extension.hpp"
 #include <memory>
 
+namespace wgt
+{
 class SelectionExtension : public IModelExtension
 {
 	Q_OBJECT
@@ -85,4 +87,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // SELECTION_EXTENSION_HPP
+

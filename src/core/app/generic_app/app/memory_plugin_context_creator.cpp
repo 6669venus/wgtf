@@ -5,6 +5,8 @@
 #include <typeinfo>
 
 //==============================================================================
+namespace wgt
+{
 IInterface * MemoryPluginContextCreator::createContext(
 	const wchar_t * contextId )
 {
@@ -24,4 +26,6 @@ const char * MemoryPluginContextCreator::getType() const
 bool MemoryPluginContextCreator::ownsSubContext() const
 {
 	return true;
+}
+
 }

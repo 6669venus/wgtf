@@ -1,6 +1,8 @@
 #ifndef I_COPYABLE_OBJECT_HPP
 #define I_COPYABLE_OBJECT_HPP
 
+namespace wgt
+{
 class ICopyPasteManager;
 class Variant;
 class ICopyableObject
@@ -15,4 +17,6 @@ public:
 };
 
 
+}
 #endif // I_COPYABLE_OBJECT_HPP
+

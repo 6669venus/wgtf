@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 struct ECGUID
 {
 	uint32_t a;
@@ -66,4 +68,6 @@ public:
 #define ENV_STATE_QUERY( CL, var ) auto var = static_cast<CL*>(state->query( CL::GUID )); assert(var)
 
 
+}
 #endif // I_ENV_SYSTEM
+

@@ -16,6 +16,8 @@
 #include <core_ui_framework/i_ui_application.hpp>
 #include <core_ui_framework/i_view.hpp>
 
+namespace wgt
+{
 class GraphEditorPlugin : public PluginMain
 {
 public:
@@ -80,3 +82,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(GraphEditorPlugin)
+}

@@ -20,6 +20,8 @@
  * the add() functionality on the AlertManager.
  */
 
+namespace wgt
+{
 class AlertUIPlugin
 	: public PluginMain
 {
@@ -101,3 +103,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC( AlertUIPlugin )
+
+}

@@ -12,6 +12,8 @@
 #include <type_traits>
 
 
+namespace wgt
+{
 /**
 Base class for data streams.
 
@@ -124,4 +126,6 @@ private:
 };
 
 
+}
 #endif
+

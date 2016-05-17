@@ -12,6 +12,8 @@
 
 
 //////////////////////////////////////////////////////////////////////////
+namespace wgt
+{
 class ColorSliderDataModel
 {
 	DECLARE_REFLECTED
@@ -109,3 +111,5 @@ void ControlsTestPanel::removePanel()
 	}
 }
 
+
+}

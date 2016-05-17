@@ -11,6 +11,8 @@
 
 #pragma once
 
+namespace wgt
+{
 struct BezierPointData
 {
 	struct PointData
@@ -24,4 +26,5 @@ struct BezierPointData
 	PointData cp2;
 };
 
+}
 #endif // BEZIER_POINT_DATA_H_

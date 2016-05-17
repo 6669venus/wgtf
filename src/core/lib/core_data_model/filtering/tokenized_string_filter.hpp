@@ -8,6 +8,8 @@
  *	TokenizedStringFilter
  *  A filter implementation, which uses a vector of strings to compare text against.
  */
+namespace wgt
+{
 class TokenizedStringFilter : public IItemFilter
 {
 public:
@@ -29,4 +31,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // TOKENIZED_STRING_FILTER_HPP
+

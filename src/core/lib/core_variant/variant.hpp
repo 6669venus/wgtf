@@ -19,6 +19,8 @@
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/binary_stream.hpp"
 
+namespace wgt
+{
 class Variant;
 
 /**
@@ -1422,4 +1424,6 @@ public:
 };
 
 
+}
 #endif // VARIANT_HPP_INCLUDED
+

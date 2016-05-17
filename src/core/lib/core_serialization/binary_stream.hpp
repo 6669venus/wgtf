@@ -7,6 +7,8 @@
 #include <cstdint>
 
 
+namespace wgt
+{
 class BinaryStream:
 	public BasicStream
 {
@@ -83,4 +85,6 @@ BinaryStream& operator<<( BinaryStream& stream, const char* value );
 BinaryStream& operator>>( BinaryStream& stream, std::string& value );
 
 
+}
 #endif // BINARY_STREAM_HPP_INCLUDED
+

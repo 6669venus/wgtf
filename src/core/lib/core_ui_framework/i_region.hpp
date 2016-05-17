@@ -1,6 +1,8 @@
 #ifndef I_REGION_HPP
 #define I_REGION_HPP
 
+namespace wgt
+{
 class IView;
 struct LayoutTags;
 
@@ -15,4 +17,5 @@ public:
 	virtual void removeView( IView & view ) = 0;
 };
 
+}
 #endif

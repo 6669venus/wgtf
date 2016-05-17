@@ -21,6 +21,8 @@
 
 
 // Set by application
+namespace wgt
+{
 IComponentContext * g_contextManager( nullptr );
 
 
@@ -161,3 +163,5 @@ TEST( Python27 )
 	}
 }
 
+
+}

@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+namespace wgt
+{
 namespace FolderPluginLoader
 {
 	bool getPluginsCustomPath( std::vector< std::wstring >& plugins, 
@@ -11,4 +13,6 @@ namespace FolderPluginLoader
 	bool getPluginsExePath();
 }
 
+}
 #endif // FOLDER_PLUGIN_LOADER_HPP
+

@@ -10,6 +10,8 @@
 #include <memory>
 #include <string>
 
+namespace wgt
+{
 class PluginContextManager
 	: public Implements < IPluginContextManager >
 	, public IComponentContextListener
@@ -41,4 +43,6 @@ private:
 	const char*											executablepath_;
 };
 
+}
 #endif //PLUGIN_CONTEXT_MANAGER_HPP
+

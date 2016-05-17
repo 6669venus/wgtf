@@ -5,6 +5,8 @@
 #include <QToolBar>
 #include <assert.h>
 
+namespace wgt
+{
 QtToolBar::QtToolBar( QToolBar & qToolBar, const char * windowId )
 	: QtMenu( qToolBar, windowId )
 	, qToolBar_( qToolBar )
@@ -39,4 +41,5 @@ void QtToolBar::removeAction( IAction & action )
 	qToolBar_.removeAction( qAction );
 	
 	destroyQAction( action );
+}
 }

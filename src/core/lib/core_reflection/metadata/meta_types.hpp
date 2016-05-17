@@ -5,6 +5,8 @@
 
 #include "../types/reflected_collection.hpp"
 
+namespace wgt
+{
 class IEnumGenerator;
 typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
 
@@ -127,4 +129,5 @@ MetaHandle MetaPassword();
 MetaHandle MetaMultiline();
 
 
+}
 #endif //META_TYPES_HPP

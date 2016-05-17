@@ -9,6 +9,8 @@
 #include "core_ui_framework/i_action.hpp"
 
 //==============================================================================
+namespace wgt
+{
 MainWindow::MainWindow()
 	: contextManager_( nullptr )
 {
@@ -99,3 +101,5 @@ void MainWindow::executeTestCommand2( IAction * action )
 	commandSystemProvider->waitForInstance( commandIns );
 }
 
+
+}

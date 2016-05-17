@@ -5,6 +5,8 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 
+namespace wgt
+{
 ReflectedCollectionInsertCommand::ReflectedCollectionInsertCommand( IDefinitionManager & definitionManager )
 	: definitionManager_( definitionManager )
 {
@@ -100,4 +102,5 @@ ObjectHandle ReflectedCollectionInsertCommand::getCommandDescription(const Objec
 CommandThreadAffinity ReflectedCollectionInsertCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
+}
 }

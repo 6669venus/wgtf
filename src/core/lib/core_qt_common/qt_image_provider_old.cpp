@@ -5,6 +5,8 @@
 #define snprintf sprintf_s
 #endif
 
+namespace wgt
+{
 QtImageProviderOld::QtImageProviderOld()
 	: QQuickImageProvider( ImageType::Image )
 {
@@ -41,4 +43,5 @@ QImage QtImageProviderOld::requestImage(
 const char * QtImageProviderOld::providerId()
 {
 	return "QtImageProvider 1.0";
+}
 }

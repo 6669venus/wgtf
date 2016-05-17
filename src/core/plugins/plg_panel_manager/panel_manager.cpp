@@ -15,6 +15,8 @@
 #include <QQmlComponent>
 #include <QObject>
 
+namespace wgt
+{
 PanelManager::PanelManager( IComponentContext & contextManager )
 	: contextManager_( contextManager )
 {
@@ -70,4 +72,6 @@ std::unique_ptr< IView > PanelManager::createAssetBrowser(
 	}
 	
 	return nullptr;
+}
+
 }

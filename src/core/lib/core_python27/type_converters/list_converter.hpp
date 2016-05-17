@@ -4,6 +4,8 @@
 
 #include "i_parent_type_converter.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 
 namespace PythonType
@@ -35,5 +37,7 @@ private:
 
 } // namespace PythonType
 
+}
 #endif // PYTHON_LIST_CONVERTER_HPP
+
 

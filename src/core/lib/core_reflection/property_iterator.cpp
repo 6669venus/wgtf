@@ -4,6 +4,8 @@
 #include "interfaces/i_base_property.hpp"
 
 // =============================================================================
+namespace wgt
+{
 PropertyIterator::PropertyIterator()
 	: strategy_(ITERATE_SELF_ONLY)
 	, currentDefinition_( nullptr )
@@ -116,4 +118,5 @@ PropertyIterator PropertyIteratorRange::begin() const
 PropertyIterator PropertyIteratorRange::end() const
 {
 	return PropertyIterator();
+}
 }

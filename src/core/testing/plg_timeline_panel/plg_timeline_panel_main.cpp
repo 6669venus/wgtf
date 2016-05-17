@@ -18,6 +18,8 @@
 #include <memory>
  
  
+namespace wgt
+{
 class TimelinePanelPlugin
     : public PluginMain
 {
@@ -64,3 +66,4 @@ private:
  
  
 PLG_CALLBACK_FUNC( TimelinePanelPlugin )
+}

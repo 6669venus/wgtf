@@ -4,6 +4,8 @@
 #include "core_qt_common/i_qt_type_converter.hpp"
 
 
+namespace wgt
+{
 class QtScriptingEngine;
 
 
@@ -29,4 +31,6 @@ private:
 };
 
 
+}
 #endif // SCRIPT_QT_TYPE_CONVERTER_HPP
+

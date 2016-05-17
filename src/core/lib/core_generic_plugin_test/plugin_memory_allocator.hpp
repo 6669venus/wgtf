@@ -4,6 +4,8 @@
 #include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 class PluginMemoryAllocator
 	: public Implements< IMemoryAllocator >
 {
@@ -24,4 +26,5 @@ private:
 };
 
 
+}
 #endif //PLUGIN_MEMORY_ALLOCATOR_HPP

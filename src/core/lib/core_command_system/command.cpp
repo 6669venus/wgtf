@@ -2,6 +2,8 @@
 #include "i_command_manager.hpp"
 
 //==============================================================================
+namespace wgt
+{
 Command::~Command()
 {
 	eventListenerCollection_.clear();
@@ -76,4 +78,6 @@ void Command::fireCommandExecuted(const CommandInstance & command, CommandOperat
 	const ObjectHandle & arguments ) const
 {
 	return nullptr;
+}
+
 }

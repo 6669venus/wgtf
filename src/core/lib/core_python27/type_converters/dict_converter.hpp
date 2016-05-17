@@ -4,6 +4,8 @@
 
 #include "i_parent_type_converter.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 
 namespace PythonType
@@ -35,5 +37,7 @@ private:
 
 } // namespace PythonType
 
+}
 #endif // _PYTHON_DICT_CONVERTER_HPP
+
 

@@ -32,6 +32,8 @@
 #include "core_serialization/serializer/serialization_manager.hpp"
 
 
+namespace wgt
+{
 class TestObjectHandleFixture
 {
 public:
@@ -232,4 +234,6 @@ TEST_F(TestObjectHandleFixture, on_stack_object)
 	CHECK_EQUAL(glist->bindProperty(0u, def1, "Value").getValue(), 13);
 	CHECK_EQUAL(glist->bindProperty(1u, def2, "Test1.Value").getValue(), 17);
 	CHECK_EQUAL(glist->bindProperty(2u, def1, "Value").getValue(), 19);
+}
+
 }

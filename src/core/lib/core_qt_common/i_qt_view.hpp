@@ -5,6 +5,8 @@
 
 class QWidget;
 
+namespace wgt
+{
 class IQtView : public IView
 {
 public:
@@ -15,4 +17,6 @@ public:
 	virtual QWidget * view() const = 0;
 };
 
+}
 #endif//I_QT_VIEW_HPP
+

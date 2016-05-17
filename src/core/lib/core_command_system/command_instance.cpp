@@ -20,6 +20,8 @@
 #include "custom_undo_redo_data.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
+namespace wgt
+{
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
@@ -337,4 +339,5 @@ void CommandInstance::consolidateUndoRedoData( CommandInstance * parentInstance 
 		parentInstance->undoRedoData_.emplace_back( data.release() );
 	}
 	undoRedoData_.clear();
+}
 }

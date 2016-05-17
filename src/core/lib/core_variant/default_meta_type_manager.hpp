@@ -11,6 +11,8 @@
 #include <typeinfo>
 #include <cstring>
 
+namespace wgt
+{
 class DefaultMetaTypeManager
 	: public Implements< IMetaTypeManager >
 {
@@ -48,4 +50,6 @@ private:
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 };
 
+}
 #endif //DEFAULT_META_TYPE_MANAGER_HPP
+

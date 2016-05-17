@@ -4,6 +4,8 @@
 
 #include "cstdmf/debug_message_callbacks.hpp"
 
+namespace wgt
+{
 BW_BEGIN_NAMESPACE
 
 	
@@ -56,3 +58,5 @@ public:
 	//ThrowTestExceptionOnAssert _throwAss
 
 BW_END_NAMESPACE
+
+}

@@ -6,6 +6,8 @@
 class QMenu;
 class QMenuBar;
 
+namespace wgt
+{
 class QtMenuBar : public QtMenu
 {
 public:
@@ -18,4 +20,5 @@ private:
 	QMenuBar & qMenuBar_;
 };
 
+}
 #endif//QT_MENU_BAR_HPP

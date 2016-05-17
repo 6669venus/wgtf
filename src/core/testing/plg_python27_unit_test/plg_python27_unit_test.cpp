@@ -13,6 +13,8 @@
 /**
  *	Runs unit tests.
  */
+namespace wgt
+{
 class MainApplication
 	: public Implements< IApplication >
 {
@@ -85,3 +87,5 @@ public:
 };
 
 PLG_CALLBACK_FUNC( Python27UnitTestPlugin )
+
+}

@@ -10,9 +10,12 @@
 #include <tuple>
 
 class QUrl;
-class IQtTypeConverter;
 class QQmlComponent;
-class QmlComponent;
+class QString;
+
+namespace wgt
+{
+class IQtTypeConverter;
 class QtScriptingEngine;
 class IComponentContext;
 class QtDefaultSpacing;
@@ -20,8 +23,8 @@ class QtGlobalSettings;
 class QmlWindow;
 class QtWindow;
 class QtPreferences;
-class QString;
 class ICommandManager;
+class QmlComponent;
 
 namespace QtFramework_Locals
 {
@@ -124,4 +127,6 @@ private:
 	std::unique_ptr< QtFramework_Locals::QtCommandEventListener > commandEventListener_;
 };
 
+}
 #endif
+

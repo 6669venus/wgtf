@@ -3,6 +3,8 @@
 
 #include "core_command_system/command_instance.hpp"
 
+namespace wgt
+{
 class DisplayObject
 {
 public:
@@ -15,4 +17,6 @@ private:
 };
 
 
+}
 #endif //DISPLAY_OBJECT_HPP
+

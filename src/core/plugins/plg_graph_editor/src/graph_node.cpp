@@ -9,6 +9,8 @@
 #include <core_reflection/i_definition_manager.hpp>
 #include <core_reflection/property_accessor.hpp>
 
+namespace wgt
+{
 class ConnectionSlotsModel : public BaseModel<ConnectionSlot>
 {
     typedef BaseModel<ConnectionSlot> TBase;
@@ -117,5 +119,7 @@ void GraphNode::PosXChanged(const float& x)
 
 void GraphNode::PosYChanged(const float& y)
 {
+
+}
 
 }

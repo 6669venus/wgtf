@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class ObjectHandle;
 
 DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
@@ -61,5 +63,7 @@ DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 
 DECLARE_INTERFACE_END()
 
+}
 #endif // I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP
+
 

@@ -15,6 +15,8 @@
 #include <core_dependency_system/i_interface.hpp>
 #include "core_serialization/i_file_system.hpp"
 
+namespace wgt
+{
 class FileSystem : public Implements < IFileSystem >
 {
 public:
@@ -29,4 +31,6 @@ public:
 	virtual bool writeFile(const char* path, const void* data, size_t len, std::ios::openmode mode) override;
 };
 
+}
 #endif // FILE_SYSTEM_H_
+

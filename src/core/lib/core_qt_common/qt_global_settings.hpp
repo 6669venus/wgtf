@@ -3,6 +3,8 @@
 
 #include <QtQuick/QQuickItem>
 
+namespace wgt
+{
 class QtGlobalSettings: public QQuickItem
 {
 	Q_OBJECT
@@ -47,4 +49,6 @@ private:
 	bool wgNativeRendering_;
 };
 
+}
 #endif
+

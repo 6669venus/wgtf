@@ -13,6 +13,8 @@
 #include <QThread>
 
 
+namespace wgt
+{
 class WGTreeModel::Impl
 {
 public:
@@ -668,3 +670,5 @@ void WGTreeModel::endRemoveRows( const QModelIndex &parent,	int first, int last 
 	}
 }
 
+
+}

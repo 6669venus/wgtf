@@ -6,6 +6,8 @@
 #include "core_reflection/i_definition_manager.hpp"
 
 
+namespace wgt
+{
 namespace Reflection_Utils
 {
 
@@ -17,4 +19,5 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( ReflectedCollectionEraseCommandParameters );
 }
 
+}
 }

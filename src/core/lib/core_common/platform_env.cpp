@@ -6,6 +6,8 @@
 #include <windows.h>
 #endif
 
+namespace wgt
+{
 bool Environment::getValue( const char* name, char* value, size_t valueSize )
 {
 	if (!name || !value)
@@ -67,4 +69,6 @@ bool Environment::unsetValue( const char* name )
 	#endif // __APPLE__
 
 	return ret != 0;
+}
+
 }

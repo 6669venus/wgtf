@@ -10,6 +10,8 @@
 #include <string>
 #include <functional>
 
+namespace wgt
+{
 class IPluginContextManager;
 
 class GenericPluginManager
@@ -57,4 +59,6 @@ private:
     bool applyDebugPostfix;
 };
 
+}
 #endif //GENERIC_PLUGIN_MANAGER_HPP
+

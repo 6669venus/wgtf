@@ -4,6 +4,8 @@
 #include "core_generic_plugin/interfaces/i_application.hpp"
 
 
+namespace wgt
+{
 class IComponentContext;
 
 
@@ -22,3 +24,5 @@ public:
 private:
 	IComponentContext & contextManager_;
 };
+
+}

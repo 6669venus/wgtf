@@ -14,6 +14,8 @@
 #include "core/testing/reflection_objects_test/test_methods_object.hpp"
 
 
+namespace wgt
+{
 struct TestMethodsFixture
 	: public TestReflectionFixture
 {
@@ -121,4 +123,6 @@ TEST_F( TestMethodsFixture, methods )
 	result = pa.invoke( Variant( int( 5 ) ) );
 	double testDoubleResult = result.value<double>();
 	CHECK( testDoubleResult == 5.0 );
+}
+
 }

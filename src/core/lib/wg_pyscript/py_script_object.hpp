@@ -12,6 +12,8 @@
 #include <sstream>
 
 
+namespace wgt
+{
 namespace PyScript
 {
 
@@ -2089,4 +2091,6 @@ inline int setData( PyObject * pObj, ScriptObject & rScriptObject,
 
 } // namespace PyScript
 
+}
 #endif // PY_SCRIPT_OBJECT_HPP
+

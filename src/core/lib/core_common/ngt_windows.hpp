@@ -20,7 +20,10 @@
 	# define vsnprintf _vsnprintf
 	#endif
 #endif
+namespace wgt
+{
 	typedef unsigned __int64 __uint64;
+}
 #endif
 
 #include "platform_dbg.hpp"
@@ -56,6 +59,8 @@
 #define SYMOPT_DEFERRED_LOADS 0x2
 #define SYMOPT_UNDNAME 0x4
 
+namespace wgt
+{
 typedef void VOID;
 typedef void* PVOID;
 typedef char* LPTSTR;
@@ -282,8 +287,9 @@ VOID WINAPI Sleep(
 
 bool MoveFileA(const char* path, const char* new_path);
 
+}
 
 
 #endif // __APPLE__
-
 #endif // NGT_WINDOWS_HPP_INCLUDED
+

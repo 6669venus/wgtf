@@ -7,6 +7,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 const char * TestCommand1::getId() const
 {
 	const char * s_Id = getClassIdentifier<TestCommand1>();
@@ -63,3 +65,5 @@ ObjectHandle TestCommand2::execute( const ObjectHandle & arguments ) const
 	return nullptr;
 }
 
+
+}

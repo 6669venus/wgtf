@@ -5,6 +5,8 @@
 #include <sstream>
 #include <mutex>
 
+namespace wgt
+{
 struct TokenizedStringFilter::Implementation
 {
 	Implementation( TokenizedStringFilter & self );
@@ -121,4 +123,6 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 	}
 
 	return true;
+}
+
 }

@@ -3,6 +3,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 SelectionHandler::SelectionHandler()
 {
 }
@@ -42,3 +44,5 @@ const std::vector< int > & SelectionHandler::getSelectedRows() const
 }
 
 
+
+}

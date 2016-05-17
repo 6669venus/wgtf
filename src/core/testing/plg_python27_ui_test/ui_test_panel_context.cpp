@@ -5,6 +5,8 @@
 #include "metadata/ui_test_panel_context.mpp"
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -81,3 +83,5 @@ void PanelContext::updateValues()
 	callMethod( newStylePythonObject_, definitionManager, methodName );
 }
 
+
+}

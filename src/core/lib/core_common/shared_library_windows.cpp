@@ -3,6 +3,8 @@
 #include "ngt_windows.hpp"
 
 
+namespace wgt
+{
 bool SharedLibrary::load(const char* fileName)
 {
 	unload();
@@ -53,3 +55,5 @@ void* SharedLibrary::findRawSymbol(const char* name) const
 	return reinterpret_cast<void*>(GetProcAddress(mod, name));
 }
 
+
+}

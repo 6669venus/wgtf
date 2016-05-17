@@ -3,6 +3,8 @@
 
 #include <QQuickItem>
 
+namespace wgt
+{
 class QtPalette : public QQuickItem
 {
 	Q_OBJECT
@@ -166,4 +168,6 @@ protected:
 
 };
 
+}
 #endif // QT_PALETTE_H
+

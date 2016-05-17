@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+namespace wgt
+{
 QtConnectionHolder::QtConnectionHolder()
 {
 }
@@ -30,4 +32,5 @@ QtConnectionHolder& QtConnectionHolder::operator+=( const QMetaObject::Connectio
 	assert( connection );
 	connections_.push_back( connection );
 	return *this;
+}
 }

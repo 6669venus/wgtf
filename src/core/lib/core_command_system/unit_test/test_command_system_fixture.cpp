@@ -12,6 +12,8 @@
 #include "core_command_system/env_system.hpp"
 
 //==============================================================================
+namespace wgt
+{
 TestCommandSystemFixture::TestCommandSystemFixture()
 	: application_( new TestApplication )
 	, objectManager_( new ObjectManager() )
@@ -92,4 +94,6 @@ void TestCommandSystemFixture::multiCommandStatusChanged(
 	ICommandEventListener::MultiCommandStatus multiCommandStatus ) const
 {
 	multiCommandStatus_ = multiCommandStatus;
+}
+
 }

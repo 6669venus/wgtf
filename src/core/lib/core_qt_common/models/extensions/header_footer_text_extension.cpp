@@ -6,6 +6,8 @@
 #include "core_qt_common/models/wg_tree_model.hpp"
 
 
+namespace wgt
+{
 HeaderFooterTextExtension::HeaderFooterTextExtension()
 {
 }
@@ -22,4 +24,6 @@ QHash<int, QByteArray> HeaderFooterTextExtension::roleNames() const
 	registerRole( headerTextRole::roleName_, roleNames );
 	registerRole( footerTextRole::roleName_, roleNames );
 	return roleNames;
+}
+
 }

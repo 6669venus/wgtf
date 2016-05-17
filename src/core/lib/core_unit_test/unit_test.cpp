@@ -28,6 +28,8 @@
 #include <cstring>
 
 
+namespace wgt
+{
 namespace BWUnitTest
 {
 
@@ -190,3 +192,5 @@ int unitTestInfo( const char *_Format, ... )
 } // namespace BWUnitTest
 
 // unit_test.cpp
+
+}

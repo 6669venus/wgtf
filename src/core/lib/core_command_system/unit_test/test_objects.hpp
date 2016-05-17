@@ -17,6 +17,8 @@
 
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 class TestCommandObject 
 {
 	DECLARE_REFLECTED
@@ -155,4 +157,6 @@ private:
 	CommandThreadAffinity threadAffinity_;
 };
 
+}
 #endif //TEST_OBJECTS2_HPP
+

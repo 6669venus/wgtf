@@ -11,6 +11,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 XMLReader::StackItem::StackItem( Variant value ):
 	value( std::move( value ) ),
 	object(),
@@ -410,3 +412,5 @@ void XMLReader::characterData( const char* data, size_t length )
 }
 
 
+
+}

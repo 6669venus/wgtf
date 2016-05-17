@@ -15,6 +15,8 @@
 #include <QThread>
 
 
+namespace wgt
+{
 class WGListModel::Impl
 {
 public:
@@ -665,3 +667,5 @@ void WGListModel::endRemoveRows( const QModelIndex &parent,	int first, int last 
 	}
 }
 
+
+}

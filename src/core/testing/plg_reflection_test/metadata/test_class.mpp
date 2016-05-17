@@ -4,6 +4,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE( TestBase, MetaNone() )
 	EXPOSE( "Name", baseName_, MetaNone() )
 END_EXPOSE()
@@ -18,3 +20,5 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestClass::InnerClass, MetaNone() )
 	EXPOSE( "InnerName", innerName_, MetaNone() )
 END_EXPOSE()
+
+}

@@ -16,6 +16,8 @@
 #include <QTextStream>
 #include <QRegExp>
 
+namespace wgt
+{
 class QtPluginContextCreator
 	: public Implements< IComponentContextCreator >
 {
@@ -113,3 +115,5 @@ private:
 
 PLG_CALLBACK_FUNC( QtPlugin )
 
+
+}

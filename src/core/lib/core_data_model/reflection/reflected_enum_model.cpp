@@ -10,6 +10,8 @@
 #include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 
+namespace wgt
+{
 namespace
 {
 	class ReflectedEnumItem : public IItem
@@ -142,4 +144,6 @@ size_t ReflectedEnumModel::size() const
 int ReflectedEnumModel::columnCount() const
 {
 	return 1;
+}
+
 }

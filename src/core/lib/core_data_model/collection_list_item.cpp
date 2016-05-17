@@ -3,6 +3,8 @@
 #include <cassert>
 #include "core_serialization/resizing_memory_stream.hpp"
 
+namespace wgt
+{
 class CollectionListItem::Impl
 {
 public:
@@ -81,3 +83,5 @@ bool CollectionListItem::setData( int column,
 	return false; 
 }
 
+
+}

@@ -11,6 +11,8 @@
 #include <codecvt>
 #include <string>
 
+namespace wgt
+{
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
@@ -281,4 +283,5 @@ namespace UnitTests
 			Assert::IsTrue(!result->hasErrors(), converter.from_bytes(result->errors()).c_str());
 		}
 	};
+}
 }

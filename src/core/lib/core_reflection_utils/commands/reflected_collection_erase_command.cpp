@@ -5,6 +5,8 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/generic/generic_object.hpp"
 
+namespace wgt
+{
 ReflectedCollectionEraseCommand::ReflectedCollectionEraseCommand( IDefinitionManager & definitionManager )
 	: definitionManager_( definitionManager )
 {
@@ -115,4 +117,5 @@ ObjectHandle ReflectedCollectionEraseCommand::getCommandDescription(const Object
 CommandThreadAffinity ReflectedCollectionEraseCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
+}
 }

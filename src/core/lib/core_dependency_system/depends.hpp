@@ -4,6 +4,8 @@
 #include <cassert>
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
+namespace wgt
+{
 class DummyDependsType {};
 
 //==============================================================================
@@ -217,4 +219,5 @@ private:
 	IComponentContext & context_;
 };
 
+}
 #endif //DEPENDS_HPP

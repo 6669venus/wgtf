@@ -4,7 +4,10 @@
 #include "core_data_model/i_tree_model.hpp"
 #include "core_data_model/i_item.hpp"
 
+namespace wgt
+{
 class TestStringData;
 
 
+}
 #endif // DATA_MODEL_UNIT_TEST_TREE_MODEL_HPP

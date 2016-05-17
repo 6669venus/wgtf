@@ -6,6 +6,8 @@
 #include "wg_condition_variable.hpp"
 
 /// Read / write lock implementation with mutex and conditional variable
+namespace wgt
+{
 class wg_read_write_lock
 {
 public:
@@ -49,4 +51,6 @@ private:
 };
 
 
+}
 #endif // WG_READ_WRITE_LOCK
+

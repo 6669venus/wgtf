@@ -11,6 +11,8 @@
 #include <utility>
 #include <cstdint>
 
+namespace wgt
+{
 class ObjectHandle;
 class IBaseProperty;
 class IDefinitionManager;
@@ -61,5 +63,7 @@ private:
 };
 
 
+}
 #endif
+
 

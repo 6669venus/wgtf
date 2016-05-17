@@ -14,6 +14,8 @@
 #include "models/bezier_point_data.hpp"
 #include <memory>
 
+namespace wgt
+{
 class BezierPoint;
 
 class ICurveInterpolator
@@ -40,4 +42,5 @@ public:
 
 typedef std::unique_ptr<ICurveInterpolator> ICurveInterpolatorPtr;
 
+}
 #endif // I_CURVE_INTERPOLATOR_H_

@@ -13,6 +13,8 @@
 #include "core_data_model/file_system/file_system_model.hpp"
 #include "core_serialization/i_file_system.hpp"
 
+namespace wgt
+{
 class ICustomModelInterface
 {
 	DECLARE_REFLECTED
@@ -209,4 +211,6 @@ void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
 		uiApplication->removeView( *testView_ );
 		testView_.reset();
 	}
+}
+
 }

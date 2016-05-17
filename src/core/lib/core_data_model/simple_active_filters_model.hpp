@@ -3,6 +3,8 @@
 
 #include "i_active_filters_model.hpp"
 
+namespace wgt
+{
 class IDefinitionManager;
 class IUIFramework;
 
@@ -55,4 +57,5 @@ private:
 	std::unique_ptr<Impl> impl_;
 };
 
+}
 #endif //SIMPLE_ACTIVE_FILTERS_MODEL_HPP

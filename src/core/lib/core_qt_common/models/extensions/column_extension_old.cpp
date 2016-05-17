@@ -2,6 +2,8 @@
 #include "core_qt_common/models/adapters/column_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
 
+namespace wgt
+{
 struct ColumnExtensionOld::Implementation
 {
 	std::vector< IndexedAdapter< ColumnListAdapter > > columnModels_;
@@ -95,4 +97,5 @@ void ColumnExtensionOld::onRowsRemoved(
 	const QModelIndex & parent, int first, int last )
 {
 	impl_->redundantColumnModels_.clear();
+}
 }

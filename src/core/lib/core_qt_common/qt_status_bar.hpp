@@ -5,6 +5,8 @@
 
 class QStatusBar;
 
+namespace wgt
+{
 class QtStatusBar : public IStatusBar
 {
 public:
@@ -18,4 +20,5 @@ private:
 	QStatusBar & qStatusBar_;
 };
 
+}
 #endif//QT_STATUS_BAR_HPP

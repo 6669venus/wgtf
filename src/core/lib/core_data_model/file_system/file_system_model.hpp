@@ -5,6 +5,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IFileSystem;
 
 class FileSystemModel : public AbstractTreeModel
@@ -24,4 +26,5 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
+}
 #endif//FILE_SYSTEM_MODEL_HPP

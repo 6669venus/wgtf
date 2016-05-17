@@ -3,6 +3,8 @@
 
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 class ICommandManager;
 class IListModel;
 
@@ -27,4 +29,6 @@ private:
 };
 
 
+}
 #endif // MACROS_OBJECT_HPP
+

@@ -17,6 +17,8 @@
 
 // =============================================================================
 
+namespace wgt
+{
 class TestPropertyFixtureBase
 	: public TestReflectionFixture
 {
@@ -544,3 +546,4 @@ public:
 #define X( TEST ) IMPLEMENT_TEST_F( TestPropertyFixtureArg, TEST )
 TESTS
 #undef X
+}

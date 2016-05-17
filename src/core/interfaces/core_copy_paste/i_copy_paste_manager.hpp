@@ -3,6 +3,8 @@
 
 #include "core_serialization/i_datastream.hpp"
 
+namespace wgt
+{
 class ICopyableObject;
 class ICopyPasteManager
 {
@@ -20,4 +22,6 @@ public:
 };
 
 
+}
 #endif // I_COPY_PASTE_MANAGER_HPP
+

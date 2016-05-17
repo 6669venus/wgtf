@@ -3,6 +3,8 @@
 #include "metadata/connection_slot.mpp"
 #include "graph_node.h"
 
+namespace wgt
+{
 void ConnectionSlot::Init(Params&& params)
 {
     title = std::move(params.title);
@@ -29,4 +31,6 @@ ObjectHandleT<GraphNode> ConnectionSlot::GetParentNode()
 {
     assert(parent != nullptr);
     return parent;
+}
+
 }

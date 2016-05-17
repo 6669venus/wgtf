@@ -8,6 +8,8 @@
 #include <map>
 #include <memory>
 
+namespace wgt
+{
 class IAction;
 class IComponent;
 class IMenu;
@@ -33,4 +35,5 @@ public:
 	virtual const Windows & windows() const = 0;
 };
 
+}
 #endif//I_UI_APPLICATION_HPP

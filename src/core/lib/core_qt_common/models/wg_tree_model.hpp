@@ -9,6 +9,8 @@
 #include "qt_model_macros.hpp"
 
 
+namespace wgt
+{
 class IModelExtension;
 
 
@@ -127,5 +129,7 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
+}
 #endif // QT_TREE_MODEL_HPP
+
 

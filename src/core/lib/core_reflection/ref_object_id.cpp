@@ -11,6 +11,8 @@
 #include <uuid/uuid.h>
 #endif
 
+namespace wgt
+{
 RefObjectId RefObjectId::s_zero_( 0, 0, 0, 0 );
 
 //==============================================================================
@@ -150,4 +152,5 @@ bool RefObjectId::fromString( const std::string & s, unsigned int * data )
 	}
 
 	return true;
+}
 }

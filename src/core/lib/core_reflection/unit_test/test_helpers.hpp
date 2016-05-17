@@ -5,6 +5,8 @@
 #include <map>
 
 
+namespace wgt
+{
 template < class T >
 std::ostream& operator << ( std::ostream& os, const std::vector< T >& vec )
 {
@@ -23,4 +25,6 @@ std::ostream& operator << ( std::ostream& os, const std::map< K, T >& m )
 }
 
 
+}
 #endif //TEST_HELPER_HPP
+

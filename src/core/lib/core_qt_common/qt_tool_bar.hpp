@@ -5,6 +5,8 @@
 
 class QToolBar;
 
+namespace wgt
+{
 class QtToolBar : public QtMenu
 {
 public:
@@ -17,4 +19,5 @@ private:
 	QToolBar & qToolBar_;
 };
 
+}
 #endif//QT_TOOL_BAR_HPP

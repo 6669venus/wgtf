@@ -13,6 +13,8 @@
 #include "core_variant/variant.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 namespace QtHelpers
 {
 
@@ -154,3 +156,4 @@ QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const char * relativePath )
 }
 
 };
+}

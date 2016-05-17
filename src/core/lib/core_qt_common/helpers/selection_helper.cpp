@@ -7,6 +7,8 @@
 #include <QPersistentModelIndex>
 
 
+namespace wgt
+{
 //==============================================================================
 SelectionHelper::SelectionHelper( QObject * parent )
     : QObject( parent )
@@ -85,4 +87,6 @@ void SelectionHelper::select( const QList<QVariant>& selectionList )
 	source_->setSelectedItems( selectedItems );
 	source_->setSelectedRows( selectedRows );
 	source_->signalPostSelectionChanged();
+}
+
 }

@@ -4,6 +4,8 @@
 
 
 
+namespace wgt
+{
 QtCollectionModel::QtCollectionModel( std::unique_ptr<CollectionModel>&& source )
 	: QtListModel( *source.get() ), model_( std::move( source ) )
 {}
@@ -161,4 +163,6 @@ bool QtCollectionModel::isMapping() const
 	auto & collection = collectionModel.getSource();
 	
 	return collection.isMapping();
+}
+
 }

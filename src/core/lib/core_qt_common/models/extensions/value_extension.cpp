@@ -6,6 +6,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/interfaces/i_class_definition.hpp"
 
+namespace wgt
+{
 ValueExtension::ValueExtension()
 {
 	
@@ -230,4 +232,5 @@ int ValueExtension::countRoles(
 	}
 
 	return valueExtension->roles_.count();
+}
 }

@@ -6,6 +6,8 @@
 #include "core_qt_common/helpers/wg_filter.hpp"
 #include <memory>
 
+namespace wgt
+{
 class WGFilteredTreeModel : public WGTreeModel
 {
 	Q_OBJECT
@@ -37,4 +39,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // WG_FILTERED_TREE_MODEL_HPP
+

@@ -12,6 +12,8 @@
 #include <QEvent>
 #include <QCoreApplication>
 
+namespace wgt
+{
 QtDockRegion::QtDockRegion( IQtFramework & qtFramework, QtWindow & qtWindow, QDockWidget & qDockWidget )
 	: qtFramework_( qtFramework )
 	, qtWindow_( qtWindow )
@@ -260,4 +262,5 @@ void QtDockRegion::removeView( IView & view )
 	// call this function to let IView control the qWidget's life-cycle again.
 	qtFramework_.retainQWidget( view );
 	dockWidget = nullptr;
+}
 }

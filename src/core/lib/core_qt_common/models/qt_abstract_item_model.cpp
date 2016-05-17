@@ -4,6 +4,8 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+namespace wgt
+{
 namespace
 {
 	class ItemData : public QObject
@@ -210,4 +212,5 @@ bool QtAbstractItemModel::removeColumn( int column, QObject * parent )
 {
 	auto parentIndex = itemToIndex( parent );
 	return QAbstractItemModel::removeColumn( column, parentIndex );
+}
 }

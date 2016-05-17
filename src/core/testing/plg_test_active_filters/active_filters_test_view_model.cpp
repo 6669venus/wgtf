@@ -8,6 +8,8 @@
 // Implementation (PIMPL)
 //------------------------------------------------------------------------------
 
+namespace wgt
+{
 struct ActiveFiltersTestViewModel::Implementation
 {
 	Implementation( ActiveFiltersTestViewModel& self );
@@ -312,4 +314,6 @@ size_t SampleActiveFiltersTreeModel::size( const IItem* parent ) const
 int SampleActiveFiltersTreeModel::columnCount() const
 {
 	return 1;
+}
+
 }

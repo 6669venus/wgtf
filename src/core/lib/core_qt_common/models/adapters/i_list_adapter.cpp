@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+namespace wgt
+{
 IListAdapter::~IListAdapter()
 {
 }
@@ -102,4 +104,5 @@ QModelIndex IListAdapter::cachedAdaptedIndex(int row, int column, const QModelIn
 	auto index = adaptedIndex( row, column, parent );
 	cachedAdaptedIndices_[row] = index;
 	return index;
+}
 }

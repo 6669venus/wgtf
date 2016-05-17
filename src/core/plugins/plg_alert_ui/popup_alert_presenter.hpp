@@ -5,6 +5,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_ui_framework/i_view.hpp"
 
+namespace wgt
+{
 class AlertPageModel;
 class IAction;
 class IComponentContext;
@@ -33,4 +35,5 @@ private:
 	int alertCounter_;
  };
 
+}
 #endif // POPUP_ALERT_PRESENTER_HPP

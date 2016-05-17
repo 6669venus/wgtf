@@ -2,6 +2,8 @@
 #include "test_objects_common.hpp"
 
 //==============================================================================
+namespace wgt
+{
 TestStructure::TestStructure()
 	INIT_DATA()
 {
@@ -27,4 +29,5 @@ void TestInheritedStruct::init( const IDefinitionManager & defManager )
 {
 	TestStructure::init( defManager );
 	INIT_COL_PRE_DERIVED( defManager )
+}
 }

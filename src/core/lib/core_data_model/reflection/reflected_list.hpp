@@ -3,6 +3,8 @@
 
 #include "core_data_model/variant_list.hpp"
 
+namespace wgt
+{
 class IDefinitionManager;
 class PropertyAccessorListener;
 
@@ -17,4 +19,6 @@ private:
 	IDefinitionManager* defManager_;
 };
 
+}
 #endif // REFLECTED_LIST_HPP
+

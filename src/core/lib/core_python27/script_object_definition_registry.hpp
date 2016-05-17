@@ -9,6 +9,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 class IClassDefinition;
 class IComponentContext;
 class IDefinitionHelper;
@@ -81,3 +83,5 @@ private:
 
 } // namespace ReflectedPython
 
+
+}

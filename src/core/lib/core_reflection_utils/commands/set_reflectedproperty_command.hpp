@@ -4,6 +4,8 @@
 #include "core_command_system/command.hpp"
 #include "core_reflection/reflected_object.hpp"
 
+namespace wgt
+{
 class IDefinitionManager;
 
 class ReflectedPropertyCommandArgument
@@ -51,4 +53,5 @@ private:
 	IDefinitionManager & definitionManager_;
 };
 
+}
 #endif //SET_REFLECTED_PROPERTY_COMMAND_HPP

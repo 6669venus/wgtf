@@ -4,6 +4,8 @@
 #include "object_handle_storage.hpp"
 #include "object_handle.hpp"
 
+namespace wgt
+{
 struct ObjectMetaData;
 typedef std::unordered_set< ObjectMetaData * > ObjIdSet;
 
@@ -56,4 +58,6 @@ private:
 	std::shared_ptr< ObjectMetaData > metaData_;
 };
 
+}
 #endif // OBJECT_HANDLE_STORAGE_SHARED_HPP
+

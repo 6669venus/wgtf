@@ -12,6 +12,8 @@
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
 
+namespace wgt
+{
 ReflectionSerializer::ReflectionSerializer( ISerializationManager & serializationManager , 
 										    IMetaTypeManager & metaTypeManager, 
 										    IObjectManager & objManager,
@@ -365,4 +367,6 @@ void ReflectionSerializer::readPropertyValue( const char * valueType, PropertyAc
 			}
 		}
 	}
+}
+
 }

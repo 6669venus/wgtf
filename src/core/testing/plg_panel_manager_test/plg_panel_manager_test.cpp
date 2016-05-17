@@ -11,6 +11,8 @@
 #include "interfaces/panel_manager/i_panel_manager.hpp"
 
 //==============================================================================
+namespace wgt
+{
 class TestPanelManagerPlugin
 	: public PluginMain
 {
@@ -76,3 +78,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC(TestPanelManagerPlugin)
+
+}

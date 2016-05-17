@@ -5,6 +5,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IAction;
 class IComponent;
 class IComponentProvider;
@@ -86,4 +88,6 @@ public:
 	virtual IPreferences * getPreferences() = 0;
 };
 
+}
 #endif//I_UI_FRAMEWORK_HPP
+

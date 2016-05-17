@@ -2,7 +2,21 @@
 
 #ifdef _WIN32
 #include <shlwapi.h>
+#endif
 
+#ifdef __APPLE__
+#include <stdlib.h>
+#include <dirent.h>
+#include <dlfcn.h>
+#include <libgen.h>
+#include <codecvt>
+#include <locale>
+#include "core_logging/logging.hpp"
+#endif
+
+namespace wgt
+{
+#ifdef _WIN32
 namespace
 {
 	bool getPluginsInternal( std::vector< std::wstring > & plugins,
@@ -51,13 +65,6 @@ bool loadPluginsExePath( std::vector< std::wstring >& plugins )
 #endif // _WIN32
 
 #ifdef __APPLE__
-#include <stdlib.h>
-#include <dirent.h>
-#include <dlfcn.h>
-#include <libgen.h>
-#include <codecvt>
-#include <locale>
-#include "core_logging/logging.hpp"
 
 namespace
 {
@@ -107,3 +114,5 @@ namespace FolderPluginLoader
 	}
 }
 #endif // __APPLE__
+
+}

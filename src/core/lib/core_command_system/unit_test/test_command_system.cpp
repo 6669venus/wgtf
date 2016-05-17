@@ -11,6 +11,8 @@
 #include "core_command_system/compound_command.hpp"
 #include "core_command_system/macro_object.hpp"
 
+namespace wgt
+{
 TEST_F( TestCommandFixture, runSingleCommand )
 {
 	auto & controller = getReflectionController();
@@ -325,4 +327,5 @@ TEST_F( TestCommandFixture, alternatingCompoundCommands )
 
 	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::ANY_THREAD ).c_str() );
 	commandManager.waitForInstance( command );
+}
 }

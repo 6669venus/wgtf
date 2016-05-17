@@ -1,6 +1,8 @@
 #ifndef I_ASSET_BROWSER_MANAGER_HPP
 #define I_ASSET_BROWSER_MANAGER_HPP
 
+namespace wgt
+{
 class IAssetListener;
 class IComponentContext;
 
@@ -16,4 +18,5 @@ public:
 	virtual void createView( IComponentContext & context ) = 0;
 };
 
+}
 #endif // I_ASSET_BROWSER_MANAGER_HPP

@@ -7,6 +7,8 @@
 #include <string>
 #include <functional>
 
+namespace wgt
+{
 class Action
 {
 public:
@@ -21,4 +23,5 @@ private:
     TOnTrigger callback;
 };
 
+}
 #endif // __GRAPHEDITOR_ACTION_H__

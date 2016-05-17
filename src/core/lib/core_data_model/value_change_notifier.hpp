@@ -9,6 +9,8 @@
 /**
  *	Wraps a type T, and sends notification events when the value is changed.
  */
+namespace wgt
+{
 template< class T >
 class ValueChangeNotifier
 	: public IValueChangeNotifier
@@ -80,4 +82,6 @@ void ValueChangeNotifier< T >::value( const T& data )
 }
 
 
+}
 #endif // VALUE_CHANGE_NOTIFIER_HPP
+

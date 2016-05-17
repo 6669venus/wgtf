@@ -3,6 +3,8 @@
 
 #include "core_command_system/command.hpp"
 
+namespace wgt
+{
 class ReflectedCollectionInsertCommandParameters
 {
 	DECLARE_REFLECTED
@@ -37,4 +39,5 @@ private:
 	IDefinitionManager & definitionManager_;
 };
 
+}
 #endif // REFLECTED_COLLECTION_INSERT_COMMAND_HPP

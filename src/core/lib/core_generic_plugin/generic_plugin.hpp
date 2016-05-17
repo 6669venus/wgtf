@@ -10,6 +10,8 @@
 	#define PLG_CALLBACK PluginCallback
 #endif
 
+namespace wgt
+{
 enum GenericPluginLoadState
 {
 	Create,
@@ -54,4 +56,5 @@ private:
 	static bool s_ContextInitialized_;
 };
 
+}
 #endif //GENERIC_PLUGIN_HPP

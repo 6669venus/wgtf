@@ -7,6 +7,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class OldTestListItem: public IItem
 {
 public:
@@ -48,4 +50,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif
+

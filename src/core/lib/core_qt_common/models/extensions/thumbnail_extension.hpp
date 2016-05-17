@@ -3,6 +3,8 @@
 
 #include "i_model_extension.hpp"
 
+namespace wgt
+{
 class IQtFramework;
 
 class ThumbnailExtension : public IModelExtension
@@ -22,4 +24,5 @@ private:
 	IQtFramework * qtFramework_;
 };
 
+}
 #endif // THUMBNAIL_EXTENSION_HPP

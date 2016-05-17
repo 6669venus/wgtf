@@ -3,6 +3,8 @@
 
 #include "core_data_model/i_item.hpp"
 
+namespace wgt
+{
 class IAssetPresentationProvider;
 
 /**
@@ -48,4 +50,5 @@ public:
 	virtual bool isCompressed() const = 0;			// This asset is a compressed file (zip, tar, resource pak, etc.)
 };
 
+}
 #endif // I_ASSET_OBJECT_ITEM_HPP

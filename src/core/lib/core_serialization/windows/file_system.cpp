@@ -11,6 +11,8 @@
 #include "core_serialization/file_info.hpp"
 #include "core_serialization/file_data_stream.hpp"
 
+namespace wgt
+{
 using namespace FileAttributes;
 
 HANDLE FindFirstFileExAHelper(const char* path, WIN32_FIND_DATAA& findData)
@@ -152,4 +154,6 @@ bool FileSystem::writeFile(const char* path, const void* data, size_t len, std::
 		return true;
 	}
 	return false;
+}
+
 }

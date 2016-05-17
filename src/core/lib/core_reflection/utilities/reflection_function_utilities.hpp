@@ -6,6 +6,8 @@
 #include "core_reflection/reflected_property.hpp"
 #include <type_traits>
 
+namespace wgt
+{
 template <typename SelfType>
 struct FunctionPropertyHelper
 {
@@ -65,4 +67,5 @@ struct FunctionPropertyHelper
 	}
 };
 
+}
 #endif //REFLECTION_FUNCTION_UTILITIES_HPP

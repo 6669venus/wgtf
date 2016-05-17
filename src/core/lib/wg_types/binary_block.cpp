@@ -4,6 +4,8 @@
 #include <memory>
 
 //------------------------------------------------------------------------------
+namespace wgt
+{
 BinaryBlock::BinaryBlock( const void * data, size_t len, bool externallyOwned )
 	: data_( nullptr )
 	, length_( len )
@@ -77,3 +79,5 @@ int BinaryBlock::compare( BinaryBlock& that ) const
 	return memcmp( this->data_, that.data_, (size_t)this->length_ );
 }
 
+
+}

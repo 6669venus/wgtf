@@ -10,6 +10,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class ListModelTestPlugin
 	: public PluginMain
 {
@@ -125,3 +127,5 @@ public:
 
 PLG_CALLBACK_FUNC( ListModelTestPlugin )
 
+
+}

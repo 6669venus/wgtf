@@ -3,6 +3,8 @@
 
 #include <QQuickItem>
 
+namespace wgt
+{
 class QtDefaultSpacing: public QQuickItem
 {
 	Q_OBJECT
@@ -67,4 +69,6 @@ private:
 	int labelColumnWidth_;
 };
 
+}
 #endif
+

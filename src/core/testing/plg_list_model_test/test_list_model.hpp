@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class OldTestListModel: public IListModel
 {
 public:
@@ -56,4 +58,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif
+

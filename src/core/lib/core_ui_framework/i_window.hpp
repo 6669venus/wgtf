@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 
+namespace wgt
+{
 class IMenu;
 class IRegion;
 class IUIApplication;
@@ -45,4 +47,5 @@ public:
 	SignalConfirm signalTryClose;
 };
 
+}
 #endif //I_WINDOW_HPP

@@ -5,6 +5,8 @@
 #include "core_reflection/reflected_types.hpp"
 
 //==============================================================================
+namespace wgt
+{
 TestDataModelFixture::TestDataModelFixture()
 	: objectManager_( new ObjectManager() )
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
@@ -33,4 +35,6 @@ IObjectManager * TestDataModelFixture::getObjectManager() const
 IDefinitionManager * TestDataModelFixture::getDefinitionManager() const
 {
 	return definitionManager_.get();
+}
+
 }

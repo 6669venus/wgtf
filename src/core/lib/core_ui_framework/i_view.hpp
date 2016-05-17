@@ -1,6 +1,8 @@
 #ifndef I_VIEW_HPP
 #define I_VIEW_HPP
 
+namespace wgt
+{
 struct LayoutHint;
 class IView;
 
@@ -28,4 +30,5 @@ public:
 	virtual void deregisterListener( IViewEventListener* listener ) = 0;
 };
 
+}
 #endif // I_VIEW_HPP

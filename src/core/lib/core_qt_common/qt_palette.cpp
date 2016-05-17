@@ -4,6 +4,8 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QStyleFactory>
 
+namespace wgt
+{
 QtPalette::QtPalette(QQuickItem* parent)
 	: QQuickItem( parent ), timerid_( 0 )
 {
@@ -426,4 +428,5 @@ void QtPalette::onPaletteChanged()
 		// Not sure why the signal isn't emitted when setPalette is called need to manually emit the signal
 		emit qApp->paletteChanged(palette);
 	}
+}
 }

@@ -8,6 +8,8 @@
 class QString;
 class QVariant;
 
+namespace wgt
+{
 /**
  *	WGTokenizedStringFilter
  *	A tokenized string filter wrapper around a TokenizedStringFilter implementation.
@@ -53,4 +55,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // WG_TOKENIZED_STRING_FILTER_HPP
+

@@ -4,6 +4,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class TypeSystemHolder
 {
 public:
@@ -57,3 +59,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC(TypeSystemPlugin)
+
+}

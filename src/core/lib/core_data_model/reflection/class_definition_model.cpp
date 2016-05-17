@@ -7,6 +7,8 @@
 #include "core_reflection/utilities/reflection_utilities.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 namespace
 {
 	class ClassDefinitionItem : public IItem
@@ -99,4 +101,6 @@ size_t ClassDefinitionModel::size() const
 int ClassDefinitionModel::columnCount() const
 {
 	return 1;
+}
+
 }

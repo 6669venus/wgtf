@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class CommandInstance;
 
 enum class CommandOperation
@@ -31,4 +33,5 @@ public:
 	virtual void onNonBlockingProcessExecution( const char * commandId ) const { }
 };
 
+}
 #endif //I_COMMAND_EVENT_LISTENER_HPP

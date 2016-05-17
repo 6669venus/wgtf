@@ -13,6 +13,8 @@
  *  (e.g. CHECK(), CHECK_MESSAGE() etc) from anywhere other than a TEST() {}
  *  block.
  */
+namespace wgt
+{
 class TestCase
 {
 public:
@@ -175,3 +177,5 @@ protected:
 
 
 // multiproc_test_case.hpp
+
+}

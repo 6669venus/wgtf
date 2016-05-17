@@ -11,6 +11,8 @@
 
 #pragma once
 
+namespace wgt
+{
 namespace FileAttributes
 {
 	enum FileAttribute
@@ -72,4 +74,5 @@ public:
 };
 typedef std::shared_ptr<IFileInfo> IFileInfoPtr;
 
+}
 #endif // I_FILE_INFO_H_

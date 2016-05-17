@@ -8,6 +8,8 @@
  *	StringFilter
  *  A simple string filter implementation.
  */
+namespace wgt
+{
 class StringFilter : public IItemFilter
 {
 public:
@@ -26,4 +28,6 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // STRING_FILTER_HPP
+

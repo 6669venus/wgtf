@@ -5,6 +5,8 @@
 #include <QItemSelection>
 #include <memory>
 
+namespace wgt
+{
 class TreeExtension : public IModelExtension
 {
 	Q_OBJECT
@@ -37,4 +39,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // TREE_EXTENSION_HPP

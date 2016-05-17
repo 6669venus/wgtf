@@ -13,6 +13,8 @@
 
 #include "interfaces/i_curve_interpolator.hpp"
 
+namespace wgt
+{
 class CubicBezierInterpolator : public ICurveInterpolator
 {
 public:
@@ -24,4 +26,5 @@ public:
 
 };
 
+}
 #endif // CUBIC_BEZIER_INTERPOLATOR_H_

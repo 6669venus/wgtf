@@ -12,6 +12,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class TreeModelTestPlugin
 	: public PluginMain
 {
@@ -103,3 +105,5 @@ public:
 
 PLG_CALLBACK_FUNC( TreeModelTestPlugin )
 
+
+}

@@ -1,5 +1,7 @@
 #include "signal.hpp"
 
+namespace wgt
+{
 Connection::Connection()
 {
 }
@@ -110,4 +112,6 @@ void ConnectionHolder::add( const Connection & connection )
 void ConnectionHolder::operator+=( const Connection & connection )
 {
 	add( connection );
+}
+
 }

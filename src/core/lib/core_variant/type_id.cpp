@@ -7,6 +7,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 TypeId::TypeId( const std::string & name )
 	: name_( nullptr )
 	, hashCode_( 0 )
@@ -220,4 +222,5 @@ bool TypeId::operator != ( const TypeId & other ) const
 bool TypeId::operator < (const TypeId & other ) const
 {
 	return hashCode_ < other.getHashcode();
+}
 }

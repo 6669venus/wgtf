@@ -1,13 +1,15 @@
 #ifndef __PLATFORM_PATH_HPP__
 #define __PLATFORM_PATH_HPP__
 
-void AddDllExtension(wchar_t* file);
-
 #if defined( _WIN32 )
 #include <windows.h>
 #include <shlwapi.h>
 #include <shellapi.h>
 #endif
+
+namespace wgt
+{
+void AddDllExtension(wchar_t* file);
 
 #ifdef __APPLE__
 
@@ -35,4 +37,6 @@ void PathFileName(wchar_t* file, const wchar_t* path);
 
 #endif // __APPLE__
 
+}
 #endif // __PLATFORM_PATH_HPP__
+

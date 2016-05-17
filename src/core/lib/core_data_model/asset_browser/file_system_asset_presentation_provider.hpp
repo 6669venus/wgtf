@@ -7,6 +7,8 @@
 #include <map>
 
 
+namespace wgt
+{
 class FileSystemAssetPresentationProvider : public IAssetPresentationProvider
 {
 public:
@@ -45,4 +47,5 @@ private:
 	ThumbnailData testStatusIcon_;
 };
 
+}
 #endif // FILE_SYSTEM_PRESENTATION_PROVIDER_HPP

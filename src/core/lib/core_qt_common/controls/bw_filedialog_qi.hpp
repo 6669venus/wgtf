@@ -15,6 +15,8 @@
 
 class QFileDialog;
 
+namespace wgt
+{
 class BWFileDialogQI
 	: public QObject
 {
@@ -58,4 +60,5 @@ private:
 	void createFileDialog();
 };
 
+}
 #endif //BW_FILEDIALO_QI_HPP

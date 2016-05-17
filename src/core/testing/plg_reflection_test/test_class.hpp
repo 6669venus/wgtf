@@ -4,6 +4,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include <string>
 
+namespace wgt
+{
 class TestBase
 {
 	DECLARE_REFLECTED
@@ -54,4 +56,6 @@ private:
 	InnerClass innerClass_;
 };
 
+}
 #endif // TEST_CLASS_HPP
+

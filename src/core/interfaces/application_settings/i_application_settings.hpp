@@ -11,6 +11,8 @@
 
 #pragma once
 
+namespace wgt
+{
 class IApplicationSettings
 {
 public:
@@ -23,4 +25,5 @@ public:
 	virtual double		getDouble	(const char* name) = 0;
 };
 
+}
 #endif // I_APPLICATION_SETTINGS_H_

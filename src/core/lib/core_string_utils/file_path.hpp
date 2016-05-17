@@ -24,6 +24,8 @@
  * \author m_martin
  * \date August 2015
  */
+namespace wgt
+{
 class FilePath
 {
 public:
@@ -140,4 +142,5 @@ private:
 
 FilePath operator+(const FilePath& lhs, const FilePath& rhs);
 
+}
 #endif // FILE_PATH_H_

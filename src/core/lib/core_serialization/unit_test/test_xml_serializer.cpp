@@ -27,6 +27,8 @@
 
 
 
+namespace wgt
+{
 	IDefinitionManager& definitionManager();
 
 	template< typename T >
@@ -315,3 +317,5 @@ TEST( XMLSerializer_reflected )
 }
 
 
+
+}

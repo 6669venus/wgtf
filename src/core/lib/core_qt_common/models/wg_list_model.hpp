@@ -12,6 +12,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 class IModelExtension;
 
 
@@ -134,5 +136,7 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
+}
 #endif // QT_LIST_MODEL_HPP
+
 

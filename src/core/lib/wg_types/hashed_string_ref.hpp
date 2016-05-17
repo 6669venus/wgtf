@@ -3,6 +3,8 @@
 
 #include <functional>
 
+namespace wgt
+{
 class HashedStringRef
 {
 public:
@@ -20,19 +22,20 @@ private:
 	size_t			length_;
 };
 
+}
+
 namespace std
 {
 
 	template<>
-	struct hash< HashedStringRef >
-		: public std::unary_function< const HashedStringRef, std::size_t >
+	struct hash< wgt::HashedStringRef >
+		: public unary_function< const wgt::HashedStringRef, size_t >
 	{
-		std::size_t operator()(const HashedStringRef & s) const
+		size_t operator()(const wgt::HashedStringRef & s) const
 		{
 			return s.hash();
 		}
 	};
 
 }
-
 #endif // HASHED_STRING_REF_HPP

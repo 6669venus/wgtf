@@ -7,6 +7,8 @@
 #include <core_dependency_system/i_interface.hpp>
 #include <core_reflection/i_definition_manager.hpp>
 
+namespace wgt
+{
 GraphEditor::GraphEditor()
 {
     IDefinitionManager* defMng = Context::queryInterface<IDefinitionManager>();
@@ -49,4 +51,6 @@ IListModel* GraphEditor::GetSlotContextMenuModel() const
 void GraphEditor::CreateConnection(size_t outputUID, size_t inputUID)
 {
     ConnectionManager::Instance().CreateConnection(outputUID, inputUID);
+}
+
 }

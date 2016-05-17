@@ -9,6 +9,8 @@
 #define EXTRA_ARGS result_, m_name
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -1217,3 +1219,5 @@ TEST(Collection_mapping_notifications)
 }
 
 
+
+}

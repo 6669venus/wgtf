@@ -3,6 +3,8 @@
 
 #include "i_item.hpp"
 
+namespace wgt
+{
 class GenericTreeModel;
 
 class GenericTreeItem : public IItem
@@ -31,4 +33,5 @@ private:
 	friend class GenericTreeModel;
 };
 
+}
 #endif // GENERIC_TREE_ITEM_HPP

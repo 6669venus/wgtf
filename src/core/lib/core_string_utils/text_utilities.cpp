@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cwchar>
 
+namespace wgt
+{
 namespace TextUtilities
 {
 
@@ -321,4 +323,5 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 	currentPos = newCursorPosition;
 }
 
+}
 }

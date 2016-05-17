@@ -12,6 +12,8 @@
 #include <cstdint>
 #include "custom_xml_data.hpp"
 
+namespace wgt
+{
 class ObjectHandle;
 class IBaseProperty;
 class IDefinitionManager;
@@ -52,5 +54,7 @@ private:
 };
 
 
+}
 #endif//CUSTOM_XML_READER_HPP_INCLUDED
+
 

@@ -3,6 +3,8 @@
 
 #include "core_logging_system/interfaces/i_logger.hpp"
 
+namespace wgt
+{
 class AlertManager;
 class LogMessage;
 
@@ -25,4 +27,5 @@ private:
 	AlertManager& alertManager_;
 };
 
+}
 #endif // BASIC_ALERT_LOGGER_HPP

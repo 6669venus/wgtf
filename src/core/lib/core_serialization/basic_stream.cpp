@@ -7,6 +7,8 @@
 #include <algorithm>
 
 
+namespace wgt
+{
 BasicStream::BasicStream( IDataStream& dataStream ):
 	dataStream_( dataStream ),
 	state_( std::ios_base::goodbit ),
@@ -390,3 +392,5 @@ bool BasicStream::resetReadBuffer()
 }
 
 
+
+}

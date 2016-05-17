@@ -6,6 +6,8 @@
 
 #include <string>
 
+namespace wgt
+{
 class CommandLineParser
 	: public Implements< ICommandLineParser >
 {
@@ -22,7 +24,9 @@ private:
 	char** argv_;
 };
 
+}
 #endif // COMMAND_LINE_PARSER_HPP
+
 
 
 

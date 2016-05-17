@@ -13,6 +13,8 @@
 
 
 //==============================================================================
+namespace wgt
+{
 class ModalDlgTestPlugin
 	: public PluginMain
 {
@@ -88,3 +90,5 @@ public:
 
 PLG_CALLBACK_FUNC( ModalDlgTestPlugin )
 
+
+}

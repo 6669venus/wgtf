@@ -2,6 +2,8 @@
 #define SHARED_LIBRARY_HPP_INCLUDED
 
 
+namespace wgt
+{
 class SharedLibrary
 {
 public:
@@ -51,4 +53,6 @@ private:
 #endif
 
 
+}
 #endif
+

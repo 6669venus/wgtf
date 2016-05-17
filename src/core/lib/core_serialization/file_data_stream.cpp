@@ -9,6 +9,8 @@
 #include "file_data_stream.hpp"
 
 
+namespace wgt
+{
 FileDataStream::FileDataStream( const char* path, std::ios::openmode mode ):
 	base( &file_ )
 {
@@ -16,3 +18,5 @@ FileDataStream::FileDataStream( const char* path, std::ios::openmode mode ):
 }
 
 
+
+}

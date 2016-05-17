@@ -3,6 +3,8 @@
 #include "metadata/compound_command.mpp"
 #include "metadata/macro_object.mpp"
 
+namespace wgt
+{
 namespace CommandSystem
 {
 
@@ -16,6 +18,8 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 	REGISTER_DEFINITION( ReflectedPropertyCommandArgumentController )
 	REGISTER_DEFINITION( MethodParam )
 	REGISTER_DEFINITION( ReflectedMethodCommandParametersController )
+}
+
 }
 
 }

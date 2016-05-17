@@ -19,6 +19,8 @@
 #include <thread>
 
 
+namespace wgt
+{
 BEGIN_EXPOSE( TestCommandObject, MetaNone() )
 	EXPOSE( "counter", counter_ )
 	EXPOSE( "text", text_ )
@@ -400,4 +402,6 @@ std::string TestAlternatingCompoundCommand::generateId( int depth, CommandThread
 		break;
 	}
 	return id;
+}
+
 }

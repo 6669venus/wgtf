@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class BasePropertyWithMetaData : public IBaseProperty
 {
 public:
@@ -44,4 +46,6 @@ private:
 	MetaHandle metaData_;
 };
 
+}
 #endif // BASE_REFLECTED_PROPERTY_HPP
+

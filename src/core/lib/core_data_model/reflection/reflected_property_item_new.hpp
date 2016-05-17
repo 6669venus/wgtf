@@ -15,6 +15,8 @@
  *	E.g. strings "parent.child" or "parent.child[0]"
  *		or pair (*parent, *child)
  */
+namespace wgt
+{
 class ReflectedPropertyItemNew : public ReflectedTreeItemNew
 {
 public:
@@ -75,5 +77,7 @@ private:
 	std::unique_ptr< Implementation > impl_;
 };
 
+}
 #endif // _REFLECTED_PROPERTY_ITEM_NEW_HPP
+
 

@@ -12,6 +12,8 @@
 #include <vector>
 #include <QApplication>
 
+namespace wgt
+{
 class MayaAdapterPlugin
 	: public PluginMain
 {
@@ -83,3 +85,5 @@ private:
 
 PLG_CALLBACK_FUNC( MayaAdapterPlugin )
 
+
+}

@@ -16,6 +16,8 @@
 #include <cwchar>
 
 
+namespace wgt
+{
 static bool ALLOCATOR_DEBUG_OUTPUT = false;
 static bool ALLOCATOR_STACK_TRACES = false;
 
@@ -577,6 +579,8 @@ void enableDebugOutput( bool enable )
 void enableStackTraces( bool enable )
 {
 	ALLOCATOR_STACK_TRACES = enable;
+}
+
 }
 
 }

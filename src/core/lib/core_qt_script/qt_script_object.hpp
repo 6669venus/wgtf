@@ -16,6 +16,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 
 #include <QObject>
 
+namespace wgt
+{
 class MetaBase;
 class IReflectionController;
 class Variant;
@@ -59,4 +61,5 @@ private:
 	ObjectHandle object_;
 };
 
+}
 #endif//QT_SCRIPT_OBJECT_HPP

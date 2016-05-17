@@ -10,6 +10,8 @@
  example to others as to how it can be used to provide customized presentation information such as thumbnail
  generation, status overlays, and file type icon overrides for their asset browsers.
  */
+namespace wgt
+{
 class TestAssetPresentationProvider : public IAssetPresentationProvider
 {
 public:
@@ -51,4 +53,5 @@ private:
 	ThumbnailData testStatusIcon_;
 };
 
+}
 #endif // TEST_ASSET_PRESENTATION_PROVIDER_HPP

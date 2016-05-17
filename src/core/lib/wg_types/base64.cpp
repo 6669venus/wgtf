@@ -16,6 +16,8 @@
 #include "base64.hpp"
 
 
+namespace wgt
+{
 static const char          fillchar = '=';
 static const std::string::size_type np = std::string::npos;
 static const char			npc = (char) np;
@@ -220,3 +222,5 @@ bool Base64::decode( const std::string& inData, std::string & outData )
     return true;
 }
 
+
+}

@@ -4,6 +4,8 @@
 #include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 class MemoryPluginContextCreator
 	: public Implements< IComponentContextCreator >
 {
@@ -13,7 +15,9 @@ public:
 	bool ownsSubContext() const;
 };
 
+}
 #endif //MEMORY_PLUGIN_CONTEXT_CREATOR_HPP
+
 
 
 

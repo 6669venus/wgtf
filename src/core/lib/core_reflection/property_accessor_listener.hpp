@@ -3,6 +3,8 @@
 
 #include "core_variant/collection.hpp"
 
+namespace wgt
+{
 class Variant;
 class PropertyAccessor;
 class ReflectedMethodParameters;
@@ -23,4 +25,6 @@ public:
 	virtual void postErased( const PropertyAccessor & accessor, size_t index, size_t count ) {}
 };
 
+}
 #endif // PROPERTY_ACCESSOR_LISTENER_HPP
+

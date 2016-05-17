@@ -5,6 +5,8 @@
 #include "metadata/test_methods_object.mpp"
 
 //==============================================================================
+namespace wgt
+{
 void TestObjects::initDefs( IDefinitionManager & definitionManager )
 {
 	REGISTER_DEFINITION( TestStructure );
@@ -31,4 +33,6 @@ void TestObjects::finiDefs( IDefinitionManager & definitionManager )
 TestStructure & TestObjects::getTestStructure()
 {
 	return structure_;
+}
+
 }

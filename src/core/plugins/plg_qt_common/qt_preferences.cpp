@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <mutex>
 
+namespace wgt
+{
 namespace 
 {
     const char* s_globalPreference = "global_setting.settings";
@@ -367,4 +369,5 @@ void QtPreferences::loadPreferenceFromFile( const char * filePath )
 {
     assert( pImpl_ != nullptr );
     return pImpl_->loadCurrentPreferenceFromFile( filePath );
+}
 }

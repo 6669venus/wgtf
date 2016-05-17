@@ -8,6 +8,8 @@
 #include <codecvt>
 
 
+namespace wgt
+{
 TestPage::TestPage()
 	: bChecked_( true )
 	, boolTest_( false)
@@ -331,4 +333,6 @@ const ObjectHandleT<TestPage> & TestPage2::getTestPage() const
 void TestPage2::setTestPage( const ObjectHandleT<TestPage> & objHandle )
 {
 	testPage_ = objHandle;
+}
+
 }

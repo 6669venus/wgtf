@@ -17,6 +17,8 @@
 #include "core_ui_framework/i_view.hpp"
 
 
+namespace wgt
+{
 class MacrosUIPlugin
 	: public PluginMain
 {
@@ -105,3 +107,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC( MacrosUIPlugin )
+
+}

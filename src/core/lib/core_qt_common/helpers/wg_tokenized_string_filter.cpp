@@ -6,6 +6,8 @@
 #include <QString>
 #include <QVariant>
 
+namespace wgt
+{
 struct WGTokenizedStringFilter::Implementation
 {
 	Implementation( WGTokenizedStringFilter & self );
@@ -85,3 +87,5 @@ void WGTokenizedStringFilter::setSplitterChar( const QString & splitter )
 	emit splitterCharChanged();
 }
 
+
+}

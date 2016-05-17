@@ -7,6 +7,8 @@
 
 #include <thread>
 
+namespace wgt
+{
 class IValueChangeNotifier;
 class VariantList;
 class IListModel;
@@ -88,4 +90,6 @@ public:
 	SignalIndexChanged signalPostCommandIndexChanged;
 };
 
+}
 #endif//I_COMMAND_MANAGER_HPP
+

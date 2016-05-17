@@ -7,6 +7,9 @@
 #include "core_qt_common/models/qt_collection_model.hpp"
 
 
+namespace wgt
+{
+
 /**
 *	Convert a QVariant to a Collection.
 *	Note that o_variant will be referencing the collection in qVariant,
@@ -65,4 +68,5 @@ bool CollectionQtTypeConverter::toQVariant(const Variant& variant,
 	o_qVariant = QVariant::fromValue( model );
 
 	return true;
+}
 }

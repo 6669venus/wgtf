@@ -16,6 +16,8 @@
 #include "core_common/wg_condition_variable.hpp"
 
 
+namespace wgt
+{
 namespace
 {
 	class CommandManagerImpl;
@@ -117,4 +119,5 @@ private:
 	std::vector< UndoRedoDataPtr > undoRedoData_;
 };
 
+}
 #endif //COMMAND_INSTANCE_HPP

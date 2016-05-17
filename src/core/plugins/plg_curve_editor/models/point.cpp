@@ -8,6 +8,8 @@
 
 #include "point.hpp"
 
+namespace wgt
+{
 Point::Point()
 	: x(0.f), y(0.f)
 {
@@ -145,4 +147,5 @@ Point operator/( const Point& lhs, float val )
 bool operator==( const Point& p1, const Point& p2 )
 {
 	return p1.getX() == p2.getX() && p1.getY() == p2.getY();
+}
 }

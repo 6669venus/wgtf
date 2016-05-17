@@ -5,6 +5,8 @@
 #include "core_reflection/reflected_types.hpp"
 
 //==============================================================================
+namespace wgt
+{
 TestReflectionFixture::TestReflectionFixture()
 	: objectManager_( new ObjectManager() )
 	, definitionManager_( new DefinitionManager( *objectManager_ ) )
@@ -43,4 +45,5 @@ IDefinitionManager & TestReflectionFixture::getDefinitionManager() const
 TestStructure & TestReflectionFixture::getTestStructure()
 {
 	return testObjects_.getTestStructure();
+}
 }

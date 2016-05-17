@@ -46,6 +46,8 @@
 #include "core_reflection/reflection_macros.hpp"
 
 
+namespace wgt
+{
 //==============================================================================
 /*static */void SharedControls::init()
 {
@@ -102,4 +104,6 @@
 
 	definitionManager.registerDefinition( new TypeClassDefinition< IBreadcrumbsModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< BaseBreadcrumbItem >() );
+}
+
 }

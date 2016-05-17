@@ -15,6 +15,8 @@
 #include <mutex>
 
 //==============================================================================
+namespace wgt
+{
 ObjectManager::ObjectManager()
 	: pDefManager_( NULL )
 {
@@ -465,3 +467,5 @@ void ObjectManager::NotifyObjectDeregistred(const ObjectHandle & handle) const
 	}
 }
 
+
+}

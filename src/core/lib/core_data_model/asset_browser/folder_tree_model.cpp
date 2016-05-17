@@ -6,6 +6,8 @@
 
 #include <vector>
 
+namespace wgt
+{
 typedef std::unique_ptr<IItem> IItem_uptr;
 
 struct FolderTreeModel::Implementation
@@ -131,4 +133,6 @@ size_t FolderTreeModel::size( const IItem* parent ) const
 int FolderTreeModel::columnCount() const
 {
 	return 1;
+}
+
 }

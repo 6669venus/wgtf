@@ -15,8 +15,11 @@ class QQmlEngine;
 class QQuickWidget;
 class QString;
 class QVariant;
-class IQtFramework;
 class QFileSystemWatcher;
+
+namespace wgt
+{
+class IQtFramework;
 
 class QmlView : public QObject, public IQtView
 {
@@ -68,4 +71,6 @@ private:
 	Listeners listeners_;
 };
 
+}
 #endif//QML_VIEW_HPP
+

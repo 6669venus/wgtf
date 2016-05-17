@@ -16,6 +16,8 @@
 // Represents the tree model with all of the items for browsing assets based
 // on the registered IFileSystem for folder retrieval.
 //------------------------------------------------------------------------------
+namespace wgt
+{
 class IFileSystem;
 
 class FolderTreeModel: public ITreeModel
@@ -44,4 +46,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
+}
 #endif // FOLDER_TREE_MODEL_HPP

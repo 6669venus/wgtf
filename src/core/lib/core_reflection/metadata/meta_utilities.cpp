@@ -1,5 +1,7 @@
 #include "meta_utilities.hpp"
 
+namespace wgt
+{
 MetaHandle findFirstMetaData( const TypeId & typeId, const MetaHandle & metaData, const IDefinitionManager & definitionManager )
 {
 	auto targetDefinition = definitionManager.getDefinition( typeId.getName() );
@@ -50,4 +52,5 @@ MetaHandle findFirstMetaData( const TypeId & typeId, const IClassDefinition & de
 {
 	auto metaData = definition.getMetaData();
 	return findFirstMetaData( typeId, metaData, definitionManager );
+}
 }

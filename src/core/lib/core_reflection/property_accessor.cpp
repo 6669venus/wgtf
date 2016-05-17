@@ -13,6 +13,8 @@
 #include "core_variant/variant.hpp"
 
 //==============================================================================
+namespace wgt
+{
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 	: object_( other.object_ )
 	, property_( std::move( other.property_ ) )
@@ -529,4 +531,6 @@ const char * PropertyAccessor::getFullPath() const
 const IDefinitionManager * PropertyAccessor::getDefinitionManager() const
 {
 	return definitionManager_;
+}
+
 }

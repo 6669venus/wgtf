@@ -25,6 +25,8 @@
 
 
 // -----------------------------------------------------------------------------
+namespace wgt
+{
 TEST_F( TestDefinitionFixture, serialize_nothing )
 {
 	ENABLE_ASSERT_EXCEPTIONS;
@@ -167,3 +169,5 @@ TEST_F( TestDefinitionFixture, serialize_properties )
 	is.close();
 }
 
+
+}

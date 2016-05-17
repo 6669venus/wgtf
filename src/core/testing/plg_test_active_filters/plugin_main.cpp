@@ -20,6 +20,8 @@
 // Spins up an instance of the plugin and creates the panel with the view
 // model being passed is as source.
 //------------------------------------------------------------------------------
+namespace wgt
+{
 class TestActiveFiltersPlugin
 	: public PluginMain
 {
@@ -98,3 +100,5 @@ private:
 
 PLG_CALLBACK_FUNC( TestActiveFiltersPlugin )
 
+
+}

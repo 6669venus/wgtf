@@ -5,6 +5,8 @@
 #include "core_common/ngt_windows.hpp"
 
 
+namespace wgt
+{
 namespace NGT
 {
 
@@ -33,3 +35,5 @@ int logMessage( const char* format, ... )
 
 } // namespace NGT
 
+
+}

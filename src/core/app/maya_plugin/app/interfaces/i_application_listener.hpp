@@ -1,6 +1,8 @@
 #ifndef I_APPLICATION_LISTENER_HPP
 #define I_APPLICATION_LISTENER_HPP
 
+namespace wgt
+{
 class IApplicationListener
 {
 public:
@@ -8,4 +10,6 @@ public:
 	virtual void applicationStopped() = 0;
 };
 
+}
 #endif // I_APPLICATION_LISTENER_HPP
+

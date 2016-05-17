@@ -54,7 +54,8 @@ WG1.WGPanel {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
-		WGListView {
+        WGListView {
+            id: listView
             //anchors.margins: 10
             //leftMargin: 50
             //rightMargin: 50
@@ -80,17 +81,17 @@ WG1.WGPanel {
                         anchors.fill: parent
                         anchors.margins: 1
                         color: {
-							if (typeof itemData.value === "string")
-							{
-								return "transparent";
-							}
+                            if (typeof itemData.value === "string")
+                            {
+                                return "transparent";
+                            }
                         
-							var colour = itemData.value;
-							var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
-							var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
-							var b = colour % 100 + 156;
+                            var colour = itemData.value;
+                            var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
+                            var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
+                            var b = colour % 100 + 156;
                         
-							return Qt.rgba(r / 255, g / 255, b / 255, 1);
+                            return Qt.rgba(r / 255, g / 255, b / 255, 1);
                         }
                     }
 
@@ -104,8 +105,9 @@ WG1.WGPanel {
                 }
             }
         }
-	}
+    }
 
-	Keys.forwardTo: [listView]
-	focus: true
+    // TODO ScrollView steals keyboard focus
+    Keys.forwardTo: [listView]
+    focus: true
 }

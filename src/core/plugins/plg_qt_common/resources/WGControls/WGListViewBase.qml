@@ -31,7 +31,7 @@ ListView {
         columnWidths: view.columnWidths
         columnSpacing: view.columnSpacing
         selected: view.selectionModel.isSelected(modelIndex)
-		isCurrent: ListView.isCurrentItem
+        isCurrent: ListView.isCurrentItem
 
         Connections {
             target: view.selectionModel

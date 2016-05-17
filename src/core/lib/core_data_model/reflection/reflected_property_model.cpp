@@ -24,6 +24,22 @@ void RefPropertyItem::injectData(size_t roleId, const Variant& value)
     injectedData[roleId] = value;
 }
 
+Variant RefPropertyItem::getInjectedData(size_t roleId)
+{
+    auto iter = injectedData.find(roleId);
+    if (iter != injectedData.end())
+    {
+        return iter->second;
+    }
+
+    return Variant();
+}
+
+const RefPropertyItem * RefPropertyItem::getParent() const
+{
+    return parent;
+}
+
 const char * RefPropertyItem::getDisplayText(int column) const
 {
     return getProperty()->getName();
@@ -67,7 +83,7 @@ const std::string & RefPropertyItem::getIndexPath() const
                 indexPath += propertyInstance->getName();
             }
 
-            item = static_cast<const RefPropertyItem*>(item->getParent());
+            item = static_cast<const RefPropertyItem*>(item->getNonConstParent());
         }
 
         indexPath.shrink_to_fit();
@@ -120,7 +136,7 @@ void RefPropertyItem::setValue(Variant && newValue)
     itemValue = std::move(newValue);
 }
 
-RefPropertyItem* RefPropertyItem::getParent() const
+RefPropertyItem* RefPropertyItem::getNonConstParent() const
 {
     return parent;
 }
@@ -289,7 +305,7 @@ ITreeModel::ItemIndex ReflectedPropertyModel::index(const IItem * item) const
 {
     assert(item != nullptr);
     const RefPropertyItem * refItem = static_cast<const RefPropertyItem *>(item);
-    return ITreeModel::ItemIndex(refItem->getPosition(), getModelParent(refItem->getParent()));
+    return ITreeModel::ItemIndex(refItem->getPosition(), getModelParent(refItem->getNonConstParent()));
 }
 
 size_t ReflectedPropertyModel::size(const IItem * item) const
@@ -363,6 +379,7 @@ void ReflectedPropertyModel::childAdded(const PropertyNode* parent, const Proper
     if (childItem != nullptr)
     {
         childItem->addObject(node);
+        injectExtension->updateInjection(childItem);
     }
     else
     {
@@ -374,7 +391,7 @@ void ReflectedPropertyModel::childAdded(const PropertyNode* parent, const Proper
         childItem->addObject(node);
         notifyPostItemsInserted(modelParent, childCount, 1);
         using namespace std::placeholders;
-        injectExtension->inject(childItem, std::bind(&RefPropertyItem::injectData, childItem, _1, _2));
+        injectExtension->inject(childItem);
     }
 
     auto newNode = nodeToItem.emplace(node, childItem);
@@ -392,12 +409,16 @@ void ReflectedPropertyModel::childRemoved(const PropertyNode* node)
 
     if (!item->hasObjects())
     {
-        RefPropertyItem* parent = item->getParent();
+        RefPropertyItem* parent = item->getNonConstParent();
         size_t positionIndex = item->getPosition();
         const IItem* modelParent = getModelParent(parent);
         notifyPreItemsRemoved(modelParent, positionIndex, 1);
         parent->removeChild(positionIndex);
         notifyPostItemsRemoved(modelParent, positionIndex, 1);
+    }
+    else
+    {
+        injectExtension->updateInjection(item);
     }
 }
 

@@ -36,9 +36,14 @@ public:
 
     const std::vector<const PropertyNode*>& getObjects() const { return nodes; }
 
+    void injectData(size_t roleId, const Variant& value);
+    Variant getInjectedData(size_t roleId);
+
+    const RefPropertyItem * getParent() const;
+
 private:
     friend class ReflectedPropertyModel;
-    RefPropertyItem * getParent() const;
+    RefPropertyItem * getNonConstParent() const;
     size_t getPosition() const;
     RefPropertyItem * createChild();
 
@@ -56,8 +61,6 @@ private:
     void setValue(Variant&& newValue);
 
     RefPropertyItem(RefPropertyItem * parent, size_t position);
-
-    void injectData(size_t roleId, const Variant& value);
 
 private:
     ReflectedPropertyModel & model;

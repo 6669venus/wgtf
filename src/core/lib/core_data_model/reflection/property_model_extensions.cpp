@@ -99,9 +99,8 @@ public:
 class DummyInjector: public InjectDataExtension
 {
 public:
-    void inject(const RefPropertyItem* item, const std::function<void(size_t, const Variant&)>& injector) override
-    {
-    }
+    void inject(RefPropertyItem* item) override{}
+    void updateInjection(RefPropertyItem * item) override{}
 };
 
 IBasePropertyPtr selfRootProperty = std::make_shared<SelfProperty>();
@@ -200,10 +199,16 @@ MergeValuesExtension * MergeValuesExtension::createDummy()
     return new PMEDetails::DummyMerger();
 }
 
-void InjectDataExtension::inject(const RefPropertyItem* item, const std::function<void(size_t, const Variant&)>& injector)
+void InjectDataExtension::inject(RefPropertyItem* item)
 {
     assert(nextExtension != nullptr);
-    return nextExtension->inject(item, injector);
+    return nextExtension->inject(item);
+}
+
+void InjectDataExtension::updateInjection(RefPropertyItem * item)
+{
+    assert(nextExtension != nullptr);
+    return nextExtension->updateInjection(item);
 }
 
 InjectDataExtension* InjectDataExtension::createDummy()

@@ -7,7 +7,7 @@
 class ButtonItem: public IItem
 {
 public:
-    ButtonItem(bool isEnabled, const std::string& iconUrl, const std::function<void(void)>& clickCallback);
+    ButtonItem(bool isEnabled, const std::string& iconUri, const std::function<void(void)>& clickCallback);
 
     const char * getDisplayText(int column) const override;
     ThumbnailData getThumbnail(int column) const override;
@@ -15,8 +15,9 @@ public:
     bool setData(int column, size_t roleId, const Variant & data) override;
 
 private:
+    friend class ButtonsModel;
     bool isEnabled;
-    std::string iconUrl;
+    std::string iconUri;
     std::function<void(void)> clickCallback;
 };
 
@@ -24,6 +25,12 @@ class ButtonsModel: public IListModel
 {
 public:
     ButtonsModel(std::vector<ButtonItem> && buttons);
+
+    bool isEnabled(size_t index) const;
+    void setEnabled(size_t index, bool isEnabled);
+
+    const std::string& getIconUri(size_t index) const;
+    void setIconUri(size_t index, const std::string& iconUri);
 
     IItem * item(size_t index) const override;
     size_t index(const IItem * item) const override;

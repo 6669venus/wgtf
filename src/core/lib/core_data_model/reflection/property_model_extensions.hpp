@@ -139,7 +139,8 @@ public:
 class InjectDataExtension: public ExtensionChain<InjectDataExtension>
 {
 public:
-    virtual void inject(const RefPropertyItem* item, const std::function<void(size_t, const Variant&)>& injector);
+    virtual void inject(RefPropertyItem* item);
+    virtual void updateInjection(RefPropertyItem* item);
     static InjectDataExtension* createDummy();
 };
 

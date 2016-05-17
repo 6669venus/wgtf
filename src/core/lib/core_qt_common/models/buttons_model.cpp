@@ -4,7 +4,7 @@
 
 ButtonItem::ButtonItem(bool isEnabled_, const std::string& iconUrl_, const std::function<void(void)>& clickCallback_)
     : isEnabled(isEnabled_)
-    , iconUrl(iconUrl_)
+    , iconUri(iconUrl_)
     , clickCallback(clickCallback_)
 {
 }
@@ -23,7 +23,7 @@ Variant ButtonItem::getData(int column, size_t roleId) const
 {
     if (roleId == ButtonIconRole::roleId_)
     {
-        return Variant(iconUrl);
+        return Variant(iconUri);
     }
     else if (roleId == ButtonEnabledRole::roleId_)
     {
@@ -44,9 +44,45 @@ bool ButtonItem::setData(int column, size_t roleId, const Variant & data)
     return false;
 }
 
-ButtonsModel::ButtonsModel(std::vector<ButtonItem>&& buttons_)
+ButtonsModel::ButtonsModel(std::vector<ButtonItem> && buttons_)
     : buttons(std::move(buttons_))
 {
+}
+
+bool ButtonsModel::isEnabled(size_t index) const
+{
+    ButtonItem* button = static_cast<ButtonItem*>(item(index));
+    return button->isEnabled;
+}
+
+void ButtonsModel::setEnabled(size_t index, bool isEnabled)
+{
+    ButtonItem* button = static_cast<ButtonItem*>(item(index));
+    if (button->isEnabled == isEnabled)
+    {
+        return;
+    }
+    notifyPreDataChanged(button, 0, ButtonEnabledRole::roleId_, isEnabled);
+    button->isEnabled = isEnabled;
+    notifyPostDataChanged(button, 0, ButtonEnabledRole::roleId_, isEnabled);
+}
+
+const std::string& ButtonsModel::getIconUri(size_t index) const
+{
+    ButtonItem* button = static_cast<ButtonItem*>(item(index));
+    return button->iconUri;
+}
+
+void ButtonsModel::setIconUri(size_t index, const std::string& iconUri)
+{
+    ButtonItem* button = static_cast<ButtonItem*>(item(index));
+    if (button->iconUri == iconUri)
+    {
+        return;
+    }
+    notifyPreDataChanged(button, 0, ButtonIconRole::roleId_, iconUri);
+    button->iconUri = iconUri;
+    notifyPostDataChanged(button, 0, ButtonIconRole::roleId_, iconUri);
 }
 
 IItem * ButtonsModel::item(size_t index) const

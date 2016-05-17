@@ -1600,6 +1600,11 @@ public:
 	*/
 	bool canResize() const;
 
+    CollectionImplPtr getImpl()
+    {
+        return impl_;
+    }
+
 private:
 	CollectionImplPtr impl_;
 

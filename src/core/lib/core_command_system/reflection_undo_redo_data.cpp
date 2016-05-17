@@ -10,8 +10,6 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "wg_types/binary_block.hpp"
 
-int ReflectionUndoRedoData::s_Connected = 0;
-
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
 {
@@ -163,11 +161,6 @@ ReflectionUndoRedoData::ReflectionUndoRedoData( CommandInstance & commandInstanc
 
 void ReflectionUndoRedoData::connect()
 {
-	if (s_Connected++ > 0)
-	{
-		return;
-	}
-
 	auto definitionManager = commandInstance_.defManager_;
 	assert( definitionManager != nullptr );
 	definitionManager->registerPropertyAccessorListener( paListener_ );
@@ -176,14 +169,15 @@ void ReflectionUndoRedoData::connect()
 
 void ReflectionUndoRedoData::disconnect()
 {
-	if (--s_Connected > 0)
-	{
-		return;
-	}
-
 	auto definitionManager = commandInstance_.defManager_;
 	assert( definitionManager != nullptr );
 	definitionManager->deregisterPropertyAccessorListener( paListener_ );
+}
+
+void ReflectionUndoRedoData::consolidate()
+{
+	auto definitionManager = commandInstance_.defManager_;
+	assert( definitionManager != nullptr );
 
 	XMLSerializer undoSerializer( undoData_, *definitionManager );
 	undoSerializer.serialize( RPURU::getUndoStreamHeaderTag() );
@@ -219,7 +213,7 @@ void ReflectionUndoRedoData::undo()
 }
 
 
-void ReflectionUndoRedoData::redo() 
+void ReflectionUndoRedoData::redo()
 {
 	auto definitionManager = commandInstance_.defManager_;
 	assert( definitionManager != nullptr );

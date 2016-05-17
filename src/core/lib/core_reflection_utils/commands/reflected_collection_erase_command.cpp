@@ -65,6 +65,11 @@ ObjectHandle ReflectedCollectionEraseCommand::execute(const ObjectHandle & argum
 	return nullptr;
 }
 
+bool ReflectedCollectionEraseCommand::customUndo() const
+{
+	return true;
+}
+
 bool ReflectedCollectionEraseCommand::undo( const ObjectHandle & arguments ) const
 {
 	ReflectedCollectionEraseCommandParameters * commandArgs =

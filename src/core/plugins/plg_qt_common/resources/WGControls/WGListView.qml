@@ -99,13 +99,12 @@ WGListViewBase {
         Connections {
             target: listView
             onItemPressed: {
+				var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
                 if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
-                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
                     itemView.selectionModel.select(selection,
                         ItemSelectionModel.Select);
                 }
-                else if (mouse.modifiers & Qt.ShiftModifier) {
-                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
+				else if (mouse.modifiers & Qt.ShiftModifier) {
                     itemView.selectionModel.select(selection,
                         itemView.selectionModel.Clear | ItemSelectionModel.Select);
                 }
@@ -117,8 +116,8 @@ WGListViewBase {
                     itemView.selectionModel.setCurrentIndex(rowIndex,
                         ItemSelectionModel.Clear | ItemSelectionModel.Select);
                 }
-                listView.currentModelIndex = rowIndex/*itemView.selectionModel.currentIndex*/;
-                listView.currentIndex = listExtension.indexToRow(rowIndex/*listView.currentModelIndex*/);
+				listView.currentModelIndex = rowIndex;
+				listView.currentIndex = listExtension.indexToRow(rowIndex);
             }
         }
     }
@@ -130,55 +129,46 @@ WGListViewBase {
     */
     property var currentModelIndex: itemView.selectionModel.currentIndex
 
-    // Only Item types can have Keys (not ListView)
-    Keys.forwardTo: [keyHandler] // Keys??
-    Item {
-        id: keyHandler
-        Keys.onUpPressed: {
-            console.log("base up pressed", currentIndex);
+	Keys.onUpPressed: {
+		// Move keyboard highlight
+		currentModelIndex = listExtension.decIndex(currentModelIndex);
 
-            // Move keyboard highlight
-            currentModelIndex = listExtension.decIndex(currentModelIndex);
-            
-            // Synchronize with the index in Qt's ListView
-            currentIndex = listExtension.indexToRow(currentModelIndex);
+		// Synchronize with the index in Qt's ListView
+		currentIndex = listExtension.indexToRow(currentModelIndex);
 
-            // When Shift is pressed, selection area increases with the keyboard highlight
-            if (event.modifiers & Qt.ShiftModifier) {
-                var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, currentModelIndex);
-                itemView.selectionModel.select(selection,
-                    itemView.selectionModel.Clear | ItemSelectionModel.Select);
-            }
+		// When Shift is pressed, selection area increases with the keyboard highlight
+		if (event.modifiers & Qt.ShiftModifier) {
+			var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, currentModelIndex);
+			itemView.selectionModel.select(selection,
+				itemView.selectionModel.Clear | ItemSelectionModel.Select);
+		}
 
-            // When Ctrl is not pressed, selection moves with the keyboard highlight
-            else if (!(event.modifiers & Qt.ControlModifier)) {
-                itemView.selectionModel.setCurrentIndex(currentModelIndex,
-                    ItemSelectionModel.Clear | ItemSelectionModel.Select);
-            }
-        }
+		// When Ctrl is not pressed, selection moves with the keyboard highlight
+		else if (!(event.modifiers & Qt.ControlModifier)) {
+			itemView.selectionModel.setCurrentIndex(currentModelIndex,
+				ItemSelectionModel.Clear | ItemSelectionModel.Select);
+		}
+	}
 
-        Keys.onDownPressed: {
-            console.log("base down pressed", currentIndex);
+	Keys.onDownPressed: {
+		// Move keyboard highlight
+		currentModelIndex = listExtension.incIndex(currentModelIndex);
 
-            // Move keyboard highlight
-            currentModelIndex = listExtension.incIndex(currentModelIndex);
+		// Synchronize with the index in Qt's ListView
+		currentIndex = listExtension.indexToRow(currentModelIndex);
 
-            // Synchronize with the index in Qt's ListView
-            currentIndex = listExtension.indexToRow(currentModelIndex);
+		// When Shift is pressed, selection area increases with the keyboard highlight
+		if (event.modifiers & Qt.ShiftModifier) {
+			var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, currentModelIndex);
+			itemView.selectionModel.select(selection,
+				itemView.selectionModel.Clear | ItemSelectionModel.Select);
+		}
 
-            // When Shift is pressed, selection area increases with the keyboard highlight
-            if (event.modifiers & Qt.ShiftModifier) {
-                var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, currentModelIndex);
-                itemView.selectionModel.select(selection,
-                    itemView.selectionModel.Clear | ItemSelectionModel.Select);
-            }
-
-            // When Ctrl is not pressed, selection moves with the keyboard highlight
-            else if (!(event.modifiers & Qt.ControlModifier)) {
-                itemView.selectionModel.setCurrentIndex(currentModelIndex,
-                    ItemSelectionModel.Clear | ItemSelectionModel.Select);
-            }
-        }
-    }
+		// When Ctrl is not pressed, selection moves with the keyboard highlight
+		else if (!(event.modifiers & Qt.ControlModifier)) {
+			itemView.selectionModel.setCurrentIndex(currentModelIndex,
+				ItemSelectionModel.Clear | ItemSelectionModel.Select);
+		}
+	}
 }
 

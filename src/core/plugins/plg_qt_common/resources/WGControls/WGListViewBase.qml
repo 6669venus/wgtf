@@ -31,8 +31,7 @@ ListView {
         columnWidths: view.columnWidths
         columnSpacing: view.columnSpacing
         selected: view.selectionModel.isSelected(modelIndex)
-        isCurrent: ListView.isCurrentItem
-        //isCurrent: (modelIndex === currentModelIndex)
+		isCurrent: ListView.isCurrentItem
 
         Connections {
             target: view.selectionModel
@@ -47,31 +46,4 @@ ListView {
         onItemClicked: listViewBase.itemClicked(mouse, itemIndex, modelIndex)
         onItemDoubleClicked: listViewBase.itemDoubleClicked(mouse, itemIndex, modelIndex)
     }
-
-    /*Keys.forwardTo: [keyHandler]
-    // Only Item types can have Keys (not ListView)
-    Item {
-        id: keyHandler
-        Keys.onUpPressed: {
-            //if (currentIndex > 0) {
-            //    --currentIndex;
-            //}
-            currentModelIndex = listExtension.decIndex(currentModelIndex);
-            currentIndex = listExtension.indexToRow(currentModelIndex);
-            console.log("base up pressed", currentIndex);
-        }
-
-        Keys.onDownPressed: {
-            //if (currentIndex < count) {
-            //    ++currentIndex;
-            //}
-            currentModelIndex = listExtension.incIndex(currentModelIndex);
-            currentIndex = listExtension.indexToRow(currentModelIndex);
-            console.log("base down pressed", currentIndex);
-        }
-
-        Keys.onReturnPressed: {
-            console.log("base return pressed", currentIndex);
-        }
-    }*/
 }

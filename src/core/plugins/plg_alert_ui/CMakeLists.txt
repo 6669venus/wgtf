@@ -5,16 +5,7 @@ INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 
 find_package(QT5)
-
-ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
-ADD_DEFINITIONS( -DQT_QML_DEBUG )
-
 find_package( Qt5Quick REQUIRED )
-
-REMOVE_DEFINITIONS( /WX )
-ADD_DEFINITIONS(
-	-D_CRT_SECURE_NO_WARNINGS
-)
 
 BW_QT_ADD_QRC(plg_alert_ui resources/plg_alert_ui)
 BW_GLOB_RESOURCE_FILES()

@@ -143,8 +143,15 @@ WGListViewBase {
             // Synchronize with the index in Qt's ListView
             currentIndex = listExtension.indexToRow(currentModelIndex);
 
-            // Move selection with keyboard highlight
-            if (!(event.modifiers & Qt.ControlModifier)) {
+            // When Shift is pressed, selection area increases with the keyboard highlight
+            if (event.modifiers & Qt.ShiftModifier) {
+                var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, currentModelIndex);
+                itemView.selectionModel.select(selection,
+                    itemView.selectionModel.Clear | ItemSelectionModel.Select);
+            }
+
+            // When Ctrl is not pressed, selection moves with the keyboard highlight
+            else if (!(event.modifiers & Qt.ControlModifier)) {
                 itemView.selectionModel.setCurrentIndex(currentModelIndex,
                     ItemSelectionModel.Clear | ItemSelectionModel.Select);
             }
@@ -159,8 +166,15 @@ WGListViewBase {
             // Synchronize with the index in Qt's ListView
             currentIndex = listExtension.indexToRow(currentModelIndex);
 
-            // Move selection with keyboard highlight
-            if (!(event.modifiers & Qt.ControlModifier)) {
+            // When Shift is pressed, selection area increases with the keyboard highlight
+            if (event.modifiers & Qt.ShiftModifier) {
+                var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, currentModelIndex);
+                itemView.selectionModel.select(selection,
+                    itemView.selectionModel.Clear | ItemSelectionModel.Select);
+            }
+
+            // When Ctrl is not pressed, selection moves with the keyboard highlight
+            else if (!(event.modifiers & Qt.ControlModifier)) {
                 itemView.selectionModel.setCurrentIndex(currentModelIndex,
                     ItemSelectionModel.Clear | ItemSelectionModel.Select);
             }

@@ -45,26 +45,13 @@ Item {
     signal itemDoubleClicked(var mouse, var itemIndex)
 
     /* MOVE INTO STYLE*/
-    // Current selection, mouse hover and keyboard focus highlight
+    // Current selection and mouse hover
     Rectangle {
         id: backgroundArea
         anchors.fill: row
         color: palette.highlightShade
-        opacity: {
-            if (selected) {
-                return 1.0;
-            }
-            else if (hoverArea.containsMouse) {
-                return 0.5;
-            }
-            else if (isCurrent) {
-                return 0.25;
-            }
-            return 0.0;
-        }
-        border.color: "red" //palette.highlightShade
-        border.width: 2 // defaultSpacing.standardBorderSize
-        visible: hoverArea.containsMouse || selected || isCurrent
+        opacity: selected ? 1 : 0.5
+        visible: hoverArea.containsMouse || selected
     }
 
     MouseArea {
@@ -72,19 +59,16 @@ Item {
         anchors.fill: backgroundArea
         hoverEnabled: true
     }
+
+    // Keyboard focus highlight
+    Rectangle {
+        id: keyboardFocusArea
+        anchors.fill: row
+        color: palette.highlightShade
+        opacity: 0.25
+        visible: isCurrent
+    }
     /**/
-
-    Keys.onUpPressed: {
-        console.log("item up pressed")
-    }
-
-    Keys.onDownPressed: {
-        console.log("item down pressed")
-    }
-
-    Keys.onReturnPressed: {
-        console.log("item return pressed")
-    }
 
     // Controls column spacing.
     Row {

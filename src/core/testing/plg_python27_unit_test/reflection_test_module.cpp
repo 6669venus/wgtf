@@ -27,7 +27,7 @@ namespace PlatformHelpers
 	{
 #if _MSC_VER >= 1900
 		sprintf(buffer, "%zd", value);
-#else
+#elif
 		sprintf(buffer, "%d", value);
 #endif /*_MSC_VER >= 1900 */
 	}

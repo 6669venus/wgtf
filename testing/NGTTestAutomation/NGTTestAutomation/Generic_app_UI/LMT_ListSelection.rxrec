@@ -42,9 +42,9 @@ mode="Global">
 			<bindings/>
 			<info
 			sourcename="RepositoryEditor"
-			id="2bce5d91-10c3-4a96-b5a4-fe12cc07dd4a">
+			id="a67c2b30-5e16-4bf7-bc06-220296287dbc">
 				<path>
-					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel.qml']//list[@name='list']/list[1]/text[@name='value']
+					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel_old.qml']//list[@type='WGListView']/element[2]/list/list[2]/text[@caption='aardwolf']
 				</path>
 			</info>
 		</mouseitem>
@@ -73,9 +73,9 @@ mode="Global">
 			<bindings/>
 			<info
 			sourcename="RepositoryEditor"
-			id="e4d6fd00-18a9-45a3-985b-da5cabf10d7d">
+			id="583e56c8-21fa-411d-97e1-ca9b9122b33b">
 				<path>
-					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel.qml']//list[@name='list']/list[12]/text[@name='value']
+					/form[@objectname='MainWindow']/container[@objectname='plg_list_model_test/test_list_panel_old.qml']//list[@type='WGListView']/element[35]/list/list[2]/text[@caption='abdicate']
 				</path>
 			</info>
 		</mouseitem>

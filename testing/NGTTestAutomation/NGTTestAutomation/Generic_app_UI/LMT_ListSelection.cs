@@ -79,16 +79,16 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ListModel_Test.Value' at Center.", repo.Generic_app.MainWindow.ListModel_Test.ValueInfo, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.ListModel_Test.Value.Click();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.Aardwolf' at Center.", repo.Generic_app.MainWindow.AardwolfInfo, new RecordItemIndex(0));
+            repo.Generic_app.MainWindow.Aardwolf.Click();
             Delay.Milliseconds(200);
             
             Report.Log(ReportLevel.Info, "Keyboard", "Key sequence '{LShiftKey down}'.", new RecordItemIndex(1));
             Keyboard.Press("{LShiftKey down}");
             Delay.Milliseconds(0);
             
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ListModel_Test.Value11' at Center.", repo.Generic_app.MainWindow.ListModel_Test.Value11Info, new RecordItemIndex(2));
-            repo.Generic_app.MainWindow.ListModel_Test.Value11.Click();
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.Abdicate' at Center.", repo.Generic_app.MainWindow.AbdicateInfo, new RecordItemIndex(2));
+            repo.Generic_app.MainWindow.Abdicate.Click();
             Delay.Milliseconds(200);
             
         }

@@ -51,11 +51,11 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="True"
-		screenshotname="Screenshot1"
-		screenshotguid="25e24d94-9fb6-4b52-9e34-6c33ee68fcb9"
-		codegenpropertyname="List_Screenshot4"
+		screenshotname="Screenshot5"
+		screenshotguid="fc830907-eb02-45a8-9bf6-5243071f6108"
+		codegenpropertyname="List_Screenshot5"
 		searchpropertyid="20822a14-a40d-40a3-9f63-740d4b581ad6"
-		imagerect="0,0,1174,906"
+		imagerect="0,0,1004,49"
 		imageoptions="0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
@@ -98,11 +98,11 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="True"
-		screenshotname="Screenshot2"
-		screenshotguid="dc6f17f6-34fe-4cb6-81dd-5439324719ee"
-		codegenpropertyname="List_Screenshot4"
+		screenshotname="Screenshot6"
+		screenshotguid="a938f14d-9b06-4dcf-925b-6b0a971bb0bb"
+		codegenpropertyname="List_Screenshot6"
 		searchpropertyid="20822a14-a40d-40a3-9f63-740d4b581ad6"
-		imagerect="0,0,1174,906"
+		imagerect="0,0,1049,45"
 		imageoptions="0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
@@ -145,11 +145,11 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="True"
-		screenshotname="Screenshot3"
-		screenshotguid="d58e7775-bf72-4e45-bc71-56ed8bf38365"
-		codegenpropertyname="List_Screenshot4"
+		screenshotname="Screenshot8"
+		screenshotguid="3ce2f733-e5d1-411d-a3bb-751697be78a2"
+		codegenpropertyname="List_Screenshot8"
 		searchpropertyid="20822a14-a40d-40a3-9f63-740d4b581ad6"
-		imagerect="0,0,1174,906"
+		imagerect="0,0,1073,42"
 		imageoptions="0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>
@@ -276,11 +276,11 @@ mode="Global">
 		<validationitem
 		enabled="True"
 		optional="True"
-		screenshotname="Screenshot4"
-		screenshotguid="8d297bc4-2fc9-4ddb-a845-650bb7f82b00"
-		codegenpropertyname="List_Screenshot4"
+		screenshotname="Screenshot9"
+		screenshotguid="9d1656c1-2758-482f-8889-2774f8d04d77"
+		codegenpropertyname="List_Screenshot9"
 		searchpropertyid="20822a14-a40d-40a3-9f63-740d4b581ad6"
-		imagerect="0,0,1174,906"
+		imagerect="0,0,55,108"
 		imageoptions="0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"
 		action="ContainsImage">
 			<comment/>

@@ -84,8 +84,8 @@ namespace NGTTestAutomation.Generic_app_UI
             Delay.Milliseconds(200);
             
             try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot1' with region {X=0,Y=0,Width=1174,Height=906}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(1));
-                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot1, List_Screenshot1_Options, Validate.DefaultMessage, false);
+                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot5' with region {X=0,Y=0,Width=1004,Height=49}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(1));
+                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot5, List_Screenshot5_Options, Validate.DefaultMessage, false);
                 Delay.Milliseconds(0);
             } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(1)); }
             
@@ -94,8 +94,8 @@ namespace NGTTestAutomation.Generic_app_UI
             Delay.Milliseconds(200);
             
             try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot2' with region {X=0,Y=0,Width=1174,Height=906}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(3));
-                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot2, List_Screenshot2_Options, Validate.DefaultMessage, false);
+                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot6' with region {X=0,Y=0,Width=1049,Height=45}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(3));
+                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot6, List_Screenshot6_Options, Validate.DefaultMessage, false);
                 Delay.Milliseconds(0);
             } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(3)); }
             
@@ -104,8 +104,8 @@ namespace NGTTestAutomation.Generic_app_UI
             Delay.Milliseconds(200);
             
             try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot3' with region {X=0,Y=0,Width=1174,Height=906}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(5));
-                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot3, List_Screenshot3_Options, Validate.DefaultMessage, false);
+                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot8' with region {X=0,Y=0,Width=1073,Height=42}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(5));
+                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot8, List_Screenshot8_Options, Validate.DefaultMessage, false);
                 Delay.Milliseconds(0);
             } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(5)); }
             
@@ -130,36 +130,36 @@ namespace NGTTestAutomation.Generic_app_UI
             Delay.Milliseconds(200);
             
             try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot4' with region {X=0,Y=0,Width=1174,Height=906}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(11));
-                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot4, List_Screenshot4_Options, Validate.DefaultMessage, false);
+                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating ContainsImage (Screenshot: 'Screenshot9' with region {X=0,Y=0,Width=55,Height=108}) on item 'MainWindow.MultiColumnListTest.List'.", repo.MainWindow.MultiColumnListTest.ListInfo, new RecordItemIndex(11));
+                Validate.ContainsImage(repo.MainWindow.MultiColumnListTest.ListInfo, List_Screenshot9, List_Screenshot9_Options, Validate.DefaultMessage, false);
                 Delay.Milliseconds(0);
             } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(11)); }
             
         }
 
 #region Image Feature Data
-        CompressedImage List_Screenshot1
-        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot1(new Rectangle(0, 0, 1174, 906)); } }
+        CompressedImage List_Screenshot5
+        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot5(new Rectangle(0, 0, 1004, 49)); } }
 
-        Imaging.FindOptions List_Screenshot1_Options
+        Imaging.FindOptions List_Screenshot5_Options
         { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
 
-        CompressedImage List_Screenshot2
-        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot2(new Rectangle(0, 0, 1174, 906)); } }
+        CompressedImage List_Screenshot6
+        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot6(new Rectangle(0, 0, 1049, 45)); } }
 
-        Imaging.FindOptions List_Screenshot2_Options
+        Imaging.FindOptions List_Screenshot6_Options
         { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
 
-        CompressedImage List_Screenshot3
-        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot3(new Rectangle(0, 0, 1174, 906)); } }
+        CompressedImage List_Screenshot8
+        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot8(new Rectangle(0, 0, 1073, 42)); } }
 
-        Imaging.FindOptions List_Screenshot3_Options
+        Imaging.FindOptions List_Screenshot8_Options
         { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
 
-        CompressedImage List_Screenshot4
-        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot4(new Rectangle(0, 0, 1174, 906)); } }
+        CompressedImage List_Screenshot9
+        { get { return repo.MainWindow.MultiColumnListTest.ListInfo.GetScreenshot9(new Rectangle(0, 0, 55, 108)); } }
 
-        Imaging.FindOptions List_Screenshot4_Options
+        Imaging.FindOptions List_Screenshot9_Options
         { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
 
 #endregion

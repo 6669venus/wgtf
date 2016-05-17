@@ -79,30 +79,21 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ListModel_Test.SwitchModelOff' at Center.", repo.Generic_app.MainWindow.ListModel_Test.SwitchModelOffInfo, new RecordItemIndex(0));
+            Report.Log(ReportLevel.Info, "Validation", "Validating AttributeEqual (Visible='True') on item 'Generic_app.MainWindow.Aardwolf'.", repo.Generic_app.MainWindow.AardwolfInfo, new RecordItemIndex(0));
+            Validate.Attribute(repo.Generic_app.MainWindow.AardwolfInfo, "Visible", "True");
+            Delay.Milliseconds(0);
+            
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ListModel_Test.SwitchModelOff' at Center.", repo.Generic_app.MainWindow.ListModel_Test.SwitchModelOffInfo, new RecordItemIndex(1));
             repo.Generic_app.MainWindow.ListModel_Test.SwitchModelOff.Click();
             Delay.Milliseconds(200);
             
-            try {
-                Report.Log(ReportLevel.Info, "Validation", "(Optional Action)\r\nValidating CompareImage (Screenshot: 'Screenshot2' with region {X=0,Y=0,Width=1174,Height=926}) on item 'Generic_app.MainWindow.ListModel_Test.List1'.", repo.Generic_app.MainWindow.ListModel_Test.List1Info, new RecordItemIndex(1));
-                Validate.CompareImage(repo.Generic_app.MainWindow.ListModel_Test.List1Info, List1_Screenshot2, List1_Screenshot2_Options, Validate.DefaultMessage, false);
-                Delay.Milliseconds(0);
-            } catch(Exception ex) { Report.Log(ReportLevel.Warn, "Module", "(Optional Action) " + ex.Message, new RecordItemIndex(1)); }
-            
-            // Disable because of crash jira#
-            //Report.Log(ReportLevel.Info, "Mouse", "Disable because of crash jira#\r\nMouse Left Click item 'Generic_app.MainWindow.ListModel_Test.SwitchModelOff' at Center.", repo.Generic_app.MainWindow.ListModel_Test.SwitchModelOffInfo, new RecordItemIndex(2));
-            //repo.Generic_app.MainWindow.ListModel_Test.SwitchModelOff.Click();
-            //Delay.Milliseconds(200);
+            Report.Log(ReportLevel.Info, "Validation", "Validating AttributeEqual (Visible='False') on item 'Generic_app.MainWindow.Aardwolf'.", repo.Generic_app.MainWindow.AardwolfInfo, new RecordItemIndex(2));
+            Validate.Attribute(repo.Generic_app.MainWindow.AardwolfInfo, "Visible", "False");
+            Delay.Milliseconds(0);
             
         }
 
 #region Image Feature Data
-        CompressedImage List1_Screenshot2
-        { get { return repo.Generic_app.MainWindow.ListModel_Test.List1Info.GetScreenshot2(new Rectangle(0, 0, 1174, 926)); } }
-
-        Imaging.FindOptions List1_Screenshot2_Options
-        { get { return Imaging.FindOptions.Parse("0.8;EdgesSobel;0,0,1174,926;True;10000000;0ms"); } }
-
 #endregion
     }
 #pragma warning restore 0436

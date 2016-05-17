@@ -83,22 +83,13 @@ namespace NGTTestAutomation.Generic_app_demo
             repo.Generic_app.MainWindow.WGMultiLineText.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 100ms.", new RecordItemIndex(1));
-            Delay.Duration(100, false);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGMultiLineText1' at Center.", repo.Generic_app.MainWindow.WGMultiLineText1Info, new RecordItemIndex(2));
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGMultiLineText1' at Center.", repo.Generic_app.MainWindow.WGMultiLineText1Info, new RecordItemIndex(1));
             repo.Generic_app.MainWindow.WGMultiLineText1.Click();
             Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 100ms.", new RecordItemIndex(3));
-            Delay.Duration(100, false);
-            
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGMultiLineText2' at Center.", repo.Generic_app.MainWindow.WGMultiLineText2Info, new RecordItemIndex(4));
+            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.WGMultiLineText2' at Center.", repo.Generic_app.MainWindow.WGMultiLineText2Info, new RecordItemIndex(2));
             repo.Generic_app.MainWindow.WGMultiLineText2.Click();
             Delay.Milliseconds(200);
-            
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 100ms.", new RecordItemIndex(5));
-            Delay.Duration(100, false);
             
         }
 

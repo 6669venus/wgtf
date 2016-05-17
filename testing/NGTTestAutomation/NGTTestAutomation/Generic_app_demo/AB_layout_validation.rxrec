@@ -137,9 +137,7 @@ mode="Global">
 					name="Cursor"
 					type="Ranorex.Plugin.QRemoteObject, Ranorex.Plugin.Qt, Version=5.4.5.19886, Culture=neutral, PublicKeyToken=b798506b574ebc9a"
 					description="The Qt QDockWidget.cursor property of type QRemoteObject."
-					readonly="False">
-						0
-					</dynamicattribute>
+					readonly="False"/>
 					<dynamicattribute
 					name="Enabled"
 					type="System.Boolean"
@@ -794,6 +792,13 @@ ooooAKKKKACiiigAooooA//Z
 			<matchname/>
 			<matchvalue/>
 		</validationitem>
+		<explicitdelayitem
+		enabled="True"
+		optional="False"
+		duration="10000ms">
+			<comment/>
+			<bindings/>
+		</explicitdelayitem>
 	</recorditems>
 	<repository
 	name="NGTTestAutomationRepository"

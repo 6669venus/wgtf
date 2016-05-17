@@ -79,26 +79,16 @@ namespace NGTTestAutomation.Generic_app_UI
 
             Init();
 
-            Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.ExpandButton1' at Center.", repo.Generic_app.MainWindow.ExpandButton1Info, new RecordItemIndex(0));
-            repo.Generic_app.MainWindow.ExpandButton1.Click();
-            Delay.Milliseconds(200);
-            
-            //Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'Generic_app.MainWindow.Column' at 19;28.", repo.Generic_app.MainWindow.ColumnInfo, new RecordItemIndex(1));
-            //repo.Generic_app.MainWindow.Column.Click(new Location(Column_Screenshot1, "19;28", Column_Screenshot1_Options));
+            //Report.Log(ReportLevel.Info, "Mouse", "Mouse Left Click item 'MainWindow.SomeText' at Center.", repo.MainWindow.SomeTextInfo, new RecordItemIndex(0));
+            //repo.MainWindow.SomeText.Click();
             //Delay.Milliseconds(200);
             
-            Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(2));
-            Delay.Duration(10000, false);
+            //Report.Log(ReportLevel.Info, "Delay", "Waiting for 10s.", new RecordItemIndex(1));
+            //Delay.Duration(10000, false);
             
         }
 
 #region Image Feature Data
-        CompressedImage Column_Screenshot1
-        { get { return repo.Generic_app.MainWindow.ColumnInfo.GetScreenshot1(new Rectangle(4, 4, 179, 702)); } }
-
-        Imaging.FindOptions Column_Screenshot1_Options
-        { get { return Imaging.FindOptions.Parse("0.85;EdgesSobel;0,0,0,0;True;10000000;0ms"); } }
-
 #endregion
     }
 #pragma warning restore 0436

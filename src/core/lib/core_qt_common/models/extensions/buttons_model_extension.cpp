@@ -1,7 +1,7 @@
 #include "buttons_model_extension.hpp"
 
-#include "core_data_model\i_item.hpp"
-#include "helpers\qt_helpers.hpp"
+#include "helpers/qt_helpers.hpp"
+#include "core_data_model/i_item.hpp"
 
 QHash<int, QByteArray> ButtonsModelExtension::roleNames() const
 {

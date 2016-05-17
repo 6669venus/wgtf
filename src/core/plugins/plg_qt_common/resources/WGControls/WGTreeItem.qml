@@ -338,7 +338,7 @@ ListView {
 
                         Rectangle {
                             id: expandIconArea
-                            objectName: "expandIconArea"
+                            objectName: typeof(itemData) != "undefined" ? "expandIconArea_" + itemData.Value : "expandIconArea"
                             color: "transparent"
                             width: firstColumn ? expandButton.x + expandButton.width + expandIconMargin : 0
                             height: Math.max(minimumRowHeight, treeView.expandIconSize)

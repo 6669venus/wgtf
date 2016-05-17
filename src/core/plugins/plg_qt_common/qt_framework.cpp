@@ -50,6 +50,7 @@
 #include <QString>
 #include <QWidget>
 #include <QDir>
+#include <QMessageBox>
 
 #ifdef QT_NAMESPACE
 namespace QT_NAMESPACE {
@@ -534,6 +535,59 @@ const std::string& QtFramework::getPluginPath() const
 {
 	return pluginPath_;
 }
+
+int QtFramework::displayMessageBox( const char* title, const char* message, int buttons ) 
+{
+	struct MessageBoxQtMapping
+	{
+		MessageBoxButtons uiButton;
+		QMessageBox::StandardButton qtButton;
+	};
+
+	static MessageBoxQtMapping buttonMappings[] = 
+	{
+		{ Ok, QMessageBox::StandardButton::Ok },
+		{ Cancel, QMessageBox::StandardButton::Cancel },
+		{ Save, QMessageBox::StandardButton::Save },
+		{ SaveAll, QMessageBox::StandardButton::SaveAll },
+		{ Yes, QMessageBox::StandardButton::Yes },
+		{ No, QMessageBox::StandardButton::No },
+	};
+
+	static size_t count = sizeof( buttonMappings ) / sizeof( buttonMappings[0] );
+	
+	int desiredButtons = 0;
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		if (buttons & buttonMappings[i].uiButton)
+		{
+			desiredButtons |= buttonMappings[i].qtButton;
+		}
+	}
+
+	assert( desiredButtons != 0 );
+
+	QMessageBox messageBox( QMessageBox::Icon::NoIcon, title, message, (QMessageBox::StandardButton)desiredButtons );
+
+	int retValue = messageBox.exec();
+
+	int result = 0;
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		if (retValue == buttonMappings[i].qtButton)
+		{
+			result = buttonMappings[i].uiButton;
+			break;
+		}
+	}
+
+	assert( result != 0 );
+
+	return result;
+}
+
 
 void QtFramework::registerDefaultComponents()
 {

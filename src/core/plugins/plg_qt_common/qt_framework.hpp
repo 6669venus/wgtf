@@ -83,6 +83,8 @@ public:
 	virtual void setPluginPath( const std::string& path ) override;
 	virtual const std::string& getPluginPath() const override;
 
+	int displayMessageBox( const char* title, const char* message, int buttons ) override;
+
 	IPreferences * getPreferences() override;
 
 protected:

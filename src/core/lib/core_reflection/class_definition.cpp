@@ -344,12 +344,10 @@ bool ClassDefinition::isGeneric() const
 bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 {
 	const IClassDefinition * baseDefinition = this;
-	const char * definitionName = definition.getName();
 	while( baseDefinition != NULL )
 	{
-		const char * baseName = baseDefinition->getName();
 		// Assuming definitions are shared we only need to check the pointer
-		if ( baseName == definitionName )
+		if ( baseDefinition == &definition )
 		{
 			return true;
 		}
@@ -362,13 +360,11 @@ bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 //------------------------------------------------------------------------------
 void * ClassDefinition::castTo( const IClassDefinition & definition, void * object ) const
 {
-	const char * definitionName = definition.getName();
-
 	const IClassDefinition * baseDefinition = this;
 	while( baseDefinition != NULL )
 	{
-		const char * baseName = baseDefinition->getName();
-		if (strcmp( baseName, definitionName ) == 0)
+		// Assuming definitions are shared we only need to check the pointer
+		if ( baseDefinition == &definition )
 		{
 			return object;
 		}

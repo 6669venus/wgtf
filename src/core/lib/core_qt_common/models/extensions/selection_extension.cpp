@@ -250,7 +250,10 @@ void SelectionExtension::Implementation::selectRange( const QModelIndex& index )
 
 		for (auto& oldIndex: oldSelection)
 		{
-			fireDataChangedEvent( oldIndex );
+			if (oldIndex.isValid())
+			{
+				fireDataChangedEvent(oldIndex);
+			}
 		}
 	}
 

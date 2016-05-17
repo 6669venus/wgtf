@@ -27,9 +27,13 @@ Item {
     /*! This property orientation can be either Qt.Vertical or Qt.Horizontal */
     property variant orientation : Qt.Vertical
 
+    /*! This property determines whether the scrollbar will expand and shrink when interacted with. It also
+        enables and disables hoverEnabled for the mousearea. */
+    property bool expandableScrollBar: true
+
     // Is the scrollbar in the flickable indicator state or conventional scrollbar state
     /*! \internal */
-    property bool __expanded: false
+    property bool __expanded: !expandableScrollBar
 
     property QtObject scrollFlickable
 
@@ -143,14 +147,17 @@ Item {
          anchors.leftMargin: orientation == Qt.Vertical && !__expanded ? -5 : 0
          anchors.topMargin: orientation != Qt.Vertical && !__expanded ? -5 : 0
 
-         hoverEnabled: true
+         hoverEnabled: expandableScrollBar
 
          onEntered: {
-            __expanded = true
+             if (expandableScrollBar)
+             {
+                 __expanded = true
+             }
          }
 
          onExited: {
-             if (!scrollBarArea.drag.active)
+             if (!scrollBarArea.drag.active && expandableScrollBar)
              {
                  shrinkDelay.restart()
              }
@@ -161,7 +168,7 @@ Item {
              id: shrinkDelay
              interval: 600
              onTriggered: {
-                 if (!scrollBarArea.drag.active && !scrollBarArea.containsMouse)
+                 if (!scrollBarArea.drag.active && !scrollBarArea.containsMouse && expandableScrollBar)
                  {
                      __expanded = false
                  }
@@ -226,7 +233,7 @@ Item {
 
          onReleased:
          {
-             if (!scrollBarArea.containsMouse)
+             if (!scrollBarArea.containsMouse && expandableScrollBar)
              {
                  shrinkDelay.restart()
              }

@@ -23,7 +23,7 @@ public:
 	 *	@param index to be moved.
 	 *	@return new position.
 	 */
-	Q_INVOKABLE QModelIndex getDownOneRow( const QModelIndex & index ) const;
+	Q_INVOKABLE QModelIndex getNextIndex( const QModelIndex & index ) const;
 
 	/**
 	 *	Move index up one row in the list.
@@ -31,7 +31,7 @@ public:
 	 *	@param index to be moved.
 	 *	@return new position.
 	 */
-	Q_INVOKABLE QModelIndex getUpOneRow( const QModelIndex & index ) const;
+	Q_INVOKABLE QModelIndex getPreviousIndex( const QModelIndex & index ) const;
 
 	/**
 	 *	Convert list model index to a row number.

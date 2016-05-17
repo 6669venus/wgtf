@@ -72,7 +72,7 @@ WGListViewBase {
 
     Keys.onUpPressed: {
         // Move keyboard highlight
-        currentModelIndex = listExtension.getUpOneRow(currentModelIndex);
+        currentModelIndex = listExtension.getPreviousIndex(currentModelIndex);
 
         // Synchronize with the index in Qt's ListView
         currentIndex = listExtension.indexToRow(currentModelIndex);
@@ -93,7 +93,7 @@ WGListViewBase {
 
     Keys.onDownPressed: {
         // Move keyboard highlight
-        currentModelIndex = listExtension.getDownOneRow(currentModelIndex);
+        currentModelIndex = listExtension.getNextIndex(currentModelIndex);
 
         // Synchronize with the index in Qt's ListView
         currentIndex = listExtension.indexToRow(currentModelIndex);

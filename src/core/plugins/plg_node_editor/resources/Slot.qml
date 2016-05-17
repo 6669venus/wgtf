@@ -48,18 +48,18 @@ Row
             onPressed:
             {
                 mouse.accepted = true;
-                startCreatingNewConnection(slotObj);
+                canvasContainer.startCreatingNewConnection(slotObj);
             }
 
             onPositionChanged:
             {
                 mouse.accepted = true;
-                graphView.currentConnection.endPos = mapToItem(graphView, mouse.x, mouse.y);
+                canvasContainer.currentConnection.endPos = mapToItem(graphView, mouse.x, mouse.y);
             }
 
             onReleased:
             {
-                finishCreatingNewConnection(mapToItem(graphView, mouse.x, mouse.y));
+                canvasContainer.finishCreatingNewConnection(mapToItem(graphView, mouse.x, mouse.y));
             }
         }
     }

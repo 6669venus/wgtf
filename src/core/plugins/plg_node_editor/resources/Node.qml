@@ -12,7 +12,8 @@ Rectangle
     property var nodeTitle
     property var inputSlotsModel
     property var outputSlotsModel
-    property var position: Qt.point(x, y)
+    property var localPosition
+    property var globalPosition: mapToItem(graphView, x, y)
 
     property bool nodeIsExpanded: true
 
@@ -35,7 +36,10 @@ Rectangle
     border.width: defaultSpacing.standardBorderSize
     border.color: palette.darkestShade
 
-    onPositionChanged: { nodeObj.setPos(x, y); }
+    x: localPosition.x
+    y: localPosition.y
+
+    onGlobalPositionChanged: { nodeObj.setPos(globalPosition.x, globalPosition.y); }
 
     function getSlotViewBySlotObj(slotObj)
     {

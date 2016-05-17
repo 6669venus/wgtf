@@ -22,6 +22,20 @@ void ConnectionCurve::setToPoint(const QPointF &p)
     update();
 }
 
+void ConnectionCurve::setContentTranslate(const QPointF &p)
+{
+    m_contentTranslate = p;
+    emit contentTranslateChanged(m_contentTranslate);
+    update();
+}
+
+void ConnectionCurve::setContentScale(const qreal &p)
+{
+    m_contentScale = p;
+    emit contentScaleChanged(m_contentScale);
+    update();
+}
+
 void ConnectionCurve::setFromNode(const QRectF &nodeRect)
 {
     m_fromNode = nodeRect;
@@ -34,7 +48,7 @@ void ConnectionCurve::setToNode(const QRectF &nodeRect)
 
 void ConnectionCurve::paint(QPainter *painter)
 {
-    #define CONNECTION_ROUNDING 10
+    #define CONNECTION_ROUNDING 10 * m_contentScale
 
     if (m_fromPoint.isNull() || m_toPoint.isNull())
         return;
@@ -47,18 +61,16 @@ void ConnectionCurve::paint(QPainter *painter)
     // For reverse connection (where OUT if to the right of IN), use more complex algorithm
     if (m_fromPoint.x() >= m_toPoint.x() - 32 && !m_fromNode.isNull() && !m_toNode.isNull())
     {
-        // Determine a line that divides the blocks vertically
-        float dividerY = 0.25 * (m_fromNode.top() + m_fromNode.bottom() + m_toNode.top() + m_toNode.bottom());
-
         // Determine the vertical segments of the connector
-        float outPartX = m_fromPoint.x() + 28;
-        float inPartX =  m_toPoint.x() - 28;
+        float outPartX = m_fromPoint.x() + (28 * m_contentScale);
+        float inPartX = m_toPoint.x() - (28 * m_contentScale);
 
         float arcWidth = 2 * CONNECTION_ROUNDING;
-
+        
         if (m_toNode.bottom() < m_fromNode.top())
         {
-            dividerY = 0.5 * (m_toNode.bottom() + m_fromNode.top());
+            float dividerY = 0.5 * (m_toNode.bottom() + m_fromNode.top());
+            dividerY = dividerY * m_contentScale + m_contentTranslate.y();
 
             path.lineTo(outPartX - CONNECTION_ROUNDING, m_fromPoint.y());
             path.arcTo(outPartX - arcWidth, m_fromPoint.y() - arcWidth, arcWidth, arcWidth, 270, 90);
@@ -75,7 +87,8 @@ void ConnectionCurve::paint(QPainter *painter)
         }
         else if (m_fromNode.bottom() < m_toNode.top())
         {
-            dividerY = 0.5 * (m_fromNode.bottom() + m_toNode.top());
+            float dividerY = 0.5 * (m_fromNode.bottom() + m_toNode.top());
+            dividerY = dividerY * m_contentScale + m_contentTranslate.y();
 
             path.lineTo(outPartX - CONNECTION_ROUNDING, m_fromPoint.y());
             path.arcTo(outPartX - arcWidth, m_fromPoint.y(), arcWidth, arcWidth, 90, -90);
@@ -106,12 +119,11 @@ void ConnectionCurve::paint(QPainter *painter)
     QColor wireColor(79, 106, 25);
     QColor maskColor = Qt::black;
 
-    painter->setPen(QPen(maskColor, 4, Qt::SolidLine,
+    painter->setPen(QPen(maskColor, 4 * m_contentScale, Qt::SolidLine,
         Qt::RoundCap, Qt::RoundJoin));
     painter->drawPath(path);
-    
 
-    painter->setPen(QPen(wireColor, 2, Qt::SolidLine,
+    painter->setPen(QPen(wireColor, 2 * m_contentScale, Qt::SolidLine,
         Qt::RoundCap, Qt::RoundJoin));
     painter->drawPath(path);
 
@@ -123,6 +135,7 @@ void ConnectionCurve::mousePressEvent(QMouseEvent *event)
     QPainterPath path;
     path.moveTo(event->pos());
     path.addEllipse(event->pos(), 4, 4);
+
     bool result = m_path.intersects(path);
     event->setAccepted(result);
 

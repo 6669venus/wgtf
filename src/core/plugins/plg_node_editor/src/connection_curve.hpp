@@ -11,6 +11,9 @@ class ConnectionCurve : public QQuickPaintedItem
     Q_PROPERTY(QPointF fromPoint READ fromPoint WRITE setFromPoint NOTIFY fromPointChanged)
     Q_PROPERTY(QPointF toPoint READ toPoint WRITE setToPoint NOTIFY toPointChanged)
 
+    Q_PROPERTY(QPointF contentTranslate READ contentTranslate WRITE setContentTranslate NOTIFY contentTranslateChanged)
+    Q_PROPERTY(qreal contentScale READ contentScale WRITE setContentScale NOTIFY contentScaleChanged)
+
     Q_PROPERTY(QRectF fromNode READ fromNode WRITE setFromNode)
     Q_PROPERTY(QRectF toNode READ toNode WRITE setToNode)
 public:
@@ -28,11 +31,19 @@ public:
     void setToNode(const QRectF &nodeRect);
     QRectF toNode() const { return  m_toNode; }
 
+    void setContentTranslate(const QPointF &translate);
+    QPointF contentTranslate() const { return m_contentTranslate; }
+
+    void setContentScale(const qreal &scale);
+    qreal contentScale() const { return m_contentScale; }
+
     void paint(QPainter *painter) override;
 
 signals:
     void fromPointChanged(const QPointF &p);
     void toPointChanged(const QPointF &p);
+    void contentTranslateChanged(const QPointF &translate);
+    void contentScaleChanged(const qreal &scale);
     void connectionClicked();
 
 private:
@@ -44,6 +55,9 @@ private:
 
     QRectF m_fromNode;
     QRectF m_toNode;
+
+    QPointF m_contentTranslate;
+    qreal m_contentScale;
     QPainterPath m_path;
 };
 

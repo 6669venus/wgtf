@@ -26,17 +26,25 @@ ConnectionCurve
 
     property var endPos
 
+    property var viewTransform
+
+    contentScale: viewTransform.xScale
+    contentTranslate: Qt.point(viewTransform.origin.x, viewTransform.origin.y)
+
     onFirstNodeChanged: initNodeView()
     onSecondNodeChanged: initNodeView()
 
     onFirstNodeViewChanged: { firstSlotView = firstNodeView.getSlotViewBySlotObj(firstSlot)    }
     onSecondNodeViewChanged:{ secondSlotView = secondNodeView.getSlotViewBySlotObj(secondSlot) }
 
-    onFirstSlotViewChanged: updatePos()
-    onSecondSlotViewChanged: updatePos()
-    onFirstNodePosChanged: updatePos()
-    onSecondNodePosChanged: updatePos()
-    onEndPosChanged: updatePos()
+    onFirstSlotViewChanged:     updatePos()
+    onSecondSlotViewChanged:    updatePos()
+
+    onFirstNodePosChanged:      updatePos()
+    onSecondNodePosChanged:     updatePos()
+
+    onEndPosChanged:            updatePos()
+    onContentTranslateChanged:  updatePos()
 
     onConnectionClicked: deleteConnection(connectionID)
 
@@ -70,15 +78,15 @@ ConnectionCurve
             var isInput = slot.isInput;
 
             if (isInput)
-                createConnection(slotObj.node.id, slotObj.id, firstNode.id, firstSlot.id);
-            else
                 createConnection(firstNode.id, firstSlot.id, slotObj.node.id, slotObj.id);
+            else
+                createConnection(slotObj.node.id, slotObj.id, firstNode.id, firstSlot.id);
         }
     }
 
     function updatePos()
     {
-        fromNode = Qt.rect(firstNodeView.x, firstNodeView.y, firstNodeView.width, firstNodeView.height);
+        fromNode = Qt.rect(firstNodeView.x, firstNodeView.y,  firstNodeView.width, firstNodeView.height);
         if (secondNodeView)
             toNode = Qt.rect(secondNodeView.x, secondNodeView.y, secondNodeView.width, secondNodeView.height);
 

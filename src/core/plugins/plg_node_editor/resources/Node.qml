@@ -102,18 +102,18 @@ Rectangle
 
         radius: defaultSpacing.halfRadius
         z: -2
+    }
 
-        MouseArea
-        {
-            anchors.fill: parent
-            drag.target: nodeContainer
-            drag.axis: Drag.XAndYAxis
-            acceptedButtons: Qt.LeftButton
-            preventStealing: true
+    MouseArea
+    {
+        anchors.fill: parent
+        drag.target: nodeContainer
+        drag.axis: Drag.XAndYAxis
+        acceptedButtons: Qt.LeftButton
+        preventStealing: true
 
-            onDoubleClicked: {
-                nodeIsExpanded = !nodeIsExpanded
-            }
+        onDoubleClicked: {
+            nodeIsExpanded = !nodeIsExpanded
         }
     }
 

@@ -19,7 +19,7 @@ WGItemView {
 	property var columnWidths: []
 	property real columnSpacing: 0
 
-    property list commonExtensions: [columnExtension, imageExtension]
+    property var commonExtensions: [columnExtension, imageExtension]
 	extensions: commonExtensions
 
 	function rowCount() {

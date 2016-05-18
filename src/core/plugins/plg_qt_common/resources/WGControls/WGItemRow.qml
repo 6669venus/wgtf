@@ -19,7 +19,7 @@ Item {
         then WGItemViewCommon will append more of the default columnDelegate.
         The default value is an empty list.
     */
-    property list columnDelegates: []
+    property var columnDelegates: []
 
     /*! This property holds a list of indexes to adapt from the model's columns
         to the view's columns.
@@ -27,8 +27,8 @@ Item {
              then the view can have 3 columns that lookup column 0 in the model.
         The default value is an empty list
     */
-    property list columnSequence: []
-    property list columnWidths: []
+    property var columnSequence: []
+    property var columnWidths: []
     property alias columnSpacing: row.spacing
     property bool selected: false
 

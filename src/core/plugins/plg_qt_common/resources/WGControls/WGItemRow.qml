@@ -151,7 +151,6 @@ Item {
                         id: columnDelegateLoader
                         property var itemData: model
                         property int itemWidth: columnWidths[index] - x
-                        property bool isCurrent: itemRow.isCurrent
                         sourceComponent: itemRow.columnDelegates[index]
                     }
                 }

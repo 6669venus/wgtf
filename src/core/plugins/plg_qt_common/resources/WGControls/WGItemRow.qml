@@ -101,8 +101,8 @@ Item {
 
                 // Line up columns horizontally.
                 Row {
-                    id: wholeRow
-                    
+                    id: columnLayoutRow
+
                     /* MOVE INTO STYLE*/
 
                     // Add expanded/collapsed arrow.
@@ -128,6 +128,7 @@ Item {
 
                         // Expanded/collapsed arrow for tree views.
                         Text {
+                            objectName: typeof(model.display) != "undefined" ? "expandIcon_" + model.display : "expandIcon"
                             color: iconArea.__hasChildren ? iconArea.__expanded ? palette.textColor : palette.neutralTextColor : "transparent"
                             font.family : "Marlett"
                             text : iconArea.__expanded ? "\uF036" : "\uF034"

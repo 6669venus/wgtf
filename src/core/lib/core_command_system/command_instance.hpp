@@ -2,6 +2,7 @@
 #define COMMAND_INSTANCE_HPP
 
 #include "reflection_undo_redo_data.hpp"
+#include "custom_undo_redo_data.hpp"
 
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
@@ -41,6 +42,9 @@ public:
 class CommandInstance;
 typedef ObjectHandleT< CommandInstance > CommandInstancePtr;
 
+class UndoRedoData;
+typedef std::unique_ptr< UndoRedoData > UndoRedoDataPtr;
+
 //TODO: Pull out interface to remove linkage
 /**
  *	CommandInstance stores per-instance data for a type of Command.
@@ -53,6 +57,7 @@ class CommandInstance
 public:
 	friend CommandManagerImpl;
 	friend ReflectionUndoRedoData;
+	friend CustomUndoRedoData;
 
 	typedef XMLSerializer UndoRedoSerializer;
 
@@ -83,6 +88,8 @@ public:
 
     ObjectHandle getCommandDescription() const;
 
+	void consolidateUndoRedoData( CommandInstance * parentInstance );
+
 private:
 	void waitForCompletion();
 
@@ -96,9 +103,6 @@ private:
 	void setCommandSystemProvider( ICommandManager * pCmdSysProvider );
 	void setDefinitionManager( IDefinitionManager & defManager );
 
-	void connectEvent();
-	void disconnectEvent();
-
 	std::mutex					mutex_;
 	IDefinitionManager *		defManager_;
 	std::atomic< ExecutionStatus > status_;
@@ -110,7 +114,7 @@ private:
 	std::string					commandId_;
 	ObjectHandle				contextObject_;
 	CommandErrorCode			errorCode_;
-	ReflectionUndoRedoData		reflectionUndoRedoData_;
+	std::vector< UndoRedoDataPtr > undoRedoData_;
 };
 
 #endif //COMMAND_INSTANCE_HPP

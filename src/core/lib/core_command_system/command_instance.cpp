@@ -17,6 +17,10 @@
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "wg_types/binary_block.hpp"
 #include "core_logging/logging.hpp"
+#include "custom_undo_redo_data.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
+
+namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 //==============================================================================
 CommandInstance::CommandInstance()
@@ -27,13 +31,12 @@ CommandInstance::CommandInstance()
 	, commandId_("")
 	, contextObject_( nullptr )
 	, errorCode_( CommandErrorCode::COMMAND_NO_ERROR )
-	, reflectionUndoRedoData_( *this )
 {
 }
 
+
 //==============================================================================
 CommandInstance::CommandInstance( const CommandInstance& )
-	: reflectionUndoRedoData_( *this )
 {
 	assert(!"Not copyable");
 }
@@ -71,30 +74,27 @@ void CommandInstance::waitForCompletion()
 //==============================================================================
 CommandErrorCode CommandInstance::getErrorCode() const
 {
-	if (children_.empty())
+	if (errorCode_ != CommandErrorCode::COMMAND_NO_ERROR)
 	{
 		return errorCode_;
 	}
 
-	//batchcommand(parent command) failure only when:
-	//all sub-commands failed(errorcode != NO_ERROR) or as long as one of sub-commands' errorcode == ABORTED
-	CommandErrorCode errorCode = CommandErrorCode::ABORTED;
+	if (children_.empty())
+	{
+		return CommandErrorCode::COMMAND_NO_ERROR;
+	}
+
 	for (const auto & child : children_)
 	{
-		CommandErrorCode childErrorCode = child->getErrorCode();
-        if (childErrorCode == CommandErrorCode::COMMAND_NO_ERROR)
+        if (child->getErrorCode() == CommandErrorCode::COMMAND_NO_ERROR)
 		{
-			errorCode = childErrorCode;
-			continue;
-		}
-		if (childErrorCode == CommandErrorCode::ABORTED)
-		{
-			errorCode = childErrorCode;
-			break;
+			return CommandErrorCode::COMMAND_NO_ERROR;
 		}
 	}
-	return errorCode;
+
+	return CommandErrorCode::ABORTED;
 }
+
 
 //==============================================================================
 bool CommandInstance::isMultiCommand() const
@@ -102,17 +102,20 @@ bool CommandInstance::isMultiCommand() const
 	return !children_.empty();
 }
 
+
 //==============================================================================
 void CommandInstance::setArguments( const ObjectHandle & arguments )
 {
 	arguments_ = arguments;
 }
 
+
 //==============================================================================
 void CommandInstance::setDefinitionManager( IDefinitionManager & defManager )
 {
 	defManager_ = &defManager;
 }
+
 
 //==============================================================================
 const char * CommandInstance::getCommandId() const
@@ -127,6 +130,7 @@ void CommandInstance::setCommandId( const char * commandName )
 	commandId_ = commandName;
 }
 
+
 //==============================================================================
 Command * CommandInstance::getCommand()
 {
@@ -137,6 +141,7 @@ Command * CommandInstance::getCommand()
 }
 
 
+//==============================================================================
 const Command * CommandInstance::getCommand() const
 {
 	assert( pCmdSysProvider_ != nullptr );
@@ -144,6 +149,7 @@ const Command * CommandInstance::getCommand() const
 	assert( pCommand != nullptr );
 	return pCommand;
 }
+
 
 //==============================================================================
 void CommandInstance::setStatus( ExecutionStatus status )
@@ -160,14 +166,15 @@ void CommandInstance::setStatus( ExecutionStatus status )
 	}
 }
 
+
 //==============================================================================
 void CommandInstance::undo()
 {
-    const Command * command = getCommand();
-	if (!command->undo( getArguments() ))
+	for (auto it = undoRedoData_.rbegin(); it != undoRedoData_.rend(); ++it)
 	{
-		reflectionUndoRedoData_.undo();
+		(*it)->undo();
 	}
+    const Command * command = getCommand();
     command->fireCommandExecuted(*this, CommandOperation::UNDO);
 }
 
@@ -175,11 +182,11 @@ void CommandInstance::undo()
 //==============================================================================
 void CommandInstance::redo()
 {
-    const Command * command = getCommand();
-	if (!command->redo( getArguments() ))
+	for (auto it = undoRedoData_.begin(); it != undoRedoData_.end(); ++it)
 	{
-		reflectionUndoRedoData_.redo();
+		(*it)->redo();
 	}
+    const Command * command = getCommand();
     command->fireCommandExecuted(*this, CommandOperation::REDO);
 }
 
@@ -188,7 +195,19 @@ void CommandInstance::redo()
 void CommandInstance::execute()
 {
     const Command * command = getCommand();
-	returnValue_ = command->execute( arguments_ );
+	if (command->customUndo())
+	{
+		returnValue_ = command->execute( arguments_ );
+		undoRedoData_.emplace_back( new CustomUndoRedoData( *this ) );
+	}
+	else
+	{
+		auto undoRedoData = new ReflectionUndoRedoData( *this );
+		undoRedoData->connect();
+		returnValue_ = command->execute( arguments_ );
+		undoRedoData->disconnect();
+		undoRedoData_.emplace_back( undoRedoData );
+	}
     command->fireCommandExecuted(*this, CommandOperation::EXECUTE);
 	auto errorCode = returnValue_.getBase<CommandErrorCode>();
 	if (errorCode != nullptr)
@@ -198,27 +217,19 @@ void CommandInstance::execute()
 }
 
 
+//==============================================================================
 bool CommandInstance::isComplete() const
 {
 	return status_ == Complete;
 }
 
+
+//==============================================================================
 ExecutionStatus CommandInstance::getExecutionStatus() const
 {
 	return status_;
 }
 
-//==============================================================================
-void CommandInstance::connectEvent()
-{
-    reflectionUndoRedoData_.connect();
-}
-
-//==============================================================================
-void CommandInstance::disconnectEvent()
-{
-    reflectionUndoRedoData_.disconnect();
-}
 
 //==============================================================================
 void CommandInstance::setContextObject( const ObjectHandle & contextObject )
@@ -226,18 +237,104 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 	contextObject_ = contextObject;
 }
 
+
+//==============================================================================
 ObjectHandle CommandInstance::getCommandDescription() const
 {
     auto description = getCommand()->getCommandDescription(getArguments());
-	if (description == nullptr)
+	if (description != nullptr)
 	{
-		description = reflectionUndoRedoData_.getCommandDescription();
+		return description;
 	}
-	return description;
+
+	if (undoRedoData_.size() != 1)
+	{
+		return nullptr;
+	}
+
+	auto reflectionUndoRedoData = dynamic_cast< ReflectionUndoRedoData * >( undoRedoData_[0].get() );
+	if (reflectionUndoRedoData == nullptr)
+	{
+		return nullptr;
+	}
+
+	return reflectionUndoRedoData->getCommandDescription();
 }
+
 
 //==============================================================================
 void CommandInstance::setCommandSystemProvider( ICommandManager * pCmdSysProvider )
 {
 	pCmdSysProvider_ = pCmdSysProvider;
+}
+
+
+//==============================================================================
+void CommandInstance::consolidateUndoRedoData( CommandInstance * parentInstance )
+{
+	if (parentInstance == nullptr)
+	{
+		for (auto & data : undoRedoData_)
+		{
+			auto reflectionUndoRedoData = dynamic_cast< ReflectionUndoRedoData * >( data.get() );
+			if (reflectionUndoRedoData != nullptr)
+			{
+				reflectionUndoRedoData->consolidate();
+			}
+		}
+		return;
+	}
+
+	auto lastParent = parentInstance->undoRedoData_.empty() ? nullptr : dynamic_cast< ReflectionUndoRedoData * >( parentInstance->undoRedoData_.back().get() );
+	if (lastParent != nullptr)
+	{
+		if (lastParent->undoRedoHelperList_.size() == 1 &&
+			lastParent->undoRedoHelperList_[0]->isMethod())
+		{
+			lastParent = nullptr;
+		}
+	}
+
+	auto firstChild = undoRedoData_.empty() ? nullptr : dynamic_cast< ReflectionUndoRedoData * >( undoRedoData_.front().get() );
+	if (firstChild != nullptr)
+	{
+		if (firstChild->undoRedoHelperList_.size() == 1 &&
+			firstChild->undoRedoHelperList_[0]->isMethod())
+		{
+			firstChild = nullptr;
+		}
+	}
+
+	if (lastParent != nullptr && firstChild != nullptr)
+	{
+		for (auto & childHelper : firstChild->undoRedoHelperList_)
+		{
+			auto it = std::find_if( lastParent->undoRedoHelperList_.begin(), lastParent->undoRedoHelperList_.end(),
+				[ &childHelper ]( std::unique_ptr< RPURU::ReflectedClassMemberUndoRedoHelper > & item )
+				{
+					return childHelper->objectId_ == item->objectId_ && childHelper->path_ == item->path_;
+				} );
+			if (it != lastParent->undoRedoHelperList_.end())
+			{
+				auto & helper = *it;
+				assert( !helper->isMethod() );
+				assert( !childHelper->isMethod() );
+				auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( helper.get() );
+				auto childPropertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( childHelper.get() );
+				propertyHelper->postValue_ = childPropertyHelper->postValue_;
+			}
+			else
+			{
+				assert( !childHelper->isMethod() );
+				lastParent->undoRedoHelperList_.emplace_back( childHelper.release() );
+			}
+		}
+		undoRedoData_.erase( undoRedoData_.begin() );
+	}
+
+	for (auto & data : undoRedoData_)
+	{
+		parentInstance->undoRedoData_.emplace_back( data.release() );
+	}
+	undoRedoData_.clear();
 }

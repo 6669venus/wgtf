@@ -51,6 +51,11 @@ ObjectHandle ReflectedCollectionInsertCommand::execute(const ObjectHandle & argu
 	return nullptr;
 }
 
+bool ReflectedCollectionInsertCommand::customUndo() const
+{
+	return true;
+}
+
 bool ReflectedCollectionInsertCommand::undo( const ObjectHandle & arguments ) const
 {
 	auto commandArgs = arguments.getBase< ReflectedCollectionInsertCommandParameters >();

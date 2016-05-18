@@ -3,6 +3,8 @@
 
 #include "undo_redo_data.hpp"
 
+namespace wgt
+{
 class CommandInstance;
 
 class CustomUndoRedoData : public UndoRedoData
@@ -16,5 +18,5 @@ public:
 private:
 	CommandInstance & commandInstance_;
 };
-
+}
 #endif // UNDO_REDO_DATA_HPP

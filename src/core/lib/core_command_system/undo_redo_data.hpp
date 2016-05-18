@@ -1,6 +1,8 @@
 #ifndef UNDO_REDO_DATA_HPP
 #define UNDO_REDO_DATA_HPP
 
+namespace wgt
+{
 class UndoRedoData
 {
 public:
@@ -9,5 +11,5 @@ public:
 	virtual void undo() = 0;
 	virtual void redo() = 0;
 };
-
+}
 #endif // UNDO_REDO_DATA_HPP

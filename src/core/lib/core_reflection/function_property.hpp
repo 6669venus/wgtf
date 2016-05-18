@@ -88,7 +88,7 @@ private:
 			const Variant & value,
 			const IDefinitionManager & definitionManager )
 		{
-			typedef std::decay<TargetType>::type value_type;
+			typedef typename std::decay<TargetType>::type value_type;
 			auto pBase = reflectedCast< BaseType >( provider.data(), provider.type(), definitionManager );
 			if(pBase == nullptr || setter == nullptr)
 			{

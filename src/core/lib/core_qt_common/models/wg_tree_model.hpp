@@ -25,7 +25,7 @@ class WGTreeModel : public QAbstractItemModel
 				READ getSource 
 				WRITE setSource 
 				NOTIFY sourceChanged)
-	Q_PROPERTY( QQmlListProperty< IModelExtension > extensions 
+	Q_PROPERTY( QQmlListProperty< wgt::IModelExtension > extensions 
 				READ getExtensions )
 	Q_CLASSINFO( "DefaultProperty", "extensions" )
 

@@ -53,11 +53,19 @@ Item
     {
         id: canvasContainer
         anchors.fill: parent
-        showMouseLine: false
         clip: false
+
+        keepAspectRatio: true
+        useAxisScaleLimit: xyScaleLimit
+
+        showMouseLine: false
+        showCoordText: false
+        showWorkArea: false
 
         viewTransform: WGViewTransform{
             container: canvasContainer
+            xScale: 1
+            yScale: -1
         }
 
         property var connectionComponent: Qt.createComponent("ConnectionNodes.qml")

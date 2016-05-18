@@ -16,7 +16,7 @@ Item
            origin.x : 0
            origin.y : 0
            xScale : _xScale
-           yScale : _xScale
+           yScale : -_yScale
        },
        Translate
        {

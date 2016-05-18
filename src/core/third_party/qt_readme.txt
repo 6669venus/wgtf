@@ -1,3 +1,4 @@
-Clone Qt-5.3.1 repository to Qt/5.3.1 folder.
-Make sure your Qt folders structure match the Qt5_DIR in build scripts <repository>\build\cmake\BWQtCommon.cmake.
-Default path is /core/third_party/Qt/5.3.1/msvc2012_64.
+Clone the Qt-5.6.0 repository into ngt/src/core/third_party/Qt/5.6.0.
+Make sure the folder structure matches Qt5_DIR in the build script
+ngt/build/cmake/BWQtCommon.cmake.
+The default path is ngt/src/core/third_party/Qt/5.6.0/msvc2015_64.

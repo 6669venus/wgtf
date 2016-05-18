@@ -28,6 +28,7 @@ public:
 
 	const char * getId() const override;
 	ObjectHandle execute(const ObjectHandle & arguments) const override;
+	bool customUndo() const override;
 	bool undo( const ObjectHandle & arguments ) const override;
 	bool redo( const ObjectHandle & arguments ) const override;
 	CommandThreadAffinity threadAffinity() const override;

@@ -4,18 +4,18 @@ import QtQuick.Layouts 1.0
 import BWControls 1.0
 
 Item {
-	id: itemRow
+    id: itemRow
     objectName: "WGItemRow"
 
-	width: childrenRect.width != 0 ? childrenRect.width : 1024
-	height: childrenRect.height != 0 ? childrenRect.height : 1024
+    width: childrenRect.width != 0 ? childrenRect.width : 1024
+    height: childrenRect.height != 0 ? childrenRect.height : 1024
 
-	property var columnDelegates: []
+    property var columnDelegates: []
     property var columnSequence: []
-	property var columnWidths: []
-	property alias columnSpacing: row.spacing
+    property var columnWidths: []
+    property alias columnSpacing: row.spacing
 
-	property bool selected: false
+    property bool selected: false
 
     /*! Stores which item is currently in focus by the keyboard.
         Often this will correspond to the selected item, but not always.
@@ -26,20 +26,20 @@ Item {
     signal itemClicked(var mouse, var itemIndex)
     signal itemDoubleClicked(var mouse, var itemIndex)
 
-	/* MOVE INTO STYLE*/
-	Rectangle {
-		id: backgroundArea
-		anchors.fill: row
+    /* MOVE INTO STYLE*/
+    Rectangle {
+        id: backgroundArea
+        anchors.fill: row
         color: palette.highlightShade
-		opacity: selected ? 1 : 0.5 
+        opacity: selected ? 1 : 0.5
         visible: hoverArea.containsMouse || selected
     }
 
-	MouseArea {
-		id: hoverArea
-		anchors.fill: backgroundArea
-		hoverEnabled: true
-	}
+    MouseArea {
+        id: hoverArea
+        anchors.fill: backgroundArea
+        hoverEnabled: true
+    }
     // Keyboard focus highlight
     Rectangle {
         id: keyboardFocusArea
@@ -48,80 +48,83 @@ Item {
         opacity: 0.25
         visible: isCurrent
     }
-	/**/
+    /**/
 
-	Row {
-		id: row
+    Row {
+        id: row
 
-		Repeater {
-			model: SequenceList {
-				model: columnModel
-				sequence: columnSequence
-			}
+        Repeater {
+            model: SequenceList {
+                model: columnModel
+                sequence: columnSequence
+            }
 
-			Item {
-				width: columnWidths[index]
-				height: childrenRect.height
-				clip: true
+            Item {
+                width: columnWidths[index]
+                height: childrenRect.height
+                clip: true
 
-				MouseArea {
-					width: columnWidths[index]
-					height: row.height
-					acceptedButtons: Qt.RightButton | Qt.LeftButton;
+                MouseArea {
+                    width: columnWidths[index]
+                    height: row.height
+                    acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
-					onPressed: itemPressed(mouse, modelIndex)
-					onClicked: itemClicked(mouse, modelIndex)
-					onDoubleClicked: itemDoubleClicked(mouse, modelIndex)
-				}
+                    onPressed: itemPressed(mouse, modelIndex)
+                    onClicked: itemClicked(mouse, modelIndex)
+                    onDoubleClicked: itemDoubleClicked(mouse, modelIndex)
+                }
 
-				Row {
-					
-					/* MOVE INTO STYLE*/
-					Row {
-						id: iconArea
-						anchors.verticalCenter: parent.verticalCenter
+                Row {
+                    id: columnLayoutRow
 
-						width: childrenRect.width
-						height: childrenRect.height
+                    /* MOVE INTO STYLE*/
+                    Row {
+                        id: iconArea
+                        anchors.verticalCenter: parent.verticalCenter
 
-						visible: __isTree && index == 0
+                        width: childrenRect.width
+                        height: childrenRect.height
 
-						property bool __isTree: typeof expanded != "undefined"
-						property real __depth: __isTree ? depth : 0
-						property bool __hasChildren: __isTree ? hasChildren : false
-						property bool __expanded: __isTree ? expanded : false
+                        visible: __isTree && index == 0
 
-						Item {
-							width: iconArea.__depth * 10
-							height: 1
-						}
+                        property bool __isTree: typeof expanded != "undefined"
+                        property real __depth: __isTree ? depth : 0
+                        property bool __hasChildren: __isTree ? hasChildren : false
+                        property bool __expanded: __isTree ? expanded : false
 
-						Text {
-							color: iconArea.__hasChildren ? iconArea.__expanded ? palette.textColor : palette.neutralTextColor : "transparent"
-							font.family : "Marlett"
-							text : iconArea.__expanded ? "\uF036" : "\uF034"
-							verticalAlignment: Text.AlignVCenter
-							horizontalAlignment: Text.AlignHCenter
+                        Item {
+                            width: iconArea.__depth * 10
+                            height: 1
+                        }
 
-							MouseArea {
-								anchors.fill: parent
-								enabled: iconArea.__hasChildren
-								onPressed: {
-									expanded = !expanded
-								}
-							}
-						}
-					}
-					/**/
+                        Text {
+                            objectName: typeof(model.display) != "undefined" ? "expandIcon_" + model.display : "expandIcon"
+                            color: iconArea.__hasChildren ? iconArea.__expanded ? palette.textColor : palette.neutralTextColor : "transparent"
+                            font.family : "Marlett"
+                            text : iconArea.__expanded ? "\uF036" : "\uF034"
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
 
-					Loader {
-						property var itemData: model
-						property var itemWidth: columnWidths[index] - x
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: iconArea.__hasChildren
+                                onPressed: {
+                                    expanded = !expanded
+                                }
+                            }
+                        }
+                    }
+                    /**/
+
+                    Loader {
+                        id: columnDelegateLoader
+                        property var itemData: model
+                        property var itemWidth: columnWidths[index] - x
                         property var isCurrent: itemRow.isCurrent
-						sourceComponent: itemRow.columnDelegates[index]
-					}
-				}
-			}
-		}
+                        sourceComponent: itemRow.columnDelegates[index]
+                    }
+                }
+            }
+        }
     }
 }

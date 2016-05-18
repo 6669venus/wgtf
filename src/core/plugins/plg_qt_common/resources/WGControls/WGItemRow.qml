@@ -15,10 +15,11 @@ Item {
 
     /*! A list of components to be used for each column.
         Item 0 for column 0, item 1 for column 1 etc.
-        If a column is not in the list, then it will default to ???.
+        If the number of columns surpasses the length of columnDelegates,
+        then WGItemViewCommon will append more of the default columnDelegate.
         The default value is an empty list.
     */
-    property var columnDelegates: []
+    property list columnDelegates: []
 
     /*! This property holds a list of indexes to adapt from the model's columns
         to the view's columns.
@@ -26,11 +27,19 @@ Item {
              then the view can have 3 columns that lookup column 0 in the model.
         The default value is an empty list
     */
-    property var columnSequence: []
-    property var columnWidths: []
+    property list columnSequence: []
+    property list columnWidths: []
     property alias columnSpacing: row.spacing
     property bool selected: false
 
+    /*! Pass parameters from mouse events up to parent.
+        \see columnMouseArea for original event.
+        \param mouse the MouseEvent that triggered the signal.
+        \param itemIndex comes from C++.
+               Call to modelIndex() automatically looks up the
+               "C++ model index" from the row and column.
+               Index of items inside the WGItemRow.
+     */
     signal itemPressed(var mouse, var itemIndex)
     signal itemClicked(var mouse, var itemIndex)
     signal itemDoubleClicked(var mouse, var itemIndex)
@@ -78,7 +87,13 @@ Item {
                     height: row.height
                     acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
-                    // modelIndex is attached by the context
+                    /*! Pass parameters from mouse events up to parent.
+                        \param mouse the KeyEvent that triggered the signal.
+                        \param itemIndex comes from C++.
+                               Call to modelIndex() automatically looks up the
+                               "C++ model index" from the row and column.
+                               Index of items inside the WGItemRow.
+                     */
                     onPressed: itemPressed(mouse, modelIndex)
                     onClicked: itemClicked(mouse, modelIndex)
                     onDoubleClicked: itemDoubleClicked(mouse, modelIndex)
@@ -123,7 +138,7 @@ Item {
                                 anchors.fill: parent
                                 enabled: iconArea.__hasChildren
                                 onPressed: {
-                                    expanded = !expanded
+                                    expanded = !expanded;
                                 }
                             }
                         }
@@ -134,8 +149,8 @@ Item {
                     Loader {
                         id: columnDelegateLoader
                         property var itemData: model
-                        property var itemWidth: columnWidths[index] - x
-                        property var isCurrent: itemRow.isCurrent
+                        property int itemWidth: columnWidths[index] - x
+                        property bool isCurrent: itemRow.isCurrent
                         sourceComponent: itemRow.columnDelegates[index]
                     }
                 }

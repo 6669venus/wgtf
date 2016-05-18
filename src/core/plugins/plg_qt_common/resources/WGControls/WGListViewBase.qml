@@ -12,6 +12,9 @@ ListView {
     property var view
 
     /*! Propogates events from children to parents.
+        \param mouse the MouseEvent that triggered the signal.
+        \param itemIndex index of items inside the WGItemRow.
+        \param rowIndex index of the WGItemRow.
      */
     signal itemPressed(var mouse, var itemIndex, var rowIndex)
     signal itemClicked(var mouse, var itemIndex, var rowIndex)
@@ -32,8 +35,15 @@ ListView {
             }
         }
 
-        // mouse and modelIndex are passed as an argument by WGItemRow
-        // itemIndex comes from ?
+        /*! Pass events up to listViewBase.
+            \param mouse passed as an argument by WGItemRow.
+            \param itemIndex passed as an argument by WGItemRow.
+            \param rowIndex comes from C++.
+                   Call to modelIndex() automatically looks up the
+                   "C++ model index" from the row.
+                   Column is always 0 in WGListView.
+                   Index of the WGItemRow.
+         */
         onItemPressed: listViewBase.itemPressed(mouse, itemIndex, modelIndex)
         onItemClicked: listViewBase.itemClicked(mouse, itemIndex, modelIndex)
         onItemDoubleClicked: listViewBase.itemDoubleClicked(mouse, itemIndex, modelIndex)

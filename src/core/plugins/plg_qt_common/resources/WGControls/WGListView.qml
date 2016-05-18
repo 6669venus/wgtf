@@ -81,7 +81,7 @@ WGListViewBase {
 
     internalModel: itemView.extendedModel
 
-    property var extensions: []
+    property list extensions: []
 
     // Data holder for various C++ extensions.
     // Pass it down to children
@@ -93,7 +93,7 @@ WGListViewBase {
             id: listExtension
         }
 
-        property var listExtensions: listView.extensions.concat(commonExtensions.concat([listExtension]))
+        property list listExtensions: listView.extensions.concat(commonExtensions.concat([listExtension]))
         extensions: listExtensions
 
         Connections {

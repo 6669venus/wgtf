@@ -52,7 +52,7 @@ QModelIndex ListExtension::getNextIndex( const QModelIndex & index ) const
 	{
 		return index;
 	}
-	if (index.row() >= pModel->rowCount( index.parent() ))
+	if (index.row() >= (pModel->rowCount( index.parent() ) - 1))
 	{
 		return index;
 	}

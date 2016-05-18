@@ -11,6 +11,7 @@ Row {
     property real bottomMargin: 0
     property int columnCount: 0
     property var columnWidthFunction: null
+    property var columnWidths: []
     property color backgroundColour: "transparent"
     property Component columnDelegate: null
     property var model: null
@@ -41,7 +42,7 @@ Row {
             id: columnDelegate
             y: topMargin
             height: columns.height - topMargin - bottomMargin
-            width: columnWidthFunction(index);
+            width: columnWidths[index]
             color: backgroundColour
 
             signal dataChanged;
@@ -58,8 +59,7 @@ Row {
                 }
 
                 onLoaded: {
-                    var widthFunction = function() { return columnWidthFunction(index); }
-                    width = Qt.binding(widthFunction);
+                    width = columnWidths[index];
                     columns.height = Math.max(height, minimumRowHeight) + topMargin + bottomMargin;
                     item.clip = true;
 

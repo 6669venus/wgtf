@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
@@ -18,6 +18,84 @@ WGItemView {
 	property real columnWidth: 0
 	property var columnWidths: []
 	property real columnSpacing: 0
+
+    property bool showColumnHeaders: false
+    property bool showColumnFooters: false
+    property Component columnHeaderDelegate: defaultColumnHeaderDelegate
+    property Component columnFooterDelegate: defaultColumnFooterDelegate
+    property Component header: !showColumnHeaders ? null : headerComponent
+    property Component footer: !showColumnFooters ? null : footerComponent
+
+    property Component headerComponent: WGHeaderRow {
+        z:2
+        topMargin: root.view.topMargin
+        columnCount: root.columnCount()
+        backgroundColour: palette.midDarkColor
+        columnDelegate: columnHeaderDelegate
+        model: root.model
+        minimumRowHeight: defaultSpacing.minimumRowHeight
+        spacing: root.columnSpacing
+        visible: showColumnHeaders
+        columnWidths: columnsFrame.columnWidths
+        width: root.view.width - root.view.rightMargin - root.view.leftMargin
+    }
+
+    property Component footerComponent: WGHeaderRow {
+        z:2
+        bottomMargin: root.view.bottomMargin
+        columnCount: root.columnCount()
+        backgroundColour: palette.midDarkColor
+        columnDelegate: columnFooterDelegate
+        model: root.model
+        minimumRowHeight: defaultSpacing.minimumRowHeight
+        spacing: root.columnSpacing
+        visible: showColumnFooters
+        columnWidths: columnsFrame.columnWidths
+        width: root.view.width - root.view.rightMargin - root.view.leftMargin
+    }
+
+    property Component defaultColumnHeaderDelegate: Item {
+        signal dataChanged;
+
+        property var headerTextVariant: getData("headerText");
+        property string headerText:
+            headerTextVariant !== null && typeof(headerTextVariant) === "string" ? headerTextVariant : ""
+
+        onDataChanged:headerTextVariant = getData("headerText");
+
+        Text {
+            id: textBox
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.textColor
+            text: headerText
+        }
+    }
+
+    property Component defaultColumnFooterDelegate: Item {
+        signal dataChanged;
+
+        property var footerTextVariant: getData("footerText");
+        property string footerText:
+            footerTextVariant !== null && typeof(footerTextVariant) === "string" ? footerTextVariant : ""
+
+        onDataChanged:footerTextVariant = getData("footerText");
+
+        Text {
+            id: textBoxFooter
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            verticalAlignment: Text.AlignVCenter
+            color: palette.textColor
+            text: footerText
+        }
+    }
+
 
 	property var commonExtensions: [columnExtension, imageExtension]
 	extensions: commonExtensions
@@ -57,6 +135,7 @@ WGItemView {
 
 		root.view.contentWidth = Qt.binding( function() { return columnsFrame.width } )
 	}
+    
 
 	WGColumnsFrame {
 		id: columnsFrame

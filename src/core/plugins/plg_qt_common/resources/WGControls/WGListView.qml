@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
@@ -16,11 +16,16 @@ WGListViewBase {
 	property alias columnWidth: itemView.columnWidth
 	property alias columnWidths: itemView.columnWidths
 	property alias columnSpacing: itemView.columnSpacing
+    property alias showColumnHeaders: itemView.showColumnHeaders
+    property alias showColumnFooters: itemView.showColumnFooters
 
 	property alias internalModel: listView.model
 	property alias model: itemView.model
 
 	internalModel: itemView.extendedModel
+    header: itemView.header
+    footer: itemView.footer
+    //footerPositioning: ListView.OverLayFooter
 
 	property var extensions: []
 

@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0 as WG1
@@ -63,6 +63,10 @@ WG1.WGPanel {
 			columnWidth: 50
 			columnSpacing: 1
 			columnDelegates: [columnDelegate, colorDelegate]
+			showColumnHeaders: true
+	    	showColumnFooters: true
+	    	headerPositioning: ListView.OverlayHeader
+	    	footerPositioning: ListView.OverlayFooter
 			roles: ["value"]
 			model: sourceModel
 

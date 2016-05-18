@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.4
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import BWControls 1.0
@@ -38,6 +38,10 @@ WG1.WGPanel {
 			model: sourceModel
 			columnSpacing: 1
 			columnSequence: [0,0]
+            showColumnHeaders: true
+            showColumnFooters: true
+            headerPositioning: ListView.OverlayHeader
+	    	footerPositioning: ListView.OverlayFooter
 		}
 	}
 }

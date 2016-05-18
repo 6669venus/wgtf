@@ -25,7 +25,6 @@ WGListViewBase {
 	internalModel: itemView.extendedModel
     header: itemView.header
     footer: itemView.footer
-    //footerPositioning: ListView.OverLayFooter
 
 	property var extensions: []
 

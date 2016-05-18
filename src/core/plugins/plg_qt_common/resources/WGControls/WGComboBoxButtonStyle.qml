@@ -6,34 +6,7 @@ import QtGraphicalEffects 1.0
 
 /*! \brief A button style for use with WGComboBoxImage*/
 
-ButtonStyle {
-    id: baseStyle
-    objectName: "WGButtonStyle"
-
-    /*! \internal */
-    // helper property for text color so states can all be in the background object
-    property color __textColor: palette.neutralTextColor
-
-    /*! \internal */
-    property int __menuPadding:
-    {
-        if(control.menu !== null && control.iconSource == "")
-        {
-            5
-        }
-        else
-        {
-            0
-        }
-    }
-
-    padding {
-        top: defaultSpacing.standardRadius
-        left: defaultSpacing.standardRadius + (control.iconSource != "" ? 0 : defaultSpacing.standardRadius)
-        right: defaultSpacing.standardRadius + (control.text != "" ? defaultSpacing.standardRadius : 0) + __menuPadding
-        bottom: defaultSpacing.standardRadius
-    }
-
+WGButtonStyle {
     label:
         Item {
         id: buttonLabel
@@ -46,6 +19,7 @@ ButtonStyle {
         RowLayout {
             id: labelFrame
             height: control.height - padding.top - padding.bottom
+            width: parent.width
             spacing: defaultSpacing.standardMargin
 
             //Disabled icons are desaturated and faded.
@@ -87,77 +61,26 @@ ButtonStyle {
                 visible: control.text
 
                 color: __textColor
+            }
 
-                Image{
-                    id: textDropDownArrow
-                    anchors.horizontalCenter: parent.right
-                    source: "icons/drop_down_arrow_16x16.png"
-                    z: 1
-                    visible: true // TODO... IF MORE ITEMS.. GREY control.menu != null && control.iconSource == "" && control.showMenuIndicator
-                }
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+            }
+
+            Text {
+                id: arrowText
+                color : palette.neutralTextColor
+                Layout.fillHeight: true
+
+                verticalAlignment: Text.AlignVCenter
+
+                font.family : "Marlett"
+                font.pixelSize: Math.round(parent.height / 2)
+
+                renderType: Text.QtRendering
+                text : "\uF075"
             }
         }
-    }
-
-    background: WGButtonFrame{
-        id: buttonFrame
-
-        radius: control.radius
-
-        states: [
-            State {
-                name: "PRESSED"
-                when: control.pressed && control.enabled
-                PropertyChanges {target: buttonFrame; color: palette.darkShade}
-                PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
-            },
-            State {
-                name: "CHECKED"
-                when: control.checked && !control.pressed && !control.hovered && control.enabled && !control.activeFocus
-                PropertyChanges {target: buttonFrame; color: palette.highlightColor}
-                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
-            },
-            State {
-                name: "HOVERED"
-                when: control.hovered && control.enabled && !control.checked
-                PropertyChanges {target: buttonFrame; highlightColor: palette.lighterShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
-            },
-            State {
-                name: "HOVERED CHECKED"
-                when: control.hovered && control.enabled && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.highlightColor}
-                PropertyChanges {target: buttonFrame; highlightColor: palette.lighterShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
-            },
-            State {
-                name: "DISABLED"
-                when: !control.enabled && !control.checked
-                PropertyChanges {target: buttonFrame; color: "transparent"}
-                PropertyChanges {target: buttonFrame; borderColor: palette.darkShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
-                PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
-            },
-            State {
-                name: "DISABLED CHECKED"
-                when: !control.enabled && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.highlightShade}
-                PropertyChanges {target: buttonFrame; borderColor: palette.darkShade}
-                PropertyChanges {target: baseStyle; __textColor: palette.disabledTextColor}
-                PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
-            },
-            State {
-                name: "ACTIVE FOCUS"
-                when: control.enabled && control.activeFocus && !control.checked
-                PropertyChanges {target: buttonFrame; innerBorderColor: palette.lightestShade}
-            },
-            State {
-                name: "ACTIVE FOCUS CHECKED"
-                when: control.enabled && control.activeFocus && control.checked
-                PropertyChanges {target: buttonFrame; color: palette.highlightColor}
-                PropertyChanges {target: baseStyle; __textColor: palette.textColor}
-                PropertyChanges {target: buttonFrame; innerBorderColor: palette.darkerShade}
-            }
-        ]
     }
 }

@@ -2,9 +2,9 @@ import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.3
+import QtQml.Models 2.2
 
 import BWControls 1.0
-import QtQml.Models 2.2
 import WGControls 1.0
 
 /*  TODO
@@ -38,19 +38,6 @@ Item {
 
     /*! This property limits the number of list items shown in the drop down*/
     property int showXItems: 5
-
-    // Ugly hack for creation purposes. Do not use this.
-    /*Component.onCompleted: {
-        parent.z = 9
-        parent.parent.z = 8
-        parent.parent.parent.z = 7
-        parent.parent.parent.parent.z = 6
-        parent.parent.parent.parent.parent.z = 5
-        parent.parent.parent.parent.parent.parent.z = 4
-        parent.parent.parent.parent.parent.parent.parent.z = 3
-        parent.parent.parent.parent.parent.parent.parent.parent.z = 2
-        parent.parent.parent.parent.parent.parent.parent.parent.parent.z = 1
-     }*/
 
     //find the widest text in model to help set control width
     Repeater {
@@ -106,7 +93,7 @@ Item {
             checkable: true
             checked: comboboximage.dropdownChecked
             iconSource: model.get(dropDownCurrentIndex).img
-            text: showPath ? model.get(dropDownCurrentIndex).path : ""
+            text: comboboximage.showpath ? model.get(dropDownCurrentIndex).path : ""
             onActiveFocusChanged: {
                 if(!activeFocus)
                 {
@@ -124,6 +111,20 @@ Item {
                 }
             }
         }
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+
+            onWheel: {
+                if (wheel.angleDelta.y > 0 && dropDownCurrentIndex > 0)
+                {
+                    dropDownCurrentIndex -= 1
+                } else if (wheel.angleDelta.y < 0 && dropDownCurrentIndex < model.count - 1)
+                {
+                    dropDownCurrentIndex += 1
+                }
+            }
+        }
     }
 
     // Loader for the collapsed button
@@ -137,10 +138,8 @@ Item {
     Item {
         id: pulldownMenu
         z: 5
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        // pulldownMenu Component coveres entire control to capture mouse leaving pulldown
+        // pulldownMenu Component covers entire control to capture mouse leaving pulldown
+
         height: {
             if (showXItems == 0) {
                 return comboboximage.height * model.count + comboboximage.height
@@ -150,6 +149,33 @@ Item {
         }
         width: comboboximage.width
         visible: dropdownChecked
+
+        // find the top most parent of an object
+        function findLastParent(parentItem)
+        {
+            if (parentItem.parent != null)
+            {
+                return findLastParent(parentItem.parent)
+            }
+            return parentItem
+        }
+
+        onVisibleChanged: {
+            if(visible)
+            {
+                var topParent = findLastParent(comboboximage)
+                var parentPoint = pushButtonDropdownLoader.mapToItem(topParent, 0, 0)
+                pulldownMenu.parent = topParent
+                pulldownMenu.x = parentPoint.x
+                pulldownMenu.y = parentPoint.y
+            }
+            else
+            {
+                pulldownMenu.parent = comboboximage
+                pulldownMenu.x = 0
+                pulldownMenu.y = 0
+            }
+        }
 
         MouseArea {
             // Triggers the timer when the mouse leaves the control
@@ -194,10 +220,11 @@ Item {
             anchors.topMargin: 2
             anchors.rightMargin: -2
             anchors.bottomMargin: -2
-            radius: 3
+            radius: defaultSpacing.standardRadius
             visible: true
             height: pulldownMenu.height - comboboximage.height
-            color: "#80000000"
+            color: palette.darkerShade
+            z: 1000
         }
 
         Rectangle {
@@ -211,17 +238,27 @@ Item {
             border.width: defaultSpacing.standardBorderSize
             border.color: palette.darkColor
 
+            radius: defaultSpacing.halfRadius
+            clip: true
+
+
+            z: 1001
+
             WGScrollPanel {
-                childObject: ListView {
-                            id: combolistview
-                            height: droprect.height
-                            width: droprect.width
-                            clip: true
-                            anchors.margins: {left: 2; right: 2; top: 5; bottom: 5}
-                            model: comboboximageModel
-                            delegate: defaultPullDownListViewDelegate
-                            }
-                        }
+                expandableScrollBar: false
+
+                childObject: Item {
+                    height: droprect.height
+                    width: droprect.width
+                    ListView {
+                        id: combolistview
+                        anchors.fill: parent
+                        anchors.margins: {left: 0; right: 2; top: 5; bottom: 5}
+                        model: comboboximageModel
+                        delegate: defaultPullDownListViewDelegate
+                    }
+                }
+            }
         }
     }
 
@@ -233,59 +270,48 @@ Item {
         height: comboboximage.height
 
         RowLayout {
-            id: dropdownrow
-            spacing: defaultSpacing.standardMargin
-            anchors.left: defaultListViewDeletgate.left
-            anchors.right: defaultListViewDeletgate.right
-            MouseArea {  //The mouse area for index selection
-                id: dropmousearea
+            anchors.fill: parent
+            Image {
+                id: image
                 Layout.preferredHeight: comboboximage.height
-                Layout.preferredWidth: comboboximage.width
+                Layout.preferredWidth: comboboximage.height
+                source: model.img
+            }
+            WGLabel {
+                id: text
+                visible: showpath
+                text: model.path
+            }
+            Item {
+                Layout.fillWidth: true
+            }
+        }
 
-                hoverEnabled: true
+        MouseArea {  //The mouse area for index selection
+            id: dropmousearea
+            anchors.fill: parent
 
-                onClicked: {
-                    dropDownCurrentIndex = index
-                    comboboximage.dropdownChecked = false
-                }
+            hoverEnabled: true
 
-                onEntered: {
-                    fadeTimer.stop()
-                    dropdownhighlight.visible = true
-                }
+            onClicked: {
+                dropDownCurrentIndex = index
+                comboboximage.dropdownChecked = false
+            }
 
-                onExited: {
-                    fadeTimer.restart()
-                    dropdownhighlight.visible = false
-                }
+            onEntered: {
+                fadeTimer.stop()
+                dropdownhighlight.visible = true
+            }
 
-                WGHighlightFrame {
-                    id: dropdownhighlight
-                    anchors.left: dropmousearea.left
-                    anchors.right: dropmousearea.right
-                    anchors.rightMargin: defaultSpacing.standardMargin
-                    height: comboboximage.height
-                    visible: false
-                }
+            onExited: {
+                fadeTimer.restart()
+                dropdownhighlight.visible = false
+            }
 
-                RowLayout {
-                    anchors.left: dropmousearea.left
-                    anchors.right: dropmousearea.right
-                    Image {
-                        id: image
-                        Layout.preferredHeight: comboboximage.height
-                        Layout.preferredWidth: comboboximage.height
-                        source: model.img
-                    }
-                    Text {
-                        id: text
-                        visible: showpath
-                        text: model.path
-                    }
-                    Item {
-                        Layout.fillWidth: true
-                    }
-                }
+            WGHighlightFrame {
+                id: dropdownhighlight
+                anchors.fill: parent
+                visible: false
             }
         }
     }

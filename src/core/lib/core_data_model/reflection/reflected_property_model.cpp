@@ -66,7 +66,9 @@ Variant RefPropertyItem::getData(int column, size_t roleId) const
 
 bool RefPropertyItem::setData(int column, size_t roleId, const Variant & data)
 {
-    return model.setData(this, column, roleId, data);
+    return false;
+    // TODO uncomment this after back write on multiselection will be fixed
+    //return model.setData(this, column, roleId, data);
 }
 
 const std::string & RefPropertyItem::getIndexPath() const
@@ -113,12 +115,12 @@ Variant RefPropertyItem::evalValue(IDefinitionManager & definitionManager) const
     {
         auto iter = nodes.begin();
 
-        const PropertyNode* node = *iter;
+        std::shared_ptr<const PropertyNode> node = *iter;
         result = node->propertyInstance->get(node->object, definitionManager);
         ++iter;
         for (iter; iter != nodes.end(); ++iter)
         {
-            const PropertyNode* node = *iter;
+            std::shared_ptr<const PropertyNode> node = *iter;
             Variant r = node->propertyInstance->get(node->object, definitionManager);
             if (r != result)
             {
@@ -179,7 +181,7 @@ void RefPropertyItem::removeChildren()
     children.clear();
 }
 
-void RefPropertyItem::addObject(const PropertyNode* node)
+void RefPropertyItem::addObject(const std::shared_ptr<const PropertyNode>& node)
 {
 #ifdef _DEBUG
     if (!nodes.empty())
@@ -191,7 +193,7 @@ void RefPropertyItem::addObject(const PropertyNode* node)
     nodes.push_back(node);
 }
 
-void RefPropertyItem::removeObject(const PropertyNode* object)
+void RefPropertyItem::removeObject(const std::shared_ptr<const PropertyNode>& object)
 {
     auto iter = std::find(nodes.begin(), nodes.end(), object);
     if (iter == nodes.end())
@@ -254,7 +256,7 @@ void ReflectedPropertyModel::update()
 
 void ReflectedPropertyModel::update(RefPropertyItem* item)
 {
-    for (const PropertyNode* node : item->nodes)
+    for (const std::shared_ptr<const PropertyNode> & node : item->nodes)
     {
         childCreator.updateSubTree(node);
     }
@@ -288,7 +290,7 @@ void ReflectedPropertyModel::setObjects(const std::vector<ObjectHandle>& objects
 
     for (const ObjectHandle& handle : objects)
     {
-        const PropertyNode* rootNode = childCreator.createRoot(handle);
+        std::shared_ptr<const PropertyNode> rootNode = childCreator.createRoot(handle);
         nodeToItem.emplace(rootNode, rootItem.get());
         rootItem->addObject(rootNode);
     }
@@ -368,7 +370,7 @@ void ReflectedPropertyModel::unregisterExtension(InjectDataExtension* extension)
     injectExtension = injectExtension->removeExtension(extension);
 }
 
-void ReflectedPropertyModel::childAdded(const PropertyNode* parent, const PropertyNode* node, size_t childPosition)
+void ReflectedPropertyModel::childAdded(const std::shared_ptr<const PropertyNode>& parent, const std::shared_ptr<const PropertyNode>& node, size_t childPosition)
 {
     auto iter = nodeToItem.find(parent);
     assert(iter != nodeToItem.end());
@@ -398,7 +400,7 @@ void ReflectedPropertyModel::childAdded(const PropertyNode* parent, const Proper
     assert(newNode.second);
 }
 
-void ReflectedPropertyModel::childRemoved(const PropertyNode* node)
+void ReflectedPropertyModel::childRemoved(const std::shared_ptr<const PropertyNode>& node)
 {
     auto iter = nodeToItem.find(node);
     assert(iter != nodeToItem.end());

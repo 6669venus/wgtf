@@ -13,22 +13,22 @@ public:
     ChildCreator(IDefinitionManager& defMng);
     ~ChildCreator();
 
-    const PropertyNode* createRoot(const ObjectHandle& handle);
-    void updateSubTree(const PropertyNode* parent);
-    void removeNode(const PropertyNode* parent);
+    std::shared_ptr<const PropertyNode> createRoot(const ObjectHandle& handle);
+    void updateSubTree(const std::shared_ptr<const PropertyNode>& parent);
+    void removeNode(const std::shared_ptr<const PropertyNode>& parent);
     void clear();
 
     void registerExtension(ChildCreatorExtension* extension);
     void unregisterExtension(ChildCreatorExtension* extension);
 
-    ::Signal<void(const PropertyNode* parent, const PropertyNode* child, size_t childPosition)> nodeCreated;
-    ::Signal<void(const PropertyNode* child)> nodeRemoved;
+    ::Signal<void(std::shared_ptr<const PropertyNode> parent, std::shared_ptr<const PropertyNode> child, size_t childPosition)> nodeCreated;
+    ::Signal<void(std::shared_ptr<const PropertyNode> child)> nodeRemoved;
 
 private:
     ChildCreatorExtension * extensions = ChildCreatorExtension::createDummy();
     IDefinitionManager& definitionManager;
 
-    std::unordered_map<const PropertyNode *, std::vector<const PropertyNode*>> propertiesIndex;
+    std::unordered_map<std::shared_ptr<const PropertyNode>, std::vector<std::shared_ptr<const PropertyNode>>> propertiesIndex;
     std::shared_ptr<IChildAllocator> allocator;
 };
 

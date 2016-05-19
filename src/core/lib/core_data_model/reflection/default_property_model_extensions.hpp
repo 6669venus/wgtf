@@ -32,13 +32,13 @@ private:
 class DefaultChildCheatorExtension: public ChildCreatorExtension
 {
 public:
-    void exposeChildren(const PropertyNode& node, std::vector<const PropertyNode*> & children, IDefinitionManager& defMng) const override;
+    void exposeChildren(const std::shared_ptr<const PropertyNode>& node, std::vector<std::shared_ptr<const PropertyNode>> & children, IDefinitionManager& defMng) const override;
 };
 
 class DefaultMergeValueExtension: public MergeValuesExtension
 {
 public:
-    RefPropertyItem* lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+    RefPropertyItem* lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                 IDefinitionManager & definitionManager) const override;
 };
 

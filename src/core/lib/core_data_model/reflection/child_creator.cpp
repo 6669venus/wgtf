@@ -5,21 +5,9 @@
 namespace CCDetails
 {
 
-bool IsPropertyEqual(const PropertyNode* left, const PropertyNode* right)
-{
-    assert(left != nullptr);
-    assert(right != nullptr);
-    if (left == right)
-    {
-        return true;
-    }
-
-    return left->propertyType == right->propertyType && left->propertyInstance == right->propertyInstance;
-}
-
 struct PropertyNodeEqual
 {
-    bool operator()(const PropertyNode* left, const PropertyNode* right) const
+    bool operator()(const std::shared_ptr<const PropertyNode>& left, const std::shared_ptr<const PropertyNode>& right) const
     {
         assert(left != nullptr);
         assert(right != nullptr);
@@ -48,32 +36,6 @@ struct PropertyNodeEqual
     }
 };
 
-struct PropertyNodeLess
-{
-    bool operator()(const PropertyNode* left, const PropertyNode* right) const
-    {
-        assert(left != nullptr);
-        assert(right != nullptr);
-
-        if (left == right)
-        {
-            return false;
-        }
-
-        if (left->propertyType != right->propertyType)
-            return left->propertyType < right->propertyType;
-
-        if (left->propertyInstance != right->propertyInstance)
-            return left->propertyInstance < right->propertyInstance;
-
-        PropertyNodeEqual equal;
-        if (equal(left, right))
-            return false;
-
-        return left->object < right->object;
-    }
-};
-
 }
 
 ChildCreator::ChildCreator(IDefinitionManager& defMng)
@@ -88,24 +50,24 @@ ChildCreator::~ChildCreator()
     ChildCreatorExtension::deleteExtensionChain(extensions);
 }
 
-const PropertyNode* ChildCreator::createRoot(const ObjectHandle& handle)
+std::shared_ptr<const PropertyNode> ChildCreator::createRoot(const ObjectHandle& handle)
 {
-    auto result = propertiesIndex.emplace(MakeRootNode(handle, *allocator), std::vector<const PropertyNode*>());
+    auto result = propertiesIndex.emplace(MakeRootNode(handle, *allocator), std::vector<std::shared_ptr<const PropertyNode>>());
     assert(result.second == true);
     return result.first->first;
 }
 
-void ChildCreator::updateSubTree(const PropertyNode* parent)
+void ChildCreator::updateSubTree(const std::shared_ptr<const PropertyNode>& parent)
 {
     assert(parent != nullptr);
-    std::vector<const PropertyNode*> children;
-    extensions->exposeChildren(*parent, children, definitionManager);
+    std::vector<std::shared_ptr<const PropertyNode>> children;
+    extensions->exposeChildren(parent, children, definitionManager);
 
     auto iter = propertiesIndex.find(parent);
     if (iter == propertiesIndex.end())
     {
         // insert new parent into index and store it's children
-        std::vector<const PropertyNode*>& newItems = propertiesIndex[parent];
+        std::vector<std::shared_ptr<const PropertyNode>>& newItems = propertiesIndex[parent];
         newItems = std::move(children);
         for (size_t i = 0; i < newItems.size(); ++i)
         {
@@ -117,7 +79,7 @@ void ChildCreator::updateSubTree(const PropertyNode* parent)
         CCDetails::PropertyNodeEqual equalCmp;
 
         bool childrenVectorsEqual = true;
-        std::vector<const PropertyNode*>& currentChildren = iter->second;
+        std::vector<std::shared_ptr<const PropertyNode>>& currentChildren = iter->second;
         if (children.size() == currentChildren.size())
         {
             for (size_t i = 0; i < children.size(); ++i)
@@ -136,8 +98,6 @@ void ChildCreator::updateSubTree(const PropertyNode* parent)
 
         if (childrenVectorsEqual)
         {
-            using namespace std::placeholders;
-            std::for_each(children.begin(), children.end(), std::bind(&IChildAllocator::deletePropertyNode, allocator.get(), _1));
             return;
         }
 
@@ -154,33 +114,23 @@ void ChildCreator::updateSubTree(const PropertyNode* parent)
     }
 }
 
-void ChildCreator::removeNode(const PropertyNode* parent)
+void ChildCreator::removeNode(const std::shared_ptr<const PropertyNode>& parent)
 {
     auto iter = propertiesIndex.find(parent);
     assert(iter != propertiesIndex.end());
-    std::vector<const PropertyNode *>& children = iter->second;
-    for (const PropertyNode* node : children)
+    std::vector<std::shared_ptr<const PropertyNode>>& children = iter->second;
+    for (const std::shared_ptr<const PropertyNode>& node : children)
     {
         removeNode(node);
     }
     propertiesIndex.erase(iter);
     nodeRemoved(parent);
-    allocator->deletePropertyNode(parent);
+    assert(parent.unique());
 }
 
 void ChildCreator::clear()
 {
-    std::set<const PropertyNode*> allNodes;
-    std::unordered_map<const PropertyNode*, std::vector<const PropertyNode*>>::iterator iter = propertiesIndex.begin();
-    for (iter; iter != propertiesIndex.end(); ++iter)
-    {
-        allNodes.insert(iter->first);
-        allNodes.insert(iter->second.begin(), iter->second.end());
-    }
     propertiesIndex.clear();
-
-    using namespace std::placeholders;
-    std::for_each(allNodes.begin(), allNodes.end(), std::bind(&IChildAllocator::deletePropertyNode, allocator.get(), _1));
 }
 
 void ChildCreator::registerExtension(ChildCreatorExtension* extension)

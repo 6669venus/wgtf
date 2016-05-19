@@ -32,6 +32,7 @@ SET( ALL_SRCS
 	wg_condition_variable.hpp
 	wg_read_write_lock.cpp
 	wg_read_write_lock.hpp
+	objects_pool.hpp
 	${PLATFORM_SRCS}
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )

@@ -34,7 +34,7 @@ public:
     IBasePropertyPtr getProperty() const;
     Variant getValue() const;
 
-    const std::vector<const PropertyNode*>& getObjects() const { return nodes; }
+    const std::vector<std::shared_ptr<const PropertyNode>>& getObjects() const { return nodes; }
 
     void injectData(size_t roleId, const Variant& value);
     Variant getInjectedData(size_t roleId);
@@ -52,8 +52,8 @@ private:
     void removeChild(size_t index);
     void removeChildren();
 
-    void addObject(const PropertyNode* node);
-    void removeObject(const PropertyNode* node);
+    void addObject(const std::shared_ptr<const PropertyNode>& node);
+    void removeObject(const std::shared_ptr<const PropertyNode>& node);
     void removeObjects();
     bool hasObjects() const;
 
@@ -67,7 +67,7 @@ private:
     RefPropertyItem * parent = nullptr;
     size_t position = 0;
     std::vector<std::unique_ptr<RefPropertyItem>> children;
-    std::vector<const PropertyNode*> nodes;
+    std::vector<std::shared_ptr<const PropertyNode>> nodes;
     Variant itemValue;
     mutable std::string indexPath;
 
@@ -106,8 +106,8 @@ public:
     void unregisterExtension(InjectDataExtension* extension);
 
 private:
-    void childAdded(const PropertyNode* parent, const PropertyNode* node, size_t childPosition);
-    void childRemoved(const PropertyNode* node);
+    void childAdded(const std::shared_ptr<const PropertyNode>& parent, const std::shared_ptr<const PropertyNode>& node, size_t childPosition);
+    void childRemoved(const std::shared_ptr<const PropertyNode>& node);
 
     const RefPropertyItem* getEffectiveParent(const IItem* modelParent) const;
     RefPropertyItem* getEffectiveParent(IItem* modelParent) const;
@@ -125,7 +125,7 @@ private:
     IDefinitionManager & definitionManager;
     ICommandManager & commandManager;
     std::unique_ptr<RefPropertyItem> rootItem;
-    std::map<const PropertyNode*, RefPropertyItem*> nodeToItem;
+    std::map<std::shared_ptr<const PropertyNode>, RefPropertyItem*> nodeToItem;
 
     GetterExtension* getterExtension;
     SetterExtension* setterExtension;

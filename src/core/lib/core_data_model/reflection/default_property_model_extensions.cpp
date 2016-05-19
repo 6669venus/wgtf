@@ -12,6 +12,8 @@
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 
+#include "core_common/objects_pool.hpp"
+
 namespace DPMEDetails
 {
 struct MaxMinValuePair
@@ -308,11 +310,11 @@ Variant UrlGetterExtension::getValue(const RefPropertyItem* item, int column, si
     return GetterExtension::getValue(item, column, roleId, defMng);
 }
 
-void DefaultChildCheatorExtension::exposeChildren(const PropertyNode& node, std::vector<const PropertyNode*>& children, IDefinitionManager& defMng) const
+void DefaultChildCheatorExtension::exposeChildren(const std::shared_ptr<const PropertyNode>& node, std::vector<std::shared_ptr<const PropertyNode>>& children, IDefinitionManager& defMng) const
 {
-    if (node.propertyType == PropertyNode::RealProperty || node.propertyType == PropertyNode::CollectionItem)
+    if (node->propertyType == PropertyNode::RealProperty || node->propertyType == PropertyNode::CollectionItem)
     {
-        Variant propertyValue = node.propertyInstance->get(node.object, defMng);
+        Variant propertyValue = node->propertyInstance->get(node->object, defMng);
 
         Collection collectionHandle;
         ObjectHandle handle;
@@ -347,14 +349,12 @@ void DefaultChildCheatorExtension::exposeChildren(const PropertyNode& node, std:
 class DefaultAllocator: public IChildAllocator
 {
 public:
+    DefaultAllocator();
     ~DefaultAllocator();
-    const PropertyNode* createPropertyNode(IBasePropertyPtr propertyInstance, ObjectHandle object, int type = PropertyNode::RealProperty) override;
-    void deletePropertyNode(const PropertyNode* node) override;
+    std::shared_ptr<const PropertyNode> createPropertyNode(IBasePropertyPtr propertyInstance, ObjectHandle object, int32_t type = PropertyNode::RealProperty) override;
     IBasePropertyPtr getCollectionItemProperty(std::string&& name, const TypeId& type, IDefinitionManager & defMng) override;
 
 private:
-    std::set<const PropertyNode*> allocatedNodes;
-
     struct EmptyDeleter
         : public std::unary_function<ReflectedIteratorProperty *, void>
     {
@@ -373,8 +373,8 @@ private:
         }
     };
 
-    struct PropertyEqual :
-        public std::binary_function<const std::shared_ptr<ReflectedIteratorProperty>,
+    struct PropertyEqual
+        : public std::binary_function<const std::shared_ptr<ReflectedIteratorProperty>,
                                     const std::shared_ptr<ReflectedIteratorProperty>, bool>
     {
         bool operator()(const std::shared_ptr<ReflectedIteratorProperty> & v1, const std::shared_ptr<ReflectedIteratorProperty> & v2) const
@@ -385,25 +385,26 @@ private:
     };
 
     std::unordered_set<std::shared_ptr<ReflectedIteratorProperty>, PropertyHash, PropertyEqual> propertiesPool;
+    ObjectsPool<PropertyNode, SingleThreadStrategy> pool;
 };
+
+DefaultAllocator::DefaultAllocator()
+    : pool(10000, 10)
+{
+}
 
 DefaultAllocator::~DefaultAllocator()
 {
-    assert(allocatedNodes.empty());
 }
 
-const PropertyNode* DefaultAllocator::createPropertyNode(IBasePropertyPtr propertyInstance, ObjectHandle object, int type /*= PropertyNode::RealProperty*/)
+std::shared_ptr<const PropertyNode> DefaultAllocator::createPropertyNode(IBasePropertyPtr propertyInstance, ObjectHandle object, int32_t type /*= PropertyNode::RealProperty*/)
 {
-    auto insertPair = allocatedNodes.insert(new PropertyNode(type, propertyInstance, object));
-    assert(insertPair.second == true);
+    std::shared_ptr<PropertyNode> result = pool.requestObject();
+    result->propertyInstance = propertyInstance;
+    result->object = object;
+    result->propertyType = type;
 
-    return *insertPair.first;
-}
-
-void DefaultAllocator::deletePropertyNode(const PropertyNode* node)
-{
-    allocatedNodes.erase(node);
-    delete node;
+    return result;
 }
 
 IBasePropertyPtr DefaultAllocator::getCollectionItemProperty(std::string&& name, const TypeId& type, IDefinitionManager & defMng)
@@ -425,7 +426,7 @@ std::shared_ptr<IChildAllocator> createDefaultAllocator()
     return std::make_shared<DefaultAllocator>();
 }
 
-RefPropertyItem * DefaultMergeValueExtension::lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+RefPropertyItem * DefaultMergeValueExtension::lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                                          IDefinitionManager & definitionManager) const
 {
     RefPropertyItem* result = nullptr;
@@ -472,13 +473,13 @@ bool DefaultSetterExtension::setValue(RefPropertyItem * item, int column, size_t
         return SetterExtension::setValue(item, column, roleId, data, definitionManager, commandManager);
     }
 
-    const std::vector<const PropertyNode*> objects = item->getObjects();
+    const std::vector<std::shared_ptr<const PropertyNode>>& objects = item->getObjects();
     if (objects.size() > 1)
     {
         commandManager.beginBatchCommand();
     }
 
-    for (const PropertyNode* object : objects)
+    for (const std::shared_ptr<const PropertyNode>& object : objects)
     {
         ObjectHandle obj = object->object;
         if (obj.getDefinition(definitionManager) == nullptr)
@@ -527,4 +528,6 @@ bool DefaultSetterExtension::setValue(RefPropertyItem * item, int column, size_t
     {
         commandManager.endBatchCommand();
     }
+
+    return true;
 }

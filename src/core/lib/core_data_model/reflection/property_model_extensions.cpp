@@ -21,7 +21,8 @@ public:
 
     uint64_t getNameHash() const override
     {
-        return HashUtilities::compute(getName());
+        static uint64_t hash = HashUtilities::compute(getName());
+        return hash;
     }
 
     MetaHandle getMetaData() const override
@@ -65,7 +66,7 @@ public:
 class DummyChildCreator : public ChildCreatorExtension
 {
 public:
-    void exposeChildren(const PropertyNode&, std::vector<const PropertyNode*>&, IDefinitionManager&) const override {}
+    void exposeChildren(const std::shared_ptr<const PropertyNode>&, std::vector<std::shared_ptr<const PropertyNode>>&, IDefinitionManager&) const override {}
 };
 
 class DummyGetter: public GetterExtension
@@ -89,7 +90,7 @@ public:
 class DummyMerger: public MergeValuesExtension
 {
 public:
-    RefPropertyItem* lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+    RefPropertyItem* lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                 IDefinitionManager & definitionManager) const override
     {
         return nullptr;
@@ -106,17 +107,8 @@ public:
 IBasePropertyPtr selfRootProperty = std::make_shared<SelfProperty>();
 }
 
-PropertyNode::PropertyNode(IBasePropertyPtr property_, ObjectHandle object_)
-    : propertyType(RealProperty)
-    , propertyInstance(property_)
-    , object(object_)
-{
-}
-
-PropertyNode::PropertyNode(int propertyType_, IBasePropertyPtr property_, ObjectHandle object_)
-    : propertyType(propertyType_)
-    , propertyInstance(property_)
-    , object(object_)
+PropertyNode::PropertyNode()
+    : propertyType(-1)
 {
 }
 
@@ -144,12 +136,12 @@ bool PropertyNode::operator<(const PropertyNode & other) const
     return object < other.object;
 }
 
-const PropertyNode * MakeRootNode(ObjectHandle handle, IChildAllocator& allocator)
+std::shared_ptr<const PropertyNode> MakeRootNode(ObjectHandle handle, IChildAllocator& allocator)
 {
     return allocator.createPropertyNode(PMEDetails::selfRootProperty, handle, PropertyNode::SelfRoot);
 }
 
-void ChildCreatorExtension::exposeChildren(const PropertyNode& node, std::vector<const PropertyNode*>& children, IDefinitionManager & defMng) const
+void ChildCreatorExtension::exposeChildren(const std::shared_ptr<const PropertyNode>& node, std::vector<std::shared_ptr<const PropertyNode>>& children, IDefinitionManager & defMng) const
 {
     assert(nextExtension != nullptr);
     nextExtension->exposeChildren(node, children, defMng);
@@ -187,7 +179,7 @@ SetterExtension * SetterExtension::createDummy()
     return new PMEDetails::DummySetter();
 }
 
-RefPropertyItem * MergeValuesExtension::lookUpItem(const PropertyNode * node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+RefPropertyItem * MergeValuesExtension::lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                                    IDefinitionManager & definitionManager) const
 {
     assert(nextExtension != nullptr);

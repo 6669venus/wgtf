@@ -25,14 +25,13 @@ struct PropertyNode
         // on you own purpose. It's only way to transfer some information between iterations
     };
 
-    PropertyNode(IBasePropertyPtr property, ObjectHandle object);
-    PropertyNode(int propertyType, IBasePropertyPtr property, ObjectHandle object);
+    PropertyNode();
 
     bool operator== (const PropertyNode& other) const;
     bool operator!= (const PropertyNode& other) const;
     bool operator< (const PropertyNode& other) const;
 
-    int propertyType; // it can be value from PropertyType or any value that you set in your extension
+    int32_t propertyType; // it can be value from PropertyType or any value that you set in your extension
     IBasePropertyPtr propertyInstance;
     ObjectHandle object; // this object should be always object that can be transfer into IBasePropertyPtr::setValue() to set new value.
 };
@@ -42,13 +41,11 @@ class IChildAllocator
 public:
     virtual ~IChildAllocator() {}
 
-    virtual const PropertyNode* createPropertyNode(IBasePropertyPtr propertyInstance, ObjectHandle object, int type = PropertyNode::RealProperty) = 0;
-    virtual void deletePropertyNode(const PropertyNode* node) = 0;
-
+    virtual std::shared_ptr<const PropertyNode> createPropertyNode(IBasePropertyPtr propertyInstance, ObjectHandle object, int32_t type = PropertyNode::RealProperty) = 0;
     virtual IBasePropertyPtr getCollectionItemProperty(std::string&& name, const TypeId& type, IDefinitionManager & defMng) = 0;
 };
 
-const PropertyNode* MakeRootNode(ObjectHandle handle, IChildAllocator& allocator);
+std::shared_ptr<const PropertyNode> MakeRootNode(ObjectHandle handle, IChildAllocator& allocator);
 
 template<typename T>
 class ExtensionChain
@@ -101,10 +98,7 @@ protected:
 class ChildCreatorExtension: public ExtensionChain<ChildCreatorExtension>
 {
 public:
-
-    // return true if extension was applied, and ChildCreator should not try to apply next registered extension
-    // return false means : "not my type, i don't know what to do with this"
-    virtual void exposeChildren(const PropertyNode& node, std::vector<const PropertyNode*> & children, IDefinitionManager& defMng) const;
+    virtual void exposeChildren(const std::shared_ptr<const PropertyNode>&, std::vector<std::shared_ptr<const PropertyNode>> & children, IDefinitionManager& defMng) const;
     static ChildCreatorExtension* createDummy();
 
     void setAllocator(std::shared_ptr<IChildAllocator> allocator);
@@ -131,7 +125,7 @@ public:
 class MergeValuesExtension: public ExtensionChain<MergeValuesExtension>
 {
 public:
-    virtual RefPropertyItem* lookUpItem(const PropertyNode* node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
+    virtual RefPropertyItem* lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                         IDefinitionManager & definitionManager) const;
     static MergeValuesExtension* createDummy();
 };

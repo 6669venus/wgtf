@@ -19,19 +19,19 @@ WGItemView {
 	property var columnWidths: []
 	property real columnSpacing: 0
 
-	property var commonExtensions: [columnExtension, imageExtension]
+    property var commonExtensions: [columnExtension, imageExtension]
 	extensions: commonExtensions
 
 	function rowCount() {
-		return extendedModel.rowCount()
+        return extendedModel.rowCount();
 	}
 
 	function columnCount() {
-		var count = columnSequence.length
+        var count = columnSequence.length;
 		if (count == 0) {
-			count = extendedModel.columnCount(null)
+            count = extendedModel.columnCount(null);
 		}
-		return count
+        return count;
 	}
 
 	ColumnExtension {
@@ -42,20 +42,24 @@ WGItemView {
 		id: imageExtension
 	}
 
+    /*! Ensure the columnDelegates and columnWidths lists are the same length
+        as the number of columns that actually loaded into the list.
+        \see WGItemRow
+     */
 	Component.onCompleted: {
-		var tmp = columnDelegates
+        var tmp = columnDelegates;
 		while (tmp.length < columnCount()) {
-			tmp.push(columnDelegate)
+            tmp.push(columnDelegate);
 		}
-		columnDelegates = tmp
+        columnDelegates = tmp;
 
-		var tmp = columnWidths
+        tmp = columnWidths;
 		while (tmp.length < columnCount()) {
-			tmp.push(Math.max(columnWidth, 1))
+            tmp.push(Math.max(columnWidth, 1));
 		}
-		columnWidths = tmp
+        columnWidths = tmp;
 
-		root.view.contentWidth = Qt.binding( function() { return columnsFrame.width } )
+        root.view.contentWidth = Qt.binding( function() { return columnsFrame.width } );
 	}
 
 	WGColumnsFrame {
@@ -68,7 +72,7 @@ WGItemView {
 		availableWidth: root.view.width - Math.max(contentItem.x, 0)
 
 		Component.onCompleted: {
-			root.view.columnWidths = Qt.binding( function() { return columnsFrame.columnWidths } )
+            root.view.columnWidths = Qt.binding( function() { return columnsFrame.columnWidths } );
 		}
 	}
 

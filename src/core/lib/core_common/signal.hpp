@@ -227,6 +227,5 @@ private:
 	Signal(const Signal &);
 	Signal & operator=(const Signal &);
 };
-}
+} // end namespace wgt
 #endif // SIGNAL_H_
-

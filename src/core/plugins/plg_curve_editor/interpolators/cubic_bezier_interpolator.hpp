@@ -26,5 +26,5 @@ public:
 
 };
 
-}
+} // end namespace wgt
 #endif // CUBIC_BEZIER_INTERPOLATOR_H_

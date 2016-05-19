@@ -49,7 +49,7 @@ private:
 	uint64_t		hashCode_;
 	bool			owns_;
 };
-}
+} // end namespace wgt
 
 namespace std
 {

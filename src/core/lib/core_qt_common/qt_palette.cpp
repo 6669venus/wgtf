@@ -429,4 +429,4 @@ void QtPalette::onPaletteChanged()
 		emit qApp->paletteChanged(palette);
 	}
 }
-}
+} // end namespace wgt

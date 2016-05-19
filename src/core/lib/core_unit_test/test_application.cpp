@@ -35,4 +35,4 @@ void TestApplication::quitApplication()
 {
 	exiting_ = true;
 }
-}
+} // end namespace wgt

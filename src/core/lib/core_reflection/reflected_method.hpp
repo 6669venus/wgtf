@@ -35,6 +35,5 @@ public:
 	typedef ReflectedMethod SelfType;
 };
 
-}
+} // end namespace wgt
 #endif // REFLECTED_METHOD_HPP
-

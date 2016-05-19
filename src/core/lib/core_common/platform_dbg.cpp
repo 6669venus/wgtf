@@ -1,9 +1,17 @@
 #include "platform_dbg.hpp"
 
-#if defined( _WIN32 )
+#ifdef __APPLE__
+#include <stdio.h>
+#include <errno.h>
+#include <wchar.h>
+#include <dlfcn.h>
+#include <string.h>
+#endif
 
 namespace wgt
 {
+#if defined( _WIN32 )
+
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
 	static const size_t errorMsgLength = 4096;
@@ -19,18 +27,10 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 	}
 	return hadError;
 }
-}
 #endif
 
 #ifdef __APPLE__
-#include <stdio.h>
-#include <errno.h>
-#include <wchar.h>
-#include <dlfcn.h>
-#include <string.h>
 
-namespace wgt
-{
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
 	const char* dlerr = dlerror();
@@ -62,6 +62,5 @@ void OutputDebugStringA(const char* s)
 	printf("%s", s);
 }
 
-}
-
 #endif // __APPLE__
+} // end namespace wgt

@@ -97,5 +97,5 @@ MenuHandlerPtr CreateMenuHandler(TArg1&& arg1, TArg2&& arg2, TArg3&& arg3, TArg4
 	return std::move(menuHandler);
 }
 
-}
+} // end namespace wgt
 #endif // MENU_HANDLER_BASE_H_

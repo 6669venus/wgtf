@@ -282,6 +282,6 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 //
 {
 	return wgt::uninitializeMayaPlugin(obj);
-}
+} // end namespace wgt
 
 #pragma warning( pop )

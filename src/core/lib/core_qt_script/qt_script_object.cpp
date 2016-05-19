@@ -353,4 +353,4 @@ const ObjectHandle & QtScriptObject::object() const
 	return object_; 
 }
 
-}
+} // end namespace wgt

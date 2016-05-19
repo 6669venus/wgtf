@@ -31,4 +31,4 @@ BEGIN_EXPOSE( ProjectData, MetaNone() )
 	EXPOSE( "Color4", getColor4, setColor4, MetaColor() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

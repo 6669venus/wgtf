@@ -12,4 +12,4 @@ BEGIN_EXPOSE( ReflectedPropertyCommandArgument, MetaNoSerialization() )
 	EXPOSE( ReflectedPropertyCommandArgument::valuePropertyName(), value_, MetaNone() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

@@ -193,6 +193,5 @@ public:
 	IClassDefinition * derived_klass_;
 };
 
-}
+} // end namespace wgt
 #endif //TEST_OBJECTS2_HPP
-

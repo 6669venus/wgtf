@@ -30,7 +30,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // TESTRESULTBWOUT_H
-
-

@@ -106,4 +106,4 @@ void CubicBezierInterpolator::updateControlPoints(BezierPoint& point, BezierPoin
 		nextPoint->cp1->setY(0);
 	}
 }
-}
+} // end namespace wgt

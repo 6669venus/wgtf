@@ -14,4 +14,4 @@ BEGIN_EXPOSE( GraphEditor, MetaNone() )
     EXPOSE("connectorsModel", GetConnectorsModel, MetaNone())
     EXPOSE_METHOD("createConnection", CreateConnection)
 END_EXPOSE()
-}
+} // end namespace wgt

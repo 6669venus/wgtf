@@ -16,5 +16,5 @@ public:
 		std::function< bool ( size_t ) > & predicate ) const = 0;
 };
 
-}
+} // end namespace wgt
 #endif//I_COMPONENT_PROVIDER_HPP

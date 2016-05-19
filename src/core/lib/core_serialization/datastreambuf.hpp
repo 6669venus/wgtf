@@ -233,6 +233,5 @@ typedef BasicDataStreamBuf<wchar_t> WDataStreamBuf;
 #undef DATA_STREAM_BUF_LOG
 
 
-}
+} // end namespace wgt
 #endif // DATASTREAMBUF_HPP_INCLUDED
-

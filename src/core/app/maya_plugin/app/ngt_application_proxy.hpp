@@ -44,6 +44,5 @@ private:
 	bool visible_;
 };
 
-}
+} // end namespace wgt
 #endif//NGT_APPLICATION_PROXY_HPP
-

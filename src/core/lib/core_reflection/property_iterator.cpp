@@ -119,4 +119,4 @@ PropertyIterator PropertyIteratorRange::end() const
 {
 	return PropertyIterator();
 }
-}
+} // end namespace wgt

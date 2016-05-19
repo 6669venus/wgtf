@@ -74,4 +74,4 @@ size_t BasePropertyWithMetaData::parameterCount() const
 {
 	return property_->parameterCount();
 }
-}
+} // end namespace wgt

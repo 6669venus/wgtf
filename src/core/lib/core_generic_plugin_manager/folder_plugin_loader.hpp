@@ -13,6 +13,5 @@ namespace FolderPluginLoader
 	bool getPluginsExePath();
 }
 
-}
+} // end namespace wgt
 #endif // FOLDER_PLUGIN_LOADER_HPP
-

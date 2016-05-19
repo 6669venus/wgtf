@@ -17,6 +17,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // I_COPYABLE_OBJECT_HPP
-

@@ -26,5 +26,5 @@ private:
 	std::vector< IItem * > items_;
 };
 
-}
+} // end namespace wgt
 #endif // REFLECTED_ENUM_MODEL_HPP

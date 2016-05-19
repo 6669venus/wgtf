@@ -33,6 +33,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // Base64_HPP
-

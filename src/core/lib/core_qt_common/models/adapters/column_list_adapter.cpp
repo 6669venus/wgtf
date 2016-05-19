@@ -51,4 +51,4 @@ void ColumnListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 	}
 }
 
-}
+} // end namespace wgt

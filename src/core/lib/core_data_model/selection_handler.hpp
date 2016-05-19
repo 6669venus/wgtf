@@ -26,6 +26,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif //HISTORY_SELECTION_HANDLER_HPP
-

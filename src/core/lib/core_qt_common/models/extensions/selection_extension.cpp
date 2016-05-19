@@ -748,4 +748,4 @@ void SelectionExtension::selectCurrentIndex( bool select )
 	setData( impl_->currentIndex_, QVariant( select ), selectedRole );
 }
 
-}
+} // end namespace wgt

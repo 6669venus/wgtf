@@ -104,4 +104,4 @@ bool ModelQtTypeConverter::toQVariant(const Variant & variant, QVariant & o_qVar
 
 	return false;
 }
-}
+} // end namespace wgt

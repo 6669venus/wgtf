@@ -184,4 +184,4 @@ bool TestDefinitionObject::operator!=( const TestDefinitionObject & tdo ) const
 	return !operator==( tdo );
 }
 
-}
+} // end namespace wgt

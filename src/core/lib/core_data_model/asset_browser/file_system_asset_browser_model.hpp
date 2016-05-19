@@ -84,5 +84,5 @@ private:
 	std::unique_ptr<FileSystemAssetBrowserModelImplementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif // ASSET_BROWSER_MODEL_H_

@@ -59,4 +59,4 @@ private:
 
 PLG_CALLBACK_FUNC( LoggingSystemPlugin )
 
-}
+} // end namespace wgt

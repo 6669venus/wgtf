@@ -461,4 +461,4 @@ const MetaType* DefaultMetaTypeManager::findType(const TypeId& typeId)  const
 }
 
 
-}
+} // end namespace wgt

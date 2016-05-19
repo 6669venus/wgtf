@@ -135,4 +135,4 @@ void CustomXmlDataWriter::closeTag( const char* tag )
 
 
 
-}
+} // end namespace wgt

@@ -105,4 +105,4 @@ QModelIndex IListAdapter::cachedAdaptedIndex(int row, int column, const QModelIn
 	cachedAdaptedIndices_[row] = index;
 	return index;
 }
-}
+} // end namespace wgt

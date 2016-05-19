@@ -70,4 +70,4 @@ void AssetBrowserEventModel::connectUseSelectedAsset( AssetCallback callback )
 }
 
 
-}
+} // end namespace wgt

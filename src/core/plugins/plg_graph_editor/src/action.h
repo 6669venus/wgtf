@@ -23,5 +23,5 @@ private:
     TOnTrigger callback;
 };
 
-}
+} // end namespace wgt
 #endif // __GRAPHEDITOR_ACTION_H__

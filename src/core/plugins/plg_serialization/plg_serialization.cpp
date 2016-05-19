@@ -58,4 +58,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( SerializationPlugin )
-}
+} // end namespace wgt

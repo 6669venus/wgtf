@@ -10,5 +10,5 @@ public:
     virtual void setMakeMacroButtonVisible(bool show) = 0;
 };
 
-}
+} // end namespace wgt
 #endif

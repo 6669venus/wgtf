@@ -73,4 +73,4 @@ bool ComponentExtensionOld::setData( const QModelIndex &index, const QVariant &v
 {
 	return false;
 }
-}
+} // end namespace wgt

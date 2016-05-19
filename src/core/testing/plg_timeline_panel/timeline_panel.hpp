@@ -27,5 +27,5 @@ private:
     std::unique_ptr< IView > timelineView_;
 };
  
-}
+} // end namespace wgt
 #endif // _TIMELINE_PANEL_HPP

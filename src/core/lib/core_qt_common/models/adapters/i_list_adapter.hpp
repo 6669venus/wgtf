@@ -45,7 +45,5 @@ private:
 	QtConnectionHolder connections_;
 };
 
-}
+} // end namespace wgt
 #endif // I_LIST_ADAPTER_HPP
-
-

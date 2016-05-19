@@ -55,4 +55,4 @@ size_t Connector::GetUID() const
     return uid;
 }
 
-}
+} // end namespace wgt

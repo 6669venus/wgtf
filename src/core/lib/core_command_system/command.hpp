@@ -72,6 +72,5 @@ private:
 	ICommandManager * commandSystemProvider_;
 };
 
-}
+} // end namespace wgt
 #endif //COMMAND_HPP
-

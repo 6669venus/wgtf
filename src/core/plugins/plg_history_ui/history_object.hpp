@@ -64,6 +64,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // HISTORY_OBJECT_HPP
-

@@ -33,5 +33,5 @@ private:
 	friend class GenericTreeModel;
 };
 
-}
+} // end namespace wgt
 #endif // GENERIC_TREE_ITEM_HPP

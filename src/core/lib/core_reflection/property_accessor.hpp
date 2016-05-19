@@ -80,6 +80,5 @@ private:
 	void setParent( const PropertyAccessor& parent );
 };
 
-}
+} // end namespace wgt
 #endif // PROPERTY_ACCESSOR_HPP
-

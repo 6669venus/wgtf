@@ -213,4 +213,4 @@ void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
 	}
 }
 
-}
+} // end namespace wgt

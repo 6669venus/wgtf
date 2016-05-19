@@ -45,5 +45,5 @@ private:
 	friend class GenericProperty;
 };
 
-}
+} // end namespace wgt
 #endif //GENERIC_OBJECT_HPP

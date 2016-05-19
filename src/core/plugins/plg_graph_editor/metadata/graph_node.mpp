@@ -15,4 +15,4 @@ BEGIN_EXPOSE( GraphNode, MetaNone() )
     EXPOSE("uid", GetUID, MetaNone())
     EXPOSE_METHOD("shiftNode", Shift)
 END_EXPOSE()
-}
+} // end namespace wgt

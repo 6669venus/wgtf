@@ -143,4 +143,4 @@ bool ResizingMemoryStream::sync()
 
 
 
-}
+} // end namespace wgt

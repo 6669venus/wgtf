@@ -161,4 +161,4 @@ const char* TestAssetPresentationProvider::getTypeIconResourceString( const IAss
 	return nullptr;
 }
 
-}
+} // end namespace wgt

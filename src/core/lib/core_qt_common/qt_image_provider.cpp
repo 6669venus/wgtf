@@ -60,4 +60,4 @@ const char * QtImageProvider::providerId()
 {
 	return "QtImageProvider";
 }
-}
+} // end namespace wgt

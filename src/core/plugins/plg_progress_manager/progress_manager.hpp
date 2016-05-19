@@ -109,6 +109,5 @@ private:
 
 };
 
-}
+} // end namespace wgt
 #endif // PROGRESS_MANAGER_HPP
-

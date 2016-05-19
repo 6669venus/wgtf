@@ -28,6 +28,5 @@ public:
 	virtual bool setData( int column, size_t roleId, const Variant & data ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_ITEM_HPP
-

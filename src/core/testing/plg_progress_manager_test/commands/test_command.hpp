@@ -47,5 +47,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif //TEST_COMMAND_HPP

@@ -70,4 +70,4 @@ const char* MultiResult::output() const
 
 
 
-}
+} // end namespace wgt

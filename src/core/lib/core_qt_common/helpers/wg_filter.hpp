@@ -56,6 +56,5 @@ protected:
 
 QML_DECLARE_TYPE( WGFilter )
 
-}
+} // end namespace wgt
 #endif // WG_FILTER_HPP
-

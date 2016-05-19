@@ -19,4 +19,4 @@ QQmlComponent * QmlComponent::component() const
 {
 	return qmlComponent_.get();
 }
-}
+} // end namespace wgt

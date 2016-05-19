@@ -14,7 +14,7 @@ void AddDllExtension(wchar_t* file)
 	PathAddExtension(file, L".dylib");
 #endif
 }
-}
+} // end namespace wgt
 #ifdef __APPLE__
 
 #include <codecvt>
@@ -120,6 +120,6 @@ void PathFileName(wchar_t* file, const wchar_t* path)
 	wcscpy(file, f);
 }
 
-}
+} // end namespace wgt
 
 #endif // __APPLE__

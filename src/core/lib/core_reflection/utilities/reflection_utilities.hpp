@@ -159,6 +159,5 @@ bool extract(const Variant & variant, ObjectHandleT< T > & value, const IDefinit
 
 
 }
-}
+} // end namespace wgt
 #endif //REFLECTION_UTILITIES_HPP
-

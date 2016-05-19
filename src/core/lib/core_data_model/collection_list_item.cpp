@@ -84,4 +84,4 @@ bool CollectionListItem::setData( int column,
 }
 
 
-}
+} // end namespace wgt

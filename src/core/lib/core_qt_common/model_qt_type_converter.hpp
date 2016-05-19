@@ -12,5 +12,5 @@ public:
 	bool toQVariant( const Variant & variant, QVariant & o_qVariant, QObject* parent ) const override;
 };
 
-}
+} // end namespace wgt
 #endif

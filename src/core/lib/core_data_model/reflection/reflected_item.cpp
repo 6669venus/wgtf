@@ -123,4 +123,4 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const IDefin
 	}
 	return true;
 }
-}
+} // end namespace wgt

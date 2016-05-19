@@ -313,4 +313,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC(ReflectionPlugin)
-}
+} // end namespace wgt

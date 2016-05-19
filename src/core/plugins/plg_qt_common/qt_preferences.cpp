@@ -370,4 +370,4 @@ void QtPreferences::loadPreferenceFromFile( const char * filePath )
     assert( pImpl_ != nullptr );
     return pImpl_->loadCurrentPreferenceFromFile( filePath );
 }
-}
+} // end namespace wgt

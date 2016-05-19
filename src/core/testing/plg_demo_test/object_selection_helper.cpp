@@ -61,4 +61,4 @@ void ObjectSelectionHelper::value( const ObjectHandle& data )
 	this->signalPostDataChanged();
 	selectionContext_->setContextObject( value_ );
 }
-}
+} // end namespace wgt

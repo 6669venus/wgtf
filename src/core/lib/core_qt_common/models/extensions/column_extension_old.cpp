@@ -98,4 +98,4 @@ void ColumnExtensionOld::onRowsRemoved(
 {
 	impl_->redundantColumnModels_.clear();
 }
-}
+} // end namespace wgt

@@ -73,4 +73,4 @@ bool ScriptQtTypeConverter::toQVariant( const ObjectHandle& object,
 }
 
 
-}
+} // end namespace wgt

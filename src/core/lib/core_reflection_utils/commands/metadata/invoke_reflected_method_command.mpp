@@ -15,4 +15,4 @@ BEGIN_EXPOSE( ReflectedMethodCommandParameters, MetaNoSerialization() )
 //	EXPOSE( ReflectedMethodCommandParameters::parametersName(), getParameterList, MetaNone() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

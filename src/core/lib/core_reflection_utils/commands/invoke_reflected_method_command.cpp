@@ -255,4 +255,4 @@ bool InvokeReflectedMethodCommand::canUndo( const ObjectHandle& arguments ) cons
 	}
 	return method->getUndoMethod() != nullptr;
 }
-}
+} // end namespace wgt

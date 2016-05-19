@@ -23,5 +23,5 @@ private:
 	IQtFramework * qtFramework_;
 };
 
-}
+} // end namespace wgt
 #endif // COMPONENT_EXTENSION_HPP

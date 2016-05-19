@@ -10,4 +10,4 @@ BEGIN_EXPOSE( Action, MetaNone() )
     EXPOSE("title", GetTitle, MetaNone())
     EXPOSE_METHOD("trigger", Trigger)
 END_EXPOSE()
-}
+} // end namespace wgt

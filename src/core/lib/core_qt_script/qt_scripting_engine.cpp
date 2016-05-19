@@ -543,4 +543,4 @@ void QtScriptingEngine::addPreference( const QString & preferenceId, const QStri
 	preference->set( name.c_str(), data );
 }
 
-}
+} // end namespace wgt

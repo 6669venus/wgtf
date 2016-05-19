@@ -20,5 +20,5 @@ public:
 	virtual void clearMessage() = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_STATUS_BAR_HPP

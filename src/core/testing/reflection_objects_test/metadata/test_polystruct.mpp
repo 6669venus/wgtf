@@ -19,4 +19,4 @@ END_EXPOSE()
 
 
 
-}
+} // end namespace wgt

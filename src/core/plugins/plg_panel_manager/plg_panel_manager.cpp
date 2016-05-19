@@ -61,4 +61,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( PanelManagerPlugin )
-}
+} // end namespace wgt

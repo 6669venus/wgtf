@@ -219,5 +219,5 @@ private:
 	IComponentContext & context_;
 };
 
-}
+} // end namespace wgt
 #endif //DEPENDS_HPP

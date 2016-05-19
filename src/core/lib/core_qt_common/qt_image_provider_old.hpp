@@ -26,5 +26,5 @@ private:
 	QHash<QString, QImage> imageCache_;
 };
 
-}
+} // end namespace wgt
 #endif // QT_IMAGE_PROVIDER_OLD_HPP

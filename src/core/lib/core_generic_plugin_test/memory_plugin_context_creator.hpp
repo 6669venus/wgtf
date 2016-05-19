@@ -14,9 +14,5 @@ public:
 	const char * getType() const;
 };
 
-}
+} // end namespace wgt
 #endif //MEMORY_PLUGIN_CONTEXT_CREATOR_HPP
-
-
-
-

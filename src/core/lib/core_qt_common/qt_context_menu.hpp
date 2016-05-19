@@ -20,5 +20,5 @@ private:
 	QWidget * qView_;
 };
 
-}
+} // end namespace wgt
 #endif // QT_CONTEXT_MENU

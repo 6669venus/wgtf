@@ -21,4 +21,4 @@ BEGIN_EXPOSE( IAssetBrowserModel, MetaNone() )
 	EXPOSE( "currentCustomContentFilter", currentCustomContentFilter, currentCustomContentFilter, MetaNone() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

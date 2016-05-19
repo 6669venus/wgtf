@@ -52,6 +52,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // I_SERIALIZATION_MANAGER_HPP
-

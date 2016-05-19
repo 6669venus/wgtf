@@ -33,4 +33,4 @@ QtConnectionHolder& QtConnectionHolder::operator+=( const QMetaObject::Connectio
 	connections_.push_back( connection );
 	return *this;
 }
-}
+} // end namespace wgt

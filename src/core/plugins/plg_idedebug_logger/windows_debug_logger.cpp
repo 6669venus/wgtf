@@ -26,4 +26,4 @@ void WindowsDebugLogger::out( LogMessage* message )
 	}
 }
 
-}
+} // end namespace wgt

@@ -85,6 +85,5 @@ private:
 	Implementation* impl_;
 };
 
-}
+} // end namespace wgt
 #endif //REFLECTED_METHOD_PARAMETERS_HPP
-

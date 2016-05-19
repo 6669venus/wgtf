@@ -7,13 +7,13 @@
 // TODO: Environment objects store and manage whole environment. Can be initialized
 // from current process environment, can replace current process environment.
 
+namespace wgt
+{
 /**
 Access process environment variables.
 
 Currently just basic access to individual variables is implemented.
 */
-namespace wgt
-{
 class Environment
 {
 public:
@@ -57,7 +57,5 @@ public:
 
 };
 
-
-}
+} // end namespace wgt
 #endif
-

@@ -31,6 +31,5 @@ namespace HashUtilities
 	}
 }
 
-}
+} // end namespace wgt
 #endif // HASH_UTILITIES_HPP
-

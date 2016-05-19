@@ -30,4 +30,4 @@ TestPluginLoader::~TestPluginLoader()
 }
 
 
-}
+} // end namespace wgt

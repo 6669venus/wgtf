@@ -50,4 +50,4 @@ double TestMethodsObject::testMethod8( double parameter )
 	return parameter;
 }
 
-}
+} // end namespace wgt

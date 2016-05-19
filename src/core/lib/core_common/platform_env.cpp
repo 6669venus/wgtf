@@ -71,4 +71,4 @@ bool Environment::unsetValue( const char* name )
 	return ret != 0;
 }
 
-}
+} // end namespace wgt

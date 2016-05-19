@@ -385,6 +385,5 @@ struct ReflectedMethodFactory
 	RM_FACTORY_CREATE_METHOD( NONE )
 };
 
-}
+} // end namespace wgt
 #endif //REFLECTION_METHOD_UTILITIES_HPP
-

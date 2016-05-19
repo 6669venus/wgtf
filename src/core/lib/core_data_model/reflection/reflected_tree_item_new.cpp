@@ -204,4 +204,4 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 	return true;
 }
 
-}
+} // end namespace wgt

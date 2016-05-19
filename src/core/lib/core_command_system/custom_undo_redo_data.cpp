@@ -25,4 +25,4 @@ void CustomUndoRedoData::redo()
 	auto commandArgs = commandInstance_.getArguments();
 	command->redo( commandArgs );
 }
-}
+} // end namespace wgt

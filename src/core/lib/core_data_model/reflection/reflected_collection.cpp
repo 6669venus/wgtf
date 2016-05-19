@@ -212,4 +212,4 @@ int ReflectedCollection::flags() const
 }
 
 
-}
+} // end namespace wgt

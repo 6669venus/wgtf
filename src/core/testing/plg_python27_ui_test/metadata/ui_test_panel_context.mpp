@@ -13,4 +13,4 @@ BEGIN_EXPOSE( PanelContext, MetaNone() )
 END_EXPOSE()
 
 
-}
+} // end namespace wgt

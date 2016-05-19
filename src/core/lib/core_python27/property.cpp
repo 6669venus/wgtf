@@ -430,4 +430,4 @@ size_t Property::parameterCount() const /* override */
 } // namespace ReflectedPython
 
 
-}
+} // end namespace wgt

@@ -324,4 +324,4 @@ void decrementNumber( std::wstring & text, int & currentPos, wchar_t decimalChar
 }
 
 }
-}
+} // end namespace wgt

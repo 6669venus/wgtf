@@ -50,5 +50,5 @@ private:
 	Listeners listeners_;
 };
 
-}
+} // end namespace wgt
 #endif // ENV_SYSTEM

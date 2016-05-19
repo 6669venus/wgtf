@@ -25,4 +25,4 @@ void BasicAlertLogger::out( LogMessage* message )
 	}
 }
 
-}
+} // end namespace wgt

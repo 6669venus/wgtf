@@ -80,6 +80,5 @@ private:
 } // namespace PythonType
 
 
-}
+} // end namespace wgt
 #endif // _PYTHON_SEQUENCE_COLLECTION_HPP
-

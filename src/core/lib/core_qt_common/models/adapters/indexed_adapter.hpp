@@ -138,7 +138,5 @@ void isolateRedundantIndex(
 }
 
 
-}
+} // end namespace wgt
 #endif // INDEXED_ADAPTER_HPP
-
-

@@ -108,4 +108,4 @@ void QtTabRegion::removeView( IView & view )
 	// call this function to let IView control the qWidget's life-cycle again.
 	qtFramework_.retainQWidget( view );
 }
-}
+} // end namespace wgt

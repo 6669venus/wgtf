@@ -37,4 +37,4 @@ void TimelinePanel::removePanel()
     }
     uiApplication->removeView( *timelineView_ );
 }
-}
+} // end namespace wgt

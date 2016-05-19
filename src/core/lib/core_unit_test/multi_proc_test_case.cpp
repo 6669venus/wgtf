@@ -126,4 +126,4 @@ bool MultiProcTestCase::checkAllChildrenPass()
 
 // multiproc_test_case.cpp
 
-}
+} // end namespace wgt

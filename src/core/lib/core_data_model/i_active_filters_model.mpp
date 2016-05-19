@@ -28,4 +28,4 @@ BEGIN_EXPOSE( IActiveFiltersModel, MetaNone() )
 	EXPOSE_METHOD( "clearSavedFilters", clearSavedFilters )
 END_EXPOSE()
 
-}
+} // end namespace wgt

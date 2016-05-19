@@ -3221,4 +3221,4 @@ ReflectionTestModule::~ReflectionTestModule()
 }
 
 
-}
+} // end namespace wgt

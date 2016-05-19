@@ -68,4 +68,4 @@ float LayoutHint::match( const LayoutTags & tags ) const
 	}
 	return 0.f;
 }
-}
+} // end namespace wgt

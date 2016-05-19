@@ -182,4 +182,4 @@ int FileSystemModel::columnCount() const
 }
 
 
-}
+} // end namespace wgt

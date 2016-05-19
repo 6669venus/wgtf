@@ -10,6 +10,5 @@ public:
 	virtual void applicationStopped() = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_APPLICATION_LISTENER_HPP
-

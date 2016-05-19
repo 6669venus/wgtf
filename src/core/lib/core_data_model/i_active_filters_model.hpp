@@ -115,5 +115,5 @@ public:
 	virtual void clearSavedFilters() {}
 };
 
-}
+} // end namespace wgt
 #endif //I_ACTIVE_FILTERS_MODEL_HPP

@@ -74,4 +74,4 @@ private:
  
 PLG_CALLBACK_FUNC( ColorPickerPlugin )
 
-}
+} // end namespace wgt

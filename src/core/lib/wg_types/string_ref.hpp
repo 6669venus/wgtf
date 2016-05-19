@@ -29,5 +29,5 @@ private:
 	size_t			length_;
 };
 
-}
+} // end namespace wgt
 #endif // STRING_REF_HPP

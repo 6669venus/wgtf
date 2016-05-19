@@ -37,5 +37,5 @@ private:
 	int columnCount_;
 };
 
-}
+} // end namespace wgt
 #endif

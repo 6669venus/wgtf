@@ -128,4 +128,4 @@ struct Python27TestUIPlugin
 
 PLG_CALLBACK_FUNC( Python27TestUIPlugin )
 
-}
+} // end namespace wgt

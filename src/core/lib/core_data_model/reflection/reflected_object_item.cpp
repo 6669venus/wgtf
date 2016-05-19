@@ -263,4 +263,4 @@ ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups() const
 	});
 	return groups_;
 }
-}
+} // end namespace wgt

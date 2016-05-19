@@ -93,5 +93,5 @@ public:
 	virtual void setIconSize(const int&) = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_ASSET_BROWSER_MODEL_HPP

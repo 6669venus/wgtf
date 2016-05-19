@@ -25,4 +25,4 @@ TEST_F( TestReflectionFixture, testBinding )
 	}
 
 }
-}
+} // end namespace wgt

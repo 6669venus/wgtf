@@ -165,4 +165,4 @@ bool QtCollectionModel::isMapping() const
 	return collection.isMapping();
 }
 
-}
+} // end namespace wgt

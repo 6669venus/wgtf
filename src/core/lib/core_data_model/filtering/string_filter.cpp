@@ -80,4 +80,4 @@ bool StringFilter::checkFilter( const IItem* item )
 	return false;
 }
 
-}
+} // end namespace wgt

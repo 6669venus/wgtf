@@ -1709,4 +1709,4 @@ bool CommandManager::undoRedo( const int & desiredIndex )
 	return true;
 }
 
-}
+} // end namespace wgt

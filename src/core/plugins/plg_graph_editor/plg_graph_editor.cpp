@@ -82,4 +82,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(GraphEditorPlugin)
-}
+} // end namespace wgt

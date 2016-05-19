@@ -451,4 +451,4 @@ ObjectHandle ClassDefinition::registerObject( ObjectHandle & pObj,
 	}
 	return ObjectHandle();
 }
-}
+} // end namespace wgt

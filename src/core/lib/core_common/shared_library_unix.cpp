@@ -37,4 +37,4 @@ void* SharedLibrary::findRawSymbol(const char* name) const
 }
 
 
-}
+} // end namespace wgt

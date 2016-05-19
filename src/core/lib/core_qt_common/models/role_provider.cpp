@@ -67,4 +67,4 @@ bool RoleProvider::decodeRole( int role, size_t & o_RoleId ) const
 	o_RoleId = roleIt->second;
 	return true;
 }
-}
+} // end namespace wgt

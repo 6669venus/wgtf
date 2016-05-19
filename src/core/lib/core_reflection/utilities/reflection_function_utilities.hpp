@@ -67,5 +67,5 @@ struct FunctionPropertyHelper
 	}
 };
 
-}
+} // end namespace wgt
 #endif //REFLECTION_FUNCTION_UTILITIES_HPP

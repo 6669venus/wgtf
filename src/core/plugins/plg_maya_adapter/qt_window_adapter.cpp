@@ -68,4 +68,4 @@ void QtWindowAdapter::removeListener( IWindowListener * listener )
 	listeners_.erase( listenerIt );
 }
 
-}
+} // end namespace wgt

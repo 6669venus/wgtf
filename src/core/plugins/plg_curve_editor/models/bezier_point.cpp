@@ -53,4 +53,4 @@ bool operator==( BezierPoint& lhs, BezierPoint& rhs )
 		&& lhs.cp1 == rhs.cp1
 		&& lhs.cp2 == rhs.cp2;
 }
-}
+} // end namespace wgt

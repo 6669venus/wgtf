@@ -313,4 +313,4 @@ bool QtActionManager::registerActionData( const char * id,
 	actionData_[ id ] = std::unique_ptr< QtActionData >( actionData.release() );
 	return true;
 }
-}
+} // end namespace wgt

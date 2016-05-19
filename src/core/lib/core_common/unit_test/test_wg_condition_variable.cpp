@@ -134,4 +134,4 @@ TEST(wg_condition_variable)
 }
 
 
-}
+} // end namespace wgt

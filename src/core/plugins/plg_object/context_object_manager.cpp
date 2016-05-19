@@ -7,4 +7,4 @@ ContextObjectManager::ContextObjectManager( IObjectManagerNew & parent, const wc
 {
 
 }
-}
+} // end namespace wgt

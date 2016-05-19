@@ -127,6 +127,5 @@ private:
 	std::unique_ptr< QtFramework_Locals::QtCommandEventListener > commandEventListener_;
 };
 
-}
+} // end namespace wgt
 #endif
-

@@ -17,5 +17,5 @@ public:
 	virtual void removeView( IView & view ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif

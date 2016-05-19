@@ -140,4 +140,4 @@ bool FileSystem::writeFile(const char* path, const void* data, size_t len, std::
 	return false;
 }
 
-}
+} // end namespace wgt

@@ -80,4 +80,4 @@ void ReflectedTreeModelPropertyListener::postSetValue(
 {
 	rootItem_.postSetValue( accessor, value );
 }
-}
+} // end namespace wgt

@@ -10,5 +10,5 @@ namespace Reflection
 	void initReflectedTypes( IDefinitionManager & definitionManager );
 }
 
-}
+} // end namespace wgt
 #endif

@@ -285,4 +285,4 @@ private:
 PLG_CALLBACK_FUNC(DemoTestPlugin)
 
 
-}
+} // end namespace wgt

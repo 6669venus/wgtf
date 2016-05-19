@@ -62,5 +62,5 @@ const T * findFirstMetaData( const IClassDefinition & definition, const IDefinit
 }
 
 
-}
+} // end namespace wgt
 #endif //META_UTILITIES_HPP

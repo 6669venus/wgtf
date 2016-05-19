@@ -239,4 +239,4 @@ QSGNode* InteractiveConnectionItem::updatePaintNode(QSGNode* oldNode, UpdatePain
     return node;
 }
 
-}
+} // end namespace wgt

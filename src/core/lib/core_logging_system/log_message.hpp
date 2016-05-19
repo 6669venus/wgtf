@@ -50,5 +50,5 @@ private:
 	std::vector< std::string > tags_;
 };
 
-}
+} // end namespace wgt
 #endif // LOG_MESSAGE_HPP

@@ -615,4 +615,4 @@ TEST_F(TestCollectionFixture, int_map)
 }
 
 
-}
+} // end namespace wgt

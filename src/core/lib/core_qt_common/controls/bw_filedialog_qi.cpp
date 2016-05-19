@@ -116,4 +116,4 @@ void BWFileDialogQI::createFileDialog()
 }
 
 
-}
+} // end namespace wgt

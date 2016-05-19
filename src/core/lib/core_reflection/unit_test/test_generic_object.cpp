@@ -153,4 +153,4 @@ TEST_F( TestDefinitionFixture, createMultipleGenericObjects )
 		CHECK( !newGenericObj->get( "testStructure", value ) );
 	}
 }
-}
+} // end namespace wgt

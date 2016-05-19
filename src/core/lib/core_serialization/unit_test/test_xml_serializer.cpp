@@ -318,4 +318,4 @@ TEST( XMLSerializer_reflected )
 
 
 
-}
+} // end namespace wgt

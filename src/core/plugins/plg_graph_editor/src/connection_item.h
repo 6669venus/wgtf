@@ -68,5 +68,5 @@ private:
     QPointF endPt;
 };
 
-}
+} // end namespace wgt
 #endif // __GRAPHEDITOR_CONNECTIONITEM_H__

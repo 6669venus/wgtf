@@ -319,4 +319,4 @@ void SimpleActiveFiltersModel::clearSavedFilters()
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
 }
 
-}
+} // end namespace wgt

@@ -13,6 +13,5 @@ public:
 	virtual void windowClosed( IWindowAdapter * window ) {}
 };
 
-}
+} // end namespace wgt
 #endif // I_WINDOW_LISTENER_HPP
-

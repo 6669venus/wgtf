@@ -56,4 +56,4 @@ private:
 
 PLG_CALLBACK_FUNC( FileSystemPlugin )
 
-}
+} // end namespace wgt

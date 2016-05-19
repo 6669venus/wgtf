@@ -100,7 +100,5 @@ public:
 	virtual IClassDefinitionModifier * getDefinitionModifier() const = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_CLASS_DEFINITION_DETAILS_HPP
-
-

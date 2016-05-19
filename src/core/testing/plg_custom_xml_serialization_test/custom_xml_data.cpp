@@ -22,4 +22,4 @@ bool CustomXmlData::operator==(const CustomXmlData& tdo) const
 	return true;
 }
 
-}
+} // end namespace wgt

@@ -47,4 +47,4 @@ public:
 PLG_CALLBACK_FUNC( AutomationPlugin )
 
 
-}
+} // end namespace wgt

@@ -23,4 +23,4 @@ void Action::Trigger(float x, float y, size_t objectUid)
     }
 }
 
-}
+} // end namespace wgt

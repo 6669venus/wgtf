@@ -22,6 +22,5 @@ private:
 	std::unique_ptr< ObjectManager > objectManager_;
 	std::unique_ptr< DefinitionManager > definitionManager_;
 };
-}
+} // end namespace wgt
 #endif //TEST_DATA_MODEL_FIXTURE_HPP
-

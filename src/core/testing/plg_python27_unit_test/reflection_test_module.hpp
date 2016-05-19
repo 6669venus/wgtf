@@ -35,6 +35,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // PYTHON_REFLECTION_MODULE_HPP
-

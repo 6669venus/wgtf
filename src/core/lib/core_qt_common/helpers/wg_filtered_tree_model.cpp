@@ -116,4 +116,4 @@ void WGFilteredTreeModel::setFilter( QObject * filter )
 	impl_->setFilter( wgFilter );
 }
 
-}
+} // end namespace wgt

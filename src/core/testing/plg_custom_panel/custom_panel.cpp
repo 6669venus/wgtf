@@ -51,4 +51,4 @@ void CustomPanel::removePanel()
 		customView_ = nullptr;
 	}
 }
-}
+} // end namespace wgt

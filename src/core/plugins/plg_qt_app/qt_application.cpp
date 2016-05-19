@@ -289,4 +289,4 @@ bool QtApplication::whiteSpace(char c)
 */
 
 
-}
+} // end namespace wgt

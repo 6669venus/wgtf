@@ -278,4 +278,4 @@ bool ReflectedGroupItem::postSetValue(
 	}
 	return false;
 }
-}
+} // end namespace wgt

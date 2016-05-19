@@ -35,5 +35,5 @@ public:
 	virtual const Windows & windows() const = 0;
 };
 
-}
+} // end namespace wgt
 #endif//I_UI_APPLICATION_HPP

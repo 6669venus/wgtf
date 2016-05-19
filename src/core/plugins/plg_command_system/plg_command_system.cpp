@@ -103,4 +103,4 @@ public:
 
 PLG_CALLBACK_FUNC( CommandSystemPlugin )
 
-}
+} // end namespace wgt

@@ -69,4 +69,4 @@ bool CollectionQtTypeConverter::toQVariant(const Variant& variant,
 
 	return true;
 }
-}
+} // end namespace wgt

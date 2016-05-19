@@ -973,6 +973,6 @@ std::istream& operator>>( std::istream& stream, Variant& value )
 	return stream;
 }
 
-}
+} // end namespace wgt
 
 #endif

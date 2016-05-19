@@ -35,5 +35,5 @@ private:
 	QWidget* current_;
 };
 
-}
+} // end namespace wgt
 #endif//QT_DOCK_REGION_HPP

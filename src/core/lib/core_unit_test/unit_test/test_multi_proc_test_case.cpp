@@ -106,4 +106,4 @@ BW_END_NAMESPACE
 
 // test_multi_proc_test_case.cpp
 
-}
+} // end namespace wgt

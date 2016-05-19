@@ -126,6 +126,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // TEST_PAGE_IMPL_HPP
-

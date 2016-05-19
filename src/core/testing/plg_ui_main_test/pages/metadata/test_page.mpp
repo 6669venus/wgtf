@@ -76,4 +76,4 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestPage2, MetaNone() )
 	EXPOSE( "TestPage", getTestPage, setTestPage, MetaNone() )
 END_EXPOSE()
-}
+} // end namespace wgt

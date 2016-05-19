@@ -65,6 +65,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // COLLECTION_LIST_MODEL_HPP
-

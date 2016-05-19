@@ -45,4 +45,4 @@ QItemSelection ListExtension::itemSelection( const QModelIndex & first, const QM
 
 	return QItemSelection( begin, end );
 }
-}
+} // end namespace wgt

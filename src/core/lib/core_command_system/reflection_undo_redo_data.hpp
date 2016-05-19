@@ -42,5 +42,5 @@ private:
 	ReflectedPropertyUndoRedoUtility::UndoRedoHelperList	undoRedoHelperList_;
 };
 
-}
+} // end namespace wgt
 #endif

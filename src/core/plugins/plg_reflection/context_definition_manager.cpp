@@ -293,4 +293,4 @@ IClassDefinitionDetails * ContextDefinitionManager::createGenericDefinition( con
 	return pBaseManager_->createGenericDefinition( name );
 }
 
-}
+} // end namespace wgt

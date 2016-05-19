@@ -15,6 +15,5 @@ public:
 	virtual QtWindow * createQtWindow( QIODevice & source ) override;
 };
 
-}
+} // end namespace wgt
 #endif
-

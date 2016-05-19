@@ -167,4 +167,4 @@ void WGAction::setActionId( const QString& actionId )
 {
 	impl_->setActionId( actionId );
 }
-}
+} // end namespace wgt

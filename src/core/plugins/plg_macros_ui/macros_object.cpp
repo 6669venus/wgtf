@@ -64,4 +64,4 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 	return macro;
 }
 
-}
+} // end namespace wgt

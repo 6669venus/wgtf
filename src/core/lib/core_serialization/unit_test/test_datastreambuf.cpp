@@ -78,4 +78,4 @@ TEST( datastreambuf_formatted_io )
 }
 
 
-}
+} // end namespace wgt

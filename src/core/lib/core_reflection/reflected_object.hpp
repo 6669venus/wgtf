@@ -24,6 +24,5 @@ const char * getClassIdentifier()
 	friend class TypeClassDefinition;
 
 
-}
+} // end namespace wgt
 #endif // REFLECTED_OBJECT_HPP
-

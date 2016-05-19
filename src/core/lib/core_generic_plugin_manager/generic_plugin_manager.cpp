@@ -279,4 +279,4 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 	return  temp;
 }
 
-}
+} // end namespace wgt

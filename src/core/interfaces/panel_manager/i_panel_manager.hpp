@@ -20,6 +20,5 @@ public:
 		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr) = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_ASSET_BROWSER_MANAGER_HPP
-

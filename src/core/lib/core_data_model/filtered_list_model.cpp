@@ -658,4 +658,4 @@ void FilteredListModel::refresh( bool waitToFinish )
 	nextRefresh.detach();
 }
 
-}
+} // end namespace wgt

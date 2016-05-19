@@ -33,5 +33,5 @@ public:
 	IDefinitionManager & defManager_;
 };
 
-}
+} // end namespace wgt
 #endif//REFLECTION_COMPONENT_PROVIDER_HPP

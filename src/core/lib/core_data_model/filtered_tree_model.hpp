@@ -39,6 +39,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif
-

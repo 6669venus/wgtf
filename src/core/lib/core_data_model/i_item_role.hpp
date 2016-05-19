@@ -83,6 +83,6 @@ namespace ItemRole {															\
 	};
 	ITEM_ROLES
 #undef X
-}
+} // end namespace wgt
 
 #endif //I_ITEM_ROLE_HPP

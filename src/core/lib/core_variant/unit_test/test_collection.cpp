@@ -1220,4 +1220,4 @@ TEST(Collection_mapping_notifications)
 
 
 
-}
+} // end namespace wgt

@@ -108,4 +108,4 @@ private:
 
 PLG_CALLBACK_FUNC( MacrosUIPlugin )
 
-}
+} // end namespace wgt

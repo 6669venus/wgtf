@@ -19,6 +19,5 @@ public:
 	virtual std::wstring getParamStrW( const char * arg ) const = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_COMMAND_LINE_PARSER_HPP
-

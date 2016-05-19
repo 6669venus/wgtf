@@ -302,4 +302,4 @@ int Mapping::flags() const /* override */
 
 } // namespace PythonType
 
-}
+} // end namespace wgt

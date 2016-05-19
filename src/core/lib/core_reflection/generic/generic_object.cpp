@@ -36,4 +36,4 @@ ObjectHandle GenericObject::getDerivedType()
 	return ObjectHandleT< GenericObject >( this );
 }
 
-}
+} // end namespace wgt

@@ -29,6 +29,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // MACROS_OBJECT_HPP
-

@@ -27,5 +27,5 @@ private:
 	friend class PropertyStorageIterator;
 };
 
-}
+} // end namespace wgt
 #endif

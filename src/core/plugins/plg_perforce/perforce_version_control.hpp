@@ -30,5 +30,5 @@ private:
 	std::unique_ptr<PerforceVersionControlImplementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif // PERFORCE_VERSION_CONTROL_H_

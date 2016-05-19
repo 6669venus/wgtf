@@ -17,4 +17,4 @@ bool GenericTreeItem::empty() const
 	return (this->size() == 0);
 }
 
-}
+} // end namespace wgt

@@ -10,7 +10,5 @@ class IComponentContext;
 // registered
 extern IComponentContext * g_contextManager;
 
-}
+} // end namespace wgt
 #endif // _PYTHON27_UNIT_TEST_HPP
-
-

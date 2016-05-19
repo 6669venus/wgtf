@@ -14,5 +14,5 @@ public:
 		IDefinitionManager & definitionManager );
 };
 
-}
+} // end namespace wgt
 #endif //SHARED_CONTROLS_HPP

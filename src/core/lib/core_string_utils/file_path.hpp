@@ -142,5 +142,5 @@ private:
 
 FilePath operator+(const FilePath& lhs, const FilePath& rhs);
 
-}
+} // end namespace wgt
 #endif // FILE_PATH_H_

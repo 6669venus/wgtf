@@ -16,4 +16,4 @@ BEGIN_EXPOSE( AlertPageModel, MetaNone() )
 	EXPOSE( "currentSelectedRowIndex", currentSelectedRowIndex, currentSelectedRowIndex, MetaNone() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

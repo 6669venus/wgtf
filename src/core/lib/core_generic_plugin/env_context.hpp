@@ -81,5 +81,5 @@ namespace
 	}
 }
 
-}
+} // end namespace wgt
 #endif//ENV_CONTEXT_HPP

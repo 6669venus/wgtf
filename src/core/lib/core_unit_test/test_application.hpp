@@ -22,5 +22,5 @@ private:
 	std::thread thread_;
 };
 
-}
+} // end namespace wgt
 #endif

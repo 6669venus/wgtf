@@ -97,4 +97,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( EditorInteractionPlugin )
-}
+} // end namespace wgt

@@ -44,6 +44,5 @@ private:
     ObjectHandleT<GraphNode> parent;
 };
 
-}
+} // end namespace wgt
 #endif // __GRAPHEDITOR_CONNECTIONSLOT_H__
-

@@ -50,4 +50,4 @@ bool ObjectHandleStorageReflectedCast::getId( RefObjectId & id ) const
 
 	return storage_->getId( id );
 }
-}
+} // end namespace wgt

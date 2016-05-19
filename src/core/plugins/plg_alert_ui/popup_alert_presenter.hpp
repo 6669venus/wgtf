@@ -35,5 +35,5 @@ private:
 	int alertCounter_;
  };
 
-}
+} // end namespace wgt
 #endif // POPUP_ALERT_PRESENTER_HPP

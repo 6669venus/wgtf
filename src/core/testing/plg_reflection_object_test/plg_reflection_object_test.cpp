@@ -53,4 +53,4 @@ public:
 PLG_CALLBACK_FUNC( ReflectionObjectTestPlugin )
 
 
-}
+} // end namespace wgt

@@ -45,5 +45,5 @@ void operator delete( void* p, void * )\
 	}\
 };\
 
-}
+} // end namespace wgt
 #endif //QT_NEW_HANDLER

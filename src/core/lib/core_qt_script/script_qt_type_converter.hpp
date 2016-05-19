@@ -31,6 +31,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // SCRIPT_QT_TYPE_CONVERTER_HPP
-

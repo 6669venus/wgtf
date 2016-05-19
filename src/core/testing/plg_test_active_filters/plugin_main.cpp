@@ -101,4 +101,4 @@ private:
 PLG_CALLBACK_FUNC( TestActiveFiltersPlugin )
 
 
-}
+} // end namespace wgt

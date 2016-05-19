@@ -77,7 +77,5 @@ private:
 	std::unique_ptr< Implementation > impl_;
 };
 
-}
+} // end namespace wgt
 #endif // _REFLECTED_PROPERTY_ITEM_NEW_HPP
-
-

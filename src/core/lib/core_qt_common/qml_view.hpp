@@ -71,6 +71,5 @@ private:
 	Listeners listeners_;
 };
 
-}
+} // end namespace wgt
 #endif//QML_VIEW_HPP
-

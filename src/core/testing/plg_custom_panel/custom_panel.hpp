@@ -29,5 +29,5 @@ private:
 };
  
  
-}
+} // end namespace wgt
 #endif // _CUSTOM_PANEL_HPP

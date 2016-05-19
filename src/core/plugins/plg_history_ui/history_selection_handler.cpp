@@ -30,4 +30,4 @@ const HistorySelectionHandler::Selection & HistorySelectionHandler::getSelection
 	return selectionSet_;
 }
 
-}
+} // end namespace wgt

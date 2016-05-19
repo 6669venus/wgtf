@@ -31,7 +31,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // I_VALUE_CHANGE_NOTIFIER_HPP
-
-

@@ -76,4 +76,4 @@ public:
 PLG_CALLBACK_FUNC( CurveEditorTestPlugin )
 
 
-}
+} // end namespace wgt

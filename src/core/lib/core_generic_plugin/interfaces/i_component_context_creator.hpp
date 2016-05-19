@@ -13,6 +13,5 @@ public:
 	virtual IInterface * createContext( const wchar_t * contextId ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif ///I_COMPONENT_CONTEXT_CREATOR_HPP
-

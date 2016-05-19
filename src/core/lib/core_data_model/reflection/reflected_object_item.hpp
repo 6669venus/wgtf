@@ -60,6 +60,5 @@ private:
 	mutable Groups groups_;
 };
 
-}
+} // end namespace wgt
 #endif //REFLECTED_OBJECT_ITEM_HPP
-

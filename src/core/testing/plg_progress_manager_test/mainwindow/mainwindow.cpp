@@ -102,4 +102,4 @@ void MainWindow::executeTestCommand2( IAction * action )
 }
 
 
-}
+} // end namespace wgt

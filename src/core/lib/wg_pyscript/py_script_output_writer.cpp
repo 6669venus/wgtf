@@ -151,4 +151,4 @@ void handleWrite( const std::string & msg, bool isStderr )
 
 // py_script_output_writer.cpp
 
-}
+} // end namespace wgt

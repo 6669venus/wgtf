@@ -113,5 +113,5 @@ public:
 	virtual size_t size() const { return 0; }
 };
 
-}
+} // end namespace wgt
 #endif //I_BREADCRUMBS_MODEL_HPP

@@ -164,4 +164,4 @@ TEST( Python27 )
 }
 
 
-}
+} // end namespace wgt

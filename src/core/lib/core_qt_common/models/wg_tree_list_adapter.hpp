@@ -101,5 +101,5 @@ private:
 	std::unique_ptr< Impl > impl_;
 };
 
-}
+} // end namespace wgt
 #endif // WG_TREE_LIST_ADAPTER_HPP

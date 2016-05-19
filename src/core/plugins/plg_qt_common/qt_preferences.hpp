@@ -28,6 +28,5 @@ private:
     std::unique_ptr< class QtPreferencesImpl > pImpl_;
 };
 
-}
+} // end namespace wgt
 #endif//QT_PREFERENCES_HPP
-

@@ -153,4 +153,4 @@ bool RefObjectId::fromString( const std::string & s, unsigned int * data )
 
 	return true;
 }
-}
+} // end namespace wgt

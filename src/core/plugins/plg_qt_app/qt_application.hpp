@@ -54,6 +54,5 @@ private:
 	bool bQuit_;
 };
 
-}
+} // end namespace wgt
 #endif//QT_APPLICATION_HPP
-

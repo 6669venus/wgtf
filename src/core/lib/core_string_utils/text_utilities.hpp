@@ -13,5 +13,5 @@ namespace TextUtilities
 		std::wstring & text, int & currentPos, wchar_t decimalChar = L'.' );
 };
 
-}
+} // end namespace wgt
 #endif

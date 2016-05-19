@@ -257,4 +257,4 @@ size_t GenericTreeModel::getChildCountInternal( const GenericTreeItem * item ) c
 
 	return item->size();
 }
-}
+} // end namespace wgt

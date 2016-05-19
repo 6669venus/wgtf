@@ -41,5 +41,5 @@ private:
 	IDefinitionManager & definitionManager_;
 };
 
-}
+} // end namespace wgt
 #endif // REFLECTED_COLLECTION_ERASE_COMMAND_HPP

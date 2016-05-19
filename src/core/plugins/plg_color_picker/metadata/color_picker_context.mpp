@@ -14,4 +14,4 @@ BEGIN_EXPOSE( ColorPickerContext, MetaNone() )
 	EXPOSE( "pixelColor", pixelColor_ )
 END_EXPOSE()
 
-}
+} // end namespace wgt

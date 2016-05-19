@@ -129,5 +129,5 @@ MetaHandle MetaPassword();
 MetaHandle MetaMultiline();
 
 
-}
+} // end namespace wgt
 #endif //META_TYPES_HPP

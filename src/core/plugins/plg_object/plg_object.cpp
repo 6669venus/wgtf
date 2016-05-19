@@ -35,4 +35,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( ObjectPlugin )
-}
+} // end namespace wgt

@@ -29,6 +29,5 @@ public:
 	SignalVoid signalFilterChanged;
 };
 
-}
+} // end namespace wgt
 #endif // I_ITEM_FILTER_HPP
-

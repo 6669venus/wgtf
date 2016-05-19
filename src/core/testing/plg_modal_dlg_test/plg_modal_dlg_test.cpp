@@ -91,4 +91,4 @@ public:
 PLG_CALLBACK_FUNC( ModalDlgTestPlugin )
 
 
-}
+} // end namespace wgt

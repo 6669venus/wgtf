@@ -22,6 +22,5 @@ namespace CurveTypes
 	};
 }
 
-}
+} // end namespace wgt
 #endif // CURVE_TYPES_H_
-

@@ -192,4 +192,4 @@ template class SequenceIterator< PyScript::ScriptTuple >;
 
 } // namespace PythonType
 
-}
+} // end namespace wgt

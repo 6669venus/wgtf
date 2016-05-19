@@ -60,5 +60,5 @@ private:
 	Windows windows_;
 };
 
-}
+} // end namespace wgt
 #endif//LAYOUT_MANAGER_HPP

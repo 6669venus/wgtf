@@ -31,6 +31,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // MAINWINDOW_H
-

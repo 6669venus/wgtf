@@ -436,4 +436,4 @@ void ProjectData::getColor4(Vector4 * color) const
 }
 
 
-}
+} // end namespace wgt

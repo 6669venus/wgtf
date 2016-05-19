@@ -28,6 +28,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif // STRING_FILTER_HPP
-

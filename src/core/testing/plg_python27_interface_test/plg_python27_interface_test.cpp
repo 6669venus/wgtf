@@ -43,4 +43,4 @@ public:
 PLG_CALLBACK_FUNC( Python27TestPlugin )
 
 
-}
+} // end namespace wgt

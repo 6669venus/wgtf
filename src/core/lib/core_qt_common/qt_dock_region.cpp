@@ -263,4 +263,4 @@ void QtDockRegion::removeView( IView & view )
 	qtFramework_.retainQWidget( view );
 	dockWidget = nullptr;
 }
-}
+} // end namespace wgt

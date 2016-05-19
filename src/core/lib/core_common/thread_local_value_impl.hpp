@@ -97,6 +97,5 @@ void ThreadLocalValueImpl<T, true>::Shutdown()
 {
 }
 
-}
+} // end namespace wgt
 #endif // _THREADLOCALVALUE_IPP_
-

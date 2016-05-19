@@ -86,7 +86,7 @@ class ThreadLocalValue :
 {
 };
 
-}
+} // end namespace wgt
 
 #include "thread_local_value_impl.hpp"
 
@@ -97,4 +97,3 @@ class ThreadLocalValue :
 #define THREAD_LOCAL_DEC(VAR) VAR.SetValue(VAR.GetValue()-1)
 
 #endif // _THREADLOCALVALUE_HPP_
-

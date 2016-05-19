@@ -114,4 +114,4 @@ private:
 PLG_CALLBACK_FUNC( TestPlugin1 )
 
 
-}
+} // end namespace wgt

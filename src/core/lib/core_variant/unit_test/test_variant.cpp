@@ -739,4 +739,4 @@ TEST( Variant_ptr_castPtr )
 
 
 
-}
+} // end namespace wgt

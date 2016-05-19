@@ -44,6 +44,5 @@ private:
 
 
 
-}
+} // end namespace wgt
 #endif // QT_COPY_PASTE_MANAGER_HPP
-

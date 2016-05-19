@@ -53,6 +53,5 @@ private:
 	bool running_;
 };
 
-}
+} // end namespace wgt
 #endif // LOGGING_SYSTEM_HPP
-

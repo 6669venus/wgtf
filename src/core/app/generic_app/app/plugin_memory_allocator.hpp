@@ -26,5 +26,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // PLUGIN_MEMORY_ALLOCATOR_HPP

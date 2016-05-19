@@ -59,4 +59,4 @@ void IMenuHandler::registerActions()
 		uiApplication->addAction(**itr);
 	}
 }
-}
+} // end namespace wgt

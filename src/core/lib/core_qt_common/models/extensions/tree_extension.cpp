@@ -348,4 +348,4 @@ QItemSelection TreeExtension::itemSelection( const QModelIndex & first, const QM
 	
 	return itemSelection;
 }
-}
+} // end namespace wgt

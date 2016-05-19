@@ -317,4 +317,4 @@ void XMLWriter::closeTag( const char* tag )
 
 
 
-}
+} // end namespace wgt

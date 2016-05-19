@@ -125,5 +125,5 @@ namespace TestObjectCommon
 };
 
 
-}
+} // end namespace wgt
 #endif //TEST_OBJECTS_COMMON_HPP

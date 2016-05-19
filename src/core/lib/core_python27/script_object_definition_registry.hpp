@@ -84,4 +84,4 @@ private:
 } // namespace ReflectedPython
 
 
-}
+} // end namespace wgt

@@ -60,5 +60,5 @@ private:
 	void createFileDialog();
 };
 
-}
+} // end namespace wgt
 #endif //BW_FILEDIALO_QI_HPP

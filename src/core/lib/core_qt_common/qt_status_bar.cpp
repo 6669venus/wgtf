@@ -27,4 +27,4 @@ void QtStatusBar::clearMessage()
 }
 
 
-}
+} // end namespace wgt

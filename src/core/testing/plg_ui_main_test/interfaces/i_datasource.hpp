@@ -33,5 +33,5 @@ public:
 	virtual std::shared_ptr< BinaryBlock > getThumbnailImage() = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_DATASOURCE_HPP

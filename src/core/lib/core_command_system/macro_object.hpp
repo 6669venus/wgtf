@@ -142,6 +142,5 @@ private:
 
 	ObjectHandle argsEdit_;
 };
-}
+} // end namespace wgt
 #endif // MACRO_OBJECT_HPP
-

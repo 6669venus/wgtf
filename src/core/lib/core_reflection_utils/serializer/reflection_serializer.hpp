@@ -52,6 +52,5 @@ private:
 	ObjLinks objLinks_;
 };
 
-}
+} // end namespace wgt
 #endif // REFLECTION_SERIALIZER_HPP
-

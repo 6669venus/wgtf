@@ -17,5 +17,5 @@ namespace ReflectedPython
 	};
 }
 
-}
+} // end namespace wgt
 #endif

@@ -261,4 +261,4 @@ void ReflectionController::erase( const PropertyAccessor & pa, const Variant & k
 	assert( impl_ != nullptr );
 	impl_->erase( pa, key );
 }
-}
+} // end namespace wgt

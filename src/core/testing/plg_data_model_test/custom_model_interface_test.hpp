@@ -21,5 +21,5 @@ private:
 	std::unique_ptr< IView > testView_;
 };
 
-}
+} // end namespace wgt
 #endif//CUSTOM_MODEL_INTERFACE_TEST__HPP

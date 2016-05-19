@@ -235,4 +235,4 @@ void QtCopyPasteManager::fini()
 
 
 
-}
+} // end namespace wgt

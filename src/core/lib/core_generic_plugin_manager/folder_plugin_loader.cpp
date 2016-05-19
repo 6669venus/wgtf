@@ -115,4 +115,4 @@ namespace FolderPluginLoader
 }
 #endif // __APPLE__
 
-}
+} // end namespace wgt

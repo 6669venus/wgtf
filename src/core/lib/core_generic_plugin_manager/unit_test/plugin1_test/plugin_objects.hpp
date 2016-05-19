@@ -95,6 +95,5 @@ private:
 
 typedef ObjectHandleT< TestPlugin1Interface > TestPlugin1InterfacePtr;
 
-}
+} // end namespace wgt
 #endif // PLUGIN1_OBJECTS_HPP
-

@@ -125,4 +125,4 @@ TEST_F( TestMethodsFixture, methods )
 	CHECK( testDoubleResult == 5.0 );
 }
 
-}
+} // end namespace wgt

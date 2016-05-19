@@ -74,4 +74,4 @@ void PythonPanel::removePanel()
 }
 
 
-}
+} // end namespace wgt

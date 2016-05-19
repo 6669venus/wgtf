@@ -161,5 +161,5 @@ private:
 	ICurveInterpolatorPtr interpolator_;
 };
 
-}
+} // end namespace wgt
 #endif // CURVE_H_

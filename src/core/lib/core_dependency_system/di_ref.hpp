@@ -102,5 +102,5 @@ private:
 	mutable T * pValue_;
 };
 
-}
+} // end namespace wgt
 #endif //DI_REF_HPP

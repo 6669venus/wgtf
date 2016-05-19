@@ -40,5 +40,5 @@ private:
 	std::unique_ptr< UIConnection > pImpl_;
 };
 
-}
+} // end namespace wgt
 #endif //UI_CONNECTION_HPP

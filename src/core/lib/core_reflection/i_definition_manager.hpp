@@ -85,6 +85,5 @@ public:
 	}
 };
 
-}
+} // end namespace wgt
 #endif // I_DEFINITION_MANAGER_HPP
-

@@ -226,4 +226,4 @@ ReflectedMethodParameters::iterator ReflectedMethodParameters::end()
 	return ReflectedMethodParameters::iterator( *this, size() );
 }
 
-}
+} // end namespace wgt

@@ -90,4 +90,4 @@ bool XMLSerializer::sync()
 
 
 
-}
+} // end namespace wgt

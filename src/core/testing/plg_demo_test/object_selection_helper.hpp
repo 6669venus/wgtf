@@ -34,6 +34,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif //SELECTION_HELPER_HPP
-

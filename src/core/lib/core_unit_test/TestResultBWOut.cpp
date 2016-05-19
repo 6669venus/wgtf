@@ -122,4 +122,4 @@ void TestResultBWOut::EndTestsTXT()
 // TestResultBWOut.cpp
 
 
-}
+} // end namespace wgt

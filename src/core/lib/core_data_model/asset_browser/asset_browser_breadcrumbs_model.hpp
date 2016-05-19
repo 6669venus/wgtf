@@ -59,5 +59,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif //ASSET_BROWSER_BREADCRUMBS_MODEL_HPP

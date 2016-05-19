@@ -20,4 +20,4 @@ namespace ReflectedPython
 		return instance->getDefinition();
 	}
 }
-}
+} // end namespace wgt

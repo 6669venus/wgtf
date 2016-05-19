@@ -103,4 +103,4 @@ int ClassDefinitionModel::columnCount() const
 	return 1;
 }
 
-}
+} // end namespace wgt

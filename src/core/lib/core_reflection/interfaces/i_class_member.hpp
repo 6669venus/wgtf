@@ -13,6 +13,5 @@ public:
 	virtual const char* getName() const = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_CLASS_MEMBER_HPP
-

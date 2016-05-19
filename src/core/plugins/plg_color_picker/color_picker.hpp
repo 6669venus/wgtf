@@ -33,6 +33,5 @@ private:
 };
  
  
-}
+} // end namespace wgt
 #endif // _COLOR_PICKER_HPP
-

@@ -60,6 +60,5 @@ private:
 	const std::wstring contextName_;
 };
 
-}
+} // end namespace wgt
 #endif // CONTEXT_DEFINITION_MANAGER_HPP
-

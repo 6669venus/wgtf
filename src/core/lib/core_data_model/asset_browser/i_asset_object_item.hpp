@@ -50,5 +50,5 @@ public:
 	virtual bool isCompressed() const = 0;			// This asset is a compressed file (zip, tar, resource pak, etc.)
 };
 
-}
+} // end namespace wgt
 #endif // I_ASSET_OBJECT_ITEM_HPP

@@ -11,4 +11,4 @@ BEGIN_EXPOSE( CompoundCommand, MetaNoSerialization() )
 	EXPOSE( "DisplayObject", getMacroObject, MetaHidden() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

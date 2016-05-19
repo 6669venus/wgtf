@@ -133,5 +133,5 @@ private:
     }
 };
 
-}
+} // end namespace wgt
 #endif //COMMAND_MANAGER_HPP

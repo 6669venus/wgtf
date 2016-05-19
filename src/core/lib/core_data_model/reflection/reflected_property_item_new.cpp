@@ -1184,4 +1184,4 @@ bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, si
 	return false;
 }
 
-}
+} // end namespace wgt

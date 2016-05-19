@@ -282,4 +282,4 @@ int TestTreeModel::columnCount() const
 	return 1;
 }
 
-}
+} // end namespace wgt

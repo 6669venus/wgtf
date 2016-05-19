@@ -41,4 +41,4 @@ private:
 
 PLG_CALLBACK_FUNC(PerforcePlugin)
 
-}
+} // end namespace wgt

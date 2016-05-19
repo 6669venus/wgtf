@@ -341,4 +341,4 @@ IAssetObjectItem* FileSystemAssetBrowserModel::getAssetAtPath( const char * path
 	return nullptr;
 }
 
-}
+} // end namespace wgt

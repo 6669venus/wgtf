@@ -468,4 +468,4 @@ void ObjectManager::NotifyObjectDeregistred(const ObjectHandle & handle) const
 }
 
 
-}
+} // end namespace wgt

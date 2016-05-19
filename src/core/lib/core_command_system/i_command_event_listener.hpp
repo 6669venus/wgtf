@@ -33,5 +33,5 @@ public:
 	virtual void onNonBlockingProcessExecution( const char * commandId ) const { }
 };
 
-}
+} // end namespace wgt
 #endif //I_COMMAND_EVENT_LISTENER_HPP

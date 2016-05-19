@@ -769,7 +769,7 @@ private:
 
 };
 
-}
+} // end namespace wgt
 
 namespace std
 {
@@ -790,5 +790,3 @@ namespace std
 }
 
 #endif
-
-

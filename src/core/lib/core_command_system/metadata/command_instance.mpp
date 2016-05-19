@@ -12,4 +12,4 @@ BEGIN_EXPOSE( CommandInstance, MetaInPlace( "CommandId" ) )
 	EXPOSE( "CommandArguments", arguments_, MetaHidden() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

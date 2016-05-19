@@ -25,5 +25,5 @@ public:
 	virtual void updateControlPoints(BezierPoint& point, BezierPoint* prevPoint, BezierPoint* nextPoint) override;
 };
 
-}
+} // end namespace wgt
 #endif // LINEAR_INTERPOLATOR_H_

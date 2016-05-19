@@ -104,4 +104,4 @@ private:
 PLG_CALLBACK_FUNC( Python27Plugin )
 
 
-}
+} // end namespace wgt

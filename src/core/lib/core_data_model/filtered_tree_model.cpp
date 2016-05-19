@@ -1224,4 +1224,4 @@ void FilteredTreeModel::refresh( bool wait )
 	nextRefresh.detach();
 }
 
-}
+} // end namespace wgt

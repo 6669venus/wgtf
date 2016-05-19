@@ -51,6 +51,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // WG_READ_WRITE_LOCK
-

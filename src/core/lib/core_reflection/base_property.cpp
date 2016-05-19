@@ -104,4 +104,4 @@ void BaseProperty::setName( const char * name )
 	name_ = name;
 	hash_ = HashUtilities::compute( name_ );
 }
-}
+} // end namespace wgt

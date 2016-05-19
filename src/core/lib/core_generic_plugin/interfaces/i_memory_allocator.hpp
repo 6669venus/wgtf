@@ -19,5 +19,5 @@ public:
 	virtual void mem_delete_array( void* ptr, const std::nothrow_t & throwable ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif //I_MEMORY_ALLOCATOR_HPP

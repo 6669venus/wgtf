@@ -158,4 +158,4 @@ bool TestTreeItem::setData( int column, size_t roleId, const Variant& data )
 {
 	return false;
 }
-}
+} // end namespace wgt

@@ -53,5 +53,5 @@ private:
 	ThumbnailData testStatusIcon_;
 };
 
-}
+} // end namespace wgt
 #endif // TEST_ASSET_PRESENTATION_PROVIDER_HPP

@@ -134,8 +134,7 @@ private:
 	bool releaseWaiter( Waiters::iterator waiter );
 
 };
-}
+} // end namespace wgt
 #endif // !ENABLE_WG_CONDITION_VARIABLE_WORKAROUND
 
 #endif // WG_CONDITION_VARIABLE_HPP_INCLUDED
-

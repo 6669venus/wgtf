@@ -36,5 +36,5 @@ private:
 	IItem * currentItem_;
 };
 
-}
+} // end namespace wgt
 #endif

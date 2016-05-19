@@ -23,4 +23,4 @@ ICurveInterpolatorPtr createInterpolator(CurveTypes::CurveType curveType)
 	}
 	return nullptr;
 }
-}
+} // end namespace wgt

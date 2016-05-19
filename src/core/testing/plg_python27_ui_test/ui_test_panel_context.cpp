@@ -84,4 +84,4 @@ void PanelContext::updateValues()
 }
 
 
-}
+} // end namespace wgt

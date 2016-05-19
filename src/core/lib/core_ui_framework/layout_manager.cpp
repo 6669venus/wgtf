@@ -411,4 +411,4 @@ const Windows & LayoutManager::windows() const
 	return windows_;
 }
 
-}
+} // end namespace wgt

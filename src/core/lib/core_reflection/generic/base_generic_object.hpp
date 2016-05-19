@@ -136,6 +136,5 @@ bool BaseGenericObject::set( const char * name, const T & value )
 }
 
 
-}
+} // end namespace wgt
 #endif // BASE_GENERIC_OBJECT_HPP
-

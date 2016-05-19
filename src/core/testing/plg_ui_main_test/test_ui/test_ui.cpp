@@ -245,4 +245,4 @@ bool TestUI::canClose() const
 }
 
 
-}
+} // end namespace wgt

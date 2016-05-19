@@ -58,5 +58,5 @@ private:
 
 	int seletColor_;
 };
-}
+} // end namespace wgt
 #endif // TEST_POLYMORPHISM_HPP

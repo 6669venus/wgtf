@@ -20,4 +20,4 @@ void releaseQtInPlaceNewCollection()
 	delete s_QtInPlaceNewed;
 	s_QtInPlaceNewed = nullptr;
 }
-}
+} // end namespace wgt

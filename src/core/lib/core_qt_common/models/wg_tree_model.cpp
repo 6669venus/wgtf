@@ -671,4 +671,4 @@ void WGTreeModel::endRemoveRows( const QModelIndex &parent,	int first, int last 
 }
 
 
-}
+} // end namespace wgt

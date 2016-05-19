@@ -61,7 +61,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // DATA_CHANGE_NOTIFIER_HPP
-
-

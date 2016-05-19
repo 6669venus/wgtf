@@ -513,4 +513,4 @@ const Variant & VariantList::operator[](size_t index) const
 	return value;
 }
 
-}
+} // end namespace wgt

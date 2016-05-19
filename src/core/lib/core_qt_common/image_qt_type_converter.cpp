@@ -43,4 +43,4 @@ bool ImageQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVa
 	o_qVariant = image;
 	return true;
 }
-}
+} // end namespace wgt

@@ -49,6 +49,5 @@ private:
 	bool wgNativeRendering_;
 };
 
-}
+} // end namespace wgt
 #endif
-

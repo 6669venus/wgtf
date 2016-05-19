@@ -47,7 +47,7 @@ private:
     static bool fromString( const std::string & s, unsigned int * data );
 };
 
-}
+} // end namespace wgt
 
 namespace std
 {
@@ -67,4 +67,3 @@ namespace std
 	};
 }
 #endif // REF_OBJECT_ID_HPP
-

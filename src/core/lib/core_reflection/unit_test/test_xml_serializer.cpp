@@ -170,4 +170,4 @@ TEST_F( TestDefinitionFixture, serialize_properties )
 }
 
 
-}
+} // end namespace wgt

@@ -117,4 +117,4 @@ void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, cons
 	}
 }
 
-}
+} // end namespace wgt

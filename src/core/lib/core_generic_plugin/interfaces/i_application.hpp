@@ -19,7 +19,5 @@ public:
 	SignalVoid signalUpdate;
 };
 
-}
+} // end namespace wgt
 #endif //I_APPLICATION_HPP
-
-

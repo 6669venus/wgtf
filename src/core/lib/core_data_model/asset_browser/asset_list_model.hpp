@@ -202,6 +202,5 @@ private:
 	Items items_;
 };
 
-}
+} // end namespace wgt
 #endif
-

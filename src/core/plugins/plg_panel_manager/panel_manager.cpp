@@ -74,4 +74,4 @@ std::unique_ptr< IView > PanelManager::createAssetBrowser(
 	return nullptr;
 }
 
-}
+} // end namespace wgt

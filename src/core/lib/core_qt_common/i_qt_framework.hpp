@@ -38,6 +38,5 @@ public:
 	virtual void retainQWidget( IView & view ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif//I_QT_FRAMEWORK
-

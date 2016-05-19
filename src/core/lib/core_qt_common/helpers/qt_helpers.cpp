@@ -156,4 +156,4 @@ QUrl resolveQmlPath( const QQmlEngine & qmlEngine, const char * relativePath )
 }
 
 };
-}
+} // end namespace wgt

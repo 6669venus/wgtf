@@ -75,4 +75,4 @@ std::wstring CommandLineParser::getParamStrW( const char * arg ) const
 	}
 	return L"";
 }
-}
+} // end namespace wgt

@@ -69,5 +69,5 @@ private:
     std::string typeId;
 };
 
-}
+} // end namespace wgt
 #endif // __GRAPHEDITOR_GRAPHNODE_H__

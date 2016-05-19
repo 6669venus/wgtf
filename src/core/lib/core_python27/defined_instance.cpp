@@ -201,4 +201,4 @@ ObjectHandle DefinedInstance::getDerivedType()
 
 } // namespace ReflectedPython
 
-}
+} // end namespace wgt

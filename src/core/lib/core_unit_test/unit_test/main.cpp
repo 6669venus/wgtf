@@ -20,4 +20,4 @@ int main( int argc, char* argv[] )
 
 // main.cpp
 
-}
+} // end namespace wgt

@@ -36,5 +36,5 @@ private:
 	std::vector< HMODULE > pluginsToUnload_;
 };
 
-}
+} // end namespace wgt
 #endif //NOTIFY_PLUGIN_HPP

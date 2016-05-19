@@ -30,5 +30,5 @@ private:
 	tPresenterVector presenters_;
 };
 
-}
+} // end namespace wgt
 #endif // ALERT_MANAGER_HPP

@@ -33,6 +33,5 @@ private:
 
 
 
-}
+} // end namespace wgt
 #endif // SERIALIZATION_MANAGER_HPP
-

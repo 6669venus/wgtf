@@ -469,4 +469,4 @@ bool QmlWindow::loadPreference()
     return false;
 }
 
-}
+} // end namespace wgt

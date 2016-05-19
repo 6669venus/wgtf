@@ -93,4 +93,4 @@ void EnvManager::loadEnvState( int id )
     }
 }
 
-}
+} // end namespace wgt

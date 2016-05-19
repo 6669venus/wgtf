@@ -69,6 +69,5 @@ private:
 	int labelColumnWidth_;
 };
 
-}
+} // end namespace wgt
 #endif
-

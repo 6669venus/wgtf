@@ -124,5 +124,5 @@ namespace ReflectedPropertyUndoRedoUtility
 
 }
 
-}
+} // end namespace wgt
 #endif //REFLECTEDPROPERTY_UNDOREDO_HELPER_HPP

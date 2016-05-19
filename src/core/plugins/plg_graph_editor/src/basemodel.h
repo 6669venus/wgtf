@@ -131,6 +131,5 @@ protected:
     TCollection items;
 };
 
-}
+} // end namespace wgt
 #endif // __GRAPHEDITOR_BASEMODEL_H__
-

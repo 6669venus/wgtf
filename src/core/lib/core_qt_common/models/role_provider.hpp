@@ -24,5 +24,5 @@ private:
 	mutable std::map< int, size_t > roleMap_;
 };
 
-}
+} // end namespace wgt
 #endif

@@ -404,4 +404,4 @@ std::string TestAlternatingCompoundCommand::generateId( int depth, CommandThread
 	return id;
 }
 
-}
+} // end namespace wgt

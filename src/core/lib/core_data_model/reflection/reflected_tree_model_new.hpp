@@ -74,6 +74,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // _REFLECTED_TREE_MODEL_NEW_HPP
-

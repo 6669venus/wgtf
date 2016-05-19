@@ -66,4 +66,4 @@ ObjectHandle TestCommand2::execute( const ObjectHandle & arguments ) const
 }
 
 
-}
+} // end namespace wgt

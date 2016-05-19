@@ -88,5 +88,5 @@ private:
 	const ReflectedTreeModelNew * model_;
 };
 
-}
+} // end namespace wgt
 #endif //_REFLECTED_TREE_ITEM_NEW_HPP

@@ -55,4 +55,4 @@ private:
 };
 
 
-}
+} // end namespace wgt

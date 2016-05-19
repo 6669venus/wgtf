@@ -47,5 +47,5 @@ private:
 	ThumbnailData testStatusIcon_;
 };
 
-}
+} // end namespace wgt
 #endif // FILE_SYSTEM_PRESENTATION_PROVIDER_HPP

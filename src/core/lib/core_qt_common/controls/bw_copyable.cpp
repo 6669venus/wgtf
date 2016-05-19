@@ -74,4 +74,4 @@ bool BWCopyable::setData( const Variant& value )
 
 
 
-}
+} // end namespace wgt

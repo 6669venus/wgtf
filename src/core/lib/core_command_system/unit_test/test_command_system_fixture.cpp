@@ -96,4 +96,4 @@ void TestCommandSystemFixture::multiCommandStatusChanged(
 	multiCommandStatus_ = multiCommandStatus;
 }
 
-}
+} // end namespace wgt

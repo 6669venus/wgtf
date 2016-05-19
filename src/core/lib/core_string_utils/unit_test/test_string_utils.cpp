@@ -83,4 +83,4 @@ TEST( filePathMembers )
 	CHECK(fullPath.getExtension() == ext);
 
 }
-}
+} // end namespace wgt

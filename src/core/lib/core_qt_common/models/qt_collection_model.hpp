@@ -76,7 +76,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // _QT_COLLECTION_MODEL_HPP
-
-

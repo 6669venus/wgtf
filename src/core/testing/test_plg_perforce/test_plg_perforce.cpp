@@ -284,4 +284,4 @@ namespace UnitTests
 		}
 	};
 }
-}
+} // end namespace wgt

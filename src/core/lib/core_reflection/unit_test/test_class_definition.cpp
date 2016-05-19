@@ -906,4 +906,4 @@ TEST_F( TestDefinitionFixture, multidimensional )
 }
 
 
-}
+} // end namespace wgt

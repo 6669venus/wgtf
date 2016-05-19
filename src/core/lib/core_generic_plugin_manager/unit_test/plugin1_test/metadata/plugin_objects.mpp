@@ -23,4 +23,4 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestPlugin1Interface, MetaNone() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

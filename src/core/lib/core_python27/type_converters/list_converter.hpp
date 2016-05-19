@@ -37,7 +37,5 @@ private:
 
 } // namespace PythonType
 
-}
+} // end namespace wgt
 #endif // PYTHON_LIST_CONVERTER_HPP
-
-

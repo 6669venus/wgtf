@@ -316,4 +316,4 @@ void TestDataSourceManager::closeDataSource(IDataSource* data)
 	sources_.erase(it);
 }
 
-}
+} // end namespace wgt

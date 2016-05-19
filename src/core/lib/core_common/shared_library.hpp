@@ -53,6 +53,5 @@ private:
 #endif
 
 
-}
+} // end namespace wgt
 #endif
-

@@ -620,7 +620,5 @@ private:
 	GetKeyFunc		getKeyFunc_;
 };
 
-}
+} // end namespace wgt
 #endif // FUNCTION_PROPERTY_HPP
-
-

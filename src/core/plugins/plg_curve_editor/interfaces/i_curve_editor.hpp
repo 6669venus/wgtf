@@ -97,5 +97,5 @@ private:
 
 };
 
-}
+} // end namespace wgt
 #endif // i_curve_editor_H_

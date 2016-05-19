@@ -210,4 +210,4 @@ public:
 PLG_CALLBACK_FUNC( EnvrionmentTestPlugin )
 
 
-}
+} // end namespace wgt

@@ -733,6 +733,5 @@ namespace collection_details
 	LinearCollectionImpl< const std::array< T, N >, false > deduceCollectionImplType( const std::array< T, N >& );
 
 }
-}
+} // end namespace wgt
 #endif
-

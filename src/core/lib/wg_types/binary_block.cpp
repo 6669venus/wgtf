@@ -80,4 +80,4 @@ int BinaryBlock::compare( BinaryBlock& that ) const
 }
 
 
-}
+} // end namespace wgt

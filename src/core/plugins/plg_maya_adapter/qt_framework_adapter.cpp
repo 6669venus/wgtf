@@ -17,4 +17,4 @@ QtWindow * QtFrameworkAdapter::createQtWindow( QIODevice & source )
 	return new QtWindowAdapter( *this, source );
 }
 
-}
+} // end namespace wgt

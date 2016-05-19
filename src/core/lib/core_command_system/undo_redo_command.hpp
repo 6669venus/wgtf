@@ -27,6 +27,5 @@ private:
 	CommandManager * pCommandManager_;
 };
 
-}
+} // end namespace wgt
 #endif//UNDO_REDO_COMMAND_HPP
-

@@ -166,4 +166,4 @@ void NGTApplicationProxy::hide()
 }
 
 
-}
+} // end namespace wgt

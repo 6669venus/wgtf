@@ -103,4 +103,4 @@ void DataChangeNotifier::onDestructing()
 }
 
 
-}
+} // end namespace wgt

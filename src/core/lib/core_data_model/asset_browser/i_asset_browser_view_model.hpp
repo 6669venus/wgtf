@@ -80,5 +80,5 @@ private:
 	int tempInt_;
 };
 
-}
+} // end namespace wgt
 #endif // I_ASSET_BROWSER_VIEW_MODEL_H_

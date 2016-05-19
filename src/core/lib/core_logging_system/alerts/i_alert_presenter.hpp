@@ -13,5 +13,5 @@ public:
 	virtual void show( const char* text ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_ALERT_PRESENTER_HPP

@@ -54,5 +54,5 @@ public:
 	}
 };
 
-}
+} // end namespace wgt
 #endif

@@ -68,6 +68,5 @@ public:
 #define ENV_STATE_QUERY( CL, var ) auto var = static_cast<CL*>(state->query( CL::GUID )); assert(var)
 
 
-}
+} // end namespace wgt
 #endif // I_ENV_SYSTEM
-

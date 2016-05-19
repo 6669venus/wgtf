@@ -236,4 +236,4 @@ TEST_F(TestObjectHandleFixture, on_stack_object)
 	CHECK_EQUAL(glist->bindProperty(2u, def1, "Value").getValue(), 19);
 }
 
-}
+} // end namespace wgt

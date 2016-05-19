@@ -54,4 +54,4 @@ private:
 PLG_CALLBACK_FUNC( ControlsTestUIPlugin )
 
 
-}
+} // end namespace wgt

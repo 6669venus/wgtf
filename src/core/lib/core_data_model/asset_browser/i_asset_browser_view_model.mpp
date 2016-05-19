@@ -22,4 +22,4 @@ BEGIN_EXPOSE( IAssetBrowserViewModel, MetaNone() )
 	EXPOSE_METHOD( "getSelectedTreeItemName", getSelectedTreeItemName )
 END_EXPOSE()
 
-}
+} // end namespace wgt

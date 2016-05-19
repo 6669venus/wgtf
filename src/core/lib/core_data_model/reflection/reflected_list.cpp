@@ -74,4 +74,4 @@ void ReflectedListListener::postSetValue(
 	}
 }
 
-}
+} // end namespace wgt

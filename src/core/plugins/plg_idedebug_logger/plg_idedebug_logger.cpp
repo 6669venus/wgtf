@@ -81,4 +81,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( IDEDebugLoggerPlugin )
-}
+} // end namespace wgt

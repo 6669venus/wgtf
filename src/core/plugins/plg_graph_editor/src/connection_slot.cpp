@@ -33,4 +33,4 @@ ObjectHandleT<GraphNode> ConnectionSlot::GetParentNode()
     return parent;
 }
 
-}
+} // end namespace wgt

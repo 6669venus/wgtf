@@ -128,4 +128,4 @@ public:
 PLG_CALLBACK_FUNC( ListModelTestPlugin )
 
 
-}
+} // end namespace wgt

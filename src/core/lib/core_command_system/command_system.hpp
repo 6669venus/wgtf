@@ -12,5 +12,5 @@ namespace CommandSystem
 }
 
 
-}
+} // end namespace wgt
 #endif //COMMAND_SYSTEM_HPP

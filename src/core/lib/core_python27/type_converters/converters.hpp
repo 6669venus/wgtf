@@ -79,4 +79,4 @@ private:
 } // namespace PythonType
 
 
-}
+} // end namespace wgt

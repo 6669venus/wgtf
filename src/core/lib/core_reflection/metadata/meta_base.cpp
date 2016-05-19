@@ -44,4 +44,4 @@ const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & righ
 
 	return left; 
 }
-}
+} // end namespace wgt

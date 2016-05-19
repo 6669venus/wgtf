@@ -36,4 +36,4 @@ void MainApplication::quitApplication() /* override */
 }
 
 
-}
+} // end namespace wgt

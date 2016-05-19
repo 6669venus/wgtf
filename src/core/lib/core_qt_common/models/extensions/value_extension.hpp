@@ -50,5 +50,5 @@ private:
 	QStringList roles_;
 };
 
-}
+} // end namespace wgt
 #endif // COMPONENT_EXTENSION_HPP

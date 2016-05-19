@@ -46,4 +46,4 @@ TestStructure & TestReflectionFixture::getTestStructure()
 {
 	return testObjects_.getTestStructure();
 }
-}
+} // end namespace wgt

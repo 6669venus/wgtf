@@ -616,4 +616,4 @@ TEST_F( TestFixture, changeTreeItem )
 	}
 }
 
-}
+} // end namespace wgt

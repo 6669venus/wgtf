@@ -163,4 +163,4 @@ void CompoundCommand::deserialize(ISerializer & serializer)
 	getMacroObject().getBase<MacroObject>()->deserialize( serializer );
 }
 
-}
+} // end namespace wgt

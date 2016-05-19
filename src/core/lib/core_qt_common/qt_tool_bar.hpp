@@ -19,5 +19,5 @@ private:
 	QToolBar & qToolBar_;
 };
 
-}
+} // end namespace wgt
 #endif//QT_TOOL_BAR_HPP

@@ -209,7 +209,5 @@ bool TypeConverterQueue< ITypeConverter, ScriptType >::toVariantWithParent(
 }
 
 
-}
+} // end namespace wgt
 #endif // TYPE_CONVERTER_QUEUE_HPP
-
-

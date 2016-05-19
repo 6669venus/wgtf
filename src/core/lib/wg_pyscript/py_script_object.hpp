@@ -2091,6 +2091,5 @@ inline int setData( PyObject * pObj, ScriptObject & rScriptObject,
 
 } // namespace PyScript
 
-}
+} // end namespace wgt
 #endif // PY_SCRIPT_OBJECT_HPP
-

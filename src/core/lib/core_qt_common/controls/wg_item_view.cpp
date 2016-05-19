@@ -530,4 +530,4 @@ void WGItemView::refresh()
 	}
 	emit headerDataChanged();*/
 }
-}
+} // end namespace wgt

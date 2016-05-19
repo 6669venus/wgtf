@@ -28,4 +28,4 @@ bool MemoryPluginContextCreator::ownsSubContext() const
 	return true;
 }
 
-}
+} // end namespace wgt

@@ -438,4 +438,4 @@ void ReflectionUndoRedoData::setRedoData( const std::shared_ptr<BinaryBlock> & r
     redoData_.setBuffer( std::string( redoData->cdata(), redoData->length() ) );
 }
 
-}
+} // end namespace wgt

@@ -18,5 +18,5 @@ public:
 	virtual void createView( IComponentContext & context ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_ASSET_BROWSER_MANAGER_HPP

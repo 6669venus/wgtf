@@ -433,4 +433,4 @@ Connection TestListModel::connectPostItemDataChanged( DataCallback callback )
 	return Connection();
 }
 
-}
+} // end namespace wgt

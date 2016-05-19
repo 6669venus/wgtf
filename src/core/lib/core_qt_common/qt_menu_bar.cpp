@@ -65,4 +65,4 @@ void QtMenuBar::removeAction( IAction & action )
 	destroyQAction( action );
 }
 
-}
+} // end namespace wgt

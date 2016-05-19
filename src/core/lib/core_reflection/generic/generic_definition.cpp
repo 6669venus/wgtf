@@ -52,4 +52,4 @@ IBasePropertyPtr GenericDefinition::addProperty( const char * name, const TypeId
 	properties_.addProperty( property );
 	return property;
 }
-}
+} // end namespace wgt

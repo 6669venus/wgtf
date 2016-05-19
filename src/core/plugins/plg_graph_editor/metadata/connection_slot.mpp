@@ -11,4 +11,4 @@ BEGIN_EXPOSE( ConnectionSlot, MetaNone() )
     EXPOSE("icon", GetIcon, MetaNone())
     EXPOSE("uid", GetUID, MetaNone())
 END_EXPOSE()
-}
+} // end namespace wgt

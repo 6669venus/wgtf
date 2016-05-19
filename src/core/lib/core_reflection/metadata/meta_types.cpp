@@ -229,4 +229,4 @@ MetaHandle MetaMultiline()
 {
 	SET_UP_OBJECT(MetaMultilineObj, ( ));
 }
-}
+} // end namespace wgt

@@ -13,5 +13,5 @@ public:
 	virtual void useAsset( const char* assetPath ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif // I_ASSET_LISTENER_HPP

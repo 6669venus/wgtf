@@ -34,4 +34,4 @@ bool getPlugins( std::vector< std::wstring >& plugins, const std::wstring& confi
 
 }
 
-}
+} // end namespace wgt

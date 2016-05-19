@@ -15,6 +15,5 @@ public:
 	virtual void removeListener( IApplicationListener * listener ) = 0;
 };
 
-}
+} // end namespace wgt
 #endif//I_APPLICATION_ADAPTER_HPP
-

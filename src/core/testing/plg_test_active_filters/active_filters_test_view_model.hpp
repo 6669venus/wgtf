@@ -77,5 +77,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif // ACTIVE_FILTERS_TEST_VIEW_MODEL_HPP

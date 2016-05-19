@@ -121,4 +121,4 @@ std::string TestStringData::getNextString()
 {
 	return impl_->getNextString();
 }
-}
+} // end namespace wgt

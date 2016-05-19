@@ -18,5 +18,5 @@ public:
 private:
 	CommandInstance & commandInstance_;
 };
-}
+} // end namespace wgt
 #endif // UNDO_REDO_DATA_HPP

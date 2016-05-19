@@ -34,4 +34,4 @@ bool ISerializer::read( IDataStream * dataStream, Variant & variant )
 
 
 
-}
+} // end namespace wgt

@@ -328,4 +328,4 @@ TEST_F( TestCommandFixture, alternatingCompoundCommands )
 	command = commandManager.queueCommand( TestAlternatingCompoundCommand::generateId( 4, CommandThreadAffinity::ANY_THREAD ).c_str() );
 	commandManager.waitForInstance( command );
 }
-}
+} // end namespace wgt

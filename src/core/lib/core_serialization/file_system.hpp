@@ -31,6 +31,5 @@ public:
 	virtual bool writeFile(const char* path, const void* data, size_t len, std::ios::openmode mode) override;
 };
 
-}
+} // end namespace wgt
 #endif // FILE_SYSTEM_H_
-

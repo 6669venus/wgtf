@@ -15,4 +15,4 @@ IClassDefinition * GenericDefinitionHelper::getDefinition( const ObjectHandle & 
 	assert( genericObject != nullptr );
 	return genericObject->getDefinition();
 }
-}
+} // end namespace wgt

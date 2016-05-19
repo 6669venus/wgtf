@@ -115,6 +115,5 @@ private:
 
 
 
-}
+} // end namespace wgt
 #endif // PROJECT_HPP
-

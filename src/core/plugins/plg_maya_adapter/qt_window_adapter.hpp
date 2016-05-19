@@ -28,5 +28,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif//QML_WINDOW_ADAPTER_HPP

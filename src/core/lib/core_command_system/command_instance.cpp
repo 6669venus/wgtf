@@ -340,4 +340,4 @@ void CommandInstance::consolidateUndoRedoData( CommandInstance * parentInstance 
 	}
 	undoRedoData_.clear();
 }
-}
+} // end namespace wgt

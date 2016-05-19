@@ -111,4 +111,4 @@ bool BaseGenericObject::setProperty( const char * name, const Variant & value )
 }
 
 
-}
+} // end namespace wgt

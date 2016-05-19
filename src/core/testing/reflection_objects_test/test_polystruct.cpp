@@ -30,4 +30,4 @@ void TestInheritedPolyStruct::init( const IDefinitionManager & definitionManager
 	TestPolyStruct::init( definitionManager );
 	INIT_COL_PRE_DERIVED( definitionManager );
 }
-}
+} // end namespace wgt

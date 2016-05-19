@@ -102,4 +102,4 @@ void MainWindow::onStartUp()
 	mainWindow_->show( true );
 }
 
-}
+} // end namespace wgt

@@ -88,6 +88,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // TEST_UI_H
-

@@ -236,4 +236,4 @@ void DefaultComponentContext::deregisterListener(
 	listeners_.erase( listenerIt );
 }
 
-}
+} // end namespace wgt

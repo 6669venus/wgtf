@@ -142,4 +142,4 @@ const char* PluginContextManager::getExecutablePath() const
 {
 	return executablepath_;
 }
-}
+} // end namespace wgt

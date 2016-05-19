@@ -537,4 +537,4 @@ std::string MethodParam::getValue() const
 	return str;
 }
 
-}
+} // end namespace wgt

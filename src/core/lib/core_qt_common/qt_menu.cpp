@@ -266,4 +266,4 @@ QSharedPointer< QAction > QtMenu::getSharedQAction( IAction & action )
 	return QSharedPointer< QAction >();
 }
 
-}
+} // end namespace wgt

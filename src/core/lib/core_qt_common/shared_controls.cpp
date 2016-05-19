@@ -106,4 +106,4 @@ namespace wgt
 	definitionManager.registerDefinition( new TypeClassDefinition< BaseBreadcrumbItem >() );
 }
 
-}
+} // end namespace wgt

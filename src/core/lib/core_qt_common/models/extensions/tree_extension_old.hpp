@@ -76,5 +76,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif // TREE_EXTENSION_OLD_HPP

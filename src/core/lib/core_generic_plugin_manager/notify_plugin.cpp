@@ -59,4 +59,4 @@ bool NotifyPluginPostLoad::operator()(HMODULE hPlugin)
 
 #undef PLUGIN_GET_PROC_ADDRESS
 #undef STR
-}
+} // end namespace wgt

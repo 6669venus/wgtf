@@ -30,7 +30,5 @@ public:
 	PluginList plugins_;
 };
 
-}
+} // end namespace wgt
 #endif // TEST_PLUGIN_LOADER_HPP
-
-

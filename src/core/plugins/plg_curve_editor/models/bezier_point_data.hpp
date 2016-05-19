@@ -26,5 +26,5 @@ struct BezierPointData
 	PointData cp2;
 };
 
-}
+} // end namespace wgt
 #endif // BEZIER_POINT_DATA_H_

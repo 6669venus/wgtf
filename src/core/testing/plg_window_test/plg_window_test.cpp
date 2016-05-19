@@ -57,4 +57,4 @@ public:
 PLG_CALLBACK_FUNC(TestWindowPlugin)
 
 
-}
+} // end namespace wgt

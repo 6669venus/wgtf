@@ -142,4 +142,4 @@ bool WGFilteredListModel::getIsFiltering() const
 	return impl_->filteredModel_.isFiltering();
 }
 
-}
+} // end namespace wgt

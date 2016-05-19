@@ -70,4 +70,4 @@ void wg_read_write_lock::write_unlock()
 }
 
 
-}
+} // end namespace wgt

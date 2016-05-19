@@ -62,6 +62,5 @@ private:
 		IDataStream * dataStream, Variant & variant );
 
 };
-}
+} // end namespace wgt
 #endif // I_SERIALIZER_HPP
-

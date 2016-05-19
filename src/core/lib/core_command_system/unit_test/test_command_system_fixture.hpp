@@ -40,6 +40,5 @@ private:
 	mutable ICommandEventListener::MultiCommandStatus multiCommandStatus_;
 
 };
-}
+} // end namespace wgt
 #endif //TEST_COMMAND_SYSTEM_FIXTURE_HPP
-

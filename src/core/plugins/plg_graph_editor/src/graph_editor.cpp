@@ -53,4 +53,4 @@ void GraphEditor::CreateConnection(size_t outputUID, size_t inputUID)
     ConnectionManager::Instance().CreateConnection(outputUID, inputUID);
 }
 
-}
+} // end namespace wgt

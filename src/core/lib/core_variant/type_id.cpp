@@ -223,4 +223,4 @@ bool TypeId::operator < (const TypeId & other ) const
 {
 	return hashCode_ < other.getHashcode();
 }
-}
+} // end namespace wgt

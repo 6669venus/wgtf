@@ -134,4 +134,4 @@ const char* FileSystemAssetPresentationProvider::getTypeIconResourceString(const
 	return nullptr;
 }
 
-}
+} // end namespace wgt

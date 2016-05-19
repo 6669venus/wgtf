@@ -193,4 +193,4 @@ int unitTestInfo( const char *_Format, ... )
 
 // unit_test.cpp
 
-}
+} // end namespace wgt

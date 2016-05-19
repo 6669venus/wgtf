@@ -74,5 +74,5 @@ private:
 
 QML_DECLARE_TYPE( WGContextMenu )
 
-}
+} // end namespace wgt
 #endif // WG_CONTEXT_MENU_HPP

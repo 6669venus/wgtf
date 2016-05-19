@@ -94,4 +94,4 @@ BinaryStream& operator>>( BinaryStream& stream, std::string& value )
 
 
 
-}
+} // end namespace wgt

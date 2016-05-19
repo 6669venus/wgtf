@@ -8,5 +8,5 @@ class IObjectManagerNew
 
 };
 
-}
+} // end namespace wgt
 #endif //I_OBJECT_MANAGER_NEW_HPP

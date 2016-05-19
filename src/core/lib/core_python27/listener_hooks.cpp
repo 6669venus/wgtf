@@ -681,4 +681,4 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 
 } // namespace ReflectedPython
 
-}
+} // end namespace wgt

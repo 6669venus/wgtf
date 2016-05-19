@@ -19,6 +19,5 @@ private:
 	IDefinitionManager* defManager_;
 };
 
-}
+} // end namespace wgt
 #endif // REFLECTED_LIST_HPP
-

@@ -37,8 +37,5 @@ private:
 	IBasePropertyPtr baseProperty_;
 };
 
-}
+} // end namespace wgt
 #endif // REFLECTED_COLLECTION_IMPL_HPP
-
-
-

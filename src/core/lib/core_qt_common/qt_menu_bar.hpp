@@ -20,5 +20,5 @@ private:
 	QMenuBar & qMenuBar_;
 };
 
-}
+} // end namespace wgt
 #endif//QT_MENU_BAR_HPP

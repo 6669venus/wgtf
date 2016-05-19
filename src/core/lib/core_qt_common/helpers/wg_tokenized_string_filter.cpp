@@ -88,4 +88,4 @@ void WGTokenizedStringFilter::setSplitterChar( const QString & splitter )
 }
 
 
-}
+} // end namespace wgt

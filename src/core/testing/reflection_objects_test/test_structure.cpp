@@ -30,4 +30,4 @@ void TestInheritedStruct::init( const IDefinitionManager & defManager )
 	TestStructure::init( defManager );
 	INIT_COL_PRE_DERIVED( defManager )
 }
-}
+} // end namespace wgt

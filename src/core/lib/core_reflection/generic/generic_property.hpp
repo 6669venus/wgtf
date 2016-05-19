@@ -37,5 +37,5 @@ private:
 	const std::string typeName_;
 };
 
-}
+} // end namespace wgt
 #endif //GENERIC_PROPERTY_HPP

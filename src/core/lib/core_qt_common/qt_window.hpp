@@ -88,5 +88,5 @@ private:
     QtConnectionHolder qtConnections_;
 };
 
-}
+} // end namespace wgt
 #endif//QT_WINDOW_HPP

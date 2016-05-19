@@ -20,5 +20,5 @@ private:
     std::unordered_map<size_t, ConnectionItem*> items;
 };
 
-}
+} // end namespace wgt
 #endif // __GRAPHEDITOR_QUICKITEMSMANAGER_H__

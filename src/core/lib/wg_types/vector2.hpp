@@ -18,7 +18,5 @@ public:
 	}
 };
 
-}
+} // end namespace wgt
 #endif // VECTOR2_HPP
-
-

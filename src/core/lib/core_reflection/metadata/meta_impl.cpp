@@ -357,4 +357,4 @@ END_EXPOSE()
 //==============================================================================
 BEGIN_EXPOSE(MetaMultilineObj, MetaBase, MetaNone())
 END_EXPOSE()
-}
+} // end namespace wgt

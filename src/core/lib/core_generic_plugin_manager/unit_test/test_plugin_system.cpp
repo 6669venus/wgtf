@@ -285,4 +285,4 @@ TEST_F( TestPluginsFixture, more_plugins )
 	CHECK( testObj2 == nullptr );
 }
 
-}
+} // end namespace wgt

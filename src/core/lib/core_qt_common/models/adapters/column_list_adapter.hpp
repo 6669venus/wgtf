@@ -30,7 +30,5 @@ private:
 	QPersistentModelIndex row_;
 };
 
-}
+} // end namespace wgt
 #endif // COLUMN_LIST_ADAPTER_HPP
-
-

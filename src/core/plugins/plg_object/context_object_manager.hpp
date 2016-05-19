@@ -15,5 +15,5 @@ private:
 	IObjectManagerNew & parent_;
 };
 
-}
+} // end namespace wgt
 #endif //CONTEXT_OBJECT_MANAGER_HPP

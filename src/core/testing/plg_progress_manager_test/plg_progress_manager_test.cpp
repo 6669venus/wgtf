@@ -83,4 +83,4 @@ public:
 
 PLG_CALLBACK_FUNC( TestProgressManagerPlugin )
 
-}
+} // end namespace wgt

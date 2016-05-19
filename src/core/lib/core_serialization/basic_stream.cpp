@@ -393,4 +393,4 @@ bool BasicStream::resetReadBuffer()
 
 
 
-}
+} // end namespace wgt

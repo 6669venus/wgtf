@@ -381,4 +381,4 @@ Connection TestListItem::connectPostDataChanged( DataCallback callback )
 	return Connection();
 }
 
-}
+} // end namespace wgt

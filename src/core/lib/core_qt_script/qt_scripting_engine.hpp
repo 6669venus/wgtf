@@ -77,5 +77,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif//QT_SCRIPTING_ENGINE_HPP

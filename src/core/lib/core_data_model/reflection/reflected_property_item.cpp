@@ -740,4 +740,4 @@ bool ReflectedPropertyItem::postSetValue(
 	}
 	return false;
 }
-}
+} // end namespace wgt

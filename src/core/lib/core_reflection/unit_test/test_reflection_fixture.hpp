@@ -23,6 +23,5 @@ private:
 
 	TestObjects testObjects_;
 };
-}
+} // end namespace wgt
 #endif //TEST_REFLECTION_FIXTURE_HPP
-

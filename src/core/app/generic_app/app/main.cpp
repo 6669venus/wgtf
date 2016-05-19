@@ -104,7 +104,7 @@ int Main(int argc, char **argv)
 	}
 	return result;
 }
-}
+} // end namespace wgt
 
 #ifdef _WIN32
 int STDMETHODCALLTYPE WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,

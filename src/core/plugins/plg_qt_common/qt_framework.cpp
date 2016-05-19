@@ -719,4 +719,4 @@ IPreferences * QtFramework::getPreferences()
 	return preferences_.get();
 }
 
-}
+} // end namespace wgt

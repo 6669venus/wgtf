@@ -61,4 +61,4 @@ void QtApplicationAdapter::removeListener( IApplicationListener * listener )
 }
 
 
-}
+} // end namespace wgt

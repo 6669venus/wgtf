@@ -54,7 +54,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif//CUSTOM_XML_READER_HPP_INCLUDED
-
-

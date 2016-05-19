@@ -85,6 +85,5 @@ BinaryStream& operator<<( BinaryStream& stream, const char* value );
 BinaryStream& operator>>( BinaryStream& stream, std::string& value );
 
 
-}
+} // end namespace wgt
 #endif // BINARY_STREAM_HPP_INCLUDED
-

@@ -66,5 +66,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // TEST_DATASOURCE_HPP

@@ -37,4 +37,4 @@ int calculateLast( const size_t start, const size_t count )
 
 } // namespace QtModelHelpers
 
-}
+} // end namespace wgt

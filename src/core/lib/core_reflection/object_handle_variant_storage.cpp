@@ -46,4 +46,4 @@ bool ObjectHandleVariantStorage::getId( RefObjectId& o_Id ) const
 
 
 
-}
+} // end namespace wgt

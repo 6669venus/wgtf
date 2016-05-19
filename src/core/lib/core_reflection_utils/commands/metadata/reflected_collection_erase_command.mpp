@@ -12,4 +12,4 @@ BEGIN_EXPOSE( ReflectedCollectionEraseCommandParameters, MetaNoSerialization() )
 	EXPOSE( "key", key_, MetaNone() )
 END_EXPOSE()
 
-}
+} // end namespace wgt

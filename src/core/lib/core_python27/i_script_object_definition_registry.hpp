@@ -47,4 +47,4 @@ struct IScriptObjectDefinitionRegistry
 	virtual const RefObjectId & getID( const PyScript::ScriptObject & object ) = 0;
 };
 
-}
+} // end namespace wgt

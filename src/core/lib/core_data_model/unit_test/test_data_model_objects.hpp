@@ -138,6 +138,5 @@ private:
 	std::unique_ptr<Implementation> impl_;
 };
 
-}
+} // end namespace wgt
 #endif //TEST_DATA_MODEL_OBJECTS_HPP
-

@@ -583,4 +583,4 @@ void enableStackTraces( bool enable )
 
 }
 
-}
+} // end namespace wgt

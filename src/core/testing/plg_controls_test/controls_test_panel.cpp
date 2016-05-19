@@ -112,4 +112,4 @@ void ControlsTestPanel::removePanel()
 }
 
 
-}
+} // end namespace wgt

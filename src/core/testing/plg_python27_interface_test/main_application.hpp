@@ -25,4 +25,4 @@ private:
 	IComponentContext & contextManager_;
 };
 
-}
+} // end namespace wgt

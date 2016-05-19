@@ -123,6 +123,5 @@ typename std::enable_if< std::is_pointer< T >::value, TextStream& >::type
 }
 
 
-}
+} // end namespace wgt
 #endif // TEXT_STREAM_HPP_INCLUDED
-

@@ -22,6 +22,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // I_COPY_PASTE_MANAGER_HPP
-

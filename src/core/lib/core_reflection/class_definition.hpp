@@ -62,7 +62,5 @@ private:
 		PropertyAccessor & o_PropertyAccessor ) const override;
 };
 
-}
+} // end namespace wgt
 #endif // #define CLASS_DEFINITION_HPP
-
-

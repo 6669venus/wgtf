@@ -399,4 +399,4 @@ void WGTreeListAdapter::onParentRowsRemoved(const QModelIndex & parent, int firs
 	endRemoveRows();
 }
 
-}
+} // end namespace wgt

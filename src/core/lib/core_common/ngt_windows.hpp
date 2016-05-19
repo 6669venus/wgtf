@@ -287,9 +287,8 @@ VOID WINAPI Sleep(
 
 bool MoveFileA(const char* path, const char* new_path);
 
-}
+} // end namespace wgt
 
 
 #endif // __APPLE__
 #endif // NGT_WINDOWS_HPP_INCLUDED
-

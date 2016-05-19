@@ -42,5 +42,5 @@ private:
 	SignalVariant signalFolderSelectionChanged;
 	SignalAsset signalUseSelectedAsset;
 };
-}
+} // end namespace wgt
 #endif // ASSET_BROWSER_EVENT_MODEL_H_

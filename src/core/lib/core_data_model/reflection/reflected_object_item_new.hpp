@@ -70,7 +70,5 @@ private:
 	void enumerateChildren( const ReflectedItemCallback & callback ) const;
 };
 
-}
+} // end namespace wgt
 #endif // _REFLECTED_OBJECT_ITEM_NEW_HPP
-
-

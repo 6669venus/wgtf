@@ -168,6 +168,5 @@ protected:
 
 };
 
-}
+} // end namespace wgt
 #endif // QT_PALETTE_H
-

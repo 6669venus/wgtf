@@ -292,6 +292,5 @@ private:
 
 };
 
-}
+} // end namespace wgt
 #endif //META_TYPE_HPP
-

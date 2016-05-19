@@ -21,7 +21,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // COLLECTION_QT_TYPE_CONVERTER_HPP
-
-

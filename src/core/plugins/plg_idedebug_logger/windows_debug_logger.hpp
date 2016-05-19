@@ -17,5 +17,5 @@ public:
 	virtual void out( LogMessage* message );
 };
 
-}
+} // end namespace wgt
 #endif // WINDOWS_DEBUG_LOGGER_HPP

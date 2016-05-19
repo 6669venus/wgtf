@@ -57,5 +57,5 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 
 #endif //NGT_ALLOCATOR
 
-}
+} // end namespace wgt
 #endif // BW_MEMORY_OPERATIONS_HPP

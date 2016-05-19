@@ -149,4 +149,4 @@ public:
 
 PLG_CALLBACK_FUNC( CopyPastePlugin )
 
-}
+} // end namespace wgt

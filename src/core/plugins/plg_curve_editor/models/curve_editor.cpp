@@ -115,4 +115,4 @@ void CurveEditor::putTimeScaleEditEnabled(const bool& timeScaleEditEnabled)
 	timeScaleEditEnabled_ = timeScaleEditEnabled;
 }
 
-}
+} // end namespace wgt

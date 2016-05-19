@@ -76,5 +76,5 @@ struct CreateHelper : public CreateHelperBase<T, IsAbstract>
 };
 
 
-}
+} // end namespace wgt
 #endif

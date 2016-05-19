@@ -374,4 +374,4 @@ Connection Collection::connectPostChanged( ElementPostChangedCallback callback )
 
 
 
-}
+} // end namespace wgt

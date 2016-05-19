@@ -29,5 +29,5 @@ public:
 
 typedef std::unique_ptr<IVersionControl> IVersionControlPtr;
 
-}
+} // end namespace wgt
 #endif // I_VERSION_CONTROL_H_

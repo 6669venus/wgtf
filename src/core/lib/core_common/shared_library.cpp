@@ -49,4 +49,4 @@ bool SharedLibrary::isValid() const
 
 
 
-}
+} // end namespace wgt

@@ -21,6 +21,5 @@ public:
 	double testMethod8( double parameter );
 };
 
-}
+} // end namespace wgt
 #endif //TEST_METHODS_OBJECT
-

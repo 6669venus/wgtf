@@ -188,4 +188,4 @@ void AssetBrowserBreadcrumbsModel::generateBreadcrumbs( const IItem * item, cons
 	}
 }
 
-}
+} // end namespace wgt

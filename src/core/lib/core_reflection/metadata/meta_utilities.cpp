@@ -53,4 +53,4 @@ MetaHandle findFirstMetaData( const TypeId & typeId, const IClassDefinition & de
 	auto metaData = definition.getMetaData();
 	return findFirstMetaData( typeId, metaData, definitionManager );
 }
-}
+} // end namespace wgt

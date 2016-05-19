@@ -25,5 +25,5 @@ private:
 	QHash<qint64, QImage> imageCache_;
 };
 
-}
+} // end namespace wgt
 #endif

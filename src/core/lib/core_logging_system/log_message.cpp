@@ -111,4 +111,4 @@ bool LogMessage::hasTag( const char* needle )
 	return false;
 }
 
-}
+} // end namespace wgt

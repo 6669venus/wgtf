@@ -71,4 +71,4 @@ bool PropertyStorageIterator::next()
 	return true;
 }
 
-}
+} // end namespace wgt

@@ -66,6 +66,5 @@ private:
 	DemoObjectsEnvCom* objects_;
 };
 
-}
+} // end namespace wgt
 #endif //DEMO_OBJECTS_HPP
-

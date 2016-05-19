@@ -26,4 +26,4 @@ QHash<int, QByteArray> HeaderFooterTextExtension::roleNames() const
 	return roleNames;
 }
 
-}
+} // end namespace wgt

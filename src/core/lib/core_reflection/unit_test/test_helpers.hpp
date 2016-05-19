@@ -25,6 +25,5 @@ std::ostream& operator << ( std::ostream& os, const std::map< K, T >& m )
 }
 
 
-}
+} // end namespace wgt
 #endif //TEST_HELPER_HPP
-

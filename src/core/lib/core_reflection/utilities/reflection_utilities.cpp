@@ -66,4 +66,4 @@ Variant reference< const Variant >( const Variant & value )
 }
 
 }
-}
+} // end namespace wgt

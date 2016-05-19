@@ -292,4 +292,4 @@ EXPORT bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
 	return false;
 }
 
-}
+} // end namespace wgt

@@ -24,5 +24,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // COLOR_PICKER_CONTEXT_HPP

@@ -26,5 +26,5 @@ private:
 	std::vector< IItem * > items_;
 };
 
-}
+} // end namespace wgt
 #endif // CLASS_DEFINITION_MODEL_HPP

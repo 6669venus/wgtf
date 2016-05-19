@@ -233,4 +233,4 @@ int ValueExtension::countRoles(
 
 	return valueExtension->roles_.count();
 }
-}
+} // end namespace wgt

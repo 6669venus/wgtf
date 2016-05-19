@@ -44,5 +44,5 @@ private:
 	std::vector< size_t > roles_;
 };
 
-}
+} // end namespace wgt
 #endif

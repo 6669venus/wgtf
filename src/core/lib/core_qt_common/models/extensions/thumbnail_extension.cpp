@@ -61,4 +61,4 @@ bool ThumbnailExtension::setData( const QModelIndex &index, const QVariant &valu
 {
 	return false;
 }
-}
+} // end namespace wgt

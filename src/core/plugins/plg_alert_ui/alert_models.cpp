@@ -146,4 +146,4 @@ void AlertPageModel::currentSelectedRowIndex( const int & index )
 }
 
 
-}
+} // end namespace wgt

@@ -22,5 +22,5 @@ private:
 	std::unique_ptr< QQmlComponent > qmlComponent_;
 };
 
-}
+} // end namespace wgt
 #endif

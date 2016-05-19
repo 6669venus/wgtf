@@ -124,5 +124,5 @@ private:
 	}
 };
 
-}
+} // end namespace wgt
 #endif // I_CURVE_H_

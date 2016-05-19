@@ -215,4 +215,4 @@ void WGContextMenu::setContextObject( const QVariant& object )
 	impl_->setContextObject( object );
 }
 
-}
+} // end namespace wgt

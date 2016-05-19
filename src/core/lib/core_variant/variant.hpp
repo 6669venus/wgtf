@@ -1424,6 +1424,5 @@ public:
 };
 
 
-}
+} // end namespace wgt
 #endif // VARIANT_HPP_INCLUDED
-

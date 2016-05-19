@@ -29,6 +29,5 @@ bool FreeLibrary(HMODULE hModule);
 
 #endif // __APPLE__
 
-}
+} // end namespace wgt
 #endif // __PLATFORM_DLL_HPP__
-

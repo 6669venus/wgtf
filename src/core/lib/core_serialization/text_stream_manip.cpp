@@ -85,4 +85,4 @@ namespace text_stream_manip_details
 
 
 
-}
+} // end namespace wgt

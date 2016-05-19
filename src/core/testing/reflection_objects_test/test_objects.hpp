@@ -18,5 +18,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif //TEST_OBJECTS_HPP

@@ -190,4 +190,4 @@ TextStream& operator>>( TextStream& stream, void*& value )
 
 
 
-}
+} // end namespace wgt

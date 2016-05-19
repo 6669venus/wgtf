@@ -12,4 +12,4 @@ BEGIN_EXPOSE( MacrosObject, MetaNoSerialization() )
 	EXPOSE_METHOD( "setSelectedRow", setSelectedRow )
 END_EXPOSE()
 
-}
+} // end namespace wgt

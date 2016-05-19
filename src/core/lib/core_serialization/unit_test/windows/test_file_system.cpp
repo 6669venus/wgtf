@@ -75,4 +75,4 @@ TEST(file_sytem)
 		return true;
 	});
 }
-}
+} // end namespace wgt

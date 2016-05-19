@@ -106,4 +106,4 @@ public:
 PLG_CALLBACK_FUNC( TreeModelTestPlugin )
 
 
-}
+} // end namespace wgt

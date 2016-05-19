@@ -213,4 +213,4 @@ bool QtAbstractItemModel::removeColumn( int column, QObject * parent )
 	auto parentIndex = itemToIndex( parent );
 	return QAbstractItemModel::removeColumn( column, parentIndex );
 }
-}
+} // end namespace wgt

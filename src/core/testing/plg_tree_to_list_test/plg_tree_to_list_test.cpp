@@ -78,4 +78,4 @@ private:
 PLG_CALLBACK_FUNC( TreeToListTest )
 
 
-}
+} // end namespace wgt

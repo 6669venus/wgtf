@@ -33,6 +33,5 @@ protected:
 	mutable std::vector< std::unique_ptr< IItem > > items_;
 };
 
-}
+} // end namespace wgt
 #endif // COLLECTION_LIST_MODEL_HPP
-

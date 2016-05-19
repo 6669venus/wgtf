@@ -97,6 +97,5 @@ private:
 	mutable std::mutex objLinkLock_;
 };
 
-}
+} // end namespace wgt
 #endif // OBJECT_MANAGER_HPP
-

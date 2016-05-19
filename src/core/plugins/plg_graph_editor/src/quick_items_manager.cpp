@@ -26,4 +26,4 @@ void QuickItemsManager::RepaintItem(size_t uid)
     if (iter != items.end())
         iter->second->update();
 }
-}
+} // end namespace wgt

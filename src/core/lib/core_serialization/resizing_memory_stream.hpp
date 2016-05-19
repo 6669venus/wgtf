@@ -34,7 +34,5 @@ private:
 
 };
 
-}
+} // end namespace wgt
 #endif //RESIZING_MEMORY_STREAM_HPP
-
-

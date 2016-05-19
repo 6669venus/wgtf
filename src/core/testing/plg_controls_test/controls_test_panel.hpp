@@ -31,7 +31,5 @@ private:
 };
 
 
-}
+} // end namespace wgt
 #endif // _CONTROLS_TEST_PANEL_HPP
-
-

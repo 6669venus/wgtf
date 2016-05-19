@@ -37,7 +37,5 @@ private:
 
 } // namespace PythonType
 
-}
+} // end namespace wgt
 #endif // _PYTHON_DICT_CONVERTER_HPP
-
-

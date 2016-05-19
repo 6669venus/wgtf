@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
+import WGControls 1.0
 
 /*!
  \brief WGListView displays data from a model defined by its delegate.

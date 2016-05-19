@@ -6,6 +6,10 @@ import WGControls 2.0
 ListView {
 	id: treeViewBase
 
+    headerPositioning: ListView.OverlayHeader
+	footerPositioning: ListView.OverlayFooter
+    contentWidth: contentItem.childrenRect.width 
+
 	property var view
 	property real depth: 0
 

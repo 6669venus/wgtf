@@ -40,8 +40,7 @@ WG1.WGPanel {
 			columnSequence: [0,0]
             showColumnHeaders: true
             showColumnFooters: true
-            headerPositioning: ListView.OverlayHeader
-	    	footerPositioning: ListView.OverlayFooter
+            roles: ["headerText", "footerText"]
 		}
 	}
 }

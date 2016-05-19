@@ -21,6 +21,8 @@ WGItemView {
 
     property bool showColumnHeaders: false
     property bool showColumnFooters: false
+    property var columnHeaderDelegates: []
+    property var columnFooterDelegates: []
     property Component columnHeaderDelegate: defaultColumnHeaderDelegate
     property Component columnFooterDelegate: defaultColumnFooterDelegate
     property Component header: !showColumnHeaders ? null : headerComponent
@@ -28,72 +30,34 @@ WGItemView {
 
     property Component headerComponent: WGHeaderRow {
         z:2
-        topMargin: root.view.topMargin
-        columnCount: root.columnCount()
-        backgroundColour: palette.midDarkColor
-        columnDelegate: columnHeaderDelegate
-        model: root.model
-        minimumRowHeight: defaultSpacing.minimumRowHeight
-        spacing: root.columnSpacing
-        visible: showColumnHeaders
-        columnWidths: columnsFrame.columnWidths
-        width: root.view.width - root.view.rightMargin - root.view.leftMargin
+        columnDelegates: root.columnHeaderDelegates
+		columnSequence: root.columnSequence
+		columnWidths: root.columnWidths
+		columnSpacing: root.columnSpacing
+        headerData: root.headerData
     }
 
     property Component footerComponent: WGHeaderRow {
         z:2
-        bottomMargin: root.view.bottomMargin
-        columnCount: root.columnCount()
-        backgroundColour: palette.midDarkColor
-        columnDelegate: columnFooterDelegate
-        model: root.model
-        minimumRowHeight: defaultSpacing.minimumRowHeight
-        spacing: root.columnSpacing
-        visible: showColumnFooters
-        columnWidths: columnsFrame.columnWidths
-        width: root.view.width - root.view.rightMargin - root.view.leftMargin
+        columnDelegates: root.columnFooterDelegates
+		columnSequence: root.columnSequence
+		columnWidths: root.columnWidths
+		columnSpacing: root.columnSpacing
+        headerData: root.headerData
     }
 
-    property Component defaultColumnHeaderDelegate: Item {
-        signal dataChanged;
-
-        property var headerTextVariant: getData("headerText");
-        property string headerText:
-            headerTextVariant !== null && typeof(headerTextVariant) === "string" ? headerTextVariant : ""
-
-        onDataChanged:headerTextVariant = getData("headerText");
-
-        Text {
-            id: textBox
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.margins: 4
-            verticalAlignment: Text.AlignVCenter
-            color: palette.textColor
-            text: headerText
-        }
+    property Component defaultColumnHeaderDelegate: Text {
+        id: textBoxHeader
+        color: palette.textColor
+        text: itemData.headerText
+        height: 24
     }
 
-    property Component defaultColumnFooterDelegate: Item {
-        signal dataChanged;
-
-        property var footerTextVariant: getData("footerText");
-        property string footerText:
-            footerTextVariant !== null && typeof(footerTextVariant) === "string" ? footerTextVariant : ""
-
-        onDataChanged:footerTextVariant = getData("footerText");
-
-        Text {
-            id: textBoxFooter
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.margins: 4
-            verticalAlignment: Text.AlignVCenter
-            color: palette.textColor
-            text: footerText
-        }
+    property Component defaultColumnFooterDelegate: Text {
+        id: textBoxFooter
+        color: palette.textColor
+        text: itemData.footerText
+        height: 24
     }
 
 
@@ -127,21 +91,30 @@ WGItemView {
 		}
 		columnDelegates = tmp
 
+        var tmpHeader = columnHeaderDelegates
+		while (tmpHeader.length < columnCount()) {
+			tmpHeader.push(columnHeaderDelegate)
+		}
+		columnHeaderDelegates = tmpHeader
+
+        var tmpFooter = columnFooterDelegates
+		while (tmpFooter.length < columnCount()) {
+			tmpFooter.push(columnFooterDelegate)
+		}
+		columnFooterDelegates = tmpFooter
+
 		var tmp = columnWidths
 		while (tmp.length < columnCount()) {
 			tmp.push(Math.max(columnWidth, 1))
 		}
 		columnWidths = tmp
-
-		root.view.contentWidth = Qt.binding( function() { return columnsFrame.width } )
 	}
-    
 
 	WGColumnsFrame {
 		id: columnsFrame
 		x: root.view.contentItem.x + root.view.originX
-		y: root.view.contentItem.y + root.view.originY
-		height: root.view.contentItem.height
+		y: 0
+        height: root.view.height
 		columnWidths: root.view.columnWidths
 		columnSpacing: root.view.columnSpacing
 		availableWidth: root.view.width - Math.max(contentItem.x, 0)

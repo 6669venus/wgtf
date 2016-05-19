@@ -7,6 +7,9 @@ ListView {
 	id: listViewBase
 
 	property var view
+    headerPositioning: ListView.OverlayHeader
+	footerPositioning: ListView.OverlayFooter
+    contentWidth: contentItem.childrenRect.width 
 
 	signal itemPressed(var mouse, var itemIndex, var rowIndex)
 	signal itemClicked(var mouse, var itemIndex, var rowIndex)

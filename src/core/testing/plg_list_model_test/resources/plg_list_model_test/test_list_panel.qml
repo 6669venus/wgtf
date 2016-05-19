@@ -65,9 +65,7 @@ WG1.WGPanel {
 			columnDelegates: [columnDelegate, colorDelegate]
 			showColumnHeaders: true
 	    	showColumnFooters: true
-	    	headerPositioning: ListView.OverlayHeader
-	    	footerPositioning: ListView.OverlayFooter
-			roles: ["value"]
+			roles: ["value", "headerText", "footerText"]
 			model: sourceModel
 
 			Component {

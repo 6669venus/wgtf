@@ -48,6 +48,8 @@ TEST_F( TestCommandFixture, runBatchCommand )
 	CHECK(counter.isValid());
 	PropertyAccessor text = klass_->bindProperty( "text", objHandle );
 	CHECK(text.isValid());
+	PropertyAccessor incrementCounter = klass_->bindProperty("incrementCounter", objHandle );
+	CHECK(incrementCounter.isValid());
 
 	{
 		int value = 0;
@@ -136,6 +138,31 @@ TEST_F( TestCommandFixture, runBatchCommand )
 		variantValue = controller.getValue( counter );
 		CHECK( variantValue.tryCast( value ) );
 		CHECK( value == 0);
+	}
+
+	{
+		int value = 0;
+		controller.setValue( counter, value );
+		Variant variantValue = controller.getValue( counter );
+		CHECK(variantValue.tryCast( value ));
+		CHECK_EQUAL(0, value);
+
+		auto & commandSystemProvider = getCommandSystemProvider();
+		commandSystemProvider.beginBatchCommand();
+		controller.invoke( incrementCounter, ReflectedMethodParameters() );
+		controller.invoke( incrementCounter, ReflectedMethodParameters() );
+		commandSystemProvider.endBatchCommand();
+		variantValue = controller.getValue( counter );
+		CHECK(variantValue.tryCast( value ));
+		CHECK_EQUAL(2, value);
+
+		commandSystemProvider.beginBatchCommand();
+		controller.invoke( incrementCounter, ReflectedMethodParameters() );
+		controller.invoke( incrementCounter, ReflectedMethodParameters() );
+		commandSystemProvider.abortBatchCommand();
+		variantValue = controller.getValue( counter );
+		CHECK(variantValue.tryCast( value ));
+		CHECK_EQUAL(2, value);
 	}
 }
 

@@ -1,5 +1,4 @@
 #include "list_extension.hpp"
-#include "core_qt_common/models/qt_abstract_item_model.hpp"
 
 ListExtension::ListExtension()
 {
@@ -72,10 +71,4 @@ QModelIndex ListExtension::getPreviousIndex( const QModelIndex & index ) const
 		return index;
 	}
 	return pModel->index( index.row() - 1, index.column(), index.parent() );
-}
-
-
-int ListExtension::indexToRow( const QModelIndex & index ) const
-{
-	return index.row();
 }

@@ -8,7 +8,7 @@ import BWControls 1.0
 */
 Item {
     id: itemRow
-    objectName: "WGItemRow"
+    objectName: typeof(model.display) != "undefined" ? "WGItemRow_" + model.display : "WGItemRow"
 
     width: childrenRect.width != 0 ? childrenRect.width : 1024
     height: childrenRect.height != 0 ? childrenRect.height : 1024
@@ -69,6 +69,7 @@ Item {
     // Controls column spacing.
     Row {
         id: row
+        objectName: typeof(model.display) != "undefined" ? "Row_" + model.display : "Row"
 
         // Repeat columns horizontally.
         Repeater {
@@ -107,12 +108,14 @@ Item {
                 // Line up columns horizontally.
                 Row {
                     id: columnLayoutRow
+                    objectName: typeof(model.display) != "undefined" ? "columnLayoutRow_" + model.display : "columnLayoutRow"
 
                     /* MOVE INTO STYLE*/
 
                     // Add expanded/collapsed arrow.
                     Row {
                         id: iconArea
+                        objectName: typeof(model.display) != "undefined" ? "iconArea_" + model.display : "iconArea"
                         anchors.verticalCenter: parent.verticalCenter
 
                         width: childrenRect.width

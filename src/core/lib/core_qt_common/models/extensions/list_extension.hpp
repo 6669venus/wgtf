@@ -15,6 +15,12 @@ public:
 
 	QHash< int, QByteArray > roleNames() const override;
 
+	/**
+	 *	Convert first and last index into a selection range.
+	 *	@param first start of selected area.
+	 *	@param last end of selected area. End can be before begin.
+	 *	@return area covered inbetween first and last.
+	 */
 	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
 };
 

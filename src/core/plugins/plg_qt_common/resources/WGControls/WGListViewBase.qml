@@ -11,6 +11,13 @@ ListView {
 
     property var view
 
+    /*! Stores which item is currently in focus by the keyboard.
+        Often this will correspond to the selected item, but not always.
+        E.g. pressing ctrl+up will move the current index, but not the selected index.
+        The default value is the same as the selection (modelIndex).
+    */
+    property var keyboardHighlightModelIndex: view.selectionModel.currentIndex
+
     /*! Propogates events from children to parents.
         \param mouse the MouseEvent that triggered the signal.
         \param itemIndex index of items inside the WGItemRow.
@@ -20,12 +27,6 @@ ListView {
     signal itemClicked(var mouse, var itemIndex, var rowIndex)
     signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
 
-    /*! Stores which item is currently in focus by the keyboard.
-        Often this will correspond to the selected item, but not always.
-        E.g. pressing ctrl+up will move the current index, but not the selected index.
-        The default value is the same as the selection (modelIndex).
-    */
-    property var currentModelIndex: view.selectionModel.currentIndex
     delegate: WGItemRow {
         id: itemRow
         columnDelegates: view.columnDelegates
@@ -33,7 +34,7 @@ ListView {
         columnWidths: view.columnWidths
         columnSpacing: view.columnSpacing
         selected: view.selectionModel.isSelected(modelIndex)
-        isCurrent: ListView.isCurrentItem
+        isKeyboardHighlight: (keyboardHighlightModelIndex === modelIndex)
 
         Connections {
             target: view.selectionModel

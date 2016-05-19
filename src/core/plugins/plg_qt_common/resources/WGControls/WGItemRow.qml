@@ -36,7 +36,7 @@ Item {
         Often this will correspond to the selected item, but not always.
         E.g. pressing ctrl+up will move the current index, but not the selected index.
     */
-    property bool isCurrent: false
+    property bool isKeyboardHighlight: false
 
     /*! Pass parameters from mouse events up to parent.
         \see columnMouseArea for original event.
@@ -64,6 +64,17 @@ Item {
         id: hoverArea
         anchors.fill: backgroundArea
         hoverEnabled: true
+    }
+
+    // Keyboard focus highlight
+    // Note: not using ListView.highlight or ListView.highlightFollowsCurrentItem
+    Rectangle {
+        id: keyboardFocusArea
+        anchors.fill: row
+        color: palette.highlightShade
+        opacity: 0.25
+        visible: isKeyboardHighlight
+    }
     /**/
 
     // Controls column spacing.

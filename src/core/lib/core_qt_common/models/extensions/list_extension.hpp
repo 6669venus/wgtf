@@ -38,13 +38,6 @@ public:
 	 *	@return new position.
 	 */
 	Q_INVOKABLE QModelIndex getPreviousIndex( const QModelIndex & index ) const;
-
-	/**
-	 *	Convert list model index to a row number.
-	 *	@param index.
-	 *	@return row.
-	 */
-	Q_INVOKABLE int indexToRow( const QModelIndex & index ) const;
 };
 
 #endif // LIST_EXTENSION_HPP

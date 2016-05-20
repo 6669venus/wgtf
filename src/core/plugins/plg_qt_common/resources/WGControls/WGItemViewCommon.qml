@@ -19,18 +19,16 @@ WGItemView {
 	property var columnWidths: []
 	property real columnSpacing: 0
 
-    property bool showColumnHeaders: false
-    property bool showColumnFooters: false
-    property var columnHeaderDelegates: []
-    property var columnFooterDelegates: []
-    property Component columnHeaderDelegate: defaultColumnHeaderDelegate
-    property Component columnFooterDelegate: defaultColumnFooterDelegate
-    property Component header: !showColumnHeaders ? null : headerComponent
-    property Component footer: !showColumnFooters ? null : footerComponent
+    property var headerDelegates: []
+    property var footerDelegates: []
+    property Component headerDelegate: null
+    property Component footerDelegate: null
+    property Component header: null
+    property Component footer: null
 
     property Component headerComponent: WGHeaderRow {
         z:2
-        columnDelegates: root.columnHeaderDelegates
+        columnDelegates: root.headerDelegates
 		columnSequence: root.columnSequence
 		columnWidths: root.columnWidths
 		columnSpacing: root.columnSpacing
@@ -39,27 +37,12 @@ WGItemView {
 
     property Component footerComponent: WGHeaderRow {
         z:2
-        columnDelegates: root.columnFooterDelegates
+        columnDelegates: root.footerDelegates
 		columnSequence: root.columnSequence
 		columnWidths: root.columnWidths
 		columnSpacing: root.columnSpacing
         headerData: root.headerData
     }
-
-    property Component defaultColumnHeaderDelegate: Text {
-        id: textBoxHeader
-        color: palette.textColor
-        text: itemData.headerText
-        height: 24
-    }
-
-    property Component defaultColumnFooterDelegate: Text {
-        id: textBoxFooter
-        color: palette.textColor
-        text: itemData.footerText
-        height: 24
-    }
-
 
 	property var commonExtensions: [columnExtension, imageExtension]
 	extensions: commonExtensions
@@ -95,17 +78,43 @@ WGItemView {
 		}
         columnDelegates = tmp;
 
-        var tmpHeader = columnHeaderDelegates
-		while (tmpHeader.length < columnCount()) {
-			tmpHeader.push(columnHeaderDelegate);
-		}
-		columnHeaderDelegates = tmpHeader;
+        var tmp = headerDelegates
+        if(tmp.length > 0)
+        {
+            while (tmp.length < columnCount()) {
+			    tmp.push(headerDelegate);
+		    }
+        }
+        if((tmp.length == 0) && (headerDelegate != null))
+        {
+            while (tmp.length < columnCount()) {
+			    tmp.push(headerDelegate);
+		    }
+        }
+		headerDelegates = tmp;
+        if(headerDelegates.length > 0)
+        {
+             header = headerComponent;
+        }
 
-        var tmpFooter = columnFooterDelegates
-		while (tmpFooter.length < columnCount()) {
-			tmpFooter.push(columnFooterDelegate);
-		}
-		columnFooterDelegates = tmpFooter;
+        var tmp = footerDelegates
+        if(tmp.length > 0)
+        {
+            while (tmp.length < columnCount()) {
+			    tmp.push(footerDelegate);
+		    }
+        }
+        if((tmp.length == 0) && (footerDelegate != null))
+        {
+            while (tmp.length < columnCount()) {
+			    tmp.push(footerDelegate);
+		    }
+        }
+		footerDelegates = tmp;
+        if(footerDelegates.length > 0)
+        {
+             footer = footerComponent;
+        }
 
 		var tmp = columnWidths;
 		while (tmp.length < columnCount()) {

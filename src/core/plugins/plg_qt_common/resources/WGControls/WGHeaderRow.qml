@@ -13,7 +13,7 @@ Item {
     property var columnDelegates: []
     property var columnSequence: []
     property var columnWidths: []
-    property var headerData: null
+    property var headerData: []
     property alias columnSpacing: row.spacing
 
     signal itemPressed(var mouse, var itemIndex)
@@ -53,8 +53,8 @@ Item {
                     id: columnLayoutRow
                     Loader {
                         id: columnDelegateLoader
-                        property var itemData: itemRow.headerData
-                        property var itemWidth: columnWidths[index] - x
+                        property var headerData: itemRow.headerData[index]
+                        property var headerWidth: columnWidths[index] - x
                         sourceComponent: itemRow.columnDelegates[index]
                     }
                 }

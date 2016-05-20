@@ -22,7 +22,7 @@ class WGItemView : public QQuickItem
 
 	Q_PROPERTY( QAbstractItemModel * extendedModel READ getExtendedModel NOTIFY extendedModelChanged )
 	//Enable for headers once body works.
-	Q_PROPERTY( QObject * headerData READ getHeaderData NOTIFY headerDataChanged )
+	Q_PROPERTY( QQmlListProperty< QObject > headerData READ getHeaderData NOTIFY headerDataChanged )
 
 	DECLARE_QT_MEMORY_HANDLER
 
@@ -49,7 +49,9 @@ private:
 	static void clearExtensions( QQmlListProperty< IModelExtension > * property );
 
 	QAbstractItemModel * getExtendedModel() const;
-	QObject * getHeaderData() const;
+    QQmlListProperty< QObject > getHeaderData() const;
+    static int countHeaderData( QQmlListProperty< QObject > * property );
+    static QObject * headerDataAt( QQmlListProperty< QObject > * property, int index );
 
 	void refresh();
 

@@ -63,10 +63,32 @@ WG1.WGPanel {
 			columnWidth: 50
 			columnSpacing: 1
 			columnDelegates: [columnDelegate, colorDelegate]
-			showColumnHeaders: true
-	    	showColumnFooters: true
+			headerDelegate: myHeaderDelegate
+			footerDelegate: myFooterDelegate
 			roles: ["value", "headerText", "footerText"]
 			model: sourceModel
+
+			Component {
+            	id: myHeaderDelegate
+
+            	Text {
+                	id: textBoxHeader
+                	color: palette.textColor
+                	text: headerData.headerText
+                	height: 24
+            	}
+        	}
+
+        	Component {
+	            id: myFooterDelegate
+
+    	        Text {
+        	        id: textBoxFooter
+            	    color: palette.textColor
+                	text: headerData.footerText
+                	height: 24
+            	}
+        	}
 
 			Component {
 				id: colorDelegate

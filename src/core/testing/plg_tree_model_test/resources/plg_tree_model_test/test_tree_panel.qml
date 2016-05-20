@@ -38,9 +38,31 @@ WG1.WGPanel {
 			model: sourceModel
 			columnSpacing: 1
 			columnSequence: [0,0]
-            showColumnHeaders: true
-            showColumnFooters: true
+			headerDelegates: [myHeaderDelegate]
+			footerDelegates: [myFooterDelegate]
             roles: ["headerText", "footerText"]
+
+            Component {
+            	id: myHeaderDelegate
+
+            	Text {
+                	id: textBoxHeader
+                	color: palette.textColor
+                	text: headerData.headerText
+                	height: 24
+            	}
+        	}
+
+        	Component {
+	            id: myFooterDelegate
+
+    	        Text {
+        	        id: textBoxFooter
+            	    color: palette.textColor
+                	text: headerData.footerText
+                	height: 24
+            	}
+        	}
 		}
 	}
 }

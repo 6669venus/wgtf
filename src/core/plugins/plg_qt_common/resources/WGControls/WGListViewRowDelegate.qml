@@ -12,7 +12,7 @@ import BWControls 1.0
 
 Item {
     id: rowDelegate
-    objectName: "WGListViewRowDelegate"
+    objectName: typeof(model.display) != "undefined" ? "WGListViewRowDelegate_" + model.display : "WGListViewRowDelegate"
 
     /*!
         This property defines the indentation before the first element on each row

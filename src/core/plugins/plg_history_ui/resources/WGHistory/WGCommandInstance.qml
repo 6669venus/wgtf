@@ -7,56 +7,58 @@ import WGControls 1.0
 
 // Component for dislaying command instances
 WGExpandingRowLayout {
-	id: commandInstance
+    id: commandInstance
 
-	// -- Begin Interface
-	property variant displayObject: null
-	property bool isCurrentItem: false
-	property bool isApplied: false
-	property int columnIndex: 0
-	// -- End Interface
+    // -- Begin Interface
+    property variant displayObject: null
+    property bool isCurrentItem: false
+    property bool isApplied: false
+    property int columnIndex: 0
+    // -- End Interface
 
-	Layout.preferredHeight: Math.max( defaultSpacing.minimumRowHeight, childrenRect.height )
+    Layout.preferredHeight: Math.max( defaultSpacing.minimumRowHeight, childrenRect.height )
 
-	WGHistoryImage {
-		id: commandImage
+    WGHistoryImage {
+        id: commandImage
+        objectName: "commandImage_" + commandName.text
         type: parent.displayObject ? (parent.displayObject.Type ? parent.displayObject.Type : "") : ""
-		isApplied: parent.isApplied
-		visible: (parent.columnIndex == 0)
-	}
+        isApplied: parent.isApplied
+        visible: (parent.columnIndex == 0)
+    }
 
 
-	WGHistoryText {
-		id: commandName
-		text: typeof parent.displayObject.Name != 'undefined' ?
-			parent.displayObject.Name.toString() :
-			"Unknown"
-		isCurrentItem: parent.isCurrentItem
-		isApplied: parent.isApplied
-	}
+    WGHistoryText {
+        id: commandName
+        objectName: "commandName_" + text
+        text: typeof parent.displayObject.Name != 'undefined' ?
+            parent.displayObject.Name.toString() :
+            "Unknown"
+        isCurrentItem: parent.isCurrentItem
+        isApplied: parent.isApplied
+    }
 
 
-	WGHistoryText {
-		id: commandPreValue
+    WGHistoryText {
+        id: commandPreValue
+        objectName: "commandPreValue_" + text
+        text: (typeof parent.displayObject.PreValue != 'undefined') ?
+            parent.displayObject.PreValue.toString() :
+            ""
+        isCurrentItem: parent.isCurrentItem
+        isApplied: parent.isApplied
+        visible: (typeof parent.displayObject.PreValue != 'undefined')
+    }
 
-		text: (typeof parent.displayObject.PreValue != 'undefined') ?
-			parent.displayObject.PreValue.toString() :
-			""
-		isCurrentItem: parent.isCurrentItem
-		isApplied: parent.isApplied
-		visible: (typeof parent.displayObject.PreValue != 'undefined')
-	}
 
-
-	WGHistoryText {
-		id: commandPostValue
-
-		text: (typeof parent.displayObject.PostValue != 'undefined') ?
-			parent.displayObject.PostValue.toString() :
-			""
-		isCurrentItem: parent.isCurrentItem
-		isApplied: parent.isApplied
-		visible: (typeof parent.displayObject.PostValue != 'undefined')
-	}
+    WGHistoryText {
+        id: commandPostValue
+        objectName: "commandPostValue_" + text
+        text: (typeof parent.displayObject.PostValue != 'undefined') ?
+            parent.displayObject.PostValue.toString() :
+            ""
+        isCurrentItem: parent.isCurrentItem
+        isApplied: parent.isApplied
+        visible: (typeof parent.displayObject.PostValue != 'undefined')
+    }
 }
 

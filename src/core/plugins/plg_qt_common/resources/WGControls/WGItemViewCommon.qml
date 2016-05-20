@@ -65,15 +65,15 @@ WGItemView {
 	extensions: commonExtensions
 
 	function rowCount() {
-		return extendedModel.rowCount()
+        return extendedModel.rowCount();
 	}
 
 	function columnCount() {
-		var count = columnSequence.length
+        var count = columnSequence.length;
 		if (count == 0) {
-			count = extendedModel.columnCount(null)
+            count = extendedModel.columnCount(null);
 		}
-		return count
+        return count;
 	}
 
 	ColumnExtension {
@@ -84,30 +84,35 @@ WGItemView {
 		id: imageExtension
 	}
 
+    /*! Ensure the columnDelegates and columnWidths lists are the same length
+        as the number of columns that actually loaded into the list.
+        \see WGItemRow
+     */
 	Component.onCompleted: {
-		var tmp = columnDelegates
+        var tmp = columnDelegates;
 		while (tmp.length < columnCount()) {
-			tmp.push(columnDelegate)
+            tmp.push(columnDelegate);
 		}
-		columnDelegates = tmp
+        columnDelegates = tmp;
 
         var tmpHeader = columnHeaderDelegates
 		while (tmpHeader.length < columnCount()) {
-			tmpHeader.push(columnHeaderDelegate)
+			tmpHeader.push(columnHeaderDelegate);
 		}
-		columnHeaderDelegates = tmpHeader
+		columnHeaderDelegates = tmpHeader;
 
         var tmpFooter = columnFooterDelegates
 		while (tmpFooter.length < columnCount()) {
-			tmpFooter.push(columnFooterDelegate)
+			tmpFooter.push(columnFooterDelegate);
 		}
-		columnFooterDelegates = tmpFooter
+		columnFooterDelegates = tmpFooter;
 
-		var tmp = columnWidths
+		var tmp = columnWidths;
 		while (tmp.length < columnCount()) {
-			tmp.push(Math.max(columnWidth, 1))
+            tmp.push(Math.max(columnWidth, 1));
 		}
-		columnWidths = tmp
+
+		columnWidths = tmp;
 	}
 
 	WGColumnsFrame {
@@ -120,7 +125,7 @@ WGItemView {
 		availableWidth: root.view.width - Math.max(contentItem.x, 0)
 
 		Component.onCompleted: {
-			root.view.columnWidths = Qt.binding( function() { return columnsFrame.columnWidths } )
+            root.view.columnWidths = Qt.binding( function() { return columnsFrame.columnWidths } );
 		}
 	}
 

@@ -42,7 +42,7 @@ public:
 
 	void finalise();
 
-	QtScriptObject * createScriptObject( const ObjectHandle & object );
+	QtScriptObject * createScriptObject( const ObjectHandle & object, QObject* parent = nullptr  );
 	void deregisterScriptObject( QtScriptObject & scriptObject );
 
 protected:

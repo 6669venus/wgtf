@@ -12,25 +12,30 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
 #include "core_reflection/object_handle.hpp"
-#include "core_dependency_system/di_ref.hpp"
+#include "core_dependency_system/depends.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 #include <QObject>
 
+class IComponentContext;
 class MetaBase;
 class IReflectionController;
 class Variant;
 class IBaseProperty;
 class QtScriptingEngine;
 
-class QtScriptObject : public QObject
+class QtScriptObject
+	: public QObject
+	, public Depends< IDefinitionManager, IReflectionController >
 {
 public:
 	QtScriptObject(
-		IComponentContext& contextManager,
-		QtScriptingEngine& scriptEngine,
-		const QMetaObject & metaObject, 
-		const ObjectHandle & object,
-		QObject * parent = nullptr );
+		QObject * parent,
+		IComponentContext & context,
+		QtScriptingEngine & engine,
+		const QMetaObject & metaObject,
+		const ObjectHandle & object );
+
 	virtual ~QtScriptObject();
 
 	const ObjectHandle & object() const;
@@ -52,8 +57,6 @@ private:
 		const QString& property,
 		const QString& metaType ) const;
 
-	DIRef<IDefinitionManager> definitionManager_;
-	DIRef<IReflectionController> controller_;
 	QtScriptingEngine& scriptEngine_;
 	const QMetaObject & metaObject_;
 	ObjectHandle object_;

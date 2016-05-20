@@ -36,7 +36,6 @@
 
 Q_DECLARE_METATYPE( ObjectHandle );
 
-typedef std::vector< QPointer<QtScriptObject> > ScriptObjects;
 
 struct QtScriptingEngine::Implementation
 {
@@ -68,7 +67,7 @@ struct QtScriptingEngine::Implementation
 
 	void initialise( IQtFramework& qtFramework, IComponentContext& contextManager );
 
-	QtScriptObject* createScriptObject( const ObjectHandle& object );
+	QtScriptObject* createScriptObject( const ObjectHandle& object, QObject* parent );
 	QMetaObject* getMetaObject( const IClassDefinition& classDefinition );
 
 	QtScriptingEngine& self_;
@@ -81,20 +80,42 @@ struct QtScriptingEngine::Implementation
 	IComponentContext* contextManager_;
 
 	std::mutex metaObjectsMutex_;
-	std::map<std::string, QMetaObject*> metaObjects_;
+	std::unordered_map<std::string, QMetaObject*> metaObjects_;
 	std::vector<std::unique_ptr< IQtTypeConverter>> qtTypeConverters_;
-	std::map<ObjectHandle, ScriptObjects > scriptObjects_;
+
+	template <typename T>
+	struct QPointerHash
+	{
+		size_t operator()(QPointer< T > const & node ) const
+		{
+			return std::hash<T*>()( node.data() );
+		}
+	};
+
+	struct ObjectHandleHash
+	{
+		size_t operator()(ObjectHandle const& node) const
+		{
+			return std::hash< void * >()(node.data());
+		}
+	};
+
+	typedef std::unordered_map<
+		ObjectHandle,
+		QPointer< QtScriptObject >,
+		ObjectHandleHash > ScriptObjectCollection;
+	ScriptObjectCollection scriptObjects_;
 
 	struct PropertyListener: public PropertyAccessorListener
 	{
-		PropertyListener( const std::map<ObjectHandle, ScriptObjects >& scriptObjects )
+		PropertyListener( const ScriptObjectCollection & scriptObjects )
 			: scriptObjects_( scriptObjects )
 		{}
 
 		void postSetValue( const PropertyAccessor& accessor, const Variant& value ) override;
 		void postInvoke( const PropertyAccessor & accessor, Variant result, bool undo ) override;
 
-		const std::map<ObjectHandle, ScriptObjects >& scriptObjects_;
+		const ScriptObjectCollection & scriptObjects_;
 	};
 
 	std::shared_ptr<PropertyAccessorListener> propListener_;
@@ -118,9 +139,9 @@ void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, I
 	// TODO: All but the scriptTypeConverter need to be moved to the qt app plugin.
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
 	qtTypeConverters_.emplace_back( new ImageQtTypeConverter() );
-	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
-	qtTypeConverters_.emplace_back( new ModelQtTypeConverter() );	
+	qtTypeConverters_.emplace_back( new ModelQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
+	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( self_ ) );
 
 	QMetaType::registerComparators<ObjectHandle>();
@@ -146,14 +167,11 @@ void QtScriptingEngine::Implementation::PropertyListener::postSetValue(
 	}
 
 	// Copy collection to accommodate re-entry
-    auto scriptObjects = itr->second;
-    for( auto scriptObject : scriptObjects )
+    auto scriptObject = itr->second;
+    assert( !scriptObject.isNull() );
+    if(!scriptObject.isNull())
     {
-        assert( !scriptObject.isNull() );
-        if(!scriptObject.isNull())
-        {
-	        scriptObject->firePropertySignal( accessor.getProperty(), value );
-        }
+	    scriptObject->firePropertySignal( accessor.getProperty(), value );
     }
 }
 
@@ -168,19 +186,16 @@ void QtScriptingEngine::Implementation::PropertyListener::postInvoke(
 	{
 		return;
 	}
-    auto& scriptObjects = itr->second;
-    for( auto scriptObject : scriptObjects )
+    auto & scriptObject = itr->second;
+    assert( !scriptObject.isNull() );
+    if(!scriptObject.isNull())
     {
-        assert( !scriptObject.isNull() );
-        if(!scriptObject.isNull())
-        {
-	        scriptObject->fireMethodSignal( accessor.getProperty(), undo );
-        }
+	    scriptObject->fireMethodSignal( accessor.getProperty(), undo );
     }
 }
 
 
-QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const ObjectHandle& object )
+QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const ObjectHandle& object, QObject* parent )
 {
 	if (!object.isValid())
 	{
@@ -189,34 +204,33 @@ QtScriptObject* QtScriptingEngine::Implementation::createScriptObject( const Obj
 
 	auto root = reflectedRoot( object, *defManager_ );
 
-	auto classDefinition = root.getDefinition( *defManager_ );
-	if (classDefinition == nullptr)
-	{
-		return nullptr;
-	}
-
-	auto metaObject = getMetaObject( *classDefinition );
-	if (metaObject == nullptr)
-	{
-		return nullptr;
-	}
-
     auto itr = scriptObjects_.find( root );
-
+	QtScriptObject * scriptObject = nullptr;
     if (itr == scriptObjects_.end())
     {
-		itr = scriptObjects_.insert(std::make_pair(root, ScriptObjects())).first;
+		auto classDefinition = root.getDefinition(*defManager_);
+		if (classDefinition == nullptr)
+		{
+			return nullptr;
+		}
+
+		auto metaObject = getMetaObject(*classDefinition);
+		if (metaObject == nullptr)
+		{
+			return nullptr;
+		}
+
+		assert(contextManager_); 
+		scriptObject = new QtScriptObject(
+				parent, *contextManager_, self_, *metaObject, root );
+		scriptObjects_.insert(
+			std::make_pair( root, scriptObject ));
     }
-    assert( itr != scriptObjects_.end() );
-	auto& scriptObjects = itr->second;
-
-	assert( contextManager_ );
-	QtScriptObject* scriptObject = new QtScriptObject(
-		*contextManager_, self_, *metaObject, root, nullptr );
-    // always set scripteObject ownership to QML
-    QQmlEngine::setObjectOwnership( scriptObject, QQmlEngine::JavaScriptOwnership );
-
-	scriptObjects.emplace_back(scriptObject );
+	else
+	{
+		scriptObject = itr->second;
+	}
+	scriptObject->setParent( parent );
 	return scriptObject;
 }
 
@@ -227,7 +241,7 @@ QMetaObject* QtScriptingEngine::Implementation::getMetaObject( const IClassDefin
 
 	{
 		std::lock_guard< std::mutex > guard( metaObjectsMutex_ );
-		const auto& metaObjectIt = metaObjects_.find( definition );
+		auto metaObjectIt = metaObjects_.find( definition );
 		if ( metaObjectIt != metaObjects_.end() )
 		{
 			return metaObjectIt->second;
@@ -354,15 +368,7 @@ void QtScriptingEngine::finalise()
         // if it goes here, we need to figure out why
         // QScriptObject not get destroyed correctly.
 		auto iter = impl_->scriptObjects_.begin();
-        auto& scriptObjects = iter->second;
-        while (!scriptObjects.empty())
-        {
-            auto&& scriptObject = scriptObjects.begin();
-            if(!scriptObject->isNull())
-            {
-                delete scriptObject->data();
-            }
-        }
+        delete iter->second;
 	}
 
 	impl_->scriptObjects_.clear();
@@ -370,22 +376,18 @@ void QtScriptingEngine::finalise()
 
 void QtScriptingEngine::deregisterScriptObject( QtScriptObject & scriptObject )
 {
-	std::map<ObjectHandle, ScriptObjects>::iterator findIt = 
-		impl_->scriptObjects_.find( scriptObject.object() );
+	auto findIt = impl_->scriptObjects_.find( scriptObject.object() );
 	assert (findIt != impl_->scriptObjects_.end());
-    auto&& scriptObjects = findIt->second;
-    scriptObjects.erase( 
-        std::remove( scriptObjects.begin(), scriptObjects.end(), &scriptObject), scriptObjects.end());
-    if( scriptObjects.empty() )
-    {
-	    impl_->scriptObjects_.erase( findIt->first );
-    }
+	if (findIt->first == nullptr)
+	{
+		impl_->scriptObjects_.erase( findIt );
+	}
 }
 
 QtScriptObject * QtScriptingEngine::createScriptObject( 
-	const ObjectHandle & object )
+	const ObjectHandle & object, QObject* parent )
 {
-	return impl_->createScriptObject( object );
+	return impl_->createScriptObject( object, parent );
 }
 
 QObject * QtScriptingEngine::createObject( QString definition )

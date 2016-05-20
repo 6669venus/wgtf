@@ -23,6 +23,9 @@ ListView {
     signal itemClicked(var mouse, var itemIndex, var rowIndex)
     signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
 
+    header: view.header
+    footer: view.footer
+
     delegate: WGItemRow {
         id: itemRow
         columnDelegates: view.columnDelegates

@@ -38,8 +38,9 @@ WG1.WGPanel {
 			model: sourceModel
 			columnSpacing: 1
 			columnSequence: [0,0]
-			headerDelegates: [myHeaderDelegate]
-			footerDelegates: [myFooterDelegate]
+			// show header text for column 0&1 and footer text only for column 0
+			headerDelegate: myHeaderDelegate
+			footerDelegates: [myFooterDelegate]// this equals [myFooterDelegate, null]
             roles: ["headerText", "footerText"]
 
             Component {

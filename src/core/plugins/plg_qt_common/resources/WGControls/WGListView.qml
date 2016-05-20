@@ -119,8 +119,6 @@ WGListViewBase {
     */
     property alias headerDelegate: itemView.headerDelegate
     property alias footerDelegate: itemView.footerDelegate
-    header: itemView.header
-    footer: itemView.footer
 
 
     property var extensions: []

@@ -25,6 +25,9 @@ ListView {
 	onItemClicked: __onItemClicked(mouse, itemIndex, rowIndex)
 	onItemDoubleClicked: __onItemDoubleClicked(mouse, itemIndex, rowIndex)
 
+    header: view.header
+    footer: view.footer
+
     delegate: Item {
 		height: childrenRect.height
 		width: childrenRect.width

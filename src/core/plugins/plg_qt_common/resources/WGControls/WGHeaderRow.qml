@@ -53,7 +53,7 @@ Item {
                     id: columnLayoutRow
                     Loader {
                         id: columnDelegateLoader
-                        property var headerData: itemRow.headerData[index]
+                        property var headerData: columnSequence.length <= index ? itemRow.headerData[index] :  itemRow.headerData[itemRow.columnSequence[index]]
                         property var headerWidth: columnWidths[index] - x
                         sourceComponent: itemRow.columnDelegates[index]
                     }

@@ -16,13 +16,27 @@ WGTreeViewBase {
 	property alias columnWidth: itemView.columnWidth
 	property alias columnWidths: itemView.columnWidths
 	property alias columnSpacing: itemView.columnSpacing
-    property alias showColumnHeaders: itemView.showColumnHeaders
-    property alias showColumnFooters: itemView.showColumnFooters
+    
 
 	property alias internalModel: treeView.model
 	property alias model: itemView.model
 
 	internalModel: itemView.extendedModel
+
+    property alias showColumnHeaders: itemView.showColumnHeaders
+    property alias showColumnFooters: itemView.showColumnFooters
+    /*! A list of components to be used for each header/footer column.
+        Item 0 for column 0, item 1 for column 1 etc.
+        If a column is not in the list, then it will default to columnHeaderDelegate/columnFooterDelegate.
+        The default value is an empty list.
+    */
+    property alias columnHeaderDelegates: itemView.columnHeaderDelegates
+    property alias columnFooterDelegates: itemView.columnFooterDelegates
+    /*! The default component to be used for header/footer columns that are not specified
+        by columnHeaderDelegates/columnFooterDelegates.
+    */
+    property alias columnHeaderDelegate: itemView.columnHeaderDelegate
+    property alias columnFooterDelegate: itemView.columnFooterDelegate
     header: itemView.header
     footer: itemView.footer
 

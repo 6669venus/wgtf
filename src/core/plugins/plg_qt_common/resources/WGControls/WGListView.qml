@@ -23,7 +23,9 @@ ScrollView {
         columnWidth: 50
         columnSpacing: 1
         columnDelegates: [columnDelegate, exampleDelegate]
-        roles: ["value"]
+        showColumnHeaders: true
+        showColumnFooters: true
+        roles: ["value", "headerText", "footerText"]
         model: sourceModel
 
         Component {
@@ -83,6 +85,18 @@ WGListViewBase {
 
     property alias showColumnHeaders: itemView.showColumnHeaders
     property alias showColumnFooters: itemView.showColumnFooters
+    /*! A list of components to be used for each header/footer column.
+        Item 0 for column 0, item 1 for column 1 etc.
+        If a column is not in the list, then it will default to columnHeaderDelegate/columnFooterDelegate.
+        The default value is an empty list.
+    */
+    property alias columnHeaderDelegates: itemView.columnHeaderDelegates
+    property alias columnFooterDelegates: itemView.columnFooterDelegates
+    /*! The default component to be used for header/footer columns that are not specified
+        by columnHeaderDelegates/columnFooterDelegates.
+    */
+    property alias columnHeaderDelegate: itemView.columnHeaderDelegate
+    property alias columnFooterDelegate: itemView.columnFooterDelegate
     header: itemView.header
     footer: itemView.footer
 

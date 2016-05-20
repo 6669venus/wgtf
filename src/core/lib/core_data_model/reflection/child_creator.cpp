@@ -40,6 +40,7 @@ struct PropertyNodeEqual
 
 ChildCreator::ChildCreator(IDefinitionManager& defMng)
     : definitionManager(defMng)
+    , extensions(ChildCreatorExtension::createDummy())
     , allocator(createDefaultAllocator())
 {
 }
@@ -118,7 +119,7 @@ void ChildCreator::removeNode(const std::shared_ptr<const PropertyNode>& parent)
 {
     auto iter = propertiesIndex.find(parent);
     assert(iter != propertiesIndex.end());
-    std::vector<std::shared_ptr<const PropertyNode>>& children = iter->second;
+    const std::vector<std::shared_ptr<const PropertyNode>>& children = iter->second;
     for (const std::shared_ptr<const PropertyNode>& node : children)
     {
         removeNode(node);

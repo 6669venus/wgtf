@@ -87,7 +87,7 @@ namespace
 ReflectedEnumModel::ReflectedEnumModel(const MetaEnumObj * enumObj)
 {
     const wchar_t * enumString = enumObj->getEnumString();
-    if (enumString)
+    if (enumString != nullptr)
     {
         generateFromString(items_, enumString);
     }

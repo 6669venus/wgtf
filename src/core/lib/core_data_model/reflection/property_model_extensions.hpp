@@ -51,6 +51,11 @@ template<typename T>
 class ExtensionChain
 {
 public:
+    ExtensionChain()
+        : nextExtension(nullptr)
+    {
+    }
+
     virtual ~ExtensionChain()
     {
         assert(nextExtension == nullptr);
@@ -92,7 +97,7 @@ public:
     }
 
 protected:
-    T * nextExtension = nullptr;
+    T * nextExtension;
 };
 
 class ChildCreatorExtension: public ExtensionChain<ChildCreatorExtension>

@@ -1,5 +1,8 @@
 #ifndef OBJECTS_POOL_HPP
+#define OBJECTS_POOL_HPP
 
+#include <memory>
+#include <vector>
 #include <thread>
 #include <mutex>
 #include <cassert>
@@ -9,8 +12,8 @@ class SingleThreadStrategy
 public:
     SingleThreadStrategy();
 
-    void Lock();
-    void Unlock();
+    void lock();
+    void unlock();
 
 private:
     std::thread::id threadAffinity;
@@ -19,8 +22,8 @@ private:
 class MultiThreadStrategy
 {
 public:
-    void Lock();
-    void Unlock();
+    void lock();
+    void unlock();
 
 private:
     std::mutex mutex;
@@ -35,6 +38,7 @@ public:
     std::shared_ptr<T> requestObject();
 
 private:
+    friend class ObjectsPoolTest;
     static const size_t INVALID_INDEX;
     struct ObjectNode
     {
@@ -60,11 +64,11 @@ private:
         LockGuard(TLockStrategy& lockStrategy_)
             : lockStrategy(lockStrategy_)
         {
-            lockStrategy.Lock();
+            lockStrategy.lock();
         }
         ~LockGuard()
         {
-            lockStrategy.Unlock();
+            lockStrategy.unlock();
         }
 
         TLockStrategy& lockStrategy;
@@ -85,22 +89,22 @@ SingleThreadStrategy::SingleThreadStrategy()
 {
 }
 
-void SingleThreadStrategy::Lock()
+void SingleThreadStrategy::lock()
 {
     assert(threadAffinity == std::this_thread::get_id());
 }
 
-void SingleThreadStrategy::Unlock()
+void SingleThreadStrategy::unlock()
 {
     assert(threadAffinity == std::this_thread::get_id());
 }
 
-void MultiThreadStrategy::Lock()
+void MultiThreadStrategy::lock()
 {
     mutex.lock();
 }
 
-void MultiThreadStrategy::Unlock()
+void MultiThreadStrategy::unlock()
 {
     mutex.unlock();
 }

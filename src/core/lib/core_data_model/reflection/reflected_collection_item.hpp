@@ -1,5 +1,5 @@
-#ifndef REFLECTEC_COLLECTION_ITEM_HPP
-#define REFLECTEC_COLLECTION_ITEM_HPP
+#ifndef REFLECTED_COLLECTION_ITEM_HPP
+#define REFLECTED_COLLECTION_ITEM_HPP
 
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/metadata/meta_base.hpp"

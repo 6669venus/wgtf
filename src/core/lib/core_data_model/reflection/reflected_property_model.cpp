@@ -7,8 +7,16 @@
 
 #include <set>
 
+namespace RPMDetails
+{
+const int ValueColumn = 1;
+}
+
+
 RefPropertyItem::RefPropertyItem(ReflectedPropertyModel & model_)
     : model(model_)
+    , parent(nullptr)
+    , position(0)
 {
 }
 
@@ -52,7 +60,7 @@ ThumbnailData RefPropertyItem::getThumbnail(int column) const
 
 Variant RefPropertyItem::getData(int column, size_t roleId) const
 {
-    if (column == 1)
+    if (column == RPMDetails::ValueColumn)
     {
         auto iter = injectedData.find(roleId);
         if (iter != injectedData.end())

@@ -115,8 +115,8 @@ PropertyNode::PropertyNode()
 bool PropertyNode::operator==(const PropertyNode & other) const
 {
     return propertyType == other.propertyType &&
-           propertyInstance == other.propertyInstance &&
-           object == other.object;
+        propertyInstance == other.propertyInstance &&
+        object == other.object;
 }
 
 bool PropertyNode::operator!=(const PropertyNode & other) const

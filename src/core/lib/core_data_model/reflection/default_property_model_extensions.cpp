@@ -16,9 +16,9 @@
 
 namespace DPMEDetails
 {
-struct MaxMinValuePair
+struct MaxMinRangePair
 {
-    MaxMinValuePair(const Variant & min, const Variant & max)
+    MaxMinRangePair(const Variant & min, const Variant & max)
         : minValue_(min)
         , maxValue_(max)
     {
@@ -28,9 +28,7 @@ struct MaxMinValuePair
     Variant maxValue_;
 };
 
-typedef std::unordered_map<const TypeId, MaxMinValuePair> MaxMinValuePairMap;
-
-MaxMinValuePair getValuePair(const TypeId& tid)
+MaxMinRangePair getValuePair(const TypeId& tid)
 {
     static const TypeId int8Type = TypeId::getType<int8_t>();
     static const TypeId int16Type = TypeId::getType<int16_t>();
@@ -46,42 +44,42 @@ MaxMinValuePair getValuePair(const TypeId& tid)
     static const TypeId doubleType = TypeId::getType<double>();
 
     if (int8Type == tid)
-        return MaxMinValuePair(std::numeric_limits<int8_t>::lowest(), std::numeric_limits<int8_t>::max());
+        return MaxMinRangePair(std::numeric_limits<int8_t>::lowest(), std::numeric_limits<int8_t>::max());
 
     if (int16Type == tid)
-        return MaxMinValuePair(std::numeric_limits<int16_t>::lowest(), std::numeric_limits<int16_t>::max());
+        return MaxMinRangePair(std::numeric_limits<int16_t>::lowest(), std::numeric_limits<int16_t>::max());
 
     if (int32Type == tid)
-        return MaxMinValuePair(std::numeric_limits<int32_t>::lowest(), std::numeric_limits<int32_t>::max());
+        return MaxMinRangePair(std::numeric_limits<int32_t>::lowest(), std::numeric_limits<int32_t>::max());
 
     if (int64Type == tid)
-        return MaxMinValuePair(std::numeric_limits<int64_t>::lowest(), std::numeric_limits<int64_t>::max());
+        return MaxMinRangePair(std::numeric_limits<int64_t>::lowest(), std::numeric_limits<int64_t>::max());
 
     if (uint8Type == tid)
-        return MaxMinValuePair(std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max());
+        return MaxMinRangePair(std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint8_t>::max());
 
     if (uint16Type == tid)
-        return MaxMinValuePair(std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max());
+        return MaxMinRangePair(std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint16_t>::max());
 
     if (uint32Type == tid)
-        return MaxMinValuePair(std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint32_t>::max());
+        return MaxMinRangePair(std::numeric_limits<uint8_t>::min(), std::numeric_limits<uint32_t>::max());
 
     if (uint64Type == tid)
-        return MaxMinValuePair(std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint64_t>::max());
+        return MaxMinRangePair(std::numeric_limits<uint16_t>::min(), std::numeric_limits<uint64_t>::max());
 
     if (longType == tid)
-        return MaxMinValuePair(std::numeric_limits<long>::lowest(), std::numeric_limits<long>::max());
+        return MaxMinRangePair(std::numeric_limits<long>::lowest(), std::numeric_limits<long>::max());
 
     if (ulongType == tid)
-        return MaxMinValuePair(std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max());
+        return MaxMinRangePair(std::numeric_limits<unsigned long>::min(), std::numeric_limits<unsigned long>::max());
 
     if (floatType == tid)
-        return MaxMinValuePair(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max());
+        return MaxMinRangePair(std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max());
 
     if (doubleType == tid)
-        return MaxMinValuePair(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
+        return MaxMinRangePair(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
 
-    return MaxMinValuePair(Variant(), Variant());
+    return MaxMinRangePair(Variant(), Variant());
 }
 
 Variant getMaxValue(const TypeId & typeId)
@@ -116,10 +114,9 @@ Variant DefaultGetterExtension::getValue(const RefPropertyItem* item, int column
     else if (roleId == EnumModelRole::roleId_)
     {
         const MetaEnumObj* enumObj = findFirstMetaData<MetaEnumObj>(*item->getProperty(), defMng);
-        if (enumObj)
+        if (enumObj != nullptr)
         {
-            auto enumModel = std::unique_ptr< IListModel >(new ReflectedEnumModel(enumObj));
-            return ObjectHandle(std::move(enumModel));
+            return ObjectHandle(std::unique_ptr< IListModel >(new ReflectedEnumModel(enumObj)));
         }
     }
     else if (roleId == IsThumbnailRole::roleId_)
@@ -162,15 +159,15 @@ Variant DefaultGetterExtension::getValue(const RefPropertyItem* item, int column
     {
         IBasePropertyPtr propertyInstance = item->getProperty();
         TypeId typeId = propertyInstance->getType();
-        Variant defaultMinValue = DPMEDetails::getMaxValue(typeId);
+        Variant defaultMaxValue = DPMEDetails::getMaxValue(typeId);
         auto minMaxObj = findFirstMetaData<MetaMinMaxObj>(*propertyInstance, defMng);
         if (minMaxObj != nullptr)
         {
             const float & value = minMaxObj->getMax();
-            float minValue = .0f;
-            bool isOk = defaultMinValue.tryCast(minValue);
+            float maxValue = .0f;
+            bool isOk = defaultMaxValue.tryCast(maxValue);
             assert(isOk);
-            float diff = value - minValue;
+            float diff = value - maxValue;
             float epsilon = std::numeric_limits<float>::epsilon();
             if (diff > epsilon)
             {
@@ -180,7 +177,7 @@ Variant DefaultGetterExtension::getValue(const RefPropertyItem* item, int column
                 return value;
         }
 
-        return defaultMinValue;
+        return defaultMaxValue;
     }
     else if (roleId == StepSizeRole::roleId_)
     {
@@ -321,7 +318,7 @@ void DefaultChildCheatorExtension::exposeChildren(const std::shared_ptr<const Pr
         if (propertyValue.tryCast(handle))
         {
             const IClassDefinition* definition = handle.getDefinition(defMng);
-            if (definition)
+            if (definition != nullptr)
             {
                 PropertyIteratorRange range = definition->allProperties();
                 for (PropertyIterator iter = range.begin(); iter != range.end(); ++iter)
@@ -337,7 +334,9 @@ void DefaultChildCheatorExtension::exposeChildren(const std::shared_ptr<const Pr
                 std::string name = BuildIteratorPropertyName(iter);
                 TypeId valueType = iter.valueType();
                 IBasePropertyPtr propertyInstance = allocator->getCollectionItemProperty(std::move(name), std::move(valueType), defMng);
-                ReflectedIteratorValue iteratorValue{ iter, iter.value() };
+                ReflectedIteratorValue iteratorValue;
+                iteratorValue.iterator = iter;
+                iteratorValue.value = iter.value();
                 children.push_back(allocator->createPropertyNode(propertyInstance, ObjectHandle(iteratorValue), PropertyNode::CollectionItem));
             }
         }
@@ -464,6 +463,50 @@ DefaultSetterExtension::DefaultSetterExtension(IReflectionController& reflection
 {
 }
 
+namespace DSetterExtensionDetails
+{
+class BatchHolder
+{
+public:
+    BatchHolder(ICommandManager& commandManager_, size_t objectsCount)
+        : commandManager(commandManager_)
+        , batchStarted(false)
+        , batchSuccessed(false)
+    {
+        if (objectsCount > 1)
+        {
+            batchStarted = true;
+            commandManager.beginBatchCommand();
+        }
+    }
+
+    ~BatchHolder()
+    {
+        if (batchStarted == true)
+        {
+            if (batchSuccessed)
+            {
+                commandManager.endBatchCommand();
+            }
+            else
+            {
+                commandManager.abortBatchCommand();
+            }
+        }
+    }
+
+    void MarkAsSuccessed()
+    {
+        batchSuccessed = true;
+    }
+
+private:
+    bool batchStarted;
+    bool batchSuccessed;
+    ICommandManager& commandManager;
+};
+}
+
 bool DefaultSetterExtension::setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
                                       IDefinitionManager & definitionManager, ICommandManager & commandManager) const
 {
@@ -474,10 +517,7 @@ bool DefaultSetterExtension::setValue(RefPropertyItem * item, int column, size_t
     }
 
     const std::vector<std::shared_ptr<const PropertyNode>>& objects = item->getObjects();
-    if (objects.size() > 1)
-    {
-        commandManager.beginBatchCommand();
-    }
+    DSetterExtensionDetails::BatchHolder batchHolder(commandManager, objects.size());
 
     for (const std::shared_ptr<const PropertyNode>& object : objects)
     {
@@ -524,10 +564,7 @@ bool DefaultSetterExtension::setValue(RefPropertyItem * item, int column, size_t
         }
     }
 
-    if (objects.size() > 1)
-    {
-        commandManager.endBatchCommand();
-    }
+    batchHolder.MarkAsSuccessed();
 
     return true;
 }

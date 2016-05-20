@@ -13,17 +13,12 @@
 class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
-
 class ReflectedPropertyModel;
+
 class RefPropertyItem: public IItem
 {
 public:
     RefPropertyItem(ReflectedPropertyModel & model);
-
-    RefPropertyItem(const RefPropertyItem& other) = delete;
-    RefPropertyItem(RefPropertyItem&& other) = delete;
-    RefPropertyItem& operator=(const RefPropertyItem& other) = delete;
-    RefPropertyItem& operator=(RefPropertyItem&& other) = delete;
 
     const char * getDisplayText(int column) const override;
     ThumbnailData getThumbnail(int column) const override;
@@ -42,6 +37,13 @@ public:
     const RefPropertyItem * getParent() const;
 
 private:
+    //![don't call it]
+    RefPropertyItem(const RefPropertyItem& other) : model(other.model) {}
+    RefPropertyItem(RefPropertyItem&& other) : model(other.model) {}
+    RefPropertyItem& operator=(const RefPropertyItem& other) { return *this; }
+    RefPropertyItem& operator=(RefPropertyItem&& other) { return *this; }
+    //![don't call it]
+
     friend class ReflectedPropertyModel;
     RefPropertyItem * getNonConstParent() const;
     size_t getPosition() const;
@@ -64,8 +66,8 @@ private:
 
 private:
     ReflectedPropertyModel & model;
-    RefPropertyItem * parent = nullptr;
-    size_t position = 0;
+    RefPropertyItem * parent;
+    size_t position;
     std::vector<std::unique_ptr<RefPropertyItem>> children;
     std::vector<std::shared_ptr<const PropertyNode>> nodes;
     Variant itemValue;

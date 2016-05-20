@@ -62,7 +62,7 @@ void ButtonsModel::setEnabled(size_t index, bool isEnabled)
     {
         return;
     }
-    notifyPreDataChanged(button, 0, ButtonEnabledRole::roleId_, isEnabled);
+    notifyPreDataChanged(button, 0, ButtonEnabledRole::roleId_, button->isEnabled);
     button->isEnabled = isEnabled;
     notifyPostDataChanged(button, 0, ButtonEnabledRole::roleId_, isEnabled);
 }
@@ -80,7 +80,7 @@ void ButtonsModel::setIconUri(size_t index, const std::string& iconUri)
     {
         return;
     }
-    notifyPreDataChanged(button, 0, ButtonIconRole::roleId_, iconUri);
+    notifyPreDataChanged(button, 0, ButtonIconRole::roleId_, button->iconUri);
     button->iconUri = iconUri;
     notifyPostDataChanged(button, 0, ButtonIconRole::roleId_, iconUri);
 }

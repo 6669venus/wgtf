@@ -25,7 +25,7 @@ public:
     ::Signal<void(std::shared_ptr<const PropertyNode> child)> nodeRemoved;
 
 private:
-    ChildCreatorExtension * extensions = ChildCreatorExtension::createDummy();
+    ChildCreatorExtension * extensions;
     IDefinitionManager& definitionManager;
 
     std::unordered_map<std::shared_ptr<const PropertyNode>, std::vector<std::shared_ptr<const PropertyNode>>> propertiesIndex;

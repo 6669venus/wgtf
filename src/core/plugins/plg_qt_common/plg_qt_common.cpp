@@ -114,6 +114,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( QtPlugin )
-
-
 } // end namespace wgt

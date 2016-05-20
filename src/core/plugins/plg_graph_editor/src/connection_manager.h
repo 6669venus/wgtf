@@ -102,6 +102,5 @@ private:
     std::unique_ptr<ContextMenuModel> nodeContextMenuModel;
     std::unique_ptr<ContextMenuModel> slotContextMenuModel;
 };
-
 } // end namespace wgt
 #endif // __GRAPHEDITOR_CONNECTIONMANAGER_H__

@@ -116,5 +116,4 @@ void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, cons
 		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 	}
 }
-
 } // end namespace wgt

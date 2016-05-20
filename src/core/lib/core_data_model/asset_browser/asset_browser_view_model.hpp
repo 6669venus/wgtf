@@ -53,6 +53,5 @@ private:
 	struct AssetBrowserViewModelImplementation;
 	std::unique_ptr<AssetBrowserViewModelImplementation> impl_;
 };
-
 } // end namespace wgt
 #endif // ASSET_BROWSER_VIEW_MODEL_H_

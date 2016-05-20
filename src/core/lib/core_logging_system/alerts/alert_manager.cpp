@@ -58,5 +58,4 @@ bool AlertManager::add( const char* text )
 
 	return true;
 }
-
 } // end namespace wgt

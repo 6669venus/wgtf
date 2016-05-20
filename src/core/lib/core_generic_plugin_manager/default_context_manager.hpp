@@ -43,6 +43,5 @@ private:
 	IComponentContext *									parentContext_;
 	std::vector< IComponentContextListener * >			listeners_;
 };
-
 } // end namespace wgt
 #endif

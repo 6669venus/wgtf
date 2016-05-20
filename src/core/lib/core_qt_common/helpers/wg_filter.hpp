@@ -53,8 +53,7 @@ protected:
 	QString roleName_;
 	unsigned int roleId_;
 };
-
-QML_DECLARE_TYPE( WGFilter )
-
 } // end namespace wgt
+
+QML_DECLARE_TYPE( wgt::WGFilter )
 #endif // WG_FILTER_HPP

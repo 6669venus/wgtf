@@ -19,6 +19,5 @@ public:
 private:
 	std::vector< QMetaObject::Connection > connections_;
 };
-
 } // end namespace wgt
 #endif//QT_CONNECTION_HOLDER_HPP

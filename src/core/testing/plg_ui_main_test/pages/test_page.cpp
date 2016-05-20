@@ -334,5 +334,4 @@ void TestPage2::setTestPage( const ObjectHandleT<TestPage> & objHandle )
 {
 	testPage_ = objHandle;
 }
-
 } // end namespace wgt

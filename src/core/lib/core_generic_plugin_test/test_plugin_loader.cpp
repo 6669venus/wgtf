@@ -28,6 +28,4 @@ TestPluginLoader::~TestPluginLoader()
 	pluginManager_.unloadPlugins( plugins_ );
 	plugins_.clear();
 }
-
-
 } // end namespace wgt

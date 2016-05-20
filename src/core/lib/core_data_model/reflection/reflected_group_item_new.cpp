@@ -431,5 +431,4 @@ void ReflectedGroupItemNew::getChildValues( Variants & outChildValues ) const
 		return true;
 	} );
 }
-
 } // end namespace wgt

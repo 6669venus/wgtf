@@ -26,6 +26,5 @@ public:
 	virtual ThumbnailData getStatusIconData( const IAssetObjectItem * asset ) = 0;
 	virtual const char* getTypeIconResourceString( const IAssetObjectItem * asset ) const = 0;
 };
-
 } // end namespace wgt
 #endif // I_ASSET_PRESENTATION_PROVIDER_HPP

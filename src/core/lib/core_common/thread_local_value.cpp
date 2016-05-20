@@ -94,5 +94,4 @@ void* ThreadLocalBase::GetTlsValue(TLIndexType id)
 	return TlsGetValue(id);
 #endif
 }
-
 } // end namespace wgt

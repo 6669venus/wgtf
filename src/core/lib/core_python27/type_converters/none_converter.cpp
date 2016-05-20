@@ -46,5 +46,4 @@ bool NoneConverter::toScriptType( const Variant & inVariant,
 
 
 } // namespace PythonType
-
 } // end namespace wgt

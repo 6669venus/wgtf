@@ -63,6 +63,5 @@ private:
 	struct PerforceDepotViewImplementation;
 	std::unique_ptr<PerforceDepotViewImplementation> impl_;
 };
-
 } // end namespace wgt
 #endif // PERFORCE_DEPOT_VIEW_H_

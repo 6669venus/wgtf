@@ -52,6 +52,5 @@ private:
 	std::map< unsigned int, ThumbnailData > testThumbnails_;
 	ThumbnailData testStatusIcon_;
 };
-
 } // end namespace wgt
 #endif // TEST_ASSET_PRESENTATION_PROVIDER_HPP

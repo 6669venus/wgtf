@@ -75,6 +75,5 @@ public:
 	virtual void registerListener( IComponentContextListener & listener ) = 0;
 	virtual void deregisterListener( IComponentContextListener & listener ) = 0;
 };
-
 } // end namespace wgt
 #endif //I_COMPONENT_CONTEXT_HPP

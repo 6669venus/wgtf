@@ -613,6 +613,4 @@ TEST_F(TestCollectionFixture, int_map)
 		CHECK_EQUAL(test2.size(), collection.size());
 	}
 }
-
-
 } // end namespace wgt

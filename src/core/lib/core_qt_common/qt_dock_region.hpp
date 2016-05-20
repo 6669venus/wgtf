@@ -37,6 +37,5 @@ private:
 	std::map< IView*, DockData > dockWidgetMap_;
 	std::vector<QDockWidget*> needToRestorePreference_;
 };
-
 } // end namespace wgt
 #endif//QT_DOCK_REGION_HPP

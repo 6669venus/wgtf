@@ -49,6 +49,5 @@ private:
 	// satisfied by existing LogLevel options.
 	std::vector< std::string > tags_;
 };
-
 } // end namespace wgt
 #endif // LOG_MESSAGE_HPP

@@ -33,7 +33,5 @@ public:
 	const char * testName_;
 	TestResult & result_;
 };
-
-
 } // end namespace wgt
 #endif // PYTHON_REFLECTION_MODULE_HPP

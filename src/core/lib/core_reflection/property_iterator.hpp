@@ -66,6 +66,5 @@ private:
 	PropertyIterator::IterateStrategy strategy_;
 	const IClassDefinition & definition_;
 };
-
 } // end namespace wgt
 #endif // PROPERTY_ITERATOR_HPP

@@ -37,6 +37,5 @@ public:
 	virtual QWidget * toQWidget( IView & view ) = 0;
 	virtual void retainQWidget( IView & view ) = 0;
 };
-
 } // end namespace wgt
 #endif//I_QT_FRAMEWORK

@@ -84,6 +84,5 @@ public:
 		return safeCast< T >( object );
 	}
 };
-
 } // end namespace wgt
 #endif // I_DEFINITION_MANAGER_HPP

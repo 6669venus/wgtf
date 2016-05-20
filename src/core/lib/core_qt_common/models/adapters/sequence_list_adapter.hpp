@@ -37,6 +37,5 @@ private:
 	QAbstractListModel *model_;
 	QList< int > sequence_;
 };
-
 } // end namespace wgt
 #endif // SEQUENCE_LIST_ADAPTER_HPP

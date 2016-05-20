@@ -551,5 +551,4 @@ bool QtWindow::isLoadingPreferences() const
 {
     return loadingPreferences_;
 }
-
 } // end namespace wgt

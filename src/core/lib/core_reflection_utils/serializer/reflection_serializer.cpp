@@ -368,5 +368,4 @@ void ReflectionSerializer::readPropertyValue( const char * valueType, PropertyAc
 		}
 	}
 }
-
 } // end namespace wgt

@@ -60,6 +60,5 @@ public:
 	SignalCount signalPostItemsRemoved;
 	SignalVoid signalDestructing;
 };
-
 } // end namespace wgt
 #endif // I_LIST_MODEL_HPP

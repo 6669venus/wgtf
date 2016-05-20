@@ -70,6 +70,5 @@ public:
 	}
 
 };
-
 } // end namespace wgt
 #endif // I_META_TYPE_MANAGER_HPP

@@ -142,5 +142,4 @@ int ReflectedEnumModelNew::columnCount() const /* override */
 {
 	return 1;
 }
-
 } // end namespace wgt

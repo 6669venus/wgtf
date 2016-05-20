@@ -22,5 +22,4 @@ void Action::Trigger(float x, float y, size_t objectUid)
         callback(x, y, objectUid);
     }
 }
-
 } // end namespace wgt

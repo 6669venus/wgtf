@@ -108,7 +108,4 @@ bool IDataStream::readValue( Variant & variant )
 {
 	return false;
 }
-
-
-
 } // end namespace wgt

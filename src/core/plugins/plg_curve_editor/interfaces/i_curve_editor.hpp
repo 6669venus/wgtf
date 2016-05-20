@@ -96,6 +96,5 @@ private:
 	virtual void putTimeScaleEditEnabled(const bool&) = 0;
 
 };
-
 } // end namespace wgt
 #endif // i_curve_editor_H_

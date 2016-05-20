@@ -32,6 +32,5 @@ public:
 private:
 	std::vector< std::unique_ptr< AbstractItem > > items_;
 };
-
 } // end namespace wgt
 #endif // _CLASS_DEFINITION_MODEL_NEW_HPP

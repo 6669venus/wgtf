@@ -38,6 +38,5 @@ private:
 	std::string id_;
 	ObjectHandleT<MacroObject> macroObject_;
 };
-
 } // end namespace wgt
 #endif //COMPOUND_COMMAND_HPP

@@ -54,5 +54,4 @@ size_t Connector::GetUID() const
     size_t uid = reinterpret_cast<size_t>(this);
     return uid;
 }
-
 } // end namespace wgt

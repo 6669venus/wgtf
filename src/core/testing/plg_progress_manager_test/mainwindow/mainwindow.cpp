@@ -100,6 +100,4 @@ void MainWindow::executeTestCommand2( IAction * action )
 	auto commandIns = commandSystemProvider->queueCommand( commandId );
 	commandSystemProvider->waitForInstance( commandIns );
 }
-
-
 } // end namespace wgt

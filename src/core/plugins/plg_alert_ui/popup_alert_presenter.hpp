@@ -34,6 +34,5 @@ private:
 	std::unique_ptr< IAction > testAddAlert_;
 	int alertCounter_;
  };
-
 } // end namespace wgt
 #endif // POPUP_ALERT_PRESENTER_HPP

@@ -237,6 +237,5 @@ inline text_stream_manip_details::QuotedStr quoted( std::string& str )
 {
 	return text_stream_manip_details::QuotedStr( str );
 }
-
 } // end namespace wgt
 #endif

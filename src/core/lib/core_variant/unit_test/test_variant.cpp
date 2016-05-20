@@ -736,7 +736,4 @@ TEST( Variant_ptr_castPtr )
 	std::enable_shared_from_this<Base>& rbb = v.castRef< std::enable_shared_from_this<Base> >();
 	CHECK( &rbb == pb );
 }
-
-
-
 } // end namespace wgt

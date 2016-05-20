@@ -266,6 +266,5 @@ private:
 	TypeId typeId_;
 	const IDefinitionManager & definitionManager_;
 };
-
 } // end namespace wgt
 #endif // OBJECT_HANDLE_STORAGE_HPP

@@ -13,6 +13,5 @@ public:
 	IInterface * createContext( const wchar_t * contextId );
 	const char * getType() const;
 };
-
 } // end namespace wgt
 #endif //MEMORY_PLUGIN_CONTEXT_CREATOR_HPP

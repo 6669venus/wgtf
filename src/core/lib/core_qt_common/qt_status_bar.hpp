@@ -19,6 +19,5 @@ public:
 private:
 	QStatusBar & qStatusBar_;
 };
-
 } // end namespace wgt
 #endif//QT_STATUS_BAR_HPP

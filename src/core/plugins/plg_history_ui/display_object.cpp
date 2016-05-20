@@ -27,6 +27,4 @@ ObjectHandle DisplayObject::getDisplayData() const
 {
 	return data_;
 }
-
-
 } // end namespace wgt

@@ -53,7 +53,5 @@ public:
 
 
 } // namespace PythonType
-
-
 } // end namespace wgt
 #endif // I_PYTHON_TYPE_CONVERTER_HPP

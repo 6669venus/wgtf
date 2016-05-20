@@ -15,6 +15,5 @@ struct CustomXmlData
 
 	bool operator==( const CustomXmlData& tdo ) const;
 };
-
 } // end namespace wgt
 #endif //CUSTOM_XML_DATA_HPP

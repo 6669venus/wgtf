@@ -74,7 +74,5 @@ template< typename T, bool IsAbstract = std::is_abstract< T >::value >
 struct CreateHelper : public CreateHelperBase<T, IsAbstract>
 {
 };
-
-
 } // end namespace wgt
 #endif

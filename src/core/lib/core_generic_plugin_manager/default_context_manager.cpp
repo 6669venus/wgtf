@@ -235,5 +235,4 @@ void DefaultComponentContext::deregisterListener(
 	assert( listenerIt != listeners_.end() );
 	listeners_.erase( listenerIt );
 }
-
 } // end namespace wgt

@@ -82,6 +82,4 @@ void PanelContext::updateValues()
 	callMethod( oldStylePythonObject_, definitionManager, methodName );
 	callMethod( newStylePythonObject_, definitionManager, methodName );
 }
-
-
 } // end namespace wgt

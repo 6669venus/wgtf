@@ -25,6 +25,5 @@ private:
 	struct Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
 } // end namespace wgt
 #endif//FILE_SYSTEM_MODEL_HPP

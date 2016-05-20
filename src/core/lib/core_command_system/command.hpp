@@ -71,6 +71,5 @@ private:
 	EventListenerCollection eventListenerCollection_;
 	ICommandManager * commandSystemProvider_;
 };
-
 } // end namespace wgt
 #endif //COMMAND_HPP

@@ -46,7 +46,6 @@ public:
 private:
     static bool fromString( const std::string & s, unsigned int * data );
 };
-
 } // end namespace wgt
 
 namespace std

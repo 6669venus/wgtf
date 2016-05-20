@@ -42,6 +42,5 @@ private:
 	Variant value_;
 	bool bPasted_;
 };
-
 } // end namespace wgt
 #endif //BW_COPYABLE_HPP

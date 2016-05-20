@@ -156,6 +156,5 @@ private:
 	int depth_;
 	CommandThreadAffinity threadAffinity_;
 };
-
 } // end namespace wgt
 #endif //TEST_OBJECTS2_HPP

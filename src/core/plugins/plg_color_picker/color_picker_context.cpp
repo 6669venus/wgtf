@@ -99,5 +99,4 @@ Vector4 ColorPickerContext::grabScreenColor(Vector2 p )
 	auto blue = pixel.blue();
 	return Vector4( red / 255.0f, green / 255.0f, blue/ 255.0f, 1.0f );
 }
-
 } // end namespace wgt

@@ -67,6 +67,5 @@ public slots:
 protected:
 	IQtFramework * qtFramework_;
 };
-
 } // end namespace wgt
 #endif // I_MODEL_EXTENSION_HPP

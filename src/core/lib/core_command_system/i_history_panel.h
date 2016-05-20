@@ -9,6 +9,5 @@ public:
     virtual void setClearButtonVisible (bool show) = 0;
     virtual void setMakeMacroButtonVisible(bool show) = 0;
 };
-
 } // end namespace wgt
 #endif

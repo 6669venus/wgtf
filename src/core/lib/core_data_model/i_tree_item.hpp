@@ -55,6 +55,5 @@ public:
 };
 
 BW_END_NAMESPACE
-
 } // end namespace wgt
 #endif // I_TREE_ITEM_HPP

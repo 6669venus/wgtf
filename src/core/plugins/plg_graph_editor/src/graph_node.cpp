@@ -121,5 +121,4 @@ void GraphNode::PosYChanged(const float& y)
 {
 
 }
-
 } // end namespace wgt

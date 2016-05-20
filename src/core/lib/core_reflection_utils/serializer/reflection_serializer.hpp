@@ -51,6 +51,5 @@ private:
 	std::vector<TypeId> typeList;
 	ObjLinks objLinks_;
 };
-
 } // end namespace wgt
 #endif // REFLECTION_SERIALIZER_HPP

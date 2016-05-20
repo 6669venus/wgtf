@@ -63,7 +63,5 @@ private:
 	PropertyAccessorListeners listeners_;
 	IObjectManager & objectManager_;
 };
-
-
 } // end namespace wgt
 #endif // DEFINITION_MANAGER_HPP

@@ -34,5 +34,4 @@ TestStructure & TestObjects::getTestStructure()
 {
 	return structure_;
 }
-
 } // end namespace wgt

@@ -73,5 +73,4 @@ void QtContextMenu::removeAction( IAction & action )
 
 	destroyQAction( action );
 }
-
 } // end namespace wgt

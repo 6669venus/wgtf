@@ -9,6 +9,5 @@ struct LayoutTags
 {
 	std::vector< std::string > tags_;
 };
-
 } // end namespace wgt
 #endif//LAYOUT_TAGS_HPP

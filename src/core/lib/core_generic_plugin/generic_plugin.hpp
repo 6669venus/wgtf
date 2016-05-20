@@ -55,6 +55,5 @@ private:
 	static IComponentContext * s_Context_;
 	static bool s_ContextInitialized_;
 };
-
 } // end namespace wgt
 #endif //GENERIC_PLUGIN_HPP

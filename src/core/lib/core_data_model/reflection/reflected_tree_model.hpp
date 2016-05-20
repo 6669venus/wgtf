@@ -39,6 +39,5 @@ private:
 	IDefinitionManager & definitionManager_;
 	std::shared_ptr< PropertyAccessorListener > listener_;
 };
-
 } // end namespace wgt
 #endif

@@ -27,6 +27,5 @@ public:
 	virtual void shutdown() = 0;
 	virtual void process() = 0;
 };
-
 } // end namespace wgt
 #endif // I_LOGGING_SYSTEM_HPP

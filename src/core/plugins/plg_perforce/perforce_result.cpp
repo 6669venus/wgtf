@@ -67,7 +67,4 @@ const char* MultiResult::output() const
 	}
 	return output_.c_str();
 }
-
-
-
 } // end namespace wgt

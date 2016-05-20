@@ -47,6 +47,5 @@ private:
 	struct Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
 } // end namespace wgt
 #endif//QT_ABSTRACT_ITEM_MODEL_HPP

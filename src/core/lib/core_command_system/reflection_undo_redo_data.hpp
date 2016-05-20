@@ -41,6 +41,5 @@ private:
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	ReflectedPropertyUndoRedoUtility::UndoRedoHelperList	undoRedoHelperList_;
 };
-
 } // end namespace wgt
 #endif

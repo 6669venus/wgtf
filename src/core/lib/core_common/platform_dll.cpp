@@ -57,7 +57,6 @@ bool FreeLibrary(HMODULE hModule)
 {
 	return dlclose(hModule);
 }
-
 } // end namespace wgt
 
 #endif // __APPLE__

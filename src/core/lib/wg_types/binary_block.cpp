@@ -78,6 +78,4 @@ int BinaryBlock::compare( BinaryBlock& that ) const
 	assert( this->length_ >= 0 );
 	return memcmp( this->data_, that.data_, (size_t)this->length_ );
 }
-
-
 } // end namespace wgt

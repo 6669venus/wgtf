@@ -32,7 +32,5 @@ private:
 	ObjectHandle	value_;
 	ISelectionContext* selectionContext_;
 };
-
-
 } // end namespace wgt
 #endif //SELECTION_HELPER_HPP

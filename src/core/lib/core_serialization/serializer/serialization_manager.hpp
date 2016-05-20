@@ -29,9 +29,5 @@ private:
 	typedef std::unordered_map< const TypeId , ISerializer * > SerializerMap;
 	SerializerMap serializerMap_;
 };
-
-
-
-
 } // end namespace wgt
 #endif // SERIALIZATION_MANAGER_HPP

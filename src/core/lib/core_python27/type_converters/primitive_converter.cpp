@@ -69,5 +69,4 @@ template class PrimitiveConverter< std::wstring >;
 
 
 } // namespace PythonType
-
 } // end namespace wgt

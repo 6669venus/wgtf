@@ -12,5 +12,4 @@ BEGIN_EXPOSE( ReflectedCollectionInsertCommandParameters, MetaNoSerialization() 
 	EXPOSE( "key", key_, MetaNone() )
 	EXPOSE( "value", value_, MetaNone() )
 END_EXPOSE()
-
 } // end namespace wgt

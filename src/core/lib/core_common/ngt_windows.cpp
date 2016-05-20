@@ -186,7 +186,6 @@ bool MoveFileA(const char* path, const char* new_path)
 {
 	return true;
 }
-
 } // end namespace wgt
 
 #endif // __APPLE__

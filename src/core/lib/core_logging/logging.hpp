@@ -33,7 +33,5 @@ namespace NGT
 int logMessage( const char* format, ... );
 
 } // namespace NGT
-
-
 } // end namespace wgt
 #endif // LOGGING_HPP

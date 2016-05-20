@@ -390,7 +390,4 @@ bool BasicStream::resetReadBuffer()
 
 	return seek( 0, std::ios_base::cur ) >= 0;
 }
-
-
-
 } // end namespace wgt

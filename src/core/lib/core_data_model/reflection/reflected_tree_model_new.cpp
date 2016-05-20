@@ -308,5 +308,4 @@ CONNECT_METHOD( connectPreRowsRemoved, preRowsRemoved_, RangeCallback )
 CONNECT_METHOD( connectPostRowsRemoved, postRowsRemoved_, RangeCallback )
 
 #undef CONNECT_METHOD
-
 } // end namespace wgt

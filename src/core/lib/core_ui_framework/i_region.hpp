@@ -16,6 +16,5 @@ public:
 	virtual void addView( IView & view ) = 0;
 	virtual void removeView( IView & view ) = 0;
 };
-
 } // end namespace wgt
 #endif

@@ -15,7 +15,5 @@ public:
 	virtual const char * getDataHint() const = 0;
 	virtual bool setData( const Variant & value ) = 0;
 };
-
-
 } // end namespace wgt
 #endif // I_COPYABLE_OBJECT_HPP

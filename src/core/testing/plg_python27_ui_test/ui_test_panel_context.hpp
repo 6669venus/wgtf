@@ -31,6 +31,4 @@ public:
 	ObjectHandle pythonObject_;
 	std::unique_ptr< ITreeModel > treeModel_;
 };
-
-
 } // end namespace wgt

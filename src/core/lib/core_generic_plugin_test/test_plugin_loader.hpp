@@ -29,6 +29,5 @@ public:
 	GenericPluginManager pluginManager_;
 	PluginList plugins_;
 };
-
 } // end namespace wgt
 #endif // TEST_PLUGIN_LOADER_HPP

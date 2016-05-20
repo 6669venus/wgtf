@@ -92,6 +92,4 @@ void PopupAlertPresenter::addTestAlert( IAction * action )
 		}
 	}
 }
-
-
 } // end namespace wgt

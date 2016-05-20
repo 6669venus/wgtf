@@ -44,6 +44,5 @@ private:
 	mutable std::string output_;
 	mutable std::string errors_;
 };
-
 } // end namespace wgt
 #endif // PERFORCE_RESULT_H_

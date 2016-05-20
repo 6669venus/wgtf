@@ -32,6 +32,5 @@ private:
     size_t outputSlotID;
     size_t intputSlotID;
 };
-
 } // end namespace wgt
 #endif // __GRAPHEDITOR_CONNECTION_H__

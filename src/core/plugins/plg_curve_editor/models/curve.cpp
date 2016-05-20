@@ -557,5 +557,4 @@ void Curve::pushModification(ModificationFunction&& executeFunc, ModificationFun
 	executeFunc();
 	modificationStack_.emplace_back(std::move(executeFunc), std::move(undoFunc));
 }
-
 } // end namespace wgt

@@ -3,11 +3,6 @@
 
 #include <set>
 
-namespace wgt
-{
-std::set< void * > & getQtInPlaceNewCollection();
-void releaseQtInPlaceNewCollection();
-
 #define DECLARE_QT_MEMORY_HANDLER \
 public:\
 void *	operator new( size_t s )\
@@ -43,7 +38,11 @@ void operator delete( void* p, void * )\
 	{\
 		wgt::releaseQtInPlaceNewCollection();\
 	}\
-};\
+};
 
+namespace wgt
+{
+std::set< void * > & getQtInPlaceNewCollection();
+void releaseQtInPlaceNewCollection();
 } // end namespace wgt
 #endif //QT_NEW_HANDLER

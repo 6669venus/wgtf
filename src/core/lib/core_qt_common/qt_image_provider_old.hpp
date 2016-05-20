@@ -25,6 +25,5 @@ private:
 	// TODO cap the size of this cache
 	QHash<QString, QImage> imageCache_;
 };
-
 } // end namespace wgt
 #endif // QT_IMAGE_PROVIDER_OLD_HPP

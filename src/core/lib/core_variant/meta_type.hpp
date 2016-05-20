@@ -291,6 +291,5 @@ private:
 #endif // FAST_RUNTIME_POINTER_CAST
 
 };
-
 } // end namespace wgt
 #endif //META_TYPE_HPP

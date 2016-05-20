@@ -17,6 +17,5 @@ public:
 		return x == v.x && y == v.y;
 	}
 };
-
 } // end namespace wgt
 #endif // VECTOR2_HPP

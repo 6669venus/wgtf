@@ -23,6 +23,5 @@ private:
 	int argc_;
 	char** argv_;
 };
-
 } // end namespace wgt
 #endif // COMMAND_LINE_PARSER_HPP

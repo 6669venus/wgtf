@@ -192,5 +192,4 @@ bool Python27ScriptingEngine::checkErrors()
 
 	return false;
 }
-
 } // end namespace wgt

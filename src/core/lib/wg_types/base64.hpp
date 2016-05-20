@@ -31,7 +31,5 @@ public:
 	static int decode(const std::string & data, char* results, size_t bufSize);
 	static bool decode( const std::string & inData, std::string & outData );
 };
-
-
 } // end namespace wgt
 #endif // Base64_HPP

@@ -37,6 +37,5 @@ private:
 	QPersistentModelIndex parent_;
 	QModelIndex removedParent_;
 };
-
 } // end namespace wgt
 #endif // CHILD_LIST_ADAPTER_HPP

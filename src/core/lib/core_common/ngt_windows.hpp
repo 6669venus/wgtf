@@ -23,7 +23,7 @@
 namespace wgt
 {
 	typedef unsigned __int64 __uint64;
-}
+} // end namespace wgt
 #endif
 
 #include "platform_dbg.hpp"
@@ -286,9 +286,7 @@ VOID WINAPI Sleep(
 );
 
 bool MoveFileA(const char* path, const char* new_path);
-
 } // end namespace wgt
-
 
 #endif // __APPLE__
 #endif // NGT_WINDOWS_HPP_INCLUDED

@@ -13,6 +13,5 @@ public:
 
 	QHash<int, QByteArray> roleNames() const override;
 };
-
 } // end namespace wgt
 #endif

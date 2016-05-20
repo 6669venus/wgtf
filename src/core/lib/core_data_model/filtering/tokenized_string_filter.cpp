@@ -124,5 +124,4 @@ bool TokenizedStringFilter::checkFilter( const IItem* item )
 
 	return true;
 }
-
 } // end namespace wgt

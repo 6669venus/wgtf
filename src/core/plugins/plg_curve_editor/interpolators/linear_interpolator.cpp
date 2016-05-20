@@ -48,5 +48,4 @@ void LinearInterpolator::updateControlPoints(BezierPoint& point, BezierPoint* pr
 		nextPoint->cp2->setY(0.f);
 	}
 }
-
 } // end namespace wgt

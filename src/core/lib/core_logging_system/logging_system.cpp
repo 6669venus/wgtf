@@ -170,5 +170,4 @@ void LoggingSystem::process()
 		}
 	}
 }
-
 } // end namespace wgt

@@ -32,6 +32,5 @@ private:
 	std::filebuf file_;
 
 };
-
 } // end namespace wgt
 #endif // FILE_DATA_STREAM_H_

@@ -315,7 +315,4 @@ TEST( XMLSerializer_reflected )
 	tmpTestObj->xs_obj_[ 1 ][ "obj1" ] = createObject<SimpleTestObject>( "value 1.1 modified" );
 	CHECK( *dstTestObj != *tmpTestObj );
 }
-
-
-
 } // end namespace wgt

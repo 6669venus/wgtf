@@ -26,6 +26,5 @@ private:
 
 	AlertManager& alertManager_;
 };
-
 } // end namespace wgt
 #endif // BASIC_ALERT_LOGGER_HPP

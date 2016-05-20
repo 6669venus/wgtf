@@ -27,6 +27,5 @@ public:
 	virtual Variant& getData() = 0;
 	virtual const Variant& getData() const = 0;
 };
-
 } // end namespace wgt
 #endif//I_ACTION_HPP

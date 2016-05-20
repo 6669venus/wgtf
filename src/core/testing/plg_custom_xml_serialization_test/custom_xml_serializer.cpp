@@ -26,5 +26,4 @@ bool CustomXmlSerializer::sync()
 {
 	return stream_.sync();
 }
-
 } // end namespace wgt

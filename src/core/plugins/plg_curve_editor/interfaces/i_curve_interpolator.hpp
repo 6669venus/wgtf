@@ -41,6 +41,5 @@ public:
 };
 
 typedef std::unique_ptr<ICurveInterpolator> ICurveInterpolatorPtr;
-
 } // end namespace wgt
 #endif // I_CURVE_INTERPOLATOR_H_

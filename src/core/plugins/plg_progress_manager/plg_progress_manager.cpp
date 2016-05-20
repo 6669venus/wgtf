@@ -44,5 +44,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( ProgressManagerUIPlugin )
-
 } // end namespace wgt

@@ -60,5 +60,4 @@ private:
 class IComponentContext;
 extern IComponentContext * g_pHookContext;
 extern std::weak_ptr< ReflectedPython::HookListener > g_listener;
-
 } // end namespace wgt

@@ -177,7 +177,5 @@ namespace Script
 
 
 } // namespace PyScript
-
-
 } // end namespace wgt
 #endif // TYPE_CONVERTER_HPP

@@ -23,6 +23,5 @@ private:
 	IComponentContext& contextManager_;
 	std::vector< IInterface * > types_;
 };
-
 } // end namespace wgt
 #endif // ASSET_BROWSER_VIEW_HPP

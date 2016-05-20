@@ -28,7 +28,5 @@ private:
 	std::string name_;
 	bool usingXML_;
 };
-
-
 } // end namespace wgt
 #endif // TESTRESULTBWOUT_H

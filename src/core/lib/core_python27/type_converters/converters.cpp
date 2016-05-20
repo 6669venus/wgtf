@@ -46,6 +46,4 @@ bool Converters::toVariant( const PyScript::ScriptObject & inObject,
 
 
 } // namespace PythonType
-
-
 } // end namespace wgt

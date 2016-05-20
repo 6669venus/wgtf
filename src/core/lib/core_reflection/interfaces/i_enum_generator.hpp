@@ -14,6 +14,5 @@ public:
 };
 
 typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
-
 } // end namespace wgt
 #endif //I_ENUM_GENERATOR_HPP

@@ -389,7 +389,5 @@ bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 	}
 	return false;
 }
-
-
 } // end namespace wgt
 #endif //OBJECT_HANDLE_HPP

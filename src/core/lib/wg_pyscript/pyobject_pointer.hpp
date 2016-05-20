@@ -249,6 +249,5 @@ protected:
 
 
 } // namespace PyScript
-
 } // end namespace wgt
 #endif // PYOBJECT_POINTER_HPP

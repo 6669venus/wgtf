@@ -109,6 +109,4 @@ bool BaseGenericObject::setProperty( const char * name, const Variant & value )
 
 	return property->set( provider, value, *definition.getDefinitionManager() );
 }
-
-
 } // end namespace wgt

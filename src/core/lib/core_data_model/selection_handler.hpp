@@ -24,7 +24,5 @@ private:
 	std::vector< int > selectedRows_;
 	std::vector< IItem* > selectedItems_;
 };
-
-
 } // end namespace wgt
 #endif //HISTORY_SELECTION_HANDLER_HPP

@@ -76,6 +76,4 @@ TEST( datastreambuf_formatted_io )
 
 	CHECK( stream.eof() );
 }
-
-
 } // end namespace wgt

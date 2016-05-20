@@ -34,6 +34,4 @@ int MainApplication::startApplication() /* override */
 void MainApplication::quitApplication() /* override */
 {
 }
-
-
 } // end namespace wgt

@@ -24,5 +24,4 @@ void BasicAlertLogger::out( LogMessage* message )
 		alertManager_.add( message->c_str() );
 	}
 }
-
 } // end namespace wgt

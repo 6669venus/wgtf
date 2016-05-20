@@ -215,6 +215,5 @@ private:
 	using QtItemModel::rowCount;
 	using QtItemModel::columnCount;
 };
-
 } // end namespace wgt
 #endif//QT_ITEM_MODEL_HPP

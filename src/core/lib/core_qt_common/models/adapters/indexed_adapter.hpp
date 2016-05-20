@@ -136,7 +136,5 @@ void isolateRedundantIndex(
 	// recursively check children for found indices
 	isolateRedundantIndices( redundantIndex, indices, redundantAdapters );
 }
-
-
 } // end namespace wgt
 #endif // INDEXED_ADAPTER_HPP

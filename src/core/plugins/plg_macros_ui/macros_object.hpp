@@ -27,7 +27,5 @@ private:
 	ICommandManager* commandSystem_;
 	int currentIndex_;
 };
-
-
 } // end namespace wgt
 #endif // MACROS_OBJECT_HPP

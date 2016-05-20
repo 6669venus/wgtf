@@ -31,6 +31,5 @@ public:
 private:
 	std::map< std::string, std::unique_ptr< QtActionData > > actionData_;
 };
-
 } // end namespace wgt
 #endif//ACTION_MANAGER_HPP

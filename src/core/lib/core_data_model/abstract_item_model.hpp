@@ -556,6 +556,5 @@ private:
 		}); 
 	}
 };
-
 } // end namespace wgt
 #endif//ABSTRACT_ITEM_MODEL_HPP

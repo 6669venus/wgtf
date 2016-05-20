@@ -7,7 +7,5 @@
 namespace wgt
 {
 class TestStringData;
-
-
 } // end namespace wgt
 #endif // DATA_MODEL_UNIT_TEST_TREE_MODEL_HPP

@@ -167,6 +167,5 @@ protected:
 	virtual void timerEvent(QTimerEvent* event) override;
 
 };
-
 } // end namespace wgt
 #endif // QT_PALETTE_H

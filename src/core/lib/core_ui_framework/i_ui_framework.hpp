@@ -87,6 +87,5 @@ public:
 
 	virtual IPreferences * getPreferences() = 0;
 };
-
 } // end namespace wgt
 #endif//I_UI_FRAMEWORK_HPP

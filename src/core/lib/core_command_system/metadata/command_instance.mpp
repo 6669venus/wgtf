@@ -11,5 +11,4 @@ BEGIN_EXPOSE( CommandInstance, MetaInPlace( "CommandId" ) )
 	EXPOSE( "Children", children_, MetaHidden() )
 	EXPOSE( "CommandArguments", arguments_, MetaHidden() )
 END_EXPOSE()
-
 } // end namespace wgt

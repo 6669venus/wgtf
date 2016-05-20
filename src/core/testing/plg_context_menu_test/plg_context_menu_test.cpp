@@ -135,6 +135,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( ContextMenuTest )
-
-
 } // end namespace wgt

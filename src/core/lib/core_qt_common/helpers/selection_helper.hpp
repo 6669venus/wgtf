@@ -48,7 +48,5 @@ private:
 	std::vector<QModelIndex> selectionSet_;
 
 };
-
-
 } // end namespace wgt
 #endif //SELECTION_HELPER_HPP

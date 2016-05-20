@@ -88,5 +88,4 @@ void SelectionHelper::select( const QList<QVariant>& selectionList )
 	source_->setSelectedRows( selectedRows );
 	source_->signalPostSelectionChanged();
 }
-
 } // end namespace wgt

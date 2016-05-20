@@ -87,7 +87,4 @@ bool XMLSerializer::sync()
 {
 	return stream_.sync();
 }
-
-
-
 } // end namespace wgt

@@ -456,5 +456,4 @@ void ReflectedObjectItemNew::enumerateChildren(
 		return true;
 	} );
 }
-
 } // end namespace wgt

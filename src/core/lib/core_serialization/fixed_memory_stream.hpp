@@ -24,6 +24,5 @@ private:
 	std::streamoff pos_;
 	std::streamsize size_;
 };
-
 } // end namespace wgt
 #endif //FIXED_MEMORY_STREAM_HPP

@@ -212,6 +212,5 @@ public:
 	 */
 	virtual void addObjectLinks( const std::string & objId, const IBasePropertyPtr & property, const ObjectHandle & parent ) = 0;
 };
-
 } // end namespace wgt
 #endif // I_OBJECT_MANAGER_HPP

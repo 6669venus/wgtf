@@ -56,6 +56,5 @@ public:
 	static bool unsetValue( const char* name );
 
 };
-
 } // end namespace wgt
 #endif

@@ -56,6 +56,5 @@ private:
 	struct Impl;
 	std::unique_ptr<Impl> impl_;
 };
-
 } // end namespace wgt
 #endif //SIMPLE_ACTIVE_FILTERS_MODEL_HPP

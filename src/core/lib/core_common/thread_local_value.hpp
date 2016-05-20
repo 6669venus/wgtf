@@ -85,7 +85,6 @@ class ThreadLocalValue :
 	public ThreadLocalValueImpl<T, (sizeof(T) <= sizeof(void*)) && std::is_trivial<T>::value>
 {
 };
-
 } // end namespace wgt
 
 #include "thread_local_value_impl.hpp"

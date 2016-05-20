@@ -31,6 +31,5 @@ public:
 		return SimpleComponentProvider::componentId( typeId, predicate );
 	}
 };
-
 } // end namespace wgt
 #endif

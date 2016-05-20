@@ -210,6 +210,4 @@ private:
 
 
 PLG_CALLBACK_FUNC(CustomXmlSerializationPlugin)
-
-
 } // end namespace wgt

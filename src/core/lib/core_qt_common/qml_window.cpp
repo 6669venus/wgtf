@@ -468,5 +468,4 @@ bool QmlWindow::loadPreference()
     NGT_DEBUG_MSG( "Load Qml Window Preferences Failed.\n" );
     return false;
 }
-
 } // end namespace wgt

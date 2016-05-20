@@ -35,6 +35,5 @@ public:
 
 
 bool operator==( const BezierPoint& lhs, const BezierPoint& rhs );
-
 } // end namespace wgt
 #endif // BEZIER_POINT_H_

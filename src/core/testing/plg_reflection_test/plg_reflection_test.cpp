@@ -172,5 +172,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( TestPluginReflection )
-
 } // end namespace wgt

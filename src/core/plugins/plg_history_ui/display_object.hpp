@@ -15,7 +15,5 @@ private:
 	ObjectHandle data_;
 
 };
-
-
 } // end namespace wgt
 #endif //DISPLAY_OBJECT_HPP

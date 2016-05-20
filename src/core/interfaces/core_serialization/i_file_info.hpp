@@ -73,6 +73,5 @@ public:
 	virtual const FileAttributes::FileAttribute	attributes() const = 0;
 };
 typedef std::shared_ptr<IFileInfo> IFileInfoPtr;
-
 } // end namespace wgt
 #endif // I_FILE_INFO_H_

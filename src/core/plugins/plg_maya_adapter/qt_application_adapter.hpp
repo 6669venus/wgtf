@@ -26,6 +26,5 @@ public slots:
 private:
 	std::vector< IApplicationListener * >	listeners_;
 };
-
 } // end namespace wgt
 #endif//QT_APPLICATION_ADAPTER_HPP

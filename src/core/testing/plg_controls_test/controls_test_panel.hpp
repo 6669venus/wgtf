@@ -29,7 +29,5 @@ private:
 	std::unique_ptr< IView > controlsView_;
 	ObjectHandle controlData_;
 };
-
-
 } // end namespace wgt
 #endif // _CONTROLS_TEST_PANEL_HPP

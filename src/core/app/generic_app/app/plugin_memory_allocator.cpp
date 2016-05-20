@@ -112,5 +112,4 @@ void PluginMemoryAllocator::mem_delete_array(
 	ScopedMemoryContext memoryContext( memoryContext_ );
 	NGTAllocator::deallocate( ptr );
 }
-
 } // end namespace wgt

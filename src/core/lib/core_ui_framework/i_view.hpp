@@ -29,6 +29,5 @@ public:
 	virtual void registerListener( IViewEventListener* listener ) = 0;
 	virtual void deregisterListener( IViewEventListener* listener ) = 0;
 };
-
 } // end namespace wgt
 #endif // I_VIEW_HPP

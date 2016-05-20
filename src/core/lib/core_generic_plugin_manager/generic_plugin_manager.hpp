@@ -58,6 +58,5 @@ private:
 	std::unique_ptr< IPluginContextManager >		contextManager_;
     bool applyDebugPostfix;
 };
-
 } // end namespace wgt
 #endif //GENERIC_PLUGIN_MANAGER_HPP

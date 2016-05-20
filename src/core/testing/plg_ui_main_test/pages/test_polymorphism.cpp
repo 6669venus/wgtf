@@ -69,5 +69,4 @@ void TestPolyColor3::setSelected( const int & select )
 {
 	seletColor_ = select;
 }
-
 } // end namespace wgt

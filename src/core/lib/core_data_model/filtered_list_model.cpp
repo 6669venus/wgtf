@@ -657,5 +657,4 @@ void FilteredListModel::refresh( bool waitToFinish )
 	std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
 	nextRefresh.detach();
 }
-
 } // end namespace wgt

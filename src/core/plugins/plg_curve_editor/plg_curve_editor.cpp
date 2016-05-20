@@ -105,6 +105,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(CurveEditorPlugin)
-
-
 } // end namespace wgt

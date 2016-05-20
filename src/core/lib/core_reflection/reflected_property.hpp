@@ -183,6 +183,5 @@ private:
 	};
 
 };
-
 } // end namespace wgt
 #endif // REFLECTED_PROPERTY_HPP

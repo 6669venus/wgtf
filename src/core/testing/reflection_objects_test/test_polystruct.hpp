@@ -34,6 +34,5 @@ public:
 private:
 	DEFINE_INHERITS_TEST_DATA_TYPES()
 };
-
 } // end namespace wgt
 #endif //TEST_POLYSTRUCTURE_HPP

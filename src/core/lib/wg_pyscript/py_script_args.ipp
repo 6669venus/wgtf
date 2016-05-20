@@ -115,4 +115,3 @@ template < typename T1, typename T2, typename T3, typename T4, typename T5,
 	PyTuple_SET_ITEM( pTuple, 7, Script::getData( arg8 ) );
 	return ScriptArgs( pTuple, ScriptObject::FROM_NEW_REFERENCE );
 }
-

@@ -84,6 +84,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( MayaAdapterPlugin )
-
-
 } // end namespace wgt

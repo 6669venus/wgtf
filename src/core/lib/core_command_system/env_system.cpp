@@ -92,5 +92,4 @@ void EnvManager::loadEnvState( int id )
         l->onLoadEnvState( it->second.get() );
     }
 }
-
 } // end namespace wgt

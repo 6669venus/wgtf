@@ -46,6 +46,5 @@ public:
 	SignalVoid signalClose;
 	SignalConfirm signalTryClose;
 };
-
 } // end namespace wgt
 #endif //I_WINDOW_HPP

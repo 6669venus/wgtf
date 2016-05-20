@@ -82,6 +82,4 @@ bool CollectionListItem::setData( int column,
 	assert( false && "Not implemented" );
 	return false; 
 }
-
-
 } // end namespace wgt

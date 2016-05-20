@@ -59,6 +59,5 @@ private:
 	struct Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
 } // end namespace wgt
 #endif//WG_ITEM_VIEW_HPP

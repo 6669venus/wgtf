@@ -39,7 +39,5 @@ private:
 	std::unique_ptr< IAction > testExit_;
 	ConnectionHolder connections_;
 };
-
-
 } // end namespace wgt
 #endif // MAINWINDOW_H

@@ -24,7 +24,5 @@ public:
 private:
 	void * memoryContext_;
 };
-
-
 } // end namespace wgt
 #endif //PLUGIN_MEMORY_ALLOCATOR_HPP

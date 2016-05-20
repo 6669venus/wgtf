@@ -615,5 +615,4 @@ TEST_F( TestFixture, changeTreeItem )
 		CHECK( size == oldSize );
 	}
 }
-
 } // end namespace wgt

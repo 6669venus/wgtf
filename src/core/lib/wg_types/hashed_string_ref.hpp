@@ -21,7 +21,6 @@ private:
 	const char *	pStart_;
 	size_t			length_;
 };
-
 } // end namespace wgt
 
 namespace std

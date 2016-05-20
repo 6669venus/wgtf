@@ -468,5 +468,4 @@ ObjectHandleT<ConnectionSlot> ConnectionManager::GetSlot(size_t slotUID)
 
     return TSlotPtr();
 }
-
 } // end namespace wgt

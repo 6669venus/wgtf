@@ -23,5 +23,4 @@ void RegisterGrapEditorTypes(IDefinitionManager& mng)
     qmlRegisterType<ConnectionItem>("DAVA", 1, 0, "ConnectionItem");
     qmlRegisterType<InteractiveConnectionItem>("DAVA", 1, 0, "InteractiveConnectionItem");
 }
-
 } // end namespace wgt

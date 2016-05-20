@@ -74,7 +74,5 @@ public:
 private:
 	std::unique_ptr<CollectionModel> model_;
 };
-
-
 } // end namespace wgt
 #endif // _QT_COLLECTION_MODEL_HPP

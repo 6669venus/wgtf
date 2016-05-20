@@ -47,6 +47,4 @@ ISerializer * SerializationManager::getSerializer( const TypeId & typeId )
 	}
 	return ret;
 }
-
-
 } // end namespace wgt

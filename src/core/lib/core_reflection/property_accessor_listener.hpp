@@ -24,6 +24,5 @@ public:
 	virtual void preErase( const PropertyAccessor & accessor, size_t index, size_t count ) {}
 	virtual void postErased( const PropertyAccessor & accessor, size_t index, size_t count ) {}
 };
-
 } // end namespace wgt
 #endif // PROPERTY_ACCESSOR_LISTENER_HPP

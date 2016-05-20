@@ -221,6 +221,4 @@ bool Base64::decode( const std::string& inData, std::string & outData )
 
     return true;
 }
-
-
 } // end namespace wgt

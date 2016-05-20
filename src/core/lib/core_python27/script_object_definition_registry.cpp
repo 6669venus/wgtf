@@ -435,5 +435,4 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 
 
 } // namespace ReflectedPython
-
 } // end namespace wgt

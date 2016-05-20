@@ -133,5 +133,4 @@ const char* FileSystemAssetPresentationProvider::getTypeIconResourceString(const
 	// Display default file icon
 	return nullptr;
 }
-
 } // end namespace wgt

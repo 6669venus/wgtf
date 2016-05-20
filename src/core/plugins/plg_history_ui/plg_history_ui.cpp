@@ -224,6 +224,4 @@ private:
 
 
 PLG_CALLBACK_FUNC( HistoryUIPlugin )
-
-
 } // end namespace wgt

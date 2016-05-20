@@ -15,8 +15,4 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestInheritedPolyStruct, TestPolyStruct, MetaNone() )
 	DEFINE_TEST_INHERITED_DATA_TYPES_METADATA()
 END_EXPOSE()
-
-
-
-
 } // end namespace wgt

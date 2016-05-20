@@ -29,7 +29,5 @@ private:
 	void executeTestCommand1( IAction * action );
 	void executeTestCommand2( IAction * action );
 };
-
-
 } // end namespace wgt
 #endif // MAINWINDOW_H

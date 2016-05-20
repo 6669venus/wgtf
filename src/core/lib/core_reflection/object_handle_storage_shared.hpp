@@ -57,6 +57,5 @@ public:
 private:
 	std::shared_ptr< ObjectMetaData > metaData_;
 };
-
 } // end namespace wgt
 #endif // OBJECT_HANDLE_STORAGE_SHARED_HPP

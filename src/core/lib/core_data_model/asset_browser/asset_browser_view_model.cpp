@@ -195,5 +195,4 @@ ISelectionHandler * AssetBrowserViewModel::getFolderContentSelectionHandler() co
 {
 	return &impl_->folderContentSelectionHandler_;
 }
-
 } // end namespace wgt

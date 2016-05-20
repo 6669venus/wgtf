@@ -62,7 +62,5 @@ private:
     bool clearButtonVisible;
     bool makeMacroButtonVisible;
 };
-
-
 } // end namespace wgt
 #endif // HISTORY_OBJECT_HPP

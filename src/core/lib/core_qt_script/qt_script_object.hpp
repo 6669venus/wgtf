@@ -60,6 +60,5 @@ private:
 	const QMetaObject & metaObject_;
 	ObjectHandle object_;
 };
-
 } // end namespace wgt
 #endif//QT_SCRIPT_OBJECT_HPP

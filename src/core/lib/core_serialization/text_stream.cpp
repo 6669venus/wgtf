@@ -187,7 +187,4 @@ TextStream& operator>>( TextStream& stream, void*& value )
 
 	return stream;
 }
-
-
-
 } // end namespace wgt

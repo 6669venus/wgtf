@@ -33,6 +33,5 @@ private:
 	BatchCommand( CommandManager * pCommandManager );
     CommandManager * pCommandManager_;
 };
-
 } // end namespace wgt
 #endif//BATCH_COMMAND_HPP

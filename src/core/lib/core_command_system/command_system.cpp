@@ -21,5 +21,4 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 }
 
 }
-
 } // end namespace wgt

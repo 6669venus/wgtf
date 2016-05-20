@@ -50,7 +50,5 @@ public:
 private:
 	virtual ISerializer * getSerializer( const TypeId & typeId ) = 0;
 };
-
-
 } // end namespace wgt
 #endif // I_SERIALIZATION_MANAGER_HPP

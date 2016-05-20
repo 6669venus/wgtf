@@ -51,6 +51,5 @@ private:
 	std::string path_;
 	std::string windowId_;
 };
-
 } // end namespace wgt
 #endif//QT_MENU_BAR_HPP

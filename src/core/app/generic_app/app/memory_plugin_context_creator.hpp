@@ -14,6 +14,5 @@ public:
 	const char * getType() const;
 	bool ownsSubContext() const;
 };
-
 } // end namespace wgt
 #endif //MEMORY_PLUGIN_CONTEXT_CREATOR_HPP

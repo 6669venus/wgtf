@@ -20,5 +20,4 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestClass::InnerClass, MetaNone() )
 	EXPOSE( "InnerName", innerName_, MetaNone() )
 END_EXPOSE()
-
 } // end namespace wgt

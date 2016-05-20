@@ -22,7 +22,5 @@ public:
 
 	Vector4 pixelColor_;
 };
-
-
 } // end namespace wgt
 #endif // COLOR_PICKER_CONTEXT_HPP

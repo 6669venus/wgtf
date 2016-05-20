@@ -42,6 +42,5 @@ private:
 	std::unique_ptr< IComponentContext >					globalContext_;
 	const char*											executablepath_;
 };
-
 } // end namespace wgt
 #endif //PLUGIN_CONTEXT_MANAGER_HPP

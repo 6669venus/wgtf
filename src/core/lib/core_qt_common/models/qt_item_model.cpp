@@ -412,5 +412,4 @@ bool QtTableModel::removeColumn( int column )
 {
 	return QtAbstractItemModel::removeColumn( column, nullptr ); 
 }
-
 } // end namespace wgt

@@ -52,7 +52,5 @@ private:
 	void characterData( const char* data, size_t length ) override;
 
 };
-
-
 } // end namespace wgt
 #endif//CUSTOM_XML_READER_HPP_INCLUDED

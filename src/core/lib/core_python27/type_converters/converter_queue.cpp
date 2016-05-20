@@ -147,6 +147,4 @@ void ConverterQueue::fini()
 
 
 } // namespace PythonType
-
-
 } // end namespace wgt

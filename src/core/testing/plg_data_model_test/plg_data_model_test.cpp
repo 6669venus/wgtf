@@ -34,6 +34,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestDataModelPlugin )
-
-
 } // end namespace wgt

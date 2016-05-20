@@ -52,7 +52,5 @@ private:
 	}
 
 };
-
-
 } // end namespace wgt
 #endif//CUSTOM_XML_WRITER_HPP_INCLUDED

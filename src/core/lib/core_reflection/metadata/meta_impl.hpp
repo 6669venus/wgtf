@@ -592,7 +592,5 @@ class MetaMultilineObj : public MetaBase
 {
 	DECLARE_REFLECTED
 };
-
-
 } // end namespace wgt
 #endif //META_IMPL_HPP

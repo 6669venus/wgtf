@@ -132,6 +132,5 @@ private:
         commandSystemProvider_->fireCommandExecuted(commandInstance, operation);
     }
 };
-
 } // end namespace wgt
 #endif //COMMAND_MANAGER_HPP

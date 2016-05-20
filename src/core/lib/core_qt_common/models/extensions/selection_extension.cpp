@@ -747,5 +747,4 @@ void SelectionExtension::selectCurrentIndex( bool select )
 	this->encodeRole( SelectedRole::roleId_, selectedRole );
 	setData( impl_->currentIndex_, QVariant( select ), selectedRole );
 }
-
 } // end namespace wgt

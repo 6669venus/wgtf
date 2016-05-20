@@ -25,5 +25,4 @@ void WindowsDebugLogger::out( LogMessage* message )
 		OutputDebugStringA( ss.str().c_str() );
 	}
 }
-
 } // end namespace wgt

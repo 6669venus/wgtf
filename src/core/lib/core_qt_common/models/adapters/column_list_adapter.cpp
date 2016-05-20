@@ -50,5 +50,4 @@ void ColumnListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 			roles );
 	}
 }
-
 } // end namespace wgt

@@ -36,5 +36,4 @@ IDefinitionManager * TestDataModelFixture::getDefinitionManager() const
 {
 	return definitionManager_.get();
 }
-
 } // end namespace wgt

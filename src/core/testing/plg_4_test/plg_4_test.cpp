@@ -48,6 +48,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( TestPlugin4 )
-
-
 } // end namespace wgt

@@ -44,6 +44,5 @@ private:
 	mutable std::unordered_map< const GenericProperty *, Variant > properties_;
 	friend class GenericProperty;
 };
-
 } // end namespace wgt
 #endif //GENERIC_OBJECT_HPP

@@ -105,5 +105,4 @@ void SequenceListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 		}
 	}
 }
-
 } // end namespace wgt

@@ -14,6 +14,5 @@ public:
 	virtual ~QtFrameworkAdapter();
 	virtual QtWindow * createQtWindow( QIODevice & source ) override;
 };
-
 } // end namespace wgt
 #endif

@@ -22,7 +22,5 @@ const char * getClassIdentifier()
 #define DECLARE_REFLECTED \
 	template< typename T >\
 	friend class TypeClassDefinition;
-
-
 } // end namespace wgt
 #endif // REFLECTED_OBJECT_HPP

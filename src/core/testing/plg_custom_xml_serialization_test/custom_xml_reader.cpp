@@ -213,7 +213,4 @@ void CustomXmlDataReader::characterData( const char* data, size_t length )
 		current.characterData.append( data, data + length );
 	}
 }
-
-
-
 } // end namespace wgt

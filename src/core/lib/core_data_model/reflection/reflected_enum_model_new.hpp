@@ -29,6 +29,5 @@ public:
 private:
 	std::vector< AbstractItem * > items_;
 };
-
 } // end namespace wgt
 #endif // _REFLECTED_ENUM_MODEL_NEW_HPP

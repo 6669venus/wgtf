@@ -45,7 +45,5 @@ public:
 	const char * getId() const override;
 	ObjectHandle execute( const ObjectHandle & arguments ) const override;
 };
-
-
 } // end namespace wgt
 #endif //TEST_COMMAND_HPP

@@ -19,7 +19,5 @@ public:
 	bool toQVariant(const Variant& variant,
 		QVariant& o_qVariant, QObject* parent = nullptr) const override;
 };
-
-
 } // end namespace wgt
 #endif // COLLECTION_QT_TYPE_CONVERTER_HPP

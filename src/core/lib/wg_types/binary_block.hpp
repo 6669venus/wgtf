@@ -21,6 +21,5 @@ private:
 	std::size_t	length_;
 	bool    externallyOwned_;
 };
-
 } // end namespace wgt
 #endif //BINARY_BLOCK_HPP

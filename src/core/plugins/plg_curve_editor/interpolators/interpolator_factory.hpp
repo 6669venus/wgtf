@@ -17,6 +17,5 @@
 namespace wgt
 {
 ICurveInterpolatorPtr createInterpolator(CurveTypes::CurveType);
-
 } // end namespace wgt
 #endif //INTERPOLATOR_FACTORY_

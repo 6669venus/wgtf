@@ -89,6 +89,5 @@ public:
 	SignalIndexChanged signalPreCommandIndexChanged;
 	SignalIndexChanged signalPostCommandIndexChanged;
 };
-
 } // end namespace wgt
 #endif//I_COMMAND_MANAGER_HPP

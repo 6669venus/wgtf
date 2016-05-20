@@ -404,5 +404,4 @@ template class Sequence< PyScript::ScriptTuple >;
 
 
 } // namespace PythonType
-
 } // end namespace wgt

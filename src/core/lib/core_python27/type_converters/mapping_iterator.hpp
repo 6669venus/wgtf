@@ -68,7 +68,5 @@ private:
 
 
 } // namespace PythonType
-
-
 } // end namespace wgt
 #endif // _PYTHON_MAPPING_ITERATOR_HPP

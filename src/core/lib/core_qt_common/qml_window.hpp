@@ -77,6 +77,5 @@ private:
     bool isMaximizedInPreference_;
     bool firstTimeShow_;
 };
-
 } // end namespace wgt
 #endif//QML_WINDOW_HPP

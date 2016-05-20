@@ -28,6 +28,5 @@ private:
 	const char *	pStart_;
 	size_t			length_;
 };
-
 } // end namespace wgt
 #endif // STRING_REF_HPP

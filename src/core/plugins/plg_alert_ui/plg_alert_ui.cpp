@@ -103,5 +103,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( AlertUIPlugin )
-
 } // end namespace wgt

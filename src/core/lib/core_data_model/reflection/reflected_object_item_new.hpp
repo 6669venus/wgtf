@@ -69,6 +69,5 @@ private:
 	typedef std::function< bool( ReflectedTreeItemNew & ) > ReflectedItemCallback;
 	void enumerateChildren( const ReflectedItemCallback & callback ) const;
 };
-
 } // end namespace wgt
 #endif // _REFLECTED_OBJECT_ITEM_NEW_HPP

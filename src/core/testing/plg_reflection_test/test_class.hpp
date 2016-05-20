@@ -55,6 +55,5 @@ private:
 	std::string string_;
 	InnerClass innerClass_;
 };
-
 } // end namespace wgt
 #endif // TEST_CLASS_HPP

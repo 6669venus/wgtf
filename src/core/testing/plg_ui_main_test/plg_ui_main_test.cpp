@@ -98,6 +98,4 @@ public:
 
 
 PLG_CALLBACK_FUNC( MainUITestPlugin )
-
-
 } // end namespace wgt

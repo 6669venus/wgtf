@@ -134,7 +134,5 @@ bool BaseGenericObject::set( const char * name, const T & value )
 	auto variantValue = ReflectionUtilities::reference( value );
 	return this->setProperty( name, variantValue );
 }
-
-
 } // end namespace wgt
 #endif // BASE_GENERIC_OBJECT_HPP

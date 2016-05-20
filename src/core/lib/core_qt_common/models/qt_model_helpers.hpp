@@ -20,7 +20,5 @@ int calculateFirst( const size_t start );
 int calculateLast( const size_t start, const size_t count );
 
 } // namespace QtModelHelpers
-
-
 } // end namespace wgt
 #endif // QT_MODEL_HELPERS_HPP

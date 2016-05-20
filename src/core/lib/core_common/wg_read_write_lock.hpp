@@ -49,7 +49,5 @@ public:
 private:
 	wg_read_write_lock & write_Lock_;
 };
-
-
 } // end namespace wgt
 #endif // WG_READ_WRITE_LOCK

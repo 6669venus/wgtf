@@ -113,5 +113,4 @@ bool TupleConverter::toScriptType( const Variant & inVariant,
 
 
 } // namespace PythonType
-
 } // end namespace wgt

@@ -487,5 +487,4 @@ bool TestFixture::verifyTreeItemMatch( IItem * item, const char * value, bool ex
 
 	return false;
 }
-
 } // end namespace wgt

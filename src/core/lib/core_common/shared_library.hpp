@@ -51,7 +51,5 @@ private:
 #define EXPORT extern "C" __attribute__ ((visibility("default")))
 
 #endif
-
-
 } // end namespace wgt
 #endif

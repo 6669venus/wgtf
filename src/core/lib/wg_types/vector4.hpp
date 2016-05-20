@@ -27,6 +27,5 @@ public:
 		return !(*this == v);
 	}
 };
-
 } // end namespace wgt
 #endif // VECTOR3_HPP

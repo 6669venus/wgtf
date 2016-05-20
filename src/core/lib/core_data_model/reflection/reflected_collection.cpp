@@ -210,6 +210,4 @@ int ReflectedCollection::flags() const
 {
 	return collection_.flags();
 }
-
-
 } // end namespace wgt

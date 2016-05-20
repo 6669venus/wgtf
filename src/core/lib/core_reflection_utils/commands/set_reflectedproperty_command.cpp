@@ -192,5 +192,4 @@ CommandThreadAffinity SetReflectedPropertyCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
 }
-
 } // end namespace wgt

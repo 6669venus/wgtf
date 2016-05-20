@@ -314,7 +314,4 @@ void XMLWriter::closeTag( const char* tag )
 
 	hasChildElements_ = true;
 }
-
-
-
 } // end namespace wgt

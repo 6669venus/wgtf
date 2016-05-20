@@ -619,6 +619,5 @@ private:
 	GetValueFunc	getValueFunc_;
 	GetKeyFunc		getKeyFunc_;
 };
-
 } // end namespace wgt
 #endif // FUNCTION_PROPERTY_HPP

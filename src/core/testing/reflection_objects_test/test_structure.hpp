@@ -36,6 +36,5 @@ struct TestInheritedStruct
 
 	DEFINE_INHERITS_TEST_DATA_TYPES()
 };
-
 } // end namespace wgt
 #endif //TEST_STRUCTURE

@@ -35,5 +35,4 @@ ObjectHandle GenericObject::getDerivedType()
 	// ObjectHandleT will make a copy
 	return ObjectHandleT< GenericObject >( this );
 }
-
 } // end namespace wgt

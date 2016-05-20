@@ -53,6 +53,5 @@ public:
 	}
 
 };
-
 } // end namespace wgt
 #endif //TOOLS_STRING_UTILS_HPP

@@ -36,6 +36,5 @@ private:
 	std::vector< GenericTreeItem * > rootItems_;
 	int columnCount_;
 };
-
 } // end namespace wgt
 #endif

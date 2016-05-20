@@ -16,6 +16,5 @@ namespace ReflectedPython
 		virtual IClassDefinition * getDefinition( const ObjectHandle & object ) const override;
 	};
 }
-
 } // end namespace wgt
 #endif

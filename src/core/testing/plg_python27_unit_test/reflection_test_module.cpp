@@ -3219,6 +3219,4 @@ ReflectionTestModule::~ReflectionTestModule()
 {
 	g_module = nullptr;
 }
-
-
 } // end namespace wgt

@@ -243,6 +243,4 @@ bool TestUI::canClose() const
 	assert(test1Views_.size() == test2Views_.size());
 	return test1Views_.size() > 0;
 }
-
-
 } // end namespace wgt

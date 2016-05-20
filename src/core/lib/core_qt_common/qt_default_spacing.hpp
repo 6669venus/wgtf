@@ -68,6 +68,5 @@ private:
 	int doubleMargin_;
 	int labelColumnWidth_;
 };
-
 } // end namespace wgt
 #endif

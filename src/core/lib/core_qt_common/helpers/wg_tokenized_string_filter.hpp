@@ -54,6 +54,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
 } // end namespace wgt
 #endif // WG_TOKENIZED_STRING_FILTER_HPP

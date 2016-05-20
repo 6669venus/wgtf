@@ -22,6 +22,5 @@ public:
 	virtual void setExecutablePath(const char* path) = 0;
 	virtual const char* getExecutablePath() const = 0;
 };
-
 } // end namespace wgt
 #endif ///I_PLUGIN_CONTEXT_MANAGER_HPP

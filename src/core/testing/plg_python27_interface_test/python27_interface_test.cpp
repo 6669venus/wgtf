@@ -156,6 +156,4 @@ TEST( Python27Interface )
 
 	return;
 }
-
-
 } // end namespace wgt

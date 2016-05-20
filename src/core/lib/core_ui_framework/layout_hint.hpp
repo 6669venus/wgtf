@@ -21,6 +21,5 @@ public:
 private:
 	std::map< std::string, float > hints_;
 };
-
 } // end namespace wgt
 #endif//LAYOUT_HINT_HPP

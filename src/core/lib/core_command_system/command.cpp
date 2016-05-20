@@ -79,5 +79,4 @@ void Command::fireCommandExecuted(const CommandInstance & command, CommandOperat
 {
 	return nullptr;
 }
-
 } // end namespace wgt

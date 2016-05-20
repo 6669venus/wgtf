@@ -18,5 +18,4 @@ const char * MemoryPluginContextCreator::getType() const
 {
 	return typeid( IMemoryAllocator ).name();
 }
-
 } // end namespace wgt

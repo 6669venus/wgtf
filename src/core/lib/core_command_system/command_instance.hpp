@@ -118,6 +118,5 @@ private:
 	CommandErrorCode			errorCode_;
 	std::vector< UndoRedoDataPtr > undoRedoData_;
 };
-
 } // end namespace wgt
 #endif //COMMAND_INSTANCE_HPP

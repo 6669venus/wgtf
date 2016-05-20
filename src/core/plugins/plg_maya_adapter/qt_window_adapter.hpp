@@ -26,7 +26,5 @@ public:
 private:
 	std::vector< IWindowListener * >	listeners_;
 };
-
-
 } // end namespace wgt
 #endif//QML_WINDOW_ADAPTER_HPP

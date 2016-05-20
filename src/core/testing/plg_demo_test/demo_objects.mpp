@@ -18,5 +18,4 @@ BEGIN_EXPOSE( DemoObjects, MetaNoSerialization() )
 	EXPOSE_METHOD( "New Object", createObject, undoCreateObject, redoCreateObject )
 	EXPOSE_METHOD( "automationUpdate", automationUpdate )
 END_EXPOSE()
-
 } // end namespace wgt

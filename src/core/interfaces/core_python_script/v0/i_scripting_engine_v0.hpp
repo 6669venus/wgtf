@@ -62,6 +62,5 @@ DECLARE_INTERFACE_BEGIN( IPythonScriptingEngine, 0, 0 )
 	virtual bool checkErrors() = 0;
 
 DECLARE_INTERFACE_END()
-
 } // end namespace wgt
 #endif // I_V0_PYTHON_SCRIPTING_ENGINE_V0_HPP

@@ -41,6 +41,5 @@ private:
 	const std::string name_;
 	PropertyStorage properties_;
 };
-
 } // end namespace wgt
 #endif //GENERIC_DEFINITION_HPP

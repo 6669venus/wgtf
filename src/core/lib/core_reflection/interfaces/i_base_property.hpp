@@ -135,6 +135,5 @@ public:
 	 */
 	virtual size_t parameterCount() const = 0;
 };
-
 } // end namespace wgt
 #endif // I_BASE_REFLECTED_PROPERTY_HPP

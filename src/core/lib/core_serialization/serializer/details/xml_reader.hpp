@@ -61,7 +61,5 @@ private:
 	void characterData( const char* data, size_t length ) override;
 
 };
-
-
 } // end namespace wgt
 #endif

@@ -21,6 +21,5 @@ private:
 	std::atomic<bool> exiting_;
 	std::thread thread_;
 };
-
 } // end namespace wgt
 #endif

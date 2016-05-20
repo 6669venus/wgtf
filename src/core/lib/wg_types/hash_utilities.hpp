@@ -30,6 +30,5 @@ namespace HashUtilities
 			(seed << 5) + (seed >> 3);
 	}
 }
-
 } // end namespace wgt
 #endif // HASH_UTILITIES_HPP

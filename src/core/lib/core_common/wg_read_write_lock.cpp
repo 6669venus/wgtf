@@ -68,6 +68,4 @@ void wg_read_write_lock::write_unlock()
 	// The lock is available now, notify all waiters
 	unlocked_.notify_all();
 }
-
-
 } // end namespace wgt

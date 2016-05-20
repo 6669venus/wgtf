@@ -57,7 +57,5 @@ private:
 	}
 
 };
-
-
 } // end namespace wgt
 #endif

@@ -119,7 +119,6 @@ void PathFileName(wchar_t* file, const wchar_t* path)
 		f = p + 1;
 	wcscpy(file, f);
 }
-
 } // end namespace wgt
 
 #endif // __APPLE__

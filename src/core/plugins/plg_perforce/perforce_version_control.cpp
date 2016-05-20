@@ -74,6 +74,4 @@ std::unique_ptr<IDepotView> PerforceVersionControl::createDepotView(const char* 
 
 	return IDepotViewPtr();
 }
-
-
 } // end namespace wgt

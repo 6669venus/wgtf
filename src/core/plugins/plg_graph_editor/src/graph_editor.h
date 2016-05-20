@@ -29,6 +29,5 @@ private:
 
     void CreateConnection(size_t outputUID, size_t inputUID);
 };
-
 } // end namespace wgt
 #endif // __GRAPHEDITOR_GRAPHEDITOR_H__

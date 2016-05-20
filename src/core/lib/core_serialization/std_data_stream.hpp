@@ -58,7 +58,5 @@ private:
 
 typedef BasicStdDataStream< char > StdDataStream;
 typedef BasicStdDataStream< wchar_t > WStdDataStream;
-
-
 } // end namespace wgt
 #endif // STD_DATA_STREAM_HPP_INCLUDED

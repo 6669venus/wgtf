@@ -25,7 +25,5 @@ public:
 	SignalVoid signalPreSelectionChanged;
 	SignalVoid signalPostSelectionChanged;
 };
-
-
 } // end namespace wgt
 #endif //I_SELECTION_HANDLER_HPP

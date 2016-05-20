@@ -135,6 +135,5 @@ private:
 	class Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
 } // end namespace wgt
 #endif // QT_LIST_MODEL_HPP

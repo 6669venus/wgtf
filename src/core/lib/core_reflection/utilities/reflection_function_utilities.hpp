@@ -66,6 +66,5 @@ struct FunctionPropertyHelper
 			name, getSizeFunc, getKeyFunc, getValueFunc, setKeyFunc);
 	}
 };
-
 } // end namespace wgt
 #endif //REFLECTION_FUNCTION_UTILITIES_HPP

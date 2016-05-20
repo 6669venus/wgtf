@@ -238,5 +238,4 @@ void QmlView::deregisterListener(IViewEventListener* listener)
 	assert( it != listeners_.end() );
 	listeners_.erase( it );
 }
-
 } // end namespace wgt

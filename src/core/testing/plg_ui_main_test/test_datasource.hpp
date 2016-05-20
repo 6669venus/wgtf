@@ -64,7 +64,5 @@ private:
 	ObjectHandleT< TestPage2 > testPage2_;
 	
 };
-
-
 } // end namespace wgt
 #endif // TEST_DATASOURCE_HPP

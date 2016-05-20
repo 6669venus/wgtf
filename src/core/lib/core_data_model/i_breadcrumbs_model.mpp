@@ -17,5 +17,4 @@ BEGIN_EXPOSE( IBreadcrumbsModel, MetaNone() )
 	EXPOSE( "path", getPath, MetaDisplayName( L"Path" ) )
 	EXPOSE_METHOD( "getItemAtIndex", getItemAtIndex )
 END_EXPOSE()
-
 } // end namespace wgt

@@ -36,6 +36,5 @@ bool PathAppendW(wchar_t* path, const wchar_t* more);
 void PathFileName(wchar_t* file, const wchar_t* path);
 
 #endif // __APPLE__
-
 } // end namespace wgt
 #endif // __PLATFORM_PATH_HPP__

@@ -160,6 +160,5 @@ private:
 	ValueChangeNotifier<bool> dirty_;
 	ICurveInterpolatorPtr interpolator_;
 };
-
 } // end namespace wgt
 #endif // CURVE_H_

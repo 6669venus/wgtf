@@ -73,5 +73,4 @@ void ReflectedListListener::postSetValue(
 		list_.signalPostItemDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
-
 } // end namespace wgt

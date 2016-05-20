@@ -29,7 +29,5 @@ public:
 private:
 	QtScriptingEngine& scriptingEngine_;
 };
-
-
 } // end namespace wgt
 #endif // SCRIPT_QT_TYPE_CONVERTER_HPP

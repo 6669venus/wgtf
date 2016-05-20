@@ -29,6 +29,5 @@ private:
 	const QAbstractItemModel * model_;
 	QPersistentModelIndex row_;
 };
-
 } // end namespace wgt
 #endif // COLUMN_LIST_ADAPTER_HPP

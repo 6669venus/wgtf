@@ -16,6 +16,5 @@ namespace NGTAllocator
 	void enableDebugOutput( bool enable );
 	void enableStackTraces( bool enable );
 }
-
 } // end namespace wgt
 #endif // NGT_ALLOCATOR_HPP

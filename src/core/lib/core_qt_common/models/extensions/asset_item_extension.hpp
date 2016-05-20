@@ -22,6 +22,5 @@ public:
 private:
 	IQtFramework * qtFramework_;
 };
-
 } // end namespace wgt
 #endif // ASSET_ITEM_EXTENSION_HPP

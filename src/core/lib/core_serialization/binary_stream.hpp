@@ -83,7 +83,5 @@ typename std::enable_if< std::is_trivially_copyable< T >::value, BinaryStream& >
 BinaryStream& operator<<( BinaryStream& stream, const std::string& value );
 BinaryStream& operator<<( BinaryStream& stream, const char* value );
 BinaryStream& operator>>( BinaryStream& stream, std::string& value );
-
-
 } // end namespace wgt
 #endif // BINARY_STREAM_HPP_INCLUDED

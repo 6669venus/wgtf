@@ -35,6 +35,5 @@ private:
 	size_t currentIndex_;
 	IItem * currentItem_;
 };
-
 } // end namespace wgt
 #endif

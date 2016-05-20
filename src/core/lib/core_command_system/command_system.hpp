@@ -10,7 +10,5 @@ namespace CommandSystem
 {
 	void initReflectedTypes( IDefinitionManager & definitionManager );
 }
-
-
 } // end namespace wgt
 #endif //COMMAND_SYSTEM_HPP

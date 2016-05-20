@@ -230,7 +230,5 @@ private:
 	bool resetReadBuffer();
 
 };
-
-
 } // end namespace wgt
 #endif // BASIC_STREAM_HPP_INCLUDED

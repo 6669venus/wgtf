@@ -168,6 +168,4 @@ TEST_F( TestDefinitionFixture, serialize_properties )
 	}
 	is.close();
 }
-
-
 } // end namespace wgt

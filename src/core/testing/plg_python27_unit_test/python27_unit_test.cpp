@@ -162,6 +162,4 @@ TEST( Python27 )
 		// Python failed to run test script.
 	}
 }
-
-
 } // end namespace wgt

@@ -211,5 +211,4 @@ CollectionIteratorImplPtr MappingIterator::clone() const /* override */
 
 
 } // namespace PythonType
-
 } // end namespace wgt

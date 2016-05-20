@@ -34,6 +34,5 @@ private:
 	QMetaObject::Connection m_connection;
 	QWidget* current_;
 };
-
 } // end namespace wgt
 #endif//QT_DOCK_REGION_HPP

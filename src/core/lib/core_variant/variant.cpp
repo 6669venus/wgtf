@@ -972,7 +972,6 @@ std::istream& operator>>( std::istream& stream, Variant& value )
 	stream.setstate( textStream.state() );
 	return stream;
 }
-
 } // end namespace wgt
 
 #endif

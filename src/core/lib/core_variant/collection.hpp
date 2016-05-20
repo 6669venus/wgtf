@@ -213,7 +213,7 @@ namespace collection_details
 	void deduceCollectionImplType(...);
 
 }
-}
+} // end namespace wgt
 
 #include "stl_container/linear_collection.hpp"
 #include "stl_container/map_collection.hpp"
@@ -768,7 +768,6 @@ private:
 	T collection_;
 
 };
-
 } // end namespace wgt
 
 namespace std

@@ -38,6 +38,5 @@ public:
 private:
 	IDefinitionManager & definitionManager_;
 };
-
 } // end namespace wgt
 #endif // REFLECTED_COLLECTION_INSERT_COMMAND_HPP

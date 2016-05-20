@@ -59,5 +59,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(TypeSystemPlugin)
-
 } // end namespace wgt

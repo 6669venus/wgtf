@@ -80,6 +80,5 @@ namespace
 		return nullptr;
 	}
 }
-
 } // end namespace wgt
 #endif//ENV_CONTEXT_HPP

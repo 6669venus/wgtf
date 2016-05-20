@@ -49,6 +49,5 @@ private:
 	typedef std::vector<IEnvEventListener*> Listeners;
 	Listeners listeners_;
 };
-
 } // end namespace wgt
 #endif // ENV_SYSTEM

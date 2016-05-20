@@ -10,7 +10,7 @@
 namespace wgt
 {
 typedef std::condition_variable wg_condition_variable;
-}
+} // end namespace wgt
 #else
 
 #include <mutex>

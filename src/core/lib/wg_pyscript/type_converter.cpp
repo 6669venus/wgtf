@@ -611,6 +611,4 @@ PyObject * getData( const wchar_t * data )
 
 
 } // namespace PyScript
-
-
 } // end namespace wgt

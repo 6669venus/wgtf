@@ -1223,5 +1223,4 @@ void FilteredTreeModel::refresh( bool wait )
 	std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
 	nextRefresh.detach();
 }
-
 } // end namespace wgt

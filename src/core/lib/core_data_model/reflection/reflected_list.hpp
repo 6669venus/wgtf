@@ -18,6 +18,5 @@ private:
 	std::shared_ptr< PropertyAccessorListener > listener_;
 	IDefinitionManager* defManager_;
 };
-
 } // end namespace wgt
 #endif // REFLECTED_LIST_HPP

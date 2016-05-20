@@ -18,6 +18,5 @@ public:
 	SignalVoid signalStartUp;
 	SignalVoid signalUpdate;
 };
-
 } // end namespace wgt
 #endif //I_APPLICATION_HPP

@@ -144,6 +144,4 @@ void AlertPageModel::currentSelectedRowIndex( const int & index )
 {
 	impl_->currentSelectedRowIndex_ = index;
 }
-
-
 } // end namespace wgt

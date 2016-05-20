@@ -16,7 +16,5 @@ public:
 private:
 	TestStructure structure_;
 };
-
-
 } // end namespace wgt
 #endif //TEST_OBJECTS_HPP

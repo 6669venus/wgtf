@@ -666,6 +666,4 @@ void WGListModel::endRemoveRows( const QModelIndex &parent,	int first, int last 
 		emit rowsRemovedThread( parent, first, last, QPrivateSignal() );
 	}
 }
-
-
 } // end namespace wgt

@@ -382,6 +382,5 @@ public:
 protected:
 	friend typename ConstMutableIterator<T>::collection;
 };
-
 } // end namespace wgt
 #endif//MUTABLE_VECTOR_HPP

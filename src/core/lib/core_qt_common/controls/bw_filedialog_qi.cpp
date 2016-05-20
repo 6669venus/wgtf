@@ -114,6 +114,4 @@ void BWFileDialogQI::createFileDialog()
 	fileDialog_->setAcceptMode( static_cast< QFileDialog::AcceptMode >( mode_ ) );
 	fileDialog_->setFileMode( static_cast< QFileDialog::FileMode >( fileModeFlag_ ) );
 }
-
-
 } // end namespace wgt

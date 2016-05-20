@@ -363,5 +363,4 @@ const PyScript::ScriptObject & DefinitionDetails::object() const
 
 
 } // namespace ReflectedPython
-
 } // end namespace wgt

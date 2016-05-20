@@ -13,5 +13,4 @@ BEGIN_EXPOSE( TestMethodsObject, MetaNone() )
 	EXPOSE_METHOD( "TestMethod7", testMethod7 )
 	EXPOSE_METHOD( "TestMethod8", testMethod8 )
 END_EXPOSE()
-
 } // end namespace wgt

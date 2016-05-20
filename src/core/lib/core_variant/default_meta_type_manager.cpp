@@ -459,6 +459,4 @@ const MetaType* DefaultMetaTypeManager::findType(const TypeId& typeId)  const
 
 	return nullptr;
 }
-
-
 } // end namespace wgt

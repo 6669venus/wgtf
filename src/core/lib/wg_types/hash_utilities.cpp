@@ -92,5 +92,4 @@ uint64_t compute( uint64_t value )
 }
 
 }
-
 } // end namespace wgt

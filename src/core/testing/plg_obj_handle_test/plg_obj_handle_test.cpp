@@ -218,6 +218,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestObjHandlePlugin )
-
-
 } // end namespace wgt

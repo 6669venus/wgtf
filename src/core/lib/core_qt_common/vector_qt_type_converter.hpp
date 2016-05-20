@@ -104,6 +104,5 @@ public:
 		return false;
 	}
 };
-
 } // end namespace wgt
 #endif //VECTOR_QT_TYPE_CONVERTERS_HPP

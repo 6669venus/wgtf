@@ -1217,7 +1217,4 @@ TEST(Collection_mapping_notifications)
 	CHECK_EQUAL( 6, counter );
 	CHECK( it.value() == 1 );
 }
-
-
-
 } // end namespace wgt

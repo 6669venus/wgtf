@@ -8,6 +8,5 @@ class IComponent
 public:
 	virtual ~IComponent() {}
 };
-
 } // end namespace wgt
 #endif//I_COMPONENT_HPP

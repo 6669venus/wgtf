@@ -83,6 +83,5 @@ public:
 	Signal< ElementPreChangeCallbackSignature > onPreChange_;
 	Signal< ElementPostChangedCallbackSignature > onPostChanged_;
 };
-
 } // end namespace wgt
 #endif // REFLECTED_COLLECTION_HPP

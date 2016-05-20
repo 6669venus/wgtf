@@ -16,7 +16,4 @@ FileDataStream::FileDataStream( const char* path, std::ios::openmode mode ):
 {
 	file_.open( path, mode );
 }
-
-
-
 } // end namespace wgt

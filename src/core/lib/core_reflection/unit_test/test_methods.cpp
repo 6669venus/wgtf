@@ -124,5 +124,4 @@ TEST_F( TestMethodsFixture, methods )
 	double testDoubleResult = result.value<double>();
 	CHECK( testDoubleResult == 5.0 );
 }
-
 } // end namespace wgt

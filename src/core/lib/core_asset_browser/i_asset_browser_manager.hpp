@@ -17,6 +17,5 @@ public:
 	virtual void registerListener( IAssetListener* listener ) = 0;
 	virtual void createView( IComponentContext & context ) = 0;
 };
-
 } // end namespace wgt
 #endif // I_ASSET_BROWSER_MANAGER_HPP

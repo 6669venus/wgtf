@@ -45,6 +45,5 @@ private:
 	IBasePropertyPtr property_;
 	MetaHandle metaData_;
 };
-
 } // end namespace wgt
 #endif // BASE_REFLECTED_PROPERTY_HPP

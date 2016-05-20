@@ -144,6 +144,4 @@ void ChildListAdapter::onParentRowsRemoved(const QModelIndex & parent, int first
 	reset();
 	endRemoveRows();
 }
-
-
 } // end namespace wgt

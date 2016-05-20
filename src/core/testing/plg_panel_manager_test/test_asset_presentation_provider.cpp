@@ -160,5 +160,4 @@ const char* TestAssetPresentationProvider::getTypeIconResourceString( const IAss
 	// Display default file icon
 	return nullptr;
 }
-
 } // end namespace wgt

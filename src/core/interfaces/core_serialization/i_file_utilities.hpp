@@ -17,6 +17,5 @@ public:
 
 	virtual std::string resolveFilename( const StringRef & file ) = 0;
 };
-
 } // end namespace wgt
 #endif

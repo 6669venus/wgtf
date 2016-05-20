@@ -35,6 +35,4 @@ void* SharedLibrary::findRawSymbol(const char* name) const
 
 	return dlsym(lib_, name);
 }
-
-
 } // end namespace wgt

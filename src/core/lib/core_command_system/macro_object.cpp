@@ -536,5 +536,4 @@ std::string MethodParam::getValue() const
 	std::string str = stream.str();
 	return str;
 }
-
 } // end namespace wgt

@@ -71,6 +71,4 @@ bool ScriptQtTypeConverter::toQVariant( const ObjectHandle& object,
 	o_qVariant = QVariant::fromValue< QtScriptObject* >( scriptObject );
 	return true;
 }
-
-
 } // end namespace wgt

@@ -177,5 +177,4 @@ protected:
 
 
 // multiproc_test_case.hpp
-
 } // end namespace wgt

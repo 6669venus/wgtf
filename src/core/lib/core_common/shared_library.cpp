@@ -46,7 +46,4 @@ bool SharedLibrary::isValid() const
 {
 	return lib_ != nullptr;
 }
-
-
-
 } // end namespace wgt

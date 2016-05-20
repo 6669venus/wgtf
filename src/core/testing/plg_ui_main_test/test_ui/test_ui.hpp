@@ -86,7 +86,5 @@ private:
 	TestViews test1Views_;
 	TestViews test2Views_;
 };
-
-
 } // end namespace wgt
 #endif // TEST_UI_H

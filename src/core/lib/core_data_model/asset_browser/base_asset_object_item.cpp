@@ -274,5 +274,4 @@ bool BaseAssetObjectItem::isCompressed() const
 {
 	return (impl_->fileInfo_->attributes() & FileAttributes::Compressed) == FileAttributes::Compressed;
 }
-
 } // end namespace wgt

@@ -124,7 +124,5 @@ private:
 	DEPRECATED virtual bool readValue( Variant & variant );
 
 };
-
-
 } // end namespace wgt
 #endif

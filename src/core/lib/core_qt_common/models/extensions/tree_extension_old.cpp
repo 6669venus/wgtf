@@ -599,5 +599,4 @@ void TreeExtensionOld::setSelectionExtension( QObject * selectionExtension )
 	impl_->selectionExtension_ = qobject_cast< SelectionExtension * >( selectionExtension );
 	emit selectionExtensionChanged();
 }
-
 } // end namespace wgt

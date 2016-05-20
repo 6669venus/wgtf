@@ -17,6 +17,5 @@ public:
 	// TODO return a collection of the arg types
 	virtual std::size_t parameterCount() const = 0;
 };
-
 } // end namespace wgt
 #endif // I_METHOD_HPP

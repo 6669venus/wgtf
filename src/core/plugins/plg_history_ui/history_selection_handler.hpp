@@ -21,7 +21,5 @@ public:
 private:
 	Selection selectionSet_;
 };
-
-
 } // end namespace wgt
 #endif //HISTORY_SELECTION_HANDLER_HPP

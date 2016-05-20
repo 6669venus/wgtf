@@ -232,7 +232,4 @@ void QtCopyPasteManager::fini()
 	definitionManager_ = nullptr;
 	commandManager_ = nullptr;
 }
-
-
-
 } // end namespace wgt

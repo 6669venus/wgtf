@@ -61,6 +61,5 @@ public:
 	 */
 	virtual void erase( const PropertyAccessor & pa, const Variant & key ) = 0;
 };
-
 } // end namespace wgt
 #endif//I_REFLECTION_CONTROLLER_HPP

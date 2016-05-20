@@ -34,10 +34,10 @@
 #include <QQmlContext>
 #include <QPointer>
 
+Q_DECLARE_METATYPE( wgt::ObjectHandle );
+
 namespace wgt
 {
-Q_DECLARE_METATYPE( ObjectHandle );
-
 typedef std::vector< QPointer<QtScriptObject> > ScriptObjects;
 
 struct QtScriptingEngine::Implementation
@@ -542,5 +542,4 @@ void QtScriptingEngine::addPreference( const QString & preferenceId, const QStri
 	auto preference = impl_->uiFramework_->getPreferences()->getPreference( id.c_str() );
 	preference->set( name.c_str(), data );
 }
-
 } // end namespace wgt

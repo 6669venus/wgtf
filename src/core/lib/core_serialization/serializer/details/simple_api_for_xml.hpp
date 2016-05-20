@@ -36,7 +36,5 @@ private:
 	virtual void characterData( const char* data, size_t length );
 
 };
-
-
 } // end namespace wgt
 #endif

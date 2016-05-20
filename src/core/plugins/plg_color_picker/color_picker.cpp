@@ -55,7 +55,4 @@ void ColorPicker::removePanel()
 		uiApplication->removeView( *colorView_ );
 	}
 }
-
-
-
 } // end namespace wgt

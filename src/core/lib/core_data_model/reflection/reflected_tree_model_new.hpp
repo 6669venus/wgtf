@@ -72,7 +72,5 @@ private:
 	class Implementation;
 	std::unique_ptr< Implementation > impl_;
 };
-
-
 } // end namespace wgt
 #endif // _REFLECTED_TREE_MODEL_NEW_HPP

@@ -36,5 +36,4 @@ namespace PyScript
 } // namespace PyScript
 
 // py_script_object.cpp
-
 } // end namespace wgt

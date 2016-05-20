@@ -101,6 +101,4 @@ void DataChangeNotifier::onDestructing()
 {
 	source( nullptr );
 }
-
-
 } // end namespace wgt

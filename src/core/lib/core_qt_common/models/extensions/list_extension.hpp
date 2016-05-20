@@ -19,6 +19,5 @@ public:
 
 	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
 };
-
 } // end namespace wgt
 #endif // LIST_EXTENSION_HPP

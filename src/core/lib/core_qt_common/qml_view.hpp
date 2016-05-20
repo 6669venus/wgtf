@@ -70,6 +70,5 @@ private:
 	typedef std::vector<IViewEventListener*> Listeners;
 	Listeners listeners_;
 };
-
 } // end namespace wgt
 #endif//QML_VIEW_HPP

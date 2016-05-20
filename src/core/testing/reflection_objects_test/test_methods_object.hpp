@@ -20,6 +20,5 @@ public:
 	int testMethod7( int parameter );
 	double testMethod8( double parameter );
 };
-
 } // end namespace wgt
 #endif //TEST_METHODS_OBJECT

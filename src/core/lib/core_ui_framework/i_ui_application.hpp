@@ -34,6 +34,5 @@ public:
 	virtual void setWindowIcon(const char* path, const char* windowId = "") = 0;
 	virtual const Windows & windows() const = 0;
 };
-
 } // end namespace wgt
 #endif//I_UI_APPLICATION_HPP

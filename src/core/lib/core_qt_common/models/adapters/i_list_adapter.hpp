@@ -44,6 +44,5 @@ private:
 	mutable std::map<int, QPersistentModelIndex> cachedAdaptedIndices_;
 	QtConnectionHolder connections_;
 };
-
 } // end namespace wgt
 #endif // I_LIST_ADAPTER_HPP

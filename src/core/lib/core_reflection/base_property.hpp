@@ -45,6 +45,5 @@ private:
 
 	friend class PropertyAccessor;
 };
-
 } // end namespace wgt
 #endif // BASE_REFLECTED_PROPERTY_HPP

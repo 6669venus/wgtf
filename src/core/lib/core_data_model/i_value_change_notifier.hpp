@@ -29,7 +29,5 @@ public:
 	SignalVoid signalPostDataChanged;
 	SignalVoid signalDestructing;
 };
-
-
 } // end namespace wgt
 #endif // I_VALUE_CHANGE_NOTIFIER_HPP

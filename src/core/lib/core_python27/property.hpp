@@ -73,6 +73,5 @@ private:
 
 
 } // namespace ReflectedPython
-
 } // end namespace wgt
 #endif // PYTHON_PROPERTY_HPP

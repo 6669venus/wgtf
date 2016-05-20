@@ -126,6 +126,5 @@ private:
 	DIRef< ICommandManager > commandManager_;
 	std::unique_ptr< QtFramework_Locals::QtCommandEventListener > commandEventListener_;
 };
-
 } // end namespace wgt
 #endif

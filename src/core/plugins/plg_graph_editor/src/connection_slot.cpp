@@ -32,5 +32,4 @@ ObjectHandleT<GraphNode> ConnectionSlot::GetParentNode()
     assert(parent != nullptr);
     return parent;
 }
-
 } // end namespace wgt

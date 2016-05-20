@@ -78,5 +78,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(TestPanelManagerPlugin)
-
 } // end namespace wgt

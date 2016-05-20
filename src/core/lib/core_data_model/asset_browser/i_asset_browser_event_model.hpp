@@ -39,6 +39,5 @@ public:
 	virtual void connectFolderSelectionChanged(VariantCallback) {}
 	virtual void connectUseSelectedAsset(AssetCallback) {}
 };
-
 } // end namespace wgt
 #endif // I_ASSET_BROWSER_EVENT_MODEL_H_

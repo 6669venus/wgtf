@@ -48,5 +48,4 @@ CommandThreadAffinity BatchCommand::threadAffinity() const
 { 
 	return CommandThreadAffinity::ANY_THREAD;
 }
-
 } // end namespace wgt

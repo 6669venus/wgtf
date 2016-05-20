@@ -12,6 +12,5 @@ enum LogLevel
 	LOG_INFO,
 	LOG_DEBUG,
 };
-
 } // end namespace wgt
 #endif // LOG_LEVEL_HPP

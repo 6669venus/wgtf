@@ -132,6 +132,4 @@ TEST(wg_condition_variable)
 	// each haveWork.notify_all() must produce consumers.size() wakeups
 	CHECK_EQUAL( consumers.size() * 2, wakeUps );
 }
-
-
 } // end namespace wgt

@@ -456,6 +456,5 @@ private:
 
 	friend class Iterator;
 };
-
 } // end namespace wgt
 #endif // GENERIC_LIST_HPP

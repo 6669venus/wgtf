@@ -48,6 +48,5 @@ private:
 	bool wgCopyableEnabled_;
 	bool wgNativeRendering_;
 };
-
 } // end namespace wgt
 #endif

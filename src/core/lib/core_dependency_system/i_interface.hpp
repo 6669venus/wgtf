@@ -157,6 +157,5 @@ void queryInterface( std::vector< T * > & o_Impls )
 }
 
 } //namespace Context
-
 } // end namespace wgt
 #endif //I_INTERFACE_HPP

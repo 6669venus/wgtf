@@ -50,6 +50,5 @@ private:
 };
 
 const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & right );
-
 } // end namespace wgt
 #endif

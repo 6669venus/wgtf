@@ -17,6 +17,5 @@ public:
 private:
 	TextStream stream_;
 };
-
 } // end namespace wgt
 #endif //CUSTOM_XML_SERIALIZER_HPP

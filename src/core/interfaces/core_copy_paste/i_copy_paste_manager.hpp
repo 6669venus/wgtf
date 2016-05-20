@@ -20,7 +20,5 @@ public:
 	virtual bool canPaste() const = 0;
 
 };
-
-
 } // end namespace wgt
 #endif // I_COPY_PASTE_MANAGER_HPP

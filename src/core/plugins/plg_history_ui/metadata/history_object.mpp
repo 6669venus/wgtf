@@ -17,5 +17,4 @@ BEGIN_EXPOSE( HistoryObject, MetaNoSerialization() )
     EXPOSE( "IsClearButtonVisible", isClearButtonVisible, setClearButtonVisible, MetaNone())
     EXPOSE( "IsMakeMacroButtonVisible", isMakeMacroButtonVisible, setMakeMacroButtonVisible, MetaNone())
 END_EXPOSE()
-
 } // end namespace wgt

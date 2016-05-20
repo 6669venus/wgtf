@@ -35,5 +35,4 @@ BEGIN_EXPOSE(ICurveEditor, MetaNone())
 	EXPOSE("yScale", getYScale, putYScale, MetaDisplayName(L"Y Scale"))
 	EXPOSE("timeScaleEditEnabled", getTimeScaleEditEnabled, putTimeScaleEditEnabled, MetaNone())
 END_EXPOSE()
-
 } // end namespace wgt

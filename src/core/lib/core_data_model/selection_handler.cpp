@@ -42,7 +42,4 @@ const std::vector< int > & SelectionHandler::getSelectedRows() const
 {
 	return selectedRows_;
 }
-
-
-
 } // end namespace wgt

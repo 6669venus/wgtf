@@ -42,6 +42,5 @@ public:
 		return false;
 	}
 };
-
 } // end namespace wgt
 #endif

@@ -101,7 +101,4 @@ bool FixedMemoryStream::sync()
 {
 	return true;
 }
-
-
-
 } // end namespace wgt

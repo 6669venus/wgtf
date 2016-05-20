@@ -154,7 +154,4 @@ void SimpleApiForXml::characterData( const char* data, size_t length )
 {
 	// nop
 }
-
-
-
 } // end namespace wgt

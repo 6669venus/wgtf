@@ -16,5 +16,4 @@ int unitTestInfo( const char * _Format, ... );
 
 
 // unit_test.hpp
-
 } // end namespace wgt

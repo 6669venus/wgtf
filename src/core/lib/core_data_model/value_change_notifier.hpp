@@ -80,7 +80,5 @@ void ValueChangeNotifier< T >::value( const T& data )
 	value_ = data;
 	this->signalPostDataChanged();
 }
-
-
 } // end namespace wgt
 #endif // VALUE_CHANGE_NOTIFIER_HPP

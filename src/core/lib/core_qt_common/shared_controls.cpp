@@ -105,5 +105,4 @@ namespace wgt
 	definitionManager.registerDefinition( new TypeClassDefinition< IBreadcrumbsModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< BaseBreadcrumbItem >() );
 }
-
 } // end namespace wgt

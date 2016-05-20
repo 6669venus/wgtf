@@ -52,6 +52,5 @@ public:
 private:
 	IDefinitionManager & definitionManager_;
 };
-
 } // end namespace wgt
 #endif //SET_REFLECTED_PROPERTY_COMMAND_HPP

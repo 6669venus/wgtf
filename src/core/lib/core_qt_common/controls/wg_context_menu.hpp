@@ -71,8 +71,7 @@ private:
 	struct Implementation;
 	std::unique_ptr< Implementation > impl_;
 };
-
-QML_DECLARE_TYPE( WGContextMenu )
-
 } // end namespace wgt
+
+QML_DECLARE_TYPE( wgt::WGContextMenu )
 #endif // WG_CONTEXT_MENU_HPP

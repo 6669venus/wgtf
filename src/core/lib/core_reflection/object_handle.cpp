@@ -393,7 +393,4 @@ BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value )
 
 	return stream;
 }
-
-
-
 } // end namespace wgt

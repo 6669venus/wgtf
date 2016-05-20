@@ -218,5 +218,4 @@ bool DefinitionManager::deserializeDefinitions( ISerializer & serializer )
 {
 	return false;
 }
-
 } // end namespace wgt

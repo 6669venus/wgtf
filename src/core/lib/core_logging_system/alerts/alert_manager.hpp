@@ -29,6 +29,5 @@ private:
 	typedef std::vector< IAlertPresenter* > tPresenterVector;
 	tPresenterVector presenters_;
 };
-
 } // end namespace wgt
 #endif // ALERT_MANAGER_HPP

@@ -72,6 +72,4 @@ void PythonPanel::removePanel()
 		uiApplication->removeView( *pythonView_ );
 	}
 }
-
-
 } // end namespace wgt

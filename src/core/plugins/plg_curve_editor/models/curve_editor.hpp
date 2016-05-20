@@ -68,6 +68,5 @@ private:
 
 	ScaleChangeSignal scaleChangeSignal_;
 };
-
 } // end namespace wgt
 #endif // CURVES_MODEL_H_

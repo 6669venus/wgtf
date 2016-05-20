@@ -87,5 +87,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( Python27UnitTestPlugin )
-
 } // end namespace wgt

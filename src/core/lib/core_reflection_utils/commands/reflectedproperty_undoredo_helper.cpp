@@ -649,5 +649,4 @@ void RPURU::saveRedoData(
 
 	serializer.serialize( helper.result_ );
 }
-
 } // end namespace wgt

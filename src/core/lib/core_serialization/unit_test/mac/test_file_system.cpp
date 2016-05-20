@@ -73,5 +73,4 @@ TEST(file_sytem)
 
 	free(readedData);
 }
-
 } // end namespace wgt

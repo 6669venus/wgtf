@@ -104,7 +104,5 @@ private:
 	Format format_;
 
 };
-
-
 } // end namespace wgt
 #endif

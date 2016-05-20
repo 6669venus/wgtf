@@ -51,6 +51,5 @@ public:
 	SignalVoid signalDestructing;
 
 };
-
 } // end namespace wgt
 #endif // I_TREE_MODEL_HPP

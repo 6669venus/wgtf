@@ -53,6 +53,4 @@ private:
 	std::unique_ptr<IView> pythonView_;
 	ObjectHandle contextObject_;
 };
-
-
 } // end namespace wgt

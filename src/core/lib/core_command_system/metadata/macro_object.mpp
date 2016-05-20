@@ -31,5 +31,4 @@ BEGIN_EXPOSE( MacroObject, MetaNoSerialization() )
 	EXPOSE( "RunMacro", executeMacro, MetaNoSerialization() )
 	EXPOSE( "TreeSource", getTreeModel, MetaNone() )
 END_EXPOSE()
-
 } // end namespace wgt

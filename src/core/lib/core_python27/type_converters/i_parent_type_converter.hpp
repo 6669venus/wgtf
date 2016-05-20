@@ -60,6 +60,4 @@ public:
 
 
 } // namespace PythonType
-
-
 } // end namespace wgt

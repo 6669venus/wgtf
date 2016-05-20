@@ -212,5 +212,4 @@ void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
 		testView_.reset();
 	}
 }
-
 } // end namespace wgt

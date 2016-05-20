@@ -318,5 +318,4 @@ void SimpleActiveFiltersModel::clearSavedFilters()
 	// TODO - can't even do this as GenericObject has no way to clear its properties
 	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
 }
-
 } // end namespace wgt

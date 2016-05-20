@@ -364,5 +364,4 @@ void DemoObjects::automationUpdate()
 		}
 	}
 }
-
 } // end namespace wgt

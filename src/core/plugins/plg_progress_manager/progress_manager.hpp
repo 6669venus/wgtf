@@ -108,6 +108,5 @@ private:
 	bool isCurrentCommandActive() { return (  commandIdList_.size() > 0 && commandIdList_.end() != curCommandId_  ); }
 
 };
-
 } // end namespace wgt
 #endif // PROGRESS_MANAGER_HPP

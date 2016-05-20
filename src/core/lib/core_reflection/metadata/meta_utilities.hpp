@@ -60,7 +60,5 @@ const T * findFirstMetaData( const IClassDefinition & definition, const IDefinit
 	auto meta = findFirstMetaData( TypeId::getType< T >(), definition, definitionManager );
 	return MetaData< T >( meta, definitionManager );
 }
-
-
 } // end namespace wgt
 #endif //META_UTILITIES_HPP

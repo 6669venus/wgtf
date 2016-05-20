@@ -452,5 +452,4 @@ void ProgressManager::timedUpdate()
 		}
 	}
 }
-
 } // end namespace wgt

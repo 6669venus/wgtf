@@ -16,6 +16,5 @@ public:
 	virtual void retainView() = 0;
 	virtual QWidget * view() const = 0;
 };
-
 } // end namespace wgt
 #endif//I_QT_VIEW_HPP

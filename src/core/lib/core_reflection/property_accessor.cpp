@@ -532,5 +532,4 @@ const IDefinitionManager * PropertyAccessor::getDefinitionManager() const
 {
 	return definitionManager_;
 }
-
 } // end namespace wgt

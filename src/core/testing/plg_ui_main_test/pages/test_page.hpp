@@ -124,7 +124,5 @@ public:
 private:
 	ObjectHandleT<TestPage> testPage_;
 };
-
-
 } // end namespace wgt
 #endif // TEST_PAGE_IMPL_HPP

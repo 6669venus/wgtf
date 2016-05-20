@@ -10,6 +10,5 @@ class ObjectManager : public Implements< IObjectManagerNew >
 {
 public:
 };
-
 } // end namespace wgt
 #endif //OBJECT_MANAGER_HPP

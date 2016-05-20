@@ -12,8 +12,8 @@ Item
     property var nodeTitle
     property var inputSlotsModel
     property var outputSlotsModel
-    property var localPosition
     property var globalPosition: mapToItem(graphView, x, y)
+    property bool isDragActive: nodeMouseArea.drag.active
 
     property bool nodeIsExpanded: true
 
@@ -32,10 +32,16 @@ Item
         node: nodeContainer
     }
 
-    x: localPosition.x
-    y: localPosition.y
+    width: nodeFrame.width
+    height: nodeFrame.height
 
-    onGlobalPositionChanged: { nodeObj.setPos(globalPosition.x, globalPosition.y); }
+    onGlobalPositionChanged: nodeObj.setPos(globalPosition.x, globalPosition.y)
+    onIsDragActiveChanged:
+    {
+        dragStateChanged(this)
+    }
+
+    signal dragStateChanged(var node);
 
     function getSlotViewBySlotObj(slotObj)
     {
@@ -98,12 +104,36 @@ Item
 
         MouseArea
         {
+            id: nodeMouseArea
             anchors.fill: parent
             drag.target: nodeContainer
             drag.axis: Drag.XAndYAxis
             acceptedButtons: Qt.LeftButton
             preventStealing: true
 
+
+            onPositionChanged:
+            {
+                if (drag.active && !nodeContainer.selected)
+                {
+                    graphView.resetNodesSelection();
+                    graphView.selectNode(nodeContainer);
+                }
+            }
+
+            onClicked: {
+                if (!(mouse.modifiers & Qt.ControlModifier))
+                {
+                    graphView.resetNodesSelection();
+                    canvasContainer.selectNode(nodeContainer);
+                    return;
+                }
+
+                if (selected)
+                    graphView.unselectNode(nodeContainer);
+                else
+                    graphView.selectNode(nodeContainer);
+            }
             onDoubleClicked: {
                 nodeIsExpanded = !nodeIsExpanded
             }

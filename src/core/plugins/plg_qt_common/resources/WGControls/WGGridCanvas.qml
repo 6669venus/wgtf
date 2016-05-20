@@ -388,7 +388,8 @@ Canvas {
         anchors.fill: parent;
         acceptedButtons: Qt.AllButtons
         onWheel: {
-            var delta = (Qt.AltModifier & wheel.modifiers) ? 1 + wheel.angleDelta.x/120.0 * .1 : 1 + wheel.angleDelta.y/120.0 * .1;
+            var delta = (Qt.AltModifier & wheel.modifiers) ? 1 + wheel.angleDelta.x/120.0 * .1
+                                                           : 1 + wheel.angleDelta.y/120.0 * .1;
             var screenPos = Qt.point(wheel.x, wheel.y)
             var oldPos = gridCanvas.viewTransform.inverseTransform(screenPos);
 

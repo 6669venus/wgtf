@@ -125,7 +125,7 @@ Item
                 if (!(mouse.modifiers & Qt.ControlModifier))
                 {
                     graphView.resetNodesSelection();
-                    canvasContainer.selectNode(nodeContainer);
+                    graphView.selectNode(nodeContainer);
                     return;
                 }
 

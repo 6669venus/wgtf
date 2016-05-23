@@ -3,8 +3,6 @@
 
 #include "abstract_item.hpp"
 
-#include <functional>
-
 namespace wgt
 {
 /**

@@ -4,8 +4,6 @@
 #include "core_common/signal.hpp"
 #include "core_variant/variant.hpp"
 
-#include <functional>
-
 
 namespace wgt
 {

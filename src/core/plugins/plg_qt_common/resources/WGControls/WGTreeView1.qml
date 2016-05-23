@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
+import WGControls 1.0
 
 //TODO: Test with various configurations of depthColourisation and flatColourisation
 //TODO: Requires extensive testing with indentation and leafNodeIndentation

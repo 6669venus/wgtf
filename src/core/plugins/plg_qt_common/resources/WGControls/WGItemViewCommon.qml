@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
@@ -18,6 +18,31 @@ WGItemView {
     property real columnWidth: 0
     property var columnWidths: []
     property real columnSpacing: 0
+
+    property var headerDelegates: []
+    property var footerDelegates: []
+    property Component headerDelegate: null
+    property Component footerDelegate: null
+    property Component header: null
+    property Component footer: null
+
+    property Component headerComponent: WGHeaderRow {
+        z:2
+        columnDelegates: root.headerDelegates
+        columnSequence: root.columnSequence
+        columnWidths: root.columnWidths
+        columnSpacing: root.columnSpacing
+        headerData: root.headerData
+    }
+
+    property Component footerComponent: WGHeaderRow {
+        z:2
+        columnDelegates: root.footerDelegates
+        columnSequence: root.columnSequence
+        columnWidths: root.columnWidths
+        columnSpacing: root.columnSpacing
+        headerData: root.headerData
+    }
 
     property var commonExtensions: [columnExtension, imageExtension]
     extensions: commonExtensions
@@ -53,20 +78,57 @@ WGItemView {
         }
         columnDelegates = tmp;
 
+        var tmp = headerDelegates
+        if(tmp.length > 0)
+        {
+            while (tmp.length < columnCount()) {
+                tmp.push(headerDelegate);
+            }
+        }
+        if((tmp.length == 0) && (headerDelegate != null))
+        {
+            while (tmp.length < columnCount()) {
+                tmp.push(headerDelegate);
+            }
+        }
+        headerDelegates = tmp;
+        if(headerDelegates.length > 0)
+        {
+             header = headerComponent;
+        }
+
+        var tmp = footerDelegates
+        if(tmp.length > 0)
+        {
+            while (tmp.length < columnCount()) {
+                tmp.push(footerDelegate);
+            }
+        }
+        if((tmp.length == 0) && (footerDelegate != null))
+        {
+            while (tmp.length < columnCount()) {
+                tmp.push(footerDelegate);
+            }
+        }
+        footerDelegates = tmp;
+        if(footerDelegates.length > 0)
+        {
+             footer = footerComponent;
+        }
+
         tmp = columnWidths;
         while (tmp.length < columnCount()) {
             tmp.push(Math.max(columnWidth, 1));
         }
-        columnWidths = tmp;
 
-        root.view.contentWidth = Qt.binding( function() { return columnsFrame.width } );
+        columnWidths = tmp;
     }
 
     WGColumnsFrame {
         id: columnsFrame
         x: root.view.contentItem.x + root.view.originX
-        y: root.view.contentItem.y + root.view.originY
-        height: root.view.contentItem.height
+        y: 0
+        height: root.view.height
         columnWidths: root.view.columnWidths
         columnSpacing: root.view.columnSpacing
         availableWidth: root.view.width - Math.max(contentItem.x, 0)

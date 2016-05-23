@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.4
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import BWControls 1.0
@@ -38,6 +38,32 @@ WG1.WGPanel {
 			model: sourceModel
 			columnSpacing: 1
 			columnSequence: [0,0]
+			// show header text for column 0&1 and footer text only for column 0
+			headerDelegate: myHeaderDelegate
+			footerDelegates: [myFooterDelegate]// this equals [myFooterDelegate, null]
+            roles: ["headerText", "footerText"]
+
+            Component {
+            	id: myHeaderDelegate
+
+            	Text {
+                	id: textBoxHeader
+                	color: palette.textColor
+                	text: headerData.headerText
+                	height: 24
+            	}
+        	}
+
+        	Component {
+	            id: myFooterDelegate
+
+    	        Text {
+        	        id: textBoxFooter
+            	    color: palette.textColor
+                	text: headerData.footerText
+                	height: 24
+            	}
+        	}
 		}
 	}
 }

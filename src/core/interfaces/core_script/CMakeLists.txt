@@ -10,9 +10,9 @@ SET( ALL_SRCS
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 # Use ADD_CUSTOM_TARGET because this target has no cpp files
-ADD_CUSTOM_TARGET( core_script SOURCES
+ADD_CUSTOM_TARGET( ${PROJECT_NAME} SOURCES
 	${ALL_SRCS}
 )
 
-BW_PROJECT_CATEGORY( core_script "NGT Libs" )
+BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Interfaces" )
 

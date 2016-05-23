@@ -37,6 +37,8 @@ WGCopyable 1.0 WGCopyable.qml
 WGDraggableColumn 1.0 WGDraggableColumn.qml
 WGDragHandle 1.0 WGDragHandle.qml
 WGDropDownBox 1.0 WGDropDownBox.qml
+WGDropDownBox 2.0 WGDropDownBox20.qml
+WGDropDownDelegate 2.0 WGDropDownDelegate.qml
 WGExpandingRowLayout 1.0 WGExpandingRowLayout.qml
 WGFileDialog 1.0 WGFileDialog.qml
 WGFileSelectBox 1.0 WGFileSelectBox.qml

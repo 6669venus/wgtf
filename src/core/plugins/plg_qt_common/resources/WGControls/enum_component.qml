@@ -1,9 +1,10 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import WGControls 1.0
+import WGControls 2.0 as WGTwo
 import BWControls 1.0
 
-WGDropDownBox {
+WGTwo.WGDropDownBox {
     id: combobox
     objectName:  itemData != null ? itemData.IndexPath : "enum_component"
     anchors.left: parent.left
@@ -14,14 +15,14 @@ WGDropDownBox {
             var modelIndex = enumModel.find( itemData.Value, "Value" );
             return enumModel.indexRow( modelIndex ); } )
     }
-
+    /*
     // just for the purpose of dynamically generating dropdown list when users click on the dropdownbox
     onPressedChanged: {
         if( pressed )
         {
             enumModel.source = itemData.EnumModel
         }
-    }
+    }*/
 
     model: enumModel
     textRole: "display"

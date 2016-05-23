@@ -10,10 +10,10 @@
 #include "models/bezier_point.hpp"
 #include "models/point.hpp"
 
-/*! Computes the Cubic Bezier position for the specified positions and control points at the given time t
-*/
 namespace wgt
 {
+/*! Computes the Cubic Bezier position for the specified positions and control points at the given time t
+*/
 template<class TVal>
 TVal computeValueAtT(float t, TVal p1, TVal c1, TVal c2, TVal p2)
 {

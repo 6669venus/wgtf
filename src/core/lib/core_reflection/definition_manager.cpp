@@ -10,9 +10,9 @@
 #include "generic/generic_definition_helper.hpp"
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 DefinitionManager::DefinitionManager( IObjectManager & objectManager )
 	: objectManager_ ( objectManager )
 {

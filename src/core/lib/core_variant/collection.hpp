@@ -10,10 +10,9 @@
 #include "core_variant/variant.hpp"
 
 
-// collection and iterator implementations base
-
 namespace wgt
 {
+// collection and iterator implementations base
 class CollectionIteratorImplBase;
 typedef std::shared_ptr<CollectionIteratorImplBase> CollectionIteratorImplPtr;
 

@@ -1,9 +1,9 @@
 #include "test_polystruct.hpp"
 #include "test_objects_common.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 TestPolyStruct::TestPolyStruct()
 	INIT_DATA()
 {

@@ -8,9 +8,9 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_action.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 MainWindow::MainWindow()
 	: contextManager_( nullptr )
 {

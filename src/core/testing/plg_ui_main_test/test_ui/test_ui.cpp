@@ -20,9 +20,9 @@
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 #include "core_logging/logging.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 TestUI::TestUI( IComponentContext & context )
 	: DepsBase( context )
 	, context_( context )

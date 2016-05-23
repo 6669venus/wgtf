@@ -3,9 +3,9 @@
 #include <cassert>
 #include <memory>
 
-//------------------------------------------------------------------------------
 namespace wgt
 {
+//------------------------------------------------------------------------------
 BinaryBlock::BinaryBlock( const void * data, size_t len, bool externallyOwned )
 	: data_( nullptr )
 	, length_( len )

@@ -8,11 +8,11 @@
 #include <vector>
 
 
+namespace wgt
+{
 /**
  *	Plugin loader to be used by unit tests.
  */
-namespace wgt
-{
 class TestPluginLoader
 {
 public:

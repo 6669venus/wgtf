@@ -7,9 +7,9 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
-//------------------------------------------------------------------------------
 namespace wgt
 {
+//------------------------------------------------------------------------------
 class TestPlugin2TestObject
 {
 	DECLARE_REFLECTED

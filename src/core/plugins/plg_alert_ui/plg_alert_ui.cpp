@@ -10,6 +10,9 @@
 #include "popup_alert_presenter.hpp"
 #include <vector>
 
+
+namespace wgt
+{
 /**
  * AlertUIPlugin
  *
@@ -19,9 +22,6 @@
  * IAlertPresenter is registered with the AlertManager and an ILogger invokes
  * the add() functionality on the AlertManager.
  */
-
-namespace wgt
-{
 class AlertUIPlugin
 	: public PluginMain
 {

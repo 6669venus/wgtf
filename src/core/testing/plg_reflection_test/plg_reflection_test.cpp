@@ -6,11 +6,11 @@
 
 #include "test_class.hpp"
 
+namespace wgt
+{
 /**
  *	Test reflection system.
  */
-namespace wgt
-{
 class TestPluginReflection
 	: public PluginMain
 {

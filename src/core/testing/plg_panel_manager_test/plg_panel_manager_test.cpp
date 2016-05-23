@@ -10,9 +10,9 @@
 #include "core_data_model/asset_browser/i_asset_browser_event_model.hpp"
 #include "interfaces/panel_manager/i_panel_manager.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class TestPanelManagerPlugin
 	: public PluginMain
 {

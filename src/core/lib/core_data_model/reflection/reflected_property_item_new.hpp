@@ -8,6 +8,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 /**
  *	Create an item in a ReflectedTreeModel from an IBaseProperty on an ObjectHandle.
  *	Must be a child item.
@@ -15,8 +17,6 @@
  *	E.g. strings "parent.child" or "parent.child[0]"
  *		or pair (*parent, *child)
  */
-namespace wgt
-{
 class ReflectedPropertyItemNew : public ReflectedTreeItemNew
 {
 public:

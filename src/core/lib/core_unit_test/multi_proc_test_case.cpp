@@ -8,6 +8,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 // -----------------------------------------------------------------------------
 // Section: MultiProcTestCase Implementation
 // -----------------------------------------------------------------------------
@@ -18,8 +20,6 @@
  *	subclasses of MultiProcTestCase to use in their test cases for spawning
  *	multiple child processes.
  */
-namespace wgt
-{
 void MultiProcTestCase::runChildren( int num,
 		MultiProcTestCase::ChildProcessFactory * pFactory )
 {

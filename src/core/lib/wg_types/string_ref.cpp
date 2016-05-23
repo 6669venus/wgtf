@@ -1,9 +1,9 @@
 #include "string_ref.hpp"
 #include <cstring>
 
-//------------------------------------------------------------------------------
 namespace wgt
 {
+//------------------------------------------------------------------------------
 StringRef::StringRef( const char * str )
 	: pStart_( str )
 	, length_( strlen( pStart_ ) )

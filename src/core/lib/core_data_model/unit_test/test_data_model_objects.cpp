@@ -6,12 +6,12 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_unit_test/unit_test.hpp"
 
+namespace wgt
+{
 //---------------------------------------------------------------------------
 // Test Fixture Class
 //---------------------------------------------------------------------------
 
-namespace wgt
-{
 void TestFixture::initialise( TestStringData::State state )
 {
 	testStringData_.initialise( state );

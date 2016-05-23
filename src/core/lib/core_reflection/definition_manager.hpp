@@ -8,11 +8,11 @@
 
 #include "wg_types/hashed_string_ref.hpp"
 
+namespace wgt
+{
 /**
  * DefinitionManager
  */
-namespace wgt
-{
 class DefinitionManager 
 	: public Implements< IDefinitionManager >
 { 

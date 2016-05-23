@@ -5,9 +5,9 @@
 #include "mainwindow/mainwindow.hpp"
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class TestProgressManagerPlugin
 	: public PluginMain
 {

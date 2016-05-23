@@ -11,9 +11,9 @@
 #include "core_command_system/command_system.hpp"
 #include "core_command_system/env_system.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 TestCommandSystemFixture::TestCommandSystemFixture()
 	: application_( new TestApplication )
 	, objectManager_( new ObjectManager() )

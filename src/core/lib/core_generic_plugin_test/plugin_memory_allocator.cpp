@@ -1,9 +1,9 @@
 #include "plugin_memory_allocator.hpp"
 #include "wg_memory/allocator.hpp"
 
-//==========================================================================
 namespace wgt
 {
+//==========================================================================
 namespace
 {
 	struct ScopedMemoryContext

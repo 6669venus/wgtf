@@ -4,12 +4,12 @@
 #include "i_item_filter.hpp"
 #include <memory>
 
+namespace wgt
+{
 /**
  *	StringFilter
  *  A simple string filter implementation.
  */
-namespace wgt
-{
 class StringFilter : public IItemFilter
 {
 public:

@@ -10,16 +10,16 @@
 
 #include <memory>
 
+namespace wgt
+{
+class IFileSystem;
+
 //------------------------------------------------------------------------------
 // FolderTreeModel
 //
 // Represents the tree model with all of the items for browsing assets based
 // on the registered IFileSystem for folder retrieval.
 //------------------------------------------------------------------------------
-namespace wgt
-{
-class IFileSystem;
-
 class FolderTreeModel: public ITreeModel
 {
 public:

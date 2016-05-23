@@ -6,6 +6,8 @@
 #include "core_logging/logging.hpp"
 #include <string>
 
+namespace wgt
+{
 /**
  *  This class acts as a base class for any object that needs to be able to pass
  *  up a failure message into an outer context.  This is necessitated by the
@@ -13,8 +15,6 @@
  *  (e.g. CHECK(), CHECK_MESSAGE() etc) from anywhere other than a TEST() {}
  *  block.
  */
-namespace wgt
-{
 class TestCase
 {
 public:

@@ -5,11 +5,11 @@
 #include "core_reflection/object_manager.hpp"
 #include "core_unit_test/unit_test.hpp"
 
+namespace wgt
+{
 //---------------------------------------------------------------------------
 // List Model Tests
 //---------------------------------------------------------------------------
-namespace wgt
-{
 TEST_F( TestFixture, refreshFilteredList )
 {
 	initialise( TestStringData::STATE_LIST );

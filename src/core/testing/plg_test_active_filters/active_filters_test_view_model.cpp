@@ -4,12 +4,12 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_data_model/i_item_role.hpp"
 
-//------------------------------------------------------------------------------
-// Implementation (PIMPL)
-//------------------------------------------------------------------------------
 
 namespace wgt
 {
+//------------------------------------------------------------------------------
+// Implementation (PIMPL)
+//------------------------------------------------------------------------------
 struct ActiveFiltersTestViewModel::Implementation
 {
 	Implementation( ActiveFiltersTestViewModel& self );

@@ -2,9 +2,9 @@
 #include <locale>
 #include <codecvt>
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 CommandLineParser::CommandLineParser(int argc, char** argv)
 	: argc_( argc )
 	, argv_( argv )

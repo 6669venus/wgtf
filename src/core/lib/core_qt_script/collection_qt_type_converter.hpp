@@ -5,11 +5,11 @@
 #include "core_qt_common/i_qt_type_converter.hpp"
 
 
+namespace wgt
+{
 /**
  *	Converts between QVariant and Collection.
  */
-namespace wgt
-{
 class CollectionQtTypeConverter : public IQtTypeConverter
 {
 public:

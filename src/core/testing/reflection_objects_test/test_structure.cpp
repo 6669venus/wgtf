@@ -1,9 +1,9 @@
 #include "test_structure.hpp"
 #include "test_objects_common.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 TestStructure::TestStructure()
 	INIT_DATA()
 {

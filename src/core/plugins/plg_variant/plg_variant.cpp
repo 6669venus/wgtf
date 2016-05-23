@@ -3,9 +3,9 @@
 #include "core_variant/default_meta_type_manager.hpp"
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class TypeSystemHolder
 {
 public:

@@ -2,9 +2,9 @@
 #include "metadata/meta_base.hpp"
 #include <stddef.h>
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 BaseProperty::BaseProperty( const char * name, const TypeId & type )
 	: name_( name )
 	, type_( type )

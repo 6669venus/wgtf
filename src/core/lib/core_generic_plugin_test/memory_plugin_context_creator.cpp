@@ -3,9 +3,9 @@
 
 #include <typeinfo>
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 IInterface * MemoryPluginContextCreator::createContext(
 	const wchar_t * contextId )
 {

@@ -1,9 +1,9 @@
 #include "command.hpp"
 #include "i_command_manager.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 Command::~Command()
 {
 	eventListenerCollection_.clear();

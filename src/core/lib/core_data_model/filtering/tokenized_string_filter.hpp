@@ -4,12 +4,12 @@
 #include "i_item_filter.hpp"
 #include <memory>
 
+namespace wgt
+{
 /**
  *	TokenizedStringFilter
  *  A filter implementation, which uses a vector of strings to compare text against.
  */
-namespace wgt
-{
 class TokenizedStringFilter : public IItemFilter
 {
 public:

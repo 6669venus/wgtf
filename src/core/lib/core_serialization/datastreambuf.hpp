@@ -13,13 +13,13 @@
 #define DATA_STREAM_BUF_LOG(x)
 
 
+namespace wgt
+{
 /**
 std::streambuf adapter for BasicStream.
 
 Use this adapter to perform stream IO on BasicStream using std::iostream.
 */
-namespace wgt
-{
 template< typename _CharT, typename _Traits = std::char_traits<_CharT> >
 class BasicDataStreamBuf:
 	public std::basic_streambuf< _CharT, _Traits >

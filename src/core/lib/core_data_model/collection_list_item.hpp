@@ -6,11 +6,11 @@
 #include <memory>
 
 
+namespace wgt
+{
 /**
  *	Item to be used by CollectionListModel.
  */
-namespace wgt
-{
 class CollectionListItem : public IItem
 {
 public:

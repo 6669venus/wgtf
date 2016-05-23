@@ -12,9 +12,9 @@
 #include "core_variant/variant.hpp"
 #include "test_tree_model.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class TreeToListTest
 	: public PluginMain
 {

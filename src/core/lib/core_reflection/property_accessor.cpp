@@ -12,9 +12,9 @@
 #include <unordered_map>
 #include "core_variant/variant.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 	: object_( other.object_ )
 	, property_( std::move( other.property_ ) )

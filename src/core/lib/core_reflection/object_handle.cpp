@@ -8,13 +8,13 @@
 #include "core_serialization/binary_stream.hpp"
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 //==============================================================================
 // ObjectHandle
 //==============================================================================
 
 //------------------------------------------------------------------------------
-namespace wgt
-{
 ObjectHandle::ObjectHandle()
 	: storage_( nullptr )
 {

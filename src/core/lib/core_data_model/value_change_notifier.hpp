@@ -6,11 +6,11 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 /**
  *	Wraps a type T, and sends notification events when the value is changed.
  */
-namespace wgt
-{
 template< class T >
 class ValueChangeNotifier
 	: public IValueChangeNotifier

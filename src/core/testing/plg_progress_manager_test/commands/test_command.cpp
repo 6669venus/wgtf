@@ -6,9 +6,9 @@
 #include "core_common/ngt_windows.hpp"
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 const char * TestCommand1::getId() const
 {
 	const char * s_Id = getClassIdentifier<TestCommand1>();

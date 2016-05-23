@@ -10,12 +10,12 @@
 #include "core_reflection/reflection_macros.hpp"
 
 
+namespace wgt
+{
 /**
  *	Controls initialization and finalization of Python and
  *	registers the Python interface to be used by other plugins.
  */
-namespace wgt
-{
 class Python27Plugin
 	: public PluginMain
 {

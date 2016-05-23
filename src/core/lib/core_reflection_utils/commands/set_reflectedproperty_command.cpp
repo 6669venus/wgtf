@@ -10,9 +10,9 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
 const char * ReflectedPropertyCommandArgument::s_PropertyPath = "PropertyPath";
 const char * ReflectedPropertyCommandArgument::s_PropertyValue = "PropertyValue";

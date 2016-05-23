@@ -7,9 +7,9 @@
 #include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
 
 
-//------------------------------------------------------------------------------
 namespace wgt
 {
+//------------------------------------------------------------------------------
 class TestPlugin1TestObject
 {
 	DECLARE_REFLECTED

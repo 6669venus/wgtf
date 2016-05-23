@@ -7,12 +7,12 @@
 #include <set>
 
 
+namespace wgt
+{
 /**
  *	Create an item in a ReflectedTreeModel from an ObjectHandle.
  *	Can be a root or child item.
  */
-namespace wgt
-{
 class ReflectedObjectItem : public ReflectedItem
 {
 public:

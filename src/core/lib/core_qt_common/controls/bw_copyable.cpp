@@ -5,9 +5,9 @@
 #include <QtCore>
 #include <QQmlEngine>
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 BWCopyable::BWCopyable( QObject * parent )
 	: QObject( parent )
 	, valueHint_( "" )

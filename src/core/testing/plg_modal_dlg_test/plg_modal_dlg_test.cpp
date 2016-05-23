@@ -8,13 +8,12 @@
 #include "core_ui_framework/i_window.hpp"
 #include "core_ui_framework/i_action.hpp"
 
-
 #include <vector>
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class ModalDlgTestPlugin
 	: public PluginMain
 {

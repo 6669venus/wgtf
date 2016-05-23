@@ -15,13 +15,13 @@
 
 #include "active_filters_test_view_model.hpp"
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 // Plugin Class
 // Spins up an instance of the plugin and creates the panel with the view
 // model being passed is as source.
 //------------------------------------------------------------------------------
-namespace wgt
-{
 class TestActiveFiltersPlugin
 	: public PluginMain
 {

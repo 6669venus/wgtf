@@ -3,10 +3,9 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_data_model/i_item_role.hpp"
 
-//------------------------------------------------------------------------------
-
 namespace wgt
 {
+//------------------------------------------------------------------------------
 struct AssetBrowserBreadcrumbsModel::Implementation
 {
 	Implementation( AssetBrowserBreadcrumbsModel& self, IDefinitionManager & definitionManager );

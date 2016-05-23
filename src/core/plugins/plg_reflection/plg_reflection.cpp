@@ -15,9 +15,9 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_string_utils/string_utils.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class ReflectionSystemContextManager
 	: public Implements< IComponentContextCreator >
 {

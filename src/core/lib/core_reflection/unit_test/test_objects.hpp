@@ -18,9 +18,9 @@
 #include <unordered_map>
 
 
-//------------------------------------------------------------------------------
 namespace wgt
 {
+//------------------------------------------------------------------------------
 struct TestStructure2
 {
 	bool operator==( const TestStructure2& tps ) const

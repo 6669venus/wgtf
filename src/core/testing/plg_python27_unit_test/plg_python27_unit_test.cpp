@@ -10,11 +10,11 @@
 #include "python27_unit_test.hpp"
 
 
+namespace wgt
+{
 /**
  *	Runs unit tests.
  */
-namespace wgt
-{
 class MainApplication
 	: public Implements< IApplication >
 {

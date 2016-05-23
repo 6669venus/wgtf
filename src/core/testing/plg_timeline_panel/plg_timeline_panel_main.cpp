@@ -1,10 +1,3 @@
-/**
- * TimelinePanelPlugin
- *
- * This is the main application's plugin. It creates the TimelinePanel and
- * registers it with the UIFramework. So that it will be added to the main dialog
- */
- 
 // Declaration of PluginMain
 #include "core_generic_plugin/generic_plugin.hpp"
  
@@ -20,6 +13,12 @@
  
 namespace wgt
 {
+/**
+ * TimelinePanelPlugin
+ *
+ * This is the main application's plugin. It creates the TimelinePanel and
+ * registers it with the UIFramework. So that it will be added to the main dialog
+ */
 class TimelinePanelPlugin
     : public PluginMain
 {

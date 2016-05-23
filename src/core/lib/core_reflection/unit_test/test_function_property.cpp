@@ -15,10 +15,9 @@
 #include <memory>
 
 
-// =============================================================================
-
 namespace wgt
 {
+// =============================================================================
 class TestPropertyFixtureBase
 	: public TestReflectionFixture
 {

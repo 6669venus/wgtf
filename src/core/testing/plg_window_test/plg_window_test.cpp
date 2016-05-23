@@ -8,9 +8,9 @@
 #include "core_ui_framework/i_window.hpp"
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class TestWindowPlugin
 	: public PluginMain
 {

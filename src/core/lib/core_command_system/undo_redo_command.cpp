@@ -5,9 +5,9 @@
 #include "command_manager.hpp"
 
 
-//--------------------------------------------------------------------------
 namespace wgt
 {
+//--------------------------------------------------------------------------
 UndoRedoCommand::UndoRedoCommand( CommandManager * pCommandManager )
     : pCommandManager_( pCommandManager )
 {

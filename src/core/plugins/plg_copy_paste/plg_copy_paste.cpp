@@ -7,9 +7,9 @@
 #include "core_qt_common/qt_global_settings.hpp"
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class CopyPastePlugin
 	: public PluginMain
 {

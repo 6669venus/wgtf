@@ -10,9 +10,9 @@
 
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 ContextDefinitionManager::ContextDefinitionManager( const wchar_t * contextName )
 	: pBaseManager_ ( NULL )
 	, contextName_( contextName )

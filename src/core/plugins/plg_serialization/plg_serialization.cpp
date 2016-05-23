@@ -2,9 +2,9 @@
 #include "core_serialization/serializer/serialization_manager.hpp"
 
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class SerializationSystemHolder
 {
 public:

@@ -3,9 +3,9 @@
 #include "command_manager.hpp"
 
 
-//--------------------------------------------------------------------------
 namespace wgt
 {
+//--------------------------------------------------------------------------
 BatchCommand::BatchCommand( CommandManager * pCommandManager )
     : pCommandManager_( pCommandManager )
 {

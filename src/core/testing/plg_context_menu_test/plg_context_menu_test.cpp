@@ -10,9 +10,9 @@
 #include "core_ui_framework/i_window.hpp"
 #include "core_variant/variant.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class ContextMenuTest
 	: public PluginMain
 {

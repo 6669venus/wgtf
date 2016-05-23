@@ -9,9 +9,9 @@
 #include "core_reflection_utils/commands/reflected_collection_erase_command.hpp"
 #include "core_reflection_utils/reflected_types.hpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 class EditorInteractionPlugin
 	: public PluginMain
 {

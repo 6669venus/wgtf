@@ -14,11 +14,11 @@
 #include <string>
 
 
+namespace wgt
+{
 /**
  *  This class provides encoding/decoding of Base64 streams.
  */
-namespace wgt
-{
 class Base64
 {
 public:

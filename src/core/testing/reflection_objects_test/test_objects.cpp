@@ -4,9 +4,9 @@
 #include "metadata/test_polystruct.mpp"
 #include "metadata/test_methods_object.mpp"
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 void TestObjects::initDefs( IDefinitionManager & definitionManager )
 {
 	REGISTER_DEFINITION( TestStructure );

@@ -22,9 +22,9 @@
 #include <shlwapi.h>
 #endif // _WIN32
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 GenericPluginManager::GenericPluginManager(bool applyDebugPostfix_)
 	: contextManager_( new PluginContextManager() )
     , applyDebugPostfix(applyDebugPostfix_)

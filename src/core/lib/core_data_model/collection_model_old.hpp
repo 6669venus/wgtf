@@ -5,11 +5,11 @@
 #include "core_variant/collection.hpp"
 #include <memory>
 
+namespace wgt
+{
 /**
  *	Data model for displaying a Collection as a list.
  */
-namespace wgt
-{
 class CollectionModelOld
 	: public IListModel
 {

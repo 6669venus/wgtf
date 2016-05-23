@@ -4,14 +4,14 @@
 #include "core_data_model/asset_browser/i_asset_presentation_provider.hpp"
 #include <map>
 
+namespace wgt
+{
 /**
  TestAssetPresentationProvider
  This class provides a test platform for the asset presentation provider functionality. It may also serve as an
  example to others as to how it can be used to provide customized presentation information such as thumbnail
  generation, status overlays, and file type icon overrides for their asset browsers.
  */
-namespace wgt
-{
 class TestAssetPresentationProvider : public IAssetPresentationProvider
 {
 public:

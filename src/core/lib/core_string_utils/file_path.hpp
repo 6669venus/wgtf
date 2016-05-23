@@ -14,6 +14,8 @@
 #include <string>
 #include <algorithm>
 
+namespace wgt
+{
 /*!
  * \class FilePath
  *
@@ -24,8 +26,6 @@
  * \author m_martin
  * \date August 2015
  */
-namespace wgt
-{
 class FilePath
 {
 public:

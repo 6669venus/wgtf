@@ -6,9 +6,9 @@
 #include <QtCore>
 #include <QQmlEngine>
 
-//==============================================================================
 namespace wgt
 {
+//==============================================================================
 BWFileDialogQI::BWFileDialogQI( QObject * parent )
 	: QObject( parent )
 	, fileDialog_( NULL )

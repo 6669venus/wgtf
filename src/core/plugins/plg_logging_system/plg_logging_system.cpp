@@ -4,14 +4,14 @@
 #include <vector>
 #include <memory>
 
+
+namespace wgt
+{
 /**
  * LoggingSystemPlugin
  *
  * A plugin used to expose the core logging system for NGT.
  */
-
-namespace wgt
-{
 class LoggingSystemPlugin
 	: public PluginMain
 {

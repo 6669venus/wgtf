@@ -3,9 +3,9 @@
 
 #include "core_command_system/command.hpp"
 
-/// Base class for TestCommand classes
 namespace wgt
 {
+/// Base class for TestCommand classes
 class TestCommandBase
 	: public Command
 {

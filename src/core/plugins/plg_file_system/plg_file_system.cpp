@@ -10,13 +10,13 @@
 
 #include "core_serialization/file_system.hpp"
 
+namespace wgt
+{
 /**
  * FileSystemPlugin
  *
  * A plugin used to enumerate and manipulate the underlying file system
  */
-namespace wgt
-{
 class FileSystemPlugin
 	: public PluginMain
 {

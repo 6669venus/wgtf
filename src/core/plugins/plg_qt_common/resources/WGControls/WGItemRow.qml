@@ -30,7 +30,7 @@ Item {
     property var columnSequence: []
     property var columnWidths: []
     property alias columnSpacing: row.spacing
-    property bool selected: false
+    property bool isSelected: false
     
     /*! Stores which item is currently in focus by the keyboard.
         Often this will correspond to the selected item, but not always.
@@ -56,8 +56,8 @@ Item {
         id: backgroundArea
         anchors.fill: row
         color: palette.highlightShade
-        opacity: selected ? 1 : 0.5
-        visible: hoverArea.containsMouse || selected
+        opacity: isSelected ? 1 : 0.5
+        visible: hoverArea.containsMouse || isSelected
     }
 
     MouseArea {

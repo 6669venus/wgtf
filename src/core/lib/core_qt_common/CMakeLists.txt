@@ -10,9 +10,6 @@ find_package(QT5)
 
 include_directories(.)
 
-ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
-ADD_DEFINITIONS( -DQT_QML_DEBUG )
-
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp

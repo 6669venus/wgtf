@@ -1093,6 +1093,7 @@ Rectangle {
                                 id: folderIconHeaderContainer
                                 Image{
                                     id: folderFileIcon
+                                    objectName: typeof(itemData.Value) != "undefined" ? "folderFileIcon_" + itemData.Value : "folderFileIcon"
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
                                     visible: true
                                     anchors.left: folderIconHeaderContainer.left //itemData.expandIconArea.right
@@ -1102,6 +1103,7 @@ Rectangle {
                                     source: itemData.HasChildren ? (itemData.Expanded ? "icons/folder_open_16x16.png" : "icons/folder_16x16.png") : "icons/file_16x16.png"
                                 }
                                 Text {
+                                    objectName: typeof(itemData.Value) != "undefined" ? "Text_" + itemData.Value : "Text"
                                     anchors.left: folderFileIcon.right
                                     color: palette.textColor
                                     clip: itemData != null && itemData.Component != null

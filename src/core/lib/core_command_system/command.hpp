@@ -49,6 +49,7 @@ public:
 
 	virtual CommandThreadAffinity threadAffinity() const { return CommandThreadAffinity::COMMAND_THREAD; }
 
+	virtual bool customUndo() const { return false; }
 	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
 	virtual bool undo( const ObjectHandle & arguments ) const { return false; }
 	virtual bool redo( const ObjectHandle & arguments ) const { return false; }

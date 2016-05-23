@@ -37,6 +37,7 @@ LIST( APPEND BW_LIBRARY_PROJECTS
 	# Interfaces
 	core_python_script			core/interfaces/core_python_script
 	core_script					core/interfaces/core_script
+	version_control				core/interfaces/version_control
 )
 
 LIST( APPEND BW_BINARY_PROJECTS

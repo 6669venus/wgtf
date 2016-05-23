@@ -5,14 +5,15 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_ui_framework/i_view.hpp"
 
+class QQuickView;
+class QQmlContext;
+class QObject;
+
 namespace wgt
 {
 class AlertPageModel;
 class IAction;
 class IComponentContext;
-class QQuickView;
-class QQmlContext;
-class QObject;
 
 class PopupAlertPresenter : public IAlertPresenter
 {

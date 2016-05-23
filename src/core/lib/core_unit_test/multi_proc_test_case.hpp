@@ -173,8 +173,5 @@ protected:
 			OBJ.failureMsg() );												\
 	}																		\
 
-#endif // __MULTIPROC_TEST_CASE_HPP__
-
-
-// multiproc_test_case.hpp
 } // end namespace wgt
+#endif // __MULTIPROC_TEST_CASE_HPP__

@@ -123,6 +123,4 @@ bool MultiProcTestCase::checkAllChildrenPass()
 	this->fail( "Not implemented in Win32" );
 	return false;
 }
-
-// multiproc_test_case.cpp
 } // end namespace wgt

@@ -51,13 +51,29 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS( Perforce
 	PERFORCE_EXISTS
 )
 
+# Only certain commands, like INCLUDE_DIRECTORIES can contain generator
+# expressions like $CONFIG:Debug
+SET( PERFORCE_CONFIG_DIR ${PERFORCE_DIR}$<$<CONFIG:Debug>:_debug> )
+SET( CONFIG_SUFFIX $<$<CONFIG:Debug>:d>$<$<NOT:$<CONFIG:Debug>>:r> )
+SET( LIB_SUFFIX ${PLATFORM_SUFFIX}${BITNESS_SUFFIX}${CONFIG_SUFFIX} )
+SET( LIBEAY_PATH ${OPENSSL_DIR}/lib/libeay_${LIB_SUFFIX}.lib )
+SET( SSLEAY_PATH ${OPENSSL_DIR}/lib/ssleay_${LIB_SUFFIX}.lib )
+SET( PERFORCE_LIB_DIR ${PERFORCE_CONFIG_DIR}/lib )
+
 # Definitions, libraries and include dirs should be output for each FIND_PACKAGE script
 # No definitions
 SET( PERFORCE_DEFINITIONS )
 # No dependencies
-SET( PERFORCE_LIBRARIES )
+SET( PERFORCE_LIBRARIES
+	Ws2_32
+	${PERFORCE_CONFIG_DIR}/lib/libclient.lib
+	${PERFORCE_CONFIG_DIR}/lib/librpc.lib
+	${PERFORCE_CONFIG_DIR}/lib/libsupp.lib
+	${LIBEAY_PATH}
+	${SSLEAY_PATH}
+)
 # Includes
-SET( PERFORCE_INCLUDE_DIRS ${PERFORCE_DIR}/Include )
+SET( PERFORCE_INCLUDE_DIRS ${PERFORCE_CONFIG_DIR}/include )
 
 MARK_AS_ADVANCED( PERFORCE_EXISTS )
 

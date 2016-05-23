@@ -1,24 +1,19 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.2.3 )
-PROJECT( core_python_script )
+PROJECT( version_control )
 
 INCLUDE( WGToolsCoreProject )
 
 
-SET( V0_INTERFACES
-	v0/i_scripting_engine_v0.hpp
-)
-SOURCE_GROUP( "v0" FILES ${V0_INTERFACES} )
-
-
 SET( ALL_SRCS
-	i_scripting_engine.hpp
+	i_version_control.hpp
+	i_depot_view.hpp
+	i_result.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
 
 # Use ADD_CUSTOM_TARGET because this target has no cpp files
 ADD_CUSTOM_TARGET( ${PROJECT_NAME} SOURCES
-	${V0_INTERFACES}
 	${ALL_SRCS}
 )
  

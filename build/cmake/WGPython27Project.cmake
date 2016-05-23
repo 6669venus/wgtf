@@ -11,7 +11,6 @@ IF( CORE_PYTHON_FOUND )
 ENDIF()
 
 IF( NOT PYTHON_FOUND )
-	MESSAGE( STATUS "Disabled ${PROJECT_NAME}. Python not found in ${CORE_PYTHON_SRC_DIR}." )
 	# Use ADD_CUSTOM_TARGET because this target has no cpp files
 	ADD_CUSTOM_TARGET( ${PROJECT_NAME} COMMENT "${PROJECT_NAME} disabled." )
 	BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Disabled" )

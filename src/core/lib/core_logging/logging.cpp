@@ -7,10 +7,6 @@
 
 namespace wgt
 {
-namespace NGT
-{
-
-
 int logMessage( const char* format, ... )
 {
 	const size_t bufferSize = 4095;
@@ -31,7 +27,4 @@ int logMessage( const char* format, ... )
 
 	return result;
 }
-
-
-} // namespace NGT
 } // end namespace wgt

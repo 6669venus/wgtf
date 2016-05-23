@@ -11,8 +11,8 @@ WG1.WGPanel {
     property var sourceModel: useModel ? source : null
     color: palette.mainWindowColor
     
-    property var useModel: 1
-    property var topControlsHeight: 20
+    property bool useModel: true
+    property int topControlsHeight: 20
 
     Button {
         id: switchModelButton
@@ -23,7 +23,7 @@ WG1.WGPanel {
         text: useModel ? "Switch Model Off" : "Switch Model On"
 
         onClicked: {
-            useModel = useModel == 0 ? 1 : 0;
+            useModel = useModel ? 1 : 0;
         }
     }
 

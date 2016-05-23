@@ -16,7 +16,21 @@ ListView {
         E.g. pressing ctrl+up will move the current index, but not the selected index.
         The default value is the same as the selection (modelIndex).
     */
-    property var keyboardHighlightModelIndex: view.selectionModel.currentIndex
+    property var keyboardHighlightModelIndex: {
+        // Use as initial value without binding
+        return view.selectionModel.currentIndex;
+    }
+
+    /*! Bind ListView.currentIndex to keyboardHighlightModelIndex.
+     *  So that users can simply use currentIndex the same as with a regular ListView.
+     */
+    onCurrentIndexChanged: {
+        // Cast currentIndex from int to QModelIndex
+        keyboardHighlightModelIndex = listExtension.getRowToIndex(keyboardHighlightModelIndex, currentIndex);
+    }
+    onKeyboardHighlightModelIndexChanged: {
+        currentIndex = listExtension.getIndexToRow(keyboardHighlightModelIndex);
+    }
 
     /*! Propogates events from children to parents.
         \param mouse the MouseEvent that triggered the signal.

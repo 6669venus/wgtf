@@ -80,8 +80,12 @@ WGListViewBase {
     property var extensions: []
 
     function moveKeyHighlightPrevious(event) {
-        // Move keyboard highlight
-        keyboardHighlightModelIndex = listExtension.getPreviousIndex(keyboardHighlightModelIndex);
+
+        if (listView.currentIndex <= 0) {
+            return;
+        }
+        // Should automatically update keyboardHighlightModelIndex
+        --listView.currentIndex;
 
         // When Shift is pressed, selection area increases with the keyboard highlight
         if (event.modifiers & Qt.ShiftModifier) {
@@ -98,8 +102,12 @@ WGListViewBase {
     }
 
     function moveKeyHighlightNext(event) {
-        // Move keyboard highlight
-        keyboardHighlightModelIndex = listExtension.getNextIndex(keyboardHighlightModelIndex);
+
+        if (listView.currentIndex >= (listView.count - 1)) {
+            return;
+        }
+        // Should automatically update keyboardHighlightModelIndex
+        ++listView.currentIndex;
 
         // When Shift is pressed, selection area increases with the keyboard highlight
         if (event.modifiers & Qt.ShiftModifier) {

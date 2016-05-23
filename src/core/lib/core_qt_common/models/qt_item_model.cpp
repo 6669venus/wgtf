@@ -270,16 +270,16 @@ bool QtItemModel::setData( const QModelIndex &index, const QVariant &value, int 
 
 QVariant QtItemModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
-	auto row = orientation == Qt::Horizontal ? section : -1;
-	auto column = orientation == Qt::Vertical ? section : -1;
+	auto row = orientation == Qt::Vertical ? section : -1;
+	auto column = orientation == Qt::Horizontal ? section : -1;
 	auto data = impl_->source_.getData( row, column, role );
 	return QtHelpers::toQVariant( data, nullptr );
 }
 
 bool QtItemModel::setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role )
 {
-	auto row = orientation == Qt::Horizontal ? section : -1;
-	auto column = orientation == Qt::Vertical ? section : -1;
+	auto row = orientation == Qt::Vertical ? section : -1;
+	auto column = orientation == Qt::Horizontal ? section : -1;
 	auto data = QtHelpers::toVariant( value );
 	return impl_->source_.setData( row, column, role, data );
 }

@@ -47,7 +47,8 @@ WGGradientSliderHandle 2.0 WGGradientSliderHandle.qml
 WGGradientSliderStyle 2.0 WGGradientSliderStyle.qml
 WGGridCanvas 2.0 WGGridCanvas.qml
 WGGroupBox 1.0 WGGroupBox.qml
-WGHeaderRow 1.0 WGHeaderRow.qml
+WGHeaderRow 1.0 WGHeaderRow1.qml
+WGHeaderRow 2.0 WGHeaderRow.qml
 WGHighlightFrame 1.0 WGHighlightFrame.qml
 WGInternalPanel 1.0 WGInternalPanel.qml
 WGInvisTextBoxStyle 1.0 WGInvisTextBoxStyle.qml

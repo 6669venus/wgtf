@@ -41,6 +41,8 @@ public:
 
 	virtual AbstractItem * item( const ItemIndex & index ) const override;
 	virtual ItemIndex index( const AbstractItem * item ) const override;
+    virtual Variant getData( int row, int column, size_t roleId ) const override;
+    virtual bool setData( int row, int column, size_t roleId, const Variant & data ) override;
 
 	virtual int rowCount( const AbstractItem * item ) const override;
 	virtual int columnCount() const override;

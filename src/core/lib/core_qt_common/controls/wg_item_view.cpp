@@ -9,6 +9,7 @@
 #include <QQmlListProperty>
 #include <QString>
 #include <QUuid>
+#include <QtAlgorithms>
 
 #include <private/qmetaobjectbuilder_p.h>
 
@@ -191,6 +192,12 @@ namespace
 				}
 			}
 
+            size_t roleId;
+            if (decodeRole( role, roleId ))
+            {
+                role = static_cast< int >( roleId );
+            }
+
 			return model_->headerData( section, orientation, role );
 		}
 
@@ -208,6 +215,12 @@ namespace
 					return true;
 				}
 			}
+
+            size_t roleId;
+            if (decodeRole( role, roleId ))
+            {
+                role = static_cast< int >( roleId );
+            }
 
 			return model_->setHeaderData( section, orientation, value, role );
 		}
@@ -339,13 +352,18 @@ namespace
 				property.setNotifySignal( builder.addSignal( itr.value() + "Changed(QVariant)" ) );
 			}
 
-			metaObject_.reset( builder.toMetaObject() );
+			metaObject_ = builder.toMetaObject();
 		}
+        ~HeaderData()
+        {
+            free( metaObject_ );
+            metaObject_ = nullptr;
+        }
 
 	private:
 		const QMetaObject * metaObject() const override
 		{
-			return metaObject_.get();
+			return metaObject_;
 		}
 
 		int qt_metacall( QMetaObject::Call c, int id, void **argv ) override
@@ -399,7 +417,7 @@ namespace
 		int section_;
 		Qt::Orientation orientation_;
 		QList< int > roles_;
-		std::unique_ptr< QMetaObject > metaObject_;
+		QMetaObject* metaObject_;
 	};
 }
 
@@ -411,7 +429,7 @@ struct WGItemView::Impl
 	QList< IModelExtension * > extensions_;
 	QStringList roles_;
 	std::unique_ptr< ExtendedModel > extendedModel_;
-	std::unique_ptr< HeaderData > headerData_;
+	QList< QObject* > headerData_;
 };
 
 WGItemView::WGItemView()
@@ -510,9 +528,9 @@ QAbstractItemModel * WGItemView::getExtendedModel() const
 	return impl_->extendedModel_.get();
 }
 
-QObject * WGItemView::getHeaderData() const
+QList< QObject* > WGItemView::getHeaderData() const
 {
-	return impl_->headerData_.get();
+    return impl_->headerData_;
 }
 
 void WGItemView::refresh()
@@ -520,11 +538,15 @@ void WGItemView::refresh()
 	impl_->extendedModel_->reset( impl_->model_ );
 
 	//Enable for headers once body works.
-	/*
-	impl_->headerData_.reset();
+	qDeleteAll( impl_->headerData_);
+	impl_->headerData_.clear();
 	if (impl_->extendedModel_ != nullptr)
 	{
-		impl_->headerData_.reset( new HeaderData( *impl_->extendedModel_, 0, Qt::Horizontal ) );
+        int columnCount = getExtendedModel()->columnCount();
+        for( int i = 0; i < columnCount; i++)
+        {
+		    impl_->headerData_.append( new HeaderData( *impl_->extendedModel_, i, Qt::Horizontal ) );
+        }
 	}
-	emit headerDataChanged();*/
+	emit headerDataChanged();
 }

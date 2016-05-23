@@ -40,7 +40,7 @@ public:
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
-	bool load(const QUrl & qUrl, const char * customTitle = 0,
+	bool load(const QUrl & qUrl, 
 		std::function< void() > loadedHandler = [] {}, bool async = true );
 
 	virtual void focusInEvent() override;

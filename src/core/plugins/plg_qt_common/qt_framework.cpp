@@ -398,7 +398,7 @@ void QtFramework::createViewInternal(
 	}
 
 	// by default using resource path as qml view id
-	auto view = new QmlView( resource, *this, *qmlEngine_ );
+	auto view = new QmlView( uniqueName ? uniqueName : resource, *this, *qmlEngine_ );
 	auto scriptObject = scriptingEngine_->createScriptObject(context, view->view());
 
 	if (scriptObject)
@@ -411,7 +411,7 @@ void QtFramework::createViewInternal(
 		view->setContextProperty( QString( "source" ), source );
 	}
 
-	view->load(qUrl, uniqueName, [loadedHandler, view ]()
+	view->load(qUrl, [loadedHandler, view ]()
 	{
 		loadedHandler( std::unique_ptr< IView >( view ) );
 	}, async );

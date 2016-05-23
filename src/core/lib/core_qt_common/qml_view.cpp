@@ -114,7 +114,7 @@ struct QmlView::Impl
 	}
 
 
-	bool doLoad(const QUrl & qUrl, std::function< void() > loadedHandler = [] {}, const char * customTitle = 0, bool async = true )
+	bool doLoad(const QUrl & qUrl, std::function< void() > loadedHandler = [] {}, bool async = true )
 	{
 		std::unique_lock< std::mutex > holder( loadMutex_ );
 		auto qmlEngine = qmlContext_->engine();
@@ -244,7 +244,7 @@ void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message
 		message.toLatin1().constData() );
 }
 
-bool QmlView::load( const QUrl & qUrl, const char * customTitle, std::function< void() > loadedHandler, bool async )
+bool QmlView::load( const QUrl & qUrl, std::function< void() > loadedHandler, bool async )
 {
 	impl_->url_ = qUrl;
 
@@ -255,7 +255,7 @@ bool QmlView::load( const QUrl & qUrl, const char * customTitle, std::function< 
 	this->setContextProperty( QString( "viewId" ), impl_->id_.c_str() );
 	this->setContextProperty( QString( "View" ), QVariant::fromValue(impl_->quickView_ ) );
 
-	return impl_->doLoad( qUrl, loadedHandler, customTitle, async );
+	return impl_->doLoad( qUrl, loadedHandler, async );
 }
 
 void QmlView::reload()

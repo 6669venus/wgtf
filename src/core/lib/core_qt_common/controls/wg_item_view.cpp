@@ -429,7 +429,7 @@ struct WGItemView::Impl
 	QList< IModelExtension * > extensions_;
 	QStringList roles_;
 	std::unique_ptr< ExtendedModel > extendedModel_;
-	QList< QObject* > headerDatas_;
+	QList< QObject* > headerData_;
 };
 
 WGItemView::WGItemView()
@@ -530,7 +530,7 @@ QAbstractItemModel * WGItemView::getExtendedModel() const
 
 QList< QObject* > WGItemView::getHeaderData() const
 {
-    return impl_->headerDatas_;
+    return impl_->headerData_;
 }
 
 void WGItemView::refresh()
@@ -538,14 +538,14 @@ void WGItemView::refresh()
 	impl_->extendedModel_->reset( impl_->model_ );
 
 	//Enable for headers once body works.
-	qDeleteAll( impl_->headerDatas_);
-	impl_->headerDatas_.clear();
+	qDeleteAll( impl_->headerData_);
+	impl_->headerData_.clear();
 	if (impl_->extendedModel_ != nullptr)
 	{
         int columnCount = getExtendedModel()->columnCount();
         for( int i = 0; i < columnCount; i++)
         {
-		    impl_->headerDatas_.append( new HeaderData( *impl_->extendedModel_, i, Qt::Horizontal ) );
+		    impl_->headerData_.append( new HeaderData( *impl_->extendedModel_, i, Qt::Horizontal ) );
         }
 	}
 	emit headerDataChanged();

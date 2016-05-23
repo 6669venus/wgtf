@@ -16,11 +16,8 @@ class INode
 {
     DECLARE_REFLECTED
 public:
-    INode() = default;
+	INode(){}
     virtual ~INode(){}
-
-    INode(const INode&) = delete;
-    INode& operator=(const INode&) = delete;
 
     virtual size_t Id() const = 0;
     virtual std::string Class() const = 0;

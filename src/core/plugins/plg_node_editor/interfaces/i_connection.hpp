@@ -11,11 +11,8 @@ class IConnection
 {
     DECLARE_REFLECTED
 public:
-    IConnection() = default;
+	IConnection(){}
     virtual ~IConnection(){}
-
-    IConnection(const IConnection&) = delete;
-    IConnection& operator=(const IConnection&) = delete;
 
     virtual size_t Id() const = 0;
     virtual ISlot* Input() const = 0;

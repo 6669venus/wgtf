@@ -17,11 +17,8 @@ class ISlot
 {
     DECLARE_REFLECTED
 public:
-    ISlot() = default;
+	ISlot(){}
     virtual ~ISlot(){}
-
-    ISlot(const ISlot&) = delete;
-    ISlot& operator=(const ISlot&) = delete;
 
     virtual size_t Id() const = 0;
     virtual bool IsInput() const = 0;

@@ -18,20 +18,20 @@ public:
 	Q_INVOKABLE QItemSelection itemSelection( const QModelIndex & first, const QModelIndex & last ) const;
 
 	/**
-	 *	Get an index with the given row.
-	 *	@param index to be moved to row.
-	 *	@param row the position to move the index.
+	 *	Move index down one row in the list.
+	 *	Index will not be moved past the end of the list.
+	 *	@param index to be moved.
 	 *	@return new position.
 	 */
-	Q_INVOKABLE QModelIndex getRowToIndex( const QModelIndex & index,
-		const int row ) const;
+	Q_INVOKABLE QModelIndex getNextIndex( const QModelIndex & index ) const;
 
 	/**
-	 *	Get an row from the given index.
-	 *	@param index from which to get the row.
-	 *	@return row.
+	 *	Move index up one row in the list.
+	 *	Index will not be moved past the start of the list.
+	 *	@param index to be moved.
+	 *	@return new position.
 	 */
-	Q_INVOKABLE int getIndexToRow( const QModelIndex & index ) const;
+	Q_INVOKABLE QModelIndex getPreviousIndex( const QModelIndex & index ) const;
 };
 
 #endif // LIST_EXTENSION_HPP

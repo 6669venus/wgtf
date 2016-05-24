@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import WGControls 1.0
 import BWControls 1.0
 
-WGTwo.WGDropDownBox {
+WGDropDownBox {
     id: combobox
     objectName:  itemData != null ? itemData.IndexPath : "polystruct_component"
     anchors.left: parent.left

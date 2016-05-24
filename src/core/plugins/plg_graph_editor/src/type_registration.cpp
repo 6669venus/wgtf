@@ -10,13 +10,13 @@
 
 #include <core_reflection/type_class_definition.hpp>
 
-void RegisterGrapEditorTypes(IDefinitionManager& mng)
+void RegisterGraphEditorTypes(IDefinitionManager& mng)
 {
-    mng.registerDefinition(new TypeClassDefinition<Action>());
-    mng.registerDefinition(new TypeClassDefinition<Connector>());
-    mng.registerDefinition(new TypeClassDefinition<ConnectionSlot>());
-    mng.registerDefinition(new TypeClassDefinition<GraphEditor>());
-    mng.registerDefinition(new TypeClassDefinition<GraphNode>());
+    mng.registerDefinition<TypeClassDefinition<Action>>();
+    mng.registerDefinition<TypeClassDefinition<Connector>>();
+    mng.registerDefinition<TypeClassDefinition<ConnectionSlot>>();
+    mng.registerDefinition<TypeClassDefinition<GraphEditor>>();
+    mng.registerDefinition<TypeClassDefinition<GraphNode>>();
 
     qmlRegisterType<ConnectionItem>("DAVA", 1, 0, "ConnectionItem");
     qmlRegisterType<InteractiveConnectionItem>("DAVA", 1, 0, "InteractiveConnectionItem");

@@ -36,10 +36,8 @@ public:
 			contextManager.queryInterface<IDefinitionManager>();
 		assert( definitionManager != nullptr );
 
-		definitionManager->registerDefinition(
-			new TypeClassDefinition<AlertPageModel>() );
-		definitionManager->registerDefinition(
-			new TypeClassDefinition<AlertObjectModel>() );
+		definitionManager->registerDefinition<TypeClassDefinition<AlertPageModel>>();
+		definitionManager->registerDefinition<TypeClassDefinition<AlertObjectModel>>();
 
 		return true;
 	}

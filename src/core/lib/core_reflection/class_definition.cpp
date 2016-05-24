@@ -97,8 +97,8 @@ const char DOT_OPERATOR = '.';
 
 
 //------------------------------------------------------------------------------
-ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
-	: details_( details )
+ClassDefinition::ClassDefinition( std::unique_ptr<IClassDefinitionDetails> details )
+	: details_( std::move(details) )
 {
 }
 

@@ -21,6 +21,8 @@ public:
 	virtual bool		getBool		(const char* name) = 0;
 	virtual float		getFloat	(const char* name) = 0;
 	virtual double		getDouble	(const char* name) = 0;
+
+	virtual void		setString	(const char* name, const char* value) = 0;
 };
 
 #endif // I_APPLICATION_SETTINGS_H_

@@ -14,7 +14,7 @@ class IClassDefinitionDetails;
 class ClassDefinition : public IClassDefinition
 { 
 public: 
-	ClassDefinition( IClassDefinitionDetails * details );
+	ClassDefinition( std::unique_ptr<IClassDefinitionDetails> details );
 
 	const IClassDefinitionDetails & getDetails() const override;
 

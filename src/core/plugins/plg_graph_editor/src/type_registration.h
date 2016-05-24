@@ -4,6 +4,6 @@
 
 #include <core_reflection/i_definition_manager.hpp>
 
-void RegisterGrapEditorTypes(IDefinitionManager& mng);
+void RegisterGraphEditorTypes(IDefinitionManager& mng);
 
 #endif // __GRAPHEDITOR_TYPEREGISTRATION_H__

@@ -4,6 +4,9 @@
 #include "core_logging_system/alerts/i_alert_presenter.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_qt_common/i_qt_framework.hpp"
+#include "core_dependency_system/depends.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 
 class AlertPageModel;
 class IAction;
@@ -12,7 +15,9 @@ class QQuickView;
 class QQmlContext;
 class QObject;
 
-class PopupAlertPresenter : public IAlertPresenter
+class PopupAlertPresenter
+	: public IAlertPresenter
+	, public Depends< wgt::IViewCreator >
 {
 public:
 

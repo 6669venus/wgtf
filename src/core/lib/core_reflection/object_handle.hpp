@@ -309,6 +309,10 @@ ObjectHandleT< T > safeCast( const ObjectHandle & other )
 	{
 		return reinterpretCast< T >( other );
 	}
+	if (other == nullptr)
+	{
+		return ObjectHandleT< T >();
+	}
 	assert( false );
 	return ObjectHandleT< T >();
 }

@@ -24,8 +24,8 @@ public:
 	virtual size_t size() const override;
 	virtual int columnCount() const override;
 
-	virtual Variant getData( int column, size_t roleId ) const;
-	virtual bool setData( int column, size_t roleId, const Variant & data );
+	virtual Variant getData( int column, size_t roleId ) const override;
+	virtual bool setData( int column, size_t roleId, const Variant & data ) override;
 
 	void setSource( IListModel * source );
 	void setFilter( IItemFilter * filter );

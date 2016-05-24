@@ -266,8 +266,8 @@ bool MacroObject::setArgumentObjectForCommand(size_t idx, const ObjectHandle& ar
 }
 
 ReflectedPropertyCommandArgumentController::ReflectedPropertyCommandArgumentController()
-	: defMngr_( nullptr )
-	, arguments_( nullptr )
+	: arguments_( nullptr )
+    , defMngr_( nullptr )
 	, subCommandIdx_( 0 )
 	, dependencyOffset_( 0 )
 {
@@ -447,8 +447,8 @@ void ReflectedPropertyCommandArgumentController::generateObjList(std::map< int, 
 }
 
 ReflectedMethodCommandParametersController::ReflectedMethodCommandParametersController()
-	: defMngr_( nullptr )
-	, paramsObj_( nullptr )
+	: paramsObj_( nullptr )
+    , defMngr_( nullptr )
 {
 
 }

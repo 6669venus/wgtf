@@ -85,10 +85,12 @@ struct MethodReturnSplitter<void>
 template<class Type, bool Reference = false>
 struct ReflectedMethodParameterWrapper
 {
-	ReflectedMethodParameterWrapper( const Variant& variant )
+	ReflectedMethodParameterWrapper( const Variant& variant, const IDefinitionManager & definitionManager )
 	{
 		ObjectHandle handle;
-		value = variant.tryCast<ObjectHandle>( handle ) ? *handle.getBase<Type>() : variant.cast<Type>();
+		value = variant.tryCast<ObjectHandle>( handle )
+			? *reflectedCast< Type >(handle.data(), handle.type(), definitionManager )
+			: variant.cast<Type>();
 	}
 
 	Type& operator()() { return value; }
@@ -99,10 +101,10 @@ struct ReflectedMethodParameterWrapper
 template<class Type>
 struct ReflectedMethodParameterWrapper<Type, true>
 {
-	ReflectedMethodParameterWrapper( const Variant& variant )
+	ReflectedMethodParameterWrapper( const Variant& variant, const IDefinitionManager & definitionManager )
 	{
 		ObjectHandle handle = variant.cast<ObjectHandle>();
-		pointer = handle.getBase<Type>();
+		pointer = reflectedCast< Type >( handle.data(), handle.type(), definitionManager );
 	}
 
 	Type& operator()() { return *pointer; }
@@ -113,7 +115,7 @@ struct ReflectedMethodParameterWrapper<Type, true>
 template<>
 struct ReflectedMethodParameterWrapper<ObjectHandle, false>
 {
-	ReflectedMethodParameterWrapper( const Variant& variant )
+	ReflectedMethodParameterWrapper( const Variant& variant, const IDefinitionManager & )
 	{
 		ObjectHandle handle = variant.cast<ObjectHandle>();
 		pointer = handle;
@@ -127,7 +129,7 @@ struct ReflectedMethodParameterWrapper<ObjectHandle, false>
 template<>
 struct ReflectedMethodParameterWrapper<ObjectHandle, true>
 {
-	ReflectedMethodParameterWrapper( const Variant& variant )
+	ReflectedMethodParameterWrapper( const Variant& variant, const IDefinitionManager &)
 	{
 		ObjectHandle handle = variant.cast<ObjectHandle>();
 		pointer = handle;
@@ -141,7 +143,7 @@ struct ReflectedMethodParameterWrapper<ObjectHandle, true>
 template<>
 struct ReflectedMethodParameterWrapper<Variant, false>
 {
-	ReflectedMethodParameterWrapper( const Variant& variant )
+	ReflectedMethodParameterWrapper( const Variant& variant, const IDefinitionManager &)
 		: variant( variant )
 	{}
 
@@ -153,7 +155,7 @@ struct ReflectedMethodParameterWrapper<Variant, false>
 template<>
 struct ReflectedMethodParameterWrapper<Variant, true>
 {
-	ReflectedMethodParameterWrapper( const Variant& variant )
+	ReflectedMethodParameterWrapper( const Variant& variant, const IDefinitionManager &)
 		: variant( variant )
 	{}
 
@@ -222,7 +224,7 @@ struct ReflectedMethodParameterWrapper<Variant, true>
 
 #define RM_EXTRACT_PARAMETER_LINE( n )\
 ReflectedMethodParameterWrapper<typename std::decay<Parameter##n##Type>::type,\
-std::is_reference<Parameter##n##Type>::value> p##n = parameters[n];
+std::is_reference<Parameter##n##Type>::value> p##n( parameters[n], definitionManager );
 
 #define RM_EXTRACT_PARAMETER_LINES( n ) RM_JOIN( RM_STATEMENT_, n )( RM_EXTRACT_PARAMETER_LINE )
 
@@ -253,9 +255,11 @@ struct ReflectedMethodSpecialisation<RM_PLAIN_PARAMETERS( n )>\
 			: nullptr );\
 	}\
 	\
-	Variant invoke(const ObjectHandle& object, const ReflectedMethodParameters& parameters) override\
+	Variant invoke(const ObjectHandle& object,\
+		const IDefinitionManager & definitionManager,\
+		const ReflectedMethodParameters& parameters) override\
 		{\
-		ClassType* pointer = object.getBase<ClassType>();\
+		auto pointer = reflectedCast< ClassType >( object.data(), object.type(), definitionManager );\
 		assert( pointer!= nullptr );
 
 #define RM_METHOD_SPECIALISATION_END( count )\

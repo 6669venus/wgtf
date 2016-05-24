@@ -59,7 +59,7 @@ signals:
 
 protected:
     void init();
-	bool eventFilter( QObject * obj, QEvent * event );
+	bool eventFilter( QObject * obj, QEvent * event ) Q_DECL_OVERRIDE;
 
 private slots:
     void onPrePreferencesChanged();

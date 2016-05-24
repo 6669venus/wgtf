@@ -12,10 +12,15 @@
 class IUIFramework;
 class IUIApplication;
 
+namespace wgt
+{
+	class IViewCreator;
+}
 
 #define DEPENDS_ON_CLASSES \
 	IUIFramework, \
-	IUIApplication
+	IUIApplication,\
+	wgt::IViewCreator
 
 
 /**
@@ -23,9 +28,6 @@ class IUIApplication;
  */
 class PythonPanel: Depends<DEPENDS_ON_CLASSES>
 {
-	typedef Depends<DEPENDS_ON_CLASSES> DepsBase;
-
-
 public:
 	PythonPanel( IComponentContext & context,
 		ObjectHandle & contextObject );

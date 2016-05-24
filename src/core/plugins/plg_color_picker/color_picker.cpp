@@ -14,27 +14,11 @@ ColorPicker::ColorPicker( IComponentContext & context )
 
 bool ColorPicker::addPanel()
 {
-	auto uiFramework = this->get< IUIFramework >();
-	auto uiApplication = this->get< IUIApplication >();
-	
-	if ((uiFramework == nullptr) ||
-		(uiApplication == nullptr))
+	auto viewCreator = get< wgt::IViewCreator >();
+	if (viewCreator)
 	{
-		return false;
-	}
-
-	
-	colorView_ = uiFramework->createView(
-		"WGColorPicker/WGColorPickerPanel.qml",
-		IUIFramework::ResourceType::Url, colorPickerContext_ );
-
-	if (colorView_ != nullptr)
-	{
-		uiApplication->addView( *colorView_ );
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Failed to load qml\n" );
+		viewCreator->createView(
+			"WGColorPicker/WGColorPickerPanel.qml", colorPickerContext_, colorView_ );
 	}
 	return true;
 }

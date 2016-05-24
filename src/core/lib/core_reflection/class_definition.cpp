@@ -175,15 +175,9 @@ void ClassDefinition::bindPropertyImpl(
 	}
 
 	auto propName = name;
-	std::string propNameTmp;
-	if (*propOperator)
-	{
-		// allocate temp string only to extract substring
-		propNameTmp.assign( name, propOperator );
-		propName = propNameTmp.c_str();
-	}
+	auto propLength = propOperator - propName;
 
-	auto baseProp = findProperty( propName );
+	auto baseProp = findProperty( propName, propLength );
 	if (baseProp == nullptr)
 	{
 		// error: property `propName` is not found
@@ -194,7 +188,7 @@ void ClassDefinition::bindPropertyImpl(
 	o_PropertyAccessor.setObject( pBase );
 	o_PropertyAccessor.setBaseProperty( baseProp );
 
-	assert( strcmp( propName, o_PropertyAccessor.getName() ) == 0 );
+	assert( strncmp( propName, o_PropertyAccessor.getName(), propLength ) == 0 );
 
 	if (!*propOperator)
 	{
@@ -311,16 +305,17 @@ void ClassDefinition::bindPropertyImpl(
 
 
 //==============================================================================
-IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
+IBasePropertyPtr ClassDefinition::findProperty( const char * name, size_t length ) const
 {
 	// Some definitions allow you to lookup by name directly
 	if (details_->canDirectLookupProperty())
 	{
-		return details_->directLookupProperty( name );
+		std::string propName( name, length );
+		return details_->directLookupProperty( propName.c_str() );
 	}
 
 	// Otherwise, perform a search
-	auto nameHash = HashUtilities::compute( name );
+	auto nameHash = HashUtilities::compute( name, length );
 	auto properties = allProperties();
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{

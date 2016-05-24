@@ -79,9 +79,8 @@ void QtTabRegion::addView( IView & view )
 	{
 		qTabWidget_.setTabText(id, QString( (std::string("noname_") + std::to_string(id)).c_str() ));
 	}
-
-	qTabWidget_.setVisible( true );
-	//qTabWidget_.setCurrentIndex( id );
+	qTabWidget_.setVisible(true);
+	qTabWidget_.setCurrentIndex( id );
 }
 
 void QtTabRegion::removeView( IView & view )

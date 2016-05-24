@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtCanvas3D 1.0
+import QtCanvas3D 1.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import BWControls 1.0
@@ -14,9 +14,10 @@ Rectangle {
 	property var title: "Viewport"
 	property var layoutHints: { 'viewport': 0.1 }
 
-	Item {
+	Loader {
 		anchors.fill: parent
 		visible: true
+		asynchronous: true
 
 		Canvas3D {
 			id: canvas3d
@@ -30,10 +31,16 @@ Rectangle {
 			property bool isRunning: true
 			property var positions: []
 
-			// Emitted when one time initializations should happen
-			onInitializeGL: {
-				GLCode.initializeGL(canvas3d);
+			Component.onCompleted:{
+				componentComplete( canvas3d )
 			}
+
+			onInitializeGL:{
+				if( shouldInitializeGL() )
+				{
+					GLCode.initializeGL(canvas3d);
+				}
+			} 
 
 			// Emitted each time Canvas3D is ready for a new frame
 			onPaintGL: {

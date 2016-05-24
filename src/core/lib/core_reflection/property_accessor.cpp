@@ -231,7 +231,7 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 		listener->preInvoke( *this, parameters, false );
 	}
 
-	result = getProperty()->invoke( object_, parameters );
+	result = getProperty()->invoke( object_, *definitionManager_, parameters );
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
@@ -269,7 +269,7 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 	ReflectedMethodParameters paramsUndoRedo;
 	paramsUndoRedo.push_back( ObjectHandle(parameters) );
 	paramsUndoRedo.push_back( result );
-	method->invoke( object_, paramsUndoRedo );
+	method->invoke( object_, *definitionManager_, paramsUndoRedo );
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{

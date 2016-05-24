@@ -30,6 +30,7 @@
 #include "wg_types/vector4.hpp"
 
 #include "demo_objects.mpp"
+#include "metadata/demo_objects_fix_mixin.mpp"
 
 #include <stdio.h>
 #include "core_command_system/i_env_system.hpp"
@@ -157,8 +158,8 @@ public:
 
 		controller_ = contextManager.queryInterface< IReflectionController >();
 
-		demoModel_ = defManager_->create<DemoObjects>();
-		demoModel_.getBase< DemoObjects >()->init( contextManager );
+		demoModel_ = defManager_->create<DemoObjectsFixMixIn>();
+		demoModel_.getBase< DemoObjectsFixMixIn >()->init( contextManager );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
@@ -233,12 +234,13 @@ public:
 	void initReflectedTypes( IDefinitionManager & definitionManager )
 	{
 		REGISTER_DEFINITION( DemoObjects )
+		REGISTER_DEFINITION( DemoObjectsFixMixIn )
 	}
 
 private:
 	void createObject()
 	{
-		IClassDefinition* def = defManager_->getDefinition<DemoObjects>();
+		IClassDefinition* def = defManager_->getDefinition<DemoObjectsFixMixIn>();
 		PropertyAccessor pa = def->bindProperty( "New Object", demoModel_ );
 		assert( pa.isValid() );
 		ReflectedMethodParameters parameters;

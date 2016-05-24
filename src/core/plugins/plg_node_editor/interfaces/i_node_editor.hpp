@@ -15,30 +15,85 @@
 
 #include "i_graph.hpp"
 
+/*!
+* \class INodeEditor
+*
+* \brief Main interface of node editor used for to set and to connect graph model
+* with graph view
+*
+* \author a_starunskiy
+* \date May 2016
+*/
 class INodeEditor
 {
 	DECLARE_REFLECTED;
 public:
 	virtual ~INodeEditor(){}
 
-    virtual void SetGraph(std::shared_ptr<IGraph>) = 0;
+    /*! Sets a new graph to node editor
+    @param graph the exact graph which model will be used for display in view
+    */
+    virtual void SetGraph(std::shared_ptr<IGraph> graph) = 0;
 
+    /*! Creates a new node in current graph
+    @param nodeClass user class of node
+    @param x coordinate of position on X axis
+    @param y coordinate of position on Y axis
+    @return new node object if node is succesfully created, null otherwise
+    */
 	virtual std::shared_ptr<INode> CreateNode(std::string nodeClass, float x, float y) = 0;
-	virtual INode* GetNode(std::string id) = 0;
-	virtual bool DeleteNode(std::string id) = 0;
 
+    /*! Deletes the node with current id in graph
+    @param id The node id of node which should be deleted
+    */
+    virtual bool DeleteNode(std::string id) = 0;
+
+    /*! Returns node with current id
+    @param id The node id which should be returned
+    @return node object if node with this id exists, null otherwise
+    */
+	virtual INode* GetNode(std::string id) = 0;
+	
+    /*! Connects slot of node with other slot of node
+    @param nodeIdFrom The node id which containes a first slot in connection
+    @oaram slotIdFrom The slot id from which connection starts
+    @param nodeIdTo The node id which containes a second slot in connection
+    @param slotIdTo The slot id where connection ends
+    @return true if connection is created, false otherwise
+    */
 	virtual bool Connect(std::string nodeIdFrom, std::string slotLabelFrom, 
 		std::string nodeIdTo, std::string slotLabelTo) = 0;
+
+    /*! Disconnects slot of node with other slot of node
+    @param nodeIdFrom The node id which containes a first slot in connection
+    @oaram slotIdFrom The slot id from which connection starts
+    @param nodeIdTo The node id which containes a second slot in connection
+    @param slotIdTo The slot id where connection ends
+    @return true if connection is disconnected, false otherwise
+    */
 	virtual bool Disconnect(std::string nodeIdFrom, std::string slotLabelFrom, 
 		std::string nodeIdTo, std::string slotLabelTo) = 0;
     
 protected:
-    virtual void onCreateNode(int x, int y, std::string nodeClass) = 0;
-    virtual void onDeleteNode(size_t nodeID) = 0;
 
+    /*! Is called by qml when node is needed to be created 
+    */
+    virtual void onCreateNode(int x, int y, std::string nodeClass) = 0;
+
+    /*! Is called by qml when node is needed to be deleted
+    */
+    virtual void onDeleteNode(size_t nodeID) = 0;
+    
+    /*! Is called by qml when connection is needed to be created
+    */
     virtual void onCreateConnection(size_t nodeIdFrom, size_t slotIdFrom, size_t nodeIdTo, size_t slotIdTo) = 0;
+
+    /*! Is called by qml when connection is needed to be deleted
+    */
     virtual void onDeleteConnection(size_t connectionId) = 0;
 
+    /*! Gets current graph model
+    */
     virtual const IListModel* GetGraphModel() const = 0;
 };
 

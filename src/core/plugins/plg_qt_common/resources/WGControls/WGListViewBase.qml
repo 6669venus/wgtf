@@ -22,6 +22,9 @@ ListView {
     */
     property var keyboardHighlightModelIndex: null
 
+    /*! Store ListView.currentIndex as it is hidden by the parent.
+     */
+    property alias originalCurrentIndex: listViewBase.currentIndex
 
     /*! Propogates events from children to parents.
         \param mouse the MouseEvent that triggered the signal.

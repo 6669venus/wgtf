@@ -67,7 +67,7 @@ QModelIndex ListExtension::getPreviousIndex( const QModelIndex & index ) const
 	{
 		return index;
 	}
-	if (index.row() <= 1)
+	if (index.row() <= 0)
 	{
 		return index;
 	}

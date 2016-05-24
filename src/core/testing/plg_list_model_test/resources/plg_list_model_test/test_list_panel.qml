@@ -73,7 +73,6 @@ WG1.WGPanel {
             footerDelegate: myFooterDelegate
             roles: ["value", "headerText", "footerText"]
             model: sourceModel
-            currentIndex: 5
 
             Component {
                 id: myHeaderDelegate

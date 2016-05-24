@@ -3,10 +3,14 @@
 
 #include <QtQuick/QQuickPaintedItem>
 #include <QPainterPath>
+#include "core_qt_common/qt_new_handler.hpp"
 
 class ConnectionCurve : public QQuickPaintedItem
 {
+	
     Q_OBJECT
+
+	DECLARE_QT_MEMORY_HANDLER
 
     Q_PROPERTY(QPointF fromPoint READ fromPoint WRITE setFromPoint NOTIFY fromPointChanged)
     Q_PROPERTY(QPointF toPoint READ toPoint WRITE setToPoint NOTIFY toPointChanged)

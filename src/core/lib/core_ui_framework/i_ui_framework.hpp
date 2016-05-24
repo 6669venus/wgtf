@@ -67,7 +67,8 @@ public:
 		const char * uniqueName,
 		const char * resource, ResourceType type, 
 		const ObjectHandle & context = ObjectHandle(),
-		std::function< void(std::unique_ptr< IView > & ) > loadedHandler = [] {} ) = 0;
+		std::function< void(std::unique_ptr< IView > & ) > loadedHandler =
+			[] ( std::unique_ptr< IView > & ){} ) = 0;
 	virtual std::unique_ptr< IWindow > createWindow( 
 		const char * resource, ResourceType type,
 		const ObjectHandle & context = ObjectHandle() ) = 0;

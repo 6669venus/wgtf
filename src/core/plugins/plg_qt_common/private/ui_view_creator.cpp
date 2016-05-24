@@ -28,7 +28,8 @@ void UIViewCreator::createView(
 	}
 	auto uiApplication = get< IUIApplication >();
 	uiFrameWork->createViewAsync(
-		uniqueName, path, IUIFramework::ResourceType::Url, context, [&o_ResultView, uiApplication](auto & view)
+		uniqueName, path, IUIFramework::ResourceType::Url, context,
+		[&o_ResultView, uiApplication](std::unique_ptr< IView > & view)
 	{
 		o_ResultView = std::move(view);
 		if (o_ResultView != nullptr)
@@ -62,7 +63,8 @@ void UIViewCreator::createView(
 
 	uiFrameWork->createViewAsync(
 		uniqueName,
-		path, IUIFramework::ResourceType::Url, context, [uiApplication, functor ](auto & view)
+		path, IUIFramework::ResourceType::Url, context,
+		[uiApplication, functor ](std::unique_ptr< IView > & view)
 	{
 		if (view)
 		{

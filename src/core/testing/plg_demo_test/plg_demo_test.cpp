@@ -86,7 +86,8 @@ DemoDoc::DemoDoc(
 	if (viewCreator)
 	{
 		viewCreator->createView(
-			"plg_demo_test/demo.qml", demo, [ this ]( auto & view )
+			"plg_demo_test/demo.qml", demo,
+			[ this ]( std::unique_ptr< IView > & view )
 		{
 			centralView_ = std::move( view );
 			centralView_->registerListener( this );

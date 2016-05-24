@@ -5,14 +5,19 @@ import WGControls 1.0 as WG1
 import WGControls 2.0
 
 WG1.WGPanel {
-    title: "ListModel Test"
-    layoutHints: { 'test': 0.1 }
+    id: testListPanel
 
     property var sourceModel: useModel ? source : null
-    color: palette.mainWindowColor
-    
     property bool useModel: true
     property int topControlsHeight: 20
+
+    title: "ListModel Test"
+    layoutHints: { 'test': 0.1 }
+    color: palette.mainWindowColor
+
+    // TODO ScrollView steals keyboard focus
+    Keys.forwardTo: [listView]
+    focus: true
 
     Button {
         id: switchModelButton
@@ -23,7 +28,7 @@ WG1.WGPanel {
         text: useModel ? "Switch Model Off" : "Switch Model On"
 
         onClicked: {
-            useModel = useModel ? 1 : 0;
+            useModel = !useModel;
         }
     }
 
@@ -68,6 +73,7 @@ WG1.WGPanel {
             footerDelegate: myFooterDelegate
             roles: ["value", "headerText", "footerText"]
             model: sourceModel
+            currentIndex: 5
 
             Component {
                 id: myHeaderDelegate
@@ -130,8 +136,4 @@ WG1.WGPanel {
             }
         }
     }
-
-    // TODO ScrollView steals keyboard focus
-    Keys.forwardTo: [listView]
-    focus: true
 }

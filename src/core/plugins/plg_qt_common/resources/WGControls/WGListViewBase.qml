@@ -9,31 +9,19 @@ import WGControls 2.0
 ListView {
     id: listViewBase
 
-	property var view
+    property var view
     headerPositioning: ListView.OverlayHeader
-	footerPositioning: ListView.OverlayFooter
+    footerPositioning: ListView.OverlayFooter
     contentWidth: contentItem.childrenRect.width 
 
     /*! Stores which item is currently in focus by the keyboard.
         Often this will correspond to the selected item, but not always.
         E.g. pressing ctrl+up will move the current index, but not the selected index.
         The default value is the same as the selection (modelIndex).
+        To be initialized by the parent.
     */
-    property var keyboardHighlightModelIndex: {
-        // Use as initial value without binding
-        return view.selectionModel.currentIndex;
-    }
+    property var keyboardHighlightModelIndex: null
 
-    /*! Bind ListView.currentIndex to keyboardHighlightModelIndex.
-     *  So that users can simply use currentIndex the same as with a regular ListView.
-     */
-    onCurrentIndexChanged: {
-        // Cast currentIndex from int to QModelIndex
-        keyboardHighlightModelIndex = listExtension.getRowToIndex(keyboardHighlightModelIndex, currentIndex);
-    }
-    onKeyboardHighlightModelIndexChanged: {
-        currentIndex = listExtension.getIndexToRow(keyboardHighlightModelIndex);
-    }
 
     /*! Propogates events from children to parents.
         \param mouse the MouseEvent that triggered the signal.

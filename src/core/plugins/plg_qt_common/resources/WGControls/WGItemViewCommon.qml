@@ -45,6 +45,14 @@ WGItemView {
     }
 
     property var commonExtensions: [columnExtension, imageExtension]
+
+    // Pass property up to parent
+    property alias currentIndex: itemSelectionModel.currentIndex
+
+    // Pass signals up to parent
+    signal currentChanged(var current, var previous)
+    signal selectionChanged(var selected, var deselected)
+
     extensions: commonExtensions
 
     function rowCount() {
@@ -78,7 +86,7 @@ WGItemView {
         }
         columnDelegates = tmp;
 
-        var tmp = headerDelegates
+        tmp = headerDelegates
         if(tmp.length > 0)
         {
             while (tmp.length < columnCount()) {
@@ -97,7 +105,7 @@ WGItemView {
              header = headerComponent;
         }
 
-        var tmp = footerDelegates
+        tmp = footerDelegates;
         if(tmp.length > 0)
         {
             while (tmp.length < columnCount()) {
@@ -141,5 +149,9 @@ WGItemView {
     ItemSelectionModel {
         id: itemSelectionModel
         model: extendedModel
+
+        // Pass signals up to parent
+        onCurrentChanged: root.currentChanged(current, previous);
+        onSelectionChanged: root.selectionChanged(selected, deselected)
     }
 }

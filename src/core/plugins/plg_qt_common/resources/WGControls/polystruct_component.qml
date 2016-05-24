@@ -1,7 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import WGControls 1.0
-import WGControls 2.0 as WGTwo
 import BWControls 1.0
 
 WGTwo.WGDropDownBox {

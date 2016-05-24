@@ -11,9 +11,9 @@
 struct WGAction::Implementation
 {
 	Implementation()
-		: uiApplication_( nullptr )
-		, uiFramework_( nullptr )
-		, func_( nullptr )
+		: uiFramework_( nullptr )
+        , uiApplication_( nullptr )
+        , func_( nullptr )
 		, active_( false )
 	{
 	}

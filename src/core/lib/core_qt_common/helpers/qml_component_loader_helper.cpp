@@ -18,7 +18,7 @@ namespace QmlComponentLoaderHelperPrivate
 		stream << std::chrono::duration_cast<std::chrono::seconds>(
 			(std::chrono::high_resolution_clock::now() - data->startTime_)).count();
 		stream << " s." << std::endl;
-		auto & endValue = stream.str();
+		auto endValue = stream.str();
 		NGT_TRACE_MSG("%s", endValue.c_str());
 		data->sig_Loaded_( data->qmlComponent_ );
 	}

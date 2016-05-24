@@ -14,12 +14,12 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include "core_reflection/object_handle.hpp"
 #include "core_dependency_system/depends.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
-
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include <QObject>
 
 class IComponentContext;
 class MetaBase;
-class IReflectionController;
 class Variant;
 class IBaseProperty;
 class QtScriptingEngine;

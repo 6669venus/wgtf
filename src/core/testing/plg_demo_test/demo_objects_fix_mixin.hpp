@@ -4,7 +4,7 @@
 #include "demo_objects.hpp"
 
 /**
-/* This class exists only to wrap the default DemoObjects 
+ * This class exists only to wrap the default DemoObjects 
  * class to work around a bug in Canvas3D where a render call is 
  * queued and the GLContext is destroyed to the hiding the window
  * by adding a new tab.

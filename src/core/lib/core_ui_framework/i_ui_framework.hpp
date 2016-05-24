@@ -54,7 +54,7 @@ public:
 		const char * resource, ResourceType type ) = 0;
 
 	/**
-	/* DEPRECATED
+	 * DEPRECATED
 	 */
 	virtual std::unique_ptr< IView > createView(
 		const char * resource, ResourceType type,

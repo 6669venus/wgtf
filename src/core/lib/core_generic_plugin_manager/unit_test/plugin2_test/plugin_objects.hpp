@@ -43,6 +43,7 @@ typedef ObjectHandleT< TestPlugin2TestObject >
 class ITestPlugin2
 {
 public:
+    virtual ~ITestPlugin2() {}
 	virtual TestPlugin2TestObjectPtr getObject( IDefinitionManager & defManager ) = 0;
 };
 

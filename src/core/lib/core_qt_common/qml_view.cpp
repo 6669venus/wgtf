@@ -25,15 +25,15 @@ struct QmlView::Impl
 {
 	Impl( QmlView & qmlView, const char * id,
 		IQtFramework & qtFramework, QQmlEngine & qmlEngine )
-		: qmlView_( qmlView )
-		, qmlEngine_( qmlEngine )
-		, quickView_(new QQuickWidget(&qmlEngine, nullptr) )
-		, qmlContext_(new QQmlContext(qmlEngine.rootContext()))
-		, released_(false)
-		, watcher_(nullptr)
-		, id_(id)
-		, qtFramework_(qtFramework)
-	{
+		: qtFramework_(qtFramework)
+        , id_(id)
+        , qmlView_( qmlView )
+        , quickView_(new QQuickWidget(&qmlEngine, nullptr) )
+        , watcher_(nullptr)
+        , qmlContext_(new QQmlContext(qmlEngine.rootContext()))
+        , qmlEngine_( qmlEngine )
+        , released_(false)
+    {
 		QQmlEngine::setContextForObject(quickView_, qmlContext_.get());
 	}
 

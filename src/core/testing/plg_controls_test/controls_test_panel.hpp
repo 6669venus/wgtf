@@ -7,14 +7,10 @@
 #include "core_dependency_system/depends.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
+
 #include <memory>
-
-class IUIApplication;
-
-namespace wgt
-{
-	class IViewCreator;
-}
 
 class ControlsTestPanel
 	: Depends< wgt::IViewCreator, IUIApplication, IDefinitionManager >

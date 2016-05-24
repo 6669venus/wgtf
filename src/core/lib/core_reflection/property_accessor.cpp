@@ -14,23 +14,23 @@
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
-	: object_( other.object_ )
-	, property_( std::move( other.property_ ) )
-	, rootObject_( other.rootObject_ )
-	, path_( std::move( other.path_ ) )
-	, definitionManager_( other.definitionManager_ )
-	, parentAccessor_( std::move(other.parentAccessor_) )
+	: parentAccessor_( std::move(other.parentAccessor_) )
+    , object_( other.object_ )
+    , property_( std::move( other.property_ ) )
+    , rootObject_( other.rootObject_ )
+    , path_( std::move( other.path_ ) )
+    , definitionManager_( other.definitionManager_ )
 {
 }
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor( const PropertyAccessor & other )
-: object_( other.object_ )
-, property_( other.property_ )
-, rootObject_( other.rootObject_ )
-, path_( other.path_ )
-, definitionManager_( other.definitionManager_ )
-, parentAccessor_( other.parentAccessor_ )
+    : parentAccessor_( other.parentAccessor_ )
+    , object_( other.object_ )
+    , property_( other.property_ )
+    , rootObject_( other.rootObject_ )
+    , path_( other.path_ )
+    , definitionManager_( other.definitionManager_ )
 {
 }
 

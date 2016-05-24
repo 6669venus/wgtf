@@ -3,13 +3,13 @@
 
 #include "core_dependency_system/depends.hpp"
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 
 #include <memory>
 
 class ObjectHandle;
 class IComponentContext;
 class IUIFramework;
-class IUIApplication;
 
 namespace wgt
 {

@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_variant/type_id.hpp"
 
 class DummyDependsType {};
 

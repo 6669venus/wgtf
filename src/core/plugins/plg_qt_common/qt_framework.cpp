@@ -411,9 +411,10 @@ void QtFramework::createViewInternal(
 		view->setContextProperty( QString( "source" ), source );
 	}
 
-	view->load(qUrl, [loadedHandler, view ]()
+    view->load(qUrl, [loadedHandler, view ]()
 	{
-		loadedHandler( std::unique_ptr< IView >( view ) );
+        std::unique_ptr< IView > localView( view );
+		loadedHandler( localView );
 	}, async );
 }
 

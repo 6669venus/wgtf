@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <mutex>
 
-namespace QtPrefernceDetails
+namespace
 {
     const char* s_globalPreference = "global_setting.settings";
 	const char* s_preferenceExtension = ".settings";
@@ -54,12 +54,12 @@ public:
     {
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
         assert( fileSystem != nullptr );
-        if (fileSystem->exists( QtPrefernceDetails::s_globalPreference ))
+        if (fileSystem->exists( s_globalPreference ))
         {
             auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
             assert( definitionManager != nullptr );
             IFileSystem::IStreamPtr fileStream = 
-                fileSystem->readFile( QtPrefernceDetails::s_globalPreference, std::ios::in | std::ios::binary );
+                fileSystem->readFile( s_globalPreference, std::ios::in | std::ios::binary );
             XMLSerializer serializer( *fileStream, *definitionManager );
             loadPreferenceState( serializer, preferenceState_ );
         }
@@ -72,7 +72,7 @@ public:
     {
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
         assert( fileSystem != nullptr );
-        auto stream = fileSystem->readFile( QtPrefernceDetails::s_globalPreference, std::ios::out | std::ios::binary );
+        auto stream = fileSystem->readFile( s_globalPreference, std::ios::out | std::ios::binary );
         if(stream)
         {
             auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
@@ -92,8 +92,8 @@ public:
 
     void saveCurrentPreferenceToFile( const char * filePath );
     void loadCurrentPreferenceFromFile( const char * filePath );
-    void savePreferenceState(  ISerializer & serializer, const QtPrefernceDetails::PreferenceEnvCom* ec );
-    void loadPreferenceState(  ISerializer & serializer, QtPrefernceDetails::PreferenceEnvCom* ec );
+    void savePreferenceState(  ISerializer & serializer, const PreferenceEnvCom* ec );
+    void loadPreferenceState(  ISerializer & serializer, PreferenceEnvCom* ec );
 
     // IEnvEventListener
     virtual void onAddEnv( IEnvState* state ) override;
@@ -107,12 +107,12 @@ public:
     virtual void onLoadEnvState( IEnvState* state ) override;
 
 private:
-    void switchEnvContext(QtPrefernceDetails::PreferenceEnvCom* ec);
+    void switchEnvContext(PreferenceEnvCom* ec);
 
     IComponentContext& contextManager_;
     QtPreferences& qtPreferences_;
-    QtPrefernceDetails::PreferenceEnvCom globalPreferenceState_;
-    QtPrefernceDetails::PreferenceEnvCom* preferenceState_;
+    PreferenceEnvCom globalPreferenceState_;
+    PreferenceEnvCom* preferenceState_;
     IPreferences::PreferencesListeners listeners_;
     std::mutex								mutex_;
 
@@ -173,7 +173,7 @@ void QtPreferences::Implementation::loadCurrentPreferenceFromFile( const char * 
 }
 
 void QtPreferences::Implementation::savePreferenceState(  ISerializer & serializer, 
-                                                          const QtPrefernceDetails::PreferenceEnvCom* ec )
+                                                          const PreferenceEnvCom* ec )
 {
     auto itBegin = listeners_.cbegin();
     auto itEnd = listeners_.cend();
@@ -202,7 +202,7 @@ void QtPreferences::Implementation::savePreferenceState(  ISerializer & serializ
     }
 }
 void QtPreferences::Implementation::loadPreferenceState(  ISerializer & serializer, 
-                                                          QtPrefernceDetails::PreferenceEnvCom* ec )
+                                                          PreferenceEnvCom* ec )
 {
     std::unique_lock<std::mutex> lock( mutex_ );
     auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
@@ -231,12 +231,12 @@ void QtPreferences::Implementation::loadPreferenceState(  ISerializer & serializ
 
 void QtPreferences::Implementation::onAddEnv( IEnvState* state ) 
 {
-    ENV_STATE_ADD( QtPrefernceDetails::PreferenceEnvCom, ec );
+    ENV_STATE_ADD( PreferenceEnvCom, ec );
 }
 
 void QtPreferences::Implementation::onRemoveEnv( IEnvState* state )
 {
-    ENV_STATE_REMOVE( QtPrefernceDetails::PreferenceEnvCom, ec );
+    ENV_STATE_REMOVE( PreferenceEnvCom, ec );
     if (ec == preferenceState_)
     {
         switchEnvContext( &globalPreferenceState_ );
@@ -245,7 +245,7 @@ void QtPreferences::Implementation::onRemoveEnv( IEnvState* state )
 
 void QtPreferences::Implementation::onSelectEnv( IEnvState* state ) 
 {
-    ENV_STATE_QUERY( QtPrefernceDetails::PreferenceEnvCom, ec );
+    ENV_STATE_QUERY( PreferenceEnvCom, ec );
     if (ec != preferenceState_)
     {
         switchEnvContext(ec);
@@ -254,8 +254,8 @@ void QtPreferences::Implementation::onSelectEnv( IEnvState* state )
 
 void QtPreferences::Implementation::onSaveEnvState( IEnvState* state ) 
 {
-    ENV_STATE_QUERY( QtPrefernceDetails::PreferenceEnvCom, ec );
-    std::string settings = QtPrefernceDetails::genProjectSettingName( state->description() );
+    ENV_STATE_QUERY( PreferenceEnvCom, ec );
+    std::string settings = genProjectSettingName( state->description() );
     auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
     auto fileSystem = contextManager_.queryInterface< IFileSystem >();
     assert( definitionManager && fileSystem );
@@ -269,8 +269,8 @@ void QtPreferences::Implementation::onSaveEnvState( IEnvState* state )
 
 void QtPreferences::Implementation::onLoadEnvState( IEnvState* state ) 
 {
-    ENV_STATE_QUERY( QtPrefernceDetails::PreferenceEnvCom, ec );
-    std::string settings = QtPrefernceDetails::genProjectSettingName( state->description() );
+    ENV_STATE_QUERY( PreferenceEnvCom, ec );
+    std::string settings = genProjectSettingName( state->description() );
     auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
     auto fileSystem = contextManager_.queryInterface< IFileSystem >();
     assert( definitionManager && fileSystem );
@@ -282,7 +282,7 @@ void QtPreferences::Implementation::onLoadEnvState( IEnvState* state )
     }
 }
 
-void QtPreferences::Implementation::switchEnvContext(QtPrefernceDetails::PreferenceEnvCom* ec)
+void QtPreferences::Implementation::switchEnvContext(PreferenceEnvCom* ec)
 {
     auto qtFramework = contextManager_.queryInterface< IQtFramework >();
     assert( qtFramework != nullptr );
@@ -300,7 +300,7 @@ void QtPreferences::Implementation::switchEnvContext(QtPrefernceDetails::Prefere
     qGlobalSettings->firePrePreferenceChangeEvent();
     if(preferenceState_ == &globalPreferenceState_)
     {
-        saveCurrentPreferenceToFile( QtPrefernceDetails::s_globalPreference );
+        saveCurrentPreferenceToFile( s_globalPreference );
     }
     {
         std::unique_lock<std::mutex> lock( mutex_ );
@@ -308,7 +308,7 @@ void QtPreferences::Implementation::switchEnvContext(QtPrefernceDetails::Prefere
     }
     if(preferenceState_ == &globalPreferenceState_)
     {
-        loadCurrentPreferenceFromFile( QtPrefernceDetails::s_globalPreference );
+        loadCurrentPreferenceFromFile( s_globalPreference );
     }
     for( auto it = itBegin; it != itEnd; ++it )
     {

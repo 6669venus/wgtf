@@ -286,21 +286,22 @@ int TestTreeModelOld::columnCount() const
 
 Variant TestTreeModelOld::getData( int column, size_t roleId ) const
 {
-	if (column >= columnCount())
-	{
-		return Variant();
-	}
+    if (column >= columnCount())
+    {
+        return Variant();
+    }
 
-	if (roleId == headerTextRole::roleId_)
-	{
-		return impl_->headerText_.c_str();
-	}
-	else if (roleId == footerTextRole::roleId_)
-	{
-		return impl_->footerText_.c_str();
-	}
+    auto role = static_cast< int >( roleId );
+    if (role == headerTextRole::roleId_)
+    {
+        return impl_->headerText_.c_str();
+    }
+    else if (role == footerTextRole::roleId_)
+    {
+        return impl_->footerText_.c_str();
+    }
 
-	return Variant();
+    return Variant();
 }
 
 bool TestTreeModelOld::setData( int column, size_t roleId, const Variant & data )
@@ -536,4 +537,29 @@ int TestTreeModel::rowCount( const AbstractItem * item ) const
 int TestTreeModel::columnCount() const
 {
 	return 1;
+}
+
+Variant TestTreeModel::getData( int row, int column, size_t roleId ) const
+{
+    if (column >= columnCount())
+    {
+        return Variant();
+    }
+
+    auto role = static_cast< int >( roleId );
+    if (role == headerTextRole::roleId_)
+    {
+        return impl_->headerText_.c_str();
+    }
+    else if (role == footerTextRole::roleId_)
+    {
+        return impl_->footerText_.c_str();
+    }
+
+    return Variant();
+}
+
+bool TestTreeModel::setData( int row, int column, size_t roleId, const Variant & data )
+{
+    return false;
 }

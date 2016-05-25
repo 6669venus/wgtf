@@ -52,15 +52,26 @@ public:
      */
 	virtual std::unique_ptr< IComponent > createComponent( 
 		const char * resource, ResourceType type ) = 0;
-	virtual std::unique_ptr< IView > createView( 
+
+	/**
+	 * DEPRECATED
+	 */
+	virtual std::unique_ptr< IView > createView(
+		const char * resource, ResourceType type,
+		const ObjectHandle & context = ObjectHandle()) = 0;
+	virtual std::unique_ptr< IView > createView(const char* uniqueName,
+		const char * resource, ResourceType type,
+		const ObjectHandle & context = ObjectHandle()) = 0;
+
+	virtual void createViewAsync(
+		const char * uniqueName,
 		const char * resource, ResourceType type, 
-		const ObjectHandle & context = ObjectHandle() ) = 0;
+		const ObjectHandle & context = ObjectHandle(),
+		std::function< void(std::unique_ptr< IView > & ) > loadedHandler =
+			[] ( std::unique_ptr< IView > & ){} ) = 0;
 	virtual std::unique_ptr< IWindow > createWindow( 
 		const char * resource, ResourceType type,
 		const ObjectHandle & context = ObjectHandle() ) = 0;
-    virtual std::unique_ptr< IView > createView( const char* uniqueName,
-        const char * resource, ResourceType type, 
-        const ObjectHandle & context = ObjectHandle() ) = 0;
 
 	virtual void loadActionData( const char * resource, ResourceType type ) = 0;
 	virtual void registerComponent( const char * id, IComponent & component ) = 0;

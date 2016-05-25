@@ -16,6 +16,10 @@ class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
 class IEnvManager;
+namespace wgt
+{
+	class IViewCreator;
+}
 
 class TestUI
 	: Depends<
@@ -23,15 +27,10 @@ class TestUI
 		ICommandManager,
 		IReflectionController,
 		IDataSourceManager,
-		IEnvManager >
+		IEnvManager,
+		wgt::IViewCreator >
 	, public IViewEventListener
 {
-	typedef Depends<
-		IDefinitionManager,
-		ICommandManager,
-		IReflectionController,
-		IDataSourceManager,
-		IEnvManager> DepsBase;
 public:
 	explicit TestUI( IComponentContext & context );
 	~TestUI();
@@ -42,6 +41,7 @@ public:
 	// IViewEventListener
 	virtual void onFocusIn( IView* view ) override;
 	virtual void onFocusOut( IView* view ) override;
+	virtual void onLoaded(IView* view) override {}
 
 private:
 	void createActions( IUIFramework & uiFramework );
@@ -50,7 +50,6 @@ private:
 	void destroyViews( size_t idx );
 
 	void addActions( IUIApplication & uiApplication );
-	void addViews( IUIApplication & uiApplication );
 
 	void undo( IAction * action );
 	void redo( IAction * action );

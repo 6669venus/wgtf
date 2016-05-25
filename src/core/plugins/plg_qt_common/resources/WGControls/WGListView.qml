@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
@@ -22,9 +22,35 @@ ScrollView {
         model: sourceModel
         columnWidth: 50
         columnSpacing: 1
+        headerDelegates: [exampleHeaderDelegate]
+        footerDelegates: [exampleFooterDelegate]
+        headerDelegate: exampleHeaderDelegate
+        footerDelegate: exampleFooterDelegate
         columnDelegates: [columnDelegate, exampleDelegate]
-        roles: ["value"]
+        roles: ["value", "headerText", "footerText"]
         model: sourceModel
+
+        Component {
+            id: exampleHeaderDelegate
+
+            Text {
+                id: textBoxHeader
+                color: palette.textColor
+                text: headerData.headerText
+                height: 24
+            }
+        }
+
+        Component {
+            id: exampleFooterDelegate
+
+            Text {
+                id: textBoxFooter
+                color: palette.textColor
+                text: headerData.footerText
+                height: 24
+            }
+        }
 
         Component {
             id: exampleDelegate
@@ -80,6 +106,20 @@ WGListViewBase {
     property alias model: itemView.model
 
     internalModel: itemView.extendedModel
+
+    /*! A list of components to be used for each header/footer column.
+        Item 0 for column 0, item 1 for column 1 etc.
+        If a column is not in the list, then it will default to headerDelegate/footerDelegate.
+        The default value is an empty list.
+    */
+    property alias headerDelegates: itemView.headerDelegates
+    property alias footerDelegates: itemView.footerDelegates
+    /*! The default component to be used for header/footer columns that are not specified
+        by headerDelegates/footerDelegates.
+    */
+    property alias headerDelegate: itemView.headerDelegate
+    property alias footerDelegate: itemView.footerDelegate
+
 
     property var extensions: []
 

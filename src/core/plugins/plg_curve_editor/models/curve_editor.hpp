@@ -33,6 +33,7 @@ class CurveEditor : public Implements<ICurveEditor>
 
 public:
 	CurveEditor() : xScale_(1.0f), yScale_(1.0f), timeScaleEditEnabled_(true) {}
+	virtual ~CurveEditor() {};
 
 	virtual ICurvePtr createCurve(CurveTypes::CurveType curveType = CurveTypes::Linear, bool add = false) override;
 	virtual bool addCurve(ICurvePtr curve) override;

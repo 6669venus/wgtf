@@ -13,9 +13,10 @@ public:
 	IPanelManager() {}
 	virtual ~IPanelManager() {}
 
-	virtual std::unique_ptr< IView > createAssetBrowser(
+	virtual void createAssetBrowser(
 		ObjectHandleT<IAssetBrowserModel> dataModel,
-		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr) = 0;
+		std::unique_ptr< IView > & o_AssetBrowser,
+		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr ) = 0;
 };
 
 #endif // I_ASSET_BROWSER_MANAGER_HPP

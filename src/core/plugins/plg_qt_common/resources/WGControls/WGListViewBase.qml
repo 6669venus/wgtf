@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
@@ -9,7 +9,10 @@ import WGControls 2.0
 ListView {
     id: listViewBase
 
-    property var view
+	property var view
+    headerPositioning: ListView.OverlayHeader
+	footerPositioning: ListView.OverlayFooter
+    contentWidth: contentItem.childrenRect.width 
 
     /*! Propogates events from children to parents.
         \param mouse the MouseEvent that triggered the signal.
@@ -19,6 +22,9 @@ ListView {
     signal itemPressed(var mouse, var itemIndex, var rowIndex)
     signal itemClicked(var mouse, var itemIndex, var rowIndex)
     signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
+
+    header: view.header
+    footer: view.footer
 
     delegate: WGItemRow {
         id: itemRow

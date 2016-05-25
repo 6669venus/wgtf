@@ -70,7 +70,6 @@ namespace
 			if (valueType.isPointer())
 			{
 				auto targetType = valueType.removePointer();
-				auto targetDefinition = definitionManager.getDefinition( targetType.getName() );
 				ObjectHandle source;
 				if (value.tryCast( source ))
 				{

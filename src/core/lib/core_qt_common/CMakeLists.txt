@@ -13,8 +13,6 @@ include_directories(.)
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp
-	models/qt_abstract_item_model.cpp
-	models/qt_abstract_item_model.hpp
 	models/qt_collection_model.cpp
 	models/qt_collection_model.hpp
 	models/qt_item_model.cpp
@@ -30,6 +28,8 @@ SET( DATA_MODEL_SRCS
 	models/wg_list_model.hpp
 	models/role_provider.cpp
 	models/role_provider.hpp
+	models/qt_abstract_item_model.hpp
+	models/qt_abstract_item_model.cpp
 )
 SOURCE_GROUP( "DataModel" FILES ${DATA_MODEL_SRCS} )
 
@@ -91,6 +91,8 @@ SET( HELPERS_SRCS
 	helpers/wg_tokenized_string_filter.cpp
     helpers/selection_helper.cpp
     helpers/selection_helper.hpp
+	helpers/qml_component_loader_helper.hpp
+	helpers/qml_component_loader_helper.cpp
 	)
 SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
@@ -179,13 +181,11 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_qt_common
 	core_reflection
 	core_data_model
 	core_logging
 	core_string_utils
-)
-BW_TARGET_LINK_LIBRARIES( core_qt_common PRIVATE
 	Qt5::Core
 	Qt5::Gui
 	Qt5::QuickWidgets

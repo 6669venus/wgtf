@@ -31,7 +31,7 @@ public:
 	virtual bool toQVariant(const Variant & variant, QVariant & o_qVariant, QObject* parent = nullptr ) const = 0;
 
 	virtual bool toQVariant( const ObjectHandle & object,
-		QVariant & o_qVariant ) const
+		QVariant & o_qVariant, QObject* parent = nullptr ) const
 	{ return false; };
 };
 

@@ -266,10 +266,10 @@ def writeCMakeDefaultPath( out ):
 	# Add default cmake exe path
 	if PLATFORM_WINDOWS:
 		out.write( "@SETLOCAL\n" )
-		out.write( '@set "PATH=%%PATH%%;%s"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
+		out.write( '@set "PATH=%s;%%PATH%%"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
 
 	elif PLATFORM_MAC:
-		out.write( 'PATH="$PATH:%s"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
+		out.write( 'PATH="%s:$PATH"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
 
 def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	# create output directory

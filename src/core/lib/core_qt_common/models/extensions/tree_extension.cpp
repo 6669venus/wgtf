@@ -346,3 +346,110 @@ QItemSelection TreeExtension::itemSelection( const QModelIndex & first, const QM
 	
 	return itemSelection;
 }
+
+
+QModelIndex TreeExtension::getNextIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	// Move to next row in current scope
+	if (impl_->expanded( index ) &&
+		pModel->hasChildren( index ))
+	{
+		const auto child = index.child( 0, index.column() );
+		if (child.isValid())
+		{
+			return child;
+		}
+	}
+
+	// Move to next sibling or parent
+	auto it = index;
+	while (it.isValid())
+	{
+		const auto parent = it.parent();
+		const auto row = it.row() + 1;
+		if (row < it.model()->rowCount( parent ))
+		{
+			const auto sibling = it.sibling( row, index.column() );
+			if (sibling.isValid())
+			{
+				return sibling;
+			}
+		}
+		it = parent;
+	}
+
+	// Could not move to next item
+	return index;
+}
+
+
+QModelIndex TreeExtension::getPreviousIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	auto it = index;
+	while (it.isValid())
+	{
+		// Move to previous row in current scope
+		const auto row = it.row() - 1;
+		if (row >= 0)
+		{
+			const auto sibling = it.sibling( row, index.column() );
+			if (sibling.isValid())
+			{
+				// Move to last child in the row
+				if (impl_->expanded( sibling ) &&
+					pModel->hasChildren( sibling ))
+				{
+					const int lastRow = it.model()->rowCount( sibling ) - 1;
+					const auto lastChild = sibling.child( lastRow, index.column() );
+					if (lastChild.isValid())
+					{
+						return lastChild;
+					}
+				}
+
+				// Previous row does not have children expanded
+				return sibling;
+			}
+		}
+
+		// Move to previous parent
+		it = it.parent();
+		if (it.isValid())
+		{
+			// Move to last child in parent
+			if (impl_->expanded( it ) &&
+				pModel->hasChildren( it ))
+			{
+				const int lastRow = it.model()->rowCount( it ) - 1;
+				const auto lastChild = it.child( lastRow, index.column() );
+				if (lastChild.isValid())
+				{
+					return lastChild;
+				}
+			}
+		}
+	}
+
+	// Could not move to previous item
+	return index;
+}

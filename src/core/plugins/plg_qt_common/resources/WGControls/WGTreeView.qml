@@ -72,23 +72,21 @@ ScrollView {
 
 
 WGTreeViewBase {
-	id: treeView
-	clip: true
-	view: itemView
+    id: treeView
 
-	property alias roles: itemView.roles
+    property alias roles: itemView.roles
 
     /*! The default component to be used for columns that are not specified
         by columnDelegates.
     */
-	property alias columnDelegate: itemView.columnDelegate
+    property alias columnDelegate: itemView.columnDelegate
 
     /*! A list of components to be used for each column.
         Item 0 for column 0, item 1 for column 1 etc.
         If a column is not in the list, then it will default to columnDelegate.
         The default value is an empty list.
     */
-	property alias columnDelegates: itemView.columnDelegates
+    property alias columnDelegates: itemView.columnDelegates
 
     /*! This property holds a list of indexes to adapt from the model's columns
         to the view's columns.
@@ -96,20 +94,19 @@ WGTreeViewBase {
              then the view can have 3 columns that lookup column 0 in the model.
         The default value is an empty list
     */
-	property alias columnSequence: itemView.columnSequence
-	property alias columnWidth: itemView.columnWidth
-	property alias columnWidths: itemView.columnWidths
-	property alias columnSpacing: itemView.columnSpacing
+    property alias columnSequence: itemView.columnSequence
+    property alias columnWidth: itemView.columnWidth
+    property alias columnWidths: itemView.columnWidths
+    property alias columnSpacing: itemView.columnSpacing
     
 
-	property alias internalModel: treeView.model
+    property alias internalModel: treeView.model
 
     /*! This property holds the data model information that will be displayed
         in the view.
     */
-	property alias model: itemView.model
+    property alias model: itemView.model
 
-	internalModel: itemView.extendedModel
 
     /*! A list of components to be used for each header/footer column.
         Item 0 for column 0, item 1 for column 1 etc.
@@ -124,38 +121,108 @@ WGTreeViewBase {
     property alias headerDelegate: itemView.headerDelegate
     property alias footerDelegate: itemView.footerDelegate
 
-	property var extensions: []
+    property var extensions: []
+
+    /*! Update selection when the keyboard highlight moves.
+     */
+    function updateKeyboardSelection(event, newIndex) {
+        // When Shift is pressed, the selected area increases with the keyboard highlight
+        if (event.modifiers & Qt.ShiftModifier) {
+            // Add new item to selection
+            var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, newIndex);
+            itemView.selectionModel.select(selection,
+                ItemSelectionModel.Select);
+
+            // Move keyboard highlight to the item selected last
+            itemView.selectionModel.setCurrentIndex(newIndex,
+                ItemSelectionModel.NoUpdate);
+        }
+
+        // When Ctrl is pressed, move keyboard highlight, but do not modify selection
+        else if (event.modifiers & Qt.ControlModifier) {
+            itemView.selectionModel.setCurrentIndex(newIndex,
+                ItemSelectionModel.NoUpdate);
+        }
+
+        // When no modifiers are pressed, selection moves with the keyboard highlight
+        else {
+            itemView.selectionModel.setCurrentIndex(newIndex,
+                ItemSelectionModel.Clear | ItemSelectionModel.Select);
+        }
+
+    }
+
+    /*! Move the keyboard highlight up/left.
+     */
+    function moveKeyHighlightPrevious(event) {
+        var newIndex = treeExtension.getPreviousIndex(itemView.selectionModel.currentIndex);
+        updateKeyboardSelection(event, newIndex);
+    }
+
+    /*! Move the keyboard highlight down/right.
+     */
+    function moveKeyHighlightNext(event) {
+        var newIndex = treeExtension.getNextIndex(itemView.selectionModel.currentIndex);
+        updateKeyboardSelection(event, newIndex);
+    }
+
+    clip: true
+    view: itemView
+    internalModel: itemView.extendedModel
+    keyboardHighlightModelIndex: itemView.currentIndex
+
+    Keys.onUpPressed: {
+        if (orientation == ListView.Vertical) {
+            moveKeyHighlightPrevious(event);
+        }
+    }
+    Keys.onDownPressed: {
+        if (orientation == ListView.Vertical) {
+            moveKeyHighlightNext(event);
+        }
+    }
+    Keys.onLeftPressed: {
+        if (orientation == ListView.Horizontal) {
+            moveKeyHighlightPrevious(event);
+        }
+    }
+    Keys.onRightPressed: {
+        if (orientation == ListView.Horizontal) {
+            moveKeyHighlightNext(event);
+        }
+    }
 
     // Data holder for various C++ extensions.
     // Pass it down to children
-	WGItemViewCommon {
-		id: itemView
+    WGItemViewCommon {
+        id: itemView
 
-		TreeExtension {
-			id: treeExtension
-		}
+        TreeExtension {
+            id: treeExtension
+        }
 
-		property var treeExtensions: treeView.extensions.concat(commonExtensions.concat([treeExtension]))
-		extensions: treeExtensions
+        property var treeExtensions: treeView.extensions.concat(commonExtensions.concat([treeExtension]))
+        extensions: treeExtensions
 
-		Connections {
-			target: treeView
-			onItemPressed: {
-				if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
-					var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-					itemView.selectionModel.select(selection, 0x0002) // Select
-				}
-				else if (mouse.modifiers & Qt.ShiftModifier) {
-					var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-					itemView.selectionModel.select(selection, 0x0001 | 0x0002) // Clear || Select
-				}
-				else if (mouse.modifiers & Qt.ControlModifier) {
-					itemView.selectionModel.setCurrentIndex(rowIndex, 0x0008) // Toggle
-				}
-				else {
-					itemView.selectionModel.setCurrentIndex(rowIndex, 0x0001 | 0x0002) // Clear | Select
-				}
-			}
-		}
-	}
+        Connections {
+            target: treeView
+            onItemPressed: {
+                var selection;
+                if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
+                    selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
+                    itemView.selectionModel.select(selection, ItemSelectionModel.Select);
+                }
+                else if (mouse.modifiers & Qt.ShiftModifier) {
+                    selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
+                    itemView.selectionModel.select(selection, ItemSelectionModel.Clear | ItemSelectionModel.Select);
+                }
+                else if (mouse.modifiers & Qt.ControlModifier) {
+                    itemView.selectionModel.setCurrentIndex(rowIndex, ItemSelectionModel.Toggle);
+                }
+                else {
+                    itemView.selectionModel.setCurrentIndex(rowIndex, ItemSelectionModel.Clear | ItemSelectionModel.Select);
+                }
+            }
+        }
+    }
 }

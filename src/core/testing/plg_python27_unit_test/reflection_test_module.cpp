@@ -389,7 +389,7 @@ void stringConversionTest( ReflectedPython::DefinedInstance & instance,
 
 		CHECK( getSuccess );
 		CHECK_EQUAL( stringExpected, stringResult );
-	}/*
+	}
 	{
 		// @see PyUnicodeObject
 		const std::wstring unicodeExpected = L"String was set";
@@ -402,8 +402,9 @@ void stringConversionTest( ReflectedPython::DefinedInstance & instance,
 			"unicodeTest", unicodeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( unicodeExpected, unicodeResult );
-	}*/
+		// std::wstring is not compatible with CHECK_EQUAL
+		CHECK( unicodeExpected == unicodeResult );
+	}
 }
 
 

@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 
 Row {
     id: columns
-    objectName: "WGDataModelHeaderRow1.0"
+    objectName: "WGDataModelHeaderRow"
 
     height: minimumRowHeight + topMargin + bottomMargin
 

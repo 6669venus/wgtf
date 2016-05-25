@@ -223,7 +223,7 @@ Control {
         __handlePosList.children[__activeHandle].range.decreaseSingleStep()
     }
 
-    style: Qt.createComponent("WGSliderStyle1.qml", slider)
+    style: Qt.createComponent("WGSliderStyle.qml", slider)
 
     Keys.onRightPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
     Keys.onLeftPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()

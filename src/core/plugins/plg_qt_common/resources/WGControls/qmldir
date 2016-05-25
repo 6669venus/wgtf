@@ -122,8 +122,8 @@ WGTimelineControl 2.0 WGTimelineControl20.qml
 WGTimelineToolbar 2.0 WGTimelineToolbar20.qml
 WGToolButton 1.0 WGToolButton.qml
 WGToolButtonStyle 1.0 WGToolButtonStyle.qml
-WGTreeItem.qml 1.0 WGTreeItem.qml
-WGTreeViewBase.qml 2.0 WGTreeViewBase20.qml
+WGTreeItem 1.0 WGTreeItem.qml
+WGTreeViewBase 2.0 WGTreeViewBase20.qml
 WGTreeView 1.0 WGTreeView.qml
 WGTreeView 2.0 WGTreeView20.qml
 WGVector2 1.0 WGVector2.qml

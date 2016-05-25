@@ -457,7 +457,7 @@ Item {
         width: listView.width - listView.rightMargin - listView.leftMargin
     }
 
-    WGColumnsFrame1 {
+    WGColumnsFrame {
         id: columnsFrame
         columnCount: listView.columnCount
         y: listView.topMargin

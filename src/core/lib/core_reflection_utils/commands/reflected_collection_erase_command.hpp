@@ -35,7 +35,7 @@ public:
 	bool redo( const ObjectHandle & arguments ) const override;
 	CommandThreadAffinity threadAffinity() const override;
 
-	ObjectHandle getCommandDescription(const ObjectHandle & arguments) const;
+	ObjectHandle getCommandDescription(const ObjectHandle & arguments) const override;
 
 private:
 	IDefinitionManager & definitionManager_;

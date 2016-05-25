@@ -267,7 +267,7 @@ public:
 	virtual AbstractItem * item( const ItemIndex & index ) const = 0;
 	virtual ItemIndex index( const AbstractItem * item ) const = 0;
 
-	virtual int rowCount( const AbstractItem * item ) const = 0;
+	virtual int rowCount( const AbstractItem * item ) const override = 0;
 	virtual int columnCount() const = 0;
 
 	virtual Connection connectPreItemDataChanged( DataCallback callback ) { return Connection(); }

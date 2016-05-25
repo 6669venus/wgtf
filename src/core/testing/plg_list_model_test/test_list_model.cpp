@@ -377,11 +377,12 @@ Variant TestListModel::getData( int row, int column, size_t roleId ) const
 		return Variant();
 	}
 
-	if (roleId == headerTextRole::roleId_)
+    auto role = static_cast< int >( roleId );
+	if (role == headerTextRole::roleId_)
 	{
 		return impl_->headerText_[column].c_str();
 	}
-	else if (roleId == footerTextRole::roleId_)
+	else if (role == footerTextRole::roleId_)
 	{
 		return impl_->footerText_[column].c_str();
 	}

@@ -10,13 +10,14 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/object_handle.hpp"
 
-#include <memory>
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 
+#include <memory>
 
 namespace wgt
 {
 class ColorPicker
-	: Depends< IUIFramework, IUIApplication, IDefinitionManager >
+	: Depends< IUIFramework, IUIApplication, IDefinitionManager, wgt::IViewCreator >
 
 {
 	typedef Depends< IUIFramework, IUIApplication, IDefinitionManager > DepsBase;

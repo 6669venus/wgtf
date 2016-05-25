@@ -62,6 +62,7 @@ public:
 		const IDefinitionManager & definitionManager ) const override;
 
 	Variant invoke( const ObjectHandle& object,
+		const IDefinitionManager & definitionManager,
 		const ReflectedMethodParameters& parameters ) override;
 
 	size_t parameterCount() const override;

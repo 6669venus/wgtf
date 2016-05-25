@@ -221,6 +221,7 @@ Variant Property::get( const ObjectHandle & handle,
 
 
 Variant Property::invoke( const ObjectHandle& object,
+	const IDefinitionManager & definitionManager,
 	const ReflectedMethodParameters& parameters ) /* override */
 {
 	const bool callable = this->isMethod();

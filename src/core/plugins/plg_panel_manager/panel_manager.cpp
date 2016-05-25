@@ -19,6 +19,7 @@ namespace wgt
 {
 PanelManager::PanelManager( IComponentContext & contextManager )
 	: contextManager_( contextManager )
+	, Depends( contextManager )
 {
 }
 
@@ -30,14 +31,12 @@ PanelManager::~PanelManager()
 	}
 }
 
-std::unique_ptr< IView > PanelManager::createAssetBrowser(
+void PanelManager::createAssetBrowser(
 	ObjectHandleT<IAssetBrowserModel> dataModel,
-	std::unique_ptr<IAssetBrowserEventModel> eventModel)
+	std::unique_ptr< IView > & o_AssetBrowser,
+	std::unique_ptr<IAssetBrowserEventModel> eventModel )
 {
-	if( dataModel == nullptr )
-	{
-		return nullptr;
-	}
+	o_AssetBrowser = nullptr;
 
 	// The variant meta type manager is required for converting an IAssetObjectModel
 	if(Variant::getMetaTypeManager() == nullptr)
@@ -66,11 +65,12 @@ std::unique_ptr< IView > PanelManager::createAssetBrowser(
 		types_.emplace_back(contextManager_.registerInterface(eventModel.get(), false));
 		auto assetBrowserEventModel = ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef);
 		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(*definitionManager, dataModel, assetBrowserEventModel));
-
-		return uiFramework->createView("plg_panel_manager/asset_browser_panel.qml",
-			IUIFramework::ResourceType::Url, ObjectHandle(std::move(viewModel), viewDef));
+		
+		auto viewCreator = get< wgt::IViewCreator >();
+		if (viewCreator)
+		{
+			viewCreator->createView("plg_panel_manager/asset_browser_panel.qml", ObjectHandle(std::move(viewModel), viewDef), o_AssetBrowser );
+		}
 	}
-	
-	return nullptr;
 }
 } // end namespace wgt

@@ -119,7 +119,7 @@ public:
 	{
 	}
 
-	~InterfaceHolder()
+	virtual ~InterfaceHolder()
 	{
 		if(owns_)
 		{

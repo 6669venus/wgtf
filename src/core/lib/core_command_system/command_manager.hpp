@@ -117,12 +117,12 @@ public:
 private:
 	ICommandManager * commandSystemProvider_;
 
-	void statusChanged( const CommandInstance & commandInstance ) const
+	void statusChanged( const CommandInstance & commandInstance ) const override
 	{
 		commandSystemProvider_->fireCommandStatusChanged( commandInstance );
 	}
 
-	void progressMade( const CommandInstance & commandInstance ) const
+	void progressMade( const CommandInstance & commandInstance ) const override
 	{
 		commandSystemProvider_->fireProgressMade( commandInstance );
 	}

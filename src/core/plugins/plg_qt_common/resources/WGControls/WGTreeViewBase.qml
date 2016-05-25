@@ -1,10 +1,14 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
 
 ListView {
 	id: treeViewBase
+
+    headerPositioning: ListView.OverlayHeader
+	footerPositioning: ListView.OverlayFooter
+    contentWidth: contentItem.childrenRect.width 
 
 	property var view
 	property real depth: 0
@@ -20,6 +24,9 @@ ListView {
 	onItemPressed: __onItemPressed(mouse, itemIndex, rowIndex)
 	onItemClicked: __onItemClicked(mouse, itemIndex, rowIndex)
 	onItemDoubleClicked: __onItemDoubleClicked(mouse, itemIndex, rowIndex)
+
+    header: view.header
+    footer: view.footer
 
     delegate: Item {
 		height: childrenRect.height

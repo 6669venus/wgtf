@@ -22,10 +22,12 @@ print "Platform:", PLATFORM
 
 if PLATFORM_WINDOWS:
 	CMAKE_RUN_BAT = 'rerun_cmake.bat'
-	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'cmake-win32-x86', 'bin', 'cmake.exe' )
+	DEFAULT_CMAKE_EXE_PATH = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'cmake-win32-x86', 'bin' )
+	CMAKE_EXE = 'cmake.exe'
 elif PLATFORM_MAC:
 	CMAKE_RUN_BAT = 'rerun_cmake.sh'
-	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
+	DEFAULT_CMAKE_EXE_PATH = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin' )
+	CMAKE_EXE = 'cmake'
 
 DEFAULT_CONFIGS = [ 'Debug', 'Hybrid', 'Release' ]
 
@@ -260,7 +262,14 @@ def buildDir( targetName, generator, buildRoot ):
 		path = os.path.join( path, generator['maya'] )
 	return path
 
+def writeCMakeDefaultPath( out ):
+	# Add default cmake exe path
+	if PLATFORM_WINDOWS:
+		out.write( "@SETLOCAL\n" )
+		out.write( '@set "PATH=%s;%%PATH%%"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
 
+	elif PLATFORM_MAC:
+		out.write( 'PATH="%s:$PATH"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
 
 def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	# create output directory
@@ -310,6 +319,8 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 
 	if PLATFORM_WINDOWS:
 		out.write( '@pushd %~dp0\n' )
+
+	writeCMakeDefaultPath( out )
 
 	if configs:
 		# if single config builder then create subdirs for each config
@@ -373,6 +384,8 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 
 	def _writeBuildBat( outputPath, cmdstr ):
 		out = cStringIO.StringIO()
+
+		writeCMakeDefaultPath( out )
 
 		if batchenv:
 			out.write( batchenv )

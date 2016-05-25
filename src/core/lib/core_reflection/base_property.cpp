@@ -77,6 +77,7 @@ Variant BaseProperty::get( const ObjectHandle & handle,
 
 
 Variant BaseProperty::invoke( const ObjectHandle& object,
+	const IDefinitionManager & definitionManager,
 	const ReflectedMethodParameters& parameters ) /* override */
 {
 	assert( isMethod() );

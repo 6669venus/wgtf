@@ -42,6 +42,7 @@ BEGIN_EXPOSE( TestCommandObject, MetaNone() )
 	EXPOSE( "floats", floats_ )
 	EXPOSE( "binary", binary_ )
 	EXPOSE( "binaries", binaries_ )
+	EXPOSE_METHOD( "incrementCounter", incrementCounter, undo, redo )
 END_EXPOSE()
 
 

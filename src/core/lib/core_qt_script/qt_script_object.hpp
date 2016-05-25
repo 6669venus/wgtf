@@ -12,28 +12,53 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 */
 
 #include "core_reflection/object_handle.hpp"
-#include "core_dependency_system/di_ref.hpp"
-
+#include "core_dependency_system/depends.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include <QObject>
 
 namespace wgt
 {
+class IComponentContext;
 class MetaBase;
-class IReflectionController;
 class Variant;
 class IBaseProperty;
 class QtScriptingEngine;
 
+struct QtScriptObjectData
+	: public Depends< IDefinitionManager, IReflectionController >
+{
+	QtScriptObjectData(
+		IComponentContext & context,
+		QtScriptingEngine & engine,
+		const QMetaObject & metaObject,
+		const ObjectHandle & object )
+		: Depends(context)
+		, scriptEngine_( engine )
+		, metaObject_( metaObject )
+		, object_( object )
+	{
+	}
+
+	QtScriptingEngine& scriptEngine_;
+	const QMetaObject & metaObject_;
+	ObjectHandle object_;
+};
+
+
 class QtScriptObject : public QObject
 {
 public:
-	QtScriptObject(
-		IComponentContext& contextManager,
-		QtScriptingEngine& scriptEngine,
-		const QMetaObject & metaObject, 
-		const ObjectHandle & object,
-		QObject * parent = nullptr );
+	QtScriptObject( std::shared_ptr< QtScriptObjectData > & data, QObject * parent = nullptr )
+		: QObject( parent )
+		, data_( data )
+	{
+	}
+
 	virtual ~QtScriptObject();
+
+	std::shared_ptr< QtScriptObjectData > getData() const { return data_; }
 
 	const ObjectHandle & object() const;
 	const QMetaObject * metaObject() const override;
@@ -41,6 +66,9 @@ public:
 
 	void firePropertySignal( const IBasePropertyPtr & property, const Variant& value );
 	void fireMethodSignal( const IBasePropertyPtr & method, bool undo = false );
+
+	//This is shadowed on purpose, as QtScriptObjects need to know what their parents are.
+	void setParent( QObject * parent );
 
 private:
 	QtScriptObject( const QtScriptObject & );
@@ -54,11 +82,7 @@ private:
 		const QString& property,
 		const QString& metaType ) const;
 
-	DIRef<IDefinitionManager> definitionManager_;
-	DIRef<IReflectionController> controller_;
-	QtScriptingEngine& scriptEngine_;
-	const QMetaObject & metaObject_;
-	ObjectHandle object_;
+	std::shared_ptr< QtScriptObjectData > data_;
 };
 } // end namespace wgt
 #endif//QT_SCRIPT_OBJECT_HPP

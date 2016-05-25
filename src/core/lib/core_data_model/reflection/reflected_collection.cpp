@@ -105,8 +105,8 @@ namespace
 
 ReflectedCollection::ReflectedCollection( const PropertyAccessor & pa, IReflectionController * controller )
 	: pa_( pa )
-	, controller_( controller )
 	, listener_( new ReflectedCollectionListener( *this ) )
+    , controller_( controller )
 {
 	auto definitionManager = const_cast< IDefinitionManager * >( pa_.getDefinitionManager() );
 	definitionManager->registerPropertyAccessorListener( listener_ );

@@ -11,7 +11,10 @@ class TestDataModelPlugin
 {
 public:
 	//==========================================================================
-	TestDataModelPlugin( IComponentContext & contextManager ) {}
+	TestDataModelPlugin( IComponentContext & contextManager )
+		: customModelInterfaceTest( contextManager )
+	{
+	}
 
 	//==========================================================================
 	void Initialise(IComponentContext & contextManager) override

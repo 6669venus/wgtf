@@ -253,9 +253,9 @@ private:
 public:
 	//==========================================================================
 	ReflectionPlugin( IComponentContext & contextManager )
-		: reflectionSystemHolder_( new ReflectionSystemHolder )
-		, baseProviderMetaType_( new MetaTypeImpl<ObjectHandle>() )
-	{ 
+		: baseProviderMetaType_( new MetaTypeImpl<ObjectHandle>() )
+        , reflectionSystemHolder_( new ReflectionSystemHolder )
+     	{
 		//Force linkage
 		Reflection::inspect();
 		Reflection::inspectVariant();

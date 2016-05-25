@@ -1,10 +1,14 @@
 #include "core_dependency_system/i_interface.hpp"
+#include "core_dependency_system/depends.hpp"
+
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_variant/variant.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
+
 #include "test_list_model.hpp"
 #include <vector>
 
@@ -14,6 +18,7 @@ namespace wgt
 //==============================================================================
 class ListModelTestPlugin
 	: public PluginMain
+	, public Depends< wgt::IViewCreator >
 {
 private:
 	std::vector<IInterface*> types_;
@@ -27,6 +32,7 @@ private:
 public:
 	//==========================================================================
 	ListModelTestPlugin(IComponentContext & contextManager )
+		: Depends( contextManager )
 	{
 
 	}
@@ -48,46 +54,27 @@ public:
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 		
 		std::unique_ptr< IListModel > oldListModel( new OldTestListModel() );
-		oldListView_ = uiFramework->createView(
-			"plg_list_model_test/test_list_panel_old.qml",
-			IUIFramework::ResourceType::Url, std::move( oldListModel ) );
-		
-		std::unique_ptr< IListModel > oldShortListModel( new OldTestListModel( true ) );
-		oldShortListView_ = uiFramework->createView(
-			"plg_list_model_test/test_short_list_panel_old.qml",
-			IUIFramework::ResourceType::Url, std::move( oldShortListModel ) );
-		
+		std::unique_ptr< IListModel > oldShortListModel(new OldTestListModel(true));
 		listModel_ = std::make_shared<TestListModel>();
-		listView_ = uiFramework->createView(
-			"plg_list_model_test/test_list_panel.qml",
-			IUIFramework::ResourceType::Url, listModel_ );
 
-		if (oldListView_ != nullptr)
+		auto viewCreator = get< wgt::IViewCreator >();
+		if (viewCreator)
 		{
-			uiApplication->addView( *oldListView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
-		if (oldShortListView_ != nullptr)
-		{
-			uiApplication->addView( *oldShortListView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
-		if (listView_ != nullptr)
-		{
-			uiApplication->addView( *listView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
+			viewCreator->createView(
+				"plg_list_model_test/test_list_panel_old.qml",
+				std::move(oldListModel), oldListView_ );
 
+			viewCreator->createView(
+				"plg_list_model_test/test_short_list_panel_old.qml",
+				std::move(oldShortListModel), oldShortListView_ );
+
+			viewCreator->createView(
+				"plg_list_model_test/test_list_panel.qml",
+				listModel_, listView_ );
+		}
 	}
+
+
 	//==========================================================================
 	bool Finalise( IComponentContext & contextManager )
 	{

@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0 as WG1
@@ -63,8 +63,32 @@ WG1.WGPanel {
 			columnWidth: 50
 			columnSpacing: 1
 			columnDelegates: [columnDelegate, colorDelegate]
-			roles: ["value"]
+			headerDelegate: myHeaderDelegate
+			footerDelegate: myFooterDelegate
+			roles: ["value", "headerText", "footerText"]
 			model: sourceModel
+
+			Component {
+            	id: myHeaderDelegate
+
+            	Text {
+                	id: textBoxHeader
+                	color: palette.textColor
+                	text: headerData.headerText
+                	height: 24
+            	}
+        	}
+
+        	Component {
+	            id: myFooterDelegate
+
+    	        Text {
+        	        id: textBoxFooter
+            	    color: palette.textColor
+                	text: headerData.footerText
+                	height: 24
+            	}
+        	}
 
 			Component {
 				id: colorDelegate

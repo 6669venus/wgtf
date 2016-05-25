@@ -1,4 +1,5 @@
 #include "core_dependency_system/i_interface.hpp"
+#include "core_dependency_system/depends.hpp"
 #include "core_data_model/abstract_item_model.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
@@ -7,15 +8,16 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "test_tree_model.hpp"
 #include <vector>
-
 
 namespace wgt
 {
 //==============================================================================
 class TreeModelTestPlugin
 	: public PluginMain
+	, Depends< wgt::IViewCreator >
 {
 private:
 	std::vector<IInterface*> types_;
@@ -25,6 +27,7 @@ private:
 public:
 	//==========================================================================
 	TreeModelTestPlugin(IComponentContext & contextManager )
+		: Depends( contextManager )
 	{
 
 	}
@@ -46,31 +49,19 @@ public:
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModelOld() );
-		oldTreeView_ = uiFramework->createView( 
-			"plg_tree_model_test/test_tree_panel_old.qml",
-			IUIFramework::ResourceType::Url, std::move( model ) );
 
-		treeModel_ = std::make_shared<TestTreeModel>();
-		treeView_ = uiFramework->createView(
-			"plg_tree_model_test/test_tree_panel.qml",
-			IUIFramework::ResourceType::Url, treeModel_ );
+		auto viewCreator = get< wgt::IViewCreator >();
+		if( viewCreator )
+		{
 
-		if (oldTreeView_ != nullptr)
-		{
-			uiApplication->addView( *oldTreeView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
+			viewCreator->createView(
+				"plg_tree_model_test/test_tree_panel_old.qml",
+				std::move(model), oldTreeView_);
 
-		if (treeView_ != nullptr)
-		{
-			uiApplication->addView( *treeView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
+			treeModel_ = std::make_shared<TestTreeModel>();
+			viewCreator->createView(
+				"plg_tree_model_test/test_tree_panel.qml",
+				treeModel_, treeView_);
 		}
 	}
 	//==========================================================================

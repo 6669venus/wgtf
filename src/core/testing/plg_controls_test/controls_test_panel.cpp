@@ -9,7 +9,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
-
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
+#include "core_ui_framework/i_ui_application.hpp"
 
 namespace wgt
 {
@@ -68,11 +69,9 @@ ControlsTestPanel::ControlsTestPanel( IComponentContext & context )
 //////////////////////////////////////////////////////////////////////////
 bool ControlsTestPanel::addPanel()
 {
-	auto uiFramework = this->get< IUIFramework >();
-	auto uiApplication = this->get< IUIApplication >();
+	auto viewCreator = get< wgt::IViewCreator >();
 	auto defManager = this->get< IDefinitionManager >();
-	if ((uiFramework == nullptr) ||
-		(uiApplication == nullptr) ||
+	if ((viewCreator == nullptr) ||
 		(defManager == nullptr))
 	{
 		return false;
@@ -80,18 +79,9 @@ bool ControlsTestPanel::addPanel()
 	IDefinitionManager& definitionManager = *defManager;
 	auto def = REGISTER_DEFINITION( ColorSliderDataModel );
 	controlData_ = def->create();
-	controlsView_ = uiFramework->createView(
+	viewCreator->createView(
 		"WGControlsTest/WGControlsTestPanel.qml",
-		IUIFramework::ResourceType::Url, controlData_ );
-
-	if (controlsView_ != nullptr)
-	{
-		uiApplication->addView( *controlsView_ );
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Failed to load qml\n" );
-	}
+		controlData_, controlsView_ );
 	return true;
 }
 

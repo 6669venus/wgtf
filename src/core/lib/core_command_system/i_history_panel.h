@@ -6,6 +6,7 @@ namespace wgt
 class IHistoryPanel
 {
 public:
+    virtual ~IHistoryPanel() {}
     virtual void setClearButtonVisible (bool show) = 0;
     virtual void setMakeMacroButtonVisible(bool show) = 0;
 };

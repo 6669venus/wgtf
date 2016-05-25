@@ -113,14 +113,14 @@ public:
 
 	/*! Redoes the last modification
 	*/
-	virtual void redo(const ObjectHandle& handle, Variant variant)
+	virtual void redo(const ObjectHandle& handle, Variant variant) override
 	{
 		modificationStack_[++currentState_].redo_();
 	}
 
 	/*! Undoes the last modification
 	*/
-	void undo(const ObjectHandle& handle, Variant variant)
+	void undo(const ObjectHandle& handle, Variant variant) override
 	{
 		modificationStack_[currentState_--].undo_();
 	}

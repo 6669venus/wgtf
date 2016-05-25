@@ -45,11 +45,7 @@ public:
 		
 		auto dataDef = definitionManager->getDefinition<IAssetBrowserModel>();
 		dataModel_ = ObjectHandleT<IAssetBrowserModel>(std::move(browserModel), dataDef);
-		assetBrowserView_ = panelManager->createAssetBrowser( dataModel_ );
-		if (assetBrowserView_ != nullptr)
-		{
-			uiApplication->addView( *assetBrowserView_ );
-		}
+		panelManager->createAssetBrowser( dataModel_, assetBrowserView_ );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

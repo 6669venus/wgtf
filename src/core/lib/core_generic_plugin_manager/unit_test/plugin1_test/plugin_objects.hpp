@@ -45,6 +45,7 @@ typedef ObjectHandleT< TestPlugin1TestObject >
 class ITestPlugin1
 {
 public:
+    virtual ~ITestPlugin1() {}
 	virtual TestPlugin1TestObjectPtr getObject( IDefinitionManager & defManager ) = 0;
 	virtual TestPlugin2TestObjectPtr getObjectFromPlugin2() = 0;
 	virtual void setObjectFromPlugin2( TestPlugin2TestObjectPtr obj ) = 0;
@@ -63,7 +64,7 @@ public:
 	{
 	}
 
-	~TestPlugin1Interface()
+	virtual ~TestPlugin1Interface()
 	{
 	}
 

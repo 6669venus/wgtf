@@ -35,6 +35,7 @@ private:
 	std::unique_ptr< IDefinitionManager > definitionManager_;
 	std::unique_ptr< CommandManager > commandManager_;
 	std::unique_ptr< Command > setReflectedPropertyCmd_;
+	std::unique_ptr< Command > invokeReflectedMethodCmd_;
 	std::unique_ptr< ReflectionController > reflectionController_;
 	std::unique_ptr< IEnvManager > envManager_;
 	mutable ICommandEventListener::MultiCommandStatus multiCommandStatus_;

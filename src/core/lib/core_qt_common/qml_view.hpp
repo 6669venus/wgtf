@@ -2,6 +2,8 @@
 #define QML_VIEW_HPP
 
 #include "core_ui_framework/layout_hint.hpp"
+#include "core_common/signal.hpp"
+
 #include "i_qt_view.hpp"
 #include <memory>
 #include <string>
@@ -41,7 +43,8 @@ public:
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
-	bool load(const QUrl & qUrl, const char * uniqueName = 0 );
+	bool load(const QUrl & qUrl, 
+		std::function< void() > loadedHandler = [] {}, bool async = true );
 
 	virtual void focusInEvent() override;
 	virtual void focusOutEvent() override;
@@ -54,21 +57,8 @@ public slots:
 	void reload();
 
 private:
-	bool doLoad(const QUrl & qUrl );
-
-	IQtFramework & qtFramework_;
-    QQmlEngine & qmlEngine_;
-	std::unique_ptr< QQmlContext > qmlContext_;
-	QQuickWidget * quickView_;
-	std::string id_;
-	std::string title_;
-	std::string windowId_;
-	LayoutHint hint_;
-	QFileSystemWatcher * watcher_;
-	bool released_;
-	QUrl url_;
-	typedef std::vector<IViewEventListener*> Listeners;
-	Listeners listeners_;
+	struct Impl;
+	std::unique_ptr< Impl > impl_;
 };
 } // end namespace wgt
 #endif//QML_VIEW_HPP

@@ -184,6 +184,10 @@ void DemoObjects::updateRootObject( int index )
 
 int DemoObjects::rootObjectIndex()
 {
+	if (objects_ == nullptr)
+	{
+		return 0;
+	}
 	return objects_->index_;
 }
 

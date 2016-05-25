@@ -24,6 +24,9 @@ ConnectionCurve
     property var firstNodePos
     property var secondNodePos
 
+    property bool firstNodeExpanded
+    property bool secondNodeExpanded
+
     property var endPos
 
     property var viewTransform
@@ -43,6 +46,9 @@ ConnectionCurve
     onFirstNodePosChanged:      updatePos()
     onSecondNodePosChanged:     updatePos()
 
+    onFirstNodeExpandedChanged: updatePos()
+    onSecondNodeExpandedChanged: updatePos()
+
     onEndPosChanged:            updatePos()
     onContentTranslateChanged:  updatePos()
 
@@ -56,6 +62,7 @@ ConnectionCurve
 
             firstNodeView = node;
             firstNodePos = Qt.binding(function() { return Qt.point(firstNodeView.x, firstNodeView.y) });
+            firstNodeExpanded = Qt.binding(function() { return firstNodeView.nodeIsExpanded; });
         }
 
         if (secondNode && !secondNodeView)
@@ -64,6 +71,7 @@ ConnectionCurve
 
             secondNodeView = node;
             secondNodePos = Qt.binding(function() { return Qt.point(secondNodeView.x, secondNodeView.y) });
+            secondNodeExpanded = Qt.binding(function() { return secondNodeView.nodeIsExpanded; });
         }
     }
 

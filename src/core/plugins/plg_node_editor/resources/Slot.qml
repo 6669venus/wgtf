@@ -30,7 +30,17 @@ Row
 
     function getSlotAnchor()
     {
-        return mapToItem(graphView, slotIcon.x + slotIcon.width / 2, slotIcon.y + slotIcon.height / 2);
+        if (nodeContainer.nodeIsExpanded)
+        {
+            return mapToItem(graphView, slotIcon.x + slotIcon.width / 2, slotIcon.y + slotIcon.height / 2);
+        }
+        else
+        {
+            if (isInput)
+                return nodeHeader.mapToItem(graphView, nodeHeader.x - defaultSpacing.standardBorderSize, nodeHeader.y + nodeHeader.height / 2);
+            else
+                return nodeHeader.mapToItem(graphView, nodeHeader.x + nodeHeader.width, nodeHeader.y + nodeHeader.height / 2)
+        }
     }
 
     Loader

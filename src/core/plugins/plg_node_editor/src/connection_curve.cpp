@@ -48,7 +48,7 @@ void ConnectionCurve::setToNode(const QRectF &nodeRect)
 
 void ConnectionCurve::paint(QPainter *painter)
 {
-    #define CONNECTION_ROUNDING 10 * m_contentScale
+    #define CONNECTION_ROUNDING 5 * m_contentScale
 
     if (m_fromPoint.isNull() || m_toPoint.isNull())
         return;
@@ -59,7 +59,7 @@ void ConnectionCurve::paint(QPainter *painter)
     bool useDefault = true;
 
     // For reverse connection (where OUT if to the right of IN), use more complex algorithm
-    if (m_fromPoint.x() >= m_toPoint.x() - 32 && !m_fromNode.isNull() && !m_toNode.isNull())
+    if (m_fromPoint.x() >= m_toPoint.x() - (32 * m_contentScale) && !m_fromNode.isNull() && !m_toNode.isNull())
     {
         // Determine the vertical segments of the connector
         float outPartX = m_fromPoint.x() + (28 * m_contentScale);

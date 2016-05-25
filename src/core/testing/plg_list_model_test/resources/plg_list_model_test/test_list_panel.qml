@@ -11,11 +11,11 @@ WG1.WGPanel {
     property bool useModel: true
     property int topControlsHeight: 20
 
-    title: "ListModel Test"
+    title: "ListModel Test 2.0"
     layoutHints: { 'test': 0.1 }
     color: palette.mainWindowColor
 
-    // TODO ScrollView steals keyboard focus
+    // TODO NGT-2493 ScrollView steals keyboard focus
     Keys.forwardTo: [listView]
     focus: true
 
@@ -106,6 +106,7 @@ WG1.WGPanel {
 
                     Rectangle {
                         id: colorItem
+                        objectName: "colorDelegate_color_" + textItem.text
 
                         anchors.fill: parent
                         anchors.margins: 1
@@ -126,6 +127,7 @@ WG1.WGPanel {
 
                     Text {
                         id: textItem
+                        objectName: "colorDelegate_text_" + textItem.text
 
                         visible: typeof itemData.value === "string"
                         text: typeof itemData.value === "string" ? itemData.value : ""

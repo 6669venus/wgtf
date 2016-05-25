@@ -10,6 +10,8 @@ WGItemView {
     property var selectionModel: itemSelectionModel
 
     property Component columnDelegate: Text {
+        id: defaultColumnDelegate
+        objectName: "defaultColumnDelegate_" + text
         text: itemData.display
         color: palette.textColor
     }

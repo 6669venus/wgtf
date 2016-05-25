@@ -119,17 +119,6 @@ WGListViewBase {
 
     property var extensions: []
 
-    /*! Override ListView.currentIndex with a QModelIndex.
-        int will automatically get cast to a QModelIndex, so users can simply use
-        currentIndex the same as with a regular ListView.
-
-        Note that if user code tries to use ListView.currentItem or ListView.isCurrentItem
-        then it's going to get strange results.
-
-        TODO setting from user code doesn't work.
-    */
-    property alias currentIndex: listView.keyboardHighlightModelIndex
-
     /*! Update selection when the keyboard highlight moves.
      */
     function updateKeyboardSelection(event, newIndex) {

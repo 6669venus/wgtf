@@ -3,6 +3,8 @@
 #include <QQuickItem>
 #include <QQuickWindow>
 
+namespace wgt
+{
 DemoObjectsFixMixIn::DemoObjectsFixMixIn()
 	: valid_(true)
 {
@@ -34,4 +36,4 @@ bool DemoObjectsFixMixIn::shouldInitializeGL()
 	valid_ = true;
 	return valid;
 }
-
+} // end namespace wgt

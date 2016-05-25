@@ -67,7 +67,7 @@ public:
 	template< typename TargetType >
 	IClassDefinition * getDefinition() const
 	{
-		const char * defName = wgt::getClassIdentifier< TargetType >();
+		const char * defName = getClassIdentifier< TargetType >();
 		return getDefinition( defName );
 	}
 

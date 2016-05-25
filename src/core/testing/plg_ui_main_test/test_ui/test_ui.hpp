@@ -18,10 +18,7 @@ class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
 class IEnvManager;
-namespace wgt
-{
-	class IViewCreator;
-}
+class IViewCreator;
 
 class TestUI
 	: Depends<

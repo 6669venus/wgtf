@@ -8,11 +8,7 @@ namespace wgt
 {
 class IComponentContext;
 class IView;
-
-namespace wgt
-{
-	class IViewCreator;
-};
+class IViewCreator;
 
 class CustomModelInterfaceTest
 	: public Depends< wgt::IViewCreator >

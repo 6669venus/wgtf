@@ -104,8 +104,8 @@ Item
         useAxisScaleLimit: xyScaleLimit
 
         showMouseLine: false
-        showCoordText: false
-        showWorkArea: false
+        useGridLabels: false
+        useBorders: false
 
         viewTransform: WGViewTransform{
             container: canvasContainer

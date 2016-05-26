@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
+import "wg_view_selection.js" as WGViewSelection
 
 
 /*!
@@ -119,47 +120,19 @@ WGListViewBase {
 
     property var extensions: []
 
-    /*! Update selection when the keyboard highlight moves.
-     */
-    function updateKeyboardSelection(event, newIndex) {
-        // When Shift is pressed, the selected area increases with the keyboard highlight
-        if (event.modifiers & Qt.ShiftModifier) {
-            // Add new item to selection
-            var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, newIndex);
-            itemView.selectionModel.select(selection,
-                ItemSelectionModel.Select);
-
-            // Move keyboard highlight to the item selected last
-            itemView.selectionModel.setCurrentIndex(newIndex,
-                ItemSelectionModel.NoUpdate);
-        }
-
-        // When Ctrl is pressed, move keyboard highlight, but do not modify selection
-        else if (event.modifiers & Qt.ControlModifier) {
-            itemView.selectionModel.setCurrentIndex(newIndex,
-                ItemSelectionModel.NoUpdate);
-        }
-
-        // When no modifiers are pressed, selection moves with the keyboard highlight
-        else {
-            itemView.selectionModel.setCurrentIndex(newIndex,
-                ItemSelectionModel.Clear | ItemSelectionModel.Select);
-        }
-
-    }
 
     /*! Move the keyboard highlight up/left.
      */
     function moveKeyHighlightPrevious(event) {
         var newIndex = listExtension.getPreviousIndex(itemView.selectionModel.currentIndex);
-        updateKeyboardSelection(event, newIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, listExtension);
     }
     
     /*! Move the keyboard highlight down/right.
      */
     function moveKeyHighlightNext(event) {
         var newIndex = listExtension.getNextIndex(itemView.selectionModel.currentIndex);
-        updateKeyboardSelection(event, newIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, listExtension);
     }
 
     clip: true
@@ -203,27 +176,7 @@ WGListViewBase {
 
         Connections {
             target: listView
-            onItemPressed: {
-                var selection;
-                if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
-                    selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
-                    itemView.selectionModel.select(selection, ItemSelectionModel.Select);
-                    itemView.selectionModel.setCurrentIndex(rowIndex,
-                        ItemSelectionModel.NoUpdate);
-                }
-                else if (mouse.modifiers & Qt.ShiftModifier) {
-                    selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-                    itemView.selectionModel.select(selection, ItemSelectionModel.Clear | ItemSelectionModel.Select);
-                    itemView.selectionModel.setCurrentIndex(rowIndex,
-                        ItemSelectionModel.NoUpdate);
-                }
-                else if (mouse.modifiers & Qt.ControlModifier) {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, ItemSelectionModel.Toggle);
-                }
-                else {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, ItemSelectionModel.Clear | ItemSelectionModel.Select);
-                }
-            }
+            onItemPressed: WGViewSelection.itemPressed(mouse, itemView, listExtension, rowIndex)
         }
     }
 }

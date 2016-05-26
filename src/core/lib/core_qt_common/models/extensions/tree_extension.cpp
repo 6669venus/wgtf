@@ -360,7 +360,10 @@ QModelIndex TreeExtension::getNextIndex( const QModelIndex & index ) const
 		return index;
 	}
 
-	// Move to next row in current scope
+	// Move to next child
+	// > a    - start
+	//  | b   - end
+	//  | c
 	if (impl_->expanded( index ) &&
 		pModel->hasChildren( index ))
 	{
@@ -371,10 +374,13 @@ QModelIndex TreeExtension::getNextIndex( const QModelIndex & index ) const
 		}
 	}
 
-	// Move to next sibling or parent
 	auto it = index;
 	while (it.isValid())
 	{
+		// Move to next sibling
+		// > a    - start
+		//  | b
+		// > c    - end
 		const auto parent = it.parent();
 		const auto row = it.row() + 1;
 		if (row < it.model()->rowCount( parent ))
@@ -385,6 +391,11 @@ QModelIndex TreeExtension::getNextIndex( const QModelIndex & index ) const
 				return sibling;
 			}
 		}
+
+		// Or move to next sibling of parent
+		// > a
+		//  | b   - start
+		// > c    - end
 		it = parent;
 	}
 
@@ -405,49 +416,60 @@ QModelIndex TreeExtension::getPreviousIndex( const QModelIndex & index ) const
 		return index;
 	}
 
-	auto it = index;
-	while (it.isValid())
+	// Move back to previous sibling
+	// > a
+	//  | b   - end
+	//  | c   - start
+	const auto row = index.row() - 1;
+	if (row >= 0)
 	{
-		// Move to previous row in current scope
-		const auto row = it.row() - 1;
-		if (row >= 0)
+		const auto sibling = index.sibling( row, index.column() );
+		if (sibling.isValid())
 		{
-			const auto sibling = it.sibling( row, index.column() );
-			if (sibling.isValid())
+			// Move forward to last child in the sibling
+			// > a
+			//  > b
+			//    | d
+			//    | e - end
+			//  | c   - start
+			auto it = sibling;
+			while (it.isValid())
 			{
-				// Move to last child in the row
-				if (impl_->expanded( sibling ) &&
-					pModel->hasChildren( sibling ))
+				// Has children, move to last one
+				if (impl_->expanded( it ) &&
+					pModel->hasChildren( it ))
 				{
-					const int lastRow = it.model()->rowCount( sibling ) - 1;
+					const int lastRow = it.model()->rowCount( it ) - 1;
 					const auto lastChild = sibling.child( lastRow, index.column() );
 					if (lastChild.isValid())
 					{
-						return lastChild;
+						it = lastChild;
+					}
+					else
+					{
+						// Last child not valid
+						return it;
 					}
 				}
-
-				// Previous row does not have children expanded
-				return sibling;
-			}
-		}
-
-		// Move to previous parent
-		it = it.parent();
-		if (it.isValid())
-		{
-			// Move to last child in parent
-			if (impl_->expanded( it ) &&
-				pModel->hasChildren( it ))
-			{
-				const int lastRow = it.model()->rowCount( it ) - 1;
-				const auto lastChild = it.child( lastRow, index.column() );
-				if (lastChild.isValid())
+				else
 				{
-					return lastChild;
+					// Previous row does not have children expanded
+					return it;
 				}
 			}
 		}
+	}
+
+	// Move to previous parent
+	// > a
+	//  > b   - end
+	//    | d - start
+	//    | e
+	//  | c   
+	const auto parent = index.parent();
+	if (parent.isValid())
+	{
+		return parent;
 	}
 
 	// Could not move to previous item

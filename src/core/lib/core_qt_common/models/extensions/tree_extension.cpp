@@ -307,41 +307,9 @@ QItemSelection TreeExtension::itemSelection( const QModelIndex & first, const QM
 		}
 
 		// Move next
-		do
-		{
-			if (impl_->expanded(it) &&
-				it.model()->hasChildren( it ))
-			{
-				auto child = it.child(0, 0);
-				if (child.isValid())
-				{
-					it = child;
-					break;
-				}
-			}
-			auto sibling = QModelIndex();
-			while (it.isValid())
-			{
-				auto parent = it.parent();
-				auto row = it.row() + 1;
-				if (it.model()->rowCount( parent ) > row)
-				{
-					sibling = it.sibling(row, 0);
-					if (sibling.isValid())
-					{
-						break;
-					}
-				}
-				it = parent;
-			}
-			if (sibling.isValid())
-			{
-				it = sibling;
-				break;
-			}
-			assert( false );
-		} while (false);
-		//
+		const auto next = this->getNextIndex( it );
+		assert( it != next );	
+		it = next;
 	}
 	
 	return itemSelection;

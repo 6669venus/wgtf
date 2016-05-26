@@ -44,38 +44,41 @@ CMAKE_GENERATORS = dict(
 	Windows = [
 		dict(
 			label = 'Visual Studio 2012 Win32',
-			generator = 'Visual Studio 11',
+			generator = 'Visual Studio 11 2012',
 			dirsuffix = 'vc11_win32',
 			toolset = 'v110_xp',
 		),
 		dict(
 			label = 'Visual Studio 2012 Win64',
-			generator = 'Visual Studio 11 Win64',
+			generator = 'Visual Studio 11 2012',
 			dirsuffix = 'vc11_win64',
+			platform = "x64",
 			toolset = 'v110_xp',
 		),
 		dict(
 			label = 'Visual Studio 2013 Win32',
-			generator = 'Visual Studio 12',
+			generator = 'Visual Studio 12 2013',
 			dirsuffix = 'vc12_win32',
 			toolset = 'v120_xp',
 		),
 		dict(
 			label = 'Visual Studio 2013 Win64',
-			generator = 'Visual Studio 12 Win64',
+			generator = 'Visual Studio 12 2013',
 			dirsuffix = 'vc12_win64',
+			platform = "x64",
 			toolset = 'v120_xp',
 		),
 		dict(
 			label = 'Visual Studio 2015 Win32',
-			generator = 'Visual Studio 14 Win32',
+			generator = 'Visual Studio 14 2015',
 			dirsuffix = 'vc14_win32',
 			toolset = 'v140_xp',
 		),
 		dict(
 			label = 'Visual Studio 2015 Win64',
-			generator = 'Visual Studio 14 Win64',
+			generator = 'Visual Studio 14 2015',
 			dirsuffix = 'vc14_win64',
+			platform = "x64",
 			toolset = 'v140_xp',
 		)
 	],
@@ -299,6 +302,11 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	if ('toolset' in generator):
 		cmd.append( '-T' )
 		cmd.append( generator['toolset'] )
+
+	# optionally append platform
+	if ('platform' in generator):
+		cmd.append( '-A' )
+		cmd.append( generator['platform'] )
 
 	# for single config builders (make/ninja) we need a list of configs to generate
 	if generator.get('singleConfig', False):

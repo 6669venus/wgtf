@@ -124,17 +124,31 @@ WGTreeViewBase {
 
     property var extensions: []
 
-    /*! Move the keyboard highlight up/left.
+    /*! Move the keyboard highlight up.
      */
     function moveKeyHighlightPrevious(event) {
         var newIndex = treeExtension.getPreviousIndex(itemView.selectionModel.currentIndex);
         WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
     }
 
-    /*! Move the keyboard highlight down/right.
+    /*! Move the keyboard highlight down.
      */
     function moveKeyHighlightNext(event) {
         var newIndex = treeExtension.getNextIndex(itemView.selectionModel.currentIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
+    }
+
+    /*! Move the keyboard highlight left.
+     */
+    function moveKeyHighlightBack(event) {
+        var newIndex = treeExtension.getBackwardIndex(itemView.selectionModel.currentIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
+    }
+
+    /*! Move the keyboard highlight right.
+     */
+    function moveKeyHighlightForward(event) {
+        var newIndex = treeExtension.getForwardIndex(itemView.selectionModel.currentIndex);
         WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
     }
 
@@ -144,24 +158,16 @@ WGTreeViewBase {
     keyboardHighlightModelIndex: itemView.currentIndex
 
     Keys.onUpPressed: {
-        if (orientation == ListView.Vertical) {
-            moveKeyHighlightPrevious(event);
-        }
+        moveKeyHighlightPrevious(event);
     }
     Keys.onDownPressed: {
-        if (orientation == ListView.Vertical) {
-            moveKeyHighlightNext(event);
-        }
+        moveKeyHighlightNext(event);
     }
     Keys.onLeftPressed: {
-        if (orientation == ListView.Horizontal) {
-            moveKeyHighlightPrevious(event);
-        }
+        moveKeyHighlightBack(event);
     }
     Keys.onRightPressed: {
-        if (orientation == ListView.Horizontal) {
-            moveKeyHighlightNext(event);
-        }
+        moveKeyHighlightForward(event);
     }
 
     // Data holder for various C++ extensions.

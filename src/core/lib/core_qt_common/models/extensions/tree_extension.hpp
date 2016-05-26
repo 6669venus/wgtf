@@ -47,6 +47,10 @@ public:
 	 *	@return new position or the original index on error.
 	 */
 	Q_INVOKABLE QModelIndex getPreviousIndex( const QModelIndex & index ) const;
+
+	/// Expand the current item if it is expandable or move to the first child
+	Q_INVOKABLE QModelIndex getForwardIndex( const QModelIndex & index ) const;
+	Q_INVOKABLE QModelIndex getBackwardIndex( const QModelIndex & index ) const;
 private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

@@ -443,3 +443,116 @@ QModelIndex TreeExtension::getPreviousIndex( const QModelIndex & index ) const
 	// Could not move to previous item
 	return index;
 }
+
+
+QModelIndex TreeExtension::getForwardIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	// Make sure the current item has children
+	if (pModel->hasChildren( index ) )
+	{
+		if (impl_->expanded( index ))
+		{
+			// Select the first child if the current item is expanded
+			const auto child = index.child( 0, index.column() );
+			if (child.isValid())
+			{
+				return child;
+			}
+		}
+		else
+		{
+			// Expand the current item
+			impl_->expand( index );
+
+			// Emit the data change
+			int role = 0;
+			auto res = this->encodeRole( ItemRole::expandedId, role );
+			assert( res );
+			QVector< int > roles;
+			roles.append( role );
+			emit const_cast< QAbstractItemModel * >( pModel )->dataChanged( index,
+				index,
+				roles );
+
+			return index;
+		}
+	}
+
+	// Move down to the next sibling
+	const auto parent = index.parent();
+	const int nextRow = index.row() + 1;
+	if (nextRow < pModel->rowCount( parent ))
+	{
+		const auto sibling = index.sibling( nextRow, index.column() );
+		if (sibling.isValid())
+		{
+			return sibling;
+		}
+	}
+	else if (parent.isValid())
+	{
+		const int nextParentRow = parent.row() + 1;
+		const auto sibling = parent.sibling( nextParentRow, index.column() );
+		if (sibling.isValid())
+		{
+			return sibling;
+		}
+	}
+
+	return index;
+}
+
+
+QModelIndex TreeExtension::getBackwardIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	// Move up to the parent if there are no children or not expanded
+	if (pModel->hasChildren( index ) && impl_->expanded( index ))
+	{
+		// Collapse the current item
+		impl_->collapse( index );
+
+		// Emit the data change
+		int role = 0;
+		auto res = this->encodeRole( ItemRole::expandedId, role );
+		assert( res );
+		QVector< int > roles;
+		roles.append( role );
+		emit const_cast< QAbstractItemModel * >( pModel )->dataChanged( index,
+			index,
+			roles );
+
+		return index;
+	}
+
+	// Move up to the parent
+	const QModelIndex parent = index.parent();
+	if (parent.isValid())
+	{
+		// Update the current index if the parent is valid
+		return parent;
+	}
+
+	return index;
+}

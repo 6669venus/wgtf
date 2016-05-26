@@ -26,6 +26,7 @@ Rectangle
         {
             nodesModel : Value.nodesModel
             connectionsModel: Value.connectionsModel
+            nodeClassesModel: Value.nodeClassesModel
         }
     }
 }

@@ -17,13 +17,13 @@ public:
     void SetGraph(std::shared_ptr<IGraph> graph) override;
 
 	std::shared_ptr<INode> CreateNode(std::string nodeClass, float x, float y) override;
-	INode* GetNode(std::string id) override;
-	bool DeleteNode(std::string id) override;    
+	INode* GetNode(size_t id) override;
+	bool DeleteNode(size_t id) override;    
 
-	bool Connect(std::string nodeIdFrom, std::string slotLabelFrom,
-		std::string nodeIdTo, std::string slotLabelTo) override;
-	bool Disconnect(std::string nodeIdFrom, std::string slotLabelFrom,
-		std::string nodeIdTo, std::string slotLabelTo) override;
+    bool Connect(size_t nodeIdFrom, size_t slotIdFrom,
+        size_t nodeIdTo, size_t slotIdTo) override;
+    bool Disconnect(size_t nodeIdFrom, size_t slotIdFrom,
+        size_t nodeIdTo, size_t slotIdTo) override;
 
 private:
     void onCreateNode(int x, int y, std::string nodeClass) override;

@@ -25,7 +25,6 @@ public:
         Variant::setMetaTypeManager(metaTypeManager);
 
         std::shared_ptr<IGraph> graph(new CustomGraph());
-        graph->CreateNode("Test Node From C++");
         nodeEditor->SetGraph(graph);
     }
 };

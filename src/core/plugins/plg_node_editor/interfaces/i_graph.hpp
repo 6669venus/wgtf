@@ -70,13 +70,17 @@ public:
 
 protected:
 
-    /*! Gets nodes models
+    /*! Gets nodes model
     */
     virtual const IListModel* GetNodesModel() const = 0;
 
-    /*! Gets connections models
+    /*! Gets connections model
     */
     virtual const IListModel* GetConnectionsModel() const = 0;
+
+    /*! Gets node classes model
+    */
+    virtual const IListModel* GetNodeClassesModel() const = 0;
 };
 
 #endif // __I_GRAPH_H__

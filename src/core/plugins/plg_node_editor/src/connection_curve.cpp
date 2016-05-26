@@ -46,6 +46,11 @@ void ConnectionCurve::setToNode(const QRectF &nodeRect)
     m_toNode = nodeRect;
 }
 
+void ConnectionCurve::setColor(const QColor &color)
+{
+    m_color = color;
+}
+
 void ConnectionCurve::paint(QPainter *painter)
 {
     #define CONNECTION_ROUNDING 5 * m_contentScale
@@ -116,14 +121,13 @@ void ConnectionCurve::paint(QPainter *painter)
         path.cubicTo(ctr1, ctr2, m_toPoint);
     }
 
-    QColor wireColor(79, 106, 25);
     QColor maskColor = Qt::black;
 
     painter->setPen(QPen(maskColor, 4 * m_contentScale, Qt::SolidLine,
         Qt::RoundCap, Qt::RoundJoin));
     painter->drawPath(path);
 
-    painter->setPen(QPen(wireColor, 2 * m_contentScale, Qt::SolidLine,
+    painter->setPen(QPen(m_color, 2 * m_contentScale, Qt::SolidLine,
         Qt::RoundCap, Qt::RoundJoin));
     painter->drawPath(path);
 

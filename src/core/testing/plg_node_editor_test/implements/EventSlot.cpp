@@ -1,60 +1,70 @@
 
-#include "CustomSlot.h"
+#include "EventSlot.h"
+#include <qstring.h>
 
-CustomSlot::CustomSlot(INode *node, bool isInput)
-: m_isInput(isInput)
+const std::string EVENT_SLOT_LABEL = "event";
+const std::string EVENT_SLOT_ICON = "images/greenSlot.png";
+const std::string EVENT_SLOT_COLOR = "white";
+
+EventSlot::EventSlot(INode *node, bool isInput)
+: m_label(EVENT_SLOT_LABEL)
+, m_icon(EVENT_SLOT_ICON)
+, m_color(EVENT_SLOT_COLOR)
+, m_editable(true)
+, m_isInput(isInput)
 , m_pNode(node)
 {
     m_id = reinterpret_cast<size_t>(this);
 }
 
-std::string CustomSlot::Label() const
+std::string EventSlot::Label() const
 {
-    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-    return std::string();
+    return m_label;
 }
 
-std::string CustomSlot::Icon() const
+void EventSlot::setLabel(const std::string &label)
 {
-    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-    return std::string();
+    m_label = label;
 }
 
-QColor CustomSlot::Color() const
+std::string EventSlot::Icon() const
 {
-    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-    return QColor();
+    return m_icon;
 }
 
-MetaType* CustomSlot::Type() const
+std::string EventSlot::Color() const
+{
+    return m_color;
+}
+
+MetaType* EventSlot::Type() const
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return nullptr;
 }
 
-bool CustomSlot::Editable() const
+bool EventSlot::Editable() const
 {
-    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-    return false;
+    return m_editable;
 }
 
-INode* CustomSlot::Node() const
+INode* EventSlot::Node() const
 {
     return m_pNode;
 }
 
-const GenericListT<ISlot*>* CustomSlot::GetConnectedSlots() const
+const GenericListT<ISlot*>* EventSlot::GetConnectedSlots() const
 {
     return &m_connectedSlots;
 }
 
-bool CustomSlot::CanConnect(ObjectHandleT<ISlot> slot)
+bool EventSlot::CanConnect(ObjectHandleT<ISlot> slot)
 {
     assert(m_pNode != nullptr);
     return m_pNode->CanConnect(this, slot);
 }
 
-bool CustomSlot::Connect(size_t connectionID, ObjectHandleT<ISlot> slot)
+bool EventSlot::Connect(size_t connectionID, ObjectHandleT<ISlot> slot)
 {
     assert(m_pNode != nullptr);
     bool result = m_pNode->CanConnect(this, slot);
@@ -69,7 +79,7 @@ bool CustomSlot::Connect(size_t connectionID, ObjectHandleT<ISlot> slot)
     return result;
 }
 
-bool CustomSlot::Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot)
+bool EventSlot::Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot)
 {
     assert(m_pNode != nullptr);
     bool result = false;

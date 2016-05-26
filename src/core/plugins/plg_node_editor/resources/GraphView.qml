@@ -12,6 +12,7 @@ Item
 
 	property var nodesModel
     property var connectionsModel
+    property var nodeClassesModel
 
     function getNodeViewById(nodeId)
     {

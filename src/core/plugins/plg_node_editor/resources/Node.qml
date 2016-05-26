@@ -19,18 +19,15 @@ Item
 
     property bool selected: false
 
-    // TODO link to data
-    property string nodeSubTitle: ""
-
-    // TODO link to Data
-    property color nodeColor: "blue"
-
-    // TODO link to data
-    property string nodeIcon: "images/model_16x16.png"
+    property string nodeSubTitle: nodeObj.subtitle
+    property color nodeColor: nodeObj.color
+    property string nodeIcon: nodeObj.icon
 
     property var style: NodeStyle{
         node: nodeContainer
     }
+
+    Component.onCompleted: { console.log(nodeObj, nodeObj.color); }
 
     width: nodeFrame.width
     height: nodeFrame.height

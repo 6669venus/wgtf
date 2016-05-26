@@ -27,12 +27,20 @@ SOURCE_GROUP("Compiled Resources" FILES ${COMPILED_RESOURCES})
 SET( IMPLEMENTS
 	implements/CustomGraph.h
 	implements/CustomGraph.cpp
-	implements/CustomNode.h
-	implements/CustomNode.cpp
-	implements/CustomSlot.h
-	implements/CustomSlot.cpp
 	implements/CustomConnection.h
 	implements/CustomConnection.cpp
+    implements/AddIntegerNode.h
+    implements/AddIntegerNode.cpp
+    implements/EventSlot.h
+    implements/EventSlot.cpp
+    implements/IntegerSlot.h
+    implements/IntegerSlot.cpp
+    implements/IntToStringNode.h
+    implements/IntToStringNode.cpp
+    implements/PrintNode.h
+    implements/PrintNode.cpp
+    implements/StringSlot.h
+    implements/StringSlot.cpp
 )
 SOURCE_GROUP( "Implements Files" FILES ${IMPLEMENTS} )
 

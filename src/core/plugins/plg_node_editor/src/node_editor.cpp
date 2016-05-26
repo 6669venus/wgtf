@@ -15,8 +15,8 @@ void NodeEditor::SetGraph(std::shared_ptr<IGraph> graph)
 
 std::shared_ptr<INode> NodeEditor::CreateNode(std::string nodeClass, float x, float y)
 {
-    NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-    return nullptr;
+    assert(!graphModel.empty());
+    return graphModel.back()->CreateNode(nodeClass, x, y);
 }
 
 void NodeEditor::onCreateNode(int x, int y, std::string nodeClass)
@@ -39,28 +39,28 @@ void NodeEditor::onDeleteConnection(size_t connectionId)
     graphModel.back()->DeleteConnection(connectionId);
 }
 
-INode* NodeEditor::GetNode(std::string id)
+INode* NodeEditor::GetNode(size_t id)
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
     return nullptr;
 }
 
-bool NodeEditor::DeleteNode(std::string id)
+bool NodeEditor::DeleteNode(size_t id)
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-	return true;
+	return false;
 }
 
-bool NodeEditor::Connect(std::string nodeIdFrom, std::string slotLabelFrom,
-	std::string nodeIdTo, std::string slotLabelTo)
+bool NodeEditor::Connect(size_t nodeIdFrom, size_t slotIdFrom,
+    size_t nodeIdTo, size_t slotIdTo)
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-	return true;
+    return false;
 }
 
-bool NodeEditor::Disconnect(std::string nodeIdFrom, std::string slotLabelFrom,
-	std::string nodeIdTo, std::string slotLabelTo)
+bool NodeEditor::Disconnect(size_t nodeIdFrom, size_t slotIdFrom,
+    size_t nodeIdTo, size_t slotIdTo)
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
-	return true;
+	return false;
 }

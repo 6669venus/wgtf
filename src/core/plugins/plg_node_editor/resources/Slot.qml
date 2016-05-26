@@ -13,11 +13,8 @@ Row
     // TODO: Make this to reflect C++ state?
     property bool connected: false
 
-    // TODO: Make this part of the slot model
-    property color slotColor: isInput ? "#7AC943" : "#3FA9F5"
-
-    // TODO: Make this part of the slot model
-    property string slotLabel: isInput ? "input Slot" : "output Slot"
+    property color slotColor: slotObj.color
+    property string slotLabel: slotObj.label
 
     property var style: SlotStyle{
         parentSlot: slot

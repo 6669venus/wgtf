@@ -37,8 +37,16 @@ ConnectionCurve
     onFirstNodeChanged: initNodeView()
     onSecondNodeChanged: initNodeView()
 
-    onFirstNodeViewChanged: { firstSlotView = firstNodeView.getSlotViewBySlotObj(firstSlot)    }
-    onSecondNodeViewChanged:{ secondSlotView = secondNodeView.getSlotViewBySlotObj(secondSlot) }
+    onFirstNodeViewChanged: 
+    { 
+        firstSlotView = firstNodeView.getSlotViewBySlotObj(firstSlot);
+        connectionColor = firstSlotView.slotColor
+    }
+
+    onSecondNodeViewChanged:
+    { 
+        secondSlotView = secondNodeView.getSlotViewBySlotObj(secondSlot) 
+    }
 
     onFirstSlotViewChanged:     updatePos()
     onSecondSlotViewChanged:    updatePos()

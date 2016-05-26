@@ -160,60 +160,92 @@ QmlView::QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlE
 		this, SLOT(error(QQuickWindow::SceneGraphError, const QString&)));
 }
 
+
+//------------------------------------------------------------------------------
 QmlView::~QmlView()
 {
     // call sendPostedEvents to give chance to QScriptObject's DeferredDeleted event get handled in time
     QApplication::sendPostedEvents( nullptr, QEvent::DeferredDelete );
 }
 
+
+//------------------------------------------------------------------------------
 const char * QmlView::id() const
 {
 	return impl_->id_.c_str();
 }
 
+
+//------------------------------------------------------------------------------
 const char * QmlView::title() const
 {
 	return impl_->title_.c_str();
 }
 
+
+//------------------------------------------------------------------------------
 const char * QmlView::windowId() const
 {
 	return impl_->windowId_.c_str();
 }
 
+
+//------------------------------------------------------------------------------
 const LayoutHint& QmlView::hint() const
 {
 	return impl_->hint_;
 }
 
+
+//------------------------------------------------------------------------------
 QWidget * QmlView::releaseView()
 {
 	impl_->released_ = true;
 	return view();
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::retainView()
 {
 	impl_->released_ = false;
 	impl_->quickView_->setParent( nullptr );
 }
 
+
+//------------------------------------------------------------------------------
 QWidget * QmlView::view() const
 {
 	return impl_->quickView_;
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::update()
 {
 
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::setContextObject( QObject * object )
 {
-    object->setParent(impl_->qmlContext_.get() );
+	//Cannot use qobject_cast because QtScriptObject doesn't have a static 
+	//MetaObject implementation.
+	auto qtScriptObject = dynamic_cast<QtScriptObject *>( object );
+	if(qtScriptObject)
+	{
+		qtScriptObject->setParent( impl_->qmlContext_.get() );
+	}
+	else
+	{
+		object->setParent(impl_->qmlContext_.get());
+	}
 	impl_->qmlContext_->setContextObject( object );
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::setContextProperty(
 	const QString & name, const QVariant & property )
 {
@@ -227,7 +259,6 @@ void QmlView::setContextProperty(
 			auto qtScriptObject = dynamic_cast<QtScriptObject *>( object );
 			if(qtScriptObject)
 			{
-				auto qtScriptObject = property.value< QtScriptObject * >();
 				qtScriptObject->setParent( impl_->qmlContext_.get() );
 			}
 			else
@@ -239,12 +270,16 @@ void QmlView::setContextProperty(
 	impl_->qmlContext_->setContextProperty( name, property );
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message )
 {
 	NGT_ERROR_MSG( "QmlView::error, rendering error: %s\n",
 		message.toLatin1().constData() );
 }
 
+
+//------------------------------------------------------------------------------
 bool QmlView::load( const QUrl & qUrl, std::function< void() > loadedHandler, bool async )
 {
 	impl_->url_ = qUrl;
@@ -259,12 +294,15 @@ bool QmlView::load( const QUrl & qUrl, std::function< void() > loadedHandler, bo
 	return impl_->doLoad( qUrl, loadedHandler, async );
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::reload()
 {
 	impl_->doLoad(impl_->url_ );
 }
 
 
+//------------------------------------------------------------------------------
 void QmlView::focusInEvent()
 {
 	for (auto& l : impl_->listeners_)
@@ -278,6 +316,8 @@ void QmlView::focusInEvent()
 	}
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::focusOutEvent()
 {
 	for (auto& l : impl_->listeners_)
@@ -291,12 +331,15 @@ void QmlView::focusOutEvent()
 	}
 }
 
+//------------------------------------------------------------------------------
 void QmlView::registerListener(IViewEventListener* listener)
 {
 	assert( std::find(impl_->listeners_.begin(), impl_->listeners_.end(), listener ) == impl_->listeners_.end() );
 	impl_->listeners_.push_back( listener );
 }
 
+
+//------------------------------------------------------------------------------
 void QmlView::deregisterListener(IViewEventListener* listener)
 {
 	auto it = std::find(impl_->listeners_.begin(), impl_->listeners_.end(), listener );

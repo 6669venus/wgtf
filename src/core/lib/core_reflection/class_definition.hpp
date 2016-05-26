@@ -53,7 +53,7 @@ private:
 	friend class PropertyIterator;
 	friend class PropertyAccessor;
 
-	IBasePropertyPtr findProperty( const char * name ) const override;
+	IBasePropertyPtr findProperty( const char * name, size_t length ) const override;
 	void setDefinitionManager( IDefinitionManager * defManager ) override;
 
 	void bindPropertyImpl(

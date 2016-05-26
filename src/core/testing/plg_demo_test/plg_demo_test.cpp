@@ -224,7 +224,7 @@ public:
 		viewport_ = nullptr;
 		demoDoc_ = nullptr;
 		demoDoc2_ = nullptr;
-		demoModel_.getBase< DemoObjects >()->fini();
+		demoModel_.getBase< DemoObjectsFixMixIn >()->fini();
 		demoModel_ = nullptr;
 		return true;
 	}

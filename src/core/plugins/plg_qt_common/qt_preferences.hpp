@@ -6,10 +6,6 @@
 namespace wgt
 {
 class IComponentContext;
-namespace
-{
-    class QtPreferencesImpl;
-}
 
 class QtPreferences : public Implements< IPreferences >
 {
@@ -25,7 +21,8 @@ public:
     void loadPreferenceFromFile( const char * filePath ) override;
 
 private:
-    std::unique_ptr< class QtPreferencesImpl > pImpl_;
+    class Implementation;
+    std::unique_ptr< Implementation > pImpl_;
 };
 } // end namespace wgt
 #endif//QT_PREFERENCES_HPP

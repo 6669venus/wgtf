@@ -51,6 +51,7 @@ ListView {
             columnWidths: view.columnWidths
             columnSpacing: view.columnSpacing
             isSelected: view.selectionModel.isSelected(modelIndex)
+            isKeyboardHighlight: (keyboardHighlightModelIndex === modelIndex)
 
             Connections {
                 target: view.selectionModel
@@ -83,7 +84,9 @@ ListView {
 
                         "__onItemPressed": function(mouse, itemIndex, rowIndex) { treeViewBase.itemPressed(mouse, itemIndex, rowIndex) },
                         "__onItemClicked": function(mouse, itemIndex, rowIndex) { treeViewBase.itemClicked(mouse, itemIndex, rowIndex) },
-                        "__onItemDoubleClicked": function(mouse, itemIndex, rowIndex) { treeViewBase.itemDoubleClicked(mouse, itemIndex, rowIndex) }
+                        "__onItemDoubleClicked": function(mouse, itemIndex, rowIndex) { treeViewBase.itemDoubleClicked(mouse, itemIndex, rowIndex) },
+
+                        "keyboardHighlightModelIndex": Qt.binding( function() { return keyboardHighlightModelIndex; } )
                     })
 
                     childItems.width = Qt.binding( function() { return active ? item.contentWidth : 0 } )

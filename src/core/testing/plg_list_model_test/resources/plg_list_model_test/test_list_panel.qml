@@ -1,14 +1,14 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
-import BWControls 1.0
-import WGControls 1.0
+import WGControls 1.0 as WG1
+import WGControls 2.0
 
-WGPanel {
+WG1.WGPanel {
 	title: "ListModel Test"
 	layoutHints: { 'test': 0.1 }
 
-	property var sourceModel: source
+    property var sourceModel: useModel ? source : null
 	color: palette.mainWindowColor
 	
     property var useModel: 1
@@ -27,70 +27,106 @@ WGPanel {
         }
     }
 
-    WGListModel {
-		id: listModel
-		source: useModel ? sourceModel : null
+    //Temporary code to test if model has data.
+    /*ScrollView {
+		anchors.top: switchModelButton.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
 
-        HeaderFooterTextExtension {}
-        ValueExtension {}
-		ColumnExtension {}
-		SelectionExtension {
-			id: listModelSelection
-			multiSelect: true
+		ListView {
+			//leftMargin: 50
+			//rightMargin: 50
+			//topMargin: 50
+			//bottomMargin: 50
+			model: sourceModel
+
+			delegate: Text {
+				text: display
+			}
+		}
+	}*/
+
+
+	ScrollView {
+		anchors.top: switchModelButton.bottom
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+
+		WGListView {
+			//anchors.margins: 10
+			//leftMargin: 50
+			//rightMargin: 50
+			//topMargin: 50
+			//bottomMargin: 50
+			columnWidth: 50
+			columnSpacing: 1
+			columnDelegates: [columnDelegate, colorDelegate]
+			headerDelegate: myHeaderDelegate
+			footerDelegate: myFooterDelegate
+			roles: ["value", "headerText", "footerText"]
+			model: sourceModel
+
+			Component {
+            	id: myHeaderDelegate
+
+            	Text {
+                	id: textBoxHeader
+                	color: palette.textColor
+                	text: headerData.headerText
+                	height: 24
+            	}
+        	}
+
+        	Component {
+	            id: myFooterDelegate
+
+    	        Text {
+        	        id: textBoxFooter
+            	    color: palette.textColor
+                	text: headerData.footerText
+                	height: 24
+            	}
+        	}
+
+			Component {
+				id: colorDelegate
+
+				Item {
+					width: itemWidth
+					implicitWidth: textItem.implicitWidth
+					implicitHeight: 24
+
+					Rectangle {
+						id: colorItem
+
+						anchors.fill: parent
+						anchors.margins: 1
+						color: {
+							if (typeof itemData.value === "string")
+							{
+								return "transparent";
+							}
+						
+							var colour = itemData.value;
+							var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
+							var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
+							var b = colour % 100 + 156;
+						
+							return Qt.rgba(r / 255, g / 255, b / 255, 1);
+						}
+					}
+
+					Text {
+						id: textItem
+
+						visible: typeof itemData.value === "string"
+						text: typeof itemData.value === "string" ? itemData.value : ""
+						color: palette.textColor
+					}
+				}
+			}
 		}
 	}
-
-    WGListView {
-        id: testListView
-        anchors.top: switchModelButton.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: 1
-        showColumnsFrame: true
-        showColumnHeaders: true
-        showColumnFooters: true
-        model: listModel
-        selectionExtension: listModelSelection
-        columnDelegates: [defaultColumnDelegate, columnDelegate]
-        
-        Component {
-            id: columnDelegate
-
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: testListView.minimumRowHeight
-				
-                Rectangle {
-                    anchors.fill: parent
-                    anchors.margins: 1
-                    color: {
-                        if (typeof itemData.Value === "string")
-                        {
-                            return "transparent";
-                        }
-						
-                        var colour = itemData.Value;
-                        var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
-                        var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
-                        var b = colour % 100 + 156;
-						
-                        return Qt.rgba(r / 255, g / 255, b / 255, 1);
-                    }
-                }
-
-                Text {
-                    clip: true
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.margins: 4
-                    verticalAlignment: Text.AlignVCenter
-                    visible: typeof itemData.Value === "string"
-                    text: typeof itemData.Value === "string" ? itemData.Value : ""
-                    color: palette.textColor
-                }
-            }
-        }
-    }
 }

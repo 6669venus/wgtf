@@ -3,6 +3,10 @@
 
 #include "abstract_item.hpp"
 
+
+/**
+ *	Base class for all types of data models.
+ */
 class AbstractItemModel : public AbstractItem
 {
 public:
@@ -19,7 +23,7 @@ public:
 			return row_ >= 0 && column_ >= 0;
 		}
 
-		bool operator==(const ItemIndex & other)
+		bool operator==( const ItemIndex & other ) const
 		{
 			if (!isValid() && !other.isValid())
 			{
@@ -29,13 +33,28 @@ public:
 			return row_ == other.row_ && column_ == other.column_ && parent_ == other.parent_;
 		}
 
+		bool operator!=( const ItemIndex & other ) const
+		{
+			return !this->operator==( other );
+		}
+
 		int row_;
 		int column_;
 		const AbstractItem * parent_;
 	};
 
-	typedef void DataSignature( const ItemIndex & index, size_t role, const Variant & value );
-	typedef void RangeSignature( const ItemIndex & index, int pos, int count );
+	/**
+	 *	Data changed at *row*, with the given role and new value.
+	 *	@note newValue is always the new value, for both pre- and post- callbacks.
+	 */
+	typedef void DataSignature( const ItemIndex & index, size_t role, const Variant & newValue );
+	/**
+	 *	Insert/remove into *parentIndex* from *startPos* to *startPos + count*.
+	 *	@param parentIndex item inside which to do the insertion/removal.
+	 *	@param startPos first row or column of insertion/removal under the parent.
+	 *	@param count number of rows or columns after startPos.
+	 */
+	typedef void RangeSignature( const ItemIndex & parentIndex, int startPos, int count );
 	typedef std::function< DataSignature > DataCallback;
 	typedef std::function< RangeSignature > RangeCallback;
 
@@ -56,14 +75,28 @@ public:
 	virtual Connection connectPreColumnsInserted( RangeCallback callback ) { return Connection(); }
 	virtual Connection connectPostColumnsInserted( RangeCallback callback ) { return Connection(); }
 	virtual Connection connectPreColumnsRemoved( RangeCallback callback ) { return Connection(); }
-	virtual Connection connectPostColumnRemoved( RangeCallback callback ) { return Connection(); }
+	virtual Connection connectPostColumnsRemoved( RangeCallback callback ) { return Connection(); }
 };
 
+
+/**
+ *	Provide models with items arranged one after the other; a list.
+ *	Items in rows are all connected, cannot have different items in different columns.
+ */
 class AbstractListModel : public AbstractItemModel
 {
 public:
-	typedef void DataSignature( int row, int column, size_t role, const Variant & value );
-	typedef void RangeSignature( int pos, int count );
+	/**
+	 *	Data changed at *row*, with the given column, role and new value.
+	 *	@note newValue is always the new value, for both pre- and post- callbacks.
+	 */
+	typedef void DataSignature( int row, int column, size_t role, const Variant & newValue );
+	/**
+	 *	Insert/remove from *startRow* to *startRow + count*.
+	 *	@param startRow first row of insertion/removal.
+	 *	@param count number of rows after startRow.
+	 */
+	typedef void RangeSignature( int startRow, int count );
 	typedef std::function< DataSignature > DataCallback;
 	typedef std::function< RangeSignature > RangeCallback;
 
@@ -83,9 +116,17 @@ public:
 	virtual Connection connectPostRowsRemoved( RangeCallback callback ) { return Connection(); }
 
 private:
+	// Override functions using base class ItemIndex and hide them
+	// Users can use public overloads with current class' ItemIndex type
+
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
-		if (index.parent_ != nullptr || index.column_ != 0)
+		if (!index.isValid())
+		{
+			return nullptr;
+		}
+
+		if (index.parent_ != nullptr)
 		{
 			return nullptr;
 		}
@@ -93,7 +134,7 @@ private:
 		return item( index.row_ );
 	}
 
-	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const
+	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const override
 	{
 		int row = index( item );
 
@@ -117,7 +158,7 @@ private:
 		return columnCount();
 	}
 
-	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPreItemDataChanged( ( DataCallback )[=]( int row, int column, size_t role, const Variant & value )
 		{
@@ -125,7 +166,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPostItemDataChanged( ( DataCallback )[=]( int row, int column, size_t role, const Variant & value )
 		{
@@ -133,7 +174,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -141,7 +182,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -149,7 +190,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -157,7 +198,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -166,6 +207,11 @@ private:
 	}
 };
 
+
+/**
+ *	Provide models with items arranged in a hierarchy; a tree.
+ *	Items in rows are all connected, cannot have different items in different columns.
+ */
 class AbstractTreeModel : public AbstractItemModel
 {
 public:
@@ -181,7 +227,7 @@ public:
 			return row_ >= 0;
 		}
 
-		bool operator==(const ItemIndex & other)
+		bool operator==( const ItemIndex & other ) const
 		{
 			if (!isValid() && !other.isValid())
 			{
@@ -191,12 +237,27 @@ public:
 			return row_ == other.row_ && parent_ == other.parent_;
 		}
 
+		bool operator!=( const ItemIndex & other ) const
+		{
+			return !this->operator==( other );
+		}
+
 		int row_;
 		const AbstractItem * parent_;
 	};
 
+	/**
+	 *	Data changed at *index*, with the given column, role and new value.
+	 *	@note value is always the new value, for both pre- and post- callbacks.
+	 */
 	typedef void DataSignature( const ItemIndex & index, int column, size_t role, const Variant & value );
-	typedef void RangeSignature( const ItemIndex & index, int pos, int count );
+	/**
+	 *	Insert/remove into the item at *parentIndex* from *startRow* to *startRow + count*.
+	 *	@param parentIndex item inside which to do the insertion/removal.
+	 *	@param startRow first row of insertion/removal under the parent.
+	 *	@param count number of rows after startRow.
+	 */
+	typedef void RangeSignature( const ItemIndex & parentIndex, int startRow, int count );
 	typedef std::function< DataSignature > DataCallback;
 	typedef std::function< RangeSignature > RangeCallback;
 
@@ -205,7 +266,7 @@ public:
 	virtual AbstractItem * item( const ItemIndex & index ) const = 0;
 	virtual ItemIndex index( const AbstractItem * item ) const = 0;
 
-	virtual int rowCount( const AbstractItem * item ) const = 0;
+	virtual int rowCount( const AbstractItem * item ) const override = 0;
 	virtual int columnCount() const = 0;
 
 	virtual Connection connectPreItemDataChanged( DataCallback callback ) { return Connection(); }
@@ -216,9 +277,12 @@ public:
 	virtual Connection connectPostRowsRemoved( RangeCallback callback ) { return Connection(); }
 
 private:
+	// Override functions using base class ItemIndex and hide them
+	// Users can use public overloads with current class' ItemIndex type
+
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
-		if (index.column_ != 0)
+		if (!index.isValid())
 		{
 			return nullptr;
 		}
@@ -226,7 +290,7 @@ private:
 		return item( ItemIndex( index.row_, index.parent_ ) );
 	}
 
-	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const
+	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const override
 	{
 		ItemIndex index = this->index( item );
 
@@ -240,7 +304,7 @@ private:
 		return columnCount();
 	}
 
-	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPreItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, int column, size_t role, const Variant & value )
 		{
@@ -248,7 +312,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPostItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, int column, size_t role, const Variant & value )
 		{
@@ -256,7 +320,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsInserted( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -264,7 +328,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsInserted( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -272,7 +336,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsRemoved( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -280,7 +344,7 @@ private:
 		}); 
 	}
 	
-	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsRemoved( ( RangeCallback )[=]( const ItemIndex & index, int pos, int count )
 		{
@@ -289,6 +353,11 @@ private:
 	}
 };
 
+
+/**
+ *	Provide models with items arranged in a grid; a table.
+ *	Items in each (row, column) can be unrelated.
+ */
 class AbstractTableModel : public AbstractItemModel
 {
 public:
@@ -304,7 +373,7 @@ public:
 			return row_ >= 0 && column_ >= 0;
 		}
 
-		bool operator==(const ItemIndex & other)
+		bool operator==( const ItemIndex & other ) const
 		{
 			if (!isValid() && !other.isValid())
 			{
@@ -314,12 +383,26 @@ public:
 			return row_ == other.row_ && column_ == other.column_;
 		}
 
+		bool operator!=( const ItemIndex & other ) const
+		{
+			return !this->operator==( other );
+		}
+
 		int row_;
 		int column_;
 	};
 
-	typedef void DataSignature( const ItemIndex & index, size_t role, const Variant & value );
-	typedef void RangeSignature( int pos, int count );
+	/**
+	 *	Data changed at *index*, with the given role and new value.
+	 *	@note newValue is always the new value, for both pre- and post- callbacks.
+	 */
+	typedef void DataSignature( const ItemIndex & index, size_t role, const Variant & newValue );
+	/**
+	 *	Insert/remove from *startPos* to *startPos + count*.
+	 *	@param startPos first row or column of insertion/removal.
+	 *	@param count number of rows or columns after startPos.
+	 */
+	typedef void RangeSignature( int startPos, int count );
 	typedef std::function< DataSignature > DataCallback;
 	typedef std::function< RangeSignature > RangeCallback;
 
@@ -343,8 +426,16 @@ public:
 	virtual Connection connectPostColumnsRemoved( RangeCallback callback ) { return Connection(); }
 
 private:
+	// Override functions using base class ItemIndex and hide them
+	// Users can use public overloads with current class' ItemIndex type
+
 	AbstractItem * item( const AbstractItemModel::ItemIndex & index ) const override
 	{
+		if (!index.isValid())
+		{
+			return nullptr;
+		}
+
 		if (index.parent_ != nullptr)
 		{
 			return nullptr;
@@ -353,7 +444,7 @@ private:
 		return item( ItemIndex( index.row_, index.column_ ) );
 	}
 
-	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const
+	void index( const AbstractItem * item, AbstractItemModel::ItemIndex & o_Index ) const override
 	{
 		ItemIndex index = this->index( item );
 
@@ -382,7 +473,7 @@ private:
 		return columnCount();
 	}
 
-	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPreItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, size_t role, const Variant & value )
 		{
@@ -390,7 +481,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) 
+	Connection connectPostItemDataChanged( AbstractItemModel::DataCallback callback ) override
 	{ 
 		return connectPostItemDataChanged( ( DataCallback )[=]( const ItemIndex & index, size_t role, const Variant & value )
 		{
@@ -398,7 +489,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -406,7 +497,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -414,7 +505,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -422,7 +513,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostRowsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostRowsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -430,7 +521,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreColumnsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreColumnsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreColumnsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -438,7 +529,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostColumnsInserted( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostColumnsInserted( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostColumnsInserted( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -446,7 +537,7 @@ private:
 		}); 
 	}
 
-	Connection connectPreColumnsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPreColumnsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPreColumnsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{
@@ -454,7 +545,7 @@ private:
 		}); 
 	}
 
-	Connection connectPostColumnsRemoved( AbstractItemModel::RangeCallback callback ) 
+	Connection connectPostColumnsRemoved( AbstractItemModel::RangeCallback callback ) override
 	{ 
 		return connectPostColumnsRemoved( ( RangeCallback )[=]( int pos, int count )
 		{

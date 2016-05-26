@@ -206,6 +206,12 @@ Rectangle {
         }
     }
 
+    // We need to update the asset manager view
+    function onRefresh( ) {
+
+        rootFrame.viewModel.refreshData;
+    }
+
     // Handles a history menu item being clicked
     function historyMenuItemClicked( index ) {
         // Don't navigate if we're actively filtering assets
@@ -492,7 +498,7 @@ Rectangle {
                         },
                         WGToolButton {
                             id: btnAssetBrowserForward
-                            objectName: "backButton"
+                            objectName: "forwardButton"
                             iconSource: "icons/fwd_16x16.png"
                             tooltip: "Forward"
                             enabled: (__currentFolderHistoryIndex < __folderHistoryIndices.length - 1)
@@ -500,6 +506,18 @@ Rectangle {
 
                             onClicked: {
                                 onNavigate( true );
+                            }
+                        },
+                        WGToolButton {
+                            id: btnAssetBrowserRefresh
+                            objectName: "refreshButton"
+                            iconSource: "icons/loop_16x16.png"
+                            tooltip: "Refresh"
+                            width: 16
+
+
+                            onClicked: {
+                                onRefresh();
                             }
                         },
                         WGToolButton {
@@ -532,7 +550,6 @@ Rectangle {
 
                 WGBreadcrumbs {
                     id: breadcrumbControl
-                    objectName: "breadCrumbs"
                     dataModel: rootFrame.viewModel.breadcrumbsModel
 
                     onBreadcrumbClicked: {
@@ -1076,6 +1093,7 @@ Rectangle {
                                 id: folderIconHeaderContainer
                                 Image{
                                     id: folderFileIcon
+                                    objectName: typeof(itemData.Value) != "undefined" ? "folderFileIcon_" + itemData.Value : "folderFileIcon"
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
                                     visible: true
                                     anchors.left: folderIconHeaderContainer.left //itemData.expandIconArea.right
@@ -1085,6 +1103,7 @@ Rectangle {
                                     source: itemData.HasChildren ? (itemData.Expanded ? "icons/folder_open_16x16.png" : "icons/folder_16x16.png") : "icons/file_16x16.png"
                                 }
                                 Text {
+                                    objectName: typeof(itemData.Value) != "undefined" ? "Text_" + itemData.Value : "Text"
                                     anchors.left: folderFileIcon.right
                                     color: palette.textColor
                                     clip: itemData != null && itemData.Component != null

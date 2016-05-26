@@ -14,6 +14,13 @@ Canvas {
         The default value is \c xyGrid*/
     property int useAxis: xyGrid
 
+    /*! Determines if the grid labels will be drawn */
+    property bool useGridLabels: true
+
+    /*! Determines if the zeroAxis(green) and oneAxis(yellow) border lines are drawn.
+        Continues to draw grid lines beyond borders*/
+    property bool useBorders: true
+
     // fake enums for useAxis
     readonly property int xyGrid: 0
     readonly property int xGrid: 1
@@ -220,13 +227,15 @@ Canvas {
         }
 
         // -- Text
-        if ((useAxis == 0 || useAxis == 2) && showCoordText) { // draw Y axis text
-            ctx.font = '12px Courier New';
-            ctx.strokeStyle = majorLineColor;
-            for (var i=startY;i<endY;i+=lineGap) {
-                if(isMajor(i, lineGap)) {
-                    var y = (viewTransform.transformY(i) - 1);
-                    ctx.strokeText((i*valueScale).toPrecision(3), textMargin, y);
+        if (useGridLabels) {
+            if (useAxis == 0 || useAxis == 2) { // draw Y axis text
+                ctx.font = '12px Courier New';
+                ctx.strokeStyle = majorLineColor;
+                for (var i=startY;i<endY;i+=lineGap) {
+                    if(isMajor(i, lineGap)) {
+                        var y = (viewTransform.transformY(i) - 1);
+                        ctx.strokeText((i*valueScale).toPrecision(3), textMargin, y);
+                    }
                 }
             }
         }
@@ -244,7 +253,7 @@ Canvas {
         var countFromWhole = Math.floor((startX - nearStartWhole) / lineGap)
         startX = nearStartWhole + countFromWhole * lineGap;
 
-        if (showWorkArea)
+        if (useBorders) {
         {
             startX = Math.max(startX, 0)
             endX = Math.min(endX, 1)
@@ -277,17 +286,19 @@ Canvas {
         }
 
         // -- Text
-        if ((useAxis == 0 || useAxis == 1) && showCoordText) { // draw X axis text
-            ctx.font = '12px Courier New';
-            ctx.strokeStyle = majorLineColor;
-            for (var i=startX;i<=endX;i+=lineGap) {
-                if(isMajor(i, lineGap)) {
-                    var text = (i*timeScale).toPrecision(3);
-                    ctx.resetTransform();
-                    var x = (viewTransform.transformX(i) - 1);
-                    ctx.translate(x, ctx.measureText(text).width + textMargin);
-                    ctx.rotate(-Math.PI/2);
-                    ctx.strokeText(text, 0, 0);
+        if (useGridLabels) {
+            if (useAxis == 0 || useAxis == 1) { // draw X axis text
+                ctx.font = '12px Courier New';
+                ctx.strokeStyle = majorLineColor;
+                for (var i=startX;i<=endX;i+=lineGap) {
+                    if(isMajor(i, lineGap)) {
+                        var text = (i*timeScale).toPrecision(3);
+                        ctx.resetTransform();
+                        var x = (viewTransform.transformX(i) - 1);
+                        ctx.translate(x, ctx.measureText(text).width + textMargin);
+                        ctx.rotate(-Math.PI/2);
+                        ctx.strokeText(text, 0, 0);
+                    }
                 }
             }
         }
@@ -318,45 +329,47 @@ Canvas {
             return;
 
         // -- Green lines
-        ctx.beginPath();
-        ctx.strokeStyle = zeroAxisColor
-        var pos = viewTransform.transform(Qt.point(0,0));
-        if (useAxis == 0) {  // use XY axis
-            ctx.moveTo(0, pos.y)
-            ctx.lineTo(parent.width, pos.y)
-            ctx.moveTo(pos.x, 0)
-            ctx.lineTo(pos.x, parent.height)
-        }
-        else if (useAxis == 1) {  // use X axis
-            ctx.moveTo(pos.x, 0)
-            ctx.lineTo(pos.x, parent.height)
-        }
-        else {  // use Y axis
-            ctx.moveTo(0, pos.y)
-            ctx.lineTo(parent.width, pos.y)
-        }
-        ctx.stroke();
+        if (useBorders) {
+            ctx.beginPath();
+            ctx.strokeStyle = zeroAxisColor
+            var pos = viewTransform.transform(Qt.point(0,0));
+            if (useAxis == 0) {  // use XY axis
+                ctx.moveTo(0, pos.y)
+                ctx.lineTo(parent.width, pos.y)
+                ctx.moveTo(pos.x, 0)
+                ctx.lineTo(pos.x, parent.height)
+            }
+            else if (useAxis == 1) {  // use X axis
+                ctx.moveTo(pos.x, 0)
+                ctx.lineTo(pos.x, parent.height)
+            }
+            else {  // use Y axis
+                ctx.moveTo(0, pos.y)
+                ctx.lineTo(parent.width, pos.y)
+            }
+            ctx.stroke();
 
-        // -- Yellow lines
-        ctx.beginPath();
-        ctx.strokeStyle = oneAxisColor
-        var pos = viewTransform.transform(Qt.point(1,1));
+            // -- Yellow lines
+            ctx.beginPath();
+            ctx.strokeStyle = oneAxisColor
+            var pos = viewTransform.transform(Qt.point(1,1));
 
-        if (useAxis == 0) {  // use XY axis
-            ctx.moveTo(pos.x, 0)
-            ctx.lineTo(pos.x, parent.height)
-            ctx.moveTo(0, pos.y)
-            ctx.lineTo(parent.width, pos.y)
-        }
-        else if (useAxis == 1) { // use X axis
-            ctx.moveTo(pos.x, 0)
-            ctx.lineTo(pos.x, parent.height)
-        }
-        else { // use Y axis
-            ctx.moveTo(0, pos.y)
-            ctx.lineTo(parent.width, pos.y)
-        }
-        ctx.stroke();
+            if (useAxis == 0) {  // use XY axis
+                ctx.moveTo(pos.x, 0)
+                ctx.lineTo(pos.x, parent.height)
+                ctx.moveTo(0, pos.y)
+                ctx.lineTo(parent.width, pos.y)
+            }
+            else if (useAxis == 1) { // use X axis
+                ctx.moveTo(pos.x, 0)
+                ctx.lineTo(pos.x, parent.height)
+            }
+            else { // use Y axis
+                ctx.moveTo(0, pos.y)
+                ctx.lineTo(parent.width, pos.y)
+            }
+            ctx.stroke();
+        } // end if (useBorders)
     }
 
     function getWidth( startTime, endTime )

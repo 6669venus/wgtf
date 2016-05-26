@@ -20,13 +20,15 @@ class WGContextMenu : public QQuickItem
 	// will be and all actions with that path will be added to that menu.
 	Q_PROPERTY( QString		path
 				READ		getPath
-				WRITE		setPath )
+				WRITE		setPath
+				NOTIFY		pathChanged)
 
 	// The object, which may be required for determining if an action should be enabled, checked, or 
 	// passed in to the handler function.
 	Q_PROPERTY( QVariant	contextObject
 				READ		getContextObject
-				WRITE		setContextObject )
+				WRITE		setContextObject
+				NOTIFY		contextObjectChanged)
 
 	DECLARE_QT_MEMORY_HANDLER
 
@@ -50,6 +52,9 @@ public:
 	Q_INVOKABLE void popup();
 
 signals:
+	void pathChanged();
+	void contextObjectChanged();
+
 	void aboutToShow();
 	void aboutToHide();
 	// Signal: onOpened

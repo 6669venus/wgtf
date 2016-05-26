@@ -27,6 +27,7 @@ class ICommandManager
 {
 	typedef Signal<void(const VariantList &, size_t, size_t)> SignalModified;
 	typedef Signal<void(const VariantList &)> SignalReset;
+	typedef Signal<void(int)> SignalIndexChanged;
 
 public:
 	virtual ~ICommandManager() {}
@@ -54,7 +55,8 @@ public:
     virtual void removeCommands(const TRemoveFunctor & functor) = 0;
 
 	virtual const VariantList & getHistory() const = 0;
-	virtual IValueChangeNotifier& currentIndex() = 0;
+	virtual const int commandIndex() const = 0;
+	virtual void moveCommandIndex( int newIndex ) = 0;
 	virtual const IListModel & getMacros() const = 0;
 	virtual bool createMacro( const VariantList & commandInstanceList, const char * id = "" ) = 0;
 	virtual bool deleteMacroByName( const char * id ) = 0;
@@ -82,6 +84,8 @@ public:
 	SignalModified signalHistoryPostRemoved;
 	SignalReset signalHistoryPreReset;
 	SignalReset signalHistoryPostReset;
+	SignalIndexChanged signalPreCommandIndexChanged;
+	SignalIndexChanged signalPostCommandIndexChanged;
 };
 
 #endif//I_COMMAND_MANAGER_HPP

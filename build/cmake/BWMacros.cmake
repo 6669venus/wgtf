@@ -398,8 +398,8 @@ MACRO( BW_ADD_TOOL_EXE _PROJNAME )
 	BW_GET_EXECUTABLE_DST_DIR(EXE_DIR)
 	BW_SET_BINARY_DIR( ${_PROJNAME} "${EXE_DIR}" )
 
-	FIND_PACKAGE( Python )
-	IF( PYTHON_FOUND AND BW_PYTHON_DLL_SUPPORT )
+	FIND_PACKAGE( CorePython )
+	IF( CORE_PYTHON_FOUND AND BW_PYTHON_DLL_SUPPORT )
 		BW_COPY_TARGET( ${_PROJNAME} libpython-shared )
 		BW_COPY_TARGET_PDB( ${_PROJNAME} libpython-shared )
 	ENDIF()
@@ -667,19 +667,3 @@ MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
     ENDFOREACH()
 ENDMACRO()
 
-# Add a target to generate API documentation with Doxygen
-SET( DOXYGEN_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxygen/bin/doxygen.exe" )
-SET( DOXYQML_EXECUTABLE "${BW_SOURCE_DIR}/core/third_party/doxyqml/bin/doxyqml.bat" )
-SET( GRAPHVIZ_DOT_PATH "${BW_SOURCE_DIR}/core/third_party/Graphviz2.38/bin/dot.exe" )
-
-FUNCTION( BW_GENERATE_DOC _target _Doxyfile _OutputDir )
-    IF( BW_PLATFORM_WINDOWS )
-        CONFIGURE_FILE( ${_Doxyfile} ${_OutputDir}/Doxyfile @ONLY )
-        ADD_CUSTOM_TARGET( ${_target}_DOC
-            ${DOXYGEN_EXECUTABLE} ${_OutputDir}/Doxyfile
-            WORKING_DIRECTORY ${_OutputDir}
-            COMMENT "Generating API documentation with Doxygen"
-            VERBATIM
-        )
-    ENDIF()
-ENDFUNCTION()

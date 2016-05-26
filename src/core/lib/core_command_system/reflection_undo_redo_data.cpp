@@ -8,8 +8,7 @@
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/i_object_manager.hpp"
-
-int ReflectionUndoRedoData::s_Connected = 0;
+#include "wg_types/binary_block.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
@@ -25,7 +24,11 @@ namespace
 
 		for (size_t i = 0; i < max; ++i)
 		{
+#if defined(_MSC_VER) && ( _MSC_VER < 1900 )
 			sprintf(counterPointer, "%d", i);
+#else
+			sprintf(counterPointer, "%zd", i);
+#endif
 			object.set(parameterName, methodHelper->parameters_[i]);
 		}
 	}    
@@ -158,11 +161,6 @@ ReflectionUndoRedoData::ReflectionUndoRedoData( CommandInstance & commandInstanc
 
 void ReflectionUndoRedoData::connect()
 {
-	if (s_Connected++ > 0)
-	{
-		return;
-	}
-
 	auto definitionManager = commandInstance_.defManager_;
 	assert( definitionManager != nullptr );
 	definitionManager->registerPropertyAccessorListener( paListener_ );
@@ -171,14 +169,15 @@ void ReflectionUndoRedoData::connect()
 
 void ReflectionUndoRedoData::disconnect()
 {
-	if (--s_Connected > 0)
-	{
-		return;
-	}
-
 	auto definitionManager = commandInstance_.defManager_;
 	assert( definitionManager != nullptr );
 	definitionManager->deregisterPropertyAccessorListener( paListener_ );
+}
+
+void ReflectionUndoRedoData::consolidate()
+{
+	auto definitionManager = commandInstance_.defManager_;
+	assert( definitionManager != nullptr );
 
 	XMLSerializer undoSerializer( undoData_, *definitionManager );
 	undoSerializer.serialize( RPURU::getUndoStreamHeaderTag() );
@@ -214,7 +213,7 @@ void ReflectionUndoRedoData::undo()
 }
 
 
-void ReflectionUndoRedoData::redo() 
+void ReflectionUndoRedoData::redo()
 {
 	auto definitionManager = commandInstance_.defManager_;
 	assert( definitionManager != nullptr );
@@ -415,4 +414,24 @@ ObjectHandle ReflectionUndoRedoData::getCommandDescription() const
 	}
 
 	return result;
+}
+
+std::shared_ptr<BinaryBlock> ReflectionUndoRedoData::getUndoData() const
+{
+    return std::make_shared<BinaryBlock>( undoData_.buffer().c_str(), undoData_.buffer().length(), true );
+}
+
+std::shared_ptr<BinaryBlock> ReflectionUndoRedoData::getRedoData() const
+{
+    return std::make_shared<BinaryBlock>( redoData_.buffer().c_str(), redoData_.buffer().length(), true );
+}
+
+void ReflectionUndoRedoData::setUndoData( const std::shared_ptr<BinaryBlock> & undoData )
+{
+     undoData_.setBuffer( std::string( undoData->cdata(), undoData->length() ) );
+}
+
+void ReflectionUndoRedoData::setRedoData( const std::shared_ptr<BinaryBlock> & redoData )
+{
+    redoData_.setBuffer( std::string( redoData->cdata(), redoData->length() ) );
 }

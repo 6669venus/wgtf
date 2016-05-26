@@ -13,8 +13,11 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_window.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
+
+#include "core_dependency_system/depends.hpp"
 
 #include "core_reflection/reflection_macros.hpp"
 
@@ -24,34 +27,30 @@
 #include "models/curve.hpp"
 #include "metadata/i_curve_editor.mpp"
 
-
-
 class CurveEditorPlugin
 	: public PluginMain
+	, public Depends< wgt::IViewCreator, ICurveEditor >
 {
 public:
 	CurveEditorPlugin(IComponentContext & contextManager)
+		: Depends( contextManager )
 	{
 	}
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
 		Q_INIT_RESOURCE(plg_curve_editor);
-		return true;
-	}
 
-	void Initialise( IComponentContext & contextManager ) override
-	{
 		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
 		assert(metaTypeMgr);
 		if (metaTypeMgr == nullptr)
-			return;
+			return false;
 		Variant::setMetaTypeManager(metaTypeMgr);
 
 		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
 		assert(definitionManager != nullptr);
 		if (definitionManager == nullptr)
-			return;
+			return false;
 
 		// Setup the models for the view
 		definitionManager->registerDefinition(new TypeClassDefinition<Point>);
@@ -59,21 +58,21 @@ public:
 		definitionManager->registerDefinition(new TypeClassDefinition<ICurve>);
 		definitionManager->registerDefinition(new TypeClassDefinition<ICurveEditor>);
 
-		std::unique_ptr<ICurveEditor> curvesModel = std::unique_ptr<ICurveEditor>( new CurveEditor() );
-		types_.emplace_back( contextManager.registerInterface<ICurveEditor>(curvesModel.get(), false) );
+		contextManager.registerInterface( new CurveEditor() );
 
-		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		auto uiFramework = contextManager.queryInterface< IUIFramework >();
-		curvePanel_ = uiFramework->createView("plg_curve_editor/CurveEditor.qml", IUIFramework::ResourceType::Url, std::move(curvesModel));
-		if (curvePanel_ != nullptr)
-		{
-			uiApplication->addView(*curvePanel_);
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
+		return true;
+	}
 
+	void Initialise( IComponentContext & contextManager ) override
+	{
+		auto viewCreator = get< wgt::IViewCreator >();
+		auto curveModel = get< ICurveEditor >();
+
+		if (viewCreator != nullptr)
+		{
+			viewCreator->createView(
+				"plg_curve_editor/CurveEditor.qml", curveModel, curvePanel_ );
+		}
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

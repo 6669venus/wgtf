@@ -65,7 +65,8 @@ public:
     void removeCommands(const TRemoveFunctor & functor) override;
     
 	const VariantList & getHistory() const override;
-	IValueChangeNotifier& currentIndex() override;
+	const int commandIndex() const override;
+	void moveCommandIndex( int newIndex ) override;
 	const IListModel & getMacros() const override;
 	bool createMacro( const VariantList & commandInstanceList, const char * id = "" ) override;
 	bool deleteMacroByName( const char * id ) override;
@@ -114,12 +115,12 @@ public:
 private:
 	ICommandManager * commandSystemProvider_;
 
-	void statusChanged( const CommandInstance & commandInstance ) const
+	void statusChanged( const CommandInstance & commandInstance ) const override
 	{
 		commandSystemProvider_->fireCommandStatusChanged( commandInstance );
 	}
 
-	void progressMade( const CommandInstance & commandInstance ) const
+	void progressMade( const CommandInstance & commandInstance ) const override
 	{
 		commandSystemProvider_->fireProgressMade( commandInstance );
 	}

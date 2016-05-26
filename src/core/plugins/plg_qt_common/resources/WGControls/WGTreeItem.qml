@@ -226,8 +226,9 @@ ListView {
                 }
             }
 
-            WGItemRow { // The row
-                objectName: "WGListViewRowDelegate"
+            WGListViewRowDelegate { // The row
+                objectName: typeof(display) != "undefined" ? "WGListViewRowDelegate_" + display : "WGListViewRowDelegate"
+
                 id: rowDelegate
 
                 anchors.top: parent.top
@@ -338,7 +339,7 @@ ListView {
 
                         Rectangle {
                             id: expandIconArea
-                            objectName: "expandIconArea"
+                            objectName: typeof(parentItemData) != "undefined" ? "expandIconArea_" + parentItemData.display : "expandIconArea"
                             color: "transparent"
                             width: firstColumn ? expandButton.x + expandButton.width + expandIconMargin : 0
                             height: Math.max(minimumRowHeight, treeView.expandIconSize)
@@ -347,7 +348,7 @@ ListView {
 
                             Text {
                                 id: expandButton
-                                objectName: "expandButton"
+                                objectName: typeof(parentItemData) != "undefined" ? "expandButton_" + parentItemData.display : "expandButton"
                                 color:
                                     !showExpandIcon ? "transparent" :
                                     expandMouseArea.containsMouse ? palette.highlightColor :

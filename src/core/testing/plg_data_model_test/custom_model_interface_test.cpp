@@ -10,6 +10,7 @@
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework//interfaces/i_view_creator.hpp"
 #include "core_data_model/file_system/file_system_model.hpp"
 #include "core_serialization/i_file_system.hpp"
 
@@ -142,7 +143,8 @@ BEGIN_EXPOSE( TestFixture, MetaNone() )
 	EXPOSE( "fileSystemModel", fileSystemModel, MetaNone() )
 END_EXPOSE()
 
-CustomModelInterfaceTest::CustomModelInterfaceTest()
+CustomModelInterfaceTest::CustomModelInterfaceTest(IComponentContext & context )
+	: Depends( context )
 {
 
 }
@@ -170,29 +172,12 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 		TestFixture >();
 	testFixture->init( defManager, fileSystem );
 
-	auto qtFramework = contextManager.queryInterface< IQtFramework >();
-	if (qtFramework == nullptr)
+	auto viewCreator = get< wgt::IViewCreator >();
+	if (viewCreator)
 	{
-		return;
-	}
-
-	testView_ = qtFramework->createView(
-		"plg_data_model_test/custom_model_interface_test_panel.qml",
-		IUIFramework::ResourceType::Url, testFixture );
-
-	auto uiApplication = contextManager.queryInterface< IUIApplication >();
-	if (uiApplication == nullptr)
-	{
-		return;
-	}
-
-	if (testView_ != nullptr)
-	{
-		uiApplication->addView( *testView_ );
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Failed to load qml\n" );
+		viewCreator->createView(
+			"plg_data_model_test/custom_model_interface_test_panel.qml",
+			testFixture, testView_ );
 	}
 }
 

@@ -4,245 +4,158 @@ import QtQuick.Layouts 1.0
 import BWControls 1.0
 
 /*!
- \brief WGListViewRowDelegate is used within WGListView's delegate.
- WGListViewRowDelegate will load custom column delegates in its delegate or fall back to a default if none exists.
- WGListViewRowDelegate should only be used within the contexts of a ListView.
- See WGTreeItem for an example of its use.
+ \brief Generates rows for both WGListView and WGTreeView.
 */
-
 Item {
-    id: rowDelegate
-    objectName: "WGListViewRowDelegate"
+    id: itemRow
+    objectName: typeof(model.display) != "undefined" ? "WGItemRow_" + model.display : "WGItemRow"
 
-    /*!
-        This property defines the indentation before the first element on each row
-        The default value is \c 0
-    */
-    property int indentation: 0
+    width: childrenRect.width != 0 ? childrenRect.width : 1024
+    height: childrenRect.height != 0 ? childrenRect.height : 1024
 
-    /*!
-        This property holds the index of the selected row in the list
-    */
-    property int rowIndex: index
-
-    /*!
-        This property represents the model index (QModelIndex) of the selected row in the list
-    */
-    property var modelIndex: null
-
-    /*!
-        This property contains a default column delegate.
-        The default value is \c null
-    */
-    property var defaultColumnDelegate: null
-
-    /*!
-        This property contains the items to be delegated by the WGListViewRowDelegate's delegate.
-        The default value is an empty list
+    /*! A list of components to be used for each column.
+        Item 0 for column 0, item 1 for column 1 etc.
+        If the number of columns surpasses the length of columnDelegates,
+        then WGItemViewCommon will append more of the default columnDelegate.
+        The default value is an empty list.
     */
     property var columnDelegates: []
 
+    /*! This property holds a list of indexes to adapt from the model's columns
+        to the view's columns.
+        e.g. if the input model has 1 column, but columnSequence is [0,0,0]
+             then the view can have 3 columns that lookup column 0 in the model.
+        The default value is an empty list
+    */
     property var columnSequence: []
-
-    /*! This property contains the column widths */
     property var columnWidths: []
+    property alias columnSpacing: row.spacing
+    property bool selected: false
 
-    property real columnSpacing: 0
+    /*! Pass parameters from mouse events up to parent.
+        \see columnMouseArea for original event.
+        \param mouse the MouseEvent that triggered the signal.
+        \param itemIndex comes from C++.
+               Call to modelIndex() automatically looks up the
+               "C++ model index" from the row and column.
+               Index of items inside the WGItemRow.
+     */
+    signal itemPressed(var mouse, var itemIndex)
+    signal itemClicked(var mouse, var itemIndex)
+    signal itemDoubleClicked(var mouse, var itemIndex)
 
-    /*!
-        This property describes mouse selection behaviour
-    */
-    property var selectionExtension: null
-
-    /*! This property holds the active focus state of the control
-        The default value is \c false */
-    property bool hasActiveFocusDelegate: false
-
-    /*! This property specifies the main colour for the row background */
-    property bool showBackgroundColour: false
-
-    /*! This property specifies the main colour for the row background */
-    property color backgroundColour: palette.midDarkColor
-
-    /*! This property specifies the alternate colour for the row background */
-    property color alternateBackgroundColour: Qt.darker(palette.midLightColor,1.2)
-
-    /*! This signal is sent on a single click
-    */
-    signal clicked(var mouse)
-
-    //TODO: Improve documentation
-    /*! This signal is sent on a double click
-    */
-    signal doubleClicked(var mouse)
-
-    function calculateMaxTextWidth(index)
-    {
-        var maxTextWidth = 0;
-        var parentComponent = itemMouseArea.columnsList;
-        var childObject = parentComponent.children[index]
-
-        if (!childObject.visible)
-        {
-            return maxTextWidth;
-        }
-
-        // if it has a painted width, turn off elide,
-        // check if its painted width is the longest then update and reset elide
-        var childElide = Text.ElideNone
-
-        if (childObject.elide != Text.ElideNone)
-        {
-            childElide = childObject.elide
-            childObject.elide = Text.ElideNone
-        }
-
-        maxTextWidth = childObject.paintedWidth
-
-        if(childElide != childObject.elide)
-        {
-            childObject.elide = childElide
-        }
-
-        return maxTextWidth;
+    /* MOVE INTO STYLE*/
+    // Current selection and mouse hover
+    Rectangle {
+        id: backgroundArea
+        anchors.fill: row
+        color: palette.highlightShade
+        opacity: selected ? 1 : 0.5
+        visible: hoverArea.containsMouse || selected
     }
 
-    height: minimumRowHeight
-    clip: true
-
     MouseArea {
-        id: itemMouseArea
-        parent: rowDelegate.parent
-        anchors.fill: rowDelegate
+        id: hoverArea
+        anchors.fill: backgroundArea
         hoverEnabled: true
-        acceptedButtons: Qt.RightButton | Qt.LeftButton;
-        property var columnsList: columns;
+    }
+    /**/
 
-        onPressed: {
-            if ((selectionExtension == null) || (typeof Selected == 'undefined'))
-            {
-                return;
-            }
+    // Controls column spacing.
+    Row {
+        id: row
+        objectName: typeof(model.display) != "undefined" ? "Row_" + model.display : "Row"
 
-            if (mouse.button == Qt.LeftButton || mouse.button == Qt.RightButton)
-            {
-                var multiSelect = selectionExtension.multiSelect;
+        // Repeat columns horizontally.
+        Repeater {
+            id: rowRepeater
 
-                if (mouse.modifiers & Qt.ControlModifier)
-                {
-                    Selected = !Selected;
-                }
-                else if (mouse.modifiers & Qt.ShiftModifier)
-                {
-                    if (multiSelect)
-                    {
-                        selectionExtension.prepareRangeSelect();
-                        Selected = true;
-                    }
-                }
-                else
-                {
-                    if (multiSelect && ((mouse.button == Qt.LeftButton) || (mouse.button == Qt.RightButton && modelIndex != null && !selectionExtension.indexInSelection(modelIndex))))
-                    {
-                        selectionExtension.clearOnNextSelect();
-                    }
-
-                    Selected = true;
-                }
-            }
-        }
-
-        onClicked: {
-            rowDelegate.clicked(mouse)
-            // NOTE: Do not give the parent active focus here. The tree view and the list view have different ways to utilize
-            //		 us, so giving parent focus will break keyboard input event handles.
-        }
-
-        onDoubleClicked: rowDelegate.doubleClicked(mouse)
-
-        Rectangle {
-            id: background
-            anchors.fill: parent
-            visible: rowDelegate.showBackgroundColour
-            color: index % 2 === 0 ? rowDelegate.backgroundColour : rowDelegate.alternateBackgroundColour
-        }
-
-        Rectangle {
-            id: selectionHighlight
-            color: hasActiveFocusDelegate ? palette.highlightShade : "grey"
-            anchors.fill: itemMouseArea
-            anchors.margins: selectionMargin
-            visible: !itemMouseArea.pressed && typeof Selected != 'undefined' && Selected
-        }
-
-        Rectangle {
-            id: mouseOverHighlight
-            anchors.fill: itemMouseArea
-            visible: itemMouseArea.containsMouse
-            opacity: 0.5
-            color: palette.highlightShade
-        }
-
-        ListView {
-            id: columns
-
-            // Adapt from number of columns in the model to the number of
-            // columns in the view.
-            // @see WGListView.columnSequence
             model: SequenceList {
-                model: ColumnModel
-                sequence: rowDelegate.columnSequence
+                id: rowModel
+                model: columnModel
+                sequence: columnSequence
             }
 
-            x: indentation
-            width: Math.max(0, parent.width - indentation)
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            orientation: Qt.Horizontal
-            interactive: false
-            spacing: rowDelegate.columnSpacing
+            delegate: Item {
+                id: columnContainer
+                width: columnWidths[index]
+                height: childrenRect.height
+                clip: true
 
-            delegate: Loader {
-                id: columnDelegate
+                MouseArea {
+                    id: columnMouseArea
+                    width: columnWidths[index]
+                    height: row.height
+                    acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
+                    /*! Pass parameters from mouse events up to parent.
+                        \param mouse the KeyEvent that triggered the signal.
+                        \param itemIndex comes from C++.
+                               Call to modelIndex() automatically looks up the
+                               "C++ model index" from the row and column.
+                               Index of items inside the WGItemRow.
+                     */
+                    onPressed: itemPressed(mouse, modelIndex)
+                    onClicked: itemClicked(mouse, modelIndex)
+                    onDoubleClicked: itemDoubleClicked(mouse, modelIndex)
+                }
 
-                property var itemData: model
-                property int rowIndex: rowDelegate.rowIndex
-                property int columnIndex: index
-                property int indentation: rowDelegate.indentation
+                // Line up columns horizontally.
+                Row {
+                    id: columnLayoutRow
+                    objectName: typeof(model.display) != "undefined" ? "columnLayoutRow_" + model.display : "columnLayoutRow"
 
-                sourceComponent:
-                    columnIndex < columnDelegates.length ? columnDelegates[columnIndex] :
-                    defaultColumnDelegate
+                    /* MOVE INTO STYLE*/
 
-                onLoaded: {
-                    var widthFunction = function()
-                    {
-                        var columnWidths = rowDelegate.columnWidths;
-                        var columnWidth = 0;
+                    // Add expanded/collapsed arrow.
+                    Row {
+                        id: iconArea
+                        objectName: typeof(model.display) != "undefined" ? "iconArea_" + model.display : "iconArea"
+                        anchors.verticalCenter: parent.verticalCenter
 
-                        if (columnWidths.length === 0)
-                        {
-                            columnWidth = Math.ceil(rowDelegate.width / columns.count - rowDelegate.columnSpacing);
+                        width: childrenRect.width
+                        height: childrenRect.height
+
+                        visible: __isTree && index == 0
+
+                        property bool __isTree: typeof expanded != "undefined"
+                        property real __depth: __isTree ? depth : 0
+                        property bool __hasChildren: __isTree ? hasChildren : false
+                        property bool __expanded: __isTree ? expanded : false
+
+                        // Reserve space.
+                        Item {
+                            width: iconArea.__depth * 10
+                            height: 1
                         }
-                        else if (columnIndex < columnWidths.length)
-                        {
-                            columnWidth = columnWidths[columnIndex];
-                        }
 
-                        if (columnIndex === 0)
-                        {
-                            columnWidth -= indentation;
-                        }
+                        // Expanded/collapsed arrow for tree views.
+                        Text {
+                            objectName: typeof(model.display) != "undefined" ? "expandIcon_" + model.display : "expandIcon"
+                            color: iconArea.__hasChildren ? iconArea.__expanded ? palette.textColor : palette.neutralTextColor : "transparent"
+                            font.family : "Marlett"
+                            text : iconArea.__expanded ? "\uF036" : "\uF034"
+                            verticalAlignment: Text.AlignVCenter
+                            horizontalAlignment: Text.AlignHCenter
 
-                        return Math.max(0, columnWidth);
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: iconArea.__hasChildren
+                                onPressed: {
+                                    expanded = !expanded;
+                                }
+                            }
+                        }
                     }
+                    /**/
 
-                    item.width = Qt.binding(widthFunction);
-                    rowDelegate.height = Math.max(height, minimumRowHeight);
-                    item.clip = true;
+                    // Actual columns added after arrow
+                    Loader {
+                        id: columnDelegateLoader
+                        property var itemData: model
+                        property int itemWidth: columnWidths[index] - x
+                        sourceComponent: itemRow.columnDelegates[index]
+                    }
                 }
             }
         }

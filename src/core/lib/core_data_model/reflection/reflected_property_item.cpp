@@ -232,17 +232,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			const float & value = minMaxObj->getMin();
 			float minValue = .0f;
 			bool isOk = variant.tryCast( minValue );
-			assert( isOk );
-			if (!isOk)
+			if (isOk)
 			{
-				return variant;
-			}
-			float diff = minValue - value;
-			float epsilon = std::numeric_limits<float>::epsilon();
-			if (diff > epsilon )
-			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
-				return variant;
+				float diff = minValue - value;
+				float epsilon = std::numeric_limits<float>::epsilon();
+				if (diff > epsilon )
+				{
+					NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
+					return variant;
+				}
 			}
 			return value;
 		}
@@ -262,17 +260,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			const float & value = minMaxObj->getMax();
 			float maxValue = .0f;
 			bool isOk = variant.tryCast( maxValue );
-			assert( isOk );
-			if (!isOk)
+			if (isOk)
 			{
-				return variant;
-			}
-			float diff = value - maxValue;
-			float epsilon = std::numeric_limits<float>::epsilon();
-			if (diff > epsilon)
-			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
-				return variant;
+				float diff = value - maxValue;
+				float epsilon = std::numeric_limits<float>::epsilon();
+				if (diff > epsilon)
+				{
+					NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
+					return variant;
+				}
 			}
 			return value;
 		}
@@ -363,7 +359,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogTitleRole::roleId_)
 	{
-		const char * title;
+		const char * title = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -374,7 +370,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogDefaultFolderRole::roleId_)
 	{
-		const char * folder;
+		const char * folder = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -385,7 +381,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogNameFiltersRole::roleId_)
 	{
-		const char * nameFilters;
+		const char * nameFilters = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -396,7 +392,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogSelectedNameFilterRole::roleId_)
 	{
-		const char * selectedFilter;
+		const char * selectedFilter = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)

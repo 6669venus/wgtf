@@ -38,7 +38,7 @@ public:
 	
 	QAbstractItemModel * parentModel() const;
 	QAbstractItemModel * model() const Q_DECL_OVERRIDE;
-	QHash< int, QByteArray > roleNames() const;
+	QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 			
 	Q_INVOKABLE virtual QModelIndex index(
 		int row, int column = 0, const QModelIndex &parent = QModelIndex() ) const override;
@@ -73,15 +73,15 @@ private:
 
 	// IListAdapter
 	void onParentDataChanged(const QModelIndex &topLeft, 
-		const QModelIndex &bottomRight, const QVector<int> &roles);
+		const QModelIndex &bottomRight, const QVector<int> &roles) override;
 	void onParentLayoutAboutToBeChanged(const QList<QPersistentModelIndex> & parents, 
-		QAbstractItemModel::LayoutChangeHint hint);
+		QAbstractItemModel::LayoutChangeHint hint) override;
 	void onParentLayoutChanged(const QList<QPersistentModelIndex> & parents, 
-		QAbstractItemModel::LayoutChangeHint hint);
-	void onParentRowsAboutToBeInserted(const QModelIndex & parent, int first, int last);
-	void onParentRowsInserted(const QModelIndex & parent, int first, int last);
-	void onParentRowsAboutToBeRemoved(const QModelIndex & parent, int first, int last);
-	void onParentRowsRemoved(const QModelIndex & parent, int first, int last);
+		QAbstractItemModel::LayoutChangeHint hint) override;
+	void onParentRowsAboutToBeInserted(const QModelIndex & parent, int first, int last) override;
+	void onParentRowsInserted(const QModelIndex & parent, int first, int last) override;
+	void onParentRowsAboutToBeRemoved(const QModelIndex & parent, int first, int last) override;
+	void onParentRowsRemoved(const QModelIndex & parent, int first, int last) override;
 
 
 	// Extensions Handling

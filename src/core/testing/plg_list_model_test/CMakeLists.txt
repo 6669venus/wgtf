@@ -24,10 +24,7 @@ SET( ALL_SRCS
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
-BW_QT_ADD_QRC(
-	plg_list_model_test resources/plg_list_model_test
-	plg_list_model_test resources/plg_short_list_model_test
-)
+BW_QT_ADD_QRC( plg_list_model_test resources/plg_list_model_test )
 
 BW_GLOB_RESOURCE_FILES()
 

@@ -1,32 +1,26 @@
 #ifndef QT_PREFERENCES_HPP
 #define QT_PREFERENCES_HPP
 
-#include "core_dependency_system/i_interface.hpp"
 #include "core_ui_framework/i_preferences.hpp"
-#include <unordered_map>
 
-class ISerializationManager;
-class IFileSystem;
+class IComponentContext;
 
 class QtPreferences : public Implements< IPreferences >
 {
 public:
-	QtPreferences( IDefinitionManager & definitionManger, 
-				   ISerializationManager & serializationManager, 
-				   IFileSystem & fileSystem,
-				   IMetaTypeManager & metaTypeManager );
+	QtPreferences();
 	~QtPreferences();
+    void init( IComponentContext& contextManager );
+    void fini();
 	GenericObjectPtr & getPreference( const char * key ) override;
-
-	void savePrferences();
-	void loadPreferences();
+    void registerPreferencesListener( std::shared_ptr< IPreferencesListener > & listener ) override;
+    void deregisterPreferencesListener( std::shared_ptr< IPreferencesListener > & listener ) override;
+    void writePreferenceToFile( const char * filePath ) override;
+    void loadPreferenceFromFile( const char * filePath ) override;
 
 private:
-	IDefinitionManager & definitionManager_;
-	ISerializationManager & serializationManager_;
-	IFileSystem & fileSystem_;
-	IMetaTypeManager & metaTypeManager_;
-	std::unordered_map< std::string, GenericObjectPtr > preferences_;
+    class Implementation;
+    std::unique_ptr< Implementation > pImpl_;
 };
 
 #endif//QT_PREFERENCES_HPP

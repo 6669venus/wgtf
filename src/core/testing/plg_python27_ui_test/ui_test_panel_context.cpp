@@ -28,7 +28,7 @@ void callMethod( Variant & object,
 	}
 
 	ReflectedMethodParameters parameters;
-	property->invoke( handle, parameters );
+	property->invoke( handle, definitionManager, parameters );
 }
 
 } // namespace

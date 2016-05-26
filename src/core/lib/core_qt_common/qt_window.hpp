@@ -51,12 +51,20 @@ public:
 	QMainWindow * window() const;
     QMainWindow * releaseWindow();
 	bool isReady() const;
+    bool isLoadingPreferences() const;
 signals:
 	void windowReady();
 
+
+
 protected:
     void init();
-	bool eventFilter( QObject * obj, QEvent * event );
+	bool eventFilter( QObject * obj, QEvent * event ) Q_DECL_OVERRIDE;
+
+private slots:
+    void onPrePreferencesChanged();
+     void onPostPreferencesChanged();
+    void onPrePreferencesSaved();
 
 private:
 	void waitForWindowExposed();
@@ -73,6 +81,8 @@ private:
 	IUIApplication * application_;
 	bool isMaximizedInPreference_;
 	bool firstTimeShow_;
+    bool loadingPreferences_;
+    QtConnectionHolder qtConnections_;
 };
 
 #endif//QT_WINDOW_HPP

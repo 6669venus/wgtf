@@ -52,14 +52,6 @@ Canvas {
         The default value is \c true*/
     property bool showMouseLine: true
 
-    /*! This property determines whether the coordinate system text is shown
-        The default value is \c true*/
-    property bool showCoordText: true
-
-    /*! This property determines whether work area is shown
-        The default value is \c true*/
-    property bool showWorkArea: true
-
     /*! This property defines the maximum pixel resolution of the horizontal grid.
         When zoomed the grid will subdivide if it passes this pizel resolution.
         The default value is \c 40
@@ -254,7 +246,6 @@ Canvas {
         startX = nearStartWhole + countFromWhole * lineGap;
 
         if (useBorders) {
-        {
             startX = Math.max(startX, 0)
             endX = Math.min(endX, 1)
         }
@@ -324,9 +315,6 @@ Canvas {
         {
             paintHorizontalLines(ctx)
         }
-
-        if (!showWorkArea)
-            return;
 
         // -- Green lines
         if (useBorders) {

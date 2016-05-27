@@ -52,8 +52,9 @@ ReflectedGroupItemNew::Implementation::Implementation(
 ReflectedGroupItemNew::ReflectedGroupItemNew( IComponentContext & contextManager,
 	const MetaGroupObj * groupObj,
 	ReflectedTreeItemNew * parent,
+	size_t index,
 	const std::string & inplacePath )
-	: ReflectedTreeItemNew( contextManager, parent, inplacePath )
+	: ReflectedTreeItemNew( contextManager, parent, index, inplacePath )
 	, impl_( new Implementation( contextManager, groupObj ) )
 {
 	assert( impl_->groupObj_ != nullptr );
@@ -245,6 +246,7 @@ ReflectedTreeItemNew * ReflectedGroupItemNew::getChild( size_t index ) const /* 
 					new ReflectedPropertyItemNew( impl_->contextManager_,
 						property,
 						parent,
+						impl_->children_.size(),
 						inPlacePath ) );
 				child = impl_->children_.back().get();
 				return false;

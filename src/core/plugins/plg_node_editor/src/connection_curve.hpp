@@ -20,6 +20,8 @@ class ConnectionCurve : public QQuickPaintedItem
 
     Q_PROPERTY(QRectF fromNode READ fromNode WRITE setFromNode)
     Q_PROPERTY(QRectF toNode READ toNode WRITE setToNode)
+
+    Q_PROPERTY(QColor connectionColor READ color WRITE setColor)
 public:
     ConnectionCurve(QQuickItem *parent = 0);
 
@@ -40,6 +42,9 @@ public:
 
     void setContentScale(const qreal &scale);
     qreal contentScale() const { return m_contentScale; }
+
+    void setColor(const QColor &color);
+    QColor color() const { return m_color; }
 
     void paint(QPainter *painter) override;
 
@@ -62,6 +67,8 @@ private:
 
     QPointF m_contentTranslate;
     qreal m_contentScale;
+
+    QColor m_color;
     QPainterPath m_path;
 };
 

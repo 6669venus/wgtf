@@ -15,11 +15,17 @@
 #include <core_ui_framework/i_ui_framework.hpp>
 #include <core_ui_framework/i_ui_application.hpp>
 #include <core_ui_framework/i_view.hpp>
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 
-class GraphEditorPlugin : public PluginMain
+#include "core_dependency_system/depends.hpp"
+
+class GraphEditorPlugin
+	: public PluginMain
+	, public Depends< wgt::IViewCreator >
 {
 public:
 	GraphEditorPlugin(IComponentContext& context)
+		: Depends( context )
 	{
 	}
 
@@ -30,12 +36,8 @@ public:
 
 	void Initialise(IComponentContext& context) override
 	{
-		IUIFramework* uiFramework = context.queryInterface<IUIFramework>();
-		IUIApplication* uiapplication = context.queryInterface<IUIApplication>();
 		IDefinitionManager* defMng = context.queryInterface<IDefinitionManager>();
 
-		assert(uiFramework != nullptr);
-		assert(uiapplication != nullptr);
 		assert(defMng != nullptr);
 
 		Variant::setMetaTypeManager(context.queryInterface<IMetaTypeManager>());
@@ -43,14 +45,11 @@ public:
 		RegisterGrapEditorTypes(*defMng);
 		editor = defMng->create<GraphEditor>(false);
 
-		view = uiFramework->createView("plg_graph_editor/GraphEditorView.qml", IUIFramework::ResourceType::Url, std::move(editor));
-		if (view != nullptr)
+		auto viewCreator = get< wgt::IViewCreator >();
+		if (viewCreator)
 		{
-			uiapplication->addView(*view);
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
+			viewCreator->createView("plg_graph_editor/GraphEditorView.qml", std::move(editor),
+				view_);
 		}
 	}
 
@@ -61,10 +60,10 @@ public:
 		{
 			return false;
 		}
-		if (view != nullptr)
+		if (view_ != nullptr)
 		{
-			uiApplication->removeView( *view );
-			view.reset();
+			uiApplication->removeView( *view_ );
+			view_.reset();
 		}
 		editor = ObjectHandleT<GraphEditor>();
 		return true;
@@ -75,7 +74,7 @@ public:
 	}
 
 private:
-	std::unique_ptr<IView> view;
+	std::unique_ptr<IView> view_;
 	ObjectHandleT<GraphEditor> editor;
 };
 

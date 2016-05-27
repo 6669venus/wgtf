@@ -28,6 +28,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include "qt_global_settings.hpp"
 
 namespace
 {
@@ -55,8 +56,9 @@ namespace
 QtWindow::QtWindow( IQtFramework & qtFramework, QIODevice & source )
     : qtFramework_( qtFramework )
     , application_(nullptr)
-    , isMaximizedInPreference_(true)
+    , isMaximizedInPreference_(false)
     , firstTimeShow_(true)
+    , loadingPreferences_( false )
 {
 	QUiLoader loader;
 
@@ -81,8 +83,9 @@ QtWindow::QtWindow(IQtFramework & qtFramework, std::unique_ptr<QMainWindow> && m
     : qtFramework_(qtFramework)
     , mainWindow_(std::move(mainWindow))
     , application_(nullptr)
-    , isMaximizedInPreference_(true)
+    , isMaximizedInPreference_(false)
     , firstTimeShow_(true)
+    , loadingPreferences_( false )
 {
     if (mainWindow_== nullptr)
     {
@@ -158,15 +161,12 @@ void QtWindow::show( bool wait /* = false */)
 		return;
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
-	if (firstTimeShow_ && isMaximizedInPreference_)
-	{
-		mainWindow_->showMaximized();
-		
-	}
-	else
-	{
-		mainWindow_->show();
-	}
+    if(firstTimeShow_ && isMaximizedInPreference_)
+    {
+        mainWindow_->setWindowState( Qt::WindowMaximized );
+    }
+    mainWindow_->show();
+	
 	if (firstTimeShow_)
 	{
 		emit windowReady();
@@ -187,15 +187,8 @@ void QtWindow::showMaximized( bool wait /* = false */)
 	}
 	mainWindow_->setWindowModality( modalityFlag_ );
 	
-	if (firstTimeShow_ && !isMaximizedInPreference_)
-	{
-		mainWindow_->show();
-		
-	}
-	else
-	{
-		mainWindow_->showMaximized();
-	}
+	mainWindow_->showMaximized();
+
 	if(firstTimeShow_)
 	{
 		emit windowReady();
@@ -214,15 +207,11 @@ void QtWindow::showModal()
 		return;
 	}
 	mainWindow_->setWindowModality( Qt::ApplicationModal );
-	if (firstTimeShow_ && isMaximizedInPreference_)
-	{
-		mainWindow_->showMaximized();
-		
-	}
-	else
-	{
-		mainWindow_->show();
-	}
+    if(firstTimeShow_ && isMaximizedInPreference_)
+    {
+        mainWindow_->setWindowState( Qt::WindowMaximized );
+    }
+	mainWindow_->show();
 	if (firstTimeShow_)
 	{
 		emit windowReady();
@@ -311,6 +300,12 @@ void QtWindow::init()
         id_ = idProperty.toString().toUtf8().operator const char *();
     }
 
+    auto windowMaximizedProperty = mainWindow_->property("windowMaximized");
+    if (windowMaximizedProperty.isValid())
+    {
+        isMaximizedInPreference_ = windowMaximizedProperty.toBool();
+    }
+
     auto menuBars = getChildren< QMenuBar >(*mainWindow_);
     for (auto & menuBar : menuBars)
     {
@@ -360,6 +355,13 @@ void QtWindow::init()
 		"QMainWindow::separator:vertical{background: palette(dark); width: 4px; border-left: 1px solid palette(midlight);}"
 		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-bottom: 1px solid palette(midlight);}"
 		"QMainWindow::separator:horizontal{background: palette(dark); height: 4px; border-top: 1px solid palette(midlight);}");
+    auto globalSettings = qtFramework_.qtGlobalSettings();
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::prePreferencesChanged,
+        this, &QtWindow::onPrePreferencesChanged );
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::postPreferencesChanged,
+        this, &QtWindow::onPostPreferencesChanged );
+    qtConnections_ += QObject::connect( globalSettings, &QtGlobalSettings::prePreferencesSaved,
+        this, &QtWindow::onPrePreferencesSaved );
 }
 
 bool QtWindow::eventFilter(QObject * obj, QEvent * event)
@@ -368,7 +370,19 @@ bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 	{
 		if (event->type() == QEvent::Close)
 		{
-			this->signalClose();
+			bool shouldClose = true;
+
+			this->signalTryClose( shouldClose );
+
+			if (shouldClose)
+			{
+				this->signalClose();
+			}
+			else
+			{
+				event->ignore();
+			}
+
 			return true;
 		}
 	}
@@ -377,6 +391,10 @@ bool QtWindow::eventFilter(QObject * obj, QEvent * event)
 
 void QtWindow::savePreference()
 {
+    if(!isReady())
+    {
+        return;
+    }
 	auto preferences = qtFramework_.getPreferences();
 	if (preferences == nullptr)
 	{
@@ -405,8 +423,6 @@ void QtWindow::savePreference()
 
 bool QtWindow::loadPreference()
 {
-	
-
 	//check the preference data first
 	do 
 	{
@@ -499,6 +515,37 @@ bool QtWindow::loadPreference()
 		return true;
 
 	} while (false);
-	NGT_DEBUG_MSG( "Load Window Preferences Failed.\n" );
+	NGT_DEBUG_MSG( "Load Qt Window Preferences Failed.\n" );
 	return false;
+}
+
+
+void QtWindow::onPrePreferencesChanged()
+{
+    savePreference();
+}
+
+void QtWindow::onPostPreferencesChanged()
+{
+    loadingPreferences_ = true;
+    loadPreference();
+    for(auto& region : regions_)
+    {
+        QtDockRegion* iRegion = dynamic_cast<QtDockRegion*>(region.get());
+        if(iRegion != nullptr)
+        {
+            iRegion->restoreDockWidgets();
+        }
+    }
+    loadingPreferences_ = false;
+}
+
+void QtWindow::onPrePreferencesSaved()
+{
+   savePreference();
+}
+
+bool QtWindow::isLoadingPreferences() const
+{
+    return loadingPreferences_;
 }

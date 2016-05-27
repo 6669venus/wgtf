@@ -7,11 +7,18 @@ find_package(QT5)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+SET( METADATA_SRCS
+	metadata/demo_objects_fix_mixin.mpp
+	demo_objects.mpp
+)
+SOURCE_GROUP( "" FILES ${METADATA_SRCS} )
+
 SET( ALL_SRCS
 	plg_demo_test.cpp
 	demo_objects.cpp
 	demo_objects.hpp
-	demo_objects.mpp
+	demo_objects_fix_mixin.hpp
+	demo_objects_fix_mixin.cpp
 	object_selection_helper.cpp
 	object_selection_helper.hpp
 	tinyxml2.cpp
@@ -28,6 +35,7 @@ BW_CUSTOM_COPY_TO_PROJECT_OUTPUT( .. "${MODEL_FILES}" )
 
 BW_ADD_TOOL_PLUGIN( plg_demo_test SHARED
 	${ALL_SRCS}
+	${METADATA_SRCS}
 	${RESOURCE_FILES}
 	${COMPILED_RESOURCES}
 	${MODEL_FILES}

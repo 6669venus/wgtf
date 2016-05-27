@@ -51,7 +51,7 @@ bool ListConverter::toVariant( const PyScript::ScriptObject & inObject,
 
 
 bool ListConverter::toScriptType( const Variant & inVariant,
-	PyScript::ScriptObject & outObject ) /* override */
+	PyScript::ScriptObject & outObject, void * userData ) /* override */
 {
 	if (!inVariant.typeIs< Variant::traits< Collection >::storage_type >())
 	{

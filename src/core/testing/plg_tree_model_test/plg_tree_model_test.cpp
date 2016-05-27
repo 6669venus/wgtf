@@ -1,4 +1,6 @@
 #include "core_dependency_system/i_interface.hpp"
+#include "core_dependency_system/depends.hpp"
+#include "core_data_model/abstract_item_model.hpp"
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_logging/logging.hpp"
@@ -6,20 +8,24 @@
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "test_tree_model.hpp"
 #include <vector>
-
 
 //==============================================================================
 class TreeModelTestPlugin
 	: public PluginMain
+	, Depends< wgt::IViewCreator >
 {
 private:
 	std::vector<IInterface*> types_;
+	std::unique_ptr<IView> oldTreeView_;
 	std::unique_ptr<IView> treeView_;
+	std::shared_ptr<AbstractTreeModel> treeModel_;
 public:
 	//==========================================================================
 	TreeModelTestPlugin(IComponentContext & contextManager )
+		: Depends( contextManager )
 	{
 
 	}
@@ -40,18 +46,20 @@ public:
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
 
-		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-		treeView_ = uiFramework->createView( 
-			"plg_tree_model_test/test_tree_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( model ) );
+		auto model = std::unique_ptr< ITreeModel >( new TestTreeModelOld() );
 
-		if (treeView_ != nullptr)
+		auto viewCreator = get< wgt::IViewCreator >();
+		if( viewCreator )
 		{
-			uiApplication->addView( *treeView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
+
+			viewCreator->createView(
+				"plg_tree_model_test/test_tree_panel_old.qml",
+				std::move(model), oldTreeView_);
+
+			treeModel_ = std::make_shared<TestTreeModel>();
+			viewCreator->createView(
+				"plg_tree_model_test/test_tree_panel.qml",
+				treeModel_, treeView_);
 		}
 	}
 	//==========================================================================
@@ -62,8 +70,14 @@ public:
 		if (treeView_ != nullptr)
 		{
 			uiApplication->removeView( *treeView_ );
-			treeView_ = nullptr;
 		}
+		if (oldTreeView_ != nullptr)
+		{
+			uiApplication->removeView( *oldTreeView_ );
+		}
+		treeModel_ = nullptr;
+		treeView_ = nullptr;
+		oldTreeView_ = nullptr;
 		return true;
 	}
 	//==========================================================================

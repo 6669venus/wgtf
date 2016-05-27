@@ -22,10 +22,12 @@ print "Platform:", PLATFORM
 
 if PLATFORM_WINDOWS:
 	CMAKE_RUN_BAT = 'rerun_cmake.bat'
-	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'cmake-win32-x86', 'bin', 'cmake.exe' )
+	DEFAULT_CMAKE_EXE_PATH = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'cmake-win32-x86', 'bin' )
+	CMAKE_EXE = 'cmake.exe'
 elif PLATFORM_MAC:
 	CMAKE_RUN_BAT = 'rerun_cmake.sh'
-	CMAKE_EXE = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin', 'cmake' )
+	DEFAULT_CMAKE_EXE_PATH = os.path.join( SRC_DIRECTORY, 'core', 'third_party', 'cmake', 'CMake.app', 'Contents', 'bin' )
+	CMAKE_EXE = 'cmake'
 
 DEFAULT_CONFIGS = [ 'Debug', 'Hybrid', 'Release' ]
 
@@ -35,33 +37,50 @@ VC11_X86_XP_ENV = '@call %s vc11 x86\n' % (VC_XP_VARS_BAT)
 VC12_X86_XP_ENV = '@call %s vc12 x86\n' % (VC_XP_VARS_BAT)
 VC11_X86_64_XP_ENV = '@call %s vc11 x64\n' % (VC_XP_VARS_BAT)
 VC12_X86_64_XP_ENV = '@call %s vc12 x64\n' % (VC_XP_VARS_BAT)
+VC14_X86_XP_ENV = '@call %s vc14 x86\n' % (VC_XP_VARS_BAT)
+VC14_X86_64_XP_ENV = '@call %s vc14 x64\n' % (VC_XP_VARS_BAT)
 
 CMAKE_GENERATORS = dict(
 	Windows = [
 		dict(
 			label = 'Visual Studio 2012 Win32',
-			generator = 'Visual Studio 11',
+			generator = 'Visual Studio 11 2012',
 			dirsuffix = 'vc11_win32',
 			toolset = 'v110_xp',
 		),
 		dict(
 			label = 'Visual Studio 2012 Win64',
-			generator = 'Visual Studio 11 Win64',
+			generator = 'Visual Studio 11 2012',
 			dirsuffix = 'vc11_win64',
+			platform = "x64",
 			toolset = 'v110_xp',
 		),
 		dict(
 			label = 'Visual Studio 2013 Win32',
-			generator = 'Visual Studio 12',
+			generator = 'Visual Studio 12 2013',
 			dirsuffix = 'vc12_win32',
 			toolset = 'v120_xp',
 		),
 		dict(
 			label = 'Visual Studio 2013 Win64',
-			generator = 'Visual Studio 12 Win64',
+			generator = 'Visual Studio 12 2013',
 			dirsuffix = 'vc12_win64',
+			platform = "x64",
 			toolset = 'v120_xp',
 		),
+		dict(
+			label = 'Visual Studio 2015 Win32',
+			generator = 'Visual Studio 14 2015',
+			dirsuffix = 'vc14_win32',
+			toolset = 'v140_xp',
+		),
+		dict(
+			label = 'Visual Studio 2015 Win64',
+			generator = 'Visual Studio 14 2015',
+			dirsuffix = 'vc14_win64',
+			platform = "x64",
+			toolset = 'v140_xp',
+		)
 	],
 
 	Darwin = [
@@ -81,8 +100,6 @@ CMAKE_GENERATORS = dict(
 CMAKE_PLATFORM_GENERATORS = CMAKE_GENERATORS[ PLATFORM ]
 
 QT_VERSIONS = [
-	dict( label = 'Qt 5.3.1', version = '5.3.1' ),
-	dict( label = 'Qt 5.3.2', version = '5.3.2' ),
 	dict( label = 'Qt 5.4.2', version = '5.4.2' ),
 	dict( label = 'Qt 5.5.0', version = '5.5.0' ),
 	dict( label = 'Qt 5.5.1', version = '5.5.1' ),
@@ -248,7 +265,14 @@ def buildDir( targetName, generator, buildRoot ):
 		path = os.path.join( path, generator['maya'] )
 	return path
 
+def writeCMakeDefaultPath( out ):
+	# Add default cmake exe path
+	if PLATFORM_WINDOWS:
+		out.write( "@SETLOCAL\n" )
+		out.write( '@set "PATH=%s;%%PATH%%"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
 
+	elif PLATFORM_MAC:
+		out.write( 'PATH="%s:$PATH"\n' % ( DEFAULT_CMAKE_EXE_PATH, ) )
 
 def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 	# create output directory
@@ -279,6 +303,11 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 		cmd.append( '-T' )
 		cmd.append( generator['toolset'] )
 
+	# optionally append platform
+	if ('platform' in generator):
+		cmd.append( '-A' )
+		cmd.append( generator['platform'] )
+
 	# for single config builders (make/ninja) we need a list of configs to generate
 	if generator.get('singleConfig', False):
 		configs = targetConfigs( targetName )
@@ -298,6 +327,8 @@ def writeGenerateBat( targetName, generator, cmakeExe, buildRoot, dryRun ):
 
 	if PLATFORM_WINDOWS:
 		out.write( '@pushd %~dp0\n' )
+
+	writeCMakeDefaultPath( out )
 
 	if configs:
 		# if single config builder then create subdirs for each config
@@ -361,6 +392,8 @@ def writeBuildBat( targetName, config, generator, cmakeExe, buildRoot, rebuild, 
 
 	def _writeBuildBat( outputPath, cmdstr ):
 		out = cStringIO.StringIO()
+
+		writeCMakeDefaultPath( out )
 
 		if batchenv:
 			out.write( batchenv )

@@ -369,7 +369,7 @@ void XMLReader::elementEnd( const char* elementName )
 		
 		stack_.pop_back();
 	}
-	else if( auto* v = parent.value.castPtr< Collection >() )
+	else if( parent.value.castPtr< Collection >() )
 	{
 		current.pos.setValue( current.value );
 		stack_.pop_back();

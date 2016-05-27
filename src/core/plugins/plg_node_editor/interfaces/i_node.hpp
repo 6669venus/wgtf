@@ -61,7 +61,7 @@ public:
     /*! Returns a color of node
     @return color
     */
-    virtual QColor Color() const = 0;
+    virtual std::string Color() const = 0;
 
     /*! Returns x coordinate position of node in global coordinates
     @return x coordinate

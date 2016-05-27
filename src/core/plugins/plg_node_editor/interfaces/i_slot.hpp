@@ -4,15 +4,14 @@
 
 #include <string>
 #include <qcolor.h>
+#include <set>
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_data_model/i_list_model.hpp"
 
 #include "i_node.hpp"
-#include <set>
 
 class MetaType;
-
 
 /*!
 * \class ISlot
@@ -43,6 +42,11 @@ public:
     */
     virtual std::string Label() const = 0;
 
+    /*! Sets a label
+    @param label label of slot
+    */
+    virtual void setLabel(const std::string &label) = 0;
+
     /*! Returns a path of icon
     @return icon path
     */
@@ -51,7 +55,7 @@ public:
     /*! Returns a color of the slot
     @return a current color of the slot
     */
-    virtual QColor Color() const = 0;
+    virtual std::string Color() const = 0;
 
     /*! Returns a user type of the slot
     @return a current metatype of the slot

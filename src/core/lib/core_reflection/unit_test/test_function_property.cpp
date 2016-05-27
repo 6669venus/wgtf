@@ -142,13 +142,7 @@ public:
 	template <typename TargetType >
 	bool setProperty( BaseProperty* property, ObjectHandle & pBase, const TargetType & value )
 	{
-		FunctionPropertySet<TargetType, TestPropertyObject> * propertySet = 
-			dynamic_cast< FunctionPropertySet<TargetType, TestPropertyObject> * >( property );
-		if (property == nullptr)
-		{
-			return false;
-		}
-		return propertySet->set( pBase, ReflectionUtilities::reference( value ), getDefinitionManager() );
+		return property->set( pBase, ReflectionUtilities::reference( value ), getDefinitionManager() );
 	}
 };
 

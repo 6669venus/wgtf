@@ -14,23 +14,23 @@
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
-	: object_( other.object_ )
-	, property_( std::move( other.property_ ) )
-	, rootObject_( other.rootObject_ )
-	, path_( std::move( other.path_ ) )
-	, definitionManager_( other.definitionManager_ )
-	, parentAccessor_( std::move(other.parentAccessor_) )
+	: parentAccessor_( std::move(other.parentAccessor_) )
+    , object_( other.object_ )
+    , property_( std::move( other.property_ ) )
+    , rootObject_( other.rootObject_ )
+    , path_( std::move( other.path_ ) )
+    , definitionManager_( other.definitionManager_ )
 {
 }
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor( const PropertyAccessor & other )
-: object_( other.object_ )
-, property_( other.property_ )
-, rootObject_( other.rootObject_ )
-, path_( other.path_ )
-, definitionManager_( other.definitionManager_ )
-, parentAccessor_( other.parentAccessor_ )
+    : parentAccessor_( other.parentAccessor_ )
+    , object_( other.object_ )
+    , property_( other.property_ )
+    , rootObject_( other.rootObject_ )
+    , path_( other.path_ )
+    , definitionManager_( other.definitionManager_ )
 {
 }
 
@@ -127,6 +127,7 @@ PropertyAccessor PropertyAccessor::getParent() const
 }
 
 
+//==============================================================================
 bool PropertyAccessor::canSetValue() const
 {
 	if (!this->isValid())
@@ -194,6 +195,7 @@ bool PropertyAccessor::setValueWithoutNotification( const Variant & value ) cons
 }
 
 
+//==============================================================================
 bool PropertyAccessor::canInvoke() const
 {
 	if (!this->isValid())
@@ -229,7 +231,7 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 		listener->preInvoke( *this, parameters, false );
 	}
 
-	result = getProperty()->invoke( object_, parameters );
+	result = getProperty()->invoke( object_, *definitionManager_, parameters );
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
@@ -267,7 +269,7 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 	ReflectedMethodParameters paramsUndoRedo;
 	paramsUndoRedo.push_back( ObjectHandle(parameters) );
 	paramsUndoRedo.push_back( result );
-	method->invoke( object_, paramsUndoRedo );
+	method->invoke( object_, *definitionManager_, paramsUndoRedo );
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
@@ -275,6 +277,137 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 		assert( listener != nullptr );
 		listener->postInvoke( *this, result, undo );
 	}
+}
+
+
+//==============================================================================
+bool PropertyAccessor::canInsert() const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	return collection.canResize();
+}
+
+
+//==============================================================================
+bool PropertyAccessor::insert( const Variant & key, const Variant & value ) const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	if (!collection.canResize())
+	{
+		return false;
+	}
+
+	// Since "listeners" is a MutableVector, these iterators are safe to use
+	// while other listeners are registered/deregistered
+	auto& listeners = definitionManager_->getPropertyAccessorListeners();
+	auto itBegin = listeners.cbegin();
+	auto itEnd = listeners.cend();
+
+	auto preInsert = collection.connectPreInsert( [&]( Collection::Iterator pos, size_t count)
+	{
+		auto index = std::distance( collection.begin(), pos );
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->preInsert( *this, index, count );
+		}
+	} );
+	auto postInserted = collection.connectPostInserted( [&]( Collection::Iterator pos, size_t count)
+	{
+		auto index = std::distance( collection.begin(), pos );
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->postInserted( *this, index, count );
+		}
+	} );
+
+	auto it = collection.insert( key );
+	it.setValue( value );
+
+	preInsert.disconnect();
+	postInserted.disconnect();
+	
+	return it != collection.end();
+}
+
+
+//==============================================================================
+bool PropertyAccessor::canErase() const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	return collection.canResize();
+}
+
+
+//==============================================================================
+bool PropertyAccessor::erase( const Variant & key ) const
+{
+	Collection collection;
+	auto thisValue = getValue();
+	if (!thisValue.tryCast( collection ))
+	{
+		return false;
+	}
+
+	if (!collection.canResize())
+	{
+		return false;
+	}
+
+	// Since "listeners" is a MutableVector, these iterators are safe to use
+	// while other listeners are registered/deregistered
+	auto& listeners = definitionManager_->getPropertyAccessorListeners();
+	auto itBegin = listeners.cbegin();
+	auto itEnd = listeners.cend();
+
+	auto preErase = collection.connectPreErase( [&]( Collection::Iterator pos, size_t count)
+	{
+		auto index = std::distance( collection.begin(), pos );
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->preErase( *this, index, count );
+		}
+	} );
+	auto postErased = collection.connectPostErased( [&]( Collection::Iterator pos, size_t count)
+	{
+		auto index = std::distance( collection.begin(), pos );
+		for( auto it = itBegin; it != itEnd; ++it )
+		{
+			auto listener = it->lock();
+			assert( listener != nullptr );
+			listener->postErased( *this, index, count );
+		}
+	} );
+
+	auto count = collection.erase( key );
+
+	preErase.disconnect();
+	postErased.disconnect();
+
+	return count > 0;
 }
 
 

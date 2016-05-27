@@ -9,11 +9,28 @@ WGContextArea
 
     contextMenu: WGMenu
     {
-        MenuItem
+        id: dynamicContextMenu
+        WGListModel
         {
-            text: qsTr("Create Node")
-            onTriggered: {
-                createNode(contextArea.popupPoint.x, contextArea.popupPoint.y, "Test Node From QML");
+            id : contextMenuModel
+            source : graphView.nodeClassesModel
+            
+            ValueExtension {}
+        }
+        
+        Instantiator
+        {
+            id : menuItemInstant
+            model : contextMenuModel
+            onObjectAdded: dynamicContextMenu.insertItem( index, object )
+            onObjectRemoved: dynamicContextMenu.removeItem( object )
+            delegate : MenuItem
+            {
+                text : Value
+                onTriggered :
+                {
+                    createNode(contextArea.popupPoint.x, contextArea.popupPoint.y, Value);
+                }
             }
         }
         MenuItem

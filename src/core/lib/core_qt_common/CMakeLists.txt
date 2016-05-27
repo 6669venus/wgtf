@@ -10,9 +10,6 @@ find_package(QT5)
 
 include_directories(.)
 
-ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
-ADD_DEFINITIONS( -DQT_QML_DEBUG )
-
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp
@@ -31,6 +28,8 @@ SET( DATA_MODEL_SRCS
 	models/wg_list_model.hpp
 	models/role_provider.cpp
 	models/role_provider.hpp
+	models/qt_abstract_item_model.hpp
+	models/qt_abstract_item_model.cpp
 )
 SOURCE_GROUP( "DataModel" FILES ${DATA_MODEL_SRCS} )
 
@@ -52,16 +51,26 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
+	models/extensions/column_extension_old.cpp
+	models/extensions/column_extension_old.hpp
 	models/extensions/component_extension.cpp
 	models/extensions/component_extension.hpp
+	models/extensions/component_extension_old.cpp
+	models/extensions/component_extension_old.hpp
+	models/extensions/list_extension.cpp
+	models/extensions/list_extension.hpp
 	models/extensions/selection_extension.cpp
 	models/extensions/selection_extension.hpp
 	models/extensions/tree_extension.cpp
 	models/extensions/tree_extension.hpp
+	models/extensions/tree_extension_old.cpp
+	models/extensions/tree_extension_old.hpp
 	models/extensions/value_extension.cpp
 	models/extensions/value_extension.hpp
 	models/extensions/thumbnail_extension.cpp
 	models/extensions/thumbnail_extension.hpp
+	models/extensions/image_extension.cpp
+	models/extensions/image_extension.hpp
 	models/extensions/i_model_extension.hpp
 	models/extensions/header_footer_text_extension.cpp
 	models/extensions/header_footer_text_extension.hpp
@@ -82,6 +91,8 @@ SET( HELPERS_SRCS
 	helpers/wg_tokenized_string_filter.cpp
     helpers/selection_helper.cpp
     helpers/selection_helper.hpp
+	helpers/qml_component_loader_helper.hpp
+	helpers/qml_component_loader_helper.cpp
 	)
 SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
@@ -112,6 +123,8 @@ SET( ALL_SRCS
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
 	i_qt_view.hpp
+	image_qt_type_converter.hpp
+	image_qt_type_converter.cpp
 	model_qt_type_converter.hpp
 	model_qt_type_converter.cpp
 	string_qt_type_converter.hpp
@@ -124,6 +137,8 @@ SET( ALL_SRCS
 	qt_action_manager.hpp
 	qt_image_provider.cpp
 	qt_image_provider.hpp
+	qt_image_provider_old.cpp
+	qt_image_provider_old.hpp
 	qt_connection_holder.hpp
 	qt_connection_holder.cpp
 	qt_new_handler.hpp
@@ -167,16 +182,16 @@ BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
 )
 
 BW_TARGET_LINK_LIBRARIES( core_qt_common
-    core_reflection
+	core_reflection
 	core_data_model
 	core_logging
 	core_string_utils
-    Qt5::Core
-    Qt5::Gui
-    Qt5::QuickWidgets
-    Qt5::Quick
-    Qt5::UiTools
-    Qt5::Xml
+	Qt5::Core
+	Qt5::Gui
+	Qt5::QuickWidgets
+	Qt5::Quick
+	Qt5::UiTools
+	Qt5::Xml
 )
 
 INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})

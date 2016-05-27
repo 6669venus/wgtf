@@ -182,13 +182,14 @@ WGSlider {
 
                     barPos = barPos.y / colorBar.height
 
-                    if (index == slider.__handleCount)
+                    var newColor = Qt.rgba(1,1,1,1)
+                    if (index == slider.__handleCount && index != 0)
                     {
-                        var newColor = slider.__handlePosList[index - 1].color
+                        newColor = slider.__handlePosList[index - 1].color
                     }
-                    else
+                    else if(slider.__handleCount > index)
                     {
-                        var newColor = slider.__handlePosList[index].getInternalColor(barPos)
+                        newColor = slider.__handlePosList[index].getInternalColor(barPos)
                     }
 
                     var newPos = pos.y / (gradientFrame.height / (slider.maximumValue - slider.minimumValue))
@@ -297,6 +298,10 @@ WGSlider {
             updateHandles()
         }
     }
+
+    onHandleRemoved: updateHandles()
+
+    onHandleAdded:  updateHandles()
 
     //pick a color using ColorDialog
     onSliderDoubleClicked: {
@@ -454,7 +459,11 @@ WGSlider {
                 }
                 else
                 {
-                    iHandle.minimumValue = Qt.binding(function() {return slider.__handlePosList[i - 1].value})
+                    iHandle.minimumValue = Qt.binding(function() {
+                        if(i - 1 < slider.__handlePosList.length)
+                            return slider.__handlePosList[i - 1].value
+                        return slider.minimumValue
+                    })
                     iHandle.minColor = slider.__handlePosList[i - 1].color
                 }
                 if (i === slider.__handlePosList.length - 1)
@@ -463,7 +472,9 @@ WGSlider {
                 }
                 else
                 {
-                    iHandle.maximumValue = Qt.binding(function() {return slider.__handlePosList[i + 1].value})
+                    iHandle.maximumValue = Qt.binding(function() {
+                        return slider.__handlePosList[i + 1].value
+                    })
                 }
             }
             else

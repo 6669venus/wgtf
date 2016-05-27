@@ -64,7 +64,7 @@ Style {
     id: styleitem
 
     /*! The \l Slider this style is attached to. */
-    readonly property WGSlider control: __control
+    readonly property QtObject control: __control
 
     property bool __horizontal: control.__horizontal
 
@@ -188,7 +188,7 @@ Style {
                         property int barClampPadding: control.handleClamp ? control.__visualMinPos : 0
 
                         height: grooveLoader.height
-                        width: Math.round(((control.__handlePosList[index].value / control.maximumValue) * __clampedLength)) - control.__handlePosList[index].barMinPos + barClampPadding
+                        width: Math.round((((control.__handlePosList[index].value - control.minimumValue) / (control.maximumValue - control.minimumValue)) * __clampedLength) + control.__visualMinPos - control.__handlePosList[index].barMinPos)
 
                         x: control.__handlePosList[index].barMinPos
                         z: 1
@@ -218,7 +218,7 @@ Style {
 
                     anchors.verticalCenter: grooveLoader.verticalCenter
 
-                    x: Math.round(((control.__handlePosList[index].value / control.maximumValue) * __clampedLength) + control.__visualMinPos + (handleOffset))
+                    x: Math.round((((control.__handlePosList[index].value - control.minimumValue) / (control.maximumValue - control.minimumValue)) * __clampedLength) + control.__visualMinPos + handleOffset)
 
                     onLoaded: {
                         control.__handleHeight = handleLoader.implicitHeight

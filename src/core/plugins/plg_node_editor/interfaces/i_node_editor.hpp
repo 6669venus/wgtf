@@ -46,13 +46,13 @@ public:
     /*! Deletes the node with current id in graph
     @param id The node id of node which should be deleted
     */
-    virtual bool DeleteNode(std::string id) = 0;
+    virtual bool DeleteNode(size_t id) = 0;
 
     /*! Returns node with current id
     @param id The node id which should be returned
     @return node object if node with this id exists, null otherwise
     */
-	virtual INode* GetNode(std::string id) = 0;
+	virtual INode* GetNode(size_t id) = 0;
 	
     /*! Connects slot of node with other slot of node
     @param nodeIdFrom The node id which containes a first slot in connection
@@ -61,8 +61,8 @@ public:
     @param slotIdTo The slot id where connection ends
     @return true if connection is created, false otherwise
     */
-	virtual bool Connect(std::string nodeIdFrom, std::string slotLabelFrom, 
-		std::string nodeIdTo, std::string slotLabelTo) = 0;
+    virtual bool Connect(size_t nodeIdFrom, size_t slotIdFrom,
+        size_t nodeIdTo, size_t slotIdTo) = 0;
 
     /*! Disconnects slot of node with other slot of node
     @param nodeIdFrom The node id which containes a first slot in connection
@@ -71,8 +71,8 @@ public:
     @param slotIdTo The slot id where connection ends
     @return true if connection is disconnected, false otherwise
     */
-	virtual bool Disconnect(std::string nodeIdFrom, std::string slotLabelFrom, 
-		std::string nodeIdTo, std::string slotLabelTo) = 0;
+    virtual bool Disconnect(size_t nodeIdFrom, size_t slotIdFrom,
+        size_t nodeIdTo, size_t slotIdTo) = 0;
     
 protected:
 

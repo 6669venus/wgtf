@@ -38,6 +38,8 @@ Item {
             text: "Warning: WGScrollPanel has no childObject"
         }
 
+    property alias expandableScrollBar: verticalScrollBar.expandableScrollBar
+
     //TODO: This breaks the UI. Either fix or hide from user
     /*! \internal */
     property bool vertical: true

@@ -1,13 +1,30 @@
 
 #include "CustomGraph.h"
-#include "CustomNode.h"
 #include "CustomConnection.h"
+
+#include "IntToStringNode.h"
+#include "AddIntegerNode.h"
+#include "PrintNode.h"
 
 #include "core_logging/logging.hpp"
 
+CustomGraph::CustomGraph()
+{
+    m_nodeClassesModel.push_back("IntToString");
+    m_nodeClasses.insert(NodeClassesMap::value_type("IntToString", []()->INode* { return new IntToStringNode("IntToString"); }));
+
+    m_nodeClassesModel.push_back("AddInteger");
+    m_nodeClasses.insert(NodeClassesMap::value_type("AddInteger", []()->INode* { return new AddIntegerNode("AddInteger"); }));
+
+    m_nodeClassesModel.push_back("Print");
+    m_nodeClasses.insert(NodeClassesMap::value_type("Print", []()->INode* { return new PrintNode("Print"); }));
+}
+
 std::shared_ptr<INode> CustomGraph::CreateNode(std::string nodeClass, float x, float y)
-{  
-    std::shared_ptr<INode> node(new CustomNode(nodeClass));
+{
+    auto nodeCreator = m_nodeClasses.at(nodeClass);
+    std::shared_ptr<INode> node(nodeCreator());
+
     node->SetPos(x, y);
     m_nodesModel.push_back(node);
     

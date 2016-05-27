@@ -30,7 +30,7 @@ public:
 		const std::string & childPath ) override;
 
 	virtual bool toScriptType( const Variant & inVariant,
-		PyScript::ScriptObject & outObject ) override;
+		PyScript::ScriptObject & outObject, void* userData = nullptr ) override;
 
 private:
 	IComponentContext & context_;

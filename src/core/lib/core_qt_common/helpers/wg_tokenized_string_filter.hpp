@@ -35,7 +35,7 @@ public:
 	virtual IItemFilter * getFilter() const override;
 
 protected:
-	virtual void updateInternalItemRole();
+	virtual void updateInternalItemRole() override;
 
 private:	
 	QString getFilterText() const;

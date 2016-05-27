@@ -102,6 +102,8 @@ Rectangle {
 
             RowLayout {
                 id: breadcrumbRowLayout
+                objectName: typeof Value.displayValue != "undefined" ? "breadcrumbRowLayout_" + Value.displayValue
+                                                                     : "breadcrumbRowLayout"
 
                 property var breadcrumbIndex_
 
@@ -116,6 +118,8 @@ Rectangle {
 
                 WGLabel {
                     id: breadcrumbLabel
+                    objectName: typeof Value.displayValue != "undefined" ? "breadcrumbLabel_" + Value.displayValue
+                                                                         : "breadcrumbLabel"
 
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
@@ -135,7 +139,8 @@ Rectangle {
 
                     MouseArea {
                         id: breadcrumbMouseArea
-                        objectName: "breadcrumbMouseArea"
+                        objectName: typeof Value.displayValue != "undefined" ? "breadcrumbMouseArea_" + Value.displayValue
+                                                                             : "breadcrumbMouseArea"
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true
@@ -146,7 +151,8 @@ Rectangle {
                 }
 
                 WGToolButton {
-                    objectName: "folderDivide"
+                    objectName: typeof Value.displayValue != "undefined" ? "folderdivide_" + Value.displayValue
+                                                                          : "folderdivide"
                     visible: index < breadcrumbRepeater.count - 1
 
                     Layout.preferredWidth: 16

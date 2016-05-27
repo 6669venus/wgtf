@@ -34,6 +34,7 @@ Canvas {
     signal pointClicked(Point point, var mouse)
     signal pointAdded(int index, var point)
     signal pointRemoved(int index, var point)
+    signal pointUpdated(Point point)
 
     on_OriginXChanged: { requestPaint() }
     on_OriginYChanged: { requestPaint() }
@@ -106,23 +107,21 @@ Canvas {
 
     function getPoint(index)
     {
-        if(index === -1)
+        if(index === -1 || index >= pointRepeater.count)
             return null;
-        var pointIt = iterator(curve.points)
-        var count = 0;
-        while(pointIt.moveNext()){
-            if(count === index)
-                return pointIt.current;
-            ++count;
-        }
-        return null;
+        return pointRepeater.itemAt(index).point
     }
 
-    function constrainHandles()
+    function constrainHandles(pointIndex)
     {
-        for(var i = 0; i < pointRepeater.count; ++i){
-            var point = pointRepeater.itemAt(i);
-            point.constrainHandles();
+        if(pointIndex > 0)
+        {
+            pointRepeater.itemAt(pointIndex-1).constrainHandles()
+        }
+        pointRepeater.itemAt(pointIndex).constrainHandles()
+        if((pointIndex + 1) < pointRepeater.count)
+        {
+            pointRepeater.itemAt(pointIndex+1).constrainHandles()
         }
     }
 
@@ -153,6 +152,7 @@ Canvas {
             onPressed: pointPressed(point, mouse)
             onReleased: pointReleased(point, mouse)
             onClicked: pointClicked(point, mouse)
+            onUpdated: pointUpdated(point)
         }
         onItemAdded:
         {

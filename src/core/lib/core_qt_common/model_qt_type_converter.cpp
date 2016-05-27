@@ -39,7 +39,7 @@ bool ModelQtTypeConverter::toVariant( const QVariant & qVariant, Variant & o_var
 	return false;
 }
 
-bool ModelQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVariant ) const
+bool ModelQtTypeConverter::toQVariant(const Variant & variant, QVariant & o_qVariant, QObject* parent) const
 {
 	if (!variant.typeIs< ObjectHandle >())
 	{
@@ -56,8 +56,9 @@ bool ModelQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVa
 		auto source = provider.getBase< AbstractItemModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtItemModel( *source );
-			QQmlEngine::setObjectOwnership( model, QQmlEngine::JavaScriptOwnership );
+			model->setParent( parent );
 			o_qVariant = QVariant::fromValue( model );
 			return true;
 		}
@@ -67,8 +68,9 @@ bool ModelQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVa
 		auto source = provider.getBase< AbstractListModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtListModel( *source );
-			QQmlEngine::setObjectOwnership( model, QQmlEngine::JavaScriptOwnership );
+			model->setParent( parent );
 			o_qVariant = QVariant::fromValue( model );
 			return true;
 		}
@@ -78,8 +80,9 @@ bool ModelQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVa
 		auto source = provider.getBase< AbstractTreeModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtTreeModel( *source );
-			QQmlEngine::setObjectOwnership( model, QQmlEngine::JavaScriptOwnership );
+			model->setParent( parent );
 			o_qVariant = QVariant::fromValue( model );
 			return true;
 		}
@@ -89,8 +92,9 @@ bool ModelQtTypeConverter::toQVariant( const Variant & variant, QVariant & o_qVa
 		auto source = provider.getBase< AbstractTableModel >();
 		if (source != nullptr)
 		{
+			assert( parent != nullptr );
 			auto model = new QtTableModel( *source );
-			QQmlEngine::setObjectOwnership( model, QQmlEngine::JavaScriptOwnership );
+			model->setParent(parent);
 			o_qVariant = QVariant::fromValue( model );
 			return true;
 		}

@@ -152,6 +152,16 @@ void DemoObjects::onSelectEnv(IEnvState* state)
 	}
 }
 
+void DemoObjects::onSaveEnvState( IEnvState* state )
+{
+
+}
+
+void DemoObjects::onLoadEnvState( IEnvState* state )
+{
+
+}
+
 ObjectHandle DemoObjects::getTreeModel() const
 {
 	auto model = std::unique_ptr< ITreeModel >(
@@ -172,6 +182,10 @@ void DemoObjects::updateRootObject( int index )
 
 int DemoObjects::rootObjectIndex()
 {
+	if (objects_ == nullptr)
+	{
+		return 0;
+	}
 	return objects_->index_;
 }
 

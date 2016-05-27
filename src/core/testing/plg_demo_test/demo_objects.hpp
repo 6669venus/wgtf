@@ -43,6 +43,8 @@ public:
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
+    virtual void onSaveEnvState( IEnvState* state ) override;
+    virtual void onLoadEnvState( IEnvState* state ) override;
 
 	bool loadDemoData( const char* name, DemoObjectsEnvCom* objects );
 	void automationUpdate();

@@ -70,7 +70,6 @@ namespace
 			if (valueType.isPointer())
 			{
 				auto targetType = valueType.removePointer();
-				auto targetDefinition = definitionManager.getDefinition( targetType.getName() );
 				ObjectHandle source;
 				if (value.tryCast( source ))
 				{
@@ -175,15 +174,9 @@ void ClassDefinition::bindPropertyImpl(
 	}
 
 	auto propName = name;
-	std::string propNameTmp;
-	if (*propOperator)
-	{
-		// allocate temp string only to extract substring
-		propNameTmp.assign( name, propOperator );
-		propName = propNameTmp.c_str();
-	}
+	auto propLength = propOperator - propName;
 
-	auto baseProp = findProperty( propName );
+	auto baseProp = findProperty( propName, propLength );
 	if (baseProp == nullptr)
 	{
 		// error: property `propName` is not found
@@ -194,7 +187,7 @@ void ClassDefinition::bindPropertyImpl(
 	o_PropertyAccessor.setObject( pBase );
 	o_PropertyAccessor.setBaseProperty( baseProp );
 
-	assert( strcmp( propName, o_PropertyAccessor.getName() ) == 0 );
+	assert( strncmp( propName, o_PropertyAccessor.getName(), propLength ) == 0 );
 
 	if (!*propOperator)
 	{
@@ -311,16 +304,17 @@ void ClassDefinition::bindPropertyImpl(
 
 
 //==============================================================================
-IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
+IBasePropertyPtr ClassDefinition::findProperty( const char * name, size_t length ) const
 {
 	// Some definitions allow you to lookup by name directly
 	if (details_->canDirectLookupProperty())
 	{
-		return details_->directLookupProperty( name );
+		std::string propName( name, length );
+		return details_->directLookupProperty( propName.c_str() );
 	}
 
 	// Otherwise, perform a search
-	auto nameHash = HashUtilities::compute( name );
+	auto nameHash = HashUtilities::compute( name, length );
 	auto properties = allProperties();
 	for (auto it = properties.begin(); it != properties.end(); ++it)
 	{
@@ -344,12 +338,10 @@ bool ClassDefinition::isGeneric() const
 bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 {
 	const IClassDefinition * baseDefinition = this;
-	const char * definitionName = definition.getName();
 	while( baseDefinition != NULL )
 	{
-		const char * baseName = baseDefinition->getName();
 		// Assuming definitions are shared we only need to check the pointer
-		if ( baseName == definitionName )
+		if ( baseDefinition == &definition )
 		{
 			return true;
 		}
@@ -362,13 +354,11 @@ bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 //------------------------------------------------------------------------------
 void * ClassDefinition::castTo( const IClassDefinition & definition, void * object ) const
 {
-	const char * definitionName = definition.getName();
-
 	const IClassDefinition * baseDefinition = this;
 	while( baseDefinition != NULL )
 	{
-		const char * baseName = baseDefinition->getName();
-		if (strcmp( baseName, definitionName ) == 0)
+		// Assuming definitions are shared we only need to check the pointer
+		if ( baseDefinition == &definition )
 		{
 			return object;
 		}

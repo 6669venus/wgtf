@@ -121,6 +121,7 @@ public:
 	 *		A Variant containing 0 on failure.
 	 */
 	virtual Variant invoke( const ObjectHandle & object,
+		const IDefinitionManager & definitionManager,
 		const ReflectedMethodParameters & parameters ) = 0;
 
 

@@ -12,6 +12,9 @@ Rectangle {
     x: viewTransform.transformX(handle.point.pos.x);
     y: viewTransform.transformY(handle.point.pos.y);
 
+    onXChanged: { parentCurve.requestPaint(); updated(handle) }
+    onYChanged: { parentCurve.requestPaint(); updated(handle) }
+
     property var _scaleX: viewTransform.xScale;
     property var _scaleY: viewTransform.yScale;
     property var _originX: viewTransform.origin.x;
@@ -40,6 +43,7 @@ Rectangle {
     signal clicked(var point, var mouse)
     signal pressed(var point, var mouse)
     signal released(var point, var mouse)
+    signal updated(var point)
 
     function setPosition(x, y) {
         if(x === handle.point.pos.x && y === handle.point.pos.y)
@@ -58,7 +62,7 @@ Rectangle {
         beginUndoFrame()
         handle.point.pos.x = x;
         handle.point.pos.y = y;
-        parentCurve.constrainHandles();
+        parentCurve.constrainHandles(pointIndex);
         if(!Qt._updatingPosition)
         {
             Qt._updatingPosition = true

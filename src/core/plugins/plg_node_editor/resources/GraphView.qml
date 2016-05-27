@@ -13,6 +13,7 @@ Item
 
     property var nodesModel
     property var connectionsModel
+    property var nodeClassesModel
 
     property ListModel groupModel: ListModel{dynamicRoles: true}
 
@@ -122,8 +123,8 @@ Item
         useAxisScaleLimit: xyScaleLimit
 
         showMouseLine: false
-        showCoordText: false
-        showWorkArea: false
+        useGridLabels: false
+        useBorders: false
 
         viewTransform: WGViewTransform{
             container: canvasContainer

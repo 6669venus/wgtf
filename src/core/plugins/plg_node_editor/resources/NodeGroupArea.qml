@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 1.2
@@ -55,7 +55,7 @@ Item
         id: titleBox
         anchors.top: parent.top
         anchors.left: leftDrag.left
-        anchors.right: parent.right
+        anchors.right: locked ? lockedText.left : parent.right
         anchors.margins: defaultSpacing.standardMargin
         height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
 
@@ -91,6 +91,19 @@ Item
                 titleBox.focus = false
             }
         }
+    }
+
+    Text {
+        id: lockedText
+        anchors.top: parent.top
+        anchors.right: rightDrag.right
+        anchors.margins: defaultSpacing.doubleMargin
+        height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
+        opacity: 0.5
+        horizontalAlignment: Text.AlignRight
+        text: "(locked)"
+        visible: locked
+        color: groupColor
     }
 
     MouseArea
@@ -144,46 +157,39 @@ Item
         }
     }
 
-    WGContextArea
+
+    WGAction
+    {
+        active: true
+        actionId: qsTr("NodeEditor.group|.Delete Group Box")
+        onTriggered: {
+            groupItem.deleteNode();
+        }
+    }
+    // bug with WGContextArea means the checked state of the menu won't update
+    WGAction
+    {
+        active: true
+        actionId: qsTr("NodeEditor.group|.Lock Group Box")
+        //checkable: true
+        //checked: locked
+        onTriggered: {
+            locked = !locked
+        }
+    }
+    WGAction
+    {
+        active: true
+        actionId: qsTr("NodeEditor.group|.Change Color")
+        onTriggered: {
+            groupItem.changeColor()
+        }
+    }
+    ContextMenu
     {
         id: contextArea
-        contextMenu: WGMenu
-        {
-            //would be better to have this in an actions.xml file?
-            MenuItem
-            {
-                text: qsTr("Create Node")
-                onTriggered: {
-                    createNode(mapToItem(graphView,contextArea.popupPoint.x, contextArea.popupPoint.y).x,
-                               mapToItem(graphView,contextArea.popupPoint.x, contextArea.popupPoint.y).y,
-                               "Test Node From QML");
-                }
-            }
-            MenuItem
-            {
-                text: qsTr("Delete Group Box")
-                onTriggered: {
-                    groupItem.deleteNode();
-                }
-            }
-            // bug with WGContextArea means the checked state of the menu won't update
-            MenuItem
-            {
-                text: qsTr("Lock Group Box")
-                checkable: true
-                checked: locked
-                onTriggered: {
-                    locked = !locked
-                }
-            }
-            MenuItem
-            {
-                text: qsTr("Change Color")
-                onTriggered: {
-                    groupItem.changeColor()
-                }
-            }
-        }
+
+        menuPath: "NodeEditor.group"
     }
 
     //visual appearance of the actual group box
@@ -193,9 +199,9 @@ Item
         anchors.right: rightDrag.right
         anchors.bottom: bottomDrag.bottom
         anchors.top: titleBox.top
-        color: selected ? Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.4) : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.2)
+        color: selected ? Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.3) : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.15)
         border.width: defaultSpacing.doubleBorderSize
-        border.color: selected ? groupColor : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.6)
+        border.color: selected ? groupColor : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.5)
 
         z: -1
     }

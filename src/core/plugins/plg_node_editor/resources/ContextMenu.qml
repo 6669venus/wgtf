@@ -7,17 +7,20 @@ WGContextArea
 {
     id: contextArea
 
+    property string menuPath: "NodeEditor"
+
     contextMenu: WGMenu
     {
         id: dynamicContextMenu
+        path: menuPath
         WGListModel
         {
             id : contextMenuModel
             source : graphView.nodeClassesModel
-            
+
             ValueExtension {}
         }
-        
+
         Instantiator
         {
             id : menuItemInstant

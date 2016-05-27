@@ -9,10 +9,22 @@ import WGControls 2.0
 ListView {
     id: listViewBase
 
-	property var view
+    property var view
     headerPositioning: ListView.OverlayHeader
-	footerPositioning: ListView.OverlayFooter
+    footerPositioning: ListView.OverlayFooter
     contentWidth: contentItem.childrenRect.width 
+
+    /*! Stores which item is currently in focus by the keyboard.
+        Often this will correspond to the selected item, but not always.
+        E.g. pressing ctrl+up will move the current index, but not the selected index.
+        The default value is the same as the selection (modelIndex).
+        To be initialized by the parent.
+    */
+    property var keyboardHighlightModelIndex: null
+
+    /*! Store ListView.currentIndex as it is hidden by the parent.
+     */
+    property alias originalCurrentIndex: listViewBase.currentIndex
 
     /*! Propogates events from children to parents.
         \param mouse the MouseEvent that triggered the signal.
@@ -32,12 +44,13 @@ ListView {
         columnSequence: view.columnSequence
         columnWidths: view.columnWidths
         columnSpacing: view.columnSpacing
-        selected: view.selectionModel.isSelected(modelIndex)
+        isSelected: view.selectionModel.isSelected(modelIndex)
+        isKeyboardHighlight: (keyboardHighlightModelIndex === modelIndex)
 
         Connections {
             target: view.selectionModel
             onSelectionChanged: {
-                itemRow.selected = view.selectionModel.isSelected(modelIndex)
+                itemRow.isSelected = view.selectionModel.isSelected(modelIndex)
             }
         }
 

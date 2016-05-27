@@ -70,8 +70,6 @@ ScrollView {
 */
 WGListViewBase {
     id: listView
-    clip: true
-    view: itemView
 
     property alias roles: itemView.roles
 
@@ -121,6 +119,75 @@ WGListViewBase {
 
     property var extensions: []
 
+    /*! Update selection when the keyboard highlight moves.
+     */
+    function updateKeyboardSelection(event, newIndex) {
+        // When Shift is pressed, the selected area increases with the keyboard highlight
+        if (event.modifiers & Qt.ShiftModifier) {
+            // Add new item to selection
+            var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, newIndex);
+            itemView.selectionModel.select(selection,
+                ItemSelectionModel.Select);
+
+            // Move keyboard highlight to the item selected last
+            itemView.selectionModel.setCurrentIndex(newIndex,
+                ItemSelectionModel.NoUpdate);
+        }
+
+        // When Ctrl is pressed, move keyboard highlight, but do not modify selection
+        else if (event.modifiers & Qt.ControlModifier) {
+            itemView.selectionModel.setCurrentIndex(newIndex,
+                ItemSelectionModel.NoUpdate);
+        }
+
+        // When no modifiers are pressed, selection moves with the keyboard highlight
+        else {
+            itemView.selectionModel.setCurrentIndex(newIndex,
+                ItemSelectionModel.Clear | ItemSelectionModel.Select);
+        }
+
+    }
+
+    /*! Move the keyboard highlight up/left.
+     */
+    function moveKeyHighlightPrevious(event) {
+        var newIndex = listExtension.getPreviousIndex(itemView.selectionModel.currentIndex);
+        updateKeyboardSelection(event, newIndex);
+    }
+    
+    /*! Move the keyboard highlight down/right.
+     */
+    function moveKeyHighlightNext(event) {
+        var newIndex = listExtension.getNextIndex(itemView.selectionModel.currentIndex);
+        updateKeyboardSelection(event, newIndex);
+    }
+
+    clip: true
+    view: itemView
+    internalModel: itemView.extendedModel
+    keyboardHighlightModelIndex: itemView.currentIndex
+
+    Keys.onUpPressed: {
+        if (orientation == ListView.Vertical) {
+            moveKeyHighlightPrevious(event);
+        }
+    }
+    Keys.onDownPressed: {
+        if (orientation == ListView.Vertical) {
+            moveKeyHighlightNext(event);
+        }
+    }
+    Keys.onLeftPressed: {
+        if (orientation == ListView.Horizontal) {
+            moveKeyHighlightPrevious(event);
+        }
+    }
+    Keys.onRightPressed: {
+        if (orientation == ListView.Horizontal) {
+            moveKeyHighlightNext(event);
+        }
+    }
+
     // Data holder for various C++ extensions.
     // Pass it down to children
     WGItemViewCommon {
@@ -137,19 +204,24 @@ WGListViewBase {
         Connections {
             target: listView
             onItemPressed: {
+                var selection;
                 if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
-                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-                    itemView.selectionModel.select(selection, 0x0002) // Select
+                    selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex);
+                    itemView.selectionModel.select(selection, ItemSelectionModel.Select);
+                    itemView.selectionModel.setCurrentIndex(rowIndex,
+                        ItemSelectionModel.NoUpdate);
                 }
                 else if (mouse.modifiers & Qt.ShiftModifier) {
-                    var selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-                    itemView.selectionModel.select(selection, 0x0001 | 0x0002) // Clear || Select
+                    selection = listExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
+                    itemView.selectionModel.select(selection, ItemSelectionModel.Clear | ItemSelectionModel.Select);
+                    itemView.selectionModel.setCurrentIndex(rowIndex,
+                        ItemSelectionModel.NoUpdate);
                 }
                 else if (mouse.modifiers & Qt.ControlModifier) {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0008) // Toggle
+                    itemView.selectionModel.setCurrentIndex(rowIndex, ItemSelectionModel.Toggle);
                 }
                 else {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0001 | 0x0002) // Clear | Select
+                    itemView.selectionModel.setCurrentIndex(rowIndex, ItemSelectionModel.Clear | ItemSelectionModel.Select);
                 }
             }
         }

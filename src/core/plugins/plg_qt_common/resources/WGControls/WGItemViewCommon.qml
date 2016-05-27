@@ -4,20 +4,22 @@ import QtQml.Models 2.2
 import WGControls 2.0
 
 WGItemView {
-	id: root
+    id: root
 
-	property var view: parent
-	property var selectionModel: itemSelectionModel
+    property var view: parent
+    property var selectionModel: itemSelectionModel
 
-	property Component columnDelegate: Text {
-		text: itemData.display
-		color: palette.textColor
-	}
-	property var columnDelegates: []
-	property var columnSequence: []
-	property real columnWidth: 0
-	property var columnWidths: []
-	property real columnSpacing: 0
+    property Component columnDelegate: Text {
+        id: defaultColumnDelegate
+        objectName: "defaultColumnDelegate_" + text
+        text: itemData.display
+        color: palette.textColor
+    }
+    property var columnDelegates: []
+    property var columnSequence: []
+    property real columnWidth: 0
+    property var columnWidths: []
+    property real columnSpacing: 0
 
     property var headerDelegates: []
     property var footerDelegates: []
@@ -29,117 +31,129 @@ WGItemView {
     property Component headerComponent: WGHeaderRow {
         z:2
         columnDelegates: root.headerDelegates
-		columnSequence: root.columnSequence
-		columnWidths: root.columnWidths
-		columnSpacing: root.columnSpacing
+        columnSequence: root.columnSequence
+        columnWidths: root.columnWidths
+        columnSpacing: root.columnSpacing
         headerData: root.headerData
     }
 
     property Component footerComponent: WGHeaderRow {
         z:2
         columnDelegates: root.footerDelegates
-		columnSequence: root.columnSequence
-		columnWidths: root.columnWidths
-		columnSpacing: root.columnSpacing
+        columnSequence: root.columnSequence
+        columnWidths: root.columnWidths
+        columnSpacing: root.columnSpacing
         headerData: root.headerData
     }
 
-	property var commonExtensions: [columnExtension, imageExtension]
-	extensions: commonExtensions
+    property var commonExtensions: [columnExtension, imageExtension]
 
-	function rowCount() {
+    // Pass property up to parent
+    property alias currentIndex: itemSelectionModel.currentIndex
+
+    // Pass signals up to parent
+    signal currentChanged(var current, var previous)
+    signal selectionChanged(var selected, var deselected)
+
+    extensions: commonExtensions
+
+    function rowCount() {
         return extendedModel.rowCount();
-	}
+    }
 
-	function columnCount() {
+    function columnCount() {
         var count = columnSequence.length;
-		if (count == 0) {
-            count = extendedModel.columnCount(null);
-		}
+        if (count == 0) {
+            count = extendedModel.columnCount(null /* parent */);
+        }
         return count;
-	}
+    }
 
-	ColumnExtension {
-		id: columnExtension
-	}
+    ColumnExtension {
+        id: columnExtension
+    }
 
-	ImageExtension {
-		id: imageExtension
-	}
+    ImageExtension {
+        id: imageExtension
+    }
 
     /*! Ensure the columnDelegates and columnWidths lists are the same length
         as the number of columns that actually loaded into the list.
         \see WGItemRow
      */
-	Component.onCompleted: {
+    Component.onCompleted: {
         var tmp = columnDelegates;
-		while (tmp.length < columnCount()) {
+        while (tmp.length < columnCount()) {
             tmp.push(columnDelegate);
-		}
+        }
         columnDelegates = tmp;
 
-        var tmp = headerDelegates
+        tmp = headerDelegates
         if(tmp.length > 0)
         {
             while (tmp.length < columnCount()) {
-			    tmp.push(headerDelegate);
-		    }
+                tmp.push(headerDelegate);
+            }
         }
         if((tmp.length == 0) && (headerDelegate != null))
         {
             while (tmp.length < columnCount()) {
-			    tmp.push(headerDelegate);
-		    }
+                tmp.push(headerDelegate);
+            }
         }
-		headerDelegates = tmp;
+        headerDelegates = tmp;
         if(headerDelegates.length > 0)
         {
              header = headerComponent;
         }
 
-        var tmp = footerDelegates
+        tmp = footerDelegates;
         if(tmp.length > 0)
         {
             while (tmp.length < columnCount()) {
-			    tmp.push(footerDelegate);
-		    }
+                tmp.push(footerDelegate);
+            }
         }
         if((tmp.length == 0) && (footerDelegate != null))
         {
             while (tmp.length < columnCount()) {
-			    tmp.push(footerDelegate);
-		    }
+                tmp.push(footerDelegate);
+            }
         }
-		footerDelegates = tmp;
+        footerDelegates = tmp;
         if(footerDelegates.length > 0)
         {
              footer = footerComponent;
         }
 
-		var tmp = columnWidths;
-		while (tmp.length < columnCount()) {
+        tmp = columnWidths;
+        while (tmp.length < columnCount()) {
             tmp.push(Math.max(columnWidth, 1));
-		}
+        }
 
-		columnWidths = tmp;
-	}
+        columnWidths = tmp;
+    }
 
-	WGColumnsFrame {
-		id: columnsFrame
-		x: root.view.contentItem.x + root.view.originX
-		y: 0
+    WGColumnsFrame {
+        id: columnsFrame
+        x: root.view.contentItem.x + root.view.originX
+        y: 0
         height: root.view.height
-		columnWidths: root.view.columnWidths
-		columnSpacing: root.view.columnSpacing
-		availableWidth: root.view.width - Math.max(contentItem.x, 0)
+        columnWidths: root.view.columnWidths
+        columnSpacing: root.view.columnSpacing
+        availableWidth: root.view.width - Math.max(contentItem.x, 0)
 
-		Component.onCompleted: {
+        Component.onCompleted: {
             root.view.columnWidths = Qt.binding( function() { return columnsFrame.columnWidths } );
-		}
-	}
+        }
+    }
 
-	ItemSelectionModel {
-		id: itemSelectionModel
-		model: extendedModel
-	}
+    ItemSelectionModel {
+        id: itemSelectionModel
+        model: extendedModel
+
+        // Pass signals up to parent
+        onCurrentChanged: root.currentChanged(current, previous);
+        onSelectionChanged: root.selectionChanged(selected, deselected)
+    }
 }

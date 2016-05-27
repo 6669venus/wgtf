@@ -25,10 +25,6 @@ ListView {
     */
     property var keyboardHighlightModelIndex: null
 
-    /*! Store ListView.currentIndex as it is hidden by the parent.
-     */
-    property alias originalCurrentIndex: treeViewBase.currentIndex
-
     headerPositioning: ListView.OverlayHeader
     footerPositioning: ListView.OverlayFooter
     contentWidth: contentItem.childrenRect.width

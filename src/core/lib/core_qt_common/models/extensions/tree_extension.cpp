@@ -500,14 +500,22 @@ QModelIndex TreeExtension::getForwardIndex( const QModelIndex & index ) const
 			return sibling;
 		}
 	}
-	else if (parent.isValid())
+
+	// Move up to next item on parent
+	auto it = parent;
+	while (it.isValid())
 	{
-		const int nextParentRow = parent.row() + 1;
-		const auto sibling = parent.sibling( nextParentRow, index.column() );
-		if (sibling.isValid())
+		const int nextParentRow = it.row() + 1;
+		if (nextParentRow < pModel->rowCount( it.parent() ))
 		{
-			return sibling;
+			const auto sibling = it.sibling( nextParentRow, index.column() );
+			if (sibling.isValid())
+			{
+				return sibling;
+			}
 		}
+
+		it = it.parent();
 	}
 
 	return index;
@@ -547,11 +555,22 @@ QModelIndex TreeExtension::getBackwardIndex( const QModelIndex & index ) const
 	}
 
 	// Move up to the parent
-	const QModelIndex parent = index.parent();
+	const auto parent = index.parent();
 	if (parent.isValid())
 	{
 		// Update the current index if the parent is valid
 		return parent;
+	}
+
+	// Move up to the previous sibling
+	const int previousRow = index.row() - 1;
+	if (previousRow < pModel->rowCount( parent ))
+	{
+		const auto sibling = index.sibling( previousRow, index.column() );
+		if (sibling.isValid())
+		{
+			return sibling;
+		}
 	}
 
 	return index;

@@ -3,7 +3,7 @@
 
 #include "i_selection_handler.hpp"
 
-// TODO: http://jira.bigworldtech.com/browse/NGT-849
+// TODO: NGT-849
 // Eventually, we need to remove this class
 class SelectionHandler
 	: public ISelectionHandler

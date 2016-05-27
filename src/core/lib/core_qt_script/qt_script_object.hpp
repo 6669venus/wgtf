@@ -8,7 +8,7 @@ exposed properties will be accessible via QML as if it was a
 QML type.
 In addition, access is provided to meta attributes via
 QML callable functions getMetaObject and containsMetaType.
-Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
+Details: Search for NGT Reflection System on the Wargaming Confluence
 */
 
 #include "core_reflection/object_handle.hpp"

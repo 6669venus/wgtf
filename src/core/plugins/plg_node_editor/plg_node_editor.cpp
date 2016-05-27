@@ -59,6 +59,12 @@ void NodeEditorPlugin::Initialise(IComponentContext& context)
 
 bool NodeEditorPlugin::Finalise(IComponentContext& context)
 {
+    auto uiApplication = context.queryInterface<IUIApplication>();
+    assert(uiApplication != nullptr);
+
+    uiApplication->removeView(*view);
+    view.reset(nullptr);
+
 	return true;
 }
 

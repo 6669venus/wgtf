@@ -9,10 +9,6 @@ ListView {
     property var view
     property real depth: 0
 
-    signal itemPressed(var mouse, var itemIndex, var rowIndex)
-    signal itemClicked(var mouse, var itemIndex, var rowIndex)
-    signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
-
     property var __onItemPressed: function(mouse, itemIndex, rowIndex) {}
     property var __onItemClicked: function(mouse, itemIndex, rowIndex) {}
     property var __onItemDoubleClicked: function(mouse, itemIndex, rowIndex) {}
@@ -24,6 +20,10 @@ ListView {
         To be initialized by the parent.
     */
     property var keyboardHighlightModelIndex: null
+
+    signal itemPressed(var mouse, var itemIndex, var rowIndex)
+    signal itemClicked(var mouse, var itemIndex, var rowIndex)
+    signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
 
     headerPositioning: ListView.OverlayHeader
     footerPositioning: ListView.OverlayFooter

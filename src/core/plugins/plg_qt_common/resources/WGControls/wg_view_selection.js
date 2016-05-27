@@ -1,6 +1,9 @@
 .pragma library
 .import QtQml.Models 2.2 as QtQmlModels
 
+/*! \file Common functions for WGListView and WGTreeView.
+ */
+
 /*! Update selection when the keyboard highlight moves.
  */
 function updateKeyboardSelection(event, newIndex, view, extension) {

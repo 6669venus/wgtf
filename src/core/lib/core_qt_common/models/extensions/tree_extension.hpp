@@ -48,9 +48,20 @@ public:
 	 */
 	Q_INVOKABLE QModelIndex getPreviousIndex( const QModelIndex & index ) const;
 
-	/// Expand the current item if it is expandable or move to the first child
+	/**
+	 *	Expand the current item if it is expandable or move to the next index.
+	 *	@param index to be moved.
+	 *	@return new position or the original index if the item was expanded or on error.
+	 */
 	Q_INVOKABLE QModelIndex getForwardIndex( const QModelIndex & index ) const;
+
+	/**
+	 *	Collapse the current item if it is collapsable or move to the previous index.
+	 *	@param index to be moved.
+	 *	@return new position or the original index if the item was expanded or on error.
+	 */
 	Q_INVOKABLE QModelIndex getBackwardIndex( const QModelIndex & index ) const;
+
 private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;

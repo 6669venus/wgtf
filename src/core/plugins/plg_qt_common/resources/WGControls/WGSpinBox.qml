@@ -69,15 +69,6 @@ WGNumberBox {
 \endcode
 /*
 
-/*TODO:
-1. TabFocus is not working correctly in a property view with multiple spin boxes.
-Something invisible is grabbing tab focus between spinbox textfields.
-Strangely, if you double click a text field then use tab to change focus, the behaviour is as desired.
-2. It would be preferable if tabfocus resulted in the text within the text field being higlighted/selected
-3. Up and Down keys only increment/decrement when the invisible object has focus.
-It may be better to use the arrow keys for keyboard navigation between controls.
-*/
-
 /*
     \qmltype SpinBox
     \inqmlmodule QtQuick.Controls

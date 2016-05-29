@@ -272,7 +272,7 @@ Item {
                         text: "Save New Filter..."
                         onTriggered: {
                             // TODO - Refine saving to allow for naming of the filter
-                            // JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+                            // JIRA - NGT-1484
 
                             if (rootFrame.__loadedFilterId.length > 0) {
                                 // Prompt the user!

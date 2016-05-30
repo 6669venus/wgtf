@@ -7,7 +7,7 @@ ListView {
     id: treeViewBase
 
     headerPositioning: ListView.OverlayHeader
-    footerPositioning: ListView.OverlayFooter
+	footerPositioning: ListView.OverlayFooter
     contentWidth: contentItem.childrenRect.width 
 
     property var view
@@ -25,8 +25,8 @@ ListView {
     onItemClicked: __onItemClicked(mouse, itemIndex, rowIndex)
     onItemDoubleClicked: __onItemDoubleClicked(mouse, itemIndex, rowIndex)
 
-    header: depth == 0 ? view.header : null
-    footer: depth == 0 ? view.footer : null
+    header: view.header
+    footer: view.footer
 
     delegate: Item {
         height: childrenRect.height
@@ -38,12 +38,12 @@ ListView {
             columnSequence: view.columnSequence
             columnWidths: view.columnWidths
             columnSpacing: view.columnSpacing
-            isSelected: view.selectionModel.isSelected(modelIndex)
+            selected: view.selectionModel.isSelected(modelIndex)
 
             Connections {
                 target: view.selectionModel
                 onSelectionChanged: {
-                    itemRow.isSelected = view.selectionModel.isSelected(modelIndex)
+                    itemRow.selected = view.selectionModel.isSelected(modelIndex)
                 }
             }
 
@@ -60,11 +60,11 @@ ListView {
                 active: hasChildren && expanded
 
                 Component.onCompleted: {
-                    setSource("WGTreeViewBase.qml", {
+                    setSource("WGTreeViewBase20.qml", {
                         "interactive": false,
                         "width": Qt.binding( function() { return treeViewBase.width - childItems.x } ),
                         "height": Qt.binding( function() { return treeViewBase.height - childItems.y + treeViewBase.contentY } ),
-                        
+
                         "view": Qt.binding( function() { return treeViewBase.view } ),
                         "model": Qt.binding( function() { return childModel } ),
                         "depth": Qt.binding( function() { return treeViewBase.depth + 1 } ),

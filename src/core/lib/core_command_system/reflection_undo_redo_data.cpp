@@ -130,6 +130,30 @@ public:
 		}
 	}
 
+	void postInvoke( const PropertyAccessor & accessor, Variant result, bool undo ) override
+	{
+		const auto& object = accessor.getRootObject();
+		assert( object != nullptr );
+
+		RefObjectId id;
+		bool ok = object.getId( id );
+		assert( ok );
+
+		if (undoRedoHelperList_.size() > 0)
+		{
+			auto helper = undoRedoHelperList_.back().get();
+			if (helper->isMethod())
+			{
+				auto methodHelper = (RPURU::ReflectedMethodUndoRedoHelper*)helper;
+
+				if (methodHelper->objectId_ == id)
+				{
+					methodHelper->result_ = result;
+				}
+			}
+		}
+	}
+
 
 private:
 	RPURU::ReflectedClassMemberUndoRedoHelper* findUndoRedoHelper( 

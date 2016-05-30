@@ -301,11 +301,11 @@ Item {
                             model: savedFiltersModel
 
                             delegate: MenuItem {
-                                text: Value.filterId + ": " + Value.terms
+                                text: value.filterId + ": " + value.terms
                                 onTriggered: {
-                                    var result = rootFrame.dataModel.loadFilter(Value.filterId);
+                                    var result = rootFrame.dataModel.loadFilter(value.filterId);
                                     if (result) {
-                                        rootFrame.__loadedFilterId = Value.filterId;
+                                        rootFrame.__loadedFilterId = value.filterId;
                                     }
                                     else {
                                         rootFrame.__loadedFilterId = "";
@@ -431,19 +431,19 @@ Item {
                             WGPushButton {
                                 id: filterString
                                 objectName: "filterStringButton"
-                                text: Value.value
+                                text: value.value
                                 checkable: true
-                                checked: Value.active
+                                checked: value.active
                                 style: WGTagButtonStyle{}
 
                                 Binding {
-                                    target: Value
+                                    target: value
                                     property: "active"
                                     value: filterString.checked
                                 }
 
                                 Connections {
-                                    target: Value
+                                    target: value
                                     onActiveChanged: {
                                         updateStringValue();
                                     }

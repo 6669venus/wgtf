@@ -38,12 +38,12 @@ ListView {
             columnSequence: view.columnSequence
             columnWidths: view.columnWidths
             columnSpacing: view.columnSpacing
-            selected: view.selectionModel.isSelected(modelIndex)
+            isSelected: view.selectionModel.isSelected(modelIndex)
 
             Connections {
                 target: view.selectionModel
                 onSelectionChanged: {
-                    itemRow.selected = view.selectionModel.isSelected(modelIndex)
+                    itemRow.isSelected = view.selectionModel.isSelected(modelIndex)
                 }
             }
 

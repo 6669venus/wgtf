@@ -96,7 +96,7 @@ WGPanel {
 					anchors.bottom: parent.bottom
 					anchors.margins: 4
 					verticalAlignment: Text.AlignVCenter
-					text: itemData.Value
+					text: itemData.value
 					color: palette.textColor
 				}
 			}

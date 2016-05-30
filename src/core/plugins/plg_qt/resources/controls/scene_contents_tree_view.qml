@@ -23,13 +23,13 @@ Rectangle {
 		anchors.fill : parent
 		property Component textPropertyDelegate : Text {
 			clip : true
-			text : itemData_.Value
+			text : itemData_.value
 			color: palette.textColor
 		}
 		property Component booleanPropertyDelegate : BWCheckBox {
 		}
 		property Component sizePropertyDelegate : Text {
-			text : itemData_.Value
+			text : itemData_.value
 			color: palette.textColor
 		}
 

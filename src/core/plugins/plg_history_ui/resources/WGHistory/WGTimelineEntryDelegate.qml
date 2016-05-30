@@ -10,7 +10,7 @@ Item {
     objectName: "WGTimelineEntryDelegate"
 
     // Only access DisplayObject once because it is generated every time in C++
-    property variant displayObject: itemData.Value.DisplayObject
+    property variant displayObject: itemData.value.DisplayObject
     property int parentColumnIndex: columnIndex
     property bool isCurrentItem: history.currentIndex == rowIndex
 

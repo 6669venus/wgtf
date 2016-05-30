@@ -8,12 +8,12 @@ import WGControls 1.0
 
 WGVector4 {
     id: vector4
-    objectName: itemData != null ? itemData.IndexPath : "vector4_component"
-    value: itemData.Value
+    objectName: itemData != null ? itemData.indexPath : "vector4_component"
+    value: itemData.value
 
     Binding {
         target: itemData
-        property: "Value"
+        property: "value"
         value: vector4.value
     }
 }

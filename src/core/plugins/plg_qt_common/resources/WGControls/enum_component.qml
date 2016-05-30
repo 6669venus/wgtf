@@ -5,13 +5,13 @@ import BWControls 1.0
 
 WGDropDownBox {
     id: combobox
-    objectName:  itemData != null ? itemData.IndexPath : "enum_component"
+    objectName:  itemData != null ? itemData.indexPath : "enum_component"
     anchors.left: parent.left
     anchors.right: parent.right
 
     Component.onCompleted: {
         currentIndex = Qt.binding( function() {
-            var modelIndex = enumModel.find( itemData.Value, "Value" );
+            var modelIndex = enumModel.find( itemData.value, "value" );
             return enumModel.indexRow( modelIndex ); } )
     }
 
@@ -19,7 +19,7 @@ WGDropDownBox {
     onPressedChanged: {
         if( pressed )
         {
-            enumModel.source = itemData.EnumModel
+            enumModel.source = itemData.enumModel
         }
     }
 
@@ -28,7 +28,7 @@ WGDropDownBox {
 
     WGListModel {
         id: enumModel
-        source: itemData.EnumModel
+        source: itemData.enumModel
 
         ValueExtension {}
     }
@@ -40,7 +40,7 @@ WGDropDownBox {
                 return;
             }
             var modelIndex = enumModel.index( currentIndex );
-            itemData.Value = enumModel.data( modelIndex, "Value" );
+            itemData.value = enumModel.data( modelIndex, "value" );
         }
     }
 }

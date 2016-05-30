@@ -22,9 +22,9 @@ Rectangle {
 			return;
 		}
 
-		itemData.Value.PropertyPath = path
+		itemData.value.PropertyPath = path
 		// TODO how to convert value from string to PropertyValue's type
-		itemData.Value.PropertyValue = value;
+		itemData.value.PropertyValue = value;
 		oldPath = path;
 		oldValue = value;
 		root.accepted = true
@@ -49,8 +49,8 @@ Rectangle {
 		}
 	}
 	Component.onCompleted: {
-		oldPath = itemData.Value.PropertyPath
-		oldValue = itemData.Value.PropertyValue
+		oldPath = itemData.value.PropertyPath
+		oldValue = itemData.value.PropertyValue
 		okButton.onOk.connect( onOkHandler )
 		cancelButton.onCancel.connect( onCancelHandler )
 	}
@@ -69,7 +69,7 @@ Rectangle {
 		WGTextBox {
 			id: text1
 			clip: false
-			text: itemData.Value.PropertyPath
+			text: itemData.value.PropertyPath
 			onTextChanged: {
 				path = text
 			}
@@ -91,7 +91,7 @@ Rectangle {
 		WGTextBox {
 			id: text2
 			clip: false
-			text: itemData.Value.PropertyValue.toString()
+			text: itemData.value.PropertyValue.toString()
 			onTextChanged: {
 				value = text
 			}

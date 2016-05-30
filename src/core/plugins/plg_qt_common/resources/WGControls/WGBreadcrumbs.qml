@@ -102,7 +102,7 @@ Rectangle {
 
             RowLayout {
                 id: breadcrumbRowLayout
-                objectName: typeof Value.displayValue != "undefined" ? "breadcrumbRowLayout_" + Value.displayValue
+                objectName: typeof value.displayValue != "undefined" ? "breadcrumbRowLayout_" + value.displayValue
                                                                      : "breadcrumbRowLayout"
 
                 property var breadcrumbIndex_
@@ -112,13 +112,13 @@ Rectangle {
 
                 WGListModel {
                     id: subItemsListModel
-                    source: Value.subItems
+                    source: value.subItems
                     ValueExtension {}
                 }
 
                 WGLabel {
                     id: breadcrumbLabel
-                    objectName: typeof Value.displayValue != "undefined" ? "breadcrumbLabel_" + Value.displayValue
+                    objectName: typeof value.displayValue != "undefined" ? "breadcrumbLabel_" + value.displayValue
                                                                          : "breadcrumbLabel"
 
                     Layout.fillWidth: true
@@ -126,7 +126,7 @@ Rectangle {
 
                     elide: Text.ElideRight
 
-                    text: Value.displayValue
+                    text: value.displayValue
 
                     font.bold: true
                     font.pointSize: 11
@@ -139,7 +139,7 @@ Rectangle {
 
                     MouseArea {
                         id: breadcrumbMouseArea
-                        objectName: typeof Value.displayValue != "undefined" ? "breadcrumbMouseArea_" + Value.displayValue
+                        objectName: typeof value.displayValue != "undefined" ? "breadcrumbMouseArea_" + value.displayValue
                                                                              : "breadcrumbMouseArea"
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -151,7 +151,7 @@ Rectangle {
                 }
 
                 WGToolButton {
-                    objectName: typeof Value.displayValue != "undefined" ? "folderdivide_" + Value.displayValue
+                    objectName: typeof value.displayValue != "undefined" ? "folderdivide_" + value.displayValue
                                                                           : "folderdivide"
                     visible: index < breadcrumbRepeater.count - 1
 
@@ -168,7 +168,7 @@ Rectangle {
                             model: subItemsListModel
 
                             delegate: MenuItem {
-                                text: Value.displayValue
+                                text: value.displayValue
                                 onTriggered: {
                                     breadcrumbChildClicked(breadcrumbRowLayout.breadcrumbIndex_, index);
                                 }

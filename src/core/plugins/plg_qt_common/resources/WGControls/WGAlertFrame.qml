@@ -104,7 +104,7 @@ Rectangle {
         WGMultiLineText {
             id: message
             objectName: "message"
-            text: Value.message
+            text: value.message
             font.pixelSize: 22
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignBottom

@@ -4,14 +4,14 @@ import BWControls 1.0
 
 WGFileSelectBox {
     id: fileComponent
-    objectName:  itemData != null ? itemData.IndexPath : "file_component"
+    objectName:  itemData != null ? itemData.indexPath : "file_component"
 
     //TODO: use WGAssetBrowserDialog when metadata says it's asset browser
     property var assetDlg : WGNativeFileDialog{}
     property var fileDlg : WGNativeFileDialog {}
 
     onFileChosen: {
-        itemData.Value = selectedFile
+        itemData.value = selectedFile
     }
     onFileRejected: {
         closeDialog()
@@ -19,16 +19,16 @@ WGFileSelectBox {
 
     anchors.left: parent.left
     anchors.right: parent.right
-    text: itemData.Value
+    text: itemData.value
     readOnly: true
-    title: itemData.UrlDialogTitle
-    folder: itemData.UrlDialogDefaultFolder
-    modality: itemData.UrlDialogModality
+    title: itemData.urlDialogTitle
+    folder: itemData.urlDialogDefaultFolder
+    modality: itemData.urlDialogModality
 
-    dialog: itemData.UrlIsAssetBrowser ? assetDlg: fileDlg
+    dialog: itemData.urlIsAssetBrowser ? assetDlg: fileDlg
 
     nameFilters: {
-        var filters = itemData.UrlDialogNameFilters;
+        var filters = itemData.urlDialogNameFilters;
         if(filters.toString() === "")
         {
             return [
@@ -44,11 +44,11 @@ WGFileSelectBox {
     }
 
     selectedNameFilter: {
-        var filters = itemData.UrlDialogNameFilters;
+        var filters = itemData.urlDialogNameFilters;
         if(filters.toString() === "")
         {
             return "All files (*)";
         }
-        return itemData.UrlDialogSelectedNameFilter;
+        return itemData.urlDialogSelectedNameFilter;
     }
 }

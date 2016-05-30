@@ -37,7 +37,7 @@ WGPanel {
 			id: stringFilter
 			filterText: searchBox.text
 			splitterChar: " "
-			itemRole: "Value"
+			itemRole: "value"
 		}
 
 		HeaderFooterTextExtension {}
@@ -76,7 +76,7 @@ WGPanel {
 					anchors.bottom: parent.bottom
 					anchors.margins: 4
 					verticalAlignment: Text.AlignVCenter
-					text: itemData.Value
+					text: itemData.value
 					color: palette.textColor
 				}
 			}

@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.1
 import WGControls 1.0
 
 Rectangle {
-    objectName:  itemData != null ? itemData.IndexPath : "property_tree_view"
+    objectName:  itemData != null ? itemData.indexPath : "property_tree_view"
     property variant source_ : source
 
     color: palette.mainWindowColor
@@ -31,7 +31,7 @@ Rectangle {
         columnCount_ : 2
         property Component propertyDelegate : Loader {
             clip : true
-            sourceComponent : itemData_ != null ? itemData_.Component : null
+            sourceComponent : itemData_ != null ? itemData_.component : null
         }
         columnDelegates_ : [ columnDelegate_, propertyDelegate ]
         clampWidth_ : true

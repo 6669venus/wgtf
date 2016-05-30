@@ -5,13 +5,13 @@ import BWControls 1.0
 
 WGDropDownBox {
     id: combobox
-    objectName:  itemData != null ? itemData.IndexPath : "polystruct_component"
+    objectName:  itemData != null ? itemData.indexPath : "polystruct_component"
     anchors.left: parent.left
     anchors.right: parent.right
 
     Component.onCompleted: {
         currentIndex = Qt.binding( function() {
-            var modelIndex = polyModel.find( itemData.Definition, "Value" );
+            var modelIndex = polyModel.find( itemData.definition, "value" );
             return polyModel.indexRow( modelIndex ); } )
     }
 
@@ -20,7 +20,7 @@ WGDropDownBox {
 
     WGListModel {
         id: polyModel
-        source: itemData.DefinitionModel
+        source: itemData.definitionModel
 
         ValueExtension {}
     }
@@ -32,7 +32,7 @@ WGDropDownBox {
                 return;
             }
             var modelIndex = polyModel.index( currentIndex );
-            itemData.Definition = polyModel.data( modelIndex, "Value" );
+            itemData.definition = polyModel.data( modelIndex, "value" );
         }
     }
 }

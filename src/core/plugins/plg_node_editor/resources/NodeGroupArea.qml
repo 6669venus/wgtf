@@ -72,7 +72,7 @@ Item
 
         style: WGTextBoxStyle {
             background: Item {}
-            textColor: groupColor
+            textColor: "#99FFFFFF"
         }
 
         // focus is not dropping because nothing else in node editor has focus items. Bit of a hack to stop editing state.

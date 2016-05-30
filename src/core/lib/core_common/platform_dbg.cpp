@@ -8,10 +8,9 @@
 #include <string.h>
 #endif
 
+#if defined( _WIN32 )
 namespace wgt
 {
-#if defined( _WIN32 )
-
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
 	static const size_t errorMsgLength = 4096;
@@ -27,10 +26,12 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 	}
 	return hadError;
 }
+} // end namespace wgt
 #endif
 
 #ifdef __APPLE__
-
+namespace wgt
+{
 bool FormatLastErrorMessage(std::string& errorMsg)
 {
 	const char* dlerr = dlerror();
@@ -46,6 +47,7 @@ bool FormatLastErrorMessage(std::string& errorMsg)
 
 	return !errorMsg.empty();
 }
+} // end namespace wgt
 
 void OutputDebugString(const char* s)
 {
@@ -63,4 +65,3 @@ void OutputDebugStringA(const char* s)
 }
 
 #endif // __APPLE__
-} // end namespace wgt

@@ -23,8 +23,6 @@ void AddDllExtension(wchar_t* file)
 #include <assert.h>
 #include <stdlib.h>
 
-namespace wgt
-{
 bool PathIsRelative(const char* path)
 {
 	assert(path);
@@ -112,6 +110,8 @@ bool PathAppend(wchar_t* path, const wchar_t* more)
 	return PathAppendW(path, more);
 }
 
+namespace wgt
+{
 void PathFileName(wchar_t* file, const wchar_t* path)
 {
 	const wchar_t* f = path;

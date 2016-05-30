@@ -5,8 +5,6 @@
 #include <windows.h>
 #endif
 
-namespace wgt
-{
 #ifdef __APPLE__
 
 typedef void* HMODULE;
@@ -28,5 +26,4 @@ HMODULE LoadLibraryA(const char* fileName);
 bool FreeLibrary(HMODULE hModule);
 
 #endif // __APPLE__
-} // end namespace wgt
 #endif // __PLATFORM_DLL_HPP__

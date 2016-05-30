@@ -7,8 +7,6 @@
 #include <codecvt>
 #include <cstring>
 
-namespace wgt
-{
 void* GetProcAddress(void* handle, const char* symbol)
 {
 	return dlsym(handle, symbol);
@@ -57,6 +55,5 @@ bool FreeLibrary(HMODULE hModule)
 {
 	return dlclose(hModule);
 }
-} // end namespace wgt
 
 #endif // __APPLE__

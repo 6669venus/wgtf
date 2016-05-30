@@ -10,6 +10,7 @@
 namespace wgt
 {
 void AddDllExtension(wchar_t* file);
+} // end namespace wgt
 
 #ifdef __APPLE__
 
@@ -33,8 +34,10 @@ bool PathRemoveFileSpec(wchar_t* path);
 bool PathAppend(wchar_t* path, const wchar_t* more);
 bool PathAppendW(wchar_t* path, const wchar_t* more);
 
+namespace wgt
+{
 void PathFileName(wchar_t* file, const wchar_t* path);
+} // end namespace wgt
 
 #endif // __APPLE__
-} // end namespace wgt
 #endif // __PLATFORM_PATH_HPP__

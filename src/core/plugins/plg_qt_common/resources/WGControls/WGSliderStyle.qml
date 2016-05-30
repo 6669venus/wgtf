@@ -40,6 +40,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
+import WGControls 1.0
 
 /*!
     A re-write of the default Slider style.
@@ -64,20 +65,29 @@ Style {
     id: styleitem
 
     /*! The \l Slider this style is attached to. */
-    readonly property QtObject control: __control
+    readonly property WGSlider control: __control
 
     property bool __horizontal: control.__horizontal
 
-    property int vertPadding: 0
-    property int horzPadding: 0
-
-    property real __clampedLength: control.__clampedLength
+    property int vertPadding: __horizontal ? 0 : 1
+    property int horzPadding: !__horizontal ? 0 : 1
 
     padding { top: vertPadding ; left: horzPadding ; right: horzPadding ; bottom: vertPadding }
 
+    /*! This property loads the slider handle style found in WGSliderHande.qml or descendent.
+    */
+    property Component handle:
+
+    Loader {
+        id: handleFrame
+        sourceComponent: control.__handlePosList.children[buttonid].handleStyle
+    }
+    /*! This property holds the background groove of the slider.
+    */
     property Component groove: Item {
 
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: __horizontal ? parent.verticalCenter : undefined
+        anchors.horizontalCenter: !__horizontal ? parent.horizontalCenter : undefined
 
         implicitWidth: Math.round(defaultSpacing.minimumRowHeight / 4)
         implicitHeight: Math.round(defaultSpacing.minimumRowHeight / 4)
@@ -92,7 +102,7 @@ Style {
     /*! This property holds the coloured bar of the slider.
     */
     property Component bar: Item {
-        property color fillColor: control.__handlePosList[barid].barColor
+        property color fillColor: control.__handlePosList.children[barid].barColor
         clip: true
         Rectangle {
             clip: true
@@ -111,12 +121,12 @@ Style {
         id: repeater
         model: control.stepSize > 0 ? 1 + (control.maximumValue - control.minimumValue) / control.stepSize : 0
         WGSeparator {
-            vertical: true
-            width: defaultSpacing.separatorWidth
-            height: defaultSpacing.standardMargin
+            vertical: __horizontal
+            width: __horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
+            height: !__horizontal ? defaultSpacing.separatorWidth : defaultSpacing.standardMargin
 
-            x: control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2)
-            y: defaultSpacing.doubleMargin
+            x: __horizontal ? control.__handleWidth / 2 + index * ((repeater.width - control.__handleWidth) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
+            y: !__horizontal ? control.__handleHeight / 2 + index * ((repeater.height - control.__handleHeight) / (repeater.count-1)) - (defaultSpacing.separatorWidth / 2) : defaultSpacing.doubleMargin
         }
     }
 
@@ -127,70 +137,62 @@ Style {
     property Component panel: Item {
         id: root
 
-        implicitWidth: control.width
-        implicitHeight: control.height
-
-        anchors.centerIn: parent
+        implicitWidth: __horizontal ? parent.width : grooveLoader.implicitWidth
+        implicitHeight: !__horizontal ? parent.height : grooveLoader.implicitHeight
 
         Item {
             objectName: "sliderFrame"
             id: sliderFrame
             anchors.centerIn: parent
-
-            height: __horizontal ? control.height : control.width
-            width: __horizontal ? control.width : control.height
-
-            rotation: __horizontal ? 0 : -90
-            transformOrigin: Item.Center
+            height: control.height
+            width: control.width
 
             Loader {
                 id: grooveLoader
                 sourceComponent: groove
 
-                width: parent.width - padding.left - padding.right
+                width: __horizontal ? parent.width - padding.left - padding.right : groove.implicitWidth
 
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                height: groove.implicitHeight
+                height: !__horizontal ? parent.height - padding.top - padding.bottom : groove.implicitHeight
 
                 x: {
                     if(control.groovePadding)
                     {
-                        padding.left
+                        __horizontal ? padding.left : padding.left + ((__horizontal ? parent.height : parent.width - padding.left - padding.right) - grooveLoader.item.width)/2
                     }
                     else
                     {
-                        0
+                        __horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.width)/2
                     }
                 }
 
                 y: {
                     if(control.groovePadding)
                     {
-                        padding.top + (parent.height - grooveLoader.item.height)/2
+                        !__horizontal ? padding.top : padding.top + ((__horizontal ? parent.height : parent.width - padding.top - padding.bottom) - grooveLoader.item.height)/2
                     }
                     else
                     {
-                        (parent.height - grooveLoader.item.height)/2
+                        !__horizontal ? 0 : ((__horizontal ? parent.height : parent.width) - grooveLoader.item.height)/2
                     }
                 }
 
                 Repeater {
-                model: control.__handleCount
+                model: control.__handlePosList.children
                     Loader {
                         id: barLoader
                         sourceComponent: bar
                         property int barid: index
-                        visible: control.__handlePosList[index].showBar
+                        visible: control.__handlePosList.children[index].showBar
 
-                        anchors.verticalCenter: grooveLoader.verticalCenter
+                        anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
+                        anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
-                        property int barClampPadding: control.handleClamp ? control.__visualMinPos : 0
+                        height: __horizontal ? grooveLoader.height : control.height - control.__handlePosList.children[index].barMinPos - padding.top - padding.bottom
+                        width: !__horizontal ? grooveLoader.width : control.__handlePosList.children[index].range.position - control.__handlePosList.children[index].barMinPos - padding.left - padding.right
 
-                        height: grooveLoader.height
-                        width: Math.round((((control.__handlePosList[index].value - control.minimumValue) / (control.maximumValue - control.minimumValue)) * __clampedLength) + control.__visualMinPos - control.__handlePosList[index].barMinPos)
-
-                        x: control.__handlePosList[index].barMinPos
+                        y: !__horizontal ? control.__handlePosList.children[index].barMinPos : 0
+                        x: __horizontal ? control.__handlePosList.children[index].barMinPos : 0
                         z: 1
                     }
                 }
@@ -205,31 +207,52 @@ Style {
             }
 
             Repeater {
-                model: control.__handleCount
-
+            model: control.__handlePosList.children
                 Loader {
                     id: handleLoader
+                    sourceComponent: handle
+                    property int buttonid: index
 
-                    property int handleIndex: index
+                    anchors.verticalCenter: __horizontal ? grooveLoader.verticalCenter : undefined
 
-                    property int handleOffset: control.__handlePosList[index].handleOffset
+                    anchors.horizontalCenter: !__horizontal ? grooveLoader.horizontalCenter : undefined
 
-                    sourceComponent: control.__handlePosList[index].handleStyle
+                    height: handleLoader.implicitHeight
 
-                    anchors.verticalCenter: grooveLoader.verticalCenter
+                    width: handleLoader.implicitWidth
 
-                    x: Math.round((((control.__handlePosList[index].value - control.minimumValue) / (control.maximumValue - control.minimumValue)) * __clampedLength) + control.__visualMinPos + handleOffset)
-
-                    onLoaded: {
-                        control.__handleHeight = handleLoader.implicitHeight
-                        control.__handleWidth = handleLoader.implicitWidth
+                    Behavior on height{
+                        enabled: __horizontal
+                        NumberAnimation {
+                            duration: 120
+                            easing {
+                                type: Easing.OutCirc
+                                amplitude: 1.0
+                                period: 0.5
+                            }
+                        }
                     }
 
-                    Connections {
-                        target: control.__handlePosList[index]
-                        onValueChanged: {
-                            control.changeValue(control.__handlePosList[index].value, index)
+                    Behavior on width{
+                        enabled: !__horizontal
+                        NumberAnimation {
+                            duration: 120
+                            easing {
+                                type: Easing.OutCirc
+                                amplitude: 1.0
+                                period: 0.5
+                            }
                         }
+                    }
+
+                    x: __horizontal ? Math.round(control.__handlePosList.children[index].range.position - control.__handleWidth / 2) : 0
+                    y: !__horizontal ? Math.round(control.__handlePosList.children[index].range.position - control.__handleHeight / 2) : 0
+
+                    onLoaded: {
+                        control.__handlePosList.children[index].handleIndex = index
+
+                        control.__handleHeight = handleLoader.implicitHeight
+                        control.__handleWidth = handleLoader.implicitWidth
                     }
 
                     MouseArea {
@@ -239,50 +262,34 @@ Style {
 
                         propagateComposedEvents: true
 
-                        cursorShape: control.__currentCursor
-
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-
                         onEntered: {
-                            control.hoveredHandle = index
+                            control.__hoveredHandle = handleIndex
                         }
 
                         onExited: {
-                            if (control.hoveredHandle == index)
+                            if (control.__hoveredHandle == handleIndex)
                             {
-                               control.hoveredHandle = -1
+                               control.__hoveredHandle = -1
                             }
                         }
 
                         onPressed: {
-                            control.__activeHandle = index
+                            control.__activeHandle = handleIndex
                             control.forceActiveFocus()
 
                             if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ControlModifier))
                             {
                                 control.__draggable = false
+                                control.handleCtrlClicked(handleIndex)
                             }
-                            else if ((mouse.button == Qt.LeftButton) && (mouse.modifiers & Qt.ShiftModifier))
-                            {
-                                control.__draggable = false
-                            }
-                            else
-                            {
-                                if (!control.grooveClickable)
-                                {
-                                    control.__draggable = true
-                                }
-                            }
-                            control.handleClicked(index, mouse.button, mouse.modifiers)
-                            if (mouse.button == Qt.LeftButton)
-                            {
-                                mouse.accepted = false
-                            }
+
+                            mouse.accepted = false
                         }
 
                         onReleased: {
-                            control.__draggable = control.grooveClickable
+                            control.__draggable = true
                         }
+
                     }
                 }
             }

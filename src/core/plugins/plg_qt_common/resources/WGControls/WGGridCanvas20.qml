@@ -26,6 +26,20 @@ Canvas {
     readonly property int xGrid: 1
     readonly property int yGrid: 2
 
+    /*! Determines what axis of the grid will be scale limited
+        The default value is \c noScaleLimit*/
+    property int useAxisScaleLimit: noScaleLimit
+
+    // fake enums for useAxisScaleLimit
+    readonly property int xyScaleLimit: 0
+    readonly property int xScaleLimit: 1
+    readonly property int yScaleLimit: 2
+    readonly property int noScaleLimit: 3
+
+    /*! This property determines whether will be keep aspect ratio after scale
+        The default value is \c false*/
+    property bool keepAspectRatio: false
+
     /*! This property determines if the X grid lines will be drawn
     */
     property bool showXGridLines: true
@@ -64,6 +78,27 @@ Canvas {
         The default value is \c 1
     */
     property real valueScale: 1;
+
+    /*! This property defines the minimum x scale of the graph
+        The default value is \c 0.1 = 10%
+    */
+    property real minXScaleFactor: 0.1
+
+    /*! This property defines the minimum y scale of the graph
+        The default value is \c 0.1 = 10%
+    */
+    property real minYScaleFactor: -0.1
+
+    /*! This property defines the maximum x scale of the graph
+        The default value is \c 2 = 200%
+    */
+    property real maxXScaleFactor: 2
+
+    /*! This property defines the maximum y scale of the graph
+        The default value is \c 2 = 200%
+    */
+    property real maxYScaleFactor: -2
+
     property var mouseDragStart;
 
     property int canvasWidth: Math.abs(viewTransform.transformX(0) - viewTransform.transformX(1))
@@ -77,6 +112,22 @@ Canvas {
 
     property var viewTransform: WGViewTransform{
         container: gridCanvas
+
+        Component.onCompleted:
+        {
+            if (useAxisScaleLimit != noScaleLimit)
+            {
+                if (useAxisScaleLimit == xScaleLimit || useAxisScaleLimit == xyScaleLimit)
+                {
+                    xScale = (xScale < minXScaleFactor) ? minXScaleFactor : (xScale > maxXScaleFactor) ? maxXScaleFactor : xScale;
+                }
+
+                if (useAxisScaleLimit == yScaleLimit || useAxisScaleLimit == xyScaleLimit)
+                {
+                    yScale = (yScale > minYScaleFactor) ? minYScaleFactor : (yScale < maxYScaleFactor) ? maxYScaleFactor : yScale;
+                }
+            }
+        }
     }
 
     WGSelectionArea
@@ -338,26 +389,56 @@ Canvas {
         anchors.fill: parent;
         acceptedButtons: Qt.AllButtons
         onWheel: {
-            var delta = 1 + wheel.angleDelta.y/120.0 * .1;
+            var delta = (Qt.AltModifier & wheel.modifiers) ? 1 + wheel.angleDelta.x/120.0 * .1
+                                                           : 1 + wheel.angleDelta.y/120.0 * .1;
             var screenPos = Qt.point(wheel.x, wheel.y)
             var oldPos = gridCanvas.viewTransform.inverseTransform(screenPos);
 
+            var checkScaleLimit = function(useAxis, delta)
+            {
+                switch(useAxis)
+                {
+                case xyGrid:
+                    return checkScaleLimit(xGrid, delta) && checkScaleLimit(yGrid, delta);
+                case xGrid:
+                    var xScaleResult = gridCanvas.viewTransform.xScale * delta;
+                    if (useAxisScaleLimit == xScaleLimit || useAxisScaleLimit == xyScaleLimit)
+                    {
+                        return (xScaleResult > minXScaleFactor) && (xScaleResult < maxXScaleFactor);
+                    }
+                    break;
+                case yGrid:
+                    var yScaleResult = gridCanvas.viewTransform.yScale * delta;
+                    if (useAxisScaleLimit == yScaleLimit || useAxisScaleLimit == xyScaleLimit)
+                    {
+                        return (yScaleResult < minYScaleFactor) && (yScaleResult > maxYScaleFactor);
+                    }
+                    break;
+                }
+
+                return true;
+            }
+
             if (useAxis == 0) { //XY axis
-                if(Qt.AltModifier & wheel.modifiers) {
-                    delta = 1 + wheel.angleDelta.x/120.0 * .1;
+                if(Qt.AltModifier & wheel.modifiers && !keepAspectRatio) {
+                    if (!checkScaleLimit(xGrid, delta)) return;
                     gridCanvas.viewTransform.xScale *= delta;
-                } else if(Qt.ShiftModifier & wheel.modifiers) {
+                } else if(Qt.ShiftModifier & wheel.modifiers && !keepAspectRatio) {
+                    if (!checkScaleLimit(yGrid, delta)) return;
                     gridCanvas.viewTransform.yScale *= delta;
-                } else {
+                } else {                    
                     // Zoom into the current mouse location
+                    if (!checkScaleLimit(xyGrid, delta)) return;
                     gridCanvas.viewTransform.xScale *= delta;
                     gridCanvas.viewTransform.yScale *= delta;
                 }
             }
             else if (useAxis == 1){
+                if (!checkScaleLimit(useAxis, delta)) return;
                 gridCanvas.viewTransform.xScale *= delta;
             }
             else if (useAxis == 2) {
+                if (!checkScaleLimit(useAxis, delta)) return;
                 gridCanvas.viewTransform.yScale *= delta;
             }
             var newScreenPos = gridCanvas.viewTransform.transform(Qt.point(oldPos.x, oldPos.y));

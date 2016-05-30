@@ -30,3 +30,5 @@ plugins/plg_custom_panel
 plugins/plg_demo_test
 plugins/plg_curve_editor
 plugins/plg_curve_editor_test
+plugins/plg_node_editor
+plugins/plg_node_editor_test

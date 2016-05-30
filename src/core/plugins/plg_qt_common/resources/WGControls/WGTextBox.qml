@@ -24,9 +24,9 @@ TextField {
     property string label: ""
 
     /*! This property determines if the context menu for this control contains the "Find In AssetBrowser" option
-        The default value is \c true
+        The default value is \c false
     */
-    property bool assetBrowserContextMenu : true
+    property bool assetBrowserContextMenu : false
 
     /*! This alias holds the width of the text entered into the textbox.
       */

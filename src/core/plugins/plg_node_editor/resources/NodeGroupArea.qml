@@ -134,8 +134,8 @@ Item
                 graphView.resetNodesSelection();
                 graphView.selectNode(groupItem);
 
-                // select all nodes inside the group box. Currently not working properly
-                canvasContainer.selectArea(globalMinPosition, globalMaxPosition, mouse)
+                canvasContainer.selectArea(canvasContainer.mapFromItem(canvasItem, groupItem.x, groupItem.y),
+                                           canvasContainer.mapFromItem(canvasItem, groupItem.x + groupItem.width, groupItem.y + groupItem.height), mouse.modifiers & Qt.ShiftModifier)
                 return;
             }
 
@@ -143,11 +143,13 @@ Item
             {
                 graphView.unselectNode(groupItem);
             }
+
             else
             {
                 graphView.selectNode(groupItem);
                 // select all nodes inside the group box. Currently not working properly
-                canvasContainer.selectArea(globalMinPosition, globalMaxPosition, mouse)
+                canvasContainer.selectArea(canvasContainer.mapFromItem(canvasItem, groupItem.x, groupItem.y),
+                                           canvasContainer.mapFromItem(canvasItem, groupItem.x + groupItem.width, groupItem.y + groupItem.height), mouse.modifiers & Qt.ShiftModifier)
             }
 
         }

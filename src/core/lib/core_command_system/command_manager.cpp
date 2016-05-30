@@ -588,48 +588,50 @@ bool CommandManagerImpl::canRedo() const
 void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & functor)
 {
     flush();
-    std::unique_lock<std::mutex> lock( workerMutex_ );
     unbindHistoryCallbacks();
 	unbindIndexCallbacks();
 
-
-    int currentIndexValue = currentIndex_.value();
-    int commandIndex = 0;
-
-	int prevSelecetedIndexValue = historyState_->previousSelectedIndex_;
-	int prevSelecetedIndex = 0;
-
-	pCommandManager_->signalPreCommandIndexChanged( currentIndexValue );
-	pCommandManager_->signalHistoryPreReset( historyState_->history_ );
-
-    VariantList::Iterator iter = historyState_->history_.begin();
-    while(iter != historyState_->history_.end())
+    int currentIndexValue = 0;
     {
-        if (functor((*iter).value<CommandInstancePtr>()))
+        std::unique_lock<std::mutex> lock(workerMutex_);
+        currentIndexValue = currentIndex_.value();
+        int commandIndex = 0;
+
+        int prevSelecetedIndexValue = historyState_->previousSelectedIndex_;
+        int prevSelecetedIndex = 0;
+
+        pCommandManager_->signalPreCommandIndexChanged(currentIndexValue);
+        pCommandManager_->signalHistoryPreReset(historyState_->history_);
+
+        VariantList::Iterator iter = historyState_->history_.begin();
+        while (iter != historyState_->history_.end())
         {
-            iter = historyState_->history_.erase(iter);
-            if (commandIndex < currentIndexValue)
+            if (functor((*iter).value<CommandInstancePtr>()))
             {
-                currentIndexValue = std::max(currentIndexValue - 1, -1);
+                iter = historyState_->history_.erase(iter);
+                if (commandIndex < currentIndexValue)
+                {
+                    currentIndexValue = std::max(currentIndexValue - 1, -1);
+                }
+
+                if (prevSelecetedIndex < prevSelecetedIndexValue)
+                {
+                    prevSelecetedIndexValue = std::max(prevSelecetedIndexValue - 1, -1);
+                }
             }
+            else
+            {
+                ++iter;
+                ++commandIndex;
+                ++prevSelecetedIndex;
+            }
+        }
 
-			if (prevSelecetedIndex < prevSelecetedIndexValue)
-			{
-				prevSelecetedIndexValue = std::max( prevSelecetedIndexValue - 1, -1 );
-			}
-        }
-        else
-        {
-            ++iter;
-            ++commandIndex;
-			++prevSelecetedIndex;
-        }
+
+        historyState_->previousSelectedIndex_ = prevSelecetedIndexValue;
+        currentIndex_.variantValue(currentIndexValue);
+        historyState_->index_ = currentIndexValue;
     }
-
-
-	historyState_->previousSelectedIndex_ = prevSelecetedIndexValue;
-	currentIndex_.variantValue( currentIndexValue );
-	historyState_->index_ = currentIndexValue;
 
 	pCommandManager_->signalHistoryPostReset( historyState_->history_ );
 	pCommandManager_->signalPostCommandIndexChanged( currentIndexValue );

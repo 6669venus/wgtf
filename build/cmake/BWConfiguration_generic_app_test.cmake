@@ -13,5 +13,3 @@ SET( BW_BUNDLE_NAME generic_app )
 
 INCLUDE( projects/core/WGToolsCore )
 INCLUDE( projects/core/WGToolsCoreTests )
-
-BW_GENERATE_DOC( WGToolsCore ${WG_TOOLS_SOURCE_DIR}/../doc/core/Doxyfile.in ${WG_TOOLS_SOURCE_DIR}/../doc/core )

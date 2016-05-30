@@ -19,6 +19,7 @@ public:
 	ReflectedGroupItemNew( IComponentContext & contextManager,
 		const MetaGroupObj * groupObj,
 		ReflectedTreeItemNew * parent,
+		size_t index,
 		const std::string & inPlacePath );
 	virtual ~ReflectedGroupItemNew();
 

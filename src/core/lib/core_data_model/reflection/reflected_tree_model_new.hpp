@@ -43,6 +43,7 @@ public:
 	 */
 	virtual int rowCount( const AbstractItem * item ) const override;
 	virtual int columnCount() const override;
+	virtual bool hasChildren( const AbstractItem * item ) const override;
 
 	virtual Connection connectPreItemDataChanged(
 		AbstractTreeModel::DataCallback callback ) override;

@@ -190,6 +190,12 @@ int QtAbstractItemModel::columnCount( QObject * parent ) const
 	return columnCount( parentIndex );
 }
 
+bool QtAbstractItemModel::hasChildren( QObject * parent ) const
+{
+	auto parentIndex = itemToIndex( parent );
+	return hasChildren( parentIndex );
+}
+
 bool QtAbstractItemModel::insertRow( int row, QObject * parent )
 {
 	auto parentIndex = itemToIndex( parent );
@@ -212,5 +218,10 @@ bool QtAbstractItemModel::removeColumn( int column, QObject * parent )
 {
 	auto parentIndex = itemToIndex( parent );
 	return QAbstractItemModel::removeColumn( column, parentIndex );
+}
+
+bool QtAbstractItemModel::hasChildren(const QModelIndex &parent) const
+{
+	return QAbstractItemModel::hasChildren( parent );
 }
 } // end namespace wgt

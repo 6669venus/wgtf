@@ -31,6 +31,7 @@ public:
 
 	Q_INVOKABLE int rowCount( QObject * parent ) const;
 	Q_INVOKABLE int columnCount( QObject * parent ) const;
+	Q_INVOKABLE bool hasChildren( QObject * parent ) const;
 
 	Q_INVOKABLE bool insertRow( int row, QObject * parent );
 	Q_INVOKABLE bool insertColumn( int column, QObject * parent );
@@ -42,6 +43,7 @@ public:
 
 	virtual int rowCount(const QModelIndex &parent = QModelIndex()) const = 0;
 	virtual int columnCount(const QModelIndex &parent = QModelIndex()) const = 0;
+	virtual bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
 
 private:
 	struct Impl;

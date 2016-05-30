@@ -29,9 +29,11 @@ public:
 		const ReflectedTreeModelNew & model );
 	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
+		size_t index,
 		const char * path );
 	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
+		size_t index,
 		const std::string & path );
 	virtual ~ReflectedTreeItemNew();
 
@@ -64,10 +66,13 @@ public:
 	const ReflectedTreeModelNew * getModel() const;
 	const ReflectedTreeItemNew * getParent() const;
 	ReflectedTreeItemNew * getParent();
+	size_t getIndex() const;
+	void setIndex( size_t index );
 
 protected:
 	ReflectedTreeItemNew * parent_;
 	std::string path_;
+	size_t index_;
 	DIRef< IReflectionController > controller_;
 	DIRef< IDefinitionManager > definitionManager_;
 

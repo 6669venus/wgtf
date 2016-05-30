@@ -66,6 +66,7 @@ public:
 
 	virtual int rowCount( const AbstractItem * item ) const = 0;
 	virtual int columnCount( const AbstractItem * item ) const = 0;
+	virtual bool hasChildren( const AbstractItem * item ) const { return rowCount( item ) > 0; }
 
 	virtual Connection connectPreItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPostItemDataChanged( DataCallback callback ) { return Connection(); }

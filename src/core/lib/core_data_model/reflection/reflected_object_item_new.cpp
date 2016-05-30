@@ -84,6 +84,7 @@ ReflectedObjectItemNew::Implementation::getGroups(
 				contextManager_,
 				groupObj,
 				&parent,
+				children_.size(),
 				inPlacePath ) );
 		}
 		return true;
@@ -103,9 +104,11 @@ ReflectedObjectItemNew::ReflectedObjectItemNew( IComponentContext & contextManag
 
 ReflectedObjectItemNew::ReflectedObjectItemNew( IComponentContext & contextManager,
 	const ObjectHandle & object,
-	ReflectedTreeItemNew * parent )
+	ReflectedTreeItemNew * parent,
+	size_t index )
 	: ReflectedTreeItemNew( contextManager,
 		parent,
+		index,
 		parent ? parent->getPath() + "." : "" )
 	, impl_( new Implementation( contextManager, object ) )
 {
@@ -449,6 +452,7 @@ void ReflectedObjectItemNew::enumerateChildren(
 					impl_->contextManager_,
 					property,
 					parent,
+					impl_->children_.size(),
 					inPlacePath ) );
 				return callback( *impl_->children_.back().get() );
 			}

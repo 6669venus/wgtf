@@ -133,8 +133,8 @@ void QtScriptingEngine::Implementation::initialise( IQtFramework& qtFramework, I
 	qtTypeConverters_.emplace_back( new GenericQtTypeConverter< ObjectHandle >() );
 	qtTypeConverters_.emplace_back( new ImageQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new ModelQtTypeConverter() );
-	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new QObjectQtTypeConverter() );
+	qtTypeConverters_.emplace_back( new CollectionQtTypeConverter() );
 	qtTypeConverters_.emplace_back( new ScriptQtTypeConverter( self_ ) );
 
 	QMetaType::registerComparators<ObjectHandle>();

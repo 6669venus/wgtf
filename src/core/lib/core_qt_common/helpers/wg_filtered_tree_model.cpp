@@ -72,7 +72,7 @@ WGFilteredTreeModel::~WGFilteredTreeModel()
 	impl_->connections_.reset();
 	
 	// Temporary hack to circumvent threading deadlock
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
+	// JIRA: NGT-227
 	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 

@@ -1,5 +1,6 @@
 build_*/
 out/
+doc/
 *.pyc
 *.bak
 *.autosave

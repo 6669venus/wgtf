@@ -56,10 +56,12 @@ TextField {
     onActiveFocusChanged: {
         if (activeFocus)
         {
+            selectAll()
             setValueHelper( textBox, "oldText", text );
         }
         else
         {
+            deselect()
             if (acceptableInput && (text !== oldText))
             {
                 editAccepted();

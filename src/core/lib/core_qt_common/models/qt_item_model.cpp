@@ -218,6 +218,14 @@ int QtItemModel::columnCount( const QModelIndex &parent ) const
 	return impl_->source_.columnCount( parentItem );
 }
 
+bool QtItemModel::hasChildren( const QModelIndex &parent ) const
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr;
+
+	return impl_->source_.hasChildren( parentItem );
+}
+
 QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 {
 	auto item = index.isValid() ?

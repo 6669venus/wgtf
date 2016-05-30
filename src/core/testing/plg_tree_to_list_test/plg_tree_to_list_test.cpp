@@ -12,13 +12,20 @@
 #include "core_variant/variant.hpp"
 #include "test_tree_model.hpp"
 
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
+#include "core_dependency_system/depends.hpp"
+
 //==============================================================================
 class TreeToListTest
 	: public PluginMain
+	, public Depends< wgt::IViewCreator >
 {
 public:
 	//==========================================================================
-	TreeToListTest( IComponentContext & contextManager ){}
+	TreeToListTest( IComponentContext & contextManager )
+		: Depends( contextManager )
+	{
+	}
 
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager )
@@ -39,17 +46,14 @@ public:
 
 		// Create the view and present it
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
-		testView_ = uiFramework->createView(
-			"plg_tree_to_list_test/test_tree_to_list_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( model ) );
 
-		if (testView_ != nullptr)
+		auto viewCreator = get< wgt::IViewCreator >();
+		if (viewCreator)
 		{
-			uiApplication->addView( *testView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
+			viewCreator->createView(
+				"plg_tree_to_list_test/test_tree_to_list_panel.qml",
+				std::move(model),
+				testView_);
 		}
 	}
 

@@ -25,7 +25,7 @@ ObjectHandles store reflection data at runtime and are flexible enough to store
 most types, including references, pointers and structures.
 Use an ObjectHandle when a model or property needs to be exposed to QML.
 Also use when working with reflection containers or reflected objects.
-Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
+Details: Search for NGT Reflection System on the Wargaming Confluence
 */
 
 #include "object_handle_storage.hpp"
@@ -308,6 +308,10 @@ ObjectHandleT< T > safeCast( const ObjectHandle & other )
 	if (other.type() == TypeId::getType< T >())
 	{
 		return reinterpretCast< T >( other );
+	}
+	if (other == nullptr)
+	{
+		return ObjectHandleT< T >();
 	}
 	assert( false );
 	return ObjectHandleT< T >();

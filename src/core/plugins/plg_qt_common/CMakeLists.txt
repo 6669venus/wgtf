@@ -12,6 +12,8 @@ SET( ALL_SRCS
 	qt_framework.hpp
 	qt_preferences.cpp
 	qt_preferences.hpp
+	private/ui_view_creator.hpp
+	private/ui_view_creator.cpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 

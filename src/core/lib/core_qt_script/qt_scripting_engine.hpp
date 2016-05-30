@@ -6,7 +6,7 @@ The QtScriptingEngine manages QtScriptObjects to allow C++ classes
 to be used in QML.
 This is used internally by the QtUIFramework to create
 context objects and properties.
-Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
+Details: Search for NGT Reflection System on the Wargaming Confluence
 */
 
 #include "core_reflection/utilities/reflection_utilities.hpp"
@@ -42,8 +42,9 @@ public:
 
 	void finalise();
 
-	QtScriptObject * createScriptObject( const ObjectHandle & object );
+	QtScriptObject * createScriptObject( const ObjectHandle & object, QObject* parent );
 	void deregisterScriptObject( QtScriptObject & scriptObject );
+	void swapParent( QtScriptObject & scriptObject, QObject * parent );
 
 protected:
 	// TODO: These invokables need to be refactored into different modules to

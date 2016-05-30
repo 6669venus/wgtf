@@ -3,19 +3,25 @@
 
 #include "core_reflection/object_handle.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
+
 #include "interfaces/panel_manager/i_panel_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
+#include "core_dependency_system/depends.hpp"
 
-class PanelManager : public Implements<IPanelManager>
+class PanelManager
+	: public Implements<IPanelManager>
+	, public Depends< wgt::IViewCreator >
 {
 public:
 
 	PanelManager( IComponentContext & contextManager );
 	virtual ~PanelManager();
 
-	virtual std::unique_ptr< IView > createAssetBrowser(
+	void createAssetBrowser(
 		ObjectHandleT<IAssetBrowserModel> dataModel,
-		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr);
+		std::unique_ptr< IView > & o_AssetBrowser,
+		std::unique_ptr<IAssetBrowserEventModel> eventModel = nullptr ) override;
 
 private:
 	IComponentContext& contextManager_;

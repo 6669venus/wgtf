@@ -5,7 +5,7 @@
 #include "core_common/signal.hpp"
 class IItem;
 
-// TODO: http://jira.bigworldtech.com/browse/NGT-849
+// TODO: NGT-849
 // Eventually, we need to remove this class
 
 class ISelectionHandler

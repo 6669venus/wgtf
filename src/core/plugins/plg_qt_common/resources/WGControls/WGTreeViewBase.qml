@@ -33,8 +33,8 @@ ListView {
     onItemClicked: __onItemClicked(mouse, itemIndex, rowIndex)
     onItemDoubleClicked: __onItemDoubleClicked(mouse, itemIndex, rowIndex)
 
-    header: view.header
-    footer: view.footer
+    header: depth == 0 ? view.header : null
+    footer: depth == 0 ? view.footer : null
 
     delegate: Item {
         height: childrenRect.height

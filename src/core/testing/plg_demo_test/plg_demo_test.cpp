@@ -1,4 +1,6 @@
 #include "core_dependency_system/i_interface.hpp"
+#include "core_dependency_system/depends.hpp"
+
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_logging/logging.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
@@ -7,6 +9,7 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_action.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 
 #include "core_data_model/i_list_model.hpp"
 #include "core_data_model/reflection/reflected_tree_model.hpp"
@@ -18,6 +21,8 @@
 #include "core_reflection/reflected_method_parameters.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+
 #include "tinyxml2.hpp"
 
 #include "wg_types/vector2.hpp"
@@ -25,6 +30,7 @@
 #include "wg_types/vector4.hpp"
 
 #include "demo_objects.mpp"
+#include "metadata/demo_objects_fix_mixin.mpp"
 
 #include <stdio.h>
 #include "core_command_system/i_env_system.hpp"
@@ -46,15 +52,17 @@ namespace
 }
 
 class DemoDoc: public IViewEventListener
+	, public Depends< wgt::IViewCreator >
 {
 public:
-	DemoDoc( const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
+	DemoDoc( IComponentContext & context, const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
 		IUIApplication* uiApplication, ObjectHandle demo );
 	~DemoDoc();
 
 	// IViewEventListener
 	virtual void onFocusIn( IView* view ) override;
 	virtual void onFocusOut( IView* view ) override;
+	void onLoaded(IView* view) override {}
 
 private:
 	IEnvManager* envManager_;
@@ -63,25 +71,27 @@ private:
 	int envId_;
 };
 
-DemoDoc::DemoDoc(const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
+DemoDoc::DemoDoc(
+	IComponentContext & context,
+	const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
 								IUIApplication* uiApplication, ObjectHandle demo)
-	: envManager_( envManager )
+	: Depends( context )
+	, envManager_( envManager )
 	, uiApplication_(uiApplication)
 {
 	envId_ = envManager_->addEnv( name );
-    envManager_->loadEnvState( envId_ );
 	envManager_->selectEnv( envId_ );
 
-	centralView_ = uiFramework->createView( "plg_demo_test/demo.qml", IUIFramework::ResourceType::Url, demo );
-	
-	if (centralView_ != nullptr)
+	auto viewCreator = get< wgt::IViewCreator >();
+	if (viewCreator)
 	{
-        centralView_->registerListener( this );
-		uiApplication->addView( *centralView_ );
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Failed to load qml\n" );
+		viewCreator->createView(
+			"plg_demo_test/demo.qml", demo,
+			[ this ]( std::unique_ptr< IView > & view )
+		{
+			centralView_ = std::move( view );
+			centralView_->registerListener( this );
+		});
 	}
 }
 
@@ -92,16 +102,12 @@ DemoDoc::~DemoDoc()
 		uiApplication_->removeView( *centralView_ );
 		centralView_->deregisterListener( this );
 	}
-    envManager_->saveEnvState( envId_ );
+
 	envManager_->removeEnv( envId_ );
 }
 
 void DemoDoc::onFocusIn(IView* view)
 {
-    if(view != centralView_.get())
-    {
-        return;
-    }
 	envManager_->selectEnv( envId_ );
 }
 
@@ -112,6 +118,7 @@ void DemoDoc::onFocusOut(IView* view)
 //==============================================================================
 class DemoTestPlugin
 	: public PluginMain
+	, public Depends< wgt::IViewCreator >
 {
 private:
 	
@@ -129,6 +136,7 @@ private:
 public:
 	//==========================================================================
 	DemoTestPlugin(IComponentContext & contextManager )
+		: Depends( contextManager )
 	{
 	}
 
@@ -151,8 +159,8 @@ public:
 
 		controller_ = contextManager.queryInterface< IReflectionController >();
 
-		demoModel_ = defManager_->create<DemoObjects>();
-		demoModel_.getBase< DemoObjects >()->init( contextManager );
+		demoModel_ = defManager_->create<DemoObjectsFixMixIn>();
+		demoModel_.getBase< DemoObjectsFixMixIn >()->init( contextManager );
 
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
@@ -162,48 +170,24 @@ public:
 			return;
 		}
 
-		demoDoc_.reset( new DemoDoc("sceneModel0", envManager, uiFramework, uiApplication, demoModel_) );
-		demoDoc2_.reset( new DemoDoc("sceneModel1", envManager, uiFramework, uiApplication, demoModel_) );
+		demoDoc_.reset( new DemoDoc( contextManager, "sceneModel0", envManager, uiFramework, uiApplication, demoModel_) );
+		demoDoc2_.reset( new DemoDoc( contextManager, "sceneModel1", envManager, uiFramework, uiApplication, demoModel_) );
 
-		propertyView_ = uiFramework->createView( 
-			"plg_demo_test/demo_property_panel.qml", 
-			IUIFramework::ResourceType::Url, demoModel_ );
-
-		if (propertyView_ != nullptr)
+		auto viewCreator = get< wgt::IViewCreator >();
+		if (viewCreator)
 		{
-			uiApplication->addView( *propertyView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
+			viewCreator->createView(
+				"plg_demo_test/demo_property_panel.qml",
+				demoModel_, propertyView_ );
 
-		sceneBrowser_ = uiFramework->createView( 
-			"plg_demo_test/demo_list_panel.qml", 
-			IUIFramework::ResourceType::Url, demoModel_ );
+			viewCreator->createView(
+				"plg_demo_test/demo_list_panel.qml",
+				demoModel_, sceneBrowser_);
 
-		if (sceneBrowser_ != nullptr)
-		{
-			uiApplication->addView( *sceneBrowser_ );
+			viewCreator->createView(
+				"plg_demo_test/Framebuffer.qml",
+				demoModel_, viewport_);
 		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
-
-		viewport_ = uiFramework->createView(
-			"plg_demo_test/Framebuffer.qml",
-			IUIFramework::ResourceType::Url, demoModel_ );
-
-		if (viewport_ != nullptr)
-		{
-			uiApplication->addView( *viewport_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
-
 		createAction_ = uiFramework->createAction(
 			"New Object", 
 			[&] (const IAction * action) { createObject(); },
@@ -238,7 +222,7 @@ public:
 		viewport_ = nullptr;
 		demoDoc_ = nullptr;
 		demoDoc2_ = nullptr;
-		demoModel_.getBase< DemoObjects >()->fini();
+		demoModel_.getBase< DemoObjectsFixMixIn >()->fini();
 		demoModel_ = nullptr;
 		return true;
 	}
@@ -251,12 +235,13 @@ public:
 	void initReflectedTypes( IDefinitionManager & definitionManager )
 	{
 		REGISTER_DEFINITION( DemoObjects )
+		REGISTER_DEFINITION( DemoObjectsFixMixIn )
 	}
 
 private:
 	void createObject()
 	{
-		IClassDefinition* def = defManager_->getDefinition<DemoObjects>();
+		IClassDefinition* def = defManager_->getDefinition<DemoObjectsFixMixIn>();
 		PropertyAccessor pa = def->bindProperty( "New Object", demoModel_ );
 		assert( pa.isValid() );
 		ReflectedMethodParameters parameters;

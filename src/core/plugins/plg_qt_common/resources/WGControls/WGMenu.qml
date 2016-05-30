@@ -72,6 +72,10 @@ WGContextMenu {
             var qmlString = "import QtQuick 2.3; import QtQuick.Controls 1.2; import WGControls 1.0; ";
             qmlString += "WGAction { actionId: \"" + actionPath + "\"; }";
             var action = Qt.createQmlObject( qmlString, menu );
+			actions.checkable = Qt.binding( function() { return object.checkable; } );
+			actions.checked = Qt.binding( function() { return object.checked; } );
+			actions.enabled = Qt.binding( function() { return object.enabled; } );
+			actions.visible = Qt.binding( function() { return object.visible; } );
             action.triggered.connect(object.trigger);
             actions[actionPath] = action;
             return;

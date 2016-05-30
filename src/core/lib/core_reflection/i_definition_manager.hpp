@@ -36,7 +36,7 @@ public:
 	 */
 	virtual IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const = 0;
 
-	virtual IClassDefinitionDetails * createGenericDefinition( const char * name ) const = 0;
+	virtual std::unique_ptr<IClassDefinitionDetails> createGenericDefinition( const char * name ) const = 0;
 
 	virtual void getDefinitionsOfType( const IClassDefinition * definition,
 		std::vector< IClassDefinition * > & o_Definitions ) const = 0;
@@ -46,7 +46,7 @@ public:
 
 	virtual IObjectManager * getObjectManager() const = 0;
 
-	virtual IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) = 0;
+	virtual IClassDefinition * registerDefinition( std::unique_ptr<IClassDefinitionDetails> definition ) = 0;
 	virtual bool deregisterDefinition( const IClassDefinition * definition ) = 0;
 
 	virtual void registerDefinitionHelper( const IDefinitionHelper & helper ) = 0;
@@ -79,6 +79,12 @@ public:
 		}
 		auto object = managed ? definition->createManagedObject() : definition->create();
 		return safeCast< T >( object );
+	}
+
+	template< class TDefinition >
+	IClassDefinition* registerDefinition()
+	{
+		return registerDefinition( std::unique_ptr<IClassDefinitionDetails>( new TDefinition() ) );
 	}
 };
 

@@ -38,7 +38,7 @@ public:
             componentContext.queryInterface< IMetaTypeManager >() );
  
 		auto defManager = componentContext.queryInterface< IDefinitionManager >();
-		defManager->registerDefinition( new TypeClassDefinition< ColorPickerContext >() );
+		defManager->registerDefinition<TypeClassDefinition< ColorPickerContext >>();
 
         // Create the panel
         colorPicker_.reset( new ColorPicker( componentContext ) );

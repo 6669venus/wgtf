@@ -80,12 +80,12 @@ IClassDefinition * ContextDefinitionManager::getObjectDefinition( const ObjectHa
 
 
 //==============================================================================
-IClassDefinition * ContextDefinitionManager::registerDefinition( IClassDefinitionDetails * defDetails )
+IClassDefinition * ContextDefinitionManager::registerDefinition( std::unique_ptr<IClassDefinitionDetails> defDetails )
 {
 	assert( defDetails );
 	assert( pBaseManager_ );
 	IClassDefinitionModifier * modifier = nullptr;
-	auto definition = pBaseManager_->registerDefinition( defDetails );
+	auto definition = pBaseManager_->registerDefinition( std::move(defDetails) );
 	if (definition)
 	{
 		definition->setDefinitionManager( this );
@@ -256,9 +256,8 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 		IClassDefinitionModifier * modifier = nullptr;
 		if ( !pDef )
 		{
-			auto genericDefinition = createGenericDefinition( defName.c_str() );
-			registerDefinition( genericDefinition );
-			modifier = genericDefinition->getDefinitionModifier();
+			auto definition = registerDefinition( createGenericDefinition( defName.c_str() ) );
+			modifier = definition->getDetails().getDefinitionModifier();
 		}
 
 		size_t size = 0;
@@ -285,7 +284,7 @@ bool ContextDefinitionManager::deserializeDefinitions( ISerializer & serializer 
 
 
 //==============================================================================
-IClassDefinitionDetails * ContextDefinitionManager::createGenericDefinition( const char * name ) const
+std::unique_ptr<IClassDefinitionDetails> ContextDefinitionManager::createGenericDefinition( const char * name ) const
 {
 	assert( pBaseManager_ );
 	return pBaseManager_->createGenericDefinition( name );

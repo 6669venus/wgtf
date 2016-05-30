@@ -3,7 +3,7 @@
 
 /*
 All reflected meta attribute classes should inherit from this class.
-Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
+Details: Search for NGT Reflection System on the Wargaming Confluence
 */
 
 #include "../reflected_object.hpp"

@@ -12,7 +12,7 @@ import WGControls 1.0
  Preliminary Layout Designed but not Finalised! Icons and menus currently placeholders only.
 
  It is operating off data models for file folders and the listview. The layout is based upon:
-        https://confluence.wargaming.net/display/NGT/Asset+Browser+Qt+Prototype
+		Search for Asset Browser Qt Prototype on the Wargaming Confluence
 ----------------------------------------------------------------------------------------------
 
 Example:
@@ -1179,7 +1179,7 @@ Rectangle {
 
                         /* TODO: Favourites functionality should be added later when a preferences system exists to
                                  persist the data. Remove for now, so as to not confuse end-users.
-                                 JIRA: http://jira.bigworldtech.com/browse/NGT-906
+                                 JIRA: NGT-906
                         Tab{
                             title : "Favourites"
                         }*/

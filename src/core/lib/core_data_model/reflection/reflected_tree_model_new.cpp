@@ -148,14 +148,7 @@ size_t ReflectedTreeModelNew::Implementation::getIndexInternal(
 	auto parent = item->getParent();
 	if (parent != nullptr)
 	{
-		const auto count = parent->rowCount();
-		for (int i = 0; i < count; ++i)
-		{
-			if (parent->getChild( i ) == item)
-			{
-				return i;
-			}
-		}
+		return item->getIndex();
 	}
 
 	assert( item == rootItem_.get() );
@@ -286,6 +279,29 @@ int ReflectedTreeModelNew::rowCount(
 int ReflectedTreeModelNew::columnCount() const /* override */
 {
 	return 1;
+}
+
+
+bool ReflectedTreeModelNew::hasChildren( 
+	const AbstractItem * item ) const /* override */
+{
+	auto reflectedItem = static_cast< const ReflectedTreeItemNew * >( item );
+	assert( item == nullptr || reflectedItem != nullptr );
+
+	auto childCount = impl_->getChildCountInternal( reflectedItem );
+	for (int i = 0; i < childCount; ++i)
+	{
+		auto childItem = impl_->getItemInternal( i, reflectedItem );
+		if (childItem != nullptr && childItem->isInPlace())
+		{
+			if (!hasChildren( childItem ))
+			{
+				continue;
+			}
+		}
+		return true;
+	}
+	return false;
 }
 
 

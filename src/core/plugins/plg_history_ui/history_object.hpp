@@ -49,7 +49,7 @@ private:
 
 	ICommandManager* commandSystem_;
 	IDefinitionManager* defManager_;
-	// TODO: http://jira.bigworldtech.com/browse/NGT-849
+	// TODO: NGT-849
 	// Eventually, we need to remove this
 	SelectionHandler selectionHandler_;
 	VariantList historyItems_;

@@ -2,8 +2,6 @@
 
 #ifdef __APPLE__
 
-namespace wgt
-{
 void ZeroMemory(PVOID Destination, DWORD Length)
 {
 
@@ -186,6 +184,5 @@ bool MoveFileA(const char* path, const char* new_path)
 {
 	return true;
 }
-} // end namespace wgt
 
 #endif // __APPLE__

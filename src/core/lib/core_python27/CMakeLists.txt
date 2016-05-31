@@ -3,7 +3,7 @@ PROJECT( core_python27 )
 
 INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
-INCLUDE( BWMacros )
+INCLUDE( WGMacros )
 INCLUDE( WGPython27Project )
 
 IF( NOT PYTHON_FOUND )

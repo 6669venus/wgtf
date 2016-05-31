@@ -28,7 +28,7 @@ SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid;Release
 	FORCE )
 
 # Include useful macros
-INCLUDE( BWMacros )
+INCLUDE( WGMacros )
 
 # Detect clang-cl
 IF( ${CMAKE_C_COMPILER_ID} MATCHES "Clang" )
@@ -36,7 +36,7 @@ IF( ${CMAKE_C_COMPILER_ID} MATCHES "Clang" )
 ENDIF()
 
 # Set compiler and linker options
-INCLUDE( BWCompilerAndLinkerOptions )
+INCLUDE( WGCompilerAndLinkerOptions )
 
 # Ensure we have a functioning compiler. Work around CMake failing to detect
 # that the compiler is unknown, do this by making sure there's some flags
@@ -58,11 +58,11 @@ GET_FILENAME_COMPONENT( BW_GAME_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
 OPTION( BW_UNIT_TESTS_ENABLED "Enable unit tests" ON )
 
 # Discover available BigWorld projects to generate. These are defined by
-# BWConfiguration_<name>.cmake files in the cmake module path.
-FILE( GLOB _target_cmake_files "${CMAKE_MODULE_PATH}/BWConfiguration_*.cmake" )
+# WGConfiguration_<name>.cmake files in the cmake module path.
+FILE( GLOB _target_cmake_files "${CMAKE_MODULE_PATH}/WGConfiguration_*.cmake" )
 FOREACH( _filename ${_target_cmake_files} )
 	GET_FILENAME_COMPONENT( _target_name ${_filename} NAME_WE )
-	STRING( REPLACE "BWConfiguration_" "" _target_name ${_target_name} )
+	STRING( REPLACE "WGConfiguration_" "" _target_name ${_target_name} )
 	SET( BW_AVAILABLE_TARGETS ${BW_AVAILABLE_TARGETS} ${_target_name} )
 ENDFOREACH()
 
@@ -108,7 +108,7 @@ SET( DEPLOY_QT_SUPPORT OFF )
 SET( DEPLOY_PYTHON_SUPPORT OFF )
 
 # Include target specific configuration
-INCLUDE( BWConfiguration_${BW_CMAKE_TARGET} )
+INCLUDE( WGConfiguration_${BW_CMAKE_TARGET} )
 
 # blob specific configuration
 IF( BW_BLOB_CONFIG )
@@ -203,7 +203,7 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_LIBRARY_PROJECTS}" 2 "libname;libpath" )
 ARRAY2D_END_LOOP()
 
 # Add executables
-INCLUDE( BWProjectUserFile )
+INCLUDE( WGProjectUserFile )
 ARRAY2D_BEGIN_LOOP( _islooping "${BW_BINARY_PROJECTS}" 2 "projname;projpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding executable: ${projname} from ${projpath}" )

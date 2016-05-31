@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_test_active_filters )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGStandardProject )
 find_package(QT5)
 
 REMOVE_DEFINITIONS( /WX )

@@ -4,7 +4,7 @@ project( plg_node_editor )
 #find_package(NGT REQUIRED)
 
 INCLUDE( WGToolsProject )
-INCLUDE( BWQtLibrary )
+INCLUDE( WGQtLibrary )
 
 BW_QT_ADD_QRC(plg_node_editor resources)
 BW_GLOB_RESOURCE_FILES()

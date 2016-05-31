@@ -31,7 +31,7 @@ namespace wgt
 {
 class CurveEditorPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator, ICurveEditor >
+	, public Depends< IViewCreator, ICurveEditor >
 {
 public:
 	CurveEditorPlugin(IComponentContext & contextManager)
@@ -67,7 +67,7 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		auto curveModel = get< ICurveEditor >();
 
 		if (viewCreator != nullptr)

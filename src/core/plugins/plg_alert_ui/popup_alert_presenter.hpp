@@ -20,7 +20,7 @@ class IComponentContext;
 
 class PopupAlertPresenter
 	: public IAlertPresenter
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 

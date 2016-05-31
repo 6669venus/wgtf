@@ -39,7 +39,7 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	IUIFramework* qtFramework = contextManager.queryInterface<IUIFramework>();
 	assert( qtFramework != nullptr );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(

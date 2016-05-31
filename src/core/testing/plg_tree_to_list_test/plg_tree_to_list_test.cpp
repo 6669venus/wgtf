@@ -19,7 +19,7 @@ namespace wgt
 //==============================================================================
 class TreeToListTest
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
@@ -48,7 +48,7 @@ public:
 		// Create the view and present it
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView(

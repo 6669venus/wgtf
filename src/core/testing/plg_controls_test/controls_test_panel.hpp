@@ -15,7 +15,7 @@
 namespace wgt
 {
 class ControlsTestPanel
-	: Depends< wgt::IViewCreator, IUIApplication, IDefinitionManager >
+	: Depends< IViewCreator, IUIApplication, IDefinitionManager >
 {
 public:
 	ControlsTestPanel( IComponentContext & context );

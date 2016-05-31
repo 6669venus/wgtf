@@ -17,7 +17,7 @@ namespace wgt
 //==============================================================================
 class ContextMenuTest
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
@@ -59,7 +59,7 @@ public:
 			std::bind( &ContextMenuTest::canTestPerforce, this, _1 ));
 		uiApplication->addAction( *cmTestCheckOut_ );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			// Create the view and present it

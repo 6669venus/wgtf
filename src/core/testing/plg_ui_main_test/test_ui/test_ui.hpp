@@ -27,7 +27,7 @@ class TestUI
 		IReflectionController,
 		IDataSourceManager,
 		IEnvManager,
-		wgt::IViewCreator >
+		IViewCreator >
 	, public IViewEventListener
 {
 public:

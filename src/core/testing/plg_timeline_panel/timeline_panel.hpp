@@ -13,7 +13,7 @@
 namespace wgt
 {
 class TimelinePanel
-    : Depends< IUIApplication, wgt::IViewCreator >
+    : Depends< IUIApplication, IViewCreator >
 {
 public:
     TimelinePanel( IComponentContext & context );

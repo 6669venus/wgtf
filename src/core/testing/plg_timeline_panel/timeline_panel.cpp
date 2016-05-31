@@ -12,7 +12,7 @@ TimelinePanel::TimelinePanel( IComponentContext & context )
  
 bool TimelinePanel::addPanel()
 {
-	auto viewCreator = this->get< wgt::IViewCreator >();
+	auto viewCreator = this->get< IViewCreator >();
 	if (viewCreator == nullptr)
 	{
 		return false;

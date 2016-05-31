@@ -69,7 +69,7 @@ ControlsTestPanel::ControlsTestPanel( IComponentContext & context )
 //////////////////////////////////////////////////////////////////////////
 bool ControlsTestPanel::addPanel()
 {
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	auto defManager = this->get< IDefinitionManager >();
 	if ((viewCreator == nullptr) ||
 		(defManager == nullptr))

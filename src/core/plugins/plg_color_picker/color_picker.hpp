@@ -17,7 +17,7 @@
 namespace wgt
 {
 class ColorPicker
-	: Depends< IUIFramework, IUIApplication, IDefinitionManager, wgt::IViewCreator >
+	: Depends< IUIFramework, IUIApplication, IDefinitionManager, IViewCreator >
 
 {
 	typedef Depends< IUIFramework, IUIApplication, IDefinitionManager > DepsBase;

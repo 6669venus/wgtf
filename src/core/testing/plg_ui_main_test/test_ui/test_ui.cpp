@@ -84,7 +84,7 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int 
 	auto controller = get<IReflectionController>();
 	assert( controller != nullptr );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	assert(viewCreator != nullptr);
 
 	test1Models_.emplace_back( new ReflectedTreeModelNew( context_, dataSrc->getTestPage() ) );

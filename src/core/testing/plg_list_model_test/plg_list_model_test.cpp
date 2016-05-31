@@ -18,7 +18,7 @@ namespace wgt
 //==============================================================================
 class ListModelTestPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 private:
 	std::vector<IInterface*> types_;
@@ -57,7 +57,7 @@ public:
 		std::unique_ptr< IListModel > oldShortListModel(new OldTestListModel(true));
 		listModel_ = std::make_shared<TestListModel>();
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView(

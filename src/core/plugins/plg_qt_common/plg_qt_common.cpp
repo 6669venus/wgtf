@@ -71,7 +71,7 @@ public:
 	{
 		qtCopyPasteManager_ = new QtCopyPasteManager();
 		contextManager.registerInterface(qtCopyPasteManager_);
-		contextManager.registerInterface(new wgt::UIViewCreator(contextManager));
+		contextManager.registerInterface(new UIViewCreator(contextManager));
 	}
 
 	bool PostLoad( IComponentContext & contextManager ) override

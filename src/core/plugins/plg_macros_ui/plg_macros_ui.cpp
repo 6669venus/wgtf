@@ -23,7 +23,7 @@ namespace wgt
 {
 class MacrosUIPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	MacrosUIPlugin( IComponentContext& contextManager )
@@ -69,7 +69,7 @@ public:
 		macros_ = pMacroDefinition->create();
 		macros_.getBase< MacrosObject >()->init( *pCommandSystemProvider );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView(

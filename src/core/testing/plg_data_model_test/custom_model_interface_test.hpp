@@ -11,7 +11,7 @@ class IView;
 class IViewCreator;
 
 class CustomModelInterfaceTest
-	: public Depends< wgt::IViewCreator >
+	: public Depends< IViewCreator >
 {
 public:
 	CustomModelInterfaceTest(IComponentContext & );

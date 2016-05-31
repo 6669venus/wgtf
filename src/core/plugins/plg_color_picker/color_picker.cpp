@@ -16,7 +16,7 @@ ColorPicker::ColorPicker( IComponentContext & context )
 
 bool ColorPicker::addPanel()
 {
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(

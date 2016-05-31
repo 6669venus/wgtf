@@ -54,7 +54,7 @@ namespace
 }
 
 class DemoDoc: public IViewEventListener
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	DemoDoc( IComponentContext & context, const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
@@ -84,7 +84,7 @@ DemoDoc::DemoDoc(
 	envId_ = envManager_->addEnv( name );
 	envManager_->selectEnv( envId_ );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(
@@ -120,7 +120,7 @@ void DemoDoc::onFocusOut(IView* view)
 //==============================================================================
 class DemoTestPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 private:
 	
@@ -175,7 +175,7 @@ public:
 		demoDoc_.reset( new DemoDoc( contextManager, "sceneModel0", envManager, uiFramework, uiApplication, demoModel_) );
 		demoDoc2_.reset( new DemoDoc( contextManager, "sceneModel1", envManager, uiFramework, uiApplication, demoModel_) );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView(

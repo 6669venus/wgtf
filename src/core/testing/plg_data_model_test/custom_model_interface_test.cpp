@@ -174,7 +174,7 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 		TestFixture >();
 	testFixture->init( defManager, fileSystem );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(

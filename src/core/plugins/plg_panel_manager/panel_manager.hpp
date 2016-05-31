@@ -13,7 +13,7 @@ namespace wgt
 {
 class PanelManager
 	: public Implements<IPanelManager>
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 

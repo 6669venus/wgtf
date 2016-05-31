@@ -27,7 +27,7 @@ namespace wgt
 //------------------------------------------------------------------------------
 class TestActiveFiltersPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
@@ -59,7 +59,7 @@ public:
 		auto testViewModel = defManager->create< ActiveFiltersTestViewModel >();
 		testViewModel->init( *defManager, *uiFramework );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator == nullptr)
 		{
 			return;

@@ -14,7 +14,6 @@ WGCopyable {
     WGCopyController {
         id: copyableObject
 
-Component.onCompleted : { console.log("TESTINNNNNNG : " + copyableObject.version ) ;}
         onDataCopied : {
             setValue( slider.value )
         }

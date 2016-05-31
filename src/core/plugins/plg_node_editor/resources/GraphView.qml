@@ -53,9 +53,9 @@ Item
             var node = nodeRepeater.itemAt(i);
             unselectNode(node);
         }
-        for(var i = 0; i < groupRepeater.count; ++i)
+        for(var j = 0; j < groupRepeater.count; ++j)
         {
-            var group = groupRepeater.itemAt(i);
+            var group = groupRepeater.itemAt(j);
             unselectNode(group);
         }
     }
@@ -197,6 +197,10 @@ Item
                 {
                     dragObjects.splice(index, 1);
                     obj.dragStateChanged.disconnect(dragStateChanged);
+
+                    // need to unbind this here again or groupBoxes don't work.
+                    obj.x = obj.x;
+                    obj.y = obj.y;
                 }
             }
 
@@ -257,6 +261,8 @@ Item
 
                     onChangeColor: {
                         beginUndoFrame()
+                        colorDialog.color = groupColor
+                        colorDialog.index = index
                         colorDialog.open()
                     }
 
@@ -301,6 +307,9 @@ Item
 
     ColorDialog {
         id: colorDialog
+
+        property int index
+
         title: "Please choose a color"
         showAlphaChannel: false
         onAccepted: {
@@ -308,7 +317,6 @@ Item
             endUndoFrame();
         }
         onRejected: {
-            console.log("Canceled")
             abortUndoFrame();
         }
     }

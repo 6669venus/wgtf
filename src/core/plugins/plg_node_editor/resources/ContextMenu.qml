@@ -34,7 +34,8 @@ WGContextArea
                 text : Value
                 onTriggered :
                 {
-                    createNode(contextArea.popupPoint.x, contextArea.popupPoint.y, Value);
+                    createNode(mapToItem(graphView, contextArea.popupPoint.x, contextArea.popupPoint.y).x,
+                               mapToItem(graphView, contextArea.popupPoint.x, contextArea.popupPoint.y).y, Value);
                 }
             }
         }
@@ -63,7 +64,11 @@ WGContextArea
 
                 var newColor = Qt.rgba(colorArray[0],colorArray[1],colorArray[2],1.0)
 
-                createGroup(contextArea.popupPoint.x, contextArea.popupPoint.y,"New Group", newColor, 500, 500)
+                createGroup(mapToItem(graphView, contextArea.popupPoint.x, contextArea.popupPoint.y).x,
+                            mapToItem(graphView, contextArea.popupPoint.x, contextArea.popupPoint.y).y,
+                            "New Group",
+                            newColor,
+                            500, 500)
             }
         }
     }

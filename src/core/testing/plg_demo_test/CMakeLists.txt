@@ -45,7 +45,8 @@ BW_TARGET_LINK_LIBRARIES( plg_demo_test PRIVATE
 	core_generic_plugin
 	core_qt_common
 	core_ui_framework
-    Qt5::Core
+	Qt5::Core
+	Qt5::Quick
 	)
 
 BW_PROJECT_CATEGORY( plg_demo_test "Plugins" )

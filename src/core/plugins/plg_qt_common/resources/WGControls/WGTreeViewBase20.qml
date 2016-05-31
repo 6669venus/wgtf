@@ -30,7 +30,7 @@ ListView {
     onItemDoubleClicked: __onItemDoubleClicked(mouse, itemIndex, rowIndex)
 
     headerPositioning: ListView.OverlayHeader
-	footerPositioning: ListView.OverlayFooter
+    footerPositioning: ListView.OverlayFooter
     contentWidth: contentItem.childrenRect.width 
 
     header: depth == 0 ? view.header : null

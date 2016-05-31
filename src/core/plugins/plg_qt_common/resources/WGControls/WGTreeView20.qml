@@ -122,6 +122,7 @@ WGTreeViewBase {
 
     /*! This component is used for showing a sort indicator 
         on header column.
+    */
     property alias sortIndicator: itemView.sortIndicator
     property var extensions: []
 

@@ -13,16 +13,12 @@ namespace wgt
 {
 class IUIFramework;
 class IUIApplication;
-
-namespace wgt
-{
-	class IViewCreator;
-}
+class IViewCreator;
 
 #define DEPENDS_ON_CLASSES \
 	IUIFramework, \
 	IUIApplication,\
-	wgt::IViewCreator
+	IViewCreator
 
 
 /**

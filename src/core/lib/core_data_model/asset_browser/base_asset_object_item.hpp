@@ -16,7 +16,7 @@ public:
 
 	// File Information
 	// TODO: Remove dependency on the file system on low level models in the asset browser.
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-1248
+	// JIRA: NGT-1248
 	IFileInfoPtr getFileInfo() const;
 
 	// IItem Implementation

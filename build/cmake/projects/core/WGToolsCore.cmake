@@ -81,6 +81,7 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_color_picker			core/plugins/plg_color_picker
 	plg_graph_editor			core/plugins/plg_graph_editor
 	plg_curve_editor			core/plugins/plg_curve_editor
+	plg_node_editor				core/plugins/plg_node_editor
 
 )
 

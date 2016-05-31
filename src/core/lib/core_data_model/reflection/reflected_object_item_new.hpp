@@ -34,7 +34,8 @@ public:
 	 */
 	ReflectedObjectItemNew( IComponentContext & contextManager,
 		const ObjectHandle & object,
-		ReflectedTreeItemNew * parent );
+		ReflectedTreeItemNew * parent,
+		size_t index );
 	virtual ~ReflectedObjectItemNew();
 
 	// AbstractItem

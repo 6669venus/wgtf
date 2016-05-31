@@ -32,6 +32,7 @@ public:
 	ReflectedPropertyItemNew( IComponentContext & contextManager,
 		const IBasePropertyPtr & property,
 		ReflectedTreeItemNew * parent,
+		size_t index,
 		const std::string & inPlacePath );
 
 	/**
@@ -47,7 +48,8 @@ public:
 	ReflectedPropertyItemNew( IComponentContext & contextManager,
 		const std::string & propertyName,
 		std::string displayName,
-		ReflectedTreeItemNew * parent );
+		ReflectedTreeItemNew * parent,
+		size_t index );
 	virtual ~ReflectedPropertyItemNew();
 
 	// AbstractItem

@@ -81,13 +81,14 @@ BW_TARGET_LINK_LIBRARIES( maya_plugin PRIVATE
 	# external libraries
 	$(PLATFORM_LIBRARIES)
 
-	${MAYA_Foundation_LIBRARY}
-	${MAYA_OpenMaya_LIBRARY}
-	${MAYA_OpenMayaUI_LIBRARY}
-	${MAYA_OpenMayaAnim_LIBRARY}
+	$<$<NOT:$<CONFIG:Debug>>:${MAYA_Foundation_LIBRARY}>
+	$<$<NOT:$<CONFIG:Debug>>:${MAYA_OpenMaya_LIBRARY}>
+	$<$<NOT:$<CONFIG:Debug>>:${MAYA_OpenMayaUI_LIBRARY}>
+	$<$<NOT:$<CONFIG:Debug>>:${MAYA_OpenMayaAnim_LIBRARY}>
 	${QT_LIBRARIES}
 )
 
 # this is a macro defined in FindMaya that sets up our plugin with standard Maya build settings
 MAYA_SET_PLUGIN_PROPERTIES( maya_plugin )
 
+SET_TARGET_PROPERTIES(maya_plugin PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_DEBUG True)

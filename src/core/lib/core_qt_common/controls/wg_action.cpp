@@ -14,6 +14,12 @@ struct WGAction::Implementation
 		: uiFramework_( nullptr )
         , uiApplication_( nullptr )
         , func_( nullptr )
+		, enabledFunc_( nullptr )
+		, checkedFunc_( nullptr )
+		, checkable_( false )
+		, checked_( false )
+		, enabled_( true )
+		, visible_( true )
 		, active_( false )
 	{
 	}
@@ -26,6 +32,8 @@ struct WGAction::Implementation
 	void onComponentComplete( WGAction * action )
 	{
 		func_ = [action](IAction*){ emit action->triggered(); };
+		enabledFunc_ = [action](const IAction*){ return action->getEnabled(); };
+		checkedFunc_ = [action](const IAction*){ return action->getChecked(); };
 
 		auto context = QQmlEngine::contextForObject( action );
 		assert( context != nullptr );
@@ -59,7 +67,7 @@ struct WGAction::Implementation
 
 		active_ = active;
 
-		if (uiApplication_ == nullptr || action_ == nullptr)
+		if (uiApplication_ == nullptr || action_ == nullptr || visible_ == false)
 		{
 			return;
 		}
@@ -79,6 +87,60 @@ struct WGAction::Implementation
 		createAction();
 	}
 
+	bool getCheckable() const
+	{
+		return checkable_;
+	}
+
+	void setCheckable( bool checkable )
+	{
+		destroyAction();
+		checkable_ = checkable;
+		createAction();
+	}
+
+	bool getChecked() const
+	{
+		return checked_;
+	}
+
+	void setChecked( bool checked )
+	{
+		checked_ = checked;
+	}
+
+	bool getEnabled() const
+	{
+		return enabled_;
+	}
+
+	void setEnabled( bool enabled )
+	{
+		enabled_ = enabled;
+	}
+
+	bool getVisible() const
+	{
+		return visible_;
+	}
+
+	void setVisible( bool visible )
+	{
+		if (visible_ == visible)
+		{
+			return;
+		}
+
+		visible_ = visible;
+
+		if (uiApplication_ == nullptr || action_ == nullptr || active_ == false)
+		{
+			return;
+		}
+
+		visible_ ? uiApplication_->addAction( *action_ ) : uiApplication_->removeAction( *action_ );
+	}
+
 	void createAction()
 	{
 		if (actionId_.empty())
@@ -91,9 +153,9 @@ struct WGAction::Implementation
 			return;
 		}
 
-		action_ = uiFramework_->createAction( actionId_.c_str(), func_ );
+		action_ = uiFramework_->createAction( actionId_.c_str(), func_, enabledFunc_, checkable_ ? checkedFunc_ : nullptr );
 		
-		if (uiApplication_ == nullptr || active_ == false)
+		if (uiApplication_ == nullptr || active_ == false || visible_ == false)
 		{
 			return;
 		}
@@ -108,7 +170,7 @@ struct WGAction::Implementation
 			return;
 		}
 
-		if (uiApplication_ != nullptr && active_)
+		if (uiApplication_ != nullptr && active_ == true && visible_ == true)
 		{
 			uiApplication_->removeAction( *action_ );
 		}
@@ -119,6 +181,12 @@ struct WGAction::Implementation
 	IUIFramework * uiFramework_;
 	IUIApplication * uiApplication_;
 	std::function<void(IAction*)> func_;
+	std::function<bool(const IAction*)> enabledFunc_;
+	std::function<bool(const IAction*)> checkedFunc_;
+	bool checkable_;
+	bool checked_;
+	bool enabled_;
+	bool visible_;
 	bool active_;
 	std::string actionId_;
 	std::unique_ptr< IAction > action_;
@@ -164,4 +232,52 @@ QString WGAction::getActionId() const
 void WGAction::setActionId( const QString& actionId )
 {
 	impl_->setActionId( actionId );
+}
+
+
+bool WGAction::getCheckable() const
+{
+	return impl_->getCheckable();
+}
+
+
+void WGAction::setCheckable( bool checkable )
+{
+	impl_->setCheckable( checkable );
+}
+
+
+bool WGAction::getChecked() const
+{
+	return impl_->getChecked();
+}
+
+
+void WGAction::setChecked( bool checked )
+{
+	impl_->setChecked( checked );
+}
+
+
+bool WGAction::getEnabled() const
+{
+	return impl_->getEnabled();
+}
+
+
+void WGAction::setEnabled( bool enabled )
+{
+	impl_->setEnabled( enabled );
+}
+
+
+bool WGAction::getVisible() const
+{
+	return impl_->getVisible();
+}
+
+
+void WGAction::setVisible( bool visible )
+{
+	impl_->setVisible( visible );
 }

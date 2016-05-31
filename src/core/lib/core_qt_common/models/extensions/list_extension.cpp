@@ -43,3 +43,33 @@ QItemSelection ListExtension::itemSelection( const QModelIndex & first, const QM
 
 	return QItemSelection( begin, end );
 }
+
+
+QModelIndex ListExtension::getNextIndex( const QModelIndex & index ) const
+{
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+	if (index.row() >= (pModel->rowCount( index.parent() ) - 1))
+	{
+		return index;
+	}
+	return pModel->index( index.row() + 1, index.column(), index.parent() );
+}
+
+
+QModelIndex ListExtension::getPreviousIndex( const QModelIndex & index ) const
+{
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+	if (index.row() <= 0)
+	{
+		return index;
+	}
+	return pModel->index( index.row() - 1, index.column(), index.parent() );
+}

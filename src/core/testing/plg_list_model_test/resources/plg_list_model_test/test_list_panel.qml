@@ -82,7 +82,7 @@ WG1.WGPanel {
                     Image {
                         id: sortArrowImage
                         anchors.centerIn: parent
-                        source: headerSortIndex == 0 ? "icons/sort_up_10x10.png" : "icons/sort_down_10x10.png"
+                        source: headerSortIndex == 0 ? "icons/sort_up.png" : "icons/sort_down.png"
                     }
                 }
             }

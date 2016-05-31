@@ -3,7 +3,6 @@ import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
 
-
 WGItemView {
     id: root
 

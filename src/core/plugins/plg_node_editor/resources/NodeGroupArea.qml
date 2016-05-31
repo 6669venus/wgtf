@@ -50,12 +50,20 @@ Item
 
     signal dragStateChanged(var group);
 
+
+
+    ContextMenu
+    {
+        id: contextArea
+        menuPath: "NodeEditor.group"
+    }
+
     // editable header at the top of the group box
     WGTextBox {
         id: titleBox
-        anchors.top: parent.top
-        anchors.left: leftDrag.left
-        anchors.right: locked ? lockedText.left : parent.right
+        anchors.top: tLeftCornerDrag.top
+        anchors.left: tLeftCornerDrag.left
+        anchors.right: locked ? lockedText.left : tRightCornerDrag.right
         anchors.margins: defaultSpacing.standardMargin
         height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
 
@@ -95,8 +103,8 @@ Item
 
     Text {
         id: lockedText
-        anchors.top: parent.top
-        anchors.right: rightDrag.right
+        anchors.top: tRightCornerDrag.top
+        anchors.right: tRightCornerDrag.right
         anchors.margins: defaultSpacing.doubleMargin
         height: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
         opacity: 0.5
@@ -111,7 +119,7 @@ Item
         id: nodeGroupMouseArea
         anchors.fill: parent
         anchors.margins: defaultSpacing.doubleMargin
-        anchors.topMargin: defaultSpacing.minimumRowHeight
+        anchors.topMargin: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
         drag.target: groupItem
         drag.axis: Drag.XAndYAxis
         acceptedButtons: Qt.LeftButton
@@ -159,6 +167,19 @@ Item
         }
     }
 
+    //visual appearance of the actual group box
+    Rectangle {
+        id: groupBox
+        anchors.left: tLeftCornerDrag.left
+        anchors.right: tRightCornerDrag.right
+        anchors.bottom: bLeftCornerDrag.bottom
+        anchors.top: tLeftCornerDrag.top
+        color: selected ? Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.3) : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.15)
+        border.width: defaultSpacing.doubleBorderSize
+        border.color: selected ? groupColor : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.5)
+        radius: defaultSpacing.standardRadius
+        z: -1
+    }
 
     WGAction
     {
@@ -173,8 +194,8 @@ Item
     {
         active: true
         actionId: qsTr("NodeEditor.group|.Lock Group Box")
-        //checkable: true
-        //checked: locked
+        checkable: true
+        checked: locked
         onTriggered: {
             locked = !locked
         }
@@ -187,32 +208,166 @@ Item
             groupItem.changeColor()
         }
     }
-    ContextMenu
-    {
-        id: contextArea
 
-        menuPath: "NodeEditor.group"
-    }
+    MouseArea {
+        id: tLeftCornerDrag
+        anchors.left: parent.left
+        anchors.top: parent.top
 
-    //visual appearance of the actual group box
-    Rectangle {
-        id: groupBox
-        anchors.left: leftDrag.left
-        anchors.right: rightDrag.right
-        anchors.bottom: bottomDrag.bottom
-        anchors.top: titleBox.top
-        color: selected ? Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.3) : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.15)
-        border.width: defaultSpacing.doubleBorderSize
-        border.color: selected ? groupColor : Qt.rgba(groupColor.r, groupColor.g, groupColor.b, 0.5)
+        drag.target: tLeftCornerDrag
+        drag.axis: Drag.XAndYAxis
+        drag.maximumX: tRightCornerDrag.x - 50
+        drag.maximumY: bLeftCornerDrag.y - 50
 
-        z: -1
+        enabled: !locked
+
+        cursorShape: !locked ? Qt.SizeFDiagCursor : Qt.ArrowCursor
+
+        onPressed: {
+            initialX = x
+            initialY = y
+            initialWidth = groupItem.width
+            initialHeight = groupItem.height
+            anchors.left = undefined
+            anchors.top = undefined
+        }
+
+        onReleased: {
+            groupItem.width = initialWidth - (tLeftCornerDrag.x - initialX)
+            groupItem.height = initialHeight - (tLeftCornerDrag.y - initialY)
+            groupItem.x = groupItem.x + (tLeftCornerDrag.x - initialX)
+            groupItem.y = groupItem.y + (tLeftCornerDrag.y - initialY)
+            anchors.left = parent.left
+            anchors.top = parent.top
+        }
+
+        width: defaultSpacing.doubleMargin
+        height: defaultSpacing.doubleMargin
     }
 
     MouseArea {
-        id: leftDrag
-        anchors.top: titleBox.bottom
+        id: tRightCornerDrag
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+        drag.target: tRightCornerDrag
+        drag.axis: Drag.XAndYAxis
+        drag.minimumX: tLeftCornerDrag.x + tLeftCornerDrag.width + 50
+        drag.maximumY: bRightCornerDrag.y - 50
+
+        enabled: !locked
+
+        cursorShape: !locked ? Qt.SizeBDiagCursor : Qt.ArrowCursor
+
+        onPressed: {
+            initialX = x
+            initialY = y
+            initialWidth = groupItem.width
+            initialHeight = groupItem.height
+            anchors.right = undefined
+            anchors.top = undefined
+            groupBox.anchors.top = tRightCornerDrag.top
+            titleBox.anchors.top = tRightCornerDrag.top
+        }
+
+        onReleased: {
+            groupItem.width = initialWidth + (tRightCornerDrag.x - initialX)
+            groupItem.height = initialHeight - (tRightCornerDrag.y - initialY)
+            groupItem.y = groupItem.y + (tRightCornerDrag.y - initialY)
+            anchors.right = parent.right
+            anchors.top = parent.top
+            groupBox.anchors.top = tLeftCornerDrag.top
+            titleBox.anchors.top = tLeftCornerDrag.top
+        }
+
+        width: defaultSpacing.doubleMargin
+        height: defaultSpacing.doubleMargin
+    }
+
+    MouseArea {
+        id: bLeftCornerDrag
         anchors.left: parent.left
-        anchors.bottom: leftCornerDrag.top
+        anchors.bottom: parent.bottom
+
+        drag.target: bLeftCornerDrag
+        drag.axis: Drag.XAndYAxis
+        drag.maximumX: bRightCornerDrag.x - 50
+        drag.minimumY: titleBox.y + titleBox.height + 50
+
+        enabled: !locked
+
+        cursorShape: !locked ? Qt.SizeBDiagCursor : Qt.ArrowCursor
+
+
+        onPressed: {
+            initialX = x
+            initialY = y
+            initialWidth = groupItem.width
+            initialHeight = groupItem.height
+            anchors.left = undefined
+            anchors.bottom = undefined
+            titleBox.anchors.left = bLeftCornerDrag.left
+            groupBox.anchors.left = bLeftCornerDrag.left
+        }
+
+        onReleased: {
+            groupItem.width = initialWidth - (bLeftCornerDrag.x - initialX)
+            groupItem.height = initialHeight + (bLeftCornerDrag.y - initialY)
+            groupItem.x = groupItem.x + (bLeftCornerDrag.x - initialX)
+            anchors.left = parent.left
+            anchors.bottom = parent.bottom
+            titleBox.anchors.left = tLeftCornerDrag.left
+            groupBox.anchors.left = tLeftCornerDrag.left
+        }
+
+        width: defaultSpacing.doubleMargin
+        height: defaultSpacing.doubleMargin
+    }
+
+    MouseArea {
+        id: bRightCornerDrag
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+
+        drag.target: bRightCornerDrag
+        drag.axis: Drag.XAndYAxis
+        drag.minimumX: bLeftCornerDrag.x + 50
+        drag.minimumY: titleBox.y + titleBox.height + 50
+
+        enabled: !locked
+
+        cursorShape: !locked ? Qt.SizeFDiagCursor : Qt.ArrowCursor
+
+        onPressed: {
+            initialX = x
+            initialY = y
+            initialWidth = groupItem.width
+            initialHeight = groupItem.height
+            anchors.right = undefined
+            anchors.bottom = undefined
+            groupBox.anchors.right = bRightCornerDrag.right
+            groupBox.anchors.bottom = bRightCornerDrag.bottom
+        }
+
+        onReleased: {
+            groupItem.width = initialWidth + (bRightCornerDrag.x - initialX)
+            groupItem.height = initialHeight + (bRightCornerDrag.y - initialY)
+            anchors.right = parent.right
+            anchors.bottom = parent.bottom
+            groupBox.anchors.right = tRightCornerDrag.right
+            groupBox.anchors.bottom = bLeftCornerDrag.bottom
+        }
+
+        width: defaultSpacing.doubleMargin
+        height: defaultSpacing.doubleMargin
+    }
+
+
+    MouseArea {
+        id: leftDrag
+        anchors.top: tLeftCornerDrag.bottom
+        anchors.left: parent.left
+        anchors.bottom: bLeftCornerDrag.top
 
         enabled: !locked
 
@@ -220,28 +375,32 @@ Item
         drag.axis: Drag.XAxis
         drag.maximumX: rightDrag.x - 50
 
-        cursorShape: Qt.SizeHorCursor
+        cursorShape: !locked ? Qt.SizeHorCursor : Qt.ArrowCursor
+
+        width: defaultSpacing.doubleMargin
 
         onPressed: {
             initialX = x
             initialWidth = groupItem.width
             anchors.left = undefined
+            groupBox.anchors.left = leftDrag.left
+            titleBox.anchors.left = leftDrag.left
         }
 
         onReleased: {
             groupItem.width = initialWidth - (leftDrag.x - initialX)
             groupItem.x = groupItem.x + (leftDrag.x - initialX)
             anchors.left = parent.left
+            groupBox.anchors.left = tLeftCornerDrag.left
+            titleBox.anchors.left = tLeftCornerDrag.left
         }
-
-        width: defaultSpacing.doubleMargin
     }
 
     MouseArea {
         id: rightDrag
-        anchors.top: titleBox.bottom
+        anchors.top: tRightCornerDrag.bottom
         anchors.right:  parent.right
-        anchors.bottom: rightCornerDrag.top
+        anchors.bottom: bRightCornerDrag.top
 
         drag.target: rightDrag
         drag.axis: Drag.XAxis
@@ -249,105 +408,63 @@ Item
 
         enabled: !locked
 
-        cursorShape: Qt.SizeHorCursor
+        cursorShape: !locked ? Qt.SizeHorCursor : Qt.ArrowCursor
+
+        width: defaultSpacing.doubleMargin
 
         onPressed: {
             initialX = x
             initialWidth = groupItem.width
             anchors.right = undefined
+            groupBox.anchors.right = rightDrag.right
+            titleBox.anchors.right = rightDrag.right
         }
 
         onReleased: {
             groupItem.width = initialWidth + (rightDrag.x - initialX)
             anchors.right = parent.right
+            groupBox.anchors.right = tRightCornerDrag.right
+            titleBox.anchors.right = tRightCornerDrag.right
         }
-
-        width: defaultSpacing.doubleMargin
     }
 
     MouseArea {
-        id: leftCornerDrag
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
+        id: topDrag
+        anchors.left: tLeftCornerDrag.right
+        anchors.right: tRightCornerDrag.left
+        anchors.top: parent.top
 
-        drag.target: leftCornerDrag
-        drag.axis: Drag.XAndYAxis
-        drag.maximumX: rightDrag.x - 50
-        drag.minimumY: titleBox.y + titleBox.height + 50
-
-        enabled: !locked
-
-        cursorShape: Qt.SizeBDiagCursor
-
-        onPressed: {
-            initialX = x
-            initialY = y
-            initialWidth = groupItem.width
-            initialHeight = groupItem.height
-            anchors.left = undefined
-            anchors.bottom = undefined
-            titleBox.anchors.left = leftCornerDrag.left
-            groupBox.anchors.left = leftCornerDrag.left
-            groupBox.anchors.bottom = leftCornerDrag.bottom
-        }
-
-        onReleased: {
-            groupItem.width = initialWidth - (leftCornerDrag.x - initialX)
-            groupItem.height = initialHeight + (leftCornerDrag.y - initialY)
-            groupItem.x = groupItem.x + (leftCornerDrag.x - initialX)
-            anchors.left = parent.left
-            anchors.bottom = parent.bottom
-            titleBox.anchors.left = leftDrag.left
-            groupBox.anchors.left = leftDrag.left
-            groupBox.anchors.bottom = bottomDrag.bottom
-        }
-
-        width: defaultSpacing.doubleMargin
-        height: defaultSpacing.doubleMargin
-    }
-
-    MouseArea {
-        id: rightCornerDrag
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-
-        drag.target: rightCornerDrag
-        drag.axis: Drag.XAndYAxis
-        drag.minimumX: leftDrag.x + 50
-        drag.minimumY: titleBox.y + titleBox.height + 50
+        drag.target: topDrag
+        drag.axis: Drag.YAxis
+        drag.maximumY: bottomDrag.y -50
 
         enabled: !locked
 
-        cursorShape: Qt.SizeFDiagCursor
+        cursorShape: !locked ? Qt.SizeVerCursor : Qt.ArrowCursor
+
+        height: defaultSpacing.doubleMargin
 
         onPressed: {
-            initialX = x
             initialY = y
-            initialWidth = groupItem.width
             initialHeight = groupItem.height
-            anchors.right = undefined
-            anchors.bottom = undefined
-            groupBox.anchors.right = rightCornerDrag.right
-            groupBox.anchors.bottom = rightCornerDrag.bottom
+            anchors.top = undefined
+            groupBox.anchors.top = topDrag.top
+            titleBox.anchors.top = topDrag.top
         }
 
         onReleased: {
-            groupItem.width = initialWidth + (rightCornerDrag.x - initialX)
-            groupItem.height = initialHeight + (rightCornerDrag.y - initialY)
-            anchors.right = parent.right
-            anchors.bottom = parent.bottom
-            groupBox.anchors.right = rightDrag.right
-            groupBox.anchors.bottom = bottomDrag.bottom
+            groupItem.height = initialHeight - (topDrag.y - initialY)
+            groupItem.y = groupItem.y + (topDrag.y - initialY)
+            anchors.top = parent.top
+            groupBox.anchors.top = tLeftCornerDrag.top
+            titleBox.anchors.top = tLeftCornerDrag.top
         }
-
-        width: defaultSpacing.doubleMargin
-        height: defaultSpacing.doubleMargin
     }
 
     MouseArea {
         id: bottomDrag
-        anchors.left: leftCornerDrag.right
-        anchors.right: rightCornerDrag.left
+        anchors.left: bLeftCornerDrag.right
+        anchors.right: bRightCornerDrag.left
         anchors.bottom: parent.bottom
 
         drag.target: bottomDrag
@@ -356,7 +473,9 @@ Item
 
         enabled: !locked
 
-        cursorShape: Qt.SizeVerCursor
+        cursorShape: !locked ? Qt.SizeVerCursor : Qt.ArrowCursor
+
+        height: defaultSpacing.doubleMargin
 
         onPressed: {
             initialY = y
@@ -368,7 +487,5 @@ Item
             groupItem.height = initialHeight + (bottomDrag.y - initialY)
             anchors.bottom = parent.bottom
         }
-
-        height: defaultSpacing.doubleMargin
     }
 }

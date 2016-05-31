@@ -9,6 +9,8 @@ WGContextArea
 
     property string menuPath: "NodeEditor"
 
+    property alias contextObject: dynamicContextMenu.contextObject
+
     contextMenu: WGMenu
     {
         id: dynamicContextMenu
@@ -40,7 +42,28 @@ WGContextArea
         {
             text: qsTr("Create Group Box")
             onTriggered: {
-                createGroup(contextArea.popupPoint.x, contextArea.popupPoint.y,"New Group", "#00FF00", 500, 500)
+
+                //generate a random 'nice' color
+
+                var colorPool = 2
+                var colorArray = []
+
+                colorArray[0] = Math.random()
+                colorPool -= colorArray[0]
+                colorArray[1] = Math.random()
+                colorPool -= colorArray[1]
+                colorArray[2] = Math.min(Math.max(Math.random(), colorPool), 1.0)
+
+                for (var i = colorArray.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = colorArray[i];
+                    colorArray[i] = colorArray[j];
+                    colorArray[j] = temp;
+                }
+
+                var newColor = Qt.rgba(colorArray[0],colorArray[1],colorArray[2],1.0)
+
+                createGroup(contextArea.popupPoint.x, contextArea.popupPoint.y,"New Group", newColor, 500, 500)
             }
         }
     }

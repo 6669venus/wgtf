@@ -15,18 +15,8 @@ Item
     property var connectionsModel
     property var nodeClassesModel
 
+    // needs to be a proper C++ model
     property ListModel groupModel: ListModel{dynamicRoles: true}
-
-    function createGroup(x, y, name, color, height, width) {
-        groupModel.append({"xPos": x,
-                              "yPos": y,
-                              "name": name,
-                              "color": color,
-                              "width": width,
-                              "height": height,
-                              "items":[]
-                          })
-    }
 
     function getNodeViewById(nodeId)
     {
@@ -91,6 +81,17 @@ Item
                 funcNodeState(node);
             }
         }
+    }
+
+    function createGroup(x, y, name, color, height, width) {
+        groupModel.append({"xPos": x,
+                              "yPos": y,
+                              "name": name,
+                              "color": color,
+                              "width": width,
+                              "height": height,
+                              "items":[]
+                          })
     }
 
     WGListModel

@@ -73,6 +73,19 @@ WG1.WGPanel {
             footerDelegate: myFooterDelegate
             roles: ["value", "headerText", "footerText"]
             model: sourceModel
+            sortIndicator: indicator
+
+            Component {
+                id: indicator
+                Item {
+                    height: sortArrowImage.height
+                    Image {
+                        id: sortArrowImage
+                        anchors.centerIn: parent
+                        source: headerSortIndex == 0 ? "icons/sort_up_10x10.png" : "icons/sort_down_10x10.png"
+                    }
+                }
+            }
 
             Component {
                 id: myHeaderDelegate

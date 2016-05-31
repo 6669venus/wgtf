@@ -2,6 +2,8 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
+import "wg_view_selection.js" as WGViewSelection
+
 
 WGItemView {
     id: root

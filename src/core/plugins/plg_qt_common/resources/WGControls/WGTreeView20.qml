@@ -2,7 +2,6 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
-import "wg_view_selection.js" as WGViewSelection
 
 
 /*!
@@ -74,8 +73,6 @@ ScrollView {
 
 WGTreeViewBase {
     id: treeView
-    clip: true
-    view: itemView
 
     property alias roles: itemView.roles
 
@@ -109,8 +106,6 @@ WGTreeViewBase {
         in the view.
     */
     property alias model: itemView.model
-
-    internalModel: itemView.extendedModel
 
     /*! A list of components to be used for each header/footer column.
         Item 0 for column 0, item 1 for column 1 etc.

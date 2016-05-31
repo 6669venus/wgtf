@@ -81,7 +81,7 @@ TEST( Python27Interface )
 
 	{
 		// Import a test module
-		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_interface_test/scripts";
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_interface_test/resources/scripts";
 		const wchar_t * deployPath = L"./scripts/plg_python27_interface_test";
 		const char * moduleName = "python27_test";
 		const bool sourcePathSet = scriptingEngine->appendSourcePath( sourcePath );

@@ -146,7 +146,6 @@ Item
         id: nodeGroupMouseArea
         anchors.fill: parent
         anchors.margins: defaultSpacing.doubleMargin
-        anchors.topMargin: defaultSpacing.minimumRowHeight + defaultSpacing.doubleMargin
         drag.target: groupItem
         drag.axis: Drag.XAndYAxis
         acceptedButtons: Qt.LeftButton

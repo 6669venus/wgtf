@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+
 
 ScrollView {
     objectName:  itemData != null ? itemData.IndexPath : "TreeView"

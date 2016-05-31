@@ -2,7 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief Slider with two handles that encompasses a range of values.
@@ -147,7 +147,7 @@ Item {
     WGCopyable {
         id: copyableControl
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {

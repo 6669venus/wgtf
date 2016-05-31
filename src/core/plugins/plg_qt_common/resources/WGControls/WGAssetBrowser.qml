@@ -2,7 +2,6 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.1
-import BWControls 1.0
 import WGControls 1.0
 
 /*!
@@ -274,7 +273,7 @@ Rectangle {
         }
     }
 
-    BWDataChangeNotifier {
+    WGDataChangeNotifier {
         id: customContentFilterIndexNotifier
         source: rootFrame.viewModel.data.customContentFilterIndexNotifier
         onDataChanged: {
@@ -337,7 +336,7 @@ Rectangle {
         }
     }
 
-    SelectionHelper {
+    WGSelectionHelper {
         id: folderModelSelectionHelper
         source: rootFrame.viewModel.folderSelectionHandler
         onSourceChanged: {
@@ -392,7 +391,7 @@ Rectangle {
         }
     }
 
-    SelectionHelper {
+    WGSelectionHelper {
         id: fileModelSelectionHelper
         source: rootFrame.viewModel.folderContentSelectionHandler
         onSourceChanged: {
@@ -418,7 +417,7 @@ Rectangle {
         }
     }
 
-    BWDataChangeNotifier {
+    WGDataChangeNotifier {
         id: folderSelectionHistory
         source: rootFrame.viewModel.folderSelectionHistoryIndex
 

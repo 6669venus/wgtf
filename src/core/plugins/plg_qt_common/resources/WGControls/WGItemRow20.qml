@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
-import BWControls 1.0
+import WGControls 2.0
 
 /*!
  \brief Generates rows for both WGListView and WGTreeView.
@@ -86,7 +86,7 @@ Item {
         Repeater {
             id: rowRepeater
 
-            model: SequenceList {
+            model: WGSequenceList {
                 id: rowModel
                 model: columnModel
                 sequence: columnSequence

@@ -1,12 +1,12 @@
-#ifndef BW_COPYABLE_HPP
-#define BW_COPYABLE_HPP
+#ifndef WG_COPY_CONTROLLER_HPP
+#define WG_COPY_CONTROLLER_HPP
 #include "core_copy_paste/i_copyable_object.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_variant/variant.hpp"
 #include <QObject>
 #include <QVariant>
 
-class BWCopyable
+class WGCopyController
 	: public QObject
 	, public ICopyableObject
 {
@@ -16,8 +16,8 @@ class BWCopyable
 	Q_PROPERTY( bool pasted MEMBER bPasted_  )
 
 public:
-	BWCopyable( QObject * parent = NULL );
-	~BWCopyable();
+	WGCopyController( QObject * parent = NULL );
+	~WGCopyController();
 
 	Q_INVOKABLE void setValue( const QVariant & data );
 	// This hint is designed for 
@@ -28,7 +28,6 @@ public:
 	const char * getDataHint() const override;
 	const Variant & getData() override;
 	bool setData( const Variant & value ) override;
-
 
 signals:
 	void dataCopied();
@@ -41,4 +40,4 @@ private:
 	bool bPasted_;
 };
 
-#endif //BW_COPYABLE_HPP
+#endif //WG_COPY_CONTROLLER_HPP

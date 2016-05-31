@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief Text entry field mostly intended for strings
@@ -90,7 +90,7 @@ TextField {
     WGCopyable {
         id: copyableControl
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {

@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import WGControls 1.0
-import BWControls 1.0
+
 
 WGDropDownBox {
     id: combobox

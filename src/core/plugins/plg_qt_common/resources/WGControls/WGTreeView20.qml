@@ -74,6 +74,8 @@ ScrollView {
 
 WGTreeViewBase {
     id: treeView
+    clip: true
+    view: itemView
 
     property alias roles: itemView.roles
 
@@ -108,6 +110,7 @@ WGTreeViewBase {
     */
     property alias model: itemView.model
 
+    internalModel: itemView.extendedModel
 
     /*! A list of components to be used for each header/footer column.
         Item 0 for column 0, item 1 for column 1 etc.
@@ -122,6 +125,9 @@ WGTreeViewBase {
     property alias headerDelegate: itemView.headerDelegate
     property alias footerDelegate: itemView.footerDelegate
 
+    /*! This component is used for showing a sort indicator 
+        on header column.
+    property alias sortIndicator: itemView.sortIndicator
     property var extensions: []
 
     /*! Move the keyboard highlight up.
@@ -184,7 +190,22 @@ WGTreeViewBase {
 
         Connections {
             target: treeView
-            onItemPressed: WGViewSelection.itemPressed(mouse, itemView, treeExtension, rowIndex)
+            onItemPressed: {
+                if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
+                    var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
+                    itemView.selectionModel.select(selection, 0x0002) // Select
+                }
+                else if (mouse.modifiers & Qt.ShiftModifier) {
+                    var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
+                    itemView.selectionModel.select(selection, 0x0001 | 0x0002) // Clear || Select
+                }
+                else if (mouse.modifiers & Qt.ControlModifier) {
+                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0008) // Toggle
+                }
+                else {
+                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0001 | 0x0002) // Clear | Select
+                }
+            }
         }
     }
 }

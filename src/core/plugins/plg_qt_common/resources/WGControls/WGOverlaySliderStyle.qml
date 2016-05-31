@@ -40,7 +40,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
-import BWControls 1.0
+
 
 /*!
     A re-write of the default Slider style.

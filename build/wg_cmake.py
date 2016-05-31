@@ -131,7 +131,7 @@ def runBat( batFile ):
 
 def targetChoices():
 	buildDir = os.path.dirname(os.path.abspath(__file__))
-	targetPrefix = buildDir + '/cmake/BWConfiguration_'
+	targetPrefix = buildDir + '/cmake/WGConfiguration_'
 	targetPrefix = targetPrefix.replace( '\\', '/' )
 
 	def _stripName( n ):

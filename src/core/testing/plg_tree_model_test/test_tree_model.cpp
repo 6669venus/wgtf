@@ -512,7 +512,7 @@ AbstractItem* TestTreeModel::item( const ItemIndex & index ) const
 {
 	auto temp = static_cast<const TestTreeItem*>( index.parent_ );
 	const auto & section = impl_->getSection( temp );
-	assert( index.row_ < section.size() );
+	assert( index.row_ < static_cast< int >( section.size() ) );
 	return section[ index.row_ ];
 }
 

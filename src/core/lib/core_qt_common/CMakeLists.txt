@@ -98,10 +98,10 @@ SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
 
 SET( CONTROLS_SRC
-	controls/bw_copyable.hpp
-	controls/bw_copyable.cpp
-	controls/bw_filedialog_qi.hpp
-	controls/bw_filedialog_qi.cpp
+	controls/wg_copy_controller.hpp
+	controls/wg_copy_controller.cpp
+	controls/wg_filedialog_qi.hpp
+	controls/wg_filedialog_qi.cpp
 	controls/wg_action.hpp
 	controls/wg_action.cpp
 	controls/wg_context_menu.hpp

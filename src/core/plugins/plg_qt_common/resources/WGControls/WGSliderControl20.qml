@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 2.0
 
 //TODO: Test orientation = vertical. Create vertical slider. Remove option here
 //Resizing the slider could be smarter. Does not take into account content of spinner width
@@ -157,7 +157,7 @@ Item {
         objectName: "copyableControl"
         id: copyableControl
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {

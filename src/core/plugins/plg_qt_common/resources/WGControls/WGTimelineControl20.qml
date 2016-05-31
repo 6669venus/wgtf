@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.1
-import BWControls 1.0
+
 import WGControls 2.0
 
 /*!

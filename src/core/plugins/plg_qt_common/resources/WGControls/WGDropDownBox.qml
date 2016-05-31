@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
-import BWControls 1.0
+import WGControls 1.0
 
 //TODO: Does this control require some more work as indicated in the brief?
 
@@ -76,7 +76,7 @@ ComboBox {
     WGCopyable {
         id: copyableControl
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {

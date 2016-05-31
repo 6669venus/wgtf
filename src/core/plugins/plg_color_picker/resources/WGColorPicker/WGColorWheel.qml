@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import QtGraphicalEffects 1.0
 
-import BWControls 1.0
+
 import WGControls 1.0
 import WGColorPicker 1.0
 

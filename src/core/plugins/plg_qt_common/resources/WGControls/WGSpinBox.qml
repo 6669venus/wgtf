@@ -42,7 +42,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Controls.Styles 1.2
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief A reimplementation of Spinbox with the following properties:
@@ -451,7 +451,7 @@ Control {
         WGCopyable {
             id: copyableControl
 
-            BWCopyable {
+            WGCopyController {
                 id: copyableObject
 
                 onDataCopied : {

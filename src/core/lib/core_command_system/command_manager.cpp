@@ -609,12 +609,12 @@ void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & 
             if (functor((*iter).value<CommandInstancePtr>()))
             {
                 iter = historyState_->history_.erase(iter);
-                if (commandIndex < currentIndexValue)
+                if (commandIndex <= currentIndexValue)
                 {
                     currentIndexValue = std::max(currentIndexValue - 1, -1);
                 }
 
-                if (prevSelecetedIndex < prevSelecetedIndexValue)
+                if (prevSelecetedIndex <= prevSelecetedIndexValue)
                 {
                     prevSelecetedIndexValue = std::max(prevSelecetedIndexValue - 1, -1);
                 }

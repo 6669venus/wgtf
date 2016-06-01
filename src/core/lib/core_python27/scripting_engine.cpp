@@ -138,13 +138,8 @@ bool Python27ScriptingEngine::init()
 	PyImport_ImportModule( "scriptoutputwriter" );
 
 	// Allow import from supported system modules
-	char * pythonSourcePath[ MAX_PATH ];
-	wsprintf( pythonSourcePath,
-		L"../../../src/core/third_party/python/Python-%d.%d.%d/Lib",
-		PY_MAJOR_VERSION,
-		PY_MINOR_VERSION,
-		PY_MICRO_VERSION );
-	if (!this->appendSourcePath( pythonSourcePath ))
+	if (!this->appendSourcePath(
+		L"../../../src/core/third_party/python/Python-2.7.10/Lib" ))
 	{
 		NGT_ERROR_MSG( "Failed to append path to system modules\n" );
 		return false;

@@ -80,7 +80,7 @@ struct Python27TestUIPlugin
 		}
 		auto & scriptingEngine = (*pScriptingEngine);
 
-		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_ui_test/resources/scripts";
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_ui_test/scripts";
 		const wchar_t * deployPath = L"./scripts/plg_python27_ui_test";
 		const char * moduleName = "test_objects";
 		const bool sourcePathSet = scriptingEngine.appendSourcePath( sourcePath );

@@ -11,7 +11,7 @@ ENDIF()
 
 
 SET( PYTHON_SRCS
-	resources/scripts/python27_test/__init__.py
+	scripts/python27_test/__init__.py
 )
 SOURCE_GROUP( "Python" FILES ${PYTHON_SRCS} )
 

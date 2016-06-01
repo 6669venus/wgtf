@@ -12,7 +12,7 @@ SET( METADATA_SRCS
 SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
 
 SET( PYTHON_FILES
-	resources/scripts/test_objects/__init__.py
+	scripts/test_objects/__init__.py
 )
 SOURCE_GROUP( "Python" FILES ${PYTHON_FILES} )
 

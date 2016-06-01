@@ -131,7 +131,7 @@ TEST( Python27 )
 
 	// Import the test module and run it
 	{
-		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_unit_test/resources\scripts";
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_unit_test/scripts";
 		const wchar_t * deployPath = L"./scripts/plg_python27_unit_test";
 		const char * moduleName = "python27_test";
 		const bool sourcePathSet = scriptingEngine->appendSourcePath( sourcePath );

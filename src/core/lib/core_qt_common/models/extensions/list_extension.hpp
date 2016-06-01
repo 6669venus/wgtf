@@ -29,7 +29,7 @@ public:
 	 *	Move index down one row in the list.
 	 *	Index will not be moved past the end of the list.
 	 *	@param index to be moved.
-	 *	@return new position.
+	 *	@return new position or the original index on error.
 	 */
 	Q_INVOKABLE QModelIndex getNextIndex( const QModelIndex & index ) const;
 
@@ -37,7 +37,7 @@ public:
 	 *	Move index up one row in the list.
 	 *	Index will not be moved past the start of the list.
 	 *	@param index to be moved.
-	 *	@return new position.
+	 *	@return new position or the original index on error.
 	 */
 	Q_INVOKABLE QModelIndex getPreviousIndex( const QModelIndex & index ) const;
 };

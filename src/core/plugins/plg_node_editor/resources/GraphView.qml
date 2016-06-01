@@ -127,6 +127,13 @@ Item
         useGridLabels: false
         useBorders: false
 
+        // bools to check for slot connection suggestions
+        property bool creatingConnection: false
+        property bool creatingFromInput: false
+        property var creatingColor: "#000000"
+        property var currentConnectionSlot: null
+        property var creatingNode: null
+
         viewTransform: WGViewTransform{
             container: canvasContainer
             xScale: 1
@@ -151,11 +158,16 @@ Item
         property var connectionComponent: Qt.createComponent("ConnectionNodes.qml")
         property var currentConnection: null
 
-        function startCreatingNewConnection(fromSlotObj)
+        function startCreatingNewConnection(fromSlotObj, parentNode)
         {
             currentConnection = connectionComponent.createObject(nodeEditorView, {"firstSlot": fromSlotObj,
                                                                      "secondSlot": null,
                                                                      "viewTransform": viewTransform});
+            creatingConnection = true
+            creatingFromInput = fromSlotObj.isInput
+            creatingColor = fromSlotObj.color
+            currentConnectionSlot = fromSlotObj
+            creatingNode = parentNode
         }
 
         function finishCreatingNewConnection(endPos)
@@ -173,6 +185,12 @@ Item
 
             currentConnection.destroy();
             currentConnection = null;
+
+            creatingConnection = false
+            creatingFromInput = false
+            creatingColor = "#000000"
+            currentConnectionSlot = null
+            creatingNode = null
         }
 
         Item
@@ -225,6 +243,20 @@ Item
                         dragObj.y = dragObj.y;
                     }
                 });
+            }
+        }
+
+        Repeater
+        {
+            id: connectionRepeater
+            model: connectionsListModel
+            delegate: ConnectionNodes
+            {
+                connectionObj: Value
+                connectionID: connectionObj.id
+                firstSlot: connectionObj.output
+                secondSlot: connectionObj.input
+                viewTransform: canvasContainer.viewTransform
             }
         }
 
@@ -286,21 +318,6 @@ Item
                     x: mapFromItem(graphView, nodeObj.nodeCoordX, nodeObj.nodeCoordY).x
                     y: mapFromItem(graphView, nodeObj.nodeCoordX, nodeObj.nodeCoordY).y
                 }
-            }
-        }
-
-
-        Repeater
-        {
-            id: connectionRepeater
-            model: connectionsListModel
-            delegate: ConnectionNodes
-            {
-                connectionObj: Value
-                connectionID: connectionObj.id
-                firstSlot: connectionObj.output
-                secondSlot: connectionObj.input
-                viewTransform: canvasContainer.viewTransform
             }
         }
     }

@@ -4,7 +4,6 @@ project( plg_node_editor_test )
 #find_package(NGT REQUIRED)
 
 INCLUDE( WGToolsProject )
-INCLUDE( BWQtLibrary )
 
 #LIST(APPEND TARGET_LIBRARIES core_generic_plugin core_qt_common core_ui_framework)
 
@@ -52,7 +51,6 @@ BW_TARGET_LINK_LIBRARIES( plg_node_editor_test PRIVATE
 	core_qt_common
 	core_qt_script
 	core_ui_framework
-	Qt5::Core
 )
 
 BW_PROJECT_CATEGORY( plg_node_editor_test "Plugins" )

@@ -1,6 +1,5 @@
 
 #include "IntegerSlot.h"
-#include <qstring.h>
 
 const std::string INTEGER_SLOT_LABEL = "integer";
 const std::string INTEGER_SLOT_ICON = "images/greenSlot.png";

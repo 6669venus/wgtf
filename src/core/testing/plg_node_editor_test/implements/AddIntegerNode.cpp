@@ -1,6 +1,5 @@
 
 #include "AddIntegerNode.h"
-#include <QtCore/QString>
 
 const std::string ADD_INTEGER_NODE_TITLE = "Add Integer";
 const std::string ADD_INTEGER_NODE_SUBTITLE = "";
@@ -23,8 +22,9 @@ AddIntegerNode::AddIntegerNode(const std::string &nodeClass)
     for (int i = 0; i < 2; ++i)
     {
         m_inputSlotsModel.push_back(new IntegerSlot(this, true));
-        QString label = QString("i") + QString::number(i);
-        m_inputSlotsModel.back()->setLabel(label.toStdString());
+	std::string label("i");
+	label += std::to_string(i);
+        m_inputSlotsModel.back()->setLabel(label);
     }
 
     m_outputSlotsModel.push_back(new IntegerSlot(this, false));

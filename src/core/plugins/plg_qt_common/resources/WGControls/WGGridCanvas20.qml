@@ -361,18 +361,12 @@ Canvas {
     }
 
     function getWidth( startTime, endTime )
-    {
-        //var startX = gridCanvas.viewTransform.inverseTransform(Qt.point(0,0)).x
+    {        
         var endX = gridCanvas.viewTransform.inverseTransform(Qt.point(width,0)).x
-        console.log("----------endX is " + endX)
         var pixelEndX = viewTransform.transformX(endX);
-        console.log("----------pixelEndX is " + pixelEndX)
         var startPixelLocation = (timeScale/startTime * pixelEndX)
-        console.log("----------startPixelLocation is " + startPixelLocation)
         var endPixelLocation =  (timeScale/endTime * pixelEndX)
-        console.log("----------endPixelLocation is " + endPixelLocation)
         var newWidth = startPixelLocation - endPixelLocation
-        console.log("----------newWidth is " + newWidth)
         return newWidth
     }
 

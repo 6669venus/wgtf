@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 1.0
 
 ListView {
     objectName:  itemData != null ? itemData.indexPath : "TreeItem"
@@ -39,7 +39,7 @@ ListView {
         property bool selected_ : selected
 
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {
@@ -277,7 +277,7 @@ ListView {
 
                 Row {
                     Repeater {
-                        model : SequenceList {
+                        model : WGSequenceList {
                             model : columnModel
                             sequence : columnSequence_
                         }

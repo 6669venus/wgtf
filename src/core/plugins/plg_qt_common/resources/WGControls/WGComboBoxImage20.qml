@@ -4,7 +4,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.2
 
-import BWControls 1.0
+
 import WGControls 1.0
 
 /*  TODO

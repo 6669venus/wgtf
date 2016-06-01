@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import BWControls 1.0
 import WGControls 1.0 as WGOne
 import WGControls 2.0
 
@@ -231,7 +230,7 @@ Canvas {
         }
     }
 
-    BWDataChangeNotifier
+    WGDataChangeNotifier
     {
         source: curveModel.notifyDirty
         onDataChanged:

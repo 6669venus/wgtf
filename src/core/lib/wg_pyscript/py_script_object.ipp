@@ -188,8 +188,17 @@ inline ScriptString ScriptObject::str(
  */
 inline ScriptLong ScriptObject::id() const
 {
-	PyObject * pLong = PyLong_FromVoidPtr( this->get() );
-	return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
+	// PyLong_FromVoidPtr may return an integer or long integer
+	PyObject * pLongOrInt = PyLong_FromVoidPtr( this->get() );
+
+	if (PyLong_CheckExact( pLongOrInt ) == 1)
+	{
+		return ScriptLong( pLongOrInt, ScriptObject::FROM_NEW_REFERENCE );
+	}
+	assert( PyInt_CheckExact( pLongOrInt ) == 1 );
+	const ScriptInt intResult = ScriptInt( pLongOrInt, ScriptObject::FROM_NEW_REFERENCE );
+	const long intToLong = intResult.asLong();
+	return ScriptLong::create( intToLong );
 }
 
 

@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
 
-import BWControls 1.0
+
 import WGControls 1.0
 
 //This is a prototype control for mocking up advanced panel features.

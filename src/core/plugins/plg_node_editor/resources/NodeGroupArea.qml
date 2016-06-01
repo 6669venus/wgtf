@@ -72,7 +72,7 @@ Item
 
         height: (defaultSpacing.minimumRowHeight + defaultSpacing.standardMargin) / scaleFactor
 
-        width: parent.width//contentWidth + defaultSpacing.doubleMargin
+        width: parent.width
 
         enabled: !locked
 

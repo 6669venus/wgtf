@@ -53,6 +53,7 @@ public:
 	virtual bool preErase( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
 	virtual bool postErased( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
 
+	uint64_t getId() const;
 	const std::string & getPath() const;
 	IReflectionController * getController() const;
 	IDefinitionManager * getDefinitionManager() const;
@@ -69,6 +70,7 @@ public:
 
 protected:
 	ReflectedTreeItemNew * parent_;
+	uint64_t id_;
 	std::string path_;
 	size_t index_;
 	DIRef< IReflectionController > controller_;

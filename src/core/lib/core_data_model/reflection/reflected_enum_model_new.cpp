@@ -31,10 +31,6 @@ namespace
 			{
 				return TypeId::getType< int >().getName();
 			}
-			else if (roleId == IndexPathRole::roleId_)
-			{
-				return text_ + std::to_string( index_ );
-			}
 			return Variant();
 		}
 		

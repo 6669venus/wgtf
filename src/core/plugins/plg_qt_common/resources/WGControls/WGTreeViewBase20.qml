@@ -6,24 +6,32 @@ import WGControls 2.0
 ListView {
     id: treeViewBase
 
-    headerPositioning: ListView.OverlayHeader
-	footerPositioning: ListView.OverlayFooter
-    contentWidth: contentItem.childrenRect.width 
-
     property var view
     property real depth: 0
-
-    signal itemPressed(var mouse, var itemIndex, var rowIndex)
-    signal itemClicked(var mouse, var itemIndex, var rowIndex)
-    signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
 
     property var __onItemPressed: function(mouse, itemIndex, rowIndex) {}
     property var __onItemClicked: function(mouse, itemIndex, rowIndex) {}
     property var __onItemDoubleClicked: function(mouse, itemIndex, rowIndex) {}
 
+    /*! Stores which item is currently in focus by the keyboard.
+        Often this will correspond to the selected item, but not always.
+        E.g. pressing ctrl+up will move the current index, but not the selected index.
+        The default value is the same as the selection (modelIndex).
+        To be initialized by the parent.
+    */
+    property var keyboardHighlightModelIndex: null
+
+    signal itemPressed(var mouse, var itemIndex, var rowIndex)
+    signal itemClicked(var mouse, var itemIndex, var rowIndex)
+    signal itemDoubleClicked(var mouse, var itemIndex, var rowIndex)
+
     onItemPressed: __onItemPressed(mouse, itemIndex, rowIndex)
     onItemClicked: __onItemClicked(mouse, itemIndex, rowIndex)
     onItemDoubleClicked: __onItemDoubleClicked(mouse, itemIndex, rowIndex)
+
+    headerPositioning: ListView.OverlayHeader
+    footerPositioning: ListView.OverlayFooter
+    contentWidth: contentItem.childrenRect.width 
 
     header: depth == 0 ? view.header : null
     footer: depth == 0 ? view.footer : null
@@ -39,6 +47,7 @@ ListView {
             columnWidths: view.columnWidths
             columnSpacing: view.columnSpacing
             isSelected: view.selectionModel.isSelected(modelIndex)
+            isKeyboardHighlight: (keyboardHighlightModelIndex === modelIndex)
 
             Connections {
                 target: view.selectionModel
@@ -71,7 +80,9 @@ ListView {
 
                         "__onItemPressed": function(mouse, itemIndex, rowIndex) { treeViewBase.itemPressed(mouse, itemIndex, rowIndex) },
                         "__onItemClicked": function(mouse, itemIndex, rowIndex) { treeViewBase.itemClicked(mouse, itemIndex, rowIndex) },
-                        "__onItemDoubleClicked": function(mouse, itemIndex, rowIndex) { treeViewBase.itemDoubleClicked(mouse, itemIndex, rowIndex) }
+                        "__onItemDoubleClicked": function(mouse, itemIndex, rowIndex) { treeViewBase.itemDoubleClicked(mouse, itemIndex, rowIndex) },
+
+                        "keyboardHighlightModelIndex": Qt.binding( function() { return keyboardHighlightModelIndex; } )
                     })
 
                     childItems.width = Qt.binding( function() { return active ? item.contentWidth : 0 } )

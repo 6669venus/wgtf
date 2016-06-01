@@ -1,4 +1,4 @@
-#include "i_asset_browser_model.hpp"
+#include "../i_asset_browser_model.hpp"
 
 #include "core_data_model/i_selection_handler.hpp"
 

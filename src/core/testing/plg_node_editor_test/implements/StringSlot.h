@@ -27,7 +27,7 @@ public:
     const GenericListT<ISlot*>* GetConnectedSlots() const override;
 
     bool CanConnect(ObjectHandleT<ISlot> slot) override;
-    bool isConnected() const override { return !m_connectedSlots.empty(); }
+    bool IsConnected() const override { return !m_connectedSlots.empty(); }
 
     bool Connect(size_t connectionID, ObjectHandleT<ISlot> slot) override;
     bool Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot) override;

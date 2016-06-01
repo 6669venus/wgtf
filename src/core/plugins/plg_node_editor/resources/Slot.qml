@@ -13,8 +13,7 @@ Row
     /*! The Node (Qml object) that this slot is part of */
     property var parentNode
 
-    // TODO: Make this to reflect C++ state?
-    property bool connected: false
+    property bool connected
 
     // TODO: Make this more robust? Not so dependent on slot 'color'?
     property bool validSlot: {
@@ -44,6 +43,13 @@ Row
     }
 
     signal removeConnection()
+
+    Connections {
+        target: canvasContainer
+        onUpdateConnections: {
+            slot.connected = slotObj.isConnected
+        }
+    }
 
     spacing: 2
     height: defaultSpacing.minimumRowHeight

@@ -58,6 +58,7 @@ Item
             var group = groupRepeater.itemAt(j);
             unselectNode(group);
         }
+        multiDrag.dragObjects = []
     }
 
     function selectNodesInArea(areaRect, isAddMode)
@@ -134,6 +135,10 @@ Item
         property var currentConnectionSlot: null
         property var creatingNode: null
 
+        signal updateConnections()
+
+        signal deleteNodes()
+
         viewTransform: WGViewTransform{
             container: canvasContainer
             xScale: 1
@@ -143,11 +148,13 @@ Item
         onCanvasPressed:
         {
             resetNodesSelection();
+            canvasContainer.focus = true
         }
 
         onSelectArea:
         {
             selectNodesInArea(canvasContainer.mapToItem(canvasItem, min.x, min.y, Math.abs(max.x - min.x), Math.abs(max.y - min.y)), mouse.modifiers & Qt.ShiftModifier);
+            canvasContainer.focus = true
         }
 
         onPreviewSelectArea:
@@ -191,6 +198,16 @@ Item
             creatingColor = "#000000"
             currentConnectionSlot = null
             creatingNode = null
+        }
+
+        Keys.onPressed: {
+            if (event.key == Qt.Key_Delete) {
+                if (multiDrag.dragObjects.length > 0)
+                {
+                    deleteDialog.open()
+                    event.accepted = true;
+                }
+            }
         }
 
         Item
@@ -258,6 +275,9 @@ Item
                 secondSlot: connectionObj.input
                 viewTransform: canvasContainer.viewTransform
             }
+            onCountChanged: {
+                canvasContainer.updateConnections()
+            }
         }
 
         WGGridCanvasItem
@@ -310,6 +330,7 @@ Item
                 model: nodesListModel
                 delegate: Node
                 {
+                    id: nodeContainer
                     nodeObj: Value
                     nodeID: nodeObj.id
                     nodeTitle: nodeObj.nodeTitle
@@ -317,6 +338,16 @@ Item
                     outputSlotsModel: nodeObj.outputSlotsModel
                     x: mapFromItem(graphView, nodeObj.nodeCoordX, nodeObj.nodeCoordY).x
                     y: mapFromItem(graphView, nodeObj.nodeCoordX, nodeObj.nodeCoordY).y
+
+                    Connections {
+                        target: canvasContainer
+                        onDeleteNodes: {
+                            if (nodeContainer.selected)
+                            {
+                                deleteNode(nodeContainer.nodeID);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -335,6 +366,62 @@ Item
         }
         onRejected: {
             abortUndoFrame();
+        }
+    }
+
+    Dialog {
+        id: deleteDialog
+        visible: false
+        title: "Delete Nodes"
+        width: 240
+        height: 80
+
+        contentItem: Rectangle {
+                color: palette.mainWindowColor
+                ColumnLayout {
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.margins: defaultSpacing.standardMargin
+                    height: 60
+                    WGLabel {
+                        text: "Delete selected nodes?"
+                        anchors.leftMargin: defaultSpacing.standardMargin
+                    }
+                    Item {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+                        }
+                        WGPushButton {
+                            text: "Yes"
+                            Layout.preferredWidth: 60
+                            onClicked: {
+                                deleteDialog.accepted()
+                                deleteDialog.close()
+                            }
+                        }
+                        WGPushButton {
+                            text: "No"
+                            Layout.preferredWidth: 60
+                            onClicked: {
+                                deleteDialog.rejected()
+                                deleteDialog.close()
+                            }
+                        }
+                    }
+                }
+        }
+
+        onAccepted: {
+            canvasContainer.deleteNodes()
         }
     }
 }

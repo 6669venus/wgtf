@@ -205,6 +205,7 @@ Item
                             z : nodeContainer.z + 10
                             slotObj: Value
                             isInput: Value.isInput
+                            connected: Value.isConnected
                             parentNode: nodeContainer
                         }
                     }
@@ -239,6 +240,7 @@ Item
                             z : nodeContainer.z + 10
                             slotObj: Value
                             isInput: Value.isInput
+                            connected: Value.isConnected
                             parentNode: nodeContainer
                             Layout.alignment : Qt.AlignTop | Qt.AlignRight
                         }

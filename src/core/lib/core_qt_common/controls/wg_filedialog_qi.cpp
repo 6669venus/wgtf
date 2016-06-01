@@ -1,4 +1,4 @@
-#include "bw_filedialog_qi.hpp"
+#include "wg_filedialog_qi.hpp"
 
 #include "../helpers/qt_helpers.hpp"
 
@@ -9,28 +9,28 @@
 namespace wgt
 {
 //==============================================================================
-BWFileDialogQI::BWFileDialogQI( QObject * parent )
+WGFileDialogQI::WGFileDialogQI( QObject * parent )
 	: QObject( parent )
 	, fileDialog_( NULL )
 {
 }
 
 //==============================================================================
-BWFileDialogQI::~BWFileDialogQI()
+WGFileDialogQI::~WGFileDialogQI()
 {
 	delete fileDialog_;
 	fileDialog_ = NULL;
 }
 
 //==============================================================================
-void BWFileDialogQI::componentOnComplete()
+void WGFileDialogQI::componentOnComplete()
 {
 	// We should have all properties we need by this point, create a new file dialog
 	createFileDialog();
 }
 
 //==============================================================================
-void BWFileDialogQI::setTitle( QString title )
+void WGFileDialogQI::setTitle( QString title )
 {
 	// Set the file dialog's title to be used later when the createFileDialog
 	// function is invoked
@@ -42,7 +42,7 @@ void BWFileDialogQI::setTitle( QString title )
 }
 
 //==============================================================================
-void BWFileDialogQI::setFilter( QString filter )
+void WGFileDialogQI::setFilter( QString filter )
 {
 	// Set the file dialog's filter to be used later when the createFileDialog
 	// function is invoked
@@ -54,7 +54,7 @@ void BWFileDialogQI::setFilter( QString filter )
 }
 
 //==============================================================================
-void BWFileDialogQI::setFileModeFlag( int fileModeFlag )
+void WGFileDialogQI::setFileModeFlag( int fileModeFlag )
 {
 	// Set the file dialog's file mode flag to be used later when the createFileDialog
 	// function is invoked
@@ -66,7 +66,7 @@ void BWFileDialogQI::setFileModeFlag( int fileModeFlag )
 }
 
 //==============================================================================
-void BWFileDialogQI::setMode( int mode )
+void WGFileDialogQI::setMode( int mode )
 {
 	// Set the file dialog's accept mode to be used later when the createFileDialog
 	// function is invoked
@@ -78,7 +78,7 @@ void BWFileDialogQI::setMode( int mode )
 }
 
 //==============================================================================
-bool BWFileDialogQI::showDialog()
+bool WGFileDialogQI::showDialog()
 {
 	// Show the file dialog and let qml know if there is any file name selected
 	bool success = fileDialog_->exec();
@@ -93,7 +93,7 @@ bool BWFileDialogQI::showDialog()
 }
 
 //==============================================================================
-QStringList BWFileDialogQI::getFileNames()
+QStringList WGFileDialogQI::getFileNames()
 {
 	// Returns the cached file names.
 	// NOTE: Must call the showDialog prior to this.
@@ -101,7 +101,7 @@ QStringList BWFileDialogQI::getFileNames()
 }
 
 //==============================================================================
-void BWFileDialogQI::createFileDialog()
+void WGFileDialogQI::createFileDialog()
 {
 	// Make sure we don't create the QFileDialog instance multiple times
 	assert( NULL == fileDialog_ );

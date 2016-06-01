@@ -3,7 +3,7 @@
 #include "qobject_qt_type_converter.hpp"
 #include "qt_script_object.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
-#include "core_qt_common/controls/bw_copyable.hpp"
+#include "core_qt_common/controls/wg_copy_controller.hpp"
 #include "script_qt_type_converter.hpp"
 #include "wg_list_iterator.hpp"
 #include "collection_qt_type_converter.hpp"
@@ -479,12 +479,12 @@ void QtScriptingEngine::deleteMacro( QString command )
 	impl_->commandSystemProvider_->deleteMacroByName( commandId.c_str() );
 }
 
-void QtScriptingEngine::selectControl( BWCopyable* control, bool append )
+void QtScriptingEngine::selectControl( WGCopyController* control, bool append )
 {
 	impl_->copyPasteManager_->onSelect( control, append );
 }
 
-void QtScriptingEngine::deselectControl( BWCopyable* control, bool reset )
+void QtScriptingEngine::deselectControl( WGCopyController* control, bool reset )
 {
 	impl_->copyPasteManager_->onDeselect( control, reset );
 }

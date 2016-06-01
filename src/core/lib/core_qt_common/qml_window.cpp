@@ -385,7 +385,7 @@ void QmlWindow::savePreference()
     {
         return;
     }
-    std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+    std::string key = id_ + g_internalPreferenceId ;
     auto & preference = preferences->getPreference( key.c_str() );
     QByteArray geometryData = mainWindow_->saveGeometry();
     std::shared_ptr< BinaryBlock > geometry = 
@@ -419,7 +419,7 @@ bool QmlWindow::loadPreference()
         {
             break;
         }
-        std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+        std::string key = id_ + g_internalPreferenceId ;
         auto & preference = preferences->getPreference( key.c_str() );
         // check the preferences
         auto accessor = preference->findProperty( "geometry" );

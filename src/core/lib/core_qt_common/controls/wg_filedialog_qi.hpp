@@ -1,12 +1,12 @@
 /**
- * BWFileDialogQI
+ * WGFileDialogQI
  *
  * The Qml Invokable FileDialog class.
  *
  */
 
-#ifndef BW_FILEDIALO_QI_HPP
-#define BW_FILEDIALO_QI_HPP
+#ifndef WG_FILEDIALO_QI_HPP
+#define WG_FILEDIALO_QI_HPP
 
 #include "../qt_new_handler.hpp"
 #include <QFileDialog>
@@ -17,7 +17,7 @@ class QFileDialog;
 
 namespace wgt
 {
-class BWFileDialogQI
+class WGFileDialogQI
 	: public QObject
 {
 	Q_OBJECT
@@ -30,8 +30,8 @@ class BWFileDialogQI
 	Q_PROPERTY( QStringList fileNames READ getFileNames NOTIFY fileNamesChanged REVISION 1 )
 
 public:
-	BWFileDialogQI( QObject * parent = NULL );
-	~BWFileDialogQI();
+	WGFileDialogQI( QObject * parent = NULL );
+	~WGFileDialogQI();
 
 	Q_INVOKABLE void componentOnComplete();
 
@@ -60,4 +60,4 @@ private:
 	void createFileDialog();
 };
 } // end namespace wgt
-#endif //BW_FILEDIALO_QI_HPP
+#endif //WG_FILEDIALO_QI_HPP

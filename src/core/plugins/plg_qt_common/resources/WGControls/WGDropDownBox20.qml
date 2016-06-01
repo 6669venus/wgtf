@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import Qt.labs.controls 1.0 as Labs
 import Qt.labs.templates 1.0 as T
 import QtQuick.Layouts 1.3
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \  brief Qt.Labs Drop Down box with styleable menu that can have a textRole and an imageRole
@@ -70,7 +70,7 @@ Labs.ComboBox {
     WGCopyable {
         id: copyableControl
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {

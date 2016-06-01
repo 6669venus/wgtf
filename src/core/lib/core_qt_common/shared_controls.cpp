@@ -1,7 +1,7 @@
 #include "shared_controls.hpp"
 
-#include "controls/bw_filedialog_qi.hpp"
-#include "controls/bw_copyable.hpp"
+#include "controls/wg_filedialog_qi.hpp"
+#include "controls/wg_copy_controller.hpp"
 #include "controls/wg_context_menu.hpp"
 #include "controls/wg_action.hpp"
 #include "controls/wg_item_view.hpp"
@@ -49,42 +49,71 @@
 //==============================================================================
 /*static */void SharedControls::init()
 {
-	qmlRegisterType< DataChangeNotifier, 1 >( "BWControls", 1, 0, "BWDataChangeNotifier" );
-	qmlRegisterType< SelectionHelper, 1 >( "WGControls", 1, 0, "SelectionHelper" );
+	// DEPRECATED BW Controls
+	qmlRegisterType< DataChangeNotifier >( "BWControls", 1, 0, "BWDataChangeNotifier" );
+	qmlRegisterType< SequenceListAdapter >("BWControls", 1, 0, "SequenceList" );
+	qmlRegisterType< WGCopyController >( "BWControls", 1, 0, "BWCopyable" );
+	qmlRegisterType< WGFileDialogQI >( "BWControls", 1, 0, "BWFileDialogQI" );
 
-	qmlRegisterType< BWFileDialogQI, 1 >( "BWControls", 1, 0, "BWFileDialogQI" );
-	qmlRegisterType< BWCopyable, 1 >( "BWControls", 1, 0, "BWCopyable" );
+	// WG Controls 1.x
+	qmlRegisterType< AssetItemExtension>( "WGControls", 1, 0, "AssetItemExtension" );
+	qmlRegisterType< ColumnExtensionOld>( "WGControls", 1, 0, "ColumnExtension" );
+	qmlRegisterType< ComponentExtensionOld>( "WGControls", 1, 0, "ComponentExtension" );
+	qmlRegisterType< DataChangeNotifier >( "WGControls", 1, 0, "WGDataChangeNotifier" );
+	qmlRegisterType< HeaderFooterTextExtension>( "WGControls", 1, 0, "HeaderFooterTextExtension" );
+	qmlRegisterType< SelectionExtension>( "WGControls", 1, 0, "SelectionExtension" );
+	qmlRegisterType< SelectionHelper >( "WGControls", 1, 0, "WGSelectionHelper" );
+	qmlRegisterType< SequenceListAdapter >("WGControls", 1, 0, "WGSequenceList" );
+	qmlRegisterType< ThumbnailExtension>( "WGControls", 1, 0, "ThumbnailExtension" );
+	qmlRegisterType< TreeExtensionOld>( "WGControls", 1, 0, "TreeExtension" );
+	qmlRegisterType< WGAction >( "WGControls", 1, 0, "WGAction" );
+	qmlRegisterType< WGCopyController >( "WGControls", 1, 0, "WGCopyController" );
+	qmlRegisterType< WGContextMenu >( "WGControls", 1, 0, "WGContextMenu" );
+	qmlRegisterType< WGFileDialogQI >( "WGControls", 1, 0, "WGFileDialogQI" );
+	qmlRegisterType< WGFilter>( "WGControls", 1, 0, "WGFilter" );
+	qmlRegisterType< WGFilteredListModel >( "WGControls", 1, 0, "WGFilteredListModel" );
+	qmlRegisterType< WGFilteredTreeModel >( "WGControls", 1, 0, "WGFilteredTreeModel" );
+	qmlRegisterType< WGListModel >( "WGControls", 1, 0, "WGListModel" );
+	qmlRegisterType< WGStringFilter>( "WGControls", 1, 0, "WGStringFilter" );
+	qmlRegisterType< WGTokenizedStringFilter>( "WGControls", 1, 0, "WGTokenizedStringFilter" );
+	qmlRegisterType< WGTreeModel >( "WGControls", 1, 0, "WGTreeModel" );
+	qmlRegisterType< WGTreeListAdapter>( "WGControls", 1, 0, "WGTreeListAdapter" );
+	qmlRegisterType< ValueExtension>( "WGControls", 1, 0, "ValueExtension" );
 
-	qmlRegisterType< WGListModel, 1 >( "WGControls", 1, 0, "WGListModel" );
-	qmlRegisterType< WGTreeModel, 1 >( "WGControls", 1, 0, "WGTreeModel" );
-	qmlRegisterType< WGFilteredTreeModel, 1 >( "WGControls", 1, 0, "WGFilteredTreeModel" );
-	qmlRegisterType< WGFilteredListModel, 1 >( "WGControls", 1, 0, "WGFilteredListModel" );
-	qmlRegisterType< WGContextMenu, 1 >( "WGControls", 1, 0, "WGContextMenu" );
-	qmlRegisterType< WGAction, 1 >( "WGControls", 1, 0, "WGAction" );
+	qmlRegisterType< WGCopyController, 1 > ( "WGCopyController", 1, 1, "WGCopyController" );
+	// WG Controls 2.x
+	// Exist from 1.0
+	qmlRegisterType< AssetItemExtension>( "WGControls", 2, 0, "AssetItemExtension" );
+	qmlRegisterType< ColumnExtensionOld>( "WGControls", 2, 0, "ColumnExtension" );
+	qmlRegisterType< ComponentExtensionOld>( "WGControls", 2, 0, "ComponentExtension" );
+	qmlRegisterType< DataChangeNotifier >( "WGControls", 2, 0, "WGDataChangeNotifier" );
+	qmlRegisterType< HeaderFooterTextExtension>( "WGControls", 2, 0, "HeaderFooterTextExtension" );
+	qmlRegisterType< SelectionExtension>( "WGControls", 2, 0, "SelectionExtension" );
+	qmlRegisterType< SelectionHelper >( "WGControls", 2, 0, "WGSelectionHelper" );
+	qmlRegisterType< SequenceListAdapter >("WGControls", 2, 0, "WGSequenceList" );
+	qmlRegisterType< ThumbnailExtension>( "WGControls", 2, 0, "ThumbnailExtension" );
+	qmlRegisterType< TreeExtensionOld>( "WGControls", 2, 0, "TreeExtension" );
+	qmlRegisterType< WGAction >( "WGControls", 2, 0, "WGAction" );
+	qmlRegisterType< WGCopyController >( "WGControls", 2, 0, "WGCopyController" );
+	qmlRegisterType< WGContextMenu >( "WGControls", 2, 0, "WGContextMenu" );
+	qmlRegisterType< WGFileDialogQI >( "WGControls", 2, 0, "WGFileDialogQI" );
+	qmlRegisterType< WGFilter>( "WGControls", 2, 0, "WGFilter" );
+	qmlRegisterType< WGFilteredListModel >( "WGControls", 2, 0, "WGFilteredListModel" );
+	qmlRegisterType< WGFilteredTreeModel >( "WGControls", 2, 0, "WGFilteredTreeModel" );
+	qmlRegisterType< WGListModel >( "WGControls", 2, 0, "WGListModel" );
+	qmlRegisterType< WGStringFilter>( "WGControls", 2, 0, "WGStringFilter" );
+	qmlRegisterType< WGTokenizedStringFilter>( "WGControls", 2, 0, "WGTokenizedStringFilter" );
+	qmlRegisterType< WGTreeModel >( "WGControls", 2, 0, "WGTreeModel" );
+	qmlRegisterType< WGTreeListAdapter>( "WGControls", 2, 0, "WGTreeListAdapter" );
+	qmlRegisterType< ValueExtension>( "WGControls", 2, 0, "ValueExtension" );
+	// New from 2.0
+	qmlRegisterType< ColumnExtension >( "WGControls", 2, 0, "ColumnExtension" );
+	qmlRegisterType< ComponentExtension >( "WGControls", 2, 0, "ComponentExtension" );
+	qmlRegisterType< ImageExtension >( "WGControls", 2, 0, "ImageExtension" );
+	qmlRegisterType< ListExtension >( "WGControls", 2, 0, "ListExtension" );
+	qmlRegisterType< TreeExtension >( "WGControls", 2, 0, "TreeExtension" );
+	qmlRegisterType< WGItemView >( "WGControls", 2, 0, "WGItemView" );
 
-	qmlRegisterType< SequenceListAdapter, 1 >("BWControls", 1, 0, "SequenceList" );
-	qmlRegisterType< WGTreeListAdapter, 1 >( "WGControls", 1, 0, "WGTreeListAdapter" );
-
-	qmlRegisterType< ColumnExtensionOld, 1 >( "WGControls", 1, 0, "ColumnExtension" );
-	qmlRegisterType< ComponentExtensionOld, 1 >( "WGControls", 1, 0, "ComponentExtension" );
-	qmlRegisterType< SelectionExtension, 1 >( "WGControls", 1, 0, "SelectionExtension" );
-	qmlRegisterType< ThumbnailExtension, 1 >( "WGControls", 1, 0, "ThumbnailExtension" );
-	qmlRegisterType< TreeExtensionOld, 1 >( "WGControls", 1, 0, "TreeExtension" );
-	qmlRegisterType< ValueExtension, 1 >( "WGControls", 1, 0, "ValueExtension" );
-	qmlRegisterType< AssetItemExtension, 1 >( "WGControls", 1, 0, "AssetItemExtension" );
-	qmlRegisterType< HeaderFooterTextExtension, 1 >( "WGControls", 1, 0, "HeaderFooterTextExtension" );
-
-	qmlRegisterType< ColumnExtension, 1 >( "WGControls", 2, 0, "ColumnExtension" );
-	qmlRegisterType< ListExtension, 1 >( "WGControls", 2, 0, "ListExtension" );
-	qmlRegisterType< TreeExtension, 1 >( "WGControls", 2, 0, "TreeExtension" );
-	qmlRegisterType< ImageExtension, 1 >( "WGControls", 2, 0, "ImageExtension" );
-	qmlRegisterType< ComponentExtension, 1 >( "WGControls", 2, 0, "ComponentExtension" );
-
-	qmlRegisterType< WGItemView, 1 >( "WGControls", 2, 0, "WGItemView" );
-
-	qmlRegisterType< WGFilter, 1 >( "WGControls", 1, 0, "WGFilter" );
-	qmlRegisterType< WGStringFilter, 1 >( "WGControls", 1, 0, "WGStringFilter" );
-	qmlRegisterType< WGTokenizedStringFilter, 1 >( "WGControls", 1, 0, "WGTokenizedStringFilter" );
 }
 
 

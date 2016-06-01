@@ -98,10 +98,10 @@ SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
 
 SET( CONTROLS_SRC
-	controls/bw_copyable.hpp
-	controls/bw_copyable.cpp
-	controls/bw_filedialog_qi.hpp
-	controls/bw_filedialog_qi.cpp
+	controls/wg_copy_controller.hpp
+	controls/wg_copy_controller.cpp
+	controls/wg_filedialog_qi.hpp
+	controls/wg_filedialog_qi.cpp
 	controls/wg_action.hpp
 	controls/wg_action.cpp
 	controls/wg_context_menu.hpp
@@ -181,11 +181,13 @@ BW_BLOB_SOURCES( BLOB_SRCS
 BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
 )
 
-BW_TARGET_LINK_LIBRARIES( core_qt_common
+BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
 	core_reflection
 	core_data_model
 	core_logging
 	core_string_utils
+)
+BW_TARGET_LINK_LIBRARIES( core_qt_common PRIVATE
 	Qt5::Core
 	Qt5::Gui
 	Qt5::QuickWidgets

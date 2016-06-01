@@ -28,6 +28,17 @@ WGItemView {
     property Component header: null
     property Component footer: null
 
+    property var __sortIndicators: []
+    property Component sortIndicator: Item {
+        id: indicator
+        height: sortArrowImage.height
+        Image {
+            id: sortArrowImage
+            anchors.centerIn: parent
+            source: "icons/sort_blank_10x10.png"
+        }
+    }
+
     property Component headerComponent: WGHeaderRow {
         z:2
         columnDelegates: root.headerDelegates
@@ -35,6 +46,7 @@ WGItemView {
         columnWidths: root.columnWidths
         columnSpacing: root.columnSpacing
         headerData: root.headerData
+        sortIndicators: root.__sortIndicators
     }
 
     property Component footerComponent: WGHeaderRow {
@@ -93,12 +105,14 @@ WGItemView {
         {
             while (tmp.length < columnCount()) {
                 tmp.push(headerDelegate);
+                __sortIndicators.push(sortIndicator);
             }
         }
         if((tmp.length == 0) && (headerDelegate != null))
         {
             while (tmp.length < columnCount()) {
                 tmp.push(headerDelegate);
+                __sortIndicators.push(sortIndicator);
             }
         }
         headerDelegates = tmp;

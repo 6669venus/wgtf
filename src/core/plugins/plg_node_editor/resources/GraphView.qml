@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import WGControls 1.0
 import WGControls 2.0
+import QtQuick.Dialogs 1.2
 
 
 Item
@@ -10,9 +11,12 @@ Item
     id: graphView
     anchors.fill: parent
 
-	property var nodesModel
+    property var nodesModel
     property var connectionsModel
     property var nodeClassesModel
+
+    // needs to be a proper C++ model
+    property ListModel groupModel: ListModel{dynamicRoles: true}
 
     function getNodeViewById(nodeId)
     {
@@ -49,6 +53,11 @@ Item
             var node = nodeRepeater.itemAt(i);
             unselectNode(node);
         }
+        for(var j = 0; j < groupRepeater.count; ++j)
+        {
+            var group = groupRepeater.itemAt(j);
+            unselectNode(group);
+        }
     }
 
     function selectNodesInArea(areaRect, isAddMode)
@@ -62,7 +71,7 @@ Item
             var nodeBottomRight = Qt.point(node.x + node.width, node.y + node.height);
 
             var isIntersects = Math.max(0, Math.min(nodeBottomRight.x, selAreaBottomRight.x) - Math.max(nodeTopLeft.x, selAreaTopLeft.x)) *
-                               Math.max(0, Math.min(nodeBottomRight.y, selAreaBottomRight.y) - Math.max(nodeTopLeft.y, selAreaTopLeft.y)) != 0;
+                    Math.max(0, Math.min(nodeBottomRight.y, selAreaBottomRight.y) - Math.max(nodeTopLeft.y, selAreaTopLeft.y)) != 0;
 
             if (isAddMode && isIntersects)
                 selectNode(node);
@@ -72,6 +81,17 @@ Item
                 funcNodeState(node);
             }
         }
+    }
+
+    function createGroup(x, y, name, color, height, width) {
+        groupModel.append({"xPos": x,
+                              "yPos": y,
+                              "name": name,
+                              "color": color,
+                              "width": width,
+                              "height": height,
+                              "items":[]
+                          })
     }
 
     WGListModel
@@ -134,8 +154,8 @@ Item
         function startCreatingNewConnection(fromSlotObj)
         {
             currentConnection = connectionComponent.createObject(nodeEditorView, {"firstSlot": fromSlotObj,
-                                                                                  "secondSlot": null,
-                                                                                  "viewTransform": viewTransform});
+                                                                     "secondSlot": null,
+                                                                     "viewTransform": viewTransform});
         }
 
         function finishCreatingNewConnection(endPos)
@@ -177,6 +197,10 @@ Item
                 {
                     dragObjects.splice(index, 1);
                     obj.dragStateChanged.disconnect(dragStateChanged);
+
+                    // need to unbind this here again or groupBoxes don't work.
+                    obj.x = obj.x;
+                    obj.y = obj.y;
                 }
             }
 
@@ -211,6 +235,43 @@ Item
             clip: false
             viewTransform: canvasContainer.viewTransform
 
+
+            Repeater
+            {
+                id: groupRepeater
+                model: groupModel
+                delegate: NodeGroupArea
+                {
+                    groupTitle: model.name
+                    groupColor: model.color
+                    height: model.height
+                    width: model.width
+                    x:  mapFromItem(graphView, model.xPos, model.yPos).x
+                    y:  mapFromItem(graphView, model.xPos, model.yPos).y
+
+                    z: -1
+
+                    onSetPosition: {
+                        groupModel.set(index, {"xPos": xPos,"yPos": yPos})
+                    }
+
+                    onDeleteNode: {
+                        groupModel.remove(index)
+                    }
+
+                    onChangeColor: {
+                        beginUndoFrame()
+                        colorDialog.color = groupColor
+                        colorDialog.index = index
+                        colorDialog.open()
+                    }
+
+                    onChangeTitle: {
+                        groupModel.set(index, {"name": title})
+                    }
+                }
+            }
+
             Repeater
             {
                 id: nodeRepeater
@@ -228,6 +289,7 @@ Item
             }
         }
 
+
         Repeater
         {
             id: connectionRepeater
@@ -240,6 +302,22 @@ Item
                 secondSlot: connectionObj.input
                 viewTransform: canvasContainer.viewTransform
             }
+        }
+    }
+
+    ColorDialog {
+        id: colorDialog
+
+        property int index
+
+        title: "Please choose a color"
+        showAlphaChannel: false
+        onAccepted: {
+            groupModel.set(index, {"color": color})
+            endUndoFrame();
+        }
+        onRejected: {
+            abortUndoFrame();
         }
     }
 }

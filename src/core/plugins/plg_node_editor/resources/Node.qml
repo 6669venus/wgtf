@@ -229,8 +229,19 @@ Item
             }
         }
 
-        NodeContextMenu
+        WGAction
         {
+            active: true
+            actionId: qsTr("NodeEditor.node|.Delete Node")
+            onTriggered: {
+                deleteNode(nodeID);
+            }
+        }
+
+        ContextMenu
+        {
+            id: contextArea
+            menuPath: "NodeEditor.node"
         }
     }
 }

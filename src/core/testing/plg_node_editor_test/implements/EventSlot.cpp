@@ -1,6 +1,6 @@
 
 #include "EventSlot.h"
-#include <qstring.h>
+#include <QtCore/QString>
 
 const std::string EVENT_SLOT_LABEL = "event";
 const std::string EVENT_SLOT_ICON = "images/greenSlot.png";

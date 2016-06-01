@@ -1,5 +1,6 @@
 
 #include "AddIntegerNode.h"
+#include <QtCore/QString>
 
 const std::string ADD_INTEGER_NODE_TITLE = "Add Integer";
 const std::string ADD_INTEGER_NODE_SUBTITLE = "";

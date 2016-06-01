@@ -3,7 +3,6 @@
 #define __I_NODE_H__
 
 #include <string>
-#include <qcolor.h>
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_data_model/generic_list.hpp"

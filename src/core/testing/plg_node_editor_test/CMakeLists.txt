@@ -6,7 +6,6 @@ project( plg_node_editor_test )
 INCLUDE( WGToolsProject )
 INCLUDE( BWQtLibrary )
 
-BW_QT_ADD_QRC(plg_node_editor_test resources)
 BW_GLOB_RESOURCE_FILES()
 
 #LIST(APPEND TARGET_LIBRARIES core_generic_plugin core_qt_common core_ui_framework)

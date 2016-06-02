@@ -2,6 +2,8 @@
 #define TEST_HELPER_HPP
 
 
+namespace wgt
+{
 template < class T >
 std::ostream& operator << ( std::ostream& os, const std::vector< T >& vec )
 {
@@ -18,7 +20,5 @@ std::ostream& operator << ( std::ostream& os, const std::map< K, T >& m )
 	}
 	return os;
 }
-
-
-
+} // end namespace wgt
 #endif //TEST_HELPER_HPP

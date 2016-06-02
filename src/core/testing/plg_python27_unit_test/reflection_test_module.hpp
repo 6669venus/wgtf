@@ -2,9 +2,11 @@
 #define PYTHON_REFLECTION_MODULE_HPP
 
 
-class IComponentContext;
 class TestResult;
 
+namespace wgt
+{
+class IComponentContext;
 
 class ReflectionTestModule
 {
@@ -31,6 +33,5 @@ public:
 	const char * testName_;
 	TestResult & result_;
 };
-
-
+} // end namespace wgt
 #endif // PYTHON_REFLECTION_MODULE_HPP

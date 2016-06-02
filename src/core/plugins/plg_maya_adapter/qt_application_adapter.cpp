@@ -4,6 +4,8 @@
 #include <assert.h>
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 QtApplicationAdapter::QtApplicationAdapter()
 	: QtApplication( __argc, __argv )
 {
@@ -57,4 +59,4 @@ void QtApplicationAdapter::removeListener( IApplicationListener * listener )
 	assert( listenerIt != listeners_.end() );
 	listeners_.erase( listenerIt );
 }
-
+} // end namespace wgt

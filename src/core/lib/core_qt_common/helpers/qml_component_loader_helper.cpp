@@ -6,6 +6,8 @@
 
 #include <QQmlComponent>
 
+namespace wgt
+{
 namespace QmlComponentLoaderHelperPrivate
 {
 	//------------------------------------------------------------------------------
@@ -64,3 +66,4 @@ void QmlComponentLoaderHelper::load( bool async )
 {
 	data_->qmlComponent_->loadUrl( data_->url_, async ? QQmlComponent::Asynchronous : QQmlComponent::PreferSynchronous );
 }
+} // end namespace wgt

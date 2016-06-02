@@ -3,6 +3,8 @@
 
 #include <vector>
 #include "core_common/signal.hpp"
+namespace wgt
+{
 class IItem;
 
 // TODO: NGT-849
@@ -23,6 +25,5 @@ public:
 	SignalVoid signalPreSelectionChanged;
 	SignalVoid signalPostSelectionChanged;
 };
-
-
+} // end namespace wgt
 #endif //I_SELECTION_HANDLER_HPP

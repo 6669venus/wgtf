@@ -4,6 +4,8 @@
 
 #include <assert.h>
 
+namespace wgt
+{
 template <typename T, bool Small>
 ThreadLocalValueImpl<T, Small>::ThreadLocalValueImpl() :
 m_tlsId(ThreadLocalBase::AllocTlsId())
@@ -94,5 +96,5 @@ template <typename T>
 void ThreadLocalValueImpl<T, true>::Shutdown()
 {
 }
-
+} // end namespace wgt
 #endif // _THREADLOCALVALUE_IPP_

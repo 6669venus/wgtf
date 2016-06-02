@@ -9,6 +9,8 @@
 
 #include <iterator>
 
+namespace wgt
+{
 namespace
 {
 	class ClassDefinitionItem : public AbstractListItem
@@ -97,3 +99,4 @@ int ClassDefinitionModelNew::columnCount() const /* override */
 {
 	return 1;
 }
+} // end namespace wgt

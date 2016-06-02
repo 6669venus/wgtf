@@ -1,4 +1,3 @@
-
 #ifndef __I_NODE_H__
 #define __I_NODE_H__
 
@@ -8,6 +7,8 @@
 #include "core_data_model/generic_list.hpp"
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 class IGraph;
 class ISlot;
 
@@ -147,5 +148,5 @@ protected:
     */
     virtual const IListModel* GetOutputSlotsModel() const = 0;
 };
-
+} // end namespace wgt
 #endif // __I_NODE_H__

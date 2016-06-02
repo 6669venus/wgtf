@@ -5,6 +5,8 @@
 #include <QPainterPath>
 #include "core_qt_common/qt_new_handler.hpp"
 
+namespace wgt
+{
 class ConnectionCurve : public QQuickPaintedItem
 {
 	
@@ -71,5 +73,5 @@ private:
     QColor m_color;
     QPainterPath m_path;
 };
-
+} // end namespace wgt
 #endif // __CONNECTION_CURVE_H__

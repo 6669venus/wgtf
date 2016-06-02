@@ -6,6 +6,8 @@
 #include "core_reflection/interfaces/i_base_property.hpp"
 
 
+namespace wgt
+{
 class IComponentContext;
 namespace PyScript
 {
@@ -72,5 +74,5 @@ private:
 
 
 } // namespace ReflectedPython
-
+} // end namespace wgt
 #endif // PYTHON_PROPERTY_HPP

@@ -5,9 +5,12 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE( IAssetBrowserEventModel, MetaNone() )
 	EXPOSE_METHOD( "assetSelectionChanged", assetSelectionChanged )
 	EXPOSE_METHOD( "useSelectedAsset", useSelectedAsset )
 	EXPOSE_METHOD( "breadcrumbSelected", breadcrumbSelected )
 	EXPOSE_METHOD( "folderSelectionChanged", folderSelectionChanged )
 END_EXPOSE()
+} // end namespace wgt

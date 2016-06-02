@@ -3,6 +3,16 @@
 
 #include "wg_types/hash_utilities.hpp"
 
+#define ITEMROLE( ROLE )														\
+namespace ItemRole {															\
+	namespace {																	\
+		const char * ROLE##Name = #ROLE;										\
+		const unsigned int ROLE##Id = ItemRole::compute( #ROLE );				\
+	}																			\
+}
+
+namespace wgt
+{
 namespace ItemRole
 {
 	inline unsigned int compute( const char * roleName )
@@ -10,14 +20,6 @@ namespace ItemRole
 		return static_cast<unsigned int>(HashUtilities::compute( roleName ));
 	}
 }
-
-#define ITEMROLE( ROLE )														\
-namespace ItemRole {															\
-	namespace {																	\
-		const char * ROLE##Name = #ROLE;										\
-		const unsigned int ROLE##Id = ItemRole::compute( #ROLE );				\
-	}																			\
-};
 
 // DEPRECATED
 // Add new role types here
@@ -81,5 +83,5 @@ namespace ItemRole {															\
 	};
 	ITEM_ROLES
 #undef X
-
+} // end namespace wgt
 #endif //I_ITEM_ROLE_HPP

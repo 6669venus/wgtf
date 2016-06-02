@@ -17,6 +17,8 @@
 #include "core_reflection/type_class_definition.hpp"
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -400,7 +402,8 @@ void stringConversionTest( ReflectedPython::DefinedInstance & instance,
 			"unicodeTest", unicodeResult );
 
 		CHECK( getSuccess );
-		CHECK_EQUAL( unicodeExpected, unicodeResult );
+		// std::wstring is not compatible with CHECK_EQUAL
+		CHECK( unicodeExpected == unicodeResult );
 	}
 }
 
@@ -3217,4 +3220,4 @@ ReflectionTestModule::~ReflectionTestModule()
 {
 	g_module = nullptr;
 }
-
+} // end namespace wgt

@@ -6,6 +6,11 @@
 
 #ifdef __APPLE__
 	#include <pthread.h>
+#endif
+
+namespace wgt
+{
+#ifdef __APPLE__
 	typedef pthread_key_t TLIndexType;
 #else
 	typedef unsigned int TLIndexType;
@@ -80,6 +85,7 @@ class ThreadLocalValue :
 	public ThreadLocalValueImpl<T, (sizeof(T) <= sizeof(void*)) && std::is_trivial<T>::value>
 {
 };
+} // end namespace wgt
 
 #include "thread_local_value_impl.hpp"
 

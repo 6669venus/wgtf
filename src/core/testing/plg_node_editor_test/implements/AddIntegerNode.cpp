@@ -1,6 +1,7 @@
-
 #include "AddIntegerNode.h"
 
+namespace wgt
+{
 const std::string ADD_INTEGER_NODE_TITLE = "Add Integer";
 const std::string ADD_INTEGER_NODE_SUBTITLE = "";
 const std::string ADD_INTEGER_NODE_ICON = "images/model_16x16.png";
@@ -126,3 +127,4 @@ void AddIntegerNode::OnDisconnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISl
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
+} // end namespace wgt

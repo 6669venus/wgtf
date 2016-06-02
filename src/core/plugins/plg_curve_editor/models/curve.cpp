@@ -16,6 +16,8 @@
 #include <core_reflection/definition_manager.hpp>
 #include <core_reflection/type_class_definition.hpp>
 
+namespace wgt
+{
 BezierPointData getPointData( const BezierPoint& point )
 {
 	BezierPointData data = {
@@ -555,3 +557,4 @@ void Curve::pushModification(ModificationFunction&& executeFunc, ModificationFun
 	executeFunc();
 	modificationStack_.emplace_back(std::move(executeFunc), std::move(undoFunc));
 }
+} // end namespace wgt

@@ -1,6 +1,7 @@
-
 #include "IntegerSlot.h"
 
+namespace wgt
+{
 const std::string INTEGER_SLOT_LABEL = "integer";
 const std::string INTEGER_SLOT_ICON = "images/greenSlot.png";
 const std::string INTEGER_SLOT_COLOR = "green";
@@ -96,3 +97,4 @@ bool IntegerSlot::Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot)
 
     return result;
 }
+} // end namespace wgt

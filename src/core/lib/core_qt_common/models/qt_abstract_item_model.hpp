@@ -5,6 +5,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 
 /**
  *	Adapter layer to allow AbstractItemModels or ExtendedModels to be used by
@@ -47,5 +49,5 @@ private:
 	struct Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
+} // end namespace wgt
 #endif//QT_ABSTRACT_ITEM_MODEL_HPP

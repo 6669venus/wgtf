@@ -3,6 +3,8 @@
 
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 class ICommandManager;
 class IListModel;
 
@@ -25,6 +27,5 @@ private:
 	ICommandManager* commandSystem_;
 	int currentIndex_;
 };
-
-
+} // end namespace wgt
 #endif // MACROS_OBJECT_HPP

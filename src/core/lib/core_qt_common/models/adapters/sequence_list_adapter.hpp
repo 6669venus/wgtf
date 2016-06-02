@@ -4,6 +4,8 @@
 #include "i_list_adapter.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 
+namespace wgt
+{
 class SequenceListAdapter : public IListAdapter
 {
 	Q_OBJECT
@@ -35,6 +37,5 @@ private:
 	QAbstractListModel *model_;
 	QList< int > sequence_;
 };
-
+} // end namespace wgt
 #endif // SEQUENCE_LIST_ADAPTER_HPP
-

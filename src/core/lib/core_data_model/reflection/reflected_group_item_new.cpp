@@ -12,6 +12,8 @@
 
 #include <codecvt>
 
+namespace wgt
+{
 ITEMROLE( display )
 
 namespace
@@ -431,3 +433,4 @@ void ReflectedGroupItemNew::getChildValues( Variants & outChildValues ) const
 		return true;
 	} );
 }
+} // end namespace wgt

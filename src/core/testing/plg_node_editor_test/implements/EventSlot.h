@@ -1,10 +1,11 @@
-
 #ifndef __EVENT_SLOT_H__
 #define __EVENT_SLOT_H__
 
 #include "plugins/plg_node_editor/interfaces/i_slot.hpp"
 #include "plugins/plg_node_editor/interfaces/i_connection.hpp"
 
+namespace wgt
+{
 class EventSlot : public Implements<ISlot>
 {
     DECLARE_REFLECTED
@@ -44,5 +45,5 @@ private:
     std::set<size_t> m_connectionIds;
     GenericListT<ISlot*> m_connectedSlots;
 };
-
+} // end namespace wgt
 #endif //__EVENT_SLOT_H__

@@ -3,6 +3,8 @@
 #include "core_variant/collection.hpp"
 
 
+namespace wgt
+{
 //==============================================================================
 HistorySelectionHandler::HistorySelectionHandler()
 {
@@ -27,3 +29,4 @@ const HistorySelectionHandler::Selection & HistorySelectionHandler::getSelection
 {
 	return selectionSet_;
 }
+} // end namespace wgt

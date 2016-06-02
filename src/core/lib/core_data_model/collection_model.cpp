@@ -3,6 +3,8 @@
 #include "core_variant/collection.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 
+namespace wgt
+{
 namespace
 {
 	class CollectionItem : public AbstractItem
@@ -248,3 +250,4 @@ int CollectionModel::columnCount() const
 {
 	return 1;
 }
+} // end namespace wgt

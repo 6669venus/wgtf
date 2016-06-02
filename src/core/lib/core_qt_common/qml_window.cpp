@@ -27,9 +27,10 @@
 #include <QElapsedTimer>
 #include "wg_types/binary_block.hpp"
 #include "wg_types/vector2.hpp"
-
 #include "core_qt_script/qt_script_object.hpp"
 
+namespace wgt
+{
 namespace
 {
 	template< typename T >
@@ -484,3 +485,4 @@ bool QmlWindow::loadPreference()
     NGT_DEBUG_MSG( "Load Qml Window Preferences Failed.\n" );
     return false;
 }
+} // end namespace wgt

@@ -4,6 +4,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 
 
+namespace wgt
+{
 BEGIN_EXPOSE( TestPolyCheckBox, TestPolyStruct, MetaNone() )
 	EXPOSE( "PolyBool", checked_, MetaNone() )
 END_EXPOSE()
@@ -21,3 +23,4 @@ END_EXPOSE()
 
 BEGIN_EXPOSE( TestPolyColor3, TestPolyComboBox, MetaNone() )
 END_EXPOSE()
+} // end namespace wgt

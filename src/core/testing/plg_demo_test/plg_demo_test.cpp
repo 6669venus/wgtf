@@ -36,6 +36,8 @@
 #include "core_command_system/i_env_system.hpp"
 #include "core_serialization/i_file_system.hpp"
 
+namespace wgt
+{
 namespace
 {
 	enum class ModelPropertyValueType : uint8_t
@@ -52,7 +54,7 @@ namespace
 }
 
 class DemoDoc: public IViewEventListener
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	DemoDoc( IComponentContext & context, const char* name, IEnvManager* envManager, IUIFramework* uiFramework,
@@ -82,7 +84,7 @@ DemoDoc::DemoDoc(
 	envId_ = envManager_->addEnv( name );
 	envManager_->selectEnv( envId_ );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(
@@ -118,7 +120,7 @@ void DemoDoc::onFocusOut(IView* view)
 //==============================================================================
 class DemoTestPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 private:
 	
@@ -173,7 +175,7 @@ public:
 		demoDoc_.reset( new DemoDoc( contextManager, "sceneModel0", envManager, uiFramework, uiApplication, demoModel_) );
 		demoDoc2_.reset( new DemoDoc( contextManager, "sceneModel1", envManager, uiFramework, uiApplication, demoModel_) );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView(
@@ -266,4 +268,4 @@ private:
 
 
 PLG_CALLBACK_FUNC(DemoTestPlugin)
-
+} // end namespace wgt

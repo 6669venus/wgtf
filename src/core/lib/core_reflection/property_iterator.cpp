@@ -3,6 +3,8 @@
 #include "interfaces/i_class_definition_details.hpp"
 #include "interfaces/i_base_property.hpp"
 
+namespace wgt
+{
 // =============================================================================
 PropertyIterator::PropertyIterator()
 	: strategy_(ITERATE_SELF_ONLY)
@@ -117,3 +119,4 @@ PropertyIterator PropertyIteratorRange::end() const
 {
 	return PropertyIterator();
 }
+} // end namespace wgt

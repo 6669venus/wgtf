@@ -3,6 +3,8 @@
 
 #include <cassert>
 
+namespace wgt
+{
 PluginContextManager::PluginContextManager()
 	: globalContext_(new DefaultComponentContext())
 	, executablepath_(nullptr)
@@ -140,3 +142,4 @@ const char* PluginContextManager::getExecutablePath() const
 {
 	return executablepath_;
 }
+} // end namespace wgt

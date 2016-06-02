@@ -6,6 +6,8 @@
 
 #include "core_data_model/i_item_role.hpp"
 
+namespace wgt
+{
 class ReflectedListListener
 	: public PropertyAccessorListener
 {
@@ -71,3 +73,4 @@ void ReflectedListListener::postSetValue(
 		list_.signalPostItemDataChanged( item, 0, DefinitionRole::roleId_, value );
 	}
 }
+} // end namespace wgt

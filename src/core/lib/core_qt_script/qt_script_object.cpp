@@ -13,6 +13,8 @@
 #include "qt_scripting_engine.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 #include <QEvent>
 
 namespace
@@ -347,3 +349,4 @@ const ObjectHandle & QtScriptObject::object() const
 { 
 	return data_->object_;
 }
+} // end namespace wgt

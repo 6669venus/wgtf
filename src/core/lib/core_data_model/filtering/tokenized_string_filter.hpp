@@ -4,6 +4,8 @@
 #include "i_item_filter.hpp"
 #include <memory>
 
+namespace wgt
+{
 /**
  *	TokenizedStringFilter
  *  A filter implementation, which uses a vector of strings to compare text against.
@@ -28,5 +30,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // TOKENIZED_STRING_FILTER_HPP

@@ -19,6 +19,10 @@
 
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
 
+#include <vector>
+
+namespace wgt
+{
 class Test1
 {
 	DECLARE_REFLECTED
@@ -119,7 +123,7 @@ private:
 
 class TestObjHandlePlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	TestObjHandlePlugin( IComponentContext & contextManager )
@@ -151,7 +155,7 @@ public:
 		glist_->addItem( Test2Stack( 58 ) );
 		glist_->addItem( Test1Stack( 7 ) );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if( viewCreator == nullptr )
 		{
 			return;
@@ -204,4 +208,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestObjHandlePlugin )
-
+} // end namespace wgt

@@ -1,10 +1,4 @@
-/**
- * ColorPickerPlugin
- *
- * This is the main application's plugin. It creates the temporary panel to display the ColorPIcker and
- * registers it with the UIFramework. So that it will be added to the main dialog
- */
- 
+
 // Declaration of PluginMain
 #include "core_generic_plugin/generic_plugin.hpp"
  
@@ -22,6 +16,14 @@
 #include <memory>
  
  
+namespace wgt
+{
+/**
+ * ColorPickerPlugin
+ *
+ * This is the main application's plugin. It creates the temporary panel to display the ColorPIcker and
+ * registers it with the UIFramework. So that it will be added to the main dialog
+ */
 class ColorPickerPlugin
     : public PluginMain
 {
@@ -71,3 +73,4 @@ private:
  
  
 PLG_CALLBACK_FUNC( ColorPickerPlugin )
+} // end namespace wgt

@@ -3,12 +3,15 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "mutable_vector.hpp"
 #include "core_serialization/i_datastream.hpp"
 #include "reflected_object.hpp"
 #include "object_handle.hpp"
 
+namespace wgt
+{
 class IClassDefinitionModifier;
 class IClassDefinitionDetails;
 class IClassDefinition;
@@ -64,7 +67,7 @@ public:
 	template< typename TargetType >
 	IClassDefinition * getDefinition() const
 	{
-		const char * defName = ::getClassIdentifier< TargetType >();
+		const char * defName = getClassIdentifier< TargetType >();
 		return getDefinition( defName );
 	}
 
@@ -81,5 +84,5 @@ public:
 		return safeCast< T >( object );
 	}
 };
-
+} // end namespace wgt
 #endif // I_DEFINITION_MANAGER_HPP

@@ -3,6 +3,8 @@
 
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 namespace TestObjectCommon
 {
 	static const wchar_t * s_MemberVariableGroup = L"Member variables";
@@ -121,6 +123,5 @@ namespace TestObjectCommon
 		}
 	}
 };
-
-
+} // end namespace wgt
 #endif //TEST_OBJECTS_COMMON_HPP

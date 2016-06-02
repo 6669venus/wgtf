@@ -5,6 +5,8 @@
 #include "core_variant/collection.hpp"
 #include <memory>
 
+namespace wgt
+{
 /**
  *	Data model for displaying a Collection as a list.
  */
@@ -30,5 +32,5 @@ protected:
 	Collection collection_;
 	mutable std::vector< std::unique_ptr< IItem > > items_;
 };
-
+} // end namespace wgt
 #endif // COLLECTION_LIST_MODEL_HPP

@@ -20,6 +20,8 @@
 #include "core_data_model/generic_list.hpp"
 #pragma warning( pop )
 
+namespace wgt
+{
 class ICurveInterpolator;
 class IDefinitionManager;
 class BezierPoint;
@@ -158,5 +160,5 @@ private:
 	ValueChangeNotifier<bool> dirty_;
 	ICurveInterpolatorPtr interpolator_;
 };
-
+} // end namespace wgt
 #endif // CURVE_H_

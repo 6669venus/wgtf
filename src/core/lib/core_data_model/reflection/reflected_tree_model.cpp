@@ -4,6 +4,8 @@
 #include "core_data_model/reflection/reflected_property_item.hpp"
 #include "core_reflection/property_accessor_listener.hpp"
 
+namespace wgt
+{
 class ReflectedTreeModelPropertyListener
 	: public PropertyAccessorListener
 {
@@ -78,3 +80,4 @@ void ReflectedTreeModelPropertyListener::postSetValue(
 {
 	rootItem_.postSetValue( accessor, value );
 }
+} // end namespace wgt

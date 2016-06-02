@@ -10,6 +10,8 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -110,3 +112,4 @@ bool ListConverter::toScriptType( const Variant & inVariant,
 
 
 } // namespace PythonType
+} // end namespace wgt

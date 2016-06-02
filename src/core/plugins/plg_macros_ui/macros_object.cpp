@@ -11,6 +11,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 //==============================================================================
 MacrosObject::MacrosObject()
 	: commandSystem_( nullptr )
@@ -61,3 +63,4 @@ ObjectHandle MacrosObject::getSelectedCompoundCommand() const
 	}
 	return macro;
 }
+} // end namespace wgt

@@ -5,6 +5,8 @@
 #include "core_data_model/i_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 
+namespace wgt
+{
 class WGTreeListAdapter::Impl
 {
 public:
@@ -396,3 +398,4 @@ void WGTreeListAdapter::onParentRowsRemoved(const QModelIndex & parent, int firs
 	reset();
 	endRemoveRows();
 }
+} // end namespace wgt

@@ -6,6 +6,8 @@
 
 #include <functional>
 
+namespace wgt
+{
 class IApplication;
 class IDefinitionManager;
 class BatchCommand;
@@ -130,5 +132,5 @@ private:
         commandSystemProvider_->fireCommandExecuted(commandInstance, operation);
     }
 };
-
+} // end namespace wgt
 #endif //COMMAND_MANAGER_HPP

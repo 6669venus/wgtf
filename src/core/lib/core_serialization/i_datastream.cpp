@@ -3,6 +3,8 @@
 // TODO: this whole file contains deprecated content; non-deprecated interface should be pure virtual
 
 
+namespace wgt
+{
 IDataStream::~IDataStream()
 {
 }
@@ -106,5 +108,4 @@ bool IDataStream::readValue( Variant & variant )
 {
 	return false;
 }
-
-
+} // end namespace wgt

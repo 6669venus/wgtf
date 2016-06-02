@@ -12,6 +12,9 @@
 #include <QVariant>
 
 class QAbstractItemModel;
+
+namespace wgt
+{
 class IQtFramework;
 
 class IModelExtension : public QObject
@@ -64,5 +67,5 @@ public slots:
 protected:
 	IQtFramework * qtFramework_;
 };
-
+} // end namespace wgt
 #endif // I_MODEL_EXTENSION_HPP

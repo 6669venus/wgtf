@@ -9,6 +9,8 @@
 #include "test_helpers.hpp"
 #include "test_objects.hpp"
 
+namespace wgt
+{
 TEST_F( TestDefinitionFixture, createGenericObject )
 {
 	auto handle = GenericObject::create( getDefinitionManager() );
@@ -151,3 +153,4 @@ TEST_F( TestDefinitionFixture, createMultipleGenericObjects )
 		CHECK( !newGenericObj->get( "testStructure", value ) );
 	}
 }
+} // end namespace wgt

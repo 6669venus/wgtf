@@ -6,6 +6,8 @@
 #include "core_data_model/i_value_change_notifier.hpp"
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 class Variant;
 class ISelectionContext;
 
@@ -30,6 +32,5 @@ private:
 	ObjectHandle	value_;
 	ISelectionContext* selectionContext_;
 };
-
-
+} // end namespace wgt
 #endif //SELECTION_HELPER_HPP

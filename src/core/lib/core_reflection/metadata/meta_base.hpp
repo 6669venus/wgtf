@@ -9,6 +9,8 @@ Details: Search for NGT Reflection System on the Wargaming Confluence
 #include "../reflected_object.hpp"
 #include "../object_handle.hpp"
 
+namespace wgt
+{
 typedef ObjectHandleT< MetaBase > MetaHandle;
 
 namespace MetaParamTypes
@@ -48,5 +50,5 @@ private:
 };
 
 const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & right );
-
+} // end namespace wgt
 #endif

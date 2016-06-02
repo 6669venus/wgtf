@@ -7,8 +7,10 @@
 
 #include <condition_variable>
 
+namespace wgt
+{
 typedef std::condition_variable wg_condition_variable;
-
+} // end namespace wgt
 #else
 
 #include <mutex>
@@ -17,6 +19,8 @@ typedef std::condition_variable wg_condition_variable;
 #include <list>
 #include <utility>
 
+namespace wgt
+{
 /**
 Replacement of buggy implementation of std::condition_variable in MSVC2012.
 */
@@ -130,7 +134,7 @@ private:
 	bool releaseWaiter( Waiters::iterator waiter );
 
 };
-
+} // end namespace wgt
 #endif // !ENABLE_WG_CONDITION_VARIABLE_WORKAROUND
 
 #endif // WG_CONDITION_VARIABLE_HPP_INCLUDED

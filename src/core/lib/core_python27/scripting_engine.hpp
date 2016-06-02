@@ -6,6 +6,8 @@
 #include "core_script/type_converter_queue.hpp"
 
 
+namespace wgt
+{
 class IComponentContext;
 class ObjectHandle;
 
@@ -50,7 +52,5 @@ private:
 
 	IComponentContext & context_;
 };
-
-
+} // end namespace wgt
 #endif // PYTHON_SCRIPTING_ENGINE_HPP
-

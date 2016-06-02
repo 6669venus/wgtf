@@ -7,6 +7,8 @@
 #include <set>
 
 
+namespace wgt
+{
 /**
  *	Create an item in a ReflectedTreeModel from an ObjectHandle.
  *	Can be a root or child item.
@@ -57,5 +59,5 @@ private:
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
 	mutable Groups groups_;
 };
-
+} // end namespace wgt
 #endif //REFLECTED_OBJECT_ITEM_HPP

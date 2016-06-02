@@ -11,6 +11,8 @@
 #include <typeinfo>
 #include <cstring>
 
+namespace wgt
+{
 class DefaultMetaTypeManager
 	: public Implements< IMetaTypeManager >
 {
@@ -47,5 +49,5 @@ private:
 	std::unordered_map<const TypeId, const MetaType*> typeInfoToMetaType_;
 	std::vector< std::unique_ptr< MetaType > > defaultMetaTypes_;
 };
-
+} // end namespace wgt
 #endif //DEFAULT_META_TYPE_MANAGER_HPP

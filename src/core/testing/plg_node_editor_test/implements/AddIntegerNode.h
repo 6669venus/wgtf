@@ -1,4 +1,3 @@
-
 #ifndef __ADD_INTEGER_NODE_H__
 #define __ADD_INTEGER_NODE_H__
 
@@ -12,6 +11,8 @@
 #include "IntegerSlot.h"
 #include "CustomGraph.h"
 
+namespace wgt
+{
 class AddIntegerNode : public Implements<INode>
 {
     DECLARE_REFLECTED
@@ -70,5 +71,5 @@ private:
     GenericListT<ObjectHandleT<ISlot>> m_inputSlotsModel;
     GenericListT<ObjectHandleT<ISlot>> m_outputSlotsModel;
 };
-
+} // end namespace wgt
 #endif // __ADD_INTEGER_NODE_H__

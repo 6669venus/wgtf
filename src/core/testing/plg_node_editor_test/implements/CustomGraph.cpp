@@ -1,4 +1,3 @@
-
 #include "CustomGraph.h"
 #include "CustomConnection.h"
 
@@ -8,6 +7,8 @@
 
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 CustomGraph::CustomGraph()
 {
     m_nodeClassesModel.push_back("IntToString");
@@ -173,3 +174,4 @@ void CustomGraph::Load(std::string fileName)
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
+} // end namespace wgt

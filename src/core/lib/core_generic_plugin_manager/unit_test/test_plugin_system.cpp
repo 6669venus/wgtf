@@ -23,6 +23,8 @@
 #include "core_generic_plugin_test/test_plugin_loader.hpp"
 
 
+namespace wgt
+{
 namespace
 {
 	const wchar_t * s_Plugin1Path = L"plugins/plg_plugin1_test";
@@ -282,3 +284,4 @@ TEST_F( TestPluginsFixture, more_plugins )
 	CHECK( testObj == nullptr );
 	CHECK( testObj2 == nullptr );
 }
+} // end namespace wgt

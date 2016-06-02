@@ -4,6 +4,8 @@
 #include "../interfaces_test/auto_populate.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 class MainApplication
 	: public Implements< IApplication >
 {
@@ -80,4 +82,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( MainTestPlugin )
-
+} // end namespace wgt

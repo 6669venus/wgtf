@@ -4,6 +4,8 @@
 
 #include "i_type_converter.hpp"
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -23,6 +25,5 @@ public:
 
 
 } // namespace PythonType
-
+} // end namespace wgt
 #endif // _PYTHON_PRIMITIVE_CONVERTER_HPP
-

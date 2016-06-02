@@ -4,6 +4,8 @@
 #include "core_variant/variant.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 
+namespace wgt
+{
 ITEMROLE( childModel )
 ITEMROLE( hasChildren )
 ITEMROLE( expanded )
@@ -527,3 +529,4 @@ QModelIndex TreeExtension::getBackwardIndex( const QModelIndex & index ) const
 
 	return this->getPreviousIndex( index );
 }
+} // end namespace wgt

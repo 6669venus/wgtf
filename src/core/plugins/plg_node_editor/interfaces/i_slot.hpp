@@ -1,4 +1,3 @@
-
 #ifndef __I_SLOT_H__
 #define __I_SLOT_H__
 
@@ -10,6 +9,8 @@
 
 #include "i_node.hpp"
 
+namespace wgt
+{
 class MetaType;
 
 /*!
@@ -106,5 +107,5 @@ public:
     */
     virtual bool Disconnect(size_t connectionId, ObjectHandleT<ISlot> slot) = 0;
 };
-
+} // end namespace wgt
 #endif //__I_SLOT_H__

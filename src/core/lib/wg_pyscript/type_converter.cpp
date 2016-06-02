@@ -8,6 +8,8 @@
 	#define _stricmp strcasecmp
 #endif
 
+namespace wgt
+{
 namespace PyScript
 {
 
@@ -609,4 +611,4 @@ PyObject * getData( const wchar_t * data )
 
 
 } // namespace PyScript
-
+} // end namespace wgt

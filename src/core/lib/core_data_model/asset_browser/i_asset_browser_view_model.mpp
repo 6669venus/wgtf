@@ -7,6 +7,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE( IAssetBrowserViewModel, MetaNone() )
 	EXPOSE( "view", view, MetaDisplayName( L"view" ) )
 	EXPOSE( "data", data, MetaDisplayName( L"data" ) )
@@ -19,3 +21,4 @@ BEGIN_EXPOSE( IAssetBrowserViewModel, MetaNone() )
 
 	EXPOSE_METHOD( "getSelectedTreeItemName", getSelectedTreeItemName )
 END_EXPOSE()
+} // end namespace wgt

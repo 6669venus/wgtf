@@ -6,6 +6,8 @@
 #include <QtCore>
 #include <QQmlEngine>
 
+namespace wgt
+{
 //==============================================================================
 WGFileDialogQI::WGFileDialogQI( QObject * parent )
 	: QObject( parent )
@@ -112,4 +114,4 @@ void WGFileDialogQI::createFileDialog()
 	fileDialog_->setAcceptMode( static_cast< QFileDialog::AcceptMode >( mode_ ) );
 	fileDialog_->setFileMode( static_cast< QFileDialog::FileMode >( fileModeFlag_ ) );
 }
-
+} // end namespace wgt

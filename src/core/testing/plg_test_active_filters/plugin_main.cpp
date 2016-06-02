@@ -18,6 +18,8 @@
 
 #include "active_filters_test_view_model.hpp"
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 // Plugin Class
 // Spins up an instance of the plugin and creates the panel with the view
@@ -25,7 +27,7 @@
 //------------------------------------------------------------------------------
 class TestActiveFiltersPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
@@ -57,7 +59,7 @@ public:
 		auto testViewModel = defManager->create< ActiveFiltersTestViewModel >();
 		testViewModel->init( *defManager, *uiFramework );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator == nullptr)
 		{
 			return;
@@ -88,4 +90,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestActiveFiltersPlugin )
-
+} // end namespace wgt

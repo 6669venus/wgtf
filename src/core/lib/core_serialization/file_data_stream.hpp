@@ -15,6 +15,8 @@
 #include "std_data_stream.hpp"
 #include <fstream>
 
+namespace wgt
+{
 class FileDataStream:
 	public StdDataStream
 {
@@ -30,5 +32,5 @@ private:
 	std::filebuf file_;
 
 };
-
+} // end namespace wgt
 #endif // FILE_DATA_STREAM_H_

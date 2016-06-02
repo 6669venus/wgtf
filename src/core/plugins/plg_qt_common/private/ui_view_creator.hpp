@@ -7,12 +7,11 @@
 
 #include <memory>
 
+namespace wgt
+{
 class ObjectHandle;
 class IComponentContext;
 class IUIFramework;
-
-namespace wgt
-{
 
 class UIViewCreator
 	: public Implements< IViewCreator >
@@ -33,6 +32,5 @@ public:
 		std::function< void(std::unique_ptr< IView > &) >,
 		const char * uniqueName ) override;
 };
-
-}
+} // end namespace wgt
 #endif //UI_VIEW_CREATOR_HPP

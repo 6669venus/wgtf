@@ -7,6 +7,8 @@
 #include <string>
 
 
+namespace wgt
+{
 namespace PyScript
 {
 class ScriptObject;
@@ -75,4 +77,4 @@ private:
 
 
 } // namespace PythonType
-
+} // end namespace wgt

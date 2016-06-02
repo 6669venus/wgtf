@@ -4,6 +4,8 @@
 #include "i_item_filter.hpp"
 #include <memory>
 
+namespace wgt
+{
 /**
  *	StringFilter
  *  A simple string filter implementation.
@@ -25,5 +27,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // STRING_FILTER_HPP

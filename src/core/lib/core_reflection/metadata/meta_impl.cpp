@@ -9,6 +9,8 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "../interfaces/i_enum_generator.hpp"
 
+namespace wgt
+{
 //==============================================================================
 BEGIN_EXPOSE( MetaNoneObj, MetaBase, MetaNone() )
 END_EXPOSE()
@@ -355,3 +357,4 @@ END_EXPOSE()
 //==============================================================================
 BEGIN_EXPOSE(MetaMultilineObj, MetaBase, MetaNone())
 END_EXPOSE()
+} // end namespace wgt

@@ -13,6 +13,8 @@
 
 #include <core_reflection/object_handle.hpp>
 
+namespace wgt
+{
 class Point;
 class IDefinitionManager;
 struct BezierPointData;
@@ -33,5 +35,5 @@ public:
 
 
 bool operator==( const BezierPoint& lhs, const BezierPoint& rhs );
-
+} // end namespace wgt
 #endif // BEZIER_POINT_H_

@@ -29,6 +29,7 @@ Item {
     */
     property var columnSequence: []
     property var columnWidths: []
+    property var implicitColumnWidths: []
     property alias columnSpacing: row.spacing
     property bool isSelected: false
     
@@ -76,6 +77,16 @@ Item {
         visible: isKeyboardHighlight
     }
     /**/
+
+    Component.onCompleted: {
+        var tmp = implicitColumnWidths;
+
+        while (tmp.length < columnWidths.length) {
+            tmp.push(0);
+        }
+
+        implicitColumnWidths = tmp;
+    }
 
     // Controls column spacing.
     Row {
@@ -171,6 +182,12 @@ Item {
                         property var itemData: model
                         property int itemWidth: columnWidths[index] - x
                         sourceComponent: itemRow.columnDelegates[index]
+                        onLoaded: itemRow.implicitColumnWidths[index] = item.implicitWidth;
+                    }
+
+                    Connections {
+                        target: columnDelegateLoader.item
+                        onImplicitWidthChanged: itemRow.implicitColumnWidths[index] = columnDelegateLoader.item.implicitWidth;
                     }
                 }
             }

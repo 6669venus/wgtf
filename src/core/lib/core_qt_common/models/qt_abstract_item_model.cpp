@@ -13,14 +13,14 @@ namespace
 	public:
 		struct MetaObject
 		{
-			MetaObject( QAbstractItemModel * model )
+			MetaObject( QAbstractItemModel & model )
 				: model_( model )
 			{
 				QMetaObjectBuilder builder;
 				builder.setClassName( QUuid().toByteArray() );
 				builder.setSuperClass( &QObject::staticMetaObject );
 
-				QHashIterator<int, QByteArray> itr( model_->roleNames() );
+				QHashIterator<int, QByteArray> itr( model_.roleNames() );
 				while (itr.hasNext())
 				{
 					itr.next();
@@ -42,7 +42,7 @@ namespace
 				::free( metaObject_ );
 			}
 
-			QAbstractItemModel * model_;
+			QAbstractItemModel & model_;
 			QList< int > roles_;
 			QMetaObject * metaObject_;
 		};
@@ -100,11 +100,11 @@ namespace
 						auto role = metaObject->roles_[id];
 						if (c == QMetaObject::ReadProperty)
 						{
-							*value = metaObject->model_->data( index_, role );
+							*value = metaObject->model_.data( index_, role );
 						}
 						else
 						{
-							metaObject->model_->setData( index_, *value, role );
+							metaObject->model_.setData( index_, *value, role );
 						}
 					}
 					id -= propertyCount;
@@ -150,7 +150,7 @@ QObject * QtAbstractItemModel::indexToItem( const QModelIndex &index ) const
 {
 	if (impl_->metaObject_ == nullptr)
 	{
-		impl_->metaObject_.reset( new ItemData::MetaObject( const_cast< QtAbstractItemModel * >( this ) ) );
+		impl_->metaObject_.reset( new ItemData::MetaObject( const_cast< QtAbstractItemModel & >( *this ) ) );
 	}
 	return index.isValid() ? new ItemData( index, impl_->metaObject_ ) : nullptr;
 }

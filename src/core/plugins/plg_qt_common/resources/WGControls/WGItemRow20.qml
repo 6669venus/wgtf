@@ -79,13 +79,13 @@ Item {
     /**/
 
     Component.onCompleted: {
-        var tmp = implicitColumnWidths;
+        var implicitWidths = implicitColumnWidths;
 
-        while (tmp.length < columnWidths.length) {
-            tmp.push(0);
+        while (implicitWidths.length < columnWidths.length) {
+            implicitWidths.push(0);
         }
 
-        implicitColumnWidths = tmp;
+        implicitColumnWidths = implicitWidths;
     }
 
     // Controls column spacing.

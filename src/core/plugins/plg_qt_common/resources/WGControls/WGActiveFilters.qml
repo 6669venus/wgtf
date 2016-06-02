@@ -425,25 +425,26 @@ Item {
                     }
 
                     delegate: WGButtonBar {
+                        property var myValue: value;
                         showSeparators: false
                         evenBoxes: false
                         buttonList: [
                             WGPushButton {
                                 id: filterString
                                 objectName: "filterStringButton"
-                                text: value.value
+                                text: myValue.value
                                 checkable: true
-                                checked: value.active
+                                checked: myValue.active
                                 style: WGTagButtonStyle{}
 
                                 Binding {
-                                    target: value
+                                    target: myValue
                                     property: "active"
                                     value: filterString.checked
                                 }
 
                                 Connections {
-                                    target: value
+                                    target: myValue
                                     onActiveChanged: {
                                         updateStringValue();
                                     }

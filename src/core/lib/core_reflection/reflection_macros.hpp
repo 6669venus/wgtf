@@ -40,9 +40,29 @@
 	properties_.addProperty( IBasePropertyPtr(\
 		ReflectedMethodFactory::create( name, &SelfType::method, nullptr, nullptr ) ) );
 
+#define EXPOSE_METHOD_3( name, method, meta )\
+	properties_.addProperty( IBasePropertyPtr( \
+		new BasePropertyWithMetaData( \
+			IBasePropertyPtr( \
+				ReflectedMethodFactory::create( name, \
+					&SelfType::method, \
+					nullptr /* undoMethod */, \
+					nullptr /* redoMethod */ ) ), \
+			meta ) ) );
+
 #define EXPOSE_METHOD_4( name, method, undoMethod, redoMethod )\
 	properties_.addProperty( IBasePropertyPtr(\
 		ReflectedMethodFactory::create( name, &SelfType::method, &SelfType::undoMethod, &SelfType::redoMethod ) ) );
+
+#define EXPOSE_METHOD_5( name, method, undoMethod, redoMethod, meta )\
+	properties_.addProperty( IBasePropertyPtr( \
+		new BasePropertyWithMetaData( \
+			IBasePropertyPtr( \
+				ReflectedMethodFactory::create( name, \
+					&SelfType::method, \
+					&SelfType::undoMethod, \
+					&SelfType::redoMethod ) ), \
+			meta ) ) );
 
 #define EXPOSE_2( name, _1 )\
 	properties_.addProperty( IBasePropertyPtr(\

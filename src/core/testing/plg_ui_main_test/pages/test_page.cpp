@@ -307,6 +307,11 @@ void TestPage::setAssetUrl( const std::string & url )
 	assetUrl_ = url;
 }
 
+void TestPage::methodOnly()
+{
+	// Do nothing
+}
+
 TestPage2::TestPage2()
 	: testPage_( nullptr )
 {

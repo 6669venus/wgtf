@@ -22,7 +22,7 @@ class MayaAdapterPlugin
 public:
 	MayaAdapterPlugin( IComponentContext & contextManager )
 	{
-		contextManager.registerInterface(new wgt::UIViewCreator(contextManager));
+		contextManager.registerInterface(new UIViewCreator(contextManager));
 	}
 
 	bool PostLoad( IComponentContext & contextManager ) override

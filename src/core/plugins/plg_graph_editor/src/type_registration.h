@@ -6,6 +6,6 @@
 
 namespace wgt
 {
-void RegisterGrapEditorTypes(IDefinitionManager& mng);
+void RegisterGraphEditorTypes(IDefinitionManager& mng);
 } // end namespace wgt
 #endif // __GRAPHEDITOR_TYPEREGISTRATION_H__

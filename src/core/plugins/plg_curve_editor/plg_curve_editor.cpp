@@ -1,5 +1,4 @@
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "core_qt_common/shared_controls.hpp"
 #include "core_reflection/type_class_definition.hpp"
 #include <QWidget>
 #include <QQmlEngine>
@@ -65,10 +64,10 @@ public:
 			return false;
 
 		// Setup the models for the view
-		definitionManager->registerDefinition(new TypeClassDefinition<Point>);
-		definitionManager->registerDefinition(new TypeClassDefinition<BezierPoint>);
-		definitionManager->registerDefinition(new TypeClassDefinition<ICurve>);
-		definitionManager->registerDefinition(new TypeClassDefinition<ICurveEditor>);
+		definitionManager->registerDefinition<TypeClassDefinition<Point>>();
+		definitionManager->registerDefinition<TypeClassDefinition<BezierPoint>>();
+		definitionManager->registerDefinition<TypeClassDefinition<ICurve>>();
+		definitionManager->registerDefinition<TypeClassDefinition<ICurveEditor>>();
 
 		contextManager.registerInterface( new CurveEditor() );
 

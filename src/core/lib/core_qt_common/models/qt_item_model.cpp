@@ -294,6 +294,34 @@ bool QtItemModel::setHeaderData( int section, Qt::Orientation orientation, const
 	return impl_->source_.setData( row, column, role, data );
 }
 
+bool QtItemModel::insertRows( int row, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.insertRows( row, count, parentItem );
+}
+
+bool QtItemModel::insertColumns( int column, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.insertColumns( column, count, parentItem );
+}
+
+bool QtItemModel::removeRows( int row, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.removeRows( row, count, parentItem );
+}
+
+bool QtItemModel::removeColumns( int column, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.removeColumns( column, count, parentItem );
+}
+
 QtListModel::QtListModel( AbstractListModel & source ) 
 	: QtItemModel( source ) 
 {}

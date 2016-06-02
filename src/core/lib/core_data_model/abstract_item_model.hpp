@@ -68,6 +68,11 @@ public:
 	virtual int columnCount( const AbstractItem * item ) const = 0;
 	virtual bool hasChildren( const AbstractItem * item ) const { return rowCount( item ) > 0; }
 
+	virtual bool insertRows( int row, int count, const AbstractItem * parent ) { return false; }
+	virtual bool insertColumns( int column, int count, const AbstractItem * parent ) { return false; }
+	virtual bool removeRows( int row, int count, const AbstractItem * parent ) { return false; }
+	virtual bool removeColumns( int column, int count, const AbstractItem * parent ) { return false; }
+
 	virtual Connection connectPreItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPostItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPreRowsInserted( RangeCallback callback ) { return Connection(); }
@@ -109,6 +114,11 @@ public:
 
 	virtual int rowCount() const = 0;
 	virtual int columnCount() const = 0;
+
+	virtual bool insertRows( int row, int count ) { return false; }
+	virtual bool insertColumns( int column, int count ) { return false; }
+	virtual bool removeRows( int row, int count ) { return false; }
+	virtual bool removeColumns( int column, int count ) { return false; }
 
 	virtual Connection connectPreItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPostItemDataChanged( DataCallback callback ) { return Connection(); }
@@ -158,6 +168,36 @@ private:
 	int columnCount( const AbstractItem * item ) const override
 	{
 		return columnCount();
+	}
+
+	bool insertRows( int row, int count, const AbstractItem * parent ) override
+	{
+		if (parent != nullptr)
+		{
+			return false;
+		}
+
+		return insertRows( row, count );
+	}
+
+	bool insertColumns( int column, int count, const AbstractItem * parent ) override
+	{
+		return insertColumns( column, count );
+	}
+
+	bool removeRows( int row, int count, const AbstractItem * parent ) override
+	{
+		if (parent != nullptr)
+		{
+			return false;
+		}
+
+		return removeRows( row, count );
+	}
+
+	bool removeColumns( int column, int count, const AbstractItem * parent ) override
+	{
+		return removeColumns( column, count );
 	}
 
 	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
@@ -271,6 +311,9 @@ public:
 	virtual int rowCount( const AbstractItem * item ) const override = 0;
 	virtual int columnCount() const = 0;
 
+	virtual bool insertColumns( int column, int count ) { return false; }
+	virtual bool removeColumns( int column, int count ) { return false; }
+
 	virtual Connection connectPreItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPostItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPreRowsInserted( RangeCallback callback ) { return Connection(); }
@@ -304,6 +347,16 @@ private:
 	int columnCount( const AbstractItem * item ) const override
 	{
 		return columnCount();
+	}
+
+	bool insertColumns( int column, int count, const AbstractItem * parent ) override
+	{
+		return insertColumns( column, count );
+	}
+
+	bool removeColumns( int column, int count, const AbstractItem * parent ) override
+	{
+		return removeColumns( column, count );
 	}
 
 	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override
@@ -416,6 +469,11 @@ public:
 	virtual int rowCount() const = 0;
 	virtual int columnCount() const = 0;
 
+	virtual bool insertRows( int row, int count ) { return false; }
+	virtual bool insertColumns( int column, int count ) { return false; }
+	virtual bool removeRows( int row, int count ) { return false; }
+	virtual bool removeColumns( int column, int count ) { return false; }
+
 	virtual Connection connectPreItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPostItemDataChanged( DataCallback callback ) { return Connection(); }
 	virtual Connection connectPreRowsInserted( RangeCallback callback ) { return Connection(); }
@@ -473,6 +531,46 @@ private:
 		}
 
 		return columnCount();
+	}
+
+	bool insertRows( int row, int count, const AbstractItem * parent ) override
+	{
+		if (parent != nullptr)
+		{
+			return false;
+		}
+
+		return insertRows( row, count );
+	}
+
+	bool insertColumns( int column, int count, const AbstractItem * parent ) override
+	{
+		if (parent != nullptr)
+		{
+			return false;
+		}
+
+		return insertColumns( column, count );
+	}
+
+	bool removeRows( int row, int count, const AbstractItem * parent ) override
+	{
+		if (parent != nullptr)
+		{
+			return false;
+		}
+
+		return removeRows( row, count );
+	}
+
+	bool removeColumns( int column, int count, const AbstractItem * parent ) override
+	{
+		if (parent != nullptr)
+		{
+			return false;
+		}
+
+		return removeColumns( column, count );
 	}
 
 	Connection connectPreItemDataChanged( AbstractItemModel::DataCallback callback ) override

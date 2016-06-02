@@ -6,6 +6,8 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 class IInterface;
 class IComponentContextCreator;
 
@@ -73,5 +75,5 @@ public:
 	virtual void registerListener( IComponentContextListener & listener ) = 0;
 	virtual void deregisterListener( IComponentContextListener & listener ) = 0;
 };
-
+} // end namespace wgt
 #endif //I_COMPONENT_CONTEXT_HPP

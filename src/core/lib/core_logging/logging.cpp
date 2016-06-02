@@ -5,10 +5,8 @@
 #include "core_common/ngt_windows.hpp"
 
 
-namespace NGT
+namespace wgt
 {
-
-
 int logMessage( const char* format, ... )
 {
 	const size_t bufferSize = 4095;
@@ -29,7 +27,4 @@ int logMessage( const char* format, ... )
 
 	return result;
 }
-
-
-} // namespace NGT
-
+} // end namespace wgt

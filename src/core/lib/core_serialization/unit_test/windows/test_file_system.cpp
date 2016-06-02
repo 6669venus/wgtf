@@ -3,6 +3,8 @@
 #include "core_common/ngt_windows.hpp"
 #include "core_serialization/file_system.hpp"
 
+namespace wgt
+{
 TEST(file_sytem)
 {
 	FileSystem fileSystem_;
@@ -73,3 +75,4 @@ TEST(file_sytem)
 		return true;
 	});
 }
+} // end namespace wgt

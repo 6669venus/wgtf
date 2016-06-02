@@ -14,6 +14,8 @@
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
 
 
+namespace wgt
+{
 PythonPanel::PythonPanel( IComponentContext & context,
 	ObjectHandle & contextObject )
 	: Depends( context )
@@ -32,7 +34,7 @@ PythonPanel::~PythonPanel()
 
 bool PythonPanel::addPanel()
 {
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator == nullptr)
 	{
 		NGT_ERROR_MSG("Failed to find IViewCreator\n");
@@ -59,4 +61,4 @@ void PythonPanel::removePanel()
 		uiApplication->removeView( *pythonView_ );
 	}
 }
-
+} // end namespace wgt

@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Window 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
-import BWControls 1.0
+
 import WGControls 1.0 as WGOne
 import WGControls 2.0
 
@@ -456,8 +456,8 @@ Rectangle {
                 delegate: Curve{
                     objectName: index
                     curveIndex: index
-                    points: Value.points
-                    curveModel: Value
+                    points: value.points
+                    curveModel: value
                     viewTransform: timeline.viewTransform;
                     Component.onCompleted:{
                         // Assign and don't bind the color, otherwise we get qml errors when the curvesModel changes

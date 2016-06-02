@@ -2,7 +2,6 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.1
-import BWControls 1.0
 import WGControls 1.0
 
 /*!
@@ -274,7 +273,7 @@ Rectangle {
         }
     }
 
-    BWDataChangeNotifier {
+    WGDataChangeNotifier {
         id: customContentFilterIndexNotifier
         source: rootFrame.viewModel.data.customContentFilterIndexNotifier
         onDataChanged: {
@@ -293,7 +292,7 @@ Rectangle {
         filter: WGTokenizedStringFilter {
             id: folderFilter
             filterText: activeFilters_.stringValue
-            itemRole: "Value"
+            itemRole: "value"
             splitterChar: ","
         }
 
@@ -337,7 +336,7 @@ Rectangle {
         }
     }
 
-    SelectionHelper {
+    WGSelectionHelper {
         id: folderModelSelectionHelper
         source: rootFrame.viewModel.folderSelectionHandler
         onSourceChanged: {
@@ -356,7 +355,7 @@ Rectangle {
         filter: WGTokenizedStringFilter {
             id: folderContentsFilter
             filterText: activeFilters_.stringValue
-            itemRole: "Value"
+            itemRole: "value"
             splitterChar: ","
         }
 
@@ -392,7 +391,7 @@ Rectangle {
         }
     }
 
-    SelectionHelper {
+    WGSelectionHelper {
         id: fileModelSelectionHelper
         source: rootFrame.viewModel.folderContentSelectionHandler
         onSourceChanged: {
@@ -418,7 +417,7 @@ Rectangle {
         }
     }
 
-    BWDataChangeNotifier {
+    WGDataChangeNotifier {
         id: folderSelectionHistory
         source: rootFrame.viewModel.folderSelectionHistoryIndex
 
@@ -1093,23 +1092,23 @@ Rectangle {
                                 id: folderIconHeaderContainer
                                 Image{
                                     id: folderFileIcon
-                                    objectName: typeof(itemData.Value) != "undefined" ? "folderFileIcon_" + itemData.Value : "folderFileIcon"
+                                    objectName: typeof(itemData.value) != "undefined" ? "folderFileIcon_" + itemData.value : "folderFileIcon"
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
                                     visible: true
                                     anchors.left: folderIconHeaderContainer.left //itemData.expandIconArea.right
                                     width: sourceSize.width
                                     height: sourceSize.heigth
                                     //TODO: Awaiting type support for icon customisation
-                                    source: itemData.HasChildren ? (itemData.Expanded ? "icons/folder_open_16x16.png" : "icons/folder_16x16.png") : "icons/file_16x16.png"
+                                    source: itemData.hasChildren ? (itemData.expanded ? "icons/folder_open_16x16.png" : "icons/folder_16x16.png") : "icons/file_16x16.png"
                                 }
                                 Text {
-                                    objectName: typeof(itemData.Value) != "undefined" ? "Text_" + itemData.Value : "Text"
+                                    objectName: typeof(itemData.value) != "undefined" ? "Text_" + itemData.value : "Text"
                                     anchors.left: folderFileIcon.right
                                     color: palette.textColor
-                                    clip: itemData != null && itemData.Component != null
-                                    text: itemData != null ? (itemData.Value != null ? itemData.Value : "") : ""
+                                    clip: itemData != null && itemData.component != null
+                                    text: itemData != null ? (itemData.value != null ? itemData.value : "") : ""
                                     anchors.leftMargin: folderView.expandIconMargin // TODO no defined error
-                                    font.bold: itemData != null && itemData.HasChildren
+                                    font.bold: itemData != null && itemData.hasChildren
                                     verticalAlignment: Text.AlignVCenter
                                     anchors.verticalCenter: folderIconHeaderContainer.verticalCenter
                                     elide: Text.ElideRight
@@ -1169,7 +1168,7 @@ Rectangle {
                                         color: "transparent"
 
                                         WGLabel {
-                                            text: itemData.Value
+                                            text: itemData.value
                                             anchors.fill: parent
                                         }
                                     }
@@ -1288,15 +1287,15 @@ Rectangle {
                                             id: icon_file
                                             anchors.fill: parent
                                             source: {
-                                                if (  IsDirectory == true )
+                                                if (  isDirectory == true )
                                                     return "icons/folder_128x128.png"
-                                                else if ( Thumbnail != undefined )
-                                                    return Thumbnail
+                                                else if ( thumbnail != undefined )
+                                                    return thumbnail
                                                 else
                                                     return "icons/file_128x128.png"
                                             }
                                             Image {
-                                                source: StatusIcon != undefined ? StatusIcon : ""
+                                                source: statusIcon != undefined ? statusIcon : ""
                                                 anchors.left: icon_file.left
                                                 anchors.bottom: icon_file.bottom
                                                 anchors.leftMargin: iconSize > 32 ? Math.round(iconSize / 12) : 0
@@ -1308,7 +1307,7 @@ Rectangle {
                                     WGMultiLineText {
                                         id: iconLabel
 
-                                        text: Value
+                                        text: value
                                         horizontalAlignment: Text.AlignHCenter
 
                                         lineHeightMode: Text.FixedHeight
@@ -1420,12 +1419,12 @@ Rectangle {
                                     anchors.bottom: parent.bottom
 
                                     Image {
-                                        source: itemData.TypeIcon != "" ? itemData.TypeIcon : "icons/file_16x16.png"
+                                        source: itemData.typeIcon != "" ? itemData.typeIcon : "icons/file_16x16.png"
                                         anchors.centerIn: parent
                                     }
 
                                     Image {
-                                        source: itemData.StatusIcon != undefined ? itemData.StatusIcon : ""
+                                        source: itemData.statusIcon != undefined ? itemData.statusIcon : ""
                                         anchors.centerIn: parent
                                     }
                                 }
@@ -1438,7 +1437,7 @@ Rectangle {
                                     anchors.margins: 1
 
                                     WGLabel {
-                                        text: itemData.Value
+                                        text: itemData.value
                                         anchors.fill: parent
                                     }
                                 }

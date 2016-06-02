@@ -8,6 +8,8 @@
 class QQmlComponent;
 class QQmlEngine;
 
+namespace wgt
+{
 class QmlComponent : public IComponent
 {
 public:
@@ -19,5 +21,5 @@ public:
 private:
 	std::unique_ptr< QQmlComponent > qmlComponent_;
 };
-
+} // end namespace wgt
 #endif

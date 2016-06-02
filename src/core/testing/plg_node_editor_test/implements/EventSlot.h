@@ -1,10 +1,11 @@
-
 #ifndef __EVENT_SLOT_H__
 #define __EVENT_SLOT_H__
 
 #include "plugins/plg_node_editor/interfaces/i_slot.hpp"
 #include "plugins/plg_node_editor/interfaces/i_connection.hpp"
 
+namespace wgt
+{
 class EventSlot : public Implements<ISlot>
 {
     DECLARE_REFLECTED
@@ -27,7 +28,7 @@ public:
     const GenericListT<ISlot*>* GetConnectedSlots() const override;
 
     bool CanConnect(ObjectHandleT<ISlot> slot) override;
-    bool isConnected() const override { return !m_connectedSlots.empty(); }
+    bool IsConnected() const override { return !m_connectedSlots.empty(); }
 
     bool Connect(size_t connectionID, ObjectHandleT<ISlot> slot) override;
     bool Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot) override;
@@ -44,5 +45,5 @@ private:
     std::set<size_t> m_connectionIds;
     GenericListT<ISlot*> m_connectedSlots;
 };
-
+} // end namespace wgt
 #endif //__EVENT_SLOT_H__

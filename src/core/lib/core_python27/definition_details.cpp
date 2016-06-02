@@ -10,6 +10,8 @@
 #include "core_reflection/property_storage.hpp"
 #include "core_reflection/base_property_with_metadata.hpp"
 
+namespace wgt
+{
 namespace
 {
 
@@ -361,3 +363,4 @@ const PyScript::ScriptObject & DefinitionDetails::object() const
 
 
 } // namespace ReflectedPython
+} // end namespace wgt

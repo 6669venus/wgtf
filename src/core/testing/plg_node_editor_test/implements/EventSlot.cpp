@@ -1,7 +1,7 @@
-
 #include "EventSlot.h"
-#include <qstring.h>
 
+namespace wgt
+{
 const std::string EVENT_SLOT_LABEL = "event";
 const std::string EVENT_SLOT_ICON = "images/greenSlot.png";
 const std::string EVENT_SLOT_COLOR = "white";
@@ -97,3 +97,4 @@ bool EventSlot::Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot)
 
     return result;
 }
+} // end namespace wgt

@@ -4,6 +4,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 namespace
 {
 	const wchar_t * s_Group1 = L"SimpleCases";
@@ -74,3 +76,4 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestPage2, MetaNone() )
 	EXPOSE( "TestPage", getTestPage, setTestPage, MetaNone() )
 END_EXPOSE()
+} // end namespace wgt

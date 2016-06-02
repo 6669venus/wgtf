@@ -15,6 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
+namespace wgt
+{
 class wg_condition_variable::Waiter
 {
 public:
@@ -270,6 +272,6 @@ bool wg_condition_variable::releaseWaiter( Waiters::iterator waiter )
 
 	return isSignaled;*/
 }
+} // end namespace wgt
 
 #endif // ENABLE_WG_CONDITION_VARIABLE_WORKAROUND
-

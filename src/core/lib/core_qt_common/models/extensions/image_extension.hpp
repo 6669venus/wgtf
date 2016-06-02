@@ -3,6 +3,8 @@
 
 #include "i_model_extension.hpp"
 
+namespace wgt
+{
 class IQtFramework;
 
 class ImageExtension : public IModelExtension
@@ -21,5 +23,5 @@ public:
 private:
 	IQtFramework * qtFramework_;
 };
-
+} // end namespace wgt
 #endif // IMAGE_EXTENSION_HPP

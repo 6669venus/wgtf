@@ -7,6 +7,8 @@
 #include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
 
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 class TestPlugin1TestObject
 {
@@ -93,5 +95,5 @@ private:
 };
 
 typedef ObjectHandleT< TestPlugin1Interface > TestPlugin1InterfacePtr;
-
+} // end namespace wgt
 #endif // PLUGIN1_OBJECTS_HPP

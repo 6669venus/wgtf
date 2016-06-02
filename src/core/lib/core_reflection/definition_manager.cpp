@@ -10,6 +10,8 @@
 #include "generic/generic_definition_helper.hpp"
 
 
+namespace wgt
+{
 //==============================================================================
 DefinitionManager::DefinitionManager( IObjectManager & objectManager )
 	: objectManager_ ( objectManager )
@@ -216,3 +218,4 @@ bool DefinitionManager::deserializeDefinitions( ISerializer & serializer )
 {
 	return false;
 }
+} // end namespace wgt

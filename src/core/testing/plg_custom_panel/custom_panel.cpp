@@ -1,12 +1,12 @@
 #include "custom_panel.hpp"
 #include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
-
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
-
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 CustomPanel::CustomPanel( IComponentContext & context )
 	: Depends( context )
 {
@@ -15,7 +15,7 @@ CustomPanel::CustomPanel( IComponentContext & context )
  
 bool CustomPanel::addPanel()
 {
-	auto viewCreator = this->get< wgt::IViewCreator >();
+	auto viewCreator = this->get< IViewCreator >();
 	
 	if (viewCreator == nullptr)
 	{
@@ -43,3 +43,4 @@ void CustomPanel::removePanel()
 		customView_ = nullptr;
 	}
 }
+} // end namespace wgt

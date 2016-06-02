@@ -3,6 +3,8 @@
 
 #include "core_reflection/utilities/reflection_utilities.hpp"
 
+namespace wgt
+{
 class IClassDefinition;
 class ReflectedMethodParameters;
 class Variant;
@@ -132,6 +134,5 @@ bool BaseGenericObject::set( const char * name, const T & value )
 	auto variantValue = ReflectionUtilities::reference( value );
 	return this->setProperty( name, variantValue );
 }
-
-
+} // end namespace wgt
 #endif // BASE_GENERIC_OBJECT_HPP

@@ -7,6 +7,8 @@
 #include "core_serialization/serializer/i_serializer.hpp"
 
 
+namespace wgt
+{
 class ObjectHandle;
 
 /**
@@ -49,5 +51,5 @@ private:
 	std::vector<TypeId> typeList;
 	ObjLinks objLinks_;
 };
-
+} // end namespace wgt
 #endif // REFLECTION_SERIALIZER_HPP

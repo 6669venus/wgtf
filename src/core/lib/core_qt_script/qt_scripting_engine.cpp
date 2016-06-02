@@ -3,7 +3,7 @@
 #include "qobject_qt_type_converter.hpp"
 #include "qt_script_object.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
-#include "core_qt_common/controls/bw_copyable.hpp"
+#include "core_qt_common/controls/wg_copy_controller.hpp"
 #include "script_qt_type_converter.hpp"
 #include "wg_list_iterator.hpp"
 #include "collection_qt_type_converter.hpp"
@@ -34,9 +34,10 @@
 #include <QQmlContext>
 #include <QPointer>
 
-Q_DECLARE_METATYPE( ObjectHandle );
+Q_DECLARE_METATYPE( wgt::ObjectHandle );
 
-
+namespace wgt
+{
 struct QtScriptingEngine::Implementation
 {
 	Implementation( QtScriptingEngine& self )
@@ -478,12 +479,12 @@ void QtScriptingEngine::deleteMacro( QString command )
 	impl_->commandSystemProvider_->deleteMacroByName( commandId.c_str() );
 }
 
-void QtScriptingEngine::selectControl( BWCopyable* control, bool append )
+void QtScriptingEngine::selectControl( WGCopyController* control, bool append )
 {
 	impl_->copyPasteManager_->onSelect( control, append );
 }
 
-void QtScriptingEngine::deselectControl( BWCopyable* control, bool reset )
+void QtScriptingEngine::deselectControl( WGCopyController* control, bool reset )
 {
 	impl_->copyPasteManager_->onDeselect( control, reset );
 }
@@ -568,3 +569,4 @@ void QtScriptingEngine::swapParent(QtScriptObject & scriptObject, QObject * newP
 	parentMap.erase(parentIt);
 	parentMap.insert( std::make_pair(newParent, &scriptObject ) );
 }
+} // end namespace wgt

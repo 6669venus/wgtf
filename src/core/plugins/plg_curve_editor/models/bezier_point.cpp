@@ -11,6 +11,8 @@
 
 #include <core_reflection/type_class_definition.hpp>
 
+namespace wgt
+{
 BezierPoint::BezierPoint(IDefinitionManager& definitionManager, const Point& pos)
 {
 	auto def = definitionManager.getDefinition<Point>();
@@ -51,3 +53,4 @@ bool operator==( BezierPoint& lhs, BezierPoint& rhs )
 		&& lhs.cp1 == rhs.cp1
 		&& lhs.cp2 == rhs.cp2;
 }
+} // end namespace wgt

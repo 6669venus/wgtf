@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+namespace wgt
+{
 IListAdapter::~IListAdapter()
 {
 }
@@ -103,3 +105,4 @@ QModelIndex IListAdapter::cachedAdaptedIndex(int row, int column, const QModelIn
 	cachedAdaptedIndices_[row] = index;
 	return index;
 }
+} // end namespace wgt

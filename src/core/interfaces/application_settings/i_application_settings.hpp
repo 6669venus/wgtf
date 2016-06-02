@@ -11,6 +11,8 @@
 
 #pragma once
 
+namespace wgt
+{
 class IApplicationSettings
 {
 public:
@@ -24,5 +26,5 @@ public:
 
 	virtual void		setString	(const char* name, const char* value) = 0;
 };
-
+} // end namespace wgt
 #endif // I_APPLICATION_SETTINGS_H_

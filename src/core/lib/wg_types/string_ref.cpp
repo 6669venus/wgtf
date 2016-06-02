@@ -1,6 +1,8 @@
 #include "string_ref.hpp"
 #include <cstring>
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 StringRef::StringRef( const char * str )
 	: pStart_( str )
@@ -49,3 +51,4 @@ bool StringRef::operator == ( const StringRef & other ) const
 	}
 	return strcmp( pStart_, other.pStart_ ) == 0;
 }
+} // end namespace wgt

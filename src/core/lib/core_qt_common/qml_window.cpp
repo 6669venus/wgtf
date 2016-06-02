@@ -27,9 +27,10 @@
 #include <QElapsedTimer>
 #include "wg_types/binary_block.hpp"
 #include "wg_types/vector2.hpp"
-
 #include "core_qt_script/qt_script_object.hpp"
 
+namespace wgt
+{
 namespace
 {
 	template< typename T >
@@ -384,7 +385,7 @@ void QmlWindow::savePreference()
     {
         return;
     }
-    std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+    std::string key = id_ + g_internalPreferenceId ;
     auto & preference = preferences->getPreference( key.c_str() );
     QByteArray geometryData = mainWindow_->saveGeometry();
     std::shared_ptr< BinaryBlock > geometry = 
@@ -418,7 +419,7 @@ bool QmlWindow::loadPreference()
         {
             break;
         }
-        std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+        std::string key = id_ + g_internalPreferenceId ;
         auto & preference = preferences->getPreference( key.c_str() );
         // check the preferences
         auto accessor = preference->findProperty( "geometry" );
@@ -484,3 +485,4 @@ bool QmlWindow::loadPreference()
     NGT_DEBUG_MSG( "Load Qml Window Preferences Failed.\n" );
     return false;
 }
+} // end namespace wgt

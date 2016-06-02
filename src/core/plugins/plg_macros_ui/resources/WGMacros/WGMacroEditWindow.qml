@@ -80,7 +80,7 @@ Window {
 			//depthColourisation: 5
 			property Component propertyDelegate: Loader {
 				clip: true
-				sourceComponent: itemData != null ? itemData.Component : null
+				sourceComponent: itemData != null ? itemData.component : null
 			}
 		}
 

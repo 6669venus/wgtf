@@ -2,6 +2,8 @@
 #include <string>
 
 
+namespace wgt
+{
 namespace BWUnitTest
 {
 
@@ -11,6 +13,4 @@ int unitTestError( const char * _Format, ... );
 int unitTestInfo( const char * _Format, ... );
 
 }
-
-
-// unit_test.hpp
+} // end namespace wgt

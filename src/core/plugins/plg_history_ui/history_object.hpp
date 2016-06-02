@@ -10,6 +10,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IDefinitionManager;
 class IValueChangeNotifier;
 
@@ -60,6 +62,5 @@ private:
     bool clearButtonVisible;
     bool makeMacroButtonVisible;
 };
-
-
+} // end namespace wgt
 #endif // HISTORY_OBJECT_HPP

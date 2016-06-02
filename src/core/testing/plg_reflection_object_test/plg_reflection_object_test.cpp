@@ -4,6 +4,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 //==============================================================================
 class ReflectionObjectTestPlugin
 	: public PluginMain
@@ -49,4 +51,4 @@ public:
 
 
 PLG_CALLBACK_FUNC( ReflectionObjectTestPlugin )
-
+} // end namespace wgt

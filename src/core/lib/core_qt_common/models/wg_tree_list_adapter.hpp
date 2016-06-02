@@ -9,6 +9,8 @@
 #include "qt_model_macros.hpp"
 #include <memory>
 
+namespace wgt
+{
 class IModelExtension;
 
 /**
@@ -25,7 +27,7 @@ class WGTreeListAdapter : public IListAdapter
 				WRITE		setParentIndex
 				NOTIFY		parentIndexChanged )
 
-	Q_PROPERTY( QQmlListProperty< IModelExtension > extensions 
+	Q_PROPERTY( QQmlListProperty< wgt::IModelExtension > extensions 
 				READ getExtensions )
 
 	Q_CLASSINFO( "DefaultProperty", "extensions" )
@@ -98,5 +100,5 @@ private:
 	class Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
+} // end namespace wgt
 #endif // WG_TREE_LIST_ADAPTER_HPP

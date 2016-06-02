@@ -1,6 +1,7 @@
-
 #include "PrintNode.h"
 
+namespace wgt
+{
 const std::string PRINT_NODE_TITLE = "Print";
 const std::string PRINT_NODE_SUBTITLE = "";
 const std::string PRINT_NODE_ICON = "images/model_16x16.png";
@@ -123,3 +124,4 @@ void PrintNode::OnDisconnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<ISlot> o
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
+} // end namespace wgt

@@ -6,6 +6,8 @@
 #include "core_variant/type_id.hpp"
 #include <type_traits>
 
+namespace wgt
+{
 class IInterface;
 
 namespace Context
@@ -155,5 +157,5 @@ void queryInterface( std::vector< T * > & o_Impls )
 }
 
 } //namespace Context
-
+} // end namespace wgt
 #endif //I_INTERFACE_HPP

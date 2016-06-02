@@ -1,6 +1,8 @@
 #ifndef I_FILE_UTILITIES_HPP
 #define I_FILE_UTILITIES_HPP
 
+namespace wgt
+{
 class StringRef;
 
 class IFileUtilities
@@ -15,5 +17,5 @@ public:
 
 	virtual std::string resolveFilename( const StringRef & file ) = 0;
 };
-
+} // end namespace wgt
 #endif

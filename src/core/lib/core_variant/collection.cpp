@@ -2,6 +2,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 Collection::ConstIterator& Collection::ConstIterator::operator++()
 {
 	detach();
@@ -369,5 +371,4 @@ Connection Collection::connectPostChanged( ElementPostChangedCallback callback )
 		return Connection();
 	}
 }
-
-
+} // end namespace wgt

@@ -26,9 +26,21 @@
 #include "models/curve.hpp"
 #include "metadata/i_curve_editor.mpp"
 
+void initQtResources()
+{
+	Q_INIT_RESOURCE( plg_curve_editor );
+}
+
+void cleanupQtResources()
+{
+	Q_CLEANUP_RESOURCE( plg_curve_editor );
+}
+
+namespace wgt
+{
 class CurveEditorPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator, ICurveEditor >
+	, public Depends< IViewCreator, ICurveEditor >
 {
 public:
 	CurveEditorPlugin(IComponentContext & contextManager)
@@ -38,7 +50,7 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		Q_INIT_RESOURCE(plg_curve_editor);
+		initQtResources();
 
 		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
 		assert(metaTypeMgr);
@@ -64,7 +76,7 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		auto curveModel = get< ICurveEditor >();
 
 		if (viewCreator != nullptr)
@@ -92,7 +104,8 @@ public:
 		{
 			contextManager.deregisterInterface(type);
 		}
-		Q_CLEANUP_RESOURCE(plg_curve_editor);
+
+		cleanupQtResources();
 	}
 
 private:
@@ -101,4 +114,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(CurveEditorPlugin)
-
+} // end namespace wgt

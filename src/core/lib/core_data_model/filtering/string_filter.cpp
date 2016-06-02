@@ -2,6 +2,8 @@
 #include "../i_item.hpp"
 #include "../i_item_role.hpp"
 
+namespace wgt
+{
 struct StringFilter::Implementation
 {
 	Implementation( StringFilter & self );
@@ -77,3 +79,4 @@ bool StringFilter::checkFilter( const IItem* item )
 
 	return false;
 }
+} // end namespace wgt

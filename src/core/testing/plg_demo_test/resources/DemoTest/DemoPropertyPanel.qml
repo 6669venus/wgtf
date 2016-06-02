@@ -1,7 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
-import BWControls 1.0
+
 import WGControls 1.0
 import WGCopyableFunctions 1.0
 
@@ -35,7 +35,7 @@ Rectangle {
         }
     }
 
-    BWDataChangeNotifier {
+    WGDataChangeNotifier {
         id: objectSelection
         source: CurrentIndexSource
         onDataChanged: {
@@ -87,7 +87,7 @@ Rectangle {
 
         property Component propertyDelegate: Loader {
             clip: true
-            sourceComponent: itemData != null ? itemData.Component : null
+            sourceComponent: itemData != null ? itemData.component : null
         }
     }
 }

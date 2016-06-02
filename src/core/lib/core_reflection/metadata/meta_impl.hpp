@@ -8,6 +8,8 @@ Details: Search for NGT Reflection System on the Wargaming Confluence
 
 #include "meta_base.hpp"
 
+namespace wgt
+{
 class Collection;
 
 //==============================================================================
@@ -590,6 +592,5 @@ class MetaMultilineObj : public MetaBase
 {
 	DECLARE_REFLECTED
 };
-
-
+} // end namespace wgt
 #endif //META_IMPL_HPP

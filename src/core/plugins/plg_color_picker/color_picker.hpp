@@ -14,8 +14,10 @@
 
 #include <memory>
 
+namespace wgt
+{
 class ColorPicker
-	: Depends< IUIFramework, IUIApplication, IDefinitionManager, wgt::IViewCreator >
+	: Depends< IUIFramework, IUIApplication, IDefinitionManager, IViewCreator >
 
 {
 	typedef Depends< IUIFramework, IUIApplication, IDefinitionManager > DepsBase;
@@ -32,4 +34,5 @@ private:
 };
  
  
+} // end namespace wgt
 #endif // _COLOR_PICKER_HPP

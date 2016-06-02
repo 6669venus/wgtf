@@ -7,6 +7,9 @@
 #include <vector>
 
 class QClipboard;
+
+namespace wgt
+{
 class ISerializer;
 class ICommandManager;
 
@@ -37,8 +40,5 @@ private:
 	IDefinitionManager * definitionManager_;
 	ICommandManager * commandManager_;
 };
-
-
-
-
+} // end namespace wgt
 #endif // QT_COPY_PASTE_MANAGER_HPP

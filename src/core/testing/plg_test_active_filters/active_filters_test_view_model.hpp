@@ -7,6 +7,8 @@
 #include "core_data_model/i_item.hpp"
 #include <memory>
 
+namespace wgt
+{
 class IActiveFiltersModel;
 class IDefinitionManager;
 class IUIFramework;
@@ -74,5 +76,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // ACTIVE_FILTERS_TEST_VIEW_MODEL_HPP

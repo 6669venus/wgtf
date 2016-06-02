@@ -3,6 +3,8 @@
 
 #include "command.hpp"
 
+namespace wgt
+{
 class ObjectHandle;
 class IDataStream;
 class CommandManager;
@@ -31,5 +33,5 @@ private:
 	BatchCommand( CommandManager * pCommandManager );
     CommandManager * pCommandManager_;
 };
-
+} // end namespace wgt
 #endif//BATCH_COMMAND_HPP

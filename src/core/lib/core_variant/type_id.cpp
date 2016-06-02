@@ -6,6 +6,8 @@
 #include <string.h>
 
 
+namespace wgt
+{
 //==============================================================================
 TypeId::TypeId( const std::string & name )
 	: name_( nullptr )
@@ -221,3 +223,4 @@ bool TypeId::operator < (const TypeId & other ) const
 {
 	return hashCode_ < other.getHashcode();
 }
+} // end namespace wgt

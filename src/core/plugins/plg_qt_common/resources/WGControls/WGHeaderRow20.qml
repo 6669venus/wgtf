@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
-import BWControls 1.0
+
 
 Item {
     id: itemRow
@@ -14,11 +14,8 @@ Item {
     property var columnSequence: []
     property var columnWidths: []
     property var headerData: []
+    property var sortIndicators: []
     property alias columnSpacing: row.spacing
-
-    signal itemPressed(var mouse, var itemIndex)
-    signal itemClicked(var mouse, var itemIndex)
-    signal itemDoubleClicked(var mouse, var itemIndex)
 
     /* MOVE INTO STYLE*/
     Rectangle {
@@ -44,17 +41,27 @@ Item {
                     height: row.height
                     acceptedButtons: Qt.RightButton | Qt.LeftButton;
 
-                    onPressed: itemPressed(mouse, index)
-                    onClicked: itemClicked(mouse, index)
-                    onDoubleClicked: itemDoubleClicked(mouse, index)
+                    onClicked: {
+                        //TODO handle sort
+                    }
                 }
 
-                Row {
+                Column {
                     id: columnLayoutRow
+
+                    // sort indicator componenet.
+                    Loader {
+                        id: sortIndicatorLoader
+                        width: itemRow.columnWidths[index]
+                        property var headerSortIndex: index;
+                        sourceComponent: itemRow.sortIndicators[index]
+                    }
+
+                    // header component
                     Loader {
                         id: columnDelegateLoader
-                        property var headerData: columnSequence.length <= index ? itemRow.headerData[index] :  itemRow.headerData[itemRow.columnSequence[index]]
-                        property var headerWidth: columnWidths[index] - x
+                        property var headerData: itemRow.columnSequence.length <= index ? itemRow.headerData[index] :  itemRow.headerData[itemRow.columnSequence[index]]
+                        property var headerWidth: itemRow.columnWidths[index] - x
                         sourceComponent: itemRow.columnDelegates[index]
                     }
                 }

@@ -7,6 +7,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/i_object_manager.hpp"
 
+namespace wgt
+{
 class TestDataSource;
 
 class TestDataSourceManager : public Implements< IDataSourceManager >
@@ -62,6 +64,5 @@ private:
 	ObjectHandleT< TestPage2 > testPage2_;
 	
 };
-
-
+} // end namespace wgt
 #endif // TEST_DATASOURCE_HPP

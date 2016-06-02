@@ -7,6 +7,8 @@
 #include <string>
 #include <functional>
 
+namespace wgt
+{
 class Action
 {
 public:
@@ -20,5 +22,5 @@ private:
     std::string title;
     TOnTrigger callback;
 };
-
+} // end namespace wgt
 #endif // __GRAPHEDITOR_ACTION_H__

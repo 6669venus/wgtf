@@ -3,6 +3,16 @@
 
 #include "wg_types/hash_utilities.hpp"
 
+#define ITEMROLE( ROLE )														\
+namespace ItemRole {															\
+	namespace {																	\
+		const char * ROLE##Name = #ROLE;										\
+		const unsigned int ROLE##Id = ItemRole::compute( #ROLE );				\
+	}																			\
+}
+
+namespace wgt
+{
 namespace ItemRole
 {
 	inline unsigned int compute( const char * roleName )
@@ -11,68 +21,60 @@ namespace ItemRole
 	}
 }
 
-#define ITEMROLE( ROLE )														\
-namespace ItemRole {															\
-	namespace {																	\
-		const char * ROLE##Name = #ROLE;										\
-		const unsigned int ROLE##Id = ItemRole::compute( #ROLE );				\
-	}																			\
-};
-
 // DEPRECATED
 // Add new role types here
 #define ITEM_ROLES																\
 	/* Tree Adapter */															\
-	X( ChildModel )																\
-	X( ColumnModel )															\
-	X( HasChildren )															\
-	X( Expanded )																\
-	X( ParentIndex )															\
-	X( Selected )																\
-	X( IndexPath )																\
+	X( ChildModel, childModel )													\
+	X( ColumnModel, columnModel )												\
+	X( HasChildren, hasChildren )												\
+	X( Expanded, expanded )														\
+	X( ParentIndex, parentIndex )												\
+	X( Selected, selected )														\
+	X( IndexPath, indexPath )													\
 	/* Component Extension */													\
-	X( Component )																\
-	X( ValueType )																\
-	X( KeyType )																\
-	X( IsEnum )																	\
-	X( IsThumbnail )															\
-	X( IsSlider )																\
-	X( IsColor )																\
-	X( IsUrl )																	\
+	X( Component, component )													\
+	X( ValueType, valueType )													\
+	X( KeyType, keyType )														\
+	X( IsEnum, isEnum )															\
+	X( IsThumbnail, isThumbnail )												\
+	X( IsSlider, isSlider )														\
+	X( IsColor, isColor )														\
+	X( IsUrl, isUrl )															\
 	/* Value Extension */														\
-	X( Value )																	\
-	X( Key )																	\
-	X( MinValue )																\
-	X( MaxValue )																\
-	X( StepSize )																\
-	X( Decimals )																\
-	X( EnumModel )																\
-	X( Definition )																\
-    X( Object )                                                                 \
-    X( RootObject )                                                             \
-	X( DefinitionModel )														\
-	X( UrlIsAssetBrowser )														\
-	X( UrlDialogTitle )															\
-	X( UrlDialogDefaultFolder )													\
-	X( UrlDialogNameFilters )													\
-	X( UrlDialogSelectedNameFilter )											\
-	X( UrlDialogModality )														\
+	X( Value, value )															\
+	X( Key, key )																\
+	X( MinValue, minValue )														\
+	X( MaxValue, maxValue )														\
+	X( StepSize, stepSize )														\
+	X( Decimals, decimals )														\
+	X( EnumModel, enumModel )													\
+	X( Definition, definition )													\
+	X( Object, object )                                                         \
+	X( RootObject, rootObject )                                                 \
+	X( DefinitionModel, definitionModel )										\
+	X( UrlIsAssetBrowser, urlIsAssetBrowser )									\
+	X( UrlDialogTitle, urlDialogTitle )											\
+	X( UrlDialogDefaultFolder, urlDialogDefaultFolder )							\
+	X( UrlDialogNameFilters, urlDialogNameFilters )								\
+	X( UrlDialogSelectedNameFilter, urlDialogSelectedNameFilter )				\
+	X( UrlDialogModality, urlDialogModality )									\
 	/* Asset Item Extension */													\
-	X( StatusIcon )																\
-	X( TypeIcon )																\
-	X( Size )																	\
-	X( CreatedTime )															\
-	X( ModifiedTime )															\
-	X( AccessedTime )															\
-	X( IsDirectory )															\
-	X( IsReadOnly )																\
-	X( IsCompressed )															\
+	X( StatusIcon, statusIcon )													\
+	X( TypeIcon, typeIcon )														\
+	X( Size, size )																\
+	X( CreatedTime, createdTime )												\
+	X( ModifiedTime, modifiedTime )												\
+	X( AccessedTime, accessedTime )												\
+	X( IsDirectory, isDirectory )												\
+	X( IsReadOnly, isReadOnly )													\
+	X( IsCompressed, isCompressed )												\
 	/* Thumbnail Extension */													\
-	X( Thumbnail )																\
-	X( headerText )																\
-	X( footerText )																\
+	X( Thumbnail, thumbnail )													\
+	X( headerText, headerText )													\
+	X( footerText, footerText )													\
 
-#define X( ROLE ) 																\
+#define X( ROLE, ROLENAME ) 													\
 	class ROLE##Role															\
 	{																			\
 	public:																		\
@@ -81,5 +83,5 @@ namespace ItemRole {															\
 	};
 	ITEM_ROLES
 #undef X
-
+} // end namespace wgt
 #endif //I_ITEM_ROLE_HPP

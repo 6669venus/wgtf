@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
-import BWControls 1.0
+
 import WGControls 1.0
 import WGCopyableFunctions 1.0
 
@@ -29,7 +29,7 @@ Rectangle {
         }
 	}
 
-	BWDataChangeNotifier {
+	WGDataChangeNotifier {
         id: objectSelection
         source: CurrentIndexSource
         onDataChanged: {
@@ -37,7 +37,7 @@ Rectangle {
         }
     }
 
-	BWDataChangeNotifier {
+	WGDataChangeNotifier {
         id: listChangeNotifier
         source: CurrentListSource
         onDataChanged: {
@@ -53,7 +53,7 @@ Rectangle {
 			id: stringFilter
 			filterText: searchBox.text
 			splitterChar: " "
-			itemRole: "Value"
+			itemRole: "value"
 		}
 
 		ValueExtension {}
@@ -91,7 +91,7 @@ Rectangle {
 					anchors.margins: 4
 					verticalAlignment: Text.AlignVCenter
 					visible: true
-					text: itemData != null ? itemData.Value.name : ""
+					text: itemData != null ? itemData.value.name : ""
 					color: palette.textColor
 				}
 			}

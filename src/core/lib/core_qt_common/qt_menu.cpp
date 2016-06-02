@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+namespace wgt
+{
 namespace QtMenu_Locals
 {
 	const char * modeDisabled = "_disabled";
@@ -263,3 +265,4 @@ QSharedPointer< QAction > QtMenu::getSharedQAction( IAction & action )
 	}
 	return QSharedPointer< QAction >();
 }
+} // end namespace wgt

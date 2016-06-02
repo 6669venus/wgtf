@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdint.h>
 
+namespace wgt
+{
 class IAlertPresenter;
 
 class AlertManager
@@ -27,5 +29,5 @@ private:
 	typedef std::vector< IAlertPresenter* > tPresenterVector;
 	tPresenterVector presenters_;
 };
-
+} // end namespace wgt
 #endif // ALERT_MANAGER_HPP

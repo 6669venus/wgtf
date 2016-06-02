@@ -1,6 +1,8 @@
 #ifndef VECTOR3_HPP
 #define VECTOR3_HPP
 
+namespace wgt
+{
 class Vector3
 {
 public:
@@ -21,6 +23,5 @@ public:
 		return !(*this == v);
 	}
 };
-
+} // end namespace wgt
 #endif // VECTOR3_HPP
-

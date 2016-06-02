@@ -4,6 +4,8 @@
 #include "i_list_item.hpp"
 #include "cstdmf/bw_vector.hpp"
 
+namespace wgt
+{
 BW_BEGIN_NAMESPACE
 
 class IRoleBinder;
@@ -53,5 +55,5 @@ public:
 };
 
 BW_END_NAMESPACE
-
+} // end namespace wgt
 #endif // I_TREE_ITEM_HPP

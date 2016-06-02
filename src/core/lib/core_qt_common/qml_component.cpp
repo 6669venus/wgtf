@@ -3,6 +3,8 @@
 #include <QQmlComponent>
 #include <QQmlEngine>
 
+namespace wgt
+{
 QmlComponent::QmlComponent( QQmlEngine & qmlEngine )
 	: qmlComponent_( new QQmlComponent( &qmlEngine ) )
 {
@@ -17,3 +19,4 @@ QQmlComponent * QmlComponent::component() const
 {
 	return qmlComponent_.get();
 }
+} // end namespace wgt

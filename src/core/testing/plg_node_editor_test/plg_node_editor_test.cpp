@@ -1,4 +1,3 @@
-
 #include <memory>
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_reflection/type_class_definition.hpp"
@@ -9,6 +8,8 @@
 #include "implements/CustomGraph.h"
 
 
+namespace wgt
+{
 class NodeEditorTestPlugin
     : public PluginMain
 {
@@ -30,3 +31,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC(NodeEditorTestPlugin)
+} // end namespace wgt

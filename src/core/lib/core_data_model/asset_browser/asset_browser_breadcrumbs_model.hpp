@@ -3,6 +3,8 @@
 
 #include "core_data_model/i_breadcrumbs_model.hpp"
 
+namespace wgt
+{
 class IDefinitionManager;
 class IAssetObjectItem;
 
@@ -56,5 +58,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif //ASSET_BROWSER_BREADCRUMBS_MODEL_HPP

@@ -1,7 +1,8 @@
-
 #include "CustomConnection.h"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 CustomConnection::CustomConnection() 
 : m_inputSlot(nullptr)
 , m_outputSlot(nullptr)
@@ -107,3 +108,4 @@ bool CustomConnection::UnBind()
 
     return result;
 }
+} // end namespace wgt

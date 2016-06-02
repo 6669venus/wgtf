@@ -6,6 +6,8 @@
 #include "core_data_model/collection_model.hpp"
 
 
+namespace wgt
+{
 class CollectionModel;
 
 
@@ -19,6 +21,8 @@ class QtCollectionModel : public QtListModel
 
 public:
 	QtCollectionModel( std::unique_ptr<CollectionModel>&& source );
+
+	QHash< int, QByteArray > roleNames() const override;	
 
 	/**
 	 *	Get CollectionModel that is being adapted to be used by Qt.
@@ -72,7 +76,5 @@ public:
 private:
 	std::unique_ptr<CollectionModel> model_;
 };
-
-
+} // end namespace wgt
 #endif // _QT_COLLECTION_MODEL_HPP
-

@@ -66,6 +66,8 @@ namespace QT_NAMESPACE {
 using namespace QT_NAMESPACE;
 #endif
 
+namespace wgt
+{
 namespace QtFramework_Locals
 {
 	// Temporary command event listener to handle process events when the command
@@ -725,3 +727,4 @@ IPreferences * QtFramework::getPreferences()
 {
 	return preferences_.get();
 }
+} // end namespace wgt

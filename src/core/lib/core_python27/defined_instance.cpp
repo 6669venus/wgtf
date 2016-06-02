@@ -11,6 +11,8 @@
 #include "i_script_object_definition_registry.hpp"
 
 
+namespace wgt
+{
 namespace ReflectedPython
 {
 
@@ -198,3 +200,4 @@ ObjectHandle DefinedInstance::getDerivedType()
 
 
 } // namespace ReflectedPython
+} // end namespace wgt

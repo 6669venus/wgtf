@@ -10,6 +10,8 @@
 
 
 
+namespace wgt
+{
 //==============================================================================
 ContextDefinitionManager::ContextDefinitionManager( const wchar_t * contextName )
 	: pBaseManager_ ( NULL )
@@ -289,3 +291,4 @@ std::unique_ptr<IClassDefinitionDetails> ContextDefinitionManager::createGeneric
 	assert( pBaseManager_ );
 	return pBaseManager_->createGenericDefinition( name );
 }
+} // end namespace wgt

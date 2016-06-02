@@ -38,6 +38,8 @@ Details: Search for NGT Reflection System on the Wargaming Confluence
 #include <map>
 #include <unordered_map>
 
+namespace wgt
+{
 template<typename T> class ObjectHandleT;
 
 class TextStream;
@@ -391,6 +393,5 @@ bool downcast( ObjectHandleT< T >* v, const ObjectHandle& storage )
 	}
 	return false;
 }
-
-
+} // end namespace wgt
 #endif //OBJECT_HANDLE_HPP

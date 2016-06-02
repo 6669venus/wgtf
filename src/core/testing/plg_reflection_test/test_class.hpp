@@ -4,6 +4,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include <string>
 
+namespace wgt
+{
 class TestBase
 {
 	DECLARE_REFLECTED
@@ -53,5 +55,5 @@ private:
 	std::string string_;
 	InnerClass innerClass_;
 };
-
+} // end namespace wgt
 #endif // TEST_CLASS_HPP

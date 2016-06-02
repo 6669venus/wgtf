@@ -2,6 +2,8 @@
 #include "core_data_model/asset_browser/i_asset_object_item.hpp"
 #include <fstream>
 
+namespace wgt
+{
 void FileSystemAssetPresentationProvider::generateData()
 {
 	testThumbnails_.clear();
@@ -131,3 +133,4 @@ const char* FileSystemAssetPresentationProvider::getTypeIconResourceString(const
 	// Display default file icon
 	return nullptr;
 }
+} // end namespace wgt

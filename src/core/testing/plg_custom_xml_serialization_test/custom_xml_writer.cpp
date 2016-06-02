@@ -7,6 +7,8 @@
 #include "wg_types/binary_block.hpp"
 #include "custom_xml_data.hpp"
 
+namespace wgt
+{
 CustomXmlDataWriter::CustomXmlDataWriter( TextStream& stream )
 	:stream_( stream )
 	, indent_( 0 )
@@ -130,5 +132,4 @@ void CustomXmlDataWriter::closeTag( const char* tag )
 
 	hasChildElements_ = true;
 }
-
-
+} // end namespace wgt

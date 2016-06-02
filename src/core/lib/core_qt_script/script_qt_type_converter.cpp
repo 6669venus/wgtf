@@ -5,6 +5,8 @@
 #include "core_reflection/object_handle.hpp"
 
 
+namespace wgt
+{
 ScriptQtTypeConverter::ScriptQtTypeConverter(
 	QtScriptingEngine& scriptingEngine )
 	: IQtTypeConverter()
@@ -69,4 +71,4 @@ bool ScriptQtTypeConverter::toQVariant( const ObjectHandle& object,
 	o_qVariant = QVariant::fromValue< QtScriptObject* >( scriptObject );
 	return true;
 }
-
+} // end namespace wgt

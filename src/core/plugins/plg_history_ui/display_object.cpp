@@ -7,6 +7,8 @@
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 
+namespace wgt
+{
 //==============================================================================
 DisplayObject::DisplayObject()
 	: data_( nullptr )
@@ -25,4 +27,4 @@ ObjectHandle DisplayObject::getDisplayData() const
 {
 	return data_;
 }
-
+} // end namespace wgt

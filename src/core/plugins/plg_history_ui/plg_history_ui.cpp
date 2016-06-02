@@ -20,6 +20,8 @@
 
 #include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
 class HistoryPanel : public IHistoryPanel
 {
 public:
@@ -55,7 +57,7 @@ private:
 
 class HistoryUIPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	HistoryUIPlugin( IComponentContext& contextManager )
@@ -161,7 +163,7 @@ public:
 		history_ = pHistoryDefinition->create();
 		history_.getBase< HistoryObject >()->init( *commandSystemProvider_, definitionManager );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView(
@@ -215,4 +217,4 @@ private:
 
 
 PLG_CALLBACK_FUNC( HistoryUIPlugin )
-
+} // end namespace wgt

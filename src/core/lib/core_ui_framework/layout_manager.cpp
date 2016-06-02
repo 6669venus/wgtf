@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <cassert>
 
+namespace wgt
+{
 namespace 
 {
 	const char * safe_str( const char * str )
@@ -407,3 +409,4 @@ const Windows & LayoutManager::windows() const
 {
 	return windows_;
 }
+} // end namespace wgt

@@ -9,6 +9,8 @@
 #include <memory>
 #include <unordered_map>
 
+namespace wgt
+{
 class IClassDefinitionDetails;
 
 class ClassDefinition : public IClassDefinition
@@ -59,6 +61,5 @@ private:
 		const ObjectHandle & pBase,
 		PropertyAccessor & o_PropertyAccessor ) const override;
 };
-
+} // end namespace wgt
 #endif // #define CLASS_DEFINITION_HPP
-

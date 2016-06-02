@@ -4,6 +4,8 @@
 
 #include "core_data_model/abstract_item_model.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 class ObjectHandle;
 
@@ -71,6 +73,5 @@ private:
 	class Implementation;
 	std::unique_ptr< Implementation > impl_;
 };
-
-
+} // end namespace wgt
 #endif // _REFLECTED_TREE_MODEL_NEW_HPP

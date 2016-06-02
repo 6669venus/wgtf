@@ -6,6 +6,8 @@
 #include <QString>
 #include <QVariant>
 
+namespace wgt
+{
 struct WGStringFilter::Implementation
 {
 	Implementation( WGStringFilter & self );
@@ -61,3 +63,4 @@ IItemFilter * WGStringFilter::getFilter() const
 {
 	return static_cast< IItemFilter * >( &impl_->filter_ );
 }
+} // end namespace wgt

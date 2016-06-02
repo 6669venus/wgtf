@@ -1,6 +1,7 @@
-
 #include "IntToStringNode.h"
 
+namespace wgt
+{
 const std::string INT_TO_STRING_NODE_TITLE = "Int to String";
 const std::string INT_TO_STRING_NODE_SUBTITLE = "";
 const std::string INT_TO_STRING_NODE_ICON = "images/model_16x16.png";
@@ -120,3 +121,4 @@ void IntToStringNode::OnDisconnect(ObjectHandleT<ISlot> mySlot, ObjectHandleT<IS
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
+} // end namespace wgt

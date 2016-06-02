@@ -8,6 +8,8 @@
 #include <string>
 
 
+namespace wgt
+{
 TEST( datastreambuf_raw_in )
 {
 	FixedMemoryStream dataStream( "abcdef01234567" );
@@ -74,4 +76,4 @@ TEST( datastreambuf_formatted_io )
 
 	CHECK( stream.eof() );
 }
-
+} // end namespace wgt

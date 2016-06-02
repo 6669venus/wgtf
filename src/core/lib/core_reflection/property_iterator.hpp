@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+namespace wgt
+{
 class IClassDefinition;
 class IBaseProperty;
 typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
@@ -64,5 +66,5 @@ private:
 	PropertyIterator::IterateStrategy strategy_;
 	const IClassDefinition & definition_;
 };
-
+} // end namespace wgt
 #endif // PROPERTY_ITERATOR_HPP

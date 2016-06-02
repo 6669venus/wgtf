@@ -9,6 +9,7 @@ namespace wgt
 BEGIN_EXPOSE(ISlot, MetaNone())
     EXPOSE("id", Id, MetaNone())
     EXPOSE("isInput", IsInput, MetaNone())
+    EXPOSE("isConnected", IsConnected, MetaNone())
     EXPOSE("node", Node, MetaNone())
     EXPOSE("label", Label, MetaNone())
     EXPOSE("icon", Icon, MetaNone())

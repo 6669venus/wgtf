@@ -10,14 +10,45 @@ Row
     property bool isInput
     property var slotObj
 
-    // TODO: Make this to reflect C++ state?
-    property bool connected: false
+    /*! The Node (Qml object) that this slot is part of */
+    property var parentNode
 
-    property color slotColor: slotObj.color
+    property bool connected
+
+    // TODO: Make this more robust? Not so dependent on slot 'color'?
+    property bool validSlot: {
+        if (canvasContainer.creatingConnection && canvasContainer.currentConnectionSlot !== slotObj)
+        {
+            if (canvasContainer.creatingFromInput !== isInput && canvasContainer.creatingColor == slotObj.color && slot.parentNode != canvasContainer.creatingNode)
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
+        }
+        else
+        {
+            return true
+        }
+    }
+
+    property color slotColor: validSlot ? slotObj.color : "#999999"
+
     property string slotLabel: slotObj.label
 
     property var style: SlotStyle{
         parentSlot: slot
+    }
+
+    signal removeConnection()
+
+    Connections {
+        target: canvasContainer
+        onUpdateConnections: {
+            slot.connected = slotObj.isConnected
+        }
     }
 
     spacing: 2
@@ -50,26 +81,42 @@ Row
         sourceComponent: style.connector
         asynchronous: true
 
+        opacity: slot.validSlot ? 1.0 : 0.5
+
         MouseArea
         {
             anchors.fill: parent
-            acceptedButtons: Qt.LeftButton
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
 
             onPressed:
             {
-                mouse.accepted = true;
-                canvasContainer.startCreatingNewConnection(slotObj);
+                if (mouse.button == Qt.LeftButton)
+                {
+                    mouse.accepted = true;
+                    canvasContainer.startCreatingNewConnection(slotObj, parentNode);
+                }
+                else if (mouse.button == Qt.RightButton)
+                {
+                    mouse.accepted = true;
+                    removeConnection()
+                }
             }
 
             onPositionChanged:
             {
-                mouse.accepted = true;
-                canvasContainer.currentConnection.endPos = mapToItem(graphView, mouse.x, mouse.y);
+                if (canvasContainer.creatingConnection)
+                {
+                    mouse.accepted = true;
+                    canvasContainer.currentConnection.endPos = mapToItem(graphView, mouse.x, mouse.y);
+                }
             }
 
             onReleased:
             {
-                canvasContainer.finishCreatingNewConnection(mapToItem(graphView, mouse.x, mouse.y));
+                if (mouse.button == Qt.LeftButton)
+                {
+                    canvasContainer.finishCreatingNewConnection(mapToItem(graphView, mouse.x, mouse.y));
+                }
             }
         }
     }
@@ -82,5 +129,7 @@ Row
         asynchronous: true
 
         anchors.verticalCenter: parent.verticalCenter
+
+        opacity: slot.validSlot ? 1.0 : 0.5
     }
 }

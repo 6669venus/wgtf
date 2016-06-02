@@ -75,7 +75,7 @@ public:
     /*! Returns whether the slot is connected
     @return true if the slot is connected, false otherwise
     */
-    virtual bool isConnected() const = 0;
+    virtual bool IsConnected() const = 0;
 
     /*! Returns all connectections ids which is connected to the current slot
     @return connections ids

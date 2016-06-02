@@ -50,7 +50,7 @@ void CustomGraph::DeleteNode(size_t nodeId)
 
     for (const auto &slot : *inputSlots)
     {
-        if (!slot->isConnected())
+        if (!slot->IsConnected())
             continue;
 
         auto connections = *slot->GetConnectionIds();
@@ -62,7 +62,7 @@ void CustomGraph::DeleteNode(size_t nodeId)
 
     for (const auto &slot : *outputSlots)
     {
-        if (!slot->isConnected())
+        if (!slot->IsConnected())
             continue;
 
         auto connections = *slot->GetConnectionIds();

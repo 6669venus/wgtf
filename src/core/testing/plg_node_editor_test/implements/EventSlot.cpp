@@ -1,5 +1,4 @@
 #include "EventSlot.h"
-#include <qstring.h>
 
 namespace wgt
 {

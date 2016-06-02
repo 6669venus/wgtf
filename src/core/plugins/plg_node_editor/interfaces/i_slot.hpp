@@ -2,7 +2,6 @@
 #define __I_SLOT_H__
 
 #include <string>
-#include <qcolor.h>
 #include <set>
 
 #include "core_reflection/reflected_object.hpp"

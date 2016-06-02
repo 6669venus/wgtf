@@ -1,5 +1,4 @@
 #include "IntegerSlot.h"
-#include <qstring.h>
 
 namespace wgt
 {

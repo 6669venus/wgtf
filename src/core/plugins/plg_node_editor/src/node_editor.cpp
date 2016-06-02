@@ -22,7 +22,9 @@ std::shared_ptr<INode> NodeEditor::CreateNode(std::string nodeClass, float x, fl
 
 void NodeEditor::onCreateNode(int x, int y, std::string nodeClass)
 {
-    std::shared_ptr<INode> node = graphModel.back()->CreateNode(nodeClass, x, y);
+	// TODO: Unify the x, y type between CreateNode() and onCreateNode()
+    std::shared_ptr<INode> node = graphModel.back()->CreateNode(
+		nodeClass, static_cast<float>(x), static_cast<float>(y));
 }
 
 void NodeEditor::onDeleteNode(size_t nodeID)

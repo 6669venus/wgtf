@@ -22,6 +22,8 @@ class QtCollectionModel : public QtListModel
 public:
 	QtCollectionModel( std::unique_ptr<CollectionModel>&& source );
 
+	QHash< int, QByteArray > roleNames() const override;	
+
 	/**
 	 *	Get CollectionModel that is being adapted to be used by Qt.
 	 */

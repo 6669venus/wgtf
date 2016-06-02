@@ -1427,7 +1427,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
 
                 WGExpandingRowLayout {
                     WGMultiLineText {
-                        text: "WGGradientSlider"
+                        text: "WGGradientSlider20"
                     }
                     Two.WGGradientSlider {
                         //text: "NA/enabled"

@@ -21,6 +21,8 @@
 
 
 // Set by application
+namespace wgt
+{
 IComponentContext * g_contextManager( nullptr );
 
 
@@ -160,4 +162,4 @@ TEST( Python27 )
 		// Python failed to run test script.
 	}
 }
-
+} // end namespace wgt

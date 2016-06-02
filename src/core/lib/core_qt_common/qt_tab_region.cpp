@@ -6,6 +6,8 @@
 #include <QTabWidget>
 #include <QVariant>
 
+namespace wgt
+{
 QtTabRegion::QtTabRegion( IQtFramework & qtFramework, QTabWidget & qTabWidget )
 	: qtFramework_( qtFramework )
 	, qTabWidget_( qTabWidget )
@@ -105,3 +107,4 @@ void QtTabRegion::removeView( IView & view )
 	// call this function to let IView control the qWidget's life-cycle again.
 	qtFramework_.retainQWidget( view );
 }
+} // end namespace wgt

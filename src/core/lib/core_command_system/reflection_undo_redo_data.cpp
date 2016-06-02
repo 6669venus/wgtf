@@ -10,6 +10,8 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "wg_types/binary_block.hpp"
 
+namespace wgt
+{
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
 {
@@ -459,3 +461,4 @@ void ReflectionUndoRedoData::setRedoData( const std::shared_ptr<BinaryBlock> & r
 {
     redoData_.setBuffer( std::string( redoData->cdata(), redoData->length() ) );
 }
+} // end namespace wgt

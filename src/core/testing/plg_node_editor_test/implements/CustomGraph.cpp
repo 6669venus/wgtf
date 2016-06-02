@@ -1,4 +1,3 @@
-
 #include "CustomGraph.h"
 #include "CustomConnection.h"
 
@@ -8,6 +7,8 @@
 
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 CustomGraph::CustomGraph()
 {
     m_nodeClassesModel.push_back("IntToString");
@@ -49,7 +50,7 @@ void CustomGraph::DeleteNode(size_t nodeId)
 
     for (const auto &slot : *inputSlots)
     {
-        if (!slot->isConnected())
+        if (!slot->IsConnected())
             continue;
 
         auto connections = *slot->GetConnectionIds();
@@ -61,7 +62,7 @@ void CustomGraph::DeleteNode(size_t nodeId)
 
     for (const auto &slot : *outputSlots)
     {
-        if (!slot->isConnected())
+        if (!slot->IsConnected())
             continue;
 
         auto connections = *slot->GetConnectionIds();
@@ -173,3 +174,4 @@ void CustomGraph::Load(std::string fileName)
 {
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 }
+} // end namespace wgt

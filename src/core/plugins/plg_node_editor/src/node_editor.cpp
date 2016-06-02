@@ -1,6 +1,7 @@
-
 #include "node_editor.hpp"
 
+namespace wgt
+{
 void NodeEditor::SetGraph(std::shared_ptr<IGraph> graph)
 {
     if (graph == nullptr)
@@ -66,3 +67,4 @@ bool NodeEditor::Disconnect(size_t nodeIdFrom, size_t slotIdFrom,
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 	return false;
 }
+} // end namespace wgt

@@ -5,7 +5,10 @@
 #include "i_definition_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include <memory>
+#include <string>
 
+namespace wgt
+{
 class ObjectHandle;
 class RefObjectId;
 class ISerializer;
@@ -209,5 +212,5 @@ public:
 	 */
 	virtual void addObjectLinks( const std::string & objId, const IBasePropertyPtr & property, const ObjectHandle & parent ) = 0;
 };
-
+} // end namespace wgt
 #endif // I_OBJECT_MANAGER_HPP

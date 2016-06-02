@@ -5,6 +5,8 @@
 #include "core_common/signal.hpp"
 
 
+namespace wgt
+{
 class Variant;
 
 
@@ -27,7 +29,5 @@ public:
 	SignalVoid signalPostDataChanged;
 	SignalVoid signalDestructing;
 };
-
-
+} // end namespace wgt
 #endif // I_VALUE_CHANGE_NOTIFIER_HPP
-

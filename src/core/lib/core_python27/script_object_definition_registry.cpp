@@ -7,6 +7,8 @@
 
 #include "structmember.h"
 
+namespace wgt
+{
 const char * g_reflectionDefinition = "__reflectionDefinition";
 
 
@@ -433,3 +435,4 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 
 
 } // namespace ReflectedPython
+} // end namespace wgt

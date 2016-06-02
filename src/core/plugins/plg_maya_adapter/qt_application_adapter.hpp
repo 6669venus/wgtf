@@ -8,6 +8,8 @@
 #include "i_application_listener.hpp"
 #include <QtCore/QObject>
 
+namespace wgt
+{
 class QtApplicationAdapter : public QObject, public QtApplication, public Implements< IApplicationAdapter >
 {
 	Q_OBJECT
@@ -24,5 +26,5 @@ public slots:
 private:
 	std::vector< IApplicationListener * >	listeners_;
 };
-
+} // end namespace wgt
 #endif//QT_APPLICATION_ADAPTER_HPP

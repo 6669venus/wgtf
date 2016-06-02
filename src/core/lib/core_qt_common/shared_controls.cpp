@@ -30,22 +30,24 @@
 #include "models/wg_tree_list_adapter.hpp"
 #include "helpers/selection_helper.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
-#include "core_data_model/asset_browser/i_asset_browser_model.mpp"
 #include "core_data_model/asset_browser/i_asset_browser_view_model.hpp"
-#include "core_data_model/asset_browser/i_asset_browser_view_model.mpp"
 #include "core_data_model/asset_browser/i_asset_browser_event_model.hpp"
-#include "core_data_model/asset_browser/i_asset_browser_event_model.mpp"
 #include "core_data_model/asset_browser/asset_browser_breadcrumbs_model.hpp"
+#include "core_data_model/asset_browser/metadata/i_asset_browser_model.mpp"
+#include "core_data_model/asset_browser/metadata/i_asset_browser_event_model.mpp"
+#include "core_data_model/asset_browser/metadata/i_asset_browser_view_model.mpp"
 #include "core_data_model/i_active_filters_model.hpp"
-#include "core_data_model/i_active_filters_model.mpp"
 #include "core_data_model/i_breadcrumbs_model.hpp"
-#include "core_data_model/i_breadcrumbs_model.mpp"
+#include "core_data_model/metadata/i_active_filters_model.mpp"
+#include "core_data_model/metadata/i_breadcrumbs_model.mpp"
 #include <QtQuick>
 
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/reflection_macros.hpp"
 
 
+namespace wgt
+{
 //==============================================================================
 /*static */void SharedControls::init()
 {
@@ -132,3 +134,4 @@
 	definitionManager.registerDefinition( new TypeClassDefinition< IBreadcrumbsModel >() );
 	definitionManager.registerDefinition( new TypeClassDefinition< BaseBreadcrumbItem >() );
 }
+} // end namespace wgt

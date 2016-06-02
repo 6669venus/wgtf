@@ -7,6 +7,8 @@
 #include <utility>
 
 
+namespace wgt
+{
 namespace collection_details
 {
 
@@ -699,6 +701,6 @@ namespace collection_details
 	MapCollectionImpl< const std::unordered_multimap< Key, T, Hash, Pred, Alloc >, false, false, true > deduceCollectionImplType( const std::unordered_multimap< Key, T, Hash, Pred, Alloc >& );
 
 }
+} // end namespace wgt
 
 #endif
-

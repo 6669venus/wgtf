@@ -5,6 +5,8 @@
 #include "core_dependency_system/depends.hpp"
 #include "core_ui_framework/i_view.hpp"
 
+namespace wgt
+{
 class AbstractTreeModel;
 class IAction;
 class IUIApplication;
@@ -16,10 +18,7 @@ class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
 class IEnvManager;
-namespace wgt
-{
-	class IViewCreator;
-}
+class IViewCreator;
 
 class TestUI
 	: Depends<
@@ -28,7 +27,7 @@ class TestUI
 		IReflectionController,
 		IDataSourceManager,
 		IEnvManager,
-		wgt::IViewCreator >
+		IViewCreator >
 	, public IViewEventListener
 {
 public:
@@ -83,6 +82,5 @@ private:
 	TestViews test1Views_;
 	TestViews test2Views_;
 };
-
-
+} // end namespace wgt
 #endif // TEST_UI_H

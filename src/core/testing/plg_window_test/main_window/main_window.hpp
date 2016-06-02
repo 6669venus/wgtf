@@ -5,6 +5,8 @@
 #include "core_generic_plugin/interfaces/i_application.hpp"
 #include <memory>
 
+namespace wgt
+{
 class IAction;
 class IUIApplication;
 class IUIFramework;
@@ -37,6 +39,5 @@ private:
 	std::unique_ptr< IAction > testExit_;
 	ConnectionHolder connections_;
 };
-
-
+} // end namespace wgt
 #endif // MAINWINDOW_H

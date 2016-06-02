@@ -7,6 +7,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 GenericObjectPtr GenericObject::create(
 	IDefinitionManager & definitionManager, 
 	const RefObjectId & id, 
@@ -33,3 +35,4 @@ ObjectHandle GenericObject::getDerivedType()
 	// ObjectHandleT will make a copy
 	return ObjectHandleT< GenericObject >( this );
 }
+} // end namespace wgt

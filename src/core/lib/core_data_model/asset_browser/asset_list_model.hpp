@@ -5,6 +5,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IAssetObjectItem;
 
 class AssetListModel: public IListModel
@@ -199,5 +201,5 @@ private:
 	
 	Items items_;
 };
-
+} // end namespace wgt
 #endif

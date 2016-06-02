@@ -6,6 +6,8 @@
 #include "core_reflection/property_accessor_listener.hpp"
 
 
+namespace wgt
+{
 IComponentContext * g_contextManager = nullptr;
 
 
@@ -154,4 +156,4 @@ TEST( Python27Interface )
 
 	return;
 }
-
+} // end namespace wgt

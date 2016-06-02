@@ -6,6 +6,8 @@
 #include "core_data_model/collection_model.hpp"
 
 
+namespace wgt
+{
 class CollectionModel;
 
 
@@ -72,7 +74,5 @@ public:
 private:
 	std::unique_ptr<CollectionModel> model_;
 };
-
-
+} // end namespace wgt
 #endif // _QT_COLLECTION_MODEL_HPP
-

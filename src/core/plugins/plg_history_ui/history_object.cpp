@@ -9,6 +9,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 struct CurrentIndexNotifier: public IValueChangeNotifier
 {
 	CurrentIndexNotifier( ICommandManager& commandManager )
@@ -276,3 +278,4 @@ void HistoryObject::onPostHistoryItemsRemoved( size_t index, size_t count )
 	selectionHandler_.setSelectedRows( std::vector< int >() );
 	selectionHandler_.setSelectedItems( std::vector< IItem* >() );
 }
+} // end namespace wgt

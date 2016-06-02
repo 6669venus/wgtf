@@ -6,6 +6,8 @@
 #include <QVariant>
 #include "core_qt_common/qt_new_handler.hpp"
 
+namespace wgt
+{
 class ISelectionHandler;
 
 
@@ -46,6 +48,5 @@ private:
 	std::vector<QModelIndex> selectionSet_;
 
 };
-
-
+} // end namespace wgt
 #endif //SELECTION_HELPER_HPP

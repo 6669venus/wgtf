@@ -11,6 +11,8 @@
 #include <memory>
 #include <thread>
 
+namespace wgt
+{
 struct StringList
 {
 	StringList()
@@ -565,3 +567,4 @@ bool TestTreeModel::setData( int row, int column, size_t roleId, const Variant &
 {
     return false;
 }
+} // end namespace wgt

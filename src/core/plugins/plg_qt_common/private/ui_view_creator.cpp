@@ -5,12 +5,10 @@
 
 namespace wgt
 {
-
 //------------------------------------------------------------------------------
 UIViewCreator::UIViewCreator(IComponentContext & context)
 	: Depends( context )
 {
-
 }
 
 
@@ -80,5 +78,4 @@ void UIViewCreator::createView(
 		}
 	});
 }
-
-}
+} // end namespace wgt

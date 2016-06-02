@@ -12,10 +12,12 @@
 #include "test_tree_model.hpp"
 #include <vector>
 
+namespace wgt
+{
 //==============================================================================
 class TreeModelTestPlugin
 	: public PluginMain
-	, Depends< wgt::IViewCreator >
+	, Depends< IViewCreator >
 {
 private:
 	std::vector<IInterface*> types_;
@@ -48,7 +50,7 @@ public:
 
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModelOld() );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if( viewCreator )
 		{
 
@@ -93,4 +95,4 @@ public:
 
 
 PLG_CALLBACK_FUNC( TreeModelTestPlugin )
-
+} // end namespace wgt

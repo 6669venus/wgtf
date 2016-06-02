@@ -2,6 +2,8 @@
 #include <locale>
 #include <codecvt>
 
+namespace wgt
+{
 //==============================================================================
 CommandLineParser::CommandLineParser(int argc, char** argv)
 	: argc_( argc )
@@ -73,3 +75,4 @@ std::wstring CommandLineParser::getParamStrW( const char * arg ) const
 	}
 	return L"";
 }
+} // end namespace wgt

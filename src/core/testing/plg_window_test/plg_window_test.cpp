@@ -8,6 +8,8 @@
 #include "core_ui_framework/i_window.hpp"
 
 
+namespace wgt
+{
 //==============================================================================
 class TestWindowPlugin
 	: public PluginMain
@@ -53,4 +55,4 @@ public:
 
 
 PLG_CALLBACK_FUNC(TestWindowPlugin)
-
+} // end namespace wgt

@@ -4,6 +4,8 @@
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 #include "core_reflection/metadata/meta_types.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE( TestPolyStruct, MetaNone() )
 	DEFINE_TEST_DATA_TYPES_METADATA()
 	EXPOSE( "Structure", structure_, MetaGroup( TestObjectCommon::s_MemberVariableGroup ) )
@@ -13,6 +15,4 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestInheritedPolyStruct, TestPolyStruct, MetaNone() )
 	DEFINE_TEST_INHERITED_DATA_TYPES_METADATA()
 END_EXPOSE()
-
-
-
+} // end namespace wgt

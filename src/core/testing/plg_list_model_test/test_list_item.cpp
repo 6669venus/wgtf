@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( value )
 
@@ -378,3 +380,4 @@ Connection TestListItem::connectPostDataChanged( DataCallback callback )
 	//impl_->dataChangedEvent.push_back( callback );
 	return Connection();
 }
+} // end namespace wgt

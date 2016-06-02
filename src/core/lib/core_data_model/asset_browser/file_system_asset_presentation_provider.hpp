@@ -7,6 +7,8 @@
 #include <map>
 
 
+namespace wgt
+{
 class FileSystemAssetPresentationProvider : public IAssetPresentationProvider
 {
 public:
@@ -44,5 +46,5 @@ private:
 	std::map< unsigned int, ThumbnailData > testThumbnails_;
 	ThumbnailData testStatusIcon_;
 };
-
+} // end namespace wgt
 #endif // FILE_SYSTEM_PRESENTATION_PROVIDER_HPP

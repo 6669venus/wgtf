@@ -5,6 +5,8 @@
 #include "../ref_object_id.hpp"
 #include <functional>
 
+namespace wgt
+{
 class ObjectHandle;
 class IClassDefinitionDetails;
 class IBaseProperty;
@@ -164,6 +166,5 @@ public:
 	 */
 	virtual ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const = 0;
 };
-
+} // end namespace wgt
 #endif // I_CLASS_DEFINITION_HPP
-

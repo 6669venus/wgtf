@@ -15,6 +15,7 @@
 #include "utilities/definition_helpers.hpp"
 
 #include "core_variant/variant.hpp"
+#include "core_variant/collection.hpp"
 #include "core_serialization/fixed_memory_stream.hpp"
 #include "core_serialization/text_stream.hpp"
 #include "core_serialization/text_stream_manip.hpp"
@@ -22,6 +23,8 @@
 #include <algorithm>
 #include <utility>
 
+namespace wgt
+{
 namespace
 { 
 
@@ -442,3 +445,4 @@ ObjectHandle ClassDefinition::registerObject( ObjectHandle & pObj,
 	}
 	return ObjectHandle();
 }
+} // end namespace wgt

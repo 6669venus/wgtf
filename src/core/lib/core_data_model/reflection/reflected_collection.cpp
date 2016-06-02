@@ -2,6 +2,8 @@
 #include "core_reflection/property_accessor_listener.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 
+namespace wgt
+{
 namespace
 {
 	class ReflectedCollectionListener : public PropertyAccessorListener
@@ -208,4 +210,4 @@ int ReflectedCollection::flags() const
 {
 	return collection_.flags();
 }
-
+} // end namespace wgt

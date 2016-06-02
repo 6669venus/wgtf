@@ -10,13 +10,14 @@
 #include "core_ui_framework/i_window.hpp"
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "core_variant/variant.hpp"
-
 #include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
 //==============================================================================
 class ContextMenuTest
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
@@ -58,7 +59,7 @@ public:
 			std::bind( &ContextMenuTest::canTestPerforce, this, _1 ));
 		uiApplication->addAction( *cmTestCheckOut_ );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			// Create the view and present it
@@ -135,4 +136,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( ContextMenuTest )
-
+} // end namespace wgt

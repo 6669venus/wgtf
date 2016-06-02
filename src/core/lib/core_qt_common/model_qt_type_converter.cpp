@@ -6,6 +6,8 @@
 
 #include <QQmlEngine>
 
+namespace wgt
+{
 bool ModelQtTypeConverter::toVariant( const QVariant & qVariant, Variant & o_variant ) const
 {
 	if (qVariant.canConvert< QtTableModel * >())
@@ -102,3 +104,4 @@ bool ModelQtTypeConverter::toQVariant(const Variant & variant, QVariant & o_qVar
 
 	return false;
 }
+} // end namespace wgt

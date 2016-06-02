@@ -1,4 +1,3 @@
-
 #ifndef __DEFAULT_NODE_EDITOR_H__
 #define __DEFAULT_NODE_EDITOR_H__
 
@@ -8,6 +7,8 @@
 
 #include "interfaces/i_node_editor.hpp"
 
+namespace wgt
+{
 class NodeEditor : public Implements<INodeEditor>
 {
 	DECLARE_REFLECTED
@@ -37,5 +38,5 @@ private:
 private:
     GenericListT<ObjectHandleT<IGraph>> graphModel;
 };
-
+} // end namespace wgt
 #endif // __DEFAULT_NODE_EDITOR_H__

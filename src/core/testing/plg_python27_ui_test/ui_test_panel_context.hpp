@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 
+namespace wgt
+{
 class IComponentContext;
 class ITreeModel;
 
@@ -29,4 +31,4 @@ public:
 	ObjectHandle pythonObject_;
 	std::unique_ptr< ITreeModel > treeModel_;
 };
-
+} // end namespace wgt

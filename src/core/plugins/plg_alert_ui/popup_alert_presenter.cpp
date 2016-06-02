@@ -15,6 +15,8 @@
 #include <QQmlEngine>
 #include <QQuickView>
 
+namespace wgt
+{
 PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	: Depends( contextManager )
 	, contextManager_( &contextManager )
@@ -37,7 +39,7 @@ PopupAlertPresenter::PopupAlertPresenter( IComponentContext & contextManager )
 	IUIFramework* qtFramework = contextManager.queryInterface<IUIFramework>();
 	assert( qtFramework != nullptr );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(
@@ -94,4 +96,4 @@ void PopupAlertPresenter::addTestAlert( IAction * action )
 		}
 	}
 }
-
+} // end namespace wgt

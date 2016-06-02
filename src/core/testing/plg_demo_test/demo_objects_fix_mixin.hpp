@@ -3,6 +3,8 @@
 
 #include "demo_objects.hpp"
 
+namespace wgt
+{
 /**
  * This class exists only to wrap the default DemoObjects 
  * class to work around a bug in Canvas3D where a render call is 
@@ -21,5 +23,5 @@ public:
 private:
 	bool valid_;
 };
-
+} // end namespace wgt
 #endif //DEMO_OBJECTS_HPP

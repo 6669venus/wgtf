@@ -9,18 +9,16 @@
 #include <memory>
 
 
-class IUIFramework;
-class IUIApplication;
-
 namespace wgt
 {
-	class IViewCreator;
-}
+class IUIFramework;
+class IUIApplication;
+class IViewCreator;
 
 #define DEPENDS_ON_CLASSES \
 	IUIFramework, \
 	IUIApplication,\
-	wgt::IViewCreator
+	IViewCreator
 
 
 /**
@@ -53,4 +51,4 @@ private:
 	std::unique_ptr<IView> pythonView_;
 	ObjectHandle contextObject_;
 };
-
+} // end namespace wgt

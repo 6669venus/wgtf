@@ -1,4 +1,3 @@
-
 #ifndef __CUSTOM_GRAPH_H__
 #define __CUSTOM_GRAPH_H__
 
@@ -10,6 +9,8 @@
 #include "plugins/plg_node_editor/interfaces/i_node.hpp"
 #include "plugins/plg_node_editor/interfaces/i_connection.hpp"
 
+namespace wgt
+{
 typedef std::map<std::string, std::function<INode*()> > NodeClassesMap;
 
 class CustomGraph : public Implements<IGraph>
@@ -41,5 +42,5 @@ private:
     GenericListT<std::string> m_nodeClassesModel;
     NodeClassesMap m_nodeClasses;
 };
-
+} // end namespace wgt
 #endif //__CUSTOM_GRAPH_H__

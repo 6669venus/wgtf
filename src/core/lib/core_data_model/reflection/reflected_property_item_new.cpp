@@ -20,6 +20,8 @@
 #include <codecvt>
 #include <limits>
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( value )
 ITEMROLE( valueType )
@@ -1207,3 +1209,4 @@ bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, si
 	}
 	return false;
 }
+} // end namespace wgt

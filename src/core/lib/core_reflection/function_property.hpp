@@ -9,6 +9,8 @@
 #include "core_variant/collection.hpp"
 #include <functional>
 
+namespace wgt
+{
 template< typename TargetType, typename BaseType >
 class FunctionPropertySet
 	: public BaseProperty
@@ -617,6 +619,5 @@ private:
 	GetValueFunc	getValueFunc_;
 	GetKeyFunc		getKeyFunc_;
 };
-
+} // end namespace wgt
 #endif // FUNCTION_PROPERTY_HPP
-

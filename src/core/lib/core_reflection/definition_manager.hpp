@@ -8,6 +8,8 @@
 
 #include "wg_types/hashed_string_ref.hpp"
 
+namespace wgt
+{
 /**
  * DefinitionManager
  */
@@ -61,6 +63,5 @@ private:
 	PropertyAccessorListeners listeners_;
 	IObjectManager & objectManager_;
 };
-
-
+} // end namespace wgt
 #endif // DEFINITION_MANAGER_HPP

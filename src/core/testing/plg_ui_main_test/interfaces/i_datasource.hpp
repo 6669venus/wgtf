@@ -5,6 +5,8 @@
 #include "core_reflection/generic/generic_object.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
+namespace wgt
+{
 class TestPolyStruct;
 
 typedef ObjectHandleT< TestPolyStruct > TestPolyStructPtr;
@@ -30,5 +32,5 @@ public:
 	virtual void closeDataSource( IDataSource* data ) = 0;
 	virtual std::shared_ptr< BinaryBlock > getThumbnailImage() = 0;
 };
-
+} // end namespace wgt
 #endif // I_DATASOURCE_HPP

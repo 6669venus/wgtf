@@ -3,6 +3,8 @@
 
 #include "core_command_system/command.hpp"
 
+namespace wgt
+{
 /// Base class for TestCommand classes
 class TestCommandBase
 	: public Command
@@ -43,6 +45,5 @@ public:
 	const char * getId() const override;
 	ObjectHandle execute( const ObjectHandle & arguments ) const override;
 };
-
-
+} // end namespace wgt
 #endif //TEST_COMMAND_HPP

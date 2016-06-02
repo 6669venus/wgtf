@@ -4,7 +4,10 @@
 #include "core_data_model/abstract_item_model.hpp"
 #include "core_variant/collection.hpp"
 #include <memory>
+#include <vector>
 
+namespace wgt
+{
 /**
  *	Data model for displaying a Collection as a list.
  */
@@ -60,6 +63,5 @@ private:
 	Connection connectPreErase_;
 	Connection connectPostErase_;
 };
-
-
+} // end namespace wgt
 #endif // COLLECTION_LIST_MODEL_HPP

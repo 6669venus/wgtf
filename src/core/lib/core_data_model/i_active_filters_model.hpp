@@ -5,6 +5,8 @@
 #include "core_reflection/object_handle.hpp"
 #include <string>
 
+namespace wgt
+{
 class IListModel;
 
 //------------------------------------------------------------------------------
@@ -112,5 +114,5 @@ public:
 	// Clears out saved filters from the preferences system
 	virtual void clearSavedFilters() {}
 };
-
+} // end namespace wgt
 #endif //I_ACTIVE_FILTERS_MODEL_HPP

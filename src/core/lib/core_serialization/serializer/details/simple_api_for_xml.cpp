@@ -1,6 +1,8 @@
 #include "simple_api_for_xml.hpp"
 
 
+namespace wgt
+{
 SimpleApiForXml::SimpleApiForXml( TextStream& stream ):
 	parser_( XML_ParserCreate( "UTF-8" ) ),
 	stream_( stream ),
@@ -152,5 +154,4 @@ void SimpleApiForXml::characterData( const char* data, size_t length )
 {
 	// nop
 }
-
-
+} // end namespace wgt

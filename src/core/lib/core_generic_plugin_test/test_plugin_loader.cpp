@@ -6,6 +6,8 @@
 
 #include <cassert>
 
+namespace wgt
+{
 TestPluginLoader::TestPluginLoader()
 {
 	IPluginContextManager & contextManager = pluginManager_.getContextManager();
@@ -26,4 +28,4 @@ TestPluginLoader::~TestPluginLoader()
 	pluginManager_.unloadPlugins( plugins_ );
 	plugins_.clear();
 }
-
+} // end namespace wgt

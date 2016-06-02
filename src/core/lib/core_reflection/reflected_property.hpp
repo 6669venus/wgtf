@@ -7,6 +7,8 @@
 #include "core_variant/collection.hpp"
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 template< typename TargetType, typename BaseType >
 class ReflectedProperty
 	:                  public BaseProperty
@@ -181,5 +183,5 @@ private:
 	};
 
 };
-
+} // end namespace wgt
 #endif // REFLECTED_PROPERTY_HPP

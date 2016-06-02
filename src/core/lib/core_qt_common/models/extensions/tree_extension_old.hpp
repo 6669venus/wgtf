@@ -4,6 +4,8 @@
 #include "i_model_extension.hpp"
 #include <memory>
 
+namespace wgt
+{
 class TreeExtensionOld : public IModelExtension
 {
 	Q_OBJECT
@@ -73,5 +75,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // TREE_EXTENSION_OLD_HPP

@@ -4,6 +4,8 @@
 
 #include "perforce_version_control.hpp"
 
+namespace wgt
+{
 class PerforcePlugin
 	: public PluginMain
 {
@@ -38,3 +40,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(PerforcePlugin)
+} // end namespace wgt

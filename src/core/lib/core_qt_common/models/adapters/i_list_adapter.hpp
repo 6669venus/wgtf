@@ -5,6 +5,8 @@
 
 #include "core_qt_common/qt_connection_holder.hpp"
 
+namespace wgt
+{
 class IListAdapter : public QAbstractListModel
 {
 	Q_OBJECT
@@ -42,6 +44,5 @@ private:
 	mutable std::map<int, QPersistentModelIndex> cachedAdaptedIndices_;
 	QtConnectionHolder connections_;
 };
-
+} // end namespace wgt
 #endif // I_LIST_ADAPTER_HPP
-

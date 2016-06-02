@@ -9,9 +9,11 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
 class PanelManager
 	: public Implements<IPanelManager>
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 
@@ -27,5 +29,5 @@ private:
 	IComponentContext& contextManager_;
 	std::vector< IInterface * > types_;
 };
-
+} // end namespace wgt
 #endif // ASSET_BROWSER_VIEW_HPP

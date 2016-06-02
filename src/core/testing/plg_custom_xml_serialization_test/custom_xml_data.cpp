@@ -1,5 +1,7 @@
 #include "custom_xml_data.hpp"
 
+namespace wgt
+{
 bool CustomXmlData::operator==(const CustomXmlData& tdo) const
 {
 	if (name_ != tdo.name_)
@@ -19,3 +21,4 @@ bool CustomXmlData::operator==(const CustomXmlData& tdo) const
 
 	return true;
 }
+} // end namespace wgt

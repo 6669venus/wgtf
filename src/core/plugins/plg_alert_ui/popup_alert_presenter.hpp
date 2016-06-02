@@ -8,16 +8,19 @@
 #include "core_dependency_system/depends.hpp"
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
 
-class AlertPageModel;
-class IAction;
-class IComponentContext;
 class QQuickView;
 class QQmlContext;
 class QObject;
 
+namespace wgt
+{
+class AlertPageModel;
+class IAction;
+class IComponentContext;
+
 class PopupAlertPresenter
 	: public IAlertPresenter
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 
@@ -37,5 +40,5 @@ private:
 	std::unique_ptr< IAction > testAddAlert_;
 	int alertCounter_;
  };
-
+} // end namespace wgt
 #endif // POPUP_ALERT_PRESENTER_HPP

@@ -2,6 +2,8 @@
 #include "core_data_model/variant_list.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 struct AlertObjectModel::Implementation
 {
 	Implementation( 
@@ -142,4 +144,4 @@ void AlertPageModel::currentSelectedRowIndex( const int & index )
 {
 	impl_->currentSelectedRowIndex_ = index;
 }
-
+} // end namespace wgt

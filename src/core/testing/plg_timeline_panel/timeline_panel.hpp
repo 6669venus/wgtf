@@ -10,8 +10,10 @@
  
 #include <memory>
  
+namespace wgt
+{
 class TimelinePanel
-    : Depends< IUIApplication, wgt::IViewCreator >
+    : Depends< IUIApplication, IViewCreator >
 {
 public:
     TimelinePanel( IComponentContext & context );
@@ -23,4 +25,5 @@ private:
     std::unique_ptr< IView > timelineView_;
 };
  
+} // end namespace wgt
 #endif // _TIMELINE_PANEL_HPP

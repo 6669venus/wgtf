@@ -5,6 +5,8 @@
 #include <QtCore>
 #include <QQmlEngine>
 
+namespace wgt
+{
 //==============================================================================
 WGCopyController::WGCopyController( QObject * parent )
 	: QObject( parent )
@@ -69,5 +71,4 @@ bool WGCopyController::setData( const Variant& value )
 	}
 	return false;
 }
-
-
+} // end namespace wgt

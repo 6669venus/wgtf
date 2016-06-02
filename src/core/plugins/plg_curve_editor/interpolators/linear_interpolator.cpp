@@ -10,6 +10,8 @@
 #include "models/bezier_point.hpp"
 #include "models/point.hpp"
 
+namespace wgt
+{
 BezierPointData LinearInterpolator::interpolate(float time, const BezierPoint& p1, const BezierPoint& p2)
 {
 	auto pos = *p1.pos.get() + (*p2.pos.get() - *p1.pos.get()) * time;
@@ -46,3 +48,4 @@ void LinearInterpolator::updateControlPoints(BezierPoint& point, BezierPoint* pr
 		nextPoint->cp2->setY(0.f);
 	}
 }
+} // end namespace wgt

@@ -25,6 +25,8 @@
 #include "core_data_model/generic_list.hpp"
 #pragma warning( pop )
 
+namespace wgt
+{
 class CurveEditor : public Implements<ICurveEditor>
 {
 	DECLARE_REFLECTED
@@ -67,5 +69,5 @@ private:
 
 	ScaleChangeSignal scaleChangeSignal_;
 };
-
+} // end namespace wgt
 #endif // CURVES_MODEL_H_

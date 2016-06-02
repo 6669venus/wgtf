@@ -6,6 +6,8 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -145,4 +147,4 @@ void ConverterQueue::fini()
 
 
 } // namespace PythonType
-
+} // end namespace wgt

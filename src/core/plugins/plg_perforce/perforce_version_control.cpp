@@ -15,6 +15,8 @@
 #include "p4/clientApi.h"
 #pragma warning(pop)
 
+namespace wgt
+{
 struct PerforceVersionControl::PerforceVersionControlImplementation
 {
 	PerforceVersionControlImplementation( PerforceVersionControl& self )
@@ -72,4 +74,4 @@ std::unique_ptr<IDepotView> PerforceVersionControl::createDepotView(const char* 
 
 	return IDepotViewPtr();
 }
-
+} // end namespace wgt

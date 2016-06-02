@@ -13,6 +13,8 @@
 
 #include "interpolators/interpolator_factory.hpp"
 
+namespace wgt
+{
 ICurvePtr CurveEditor::createCurve(CurveTypes::CurveType curveType, bool add)
 {
 	auto definitionManager = Context::queryInterface<IDefinitionManager>();
@@ -112,3 +114,4 @@ void CurveEditor::putTimeScaleEditEnabled(const bool& timeScaleEditEnabled)
 {
 	timeScaleEditEnabled_ = timeScaleEditEnabled;
 }
+} // end namespace wgt

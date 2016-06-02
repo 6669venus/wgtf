@@ -65,7 +65,7 @@ public:
 			return;
 		}
 		viewCreator->createView( 
-			"plg_test_active_filters/active_filters_test_panel.qml",
+			"TestActiveFilters/ActiveFiltersTestPanel.qml",
 			testViewModel, testView_ );
 	}
 

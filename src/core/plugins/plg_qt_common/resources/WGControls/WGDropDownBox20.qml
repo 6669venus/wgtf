@@ -17,9 +17,9 @@ WGDropDownBox {
     imageRole: "icon"
 
     model: ListModel {
-        ListElement { label: "Option 1", icon: "icons/icon1.png"}
-        ListElement { label: "Option 2", icon: "icons/icon2.png"}
-        ListElement { label: "Option 3", icon: "icons/icon3.png"}
+        ListElement { label: "Option 1"; icon: "icons/icon1.png"}
+        ListElement { label: "Option 2"; icon: "icons/icon2.png"}
+        ListElement { label: "Option 3"; icon: "icons/icon3.png"}
     }
 }
 \endcode
@@ -102,7 +102,7 @@ Labs.ComboBox {
             anchors.verticalCenter: parent.verticalCenter
             source: control.imageRole ? model.get(control.currentIndex)[control.imageRole] : ""
             visible: control.imageRole
-            height: control.height - defaultSpacing.doubleBorderSize
+            height: Math.min(sourceSize.height,control.height - defaultSpacing.doubleBorderSize)
             width: height
         }
 

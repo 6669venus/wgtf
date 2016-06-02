@@ -30,8 +30,6 @@ WGColumnLayout 1.0 WGColumnLayout.qml
 WGColumnScrollPanel 1.0 WGColumnScrollPanel.qml
 WGColumnsFrame 1.0 WGColumnsFrame.qml
 WGColumnsFrame 2.0 WGColumnsFrame20.qml
-WGComboBoxButtonStyle 2.0 WGComboBoxButtonStyle20.qml
-WGComboBoxImage 2.0 WGComboBoxImage20.qml
 WGContextArea 1.0 WGContextArea.qml
 WGCopyable 1.0 WGCopyable.qml
 WGDraggableColumn 1.0 WGDraggableColumn.qml

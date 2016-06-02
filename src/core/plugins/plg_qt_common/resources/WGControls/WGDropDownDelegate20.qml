@@ -70,9 +70,10 @@ T.ItemDelegate {
 
         Image {
             id: delegateImage
+            anchors.verticalCenter: parent.verticalCenter
             source: control.image
             visible: control.image
-            height: control.availableHeight
+            height: Math.min(sourceSize.height, control.availableHeight)
             width: height
         }
 

@@ -11,6 +11,8 @@
 #include <codecvt>
 #include <iterator>
 
+namespace wgt
+{
 namespace
 {
 	class ReflectedEnumItem : public AbstractListItem
@@ -140,3 +142,4 @@ int ReflectedEnumModelNew::columnCount() const /* override */
 {
 	return 1;
 }
+} // end namespace wgt

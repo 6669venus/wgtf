@@ -3,6 +3,8 @@
 
 #include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 class IClassDefinition;
 class ObjectHandle;
 
@@ -25,5 +27,5 @@ public:
 	 */
 	virtual IClassDefinition * getDefinition( const ObjectHandle & object ) const = 0;
 };
-
+} // end namespace wgt
 #endif

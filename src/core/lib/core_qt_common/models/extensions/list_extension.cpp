@@ -1,5 +1,7 @@
 #include "list_extension.hpp"
 
+namespace wgt
+{
 ListExtension::ListExtension()
 {
 
@@ -73,3 +75,4 @@ QModelIndex ListExtension::getPreviousIndex( const QModelIndex & index ) const
 	}
 	return pModel->index( index.row() - 1, index.column(), index.parent() );
 }
+} // end namespace wgt

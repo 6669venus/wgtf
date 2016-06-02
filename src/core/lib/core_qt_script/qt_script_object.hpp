@@ -18,6 +18,8 @@ Details: Search for NGT Reflection System on the Wargaming Confluence
 #include "core_reflection/i_definition_manager.hpp"
 #include <QObject>
 
+namespace wgt
+{
 class IComponentContext;
 class MetaBase;
 class Variant;
@@ -82,5 +84,5 @@ private:
 
 	std::shared_ptr< QtScriptObjectData > data_;
 };
-
+} // end namespace wgt
 #endif//QT_SCRIPT_OBJECT_HPP

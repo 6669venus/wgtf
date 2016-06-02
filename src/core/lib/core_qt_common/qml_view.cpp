@@ -19,7 +19,8 @@
 #include <QFileSystemWatcher>
 #include <QApplication>
 
-
+namespace wgt
+{
 //==============================================================================
 struct QmlView::Impl
 {
@@ -345,3 +346,4 @@ void QmlView::deregisterListener(IViewEventListener* listener)
 	assert( it != impl_->listeners_.end() );
 	impl_->listeners_.erase( it );
 }
+} // end namespace wgt

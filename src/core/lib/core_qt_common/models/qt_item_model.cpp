@@ -4,6 +4,8 @@
 #include "core_data_model/i_item_role.hpp"
 #include "helpers/qt_helpers.hpp"
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( decoration )
 
@@ -418,3 +420,4 @@ bool QtTableModel::removeColumn( int column )
 {
 	return QtAbstractItemModel::removeColumn( column, nullptr ); 
 }
+} // end namespace wgt

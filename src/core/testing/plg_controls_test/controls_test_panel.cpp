@@ -12,6 +12,8 @@
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 
+namespace wgt
+{
 //////////////////////////////////////////////////////////////////////////
 class ColorSliderDataModel
 {
@@ -67,7 +69,7 @@ ControlsTestPanel::ControlsTestPanel( IComponentContext & context )
 //////////////////////////////////////////////////////////////////////////
 bool ControlsTestPanel::addPanel()
 {
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	auto defManager = this->get< IDefinitionManager >();
 	if ((viewCreator == nullptr) ||
 		(defManager == nullptr))
@@ -98,4 +100,4 @@ void ControlsTestPanel::removePanel()
 		controlsView_ = nullptr;
 	}
 }
-
+} // end namespace wgt

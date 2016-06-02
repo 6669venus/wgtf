@@ -13,6 +13,8 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+namespace wgt
+{
 ITEMROLE( modelIndex )
 
 namespace
@@ -550,3 +552,4 @@ void WGItemView::refresh()
 	}
 	emit headerDataChanged();
 }
+} // end namespace wgt

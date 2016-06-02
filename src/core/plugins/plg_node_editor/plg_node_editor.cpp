@@ -1,4 +1,3 @@
-
 #include "plg_node_editor.hpp"
 #include "src/node_editor.hpp"
 
@@ -19,6 +18,8 @@
 
 #include "src/connection_curve.hpp"
 
+namespace wgt
+{
 NodeEditorPlugin::NodeEditorPlugin(IComponentContext& context)
 {}
 
@@ -70,3 +71,4 @@ bool NodeEditorPlugin::Finalise(IComponentContext& context)
 
 void NodeEditorPlugin::Unload(IComponentContext& context)
 {}
+} // end namespace wgt

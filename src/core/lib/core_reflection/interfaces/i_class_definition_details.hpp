@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <memory>
 
+namespace wgt
+{
 class ObjectHandle;
 
 class IClassDefinition;
@@ -97,6 +99,5 @@ public:
 
 	virtual IClassDefinitionModifier * getDefinitionModifier() const = 0;
 };
-
+} // end namespace wgt
 #endif // I_CLASS_DEFINITION_DETAILS_HPP
-

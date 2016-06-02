@@ -17,6 +17,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 //==============================================================================
 class MainUITestPlugin
 	: public PluginMain
@@ -96,4 +98,4 @@ public:
 
 
 PLG_CALLBACK_FUNC( MainUITestPlugin )
-
+} // end namespace wgt

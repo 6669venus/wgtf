@@ -6,6 +6,8 @@
 #include "core_serialization/i_datastream.hpp"
 #include "core_common/deprecated.hpp"
 
+namespace wgt
+{
 class IDataStream;
 class DEPRECATED ISerializationManager
 {
@@ -48,6 +50,5 @@ public:
 private:
 	virtual ISerializer * getSerializer( const TypeId & typeId ) = 0;
 };
-
-
+} // end namespace wgt
 #endif // I_SERIALIZATION_MANAGER_HPP

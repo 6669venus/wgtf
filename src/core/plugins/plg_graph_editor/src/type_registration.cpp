@@ -10,6 +10,8 @@
 
 #include <core_reflection/type_class_definition.hpp>
 
+namespace wgt
+{
 void RegisterGrapEditorTypes(IDefinitionManager& mng)
 {
     mng.registerDefinition(new TypeClassDefinition<Action>());
@@ -21,3 +23,4 @@ void RegisterGrapEditorTypes(IDefinitionManager& mng)
     qmlRegisterType<ConnectionItem>("DAVA", 1, 0, "ConnectionItem");
     qmlRegisterType<InteractiveConnectionItem>("DAVA", 1, 0, "InteractiveConnectionItem");
 }
+} // end namespace wgt

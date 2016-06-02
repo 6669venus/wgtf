@@ -8,6 +8,8 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 
+namespace wgt
+{
 struct WGAction::Implementation
 {
 	Implementation()
@@ -281,3 +283,4 @@ void WGAction::setVisible( bool visible )
 {
 	impl_->setVisible( visible );
 }
+} // end namespace wgt

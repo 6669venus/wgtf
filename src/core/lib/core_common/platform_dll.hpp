@@ -26,5 +26,4 @@ HMODULE LoadLibraryA(const char* fileName);
 bool FreeLibrary(HMODULE hModule);
 
 #endif // __APPLE__
-
 #endif // __PLATFORM_DLL_HPP__

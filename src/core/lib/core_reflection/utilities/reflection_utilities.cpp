@@ -1,6 +1,8 @@
 #include "reflection_utilities.hpp"
 #include "../property_accessor.hpp"
 
+namespace wgt
+{
 namespace ReflectionUtilities
 {
 
@@ -64,3 +66,4 @@ Variant reference< const Variant >( const Variant & value )
 }
 
 }
+} // end namespace wgt

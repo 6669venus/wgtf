@@ -12,6 +12,8 @@
 #include "wg_pyscript/py_script_object.hpp"
 
 
+namespace wgt
+{
 IComponentContext * g_pHookContext = nullptr;
 std::weak_ptr< ReflectedPython::HookListener > g_listener;
 
@@ -678,3 +680,4 @@ void detachListenerHooks( PyScript::ScriptObject & pythonObject )
 
 
 } // namespace ReflectedPython
+} // end namespace wgt

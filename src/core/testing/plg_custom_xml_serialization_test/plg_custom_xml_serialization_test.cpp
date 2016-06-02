@@ -15,6 +15,8 @@
 #endif
 
 #if USE_VARIANT_STREAM_OPERATOR 
+namespace wgt
+{
 namespace{
 const char g_separator = ',';
 }
@@ -208,4 +210,4 @@ private:
 
 
 PLG_CALLBACK_FUNC(CustomXmlSerializationPlugin)
-
+} // end namespace wgt

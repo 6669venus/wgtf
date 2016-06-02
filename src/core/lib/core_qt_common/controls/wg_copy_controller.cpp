@@ -1,12 +1,14 @@
-#include "bw_copyable.hpp"
+#include "wg_copy_controller.hpp"
 #include "helpers/qt_helpers.hpp"
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 #include <cassert>
 #include <QtCore>
 #include <QQmlEngine>
 
+namespace wgt
+{
 //==============================================================================
-BWCopyable::BWCopyable( QObject * parent )
+WGCopyController::WGCopyController( QObject * parent )
 	: QObject( parent )
 	, valueHint_( "" )
 	, bPasted_( false )
@@ -15,13 +17,13 @@ BWCopyable::BWCopyable( QObject * parent )
 
 
 //==============================================================================
-BWCopyable::~BWCopyable()
+WGCopyController::~WGCopyController()
 {
 }
 
 
 //==============================================================================
-void BWCopyable::setValue( const QVariant & data )
+void WGCopyController::setValue( const QVariant & data )
 {
 	if (data_ == data)
 	{
@@ -31,7 +33,7 @@ void BWCopyable::setValue( const QVariant & data )
 }
 
 //==============================================================================
-void BWCopyable::setValueHint( const QString & hint )
+void WGCopyController::setValueHint( const QString & hint )
 {
 	if(hint.isEmpty() || hint.isNull())
 	{
@@ -41,13 +43,13 @@ void BWCopyable::setValueHint( const QString & hint )
 }
 
 //==============================================================================
-const char * BWCopyable::getDataHint() const
+const char * WGCopyController::getDataHint() const
 {
 	return valueHint_.c_str();
 }
 
 //==============================================================================
-const Variant & BWCopyable::getData()
+const Variant & WGCopyController::getData()
 {
 	emit dataCopied();
 	value_ = QtHelpers::toVariant( data_ );
@@ -56,7 +58,7 @@ const Variant & BWCopyable::getData()
 
 
 //==============================================================================
-bool BWCopyable::setData( const Variant& value )
+bool WGCopyController::setData( const Variant& value )
 {
 
 	auto data = QtHelpers::toQVariant( value, this );
@@ -69,5 +71,4 @@ bool BWCopyable::setData( const Variant& value )
 	}
 	return false;
 }
-
-
+} // end namespace wgt

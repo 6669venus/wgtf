@@ -4,6 +4,8 @@
 
 #include "i_parent_type_converter.hpp"
 
+namespace wgt
+{
 namespace PyScript
 {
 class ScriptObject;
@@ -38,4 +40,4 @@ private:
 
 
 } // namespace PythonType
-
+} // end namespace wgt

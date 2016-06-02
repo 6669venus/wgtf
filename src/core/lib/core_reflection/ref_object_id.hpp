@@ -4,6 +4,8 @@
 #include <string>
 #include "wg_types/hash_utilities.hpp"
 
+namespace wgt
+{
 class RefObjectId
 {
 private:
@@ -44,23 +46,23 @@ public:
 private:
     static bool fromString( const std::string & s, unsigned int * data );
 };
+} // end namespace wgt
 
 namespace std
 {
 	template<>
-	struct hash< const RefObjectId >
-		: public std::unary_function< const RefObjectId, uint64_t>
+	struct hash< const wgt::RefObjectId >
+		: public unary_function< const wgt::RefObjectId, uint64_t>
 	{
-		uint64_t operator()( const RefObjectId & v ) const
+		uint64_t operator()( const wgt::RefObjectId & v ) const
 		{
 			uint64_t seed = 0;
-			HashUtilities::combine( seed, v.getA() );
-			HashUtilities::combine( seed, v.getB() );
-			HashUtilities::combine( seed, v.getC() );
-			HashUtilities::combine( seed, v.getD() );
+			wgt::HashUtilities::combine( seed, v.getA() );
+			wgt::HashUtilities::combine( seed, v.getB() );
+			wgt::HashUtilities::combine( seed, v.getC() );
+			wgt::HashUtilities::combine( seed, v.getD() );
 			return seed;
 		}
 	};
 }
-
 #endif // REF_OBJECT_ID_HPP

@@ -4,6 +4,8 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+namespace wgt
+{
 namespace
 {
 	class ItemData : public QObject
@@ -222,3 +224,4 @@ bool QtAbstractItemModel::hasChildren(const QModelIndex &parent) const
 {
 	return QAbstractItemModel::hasChildren( parent );
 }
+} // end namespace wgt

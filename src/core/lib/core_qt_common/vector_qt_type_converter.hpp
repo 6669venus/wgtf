@@ -10,6 +10,8 @@
 #include <QVector3D>
 #include <QVector4D>
 
+namespace wgt
+{
 class WGVectorQtTypeConverter : public IQtTypeConverter
 {
 public:
@@ -102,5 +104,5 @@ public:
 		return false;
 	}
 };
-
+} // end namespace wgt
 #endif //VECTOR_QT_TYPE_CONVERTERS_HPP

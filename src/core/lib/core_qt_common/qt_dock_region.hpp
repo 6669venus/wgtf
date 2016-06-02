@@ -7,8 +7,11 @@
 #include <map>
 #include <memory>
 
-class IQtFramework;
 class QDockWidget;
+
+namespace wgt
+{
+class IQtFramework;
 class QtWindow;
 
 class QtDockRegion : public IRegion
@@ -34,5 +37,5 @@ private:
 	std::map< IView*, DockData > dockWidgetMap_;
 	std::vector<QDockWidget*> needToRestorePreference_;
 };
-
+} // end namespace wgt
 #endif//QT_DOCK_REGION_HPP

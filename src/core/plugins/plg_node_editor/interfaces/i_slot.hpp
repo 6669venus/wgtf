@@ -1,9 +1,7 @@
-
 #ifndef __I_SLOT_H__
 #define __I_SLOT_H__
 
 #include <string>
-#include <qcolor.h>
 #include <set>
 
 #include "core_reflection/reflected_object.hpp"
@@ -11,6 +9,8 @@
 
 #include "i_node.hpp"
 
+namespace wgt
+{
 class MetaType;
 
 /*!
@@ -75,7 +75,7 @@ public:
     /*! Returns whether the slot is connected
     @return true if the slot is connected, false otherwise
     */
-    virtual bool isConnected() const = 0;
+    virtual bool IsConnected() const = 0;
 
     /*! Returns all connectections ids which is connected to the current slot
     @return connections ids
@@ -107,5 +107,5 @@ public:
     */
     virtual bool Disconnect(size_t connectionId, ObjectHandleT<ISlot> slot) = 0;
 };
-
+} // end namespace wgt
 #endif //__I_SLOT_H__

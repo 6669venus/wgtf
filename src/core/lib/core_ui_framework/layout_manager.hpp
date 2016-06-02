@@ -7,6 +7,8 @@
 #include <vector>
 #include <set>
 
+namespace wgt
+{
 class IAction;
 class IMenu;
 class IRegion;
@@ -57,5 +59,5 @@ private:
 	std::vector< IMenu * > dynamicMenus_;
 	Windows windows_;
 };
-
+} // end namespace wgt
 #endif//LAYOUT_MANAGER_HPP

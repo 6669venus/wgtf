@@ -4,6 +4,8 @@
 #include "interfaces/i_base_property.hpp"
 #include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 class BaseProperty
 	: public IBaseProperty
 {
@@ -44,5 +46,5 @@ private:
 
 	friend class PropertyAccessor;
 };
-
+} // end namespace wgt
 #endif // BASE_REFLECTED_PROPERTY_HPP

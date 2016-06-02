@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IBaseProperty;
 class IDefinitionManager;
 class MetaBase;
@@ -15,6 +17,5 @@ public:
 	virtual ~IClassDefinitionModifier() {}
 	virtual IBasePropertyPtr addProperty( const char * name, const TypeId & typeId, MetaHandle metaData ) = 0;
 };
-
+} // end namespace wgt
 #endif // I_CLASS_DEFINITION_MODIFIER_HPP
-

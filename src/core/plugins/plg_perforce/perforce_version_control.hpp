@@ -14,6 +14,8 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "version_control/i_version_control.hpp"
 
+namespace wgt
+{
 class PerforceVersionControl : public Implements<IVersionControl>
 {
 public:
@@ -27,5 +29,5 @@ private:
 	struct PerforceVersionControlImplementation;
 	std::unique_ptr<PerforceVersionControlImplementation> impl_;
 };
-
+} // end namespace wgt
 #endif // PERFORCE_VERSION_CONTROL_H_

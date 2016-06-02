@@ -2,6 +2,8 @@
 #include "object_manager.hpp"
 #include "object_manager_creator.hpp"
 
+namespace wgt
+{
 class ObjectPlugin : public PluginMain
 {
 public:
@@ -33,3 +35,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( ObjectPlugin )
+} // end namespace wgt

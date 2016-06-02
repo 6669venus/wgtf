@@ -16,6 +16,8 @@
 #include <vector>
 #include <unordered_map>
 
+namespace wgt
+{
 class IDepotView
 {
 public:
@@ -50,5 +52,5 @@ public:
 
 typedef std::unique_ptr<IDepotView> IDepotViewPtr;
 typedef std::shared_ptr<IDepotView> IDepotViewSharedPtr;
-
+} // end namespace wgt
 #endif // I_DEPOT_VIEW_H_

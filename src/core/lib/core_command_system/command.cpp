@@ -1,6 +1,8 @@
 #include "command.hpp"
 #include "i_command_manager.hpp"
 
+namespace wgt
+{
 //==============================================================================
 Command::~Command()
 {
@@ -77,3 +79,4 @@ void Command::fireCommandExecuted(const CommandInstance & command, CommandOperat
 {
 	return nullptr;
 }
+} // end namespace wgt

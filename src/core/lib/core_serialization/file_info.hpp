@@ -12,6 +12,8 @@
 
 #pragma once
 
+namespace wgt
+{
 class FileInfo : public IFileInfo
 {
 public:
@@ -89,5 +91,5 @@ private:
 
 	const FileAttributes::FileAttribute	attributes_;
 };
-
+} // end namespace wgt
 #endif // FILE_INFO_H_

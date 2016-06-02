@@ -3,7 +3,8 @@
 
 #include "abstract_item.hpp"
 
-
+namespace wgt
+{
 /**
  *	Base class for all types of data models.
  */
@@ -554,5 +555,5 @@ private:
 		}); 
 	}
 };
-
+} // end namespace wgt
 #endif//ABSTRACT_ITEM_MODEL_HPP

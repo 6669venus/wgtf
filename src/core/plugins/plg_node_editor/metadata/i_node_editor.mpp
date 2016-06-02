@@ -4,6 +4,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE(INodeEditor, MetaNone())
 	EXPOSE("graphModel", GetGraphModel, MetaNone())
     EXPOSE_METHOD("createNode", onCreateNode)
@@ -11,3 +13,4 @@ BEGIN_EXPOSE(INodeEditor, MetaNone())
     EXPOSE_METHOD("createConnection", onCreateConnection)
     EXPOSE_METHOD("deleteConnection", onDeleteConnection)
 END_EXPOSE()
+}

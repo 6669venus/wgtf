@@ -6,6 +6,8 @@
 #include <QQmlComponent>
 #include <QModelIndex>
 
+namespace wgt
+{
 ComponentExtensionOld::ComponentExtensionOld()
 	: qtFramework_( Context::queryInterface< IQtFramework >() )
 {
@@ -71,3 +73,4 @@ bool ComponentExtensionOld::setData( const QModelIndex &index, const QVariant &v
 {
 	return false;
 }
+} // end namespace wgt

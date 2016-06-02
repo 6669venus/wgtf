@@ -4,6 +4,8 @@
 #include "core_variant/variant.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 
+namespace wgt
+{
 ITEMROLE( childModel )
 ITEMROLE( hasChildren )
 ITEMROLE( expanded )
@@ -307,42 +309,224 @@ QItemSelection TreeExtension::itemSelection( const QModelIndex & first, const QM
 		}
 
 		// Move next
-		do
-		{
-			if (impl_->expanded(it) &&
-				it.model()->hasChildren( it ))
-			{
-				auto child = it.child(0, 0);
-				if (child.isValid())
-				{
-					it = child;
-					break;
-				}
-			}
-			auto sibling = QModelIndex();
-			while (it.isValid())
-			{
-				auto parent = it.parent();
-				auto row = it.row() + 1;
-				if (it.model()->rowCount( parent ) > row)
-				{
-					sibling = it.sibling(row, 0);
-					if (sibling.isValid())
-					{
-						break;
-					}
-				}
-				it = parent;
-			}
-			if (sibling.isValid())
-			{
-				it = sibling;
-				break;
-			}
-			assert( false );
-		} while (false);
-		//
+		const auto next = this->getNextIndex( it );
+		assert( it != next );	
+		it = next;
 	}
 	
 	return itemSelection;
 }
+
+
+QModelIndex TreeExtension::getNextIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	// Move to next child
+	// > a    - start
+	//  | b   - end
+	//  | c
+	if (impl_->expanded( index ) &&
+		pModel->hasChildren( index ))
+	{
+		const auto child = index.child( 0, index.column() );
+		if (child.isValid())
+		{
+			return child;
+		}
+	}
+
+	auto it = index;
+	while (it.isValid())
+	{
+		// Move to next sibling
+		// > a    - start
+		//  | b
+		// > c    - end
+		const auto parent = it.parent();
+		const auto row = it.row() + 1;
+		if (row < it.model()->rowCount( parent ))
+		{
+			const auto sibling = it.sibling( row, index.column() );
+			if (sibling.isValid())
+			{
+				return sibling;
+			}
+		}
+
+		// Or move to next sibling of parent
+		// > a
+		//  | b   - start
+		// > c    - end
+		it = parent;
+	}
+
+	// Could not move to next item
+	return index;
+}
+
+
+QModelIndex TreeExtension::getPreviousIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	// Move back to previous sibling
+	// > a
+	//  | b   - end
+	//  | c   - start
+	const auto row = index.row() - 1;
+	if (row >= 0)
+	{
+		const auto sibling = index.sibling( row, index.column() );
+		if (sibling.isValid())
+		{
+			// Move forward to last child in the sibling
+			// > a
+			//  > b
+			//    | d
+			//    | e - end
+			//  | c   - start
+			auto it = sibling;
+			while (it.isValid())
+			{
+				// Has children, move to last one
+				if (impl_->expanded( it ) &&
+					pModel->hasChildren( it ))
+				{
+					const int lastRow = it.model()->rowCount( it ) - 1;
+					const auto lastChild = sibling.child( lastRow, index.column() );
+					if (lastChild.isValid())
+					{
+						it = lastChild;
+					}
+					else
+					{
+						// Last child not valid
+						return it;
+					}
+				}
+				else
+				{
+					// Previous row does not have children expanded
+					return it;
+				}
+			}
+		}
+	}
+
+	// Move to previous parent
+	// > a
+	//  > b   - end
+	//    | d - start
+	//    | e
+	//  | c   
+	const auto parent = index.parent();
+	if (parent.isValid())
+	{
+		return parent;
+	}
+
+	// Could not move to previous item
+	return index;
+}
+
+
+QModelIndex TreeExtension::getForwardIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	// Make sure the current item has children
+	if (pModel->hasChildren( index ) )
+	{
+		if (impl_->expanded( index ))
+		{
+			// Select the first child if the current item is expanded
+			const auto child = index.child( 0, index.column() );
+			if (child.isValid())
+			{
+				return child;
+			}
+		}
+		else
+		{
+			// Expand the current item
+			impl_->expand( index );
+
+			// Emit the data change
+			int role = 0;
+			auto res = this->encodeRole( ItemRole::expandedId, role );
+			assert( res );
+			QVector< int > roles;
+			roles.append( role );
+			emit const_cast< QAbstractItemModel * >( pModel )->dataChanged( index,
+				index,
+				roles );
+
+			return index;
+		}
+	}
+
+	return this->getNextIndex( index );
+}
+
+
+QModelIndex TreeExtension::getBackwardIndex( const QModelIndex & index ) const
+{
+	if (!index.isValid())
+	{
+		return index;
+	}
+
+	const auto pModel = index.model();
+	if (pModel == nullptr)
+	{
+		return index;
+	}
+
+	// Move up to the parent if there are no children or not expanded
+	if (pModel->hasChildren( index ) && impl_->expanded( index ))
+	{
+		// Collapse the current item
+		impl_->collapse( index );
+
+		// Emit the data change
+		int role = 0;
+		auto res = this->encodeRole( ItemRole::expandedId, role );
+		assert( res );
+		QVector< int > roles;
+		roles.append( role );
+		emit const_cast< QAbstractItemModel * >( pModel )->dataChanged( index,
+			index,
+			roles );
+
+		return index;
+	}
+
+	return this->getPreviousIndex( index );
+}
+} // end namespace wgt

@@ -2,6 +2,8 @@
 #include "metadata/meta_base.hpp"
 #include <stddef.h>
 
+namespace wgt
+{
 //==============================================================================
 BaseProperty::BaseProperty( const char * name, const TypeId & type )
 	: name_( name )
@@ -103,3 +105,4 @@ void BaseProperty::setName( const char * name )
 	name_ = name;
 	hash_ = HashUtilities::compute( name_ );
 }
+} // end namespace wgt

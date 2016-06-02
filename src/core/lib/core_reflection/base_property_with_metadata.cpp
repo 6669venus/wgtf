@@ -1,5 +1,7 @@
 #include "base_property_with_metadata.hpp"
 
+namespace wgt
+{
 BasePropertyWithMetaData::BasePropertyWithMetaData( const IBasePropertyPtr & property, MetaHandle metaData )
 	: property_( property )
 	, metaData_( metaData )
@@ -73,3 +75,4 @@ size_t BasePropertyWithMetaData::parameterCount() const
 {
 	return property_->parameterCount();
 }
+} // end namespace wgt

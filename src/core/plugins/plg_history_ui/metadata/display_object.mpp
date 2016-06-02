@@ -4,6 +4,9 @@
 #include "core_reflection/reflection_macros.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE( DisplayObject, MetaNoSerialization() )
 	EXPOSE( "DisplayObject", getDisplayData, MetaNone() )
 END_EXPOSE()
+} // end namespace wgt

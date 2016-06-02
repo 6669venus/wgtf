@@ -7,6 +7,8 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 class TestPlugin2TestObject
 {
@@ -76,5 +78,5 @@ private:
 };
 
 typedef ObjectHandleT< TestPlugin2Interface > TestPlugin2InterfacePtr;
-
+} // end namespace wgt
 #endif // PLUGIN2_OBJECTS_HPP

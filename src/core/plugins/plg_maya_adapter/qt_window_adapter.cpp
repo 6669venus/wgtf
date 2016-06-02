@@ -3,6 +3,8 @@
 #include <QtWidgets/QMainWindow>
 #include <assert.h>
 
+namespace wgt
+{
 QtWindowAdapter::QtWindowAdapter( IQtFramework & qtFramework, QIODevice & source )
 	: QtWindow( qtFramework, source )
 {
@@ -65,3 +67,4 @@ void QtWindowAdapter::removeListener( IWindowListener * listener )
 	assert( listenerIt != listeners_.end() );
 	listeners_.erase( listenerIt );
 }
+} // end namespace wgt

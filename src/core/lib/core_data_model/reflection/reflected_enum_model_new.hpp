@@ -5,6 +5,8 @@
 #include "core_data_model/abstract_item_model.hpp"
 #include <vector>
 
+namespace wgt
+{
 class PropertyAccessor;
 class MetaEnumObj;
 
@@ -27,5 +29,5 @@ public:
 private:
 	std::vector< AbstractItem * > items_;
 };
-
+} // end namespace wgt
 #endif // _REFLECTED_ENUM_MODEL_NEW_HPP

@@ -3,6 +3,8 @@
 
 #include <QtQuick/QQuickItem>
 
+namespace wgt
+{
 class QtGlobalSettings: public QQuickItem
 {
 	Q_OBJECT
@@ -46,5 +48,5 @@ private:
 	bool wgCopyableEnabled_;
 	bool wgNativeRendering_;
 };
-
+} // end namespace wgt
 #endif

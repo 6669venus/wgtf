@@ -4,6 +4,8 @@
 #include "core_variant/variant.hpp"
 #include "wg_types/binary_block.hpp"
 
+namespace wgt
+{
 typedef std::shared_ptr< BinaryBlock > ThumbnailData;
 
 /**
@@ -25,5 +27,5 @@ public:
 	virtual Variant getData( int column, size_t roleId ) const = 0;
 	virtual bool setData( int column, size_t roleId, const Variant & data ) = 0;
 };
-
+} // end namespace wgt
 #endif // I_ITEM_HPP

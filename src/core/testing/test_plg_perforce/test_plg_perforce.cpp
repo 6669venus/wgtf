@@ -11,6 +11,8 @@
 #include <codecvt>
 #include <string>
 
+namespace wgt
+{
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
@@ -282,3 +284,4 @@ namespace UnitTests
 		}
 	};
 }
+} // end namespace wgt

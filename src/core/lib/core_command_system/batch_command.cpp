@@ -3,6 +3,8 @@
 #include "command_manager.hpp"
 
 
+namespace wgt
+{
 //--------------------------------------------------------------------------
 BatchCommand::BatchCommand( CommandManager * pCommandManager )
     : pCommandManager_( pCommandManager )
@@ -46,3 +48,4 @@ CommandThreadAffinity BatchCommand::threadAffinity() const
 { 
 	return CommandThreadAffinity::ANY_THREAD;
 }
+} // end namespace wgt

@@ -5,6 +5,8 @@
 #include "i_item.hpp"
 #include <memory>
 
+namespace wgt
+{
 class VariantList
 	: public IListModel
 {
@@ -117,5 +119,5 @@ private:
 
 	friend class Iterator;
 };
-
+} // end namespace wgt
 #endif // VARIANT_LIST_HPP

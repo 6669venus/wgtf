@@ -2,6 +2,8 @@
 #define CUSTOM_XML_SERIALIZER_HPP
 #include "core_serialization/serializer/i_serializer.hpp"
 
+namespace wgt
+{
 class CustomXmlSerializer : public Implements< ISerializer >
 {
 public:
@@ -15,5 +17,5 @@ public:
 private:
 	TextStream stream_;
 };
-
+} // end namespace wgt
 #endif //CUSTOM_XML_SERIALIZER_HPP

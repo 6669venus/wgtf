@@ -7,6 +7,8 @@
 #include <functional>
 #include <memory>
 
+namespace wgt
+{
 class FilteredListModel : public IListModel
 {
 	typedef Signal< void( void ) > SignalVoid;
@@ -44,5 +46,5 @@ private:
 	struct Implementation;
 	std::unique_ptr< Implementation > impl_;
 };
-
+} // end namespace wgt
 #endif // FILTERED_LIST_MODEL_HPP

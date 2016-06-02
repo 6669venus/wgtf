@@ -18,6 +18,8 @@
 #include <iostream>
 #include <codecvt>
 
+namespace wgt
+{
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 
 void MacroEditObject::init( size_t count )
@@ -534,3 +536,4 @@ std::string MethodParam::getValue() const
 	std::string str = stream.str();
 	return str;
 }
+} // end namespace wgt

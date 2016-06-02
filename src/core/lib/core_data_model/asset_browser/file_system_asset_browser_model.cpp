@@ -25,6 +25,8 @@
 
 #include <list>
 
+namespace wgt
+{
 static const int NO_SELECTION = -1;
 
 struct FileSystemAssetBrowserModel::FileSystemAssetBrowserModelImplementation
@@ -338,3 +340,4 @@ IAssetObjectItem* FileSystemAssetBrowserModel::getAssetAtPath( const char * path
 
 	return nullptr;
 }
+} // end namespace wgt

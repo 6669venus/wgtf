@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 
 import WGControls 1.0
-import WGControls 2.0 as Two
+import WGControls 2.0 as WG2
 
 /**
  *	Sample panel with all the available controls and styles.
@@ -1107,7 +1107,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                     WGMultiLineText {
                         text: "WGColorSlider20"
                     }
-                    Two.WGColorSlider {
+                    WG2.WGColorSlider {
                         enabled: true
 
                         Layout.fillWidth: true
@@ -1126,7 +1126,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                             }
                         }
                     }
-                    Two.WGColorSlider {
+                    WG2.WGColorSlider {
                         enabled: true
 
                         Layout.fillWidth: true
@@ -1145,7 +1145,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                             }
                         }
                     }
-                    Two.WGColorSlider {
+                    WG2.WGColorSlider {
                         enabled: false
 
                         Layout.fillWidth: true
@@ -1164,7 +1164,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                             }
                         }
                     }
-                    Two.WGColorSlider {
+                    WG2.WGColorSlider {
                         enabled: false
 
                         Layout.fillWidth: true
@@ -1248,72 +1248,6 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                     }
 
                 }
-
-                // COMMENTED OUT BECAUSE IMPORTS NOT WORKING //
-                /*
-                WGExpandingRowLayout {
-                    WGMultiLineText {
-                        text: "WGDropDownbox20"
-                    }
-                    Two.WGDropDownBox {
-                        //text: "NA/enabled"
-                        enabled: true
-
-                        textRole: "label"
-                        imageRole: "icon"
-
-                        model: ListModel {
-                            ListElement { label: "Option 1", icon: "icons/icon1.png"}
-                            ListElement { label: "Option 2", icon: "icons/icon2.png"}
-                            ListElement { label: "Option 3", icon: "icons/icon3.png"}
-                        }
-                    }
-                    Two.WGDropDownBox {
-                        //text: "NA/enabled"
-                        enabled: true
-
-                        textRole: "label"
-                        imageRole: "icon"
-
-                        model: ListModel {
-                            ListElement { label: "Option 1", icon: "icons/icon1.png"}
-                            ListElement { label: "Option 2", icon: "icons/icon2.png"}
-                            ListElement { label: "Option 3", icon: "icons/icon3.png"}
-                        }
-                    }
-                    Two.WGDropDownBox {
-                        //text: "NA/disabled"
-                        enabled: false
-
-                        textRole: "label"
-                        imageRole: "icon"
-
-                        model: ListModel {
-                            ListElement { label: "Option 1", icon: "icons/icon1.png"}
-                            ListElement { label: "Option 2", icon: "icons/icon2.png"}
-                            ListElement { label: "Option 3", icon: "icons/icon3.png"}
-                        }
-                    }
-                    Two.WGDropDownBox {
-                        //text: "NA/disabled"
-                        enabled: false
-
-                        textRole: "label"
-                        imageRole: "icon"
-
-                        model: ListModel {
-                            ListElement { label: "Option 1", icon: "icons/icon1.png"}
-                            ListElement { label: "Option 2", icon: "icons/icon2.png"}
-                            ListElement { label: "Option 3", icon: "icons/icon3.png"}
-                        }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                }
-                */
 
                 WGExpandingRowLayout {
                     WGMultiLineText {
@@ -1429,78 +1363,78 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                     WGMultiLineText {
                         text: "WGGradientSlider20"
                     }
-                    Two.WGGradientSlider {
+                    WG2.WGGradientSlider {
                         //text: "NA/enabled"
                         enabled: true
 
                         Layout.fillWidth: true
 
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.25
                             color: "red"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.5
                             color: "yellow"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.75
                             color: "white"
                         }
                     }
-                    Two.WGGradientSlider {
+                    WG2.WGGradientSlider {
                         //text: "NA/enabled"
                         enabled: true
 
                         Layout.fillWidth: true
 
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.25
                             color: "red"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.5
                             color: "yellow"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.75
                             color: "white"
                         }
                     }
-                    Two.WGGradientSlider {
+                    WG2.WGGradientSlider {
                         //text: "NA/disabled"
                         enabled: false
 
                         Layout.fillWidth: true
 
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.25
                             color: "red"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.5
                             color: "yellow"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.75
                             color: "white"
                         }
                     }
-                    Two.WGGradientSlider {
+                    WG2.WGGradientSlider {
                         //text: "NA/disabled"
                         enabled: false
 
                         Layout.fillWidth: true
 
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.25
                             color: "red"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.5
                             color: "yellow"
                         }
-                        Two.WGGradientSliderHandle {
+                        WG2.WGGradientSliderHandle {
                             value: 0.75
                             color: "white"
                         }
@@ -1657,7 +1591,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                     WGMultiLineText {
                         text: "WGSliderControl20"
                     }
-                    Two.WGSliderControl {
+                    WG2.WGSliderControl {
                         enabled: true
 
                         Layout.fillWidth: true
@@ -1666,7 +1600,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                         stepSize: 1
                         value: 40
                     }
-                    Two.WGSliderControl {
+                    WG2.WGSliderControl {
                         enabled: true
 
                         Layout.fillWidth: true
@@ -1675,7 +1609,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                         stepSize: 1
                         value: 40
                     }
-                    Two.WGSliderControl {
+                    WG2.WGSliderControl {
                         enabled: false
 
                         Layout.fillWidth: true
@@ -1684,7 +1618,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                         stepSize: 1
                         value: 40
                     }
-                    Two.WGSliderControl {
+                    WG2.WGSliderControl {
                         enabled: false
 
                         Layout.fillWidth: true
@@ -1931,10 +1865,10 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                     }
                     WGToolButton {
                         enabled: false
-                        text: "disabled, checked"
+                        text: "disabled, unchecked"
 
                         checkable: true
-                        checked: true
+                        checked: false
                         exclusiveGroup: toolbarGroup
                         iconSource: "icons/pause_16x16.png"
                     }
@@ -1945,7 +1879,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                     WGMultiLineText {
                         text: "WGDropDownBox20"
                     }
-                    Two.WGDropDownBox {
+                    WG2.WGDropDownBox {
                         enabled: true
 
                         textRole: "label"
@@ -1957,7 +1891,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                             ListElement { label: "Option 3"; icon: "icons/diffuse3.png"}
                         }
                     }
-                    Two.WGDropDownBox {
+                    WG2.WGDropDownBox {
                         enabled: true
 
                         textRole: "label"
@@ -1969,7 +1903,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                             ListElement { label: "Option 3"; icon: "icons/diffuse3.png"}
                         }
                     }
-                    Two.WGDropDownBox {
+                    WG2.WGDropDownBox {
                         enabled: false
 
                         textRole: "label"
@@ -1981,7 +1915,7 @@ Write/Enabled, ReadOnly/Enabled, Write/Disabled, ReadOnly/Disabled"
                             ListElement { label: "Option 3"; icon: "icons/diffuse3.png"}
                         }
                     }
-                    Two.WGDropDownBox {
+                    WG2.WGDropDownBox {
                         enabled: false
 
                         textRole: "label"

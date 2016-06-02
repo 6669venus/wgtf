@@ -33,7 +33,7 @@ Example:
 
         property Component propertyDelegate: Loader {
             clip: true
-            sourceComponent: itemData != null ? itemData.Component : null
+            sourceComponent: itemData != null ? itemData.component : null
         }
     }
 \endcode
@@ -41,7 +41,7 @@ Example:
 
 Item {
     id: treeView
-    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGTreeView"
+    objectName: typeof(itemData) != "undefined" ? itemData.indexPath : "WGTreeView"
 
     /*! This property holds the dataModel information that will be displayed in the tree view
     */
@@ -425,9 +425,9 @@ Item {
     property Component defaultColumnDelegate: Text {
         property bool __treeLabel: true
         color: palette.textColor
-        clip: itemData != null && itemData.Component != null
+        clip: itemData != null && itemData.component != null
         text: itemData != null ? itemData.display : ""
-        font.bold: itemData != null && itemData.HasChildren
+        font.bold: itemData != null && itemData.hasChildren
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
     }

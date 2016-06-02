@@ -14,7 +14,7 @@ Item {
     function closeHandler() {
         if (macroWindow.accepted)
         {
-            itemData.Value.DisplayObject.UpdateMacroData
+            itemData.value.DisplayObject.UpdateMacroData
         }
     }
 
@@ -63,7 +63,7 @@ Item {
             id: textField
             Layout.minimumWidth: paintedWidth
             clip: false
-            text: itemData.Value.DisplayObject.DisplayName
+            text: itemData.value.DisplayObject.DisplayName
             color: palette.textColor
         }
 
@@ -71,9 +71,9 @@ Item {
             objectName: "editMacroButton"
             iconSource: "icons/edit_16x16.png"
             onClicked: {
-                macroWindow.sourceData = itemData.Value.DisplayObject.TreeSource
+                macroWindow.sourceData = itemData.value.DisplayObject.TreeSource
                 macroWindow.accepted = false
-                macroWindow.title = "Edit " + itemData.Value.DisplayObject.DisplayName
+                macroWindow.title = "Edit " + itemData.value.DisplayObject.DisplayName
                 macroWindow.show()
             }
         }
@@ -109,17 +109,17 @@ Item {
 
             WGListModel {
                 id: contextObjects
-                source: itemData.Value.DisplayObject.ContextObjects
+                source: itemData.value.DisplayObject.ContextObjects
 
                 ValueExtension {}
             }
 
             model: contextObjects
-            textRole: "ValueType"
+            textRole: "valueType"
 
             Component.onCompleted: {
                 currentIndex = Qt.binding( function() {
-                    var modelIndex = contextObjects.find( itemData.Value.DisplayObject.ContextObject, "Value" );
+                    var modelIndex = contextObjects.find( itemData.value.DisplayObject.ContextObject, "value" );
                     return contextObjects.indexRow( modelIndex ); } )
             }
 
@@ -130,7 +130,7 @@ Item {
                         return;
                     }
                     var modelIndex = contextObjects.index( contextObject.currentIndex );
-                    itemData.Value.DisplayObject.ContextObject = contextObjects.data( modelIndex, "Value" );
+                    itemData.value.DisplayObject.ContextObject = contextObjects.data( modelIndex, "value" );
                 }
             }
         }

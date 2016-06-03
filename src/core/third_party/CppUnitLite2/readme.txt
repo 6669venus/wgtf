@@ -1,4 +1,4 @@
-BigWorld Readme for CppUnitLite2
+Wargaming Readme for CppUnitLite2
 --------------------------------
 
 CppUnitLite2 1.1 was downloaded from: http://www.gamesfromwithin.com/articles/0512/000103.html

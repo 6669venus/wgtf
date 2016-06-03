@@ -17,6 +17,7 @@ After pulling down the repository, you will need to add several dependancies.
 The version of Qt you plan to use must be in the wgtf/src/core/third_party/Qt
 directory and cmake must be in the wgtf/src/core/third_party/cmake directory
 
+
 ### On Windows
 
 1.  Run **wgtf\build\wg_cmake.bat**
@@ -89,6 +90,9 @@ the WGTF framework.
 13. Log output should appear in the Visual Studio Output window. To view logs
 without debugging, open 
 [Debug View](https://technet.microsoft.com/en-us/sysinternals/debugview.aspx)
+
+
+
 
 ### On OSX
 

@@ -1,4 +1,4 @@
-INCLUDE( BWStandardProject )
+INCLUDE( WGStandardProject )
 
 IF( NOT MAYA_VERSION )
     SET( MAYA_VERSION "2014" )

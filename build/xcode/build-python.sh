@@ -8,7 +8,7 @@ SHARED_MODS_OUTPUT_DIR="${SRCROOT}/../../../../game/res/bigworld/scripts/server_
 STANDARD_LIBRARY_OUTPUT_DIR="${SRCROOT}/../../../../game/res/bigworld/scripts/common/Lib"
 PYTHON_BUILD_DIR="${SRCROOT}/pythonbuild-macosx"
 
-# This is required for building for BigWorld, else a compile-time assertion
+# This is required for building for Wargaming python support, else a compile-time assertion
 # fails while building any Python-dependent libraries.
 CONFIGURE_FLAGS="--enable-unicode=ucs4"
 

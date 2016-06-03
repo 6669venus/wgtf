@@ -34,5 +34,5 @@ BW_TARGET_LINK_LIBRARIES( core_generic_plugin INTERFACE
 	core_logging
 )
 
-BW_PROJECT_CATEGORY( core_generic_plugin "NGT Libs/Plugin System" )
+BW_PROJECT_CATEGORY( core_generic_plugin "WGT Libs/Plugin System" )
 

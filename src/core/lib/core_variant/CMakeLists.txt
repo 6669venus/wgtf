@@ -43,5 +43,5 @@ BW_TARGET_LINK_LIBRARIES( core_variant PRIVATE
 	core_serialization
 )
 
-BW_PROJECT_CATEGORY( core_variant "NGT Libs" )
+BW_PROJECT_CATEGORY( core_variant "WGT Libs" )
 

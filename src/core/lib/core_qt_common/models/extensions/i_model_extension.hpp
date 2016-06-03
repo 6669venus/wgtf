@@ -17,6 +17,13 @@ namespace wgt
 {
 class IQtFramework;
 
+class IExtensionData
+{
+public:
+	typedef QMap< size_t, QVariant > ItemData;
+	virtual ItemData & getItemData( const QModelIndex& index ) = 0;
+};
+
 class IModelExtension : public QObject
 					  , public RoleProvider
 {
@@ -25,24 +32,32 @@ class IModelExtension : public QObject
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
-	IModelExtension() : qtFramework_( nullptr ) {}
-	virtual ~IModelExtension() {}
+	IModelExtension();
+	virtual ~IModelExtension();
 
+	void init( IExtensionData & extensionData_ );
+
+	virtual QHash< int, QByteArray > roleNames() const = 0;
+
+	virtual QVariant data( const QModelIndex &index, int role ) const;
+	virtual bool setData( const QModelIndex &index, const QVariant &value, int role );
+
+	virtual QVariant headerData( int section, Qt::Orientation orientation, int role ) const { return QVariant::Invalid; }
+	virtual bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) { return false; }
+
+	// DEPRECATED
 	void init( IQtFramework* qtFramework )
 	{
 		qtFramework_ = qtFramework;
 	}
 
-	virtual QHash< int, QByteArray > roleNames() const = 0;
-
-	virtual QVariant data( const QModelIndex &index, int role ) const { return QVariant::Invalid; }
-	virtual bool setData( const QModelIndex &index, const QVariant &value, int role ) { return false; }
-
-	virtual QVariant headerData( int section, Qt::Orientation orientation, int role ) const { return QVariant::Invalid; }
-	virtual bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) { return false; }
-
 	virtual void saveStates( const char * modelUniqueName ) {}
 	virtual void loadStates( const char * modelUniqueName ) {}
+	//
+
+protected:
+	QVariant dataExt( const QModelIndex &index, size_t roleId ) const;
+	bool setDataExt( const QModelIndex &index, const QVariant &value, size_t roleId );
 
 public slots:
 	virtual void onDataAboutToBeChanged( 
@@ -66,6 +81,7 @@ public slots:
 
 protected:
 	IQtFramework * qtFramework_;
+	IExtensionData * extensionData_;
 };
 } // end namespace wgt
 #endif // I_MODEL_EXTENSION_HPP

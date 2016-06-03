@@ -71,6 +71,7 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/thumbnail_extension.hpp
 	models/extensions/image_extension.cpp
 	models/extensions/image_extension.hpp
+	models/extensions/i_model_extension.cpp
 	models/extensions/i_model_extension.hpp
 	models/extensions/header_footer_text_extension.cpp
 	models/extensions/header_footer_text_extension.hpp
@@ -199,5 +200,5 @@ BW_TARGET_LINK_LIBRARIES( core_qt_common PRIVATE
 
 INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})
 
-BW_PROJECT_CATEGORY( core_qt_common "NGT Libs" )
+BW_PROJECT_CATEGORY( core_qt_common "WGT Libs" )
 

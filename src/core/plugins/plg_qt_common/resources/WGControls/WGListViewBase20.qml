@@ -62,5 +62,21 @@ ListView {
         onItemPressed: listViewBase.itemPressed(mouse, itemIndex, modelIndex)
         onItemClicked: listViewBase.itemClicked(mouse, itemIndex, modelIndex)
         onItemDoubleClicked: listViewBase.itemDoubleClicked(mouse, itemIndex, modelIndex)
+
+        onImplicitColumnWidthsChanged: {
+            var viewWidths = view.implicitColumnWidths;
+
+            while (viewWidths.length < implicitColumnWidths.length)
+            {
+                viewWidths.push(0);
+            }
+
+            for (var i = 0; i < implicitColumnWidths.length; ++i)
+            {
+                viewWidths[i] = Math.max(viewWidths[i], implicitColumnWidths[i]);
+            }
+
+            view.implicitColumnWidths = viewWidths;
+        }
     }
 }

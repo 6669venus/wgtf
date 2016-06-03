@@ -4,7 +4,7 @@
 
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 
-INCLUDE( BWPlatformOptions )
+INCLUDE( WGPlatformOptions )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

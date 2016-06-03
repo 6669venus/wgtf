@@ -1,6 +1,6 @@
-NGT
+WGTF 
 ===========
-NGT stands for "Next Generation Tools." It is a global tools initiative to
+WGTF stands for "Wargaming Tools Framework" It is a global tools initiative to
 rebuild Wargaming tools on a new framework that is driven by a plug-in based
 architecture. This architecture would allow for greater flexibility in sharing
 code and common functionality across multiple projects as well as supporting
@@ -8,14 +8,14 @@ cross-platform development. The project uses a combination of C++ and Qt.
 
 Introduction
 -----------
-This guide is for building and running the NGT test app.
+This guide is for building and running the WGTF test app.
 
 Step-by-Step Guide
 -----------
 
 On Windows
 
-1. Run ngt\build\wg_cmake.bat
+1. Run wgtf\build\wg_cmake.bat
 
     a. Select Visual Studio <version> <arch> - <Qt version>
        The version of Qt depends on the age of the branch. As of writing
@@ -27,18 +27,18 @@ On Windows
 	   
 
     b. The solution will be generated to
-       ngt\build_generic_app_test_vc11_win64_qt5.6.0\generic_app_test_win64.sln
+       wgtf\build_generic_app_test_vc11_win64_qt5.6.0\generic_app_test_win64.sln
        
        If you want an out-of-tree build, pass in the desired output path to
        wg_cmake.bat E.g. Edit wg_cmake.bat
        
-       @python wg_cmake.py D:\build\ngt
+       @python wg_cmake.py D:\build\wgtf
        @pause
 
 -------------------------------------------------------------------------------
 | Some projects will be ignored if the 3rd party libraries are not available. |
 | Add any other 3rd party dependencies if needed. For Python support, follow  |
-| the instructions in ngt\src\core\third_party\python_readme.txt              |
+| the instructions in wgtf\src\core\third_party\python_readme.txt              |
 -------------------------------------------------------------------------------
 
 2. Open the generated solution (generic_app_test_win64.sln) in Visual Studio
@@ -52,7 +52,7 @@ On Windows
    project and select Set As Startup Project.
 
 6. Select the plugins config you want to run. The plugins configs can be found
-   in ngt\bin\generic_app_test\win64\plugins. For this example we will use
+   in wgtf\bin\generic_app_test\win64\plugins. For this example we will use
    plugins_ui.txt.
 
 7. In the Solution Explorer, right click on the Executables/generic_app
@@ -77,12 +77,12 @@ On Windows
 -------------------------------------------------------------------------------
 
 12. The Generic App UI Test should start. It has all of the features core to
-    the NGT framework.
+    the WGTF framework.
 
 
 On OSX
 
-1. Run ngt\build\wg_cmake.sh
+1. Run wgtf\build\wg_cmake.sh
 
     a. Select XCode
 
@@ -96,13 +96,13 @@ On OSX
        non-deploy targets should be used for development.
 
     d. The Xcode project will be generated to
-       ngt\build_generic_app_test_xcode_qt5.6.0\generic_app_test_mac.xcodeproj
+       wgtf\build_generic_app_test_xcode_qt5.6.0\generic_app_test_mac.xcodeproj
        (depending on the selected Qt version).
 
 -------------------------------------------------------------------------------
 | Some projects will be ignored if the 3rd party libraries are not available. |
 | Add any other 3rd party dependencies if needed. For Python support, follow  |
-| the instructions in ngt\src\core\third_party\python_readme.txt              |
+| the instructions in wgtf\src\core\third_party\python_readme.txt              |
 -------------------------------------------------------------------------------
 
 2. Open the generated solution (generic_app_test_mac.xcodeproj) in OSX El
@@ -133,7 +133,7 @@ On OSX
 7. Change schemes to generic_app
 
 8. Find the plugins config you want to run. The plugins configs can be found in
-   ngt\bin\generic_app_test\mac\generic_app.app\Contents\Resources\plugins
+   wgtf\bin\generic_app_test\mac\generic_app.app\Contents\Resources\plugins
    (Show Package Contents in Finder). For this example we will use
    plugins_ui.txt.
 
@@ -154,4 +154,4 @@ On OSX
 12. If it asks for permissions, get permissions.
 
 13. The Generic App UI Test should start. It has all of the features core to
-    the NGT framework.
+    the WGTF framework.

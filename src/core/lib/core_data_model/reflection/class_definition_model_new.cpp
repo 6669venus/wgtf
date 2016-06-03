@@ -31,10 +31,6 @@ namespace
 			{
 				return TypeId::getType< ObjectHandle >().getName();
 			}
-			else if (roleId == IndexPathRole::roleId_)
-			{
-				return definition_->getName();
-			}
 			return Variant();
 		}	
 		

@@ -155,3 +155,42 @@ On OSX
 
 13. The Generic App UI Test should start. It has all of the features core to
     the WGTF framework.
+	
+Maya Plugin
+-----------
+
+Building the Maya Plug-in
+
+1. Go to the wgtf\build folder.
+
+2. Double click on wg_cmake.bat.
+
+3. Select maya_plugin -> Visual Studio 2012 Win64 -> Maya 2014.
+
+4. Go to the build folder located in wgtf.
+
+5. Select the solution file and open with VS2012.
+
+6. Build the Hybrid solution.
+
+
+Running the Maya Plug-in
+
+1. Start Maya 2014.
+
+2. Go to window -> settings/preference -> Plug-in Manager.
+
+3. Select Browse at the bottom of the Plug-in Manager window.
+
+4. Browse to wgtf\bin\generic_app_test\win64 folder and select wgtf_maya_plugin.mll
+
+5. Select Open
+
+
+The WGTF Maya plug-in should open on the right side of the viewport. 
+
+The behavior of WGTF Maya Plugin should be the same as WGTF stand alone
+Generic_app.exe --config plugins_ui.txt. The features and panels should all
+work as in the stand-alone version.
+
+

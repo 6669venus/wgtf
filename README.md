@@ -42,7 +42,7 @@ directory and cmake must be in the wgtf/src/core/third_party/cmake directory
     @pause
     ```
 
-    ```
+```
     Qt and cmake are required to build WGTF. Read wgtf\src\core\third_party\qt_readme.txt and
     wgtf\src\core\third_party\cmake_readme.txt for instructions on using them.
 
@@ -50,7 +50,7 @@ directory and cmake must be in the wgtf/src/core/third_party/cmake directory
     Add any other 3rd party dependencies if needed. For Python support, follow
     the instructions in wgtf\src\core\third_party\python_readme.txt, for Perforce
     support, read wgtf\src\core\third_party\perforce_readme.txt
-    ```
+```
 
 2. Open the generated solution (**generic_app_test_win64.sln**) in _Visual
 Studio 2012 Update 4._
@@ -118,7 +118,7 @@ without debugging, open
     **wgtf\build_generic_app_test_xcode_qt5.6.0\generic_app_test_mac.xcodeproj**
     (depending on the selected Qt version).
 
-    ```
+```
     Qt and cmake are required to build WGTF. Read wgtf\src\core\third_party\qt_readme.txt and
     wgtf\src\core\third_party\cmake_readme.txt for instructions on using them.
 
@@ -126,7 +126,7 @@ without debugging, open
     Add any other 3rd party dependencies if needed. For Python support, follow
     the instructions in wgtf\src\core\third_party\python_readme.txt, for Perforce
     support, read wgtf\src\core\third_party\perforce_readme.txt
-    ```
+```
 
 2. Open the generated solution (**generic_app_test_mac.xcodeproj**) in _OSX El
 Capitan 10.11.1 Xcode Version 7.1 (7B91b)_ by double clicking it in the finder.

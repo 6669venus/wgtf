@@ -86,4 +86,4 @@ BW_TARGET_LINK_LIBRARIES( core_serialization
 	expat
 )
 
-BW_PROJECT_CATEGORY( core_serialization "NGT Libs" )
+BW_PROJECT_CATEGORY( core_serialization "WGT Libs" )

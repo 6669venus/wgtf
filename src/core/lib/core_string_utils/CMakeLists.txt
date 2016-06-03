@@ -18,5 +18,5 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_string_utils ${BLOB_SRCS} )
 
-BW_PROJECT_CATEGORY( core_string_utils "NGT Libs" )
+BW_PROJECT_CATEGORY( core_string_utils "WGT Libs" )
 

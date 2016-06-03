@@ -54,7 +54,7 @@ public:
 			return;
 		}
 
-		defManager->registerDefinition( new TypeClassDefinition< ActiveFiltersTestViewModel >() );
+		defManager->registerDefinition< TypeClassDefinition< ActiveFiltersTestViewModel > >();
 
 		auto testViewModel = defManager->create< ActiveFiltersTestViewModel >();
 		testViewModel->init( *defManager, *uiFramework );

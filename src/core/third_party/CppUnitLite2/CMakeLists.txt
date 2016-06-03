@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 PROJECT( CppUnitLite2 )
 
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGStandardProject )
+INCLUDE( WGStandardLibrary )
 
 BW_REMOVE_COMPILE_FLAGS( /WX )
 

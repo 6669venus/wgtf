@@ -30,6 +30,7 @@ ITEMROLE( keyType )
 ITEMROLE( isCollection )
 ITEMROLE( elementValueType )
 ITEMROLE( elementKeyType )
+ITEMROLE( itemId )
 
 namespace
 {
@@ -354,12 +355,12 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		}
 		return collection.keyType().getName();
 	}
-
-	if (roleId == IndexPathRole::roleId_)
+	else if (roleId == ItemRole::itemIdId)
 	{
-		return this->getPath();
+		return getId();
 	}
-	else if (roleId == ObjectRole::roleId_)
+
+	if (roleId == ObjectRole::roleId_)
 	{
 		return getObject();
 	}

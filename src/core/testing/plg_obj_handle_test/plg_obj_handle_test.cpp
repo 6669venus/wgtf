@@ -137,12 +137,12 @@ public:
 
 		if (IDefinitionManager* dm = contextManager.queryInterface<IDefinitionManager>())
 		{
-			def1_ = dm->registerDefinition( new TypeClassDefinition< Test1 > );
-			def2_ = dm->registerDefinition( new TypeClassDefinition< Test2 > );
-			def3_ = dm->registerDefinition( new TypeClassDefinition< Test3 > );
+			def1_ = dm->registerDefinition< TypeClassDefinition< Test1 > >();
+			def2_ = dm->registerDefinition< TypeClassDefinition< Test2 > >();
+			def3_ = dm->registerDefinition< TypeClassDefinition< Test3 > >();
 
-			dm->registerDefinition( new TypeClassDefinition< Test1Stack > );
-			dm->registerDefinition( new TypeClassDefinition< Test2Stack > );
+			dm->registerDefinition< TypeClassDefinition< Test1Stack > >();
+			dm->registerDefinition< TypeClassDefinition< Test2Stack > >();
 		}
 		return true;
 	}

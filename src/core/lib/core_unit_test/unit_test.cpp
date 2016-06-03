@@ -49,7 +49,7 @@ int runTest( const std::string & testName, int argc, char* argv[] )
 		}
 	}
 
-	// Output using BigWorld's outputter
+	// Output using Wargaming's outputter
 	TestResultBWOut result( testName, useXML );
 
 	TestRegistry::Instance().Run( result );

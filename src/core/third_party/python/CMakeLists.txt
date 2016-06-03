@@ -26,8 +26,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 SET(BW_NO_UNICODE ON)
-INCLUDE( BWStandardProject )
-INCLUDE( BWStandardLibrary )
+INCLUDE( WGStandardProject )
+INCLUDE( WGStandardLibrary )
 SET(BW_NO_UNICODE OFF)
 ADD_DEFINITIONS( -DCOMPILED_FROM_DSP )
 ADD_DEFINITIONS( -DXML_STATIC )
@@ -228,16 +228,6 @@ endif(UNIX AND NOT APPLE)
 
 # Clear PythonTargets.cmake
 file(WRITE ${CONFIG_BUILD_DIR}/PythonTargets.cmake "")
-
-# BigWorld: Override path to OpenSSL
-#FIND_PACKAGE(BWOpenSSL)
-#SET(OPENSSL_INCLUDE_DIR ${BWOPENSSL_INCLUDE_DIRS})
-#SET(OPENSSL_LIBRARIES ${BWOPENSSL_LIBRARIES})
-# BigWorld: Override path to zlib
-# since we include zlib as source we only need to define zlib
-# so it exists
-#SET(ZLIB_LIBRARIES FOUND_DUMMY_DIR)
-
 
 # Add extension modules
 set(builtin_extensions "" CACHE INTERNAL "" FORCE)

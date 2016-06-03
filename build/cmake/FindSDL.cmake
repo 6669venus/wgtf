@@ -53,7 +53,7 @@
 # is #include "SDL.h", not <SDL/SDL.h>. This is done for portability
 # reasons because not all systems place things in SDL/ (see FreeBSD).
 
-# Modified by PaulH for BigWorld to deal with the distributed SDL for
+# Modified by PaulH for Wargaming to deal with the distributed SDL for
 # Visual Studio, which includes both 32-bit and 64-bit libs in lib/
 # Original version came from CMake 2.8.11 Win32 installation
 # See http://www.cmake.org/Bug/view.php?id=14029
@@ -78,7 +78,7 @@ find_path(SDL_INCLUDE_DIR SDL.h
   PATH_SUFFIXES include/SDL include/SDL12 include/SDL11 include
 )
 
-# BigWorld: Fix for not looking in arch specific dirs
+# Wargaming: Fix for not looking in arch specific dirs
 if(CMAKE_GENERATOR MATCHES Win64)
     set(MSVC_DEVEL_PATHSUFFIX lib/x64)
 else()
@@ -183,7 +183,7 @@ if(SDL_INCLUDE_DIR AND EXISTS "${SDL_INCLUDE_DIR}/SDL_version.h")
   unset(SDL_VERSION_PATCH)
 endif()
 
-# BigWorld: Find as module instead of file
+# Wargaming: Find as module instead of file
 include(FindPackageHandleStandardArgs)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL

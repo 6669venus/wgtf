@@ -33,5 +33,5 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_ui_framework ${BLOB_SRCS} )
 
-BW_PROJECT_CATEGORY( core_ui_framework "NGT Libs" )
+BW_PROJECT_CATEGORY( core_ui_framework "WGT Libs" )
 

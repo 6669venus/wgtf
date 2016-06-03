@@ -9,6 +9,8 @@
 #include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
+#include "private/ui_view_creator.hpp"
+
 #include <vector>
 #include <QApplication>
 
@@ -18,7 +20,10 @@ class MayaAdapterPlugin
 	: public PluginMain
 {
 public:
-	MayaAdapterPlugin( IComponentContext & contextManager ){}
+	MayaAdapterPlugin( IComponentContext & contextManager )
+	{
+		contextManager.registerInterface(new UIViewCreator(contextManager));
+	}
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{

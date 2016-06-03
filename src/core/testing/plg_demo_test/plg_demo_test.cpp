@@ -29,7 +29,7 @@
 #include "wg_types/vector3.hpp"
 #include "wg_types/vector4.hpp"
 
-#include "demo_objects.mpp"
+#include "metadata/demo_objects.mpp"
 #include "metadata/demo_objects_fix_mixin.mpp"
 
 #include <stdio.h>
@@ -88,7 +88,7 @@ DemoDoc::DemoDoc(
 	if (viewCreator)
 	{
 		viewCreator->createView(
-			"plg_demo_test/demo.qml", demo,
+			"DemoTest/Demo.qml", demo,
 			[ this ]( std::unique_ptr< IView > & view )
 		{
 			centralView_ = std::move( view );
@@ -179,15 +179,15 @@ public:
 		if (viewCreator)
 		{
 			viewCreator->createView(
-				"plg_demo_test/demo_property_panel.qml",
+				"DemoTest/DemoPropertyPanel.qml",
 				demoModel_, propertyView_ );
 
 			viewCreator->createView(
-				"plg_demo_test/demo_list_panel.qml",
+				"DemoTest/DemoListPanel.qml",
 				demoModel_, sceneBrowser_);
 
 			viewCreator->createView(
-				"plg_demo_test/Framebuffer.qml",
+				"DemoTest/Framebuffer.qml",
 				demoModel_, viewport_);
 		}
 		createAction_ = uiFramework->createAction(

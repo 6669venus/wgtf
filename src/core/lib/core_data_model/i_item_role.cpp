@@ -2,9 +2,9 @@
 
 namespace wgt
 {
-#define X( ROLE )																					\
-	const char * ROLE##Role::roleName_ = #ROLE;														\
-	unsigned int ROLE##Role::roleId_ = ItemRole::compute( #ROLE );
+#define X( ROLE, ROLENAME )																			\
+	const char * ROLE##Role::roleName_ = #ROLENAME;														\
+	unsigned int ROLE##Role::roleId_ = ItemRole::compute( #ROLENAME );
 	ITEM_ROLES
 #undef X
 } // end namespace wgt

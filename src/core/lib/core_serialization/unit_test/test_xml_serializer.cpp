@@ -37,7 +37,7 @@ namespace wgt
 		static const IClassDefinition* s_classDefinitionPtr = nullptr;
 		if( !s_classDefinitionPtr )
 		{
-			s_classDefinitionPtr = definitionManager().registerDefinition( new TypeClassDefinition< T > );
+			s_classDefinitionPtr = definitionManager().registerDefinition< TypeClassDefinition< T > >();
 		}
 
 		return s_classDefinitionPtr;

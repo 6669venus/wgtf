@@ -4,6 +4,15 @@ INCLUDE( WGToolsCoreProject )
 INCLUDE( WGToolsCoreLibrary )
 PROJECT( core_data_model )
 
+SET( METADATA_SRCS
+	metadata/i_active_filters_model.mpp
+	metadata/i_breadcrumbs_model.mpp
+	asset_browser/metadata/i_asset_browser_event_model.mpp
+	asset_browser/metadata/i_asset_browser_model.mpp
+	asset_browser/metadata/i_asset_browser_view_model.mpp
+)
+SOURCE_GROUP( "MetaData" FILES ${METADATA_SRCS} )
+
 SET( MODEL_SRCS
 	abstract_item.hpp
 	abstract_item_model.hpp
@@ -23,9 +32,7 @@ SET( MODEL_SRCS
 	generic_tree_item.cpp
 	generic_tree_item.hpp
 	i_active_filters_model.hpp
-	i_active_filters_model.mpp
 	i_breadcrumbs_model.hpp
-	i_breadcrumbs_model.mpp
 	i_list_model.cpp
 	i_list_model.hpp
 	i_tree_model.cpp
@@ -40,7 +47,7 @@ SET( MODEL_SRCS
 	selection_handler.cpp
 	selection_handler.hpp
 )
-SOURCE_GROUP( "DataModel" FILES ${SHARED_MODEL_SRCS} )
+SOURCE_GROUP( "DataModel" FILES ${MODEL_SRCS} )
 
 SET( MODEL_REFLECTION_SRCS
 	reflection/class_definition_model.cpp
@@ -98,11 +105,8 @@ SET( MODEL_ASSET_BROWSER_SRCS
 	asset_browser/folder_tree_model.hpp
 	asset_browser/i_asset_object_item.hpp
 	asset_browser/i_asset_browser_event_model.hpp
-	asset_browser/i_asset_browser_event_model.mpp
 	asset_browser/i_asset_browser_model.hpp
-	asset_browser/i_asset_browser_model.mpp
 	asset_browser/i_asset_browser_view_model.hpp
-	asset_browser/i_asset_browser_view_model.mpp
 	asset_browser/i_asset_presentation_provider.hpp
 )
 SOURCE_GROUP( "DataModel\\Asset Browser"
@@ -126,6 +130,7 @@ SOURCE_GROUP( "DataModel\\File System"
 	FILES ${MODEL_FILE_SYSTEM_SRCS} )
 
 SET( ALL_SRCS
+	${METADATA_SRCS}
 	${MODEL_SRCS}
 	${MODEL_ASSET_BROWSER_SRCS}
 	${MODEL_REFLECTION_SRCS}

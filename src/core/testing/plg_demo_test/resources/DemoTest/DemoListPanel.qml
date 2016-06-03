@@ -53,7 +53,7 @@ Rectangle {
 			id: stringFilter
 			filterText: searchBox.text
 			splitterChar: " "
-			itemRole: "Value"
+			itemRole: "value"
 		}
 
 		ValueExtension {}
@@ -91,7 +91,7 @@ Rectangle {
 					anchors.margins: 4
 					verticalAlignment: Text.AlignVCenter
 					visible: true
-					text: itemData != null ? itemData.Value.name : ""
+					text: itemData != null ? itemData.value.name : ""
 					color: palette.textColor
 				}
 			}

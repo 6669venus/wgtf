@@ -44,7 +44,7 @@ public:
 
 		Variant::setMetaTypeManager(context.queryInterface<IMetaTypeManager>());
 
-		RegisterGrapEditorTypes(*defMng);
+        RegisterGraphEditorTypes(*defMng);
 		editor = defMng->create<GraphEditor>(false);
 
 		auto viewCreator = get< IViewCreator >();

@@ -81,18 +81,18 @@ IClassDefinition * DefinitionManager::getObjectDefinition( const ObjectHandle & 
 
 
 //==============================================================================
-IClassDefinitionDetails * DefinitionManager::createGenericDefinition(
+std::unique_ptr<IClassDefinitionDetails> DefinitionManager::createGenericDefinition(
 	const char * name ) const
 {
-	return new GenericDefinition( name );
+	return std::unique_ptr<IClassDefinitionDetails>(new GenericDefinition( name ));
 }
 
 
 //==============================================================================
-IClassDefinition * DefinitionManager::registerDefinition( IClassDefinitionDetails * defDetails )
+IClassDefinition * DefinitionManager::registerDefinition( std::unique_ptr<IClassDefinitionDetails> defDetails )
 {
 	assert( defDetails );
-	IClassDefinition * definition = new ClassDefinition( defDetails );
+	IClassDefinition * definition = new ClassDefinition( std::move(defDetails) );
 	const auto result =
 		definitions_.insert( std::make_pair( definition->getName(), definition ) );
 	assert( result.second && "Duplicate definition overwritten in map." );

@@ -4,6 +4,8 @@
 #include <memory>
 #include "core_generic_plugin/generic_plugin.hpp"
 
+namespace wgt
+{
 class IView;
 class IComponentContext;
 
@@ -21,5 +23,5 @@ private:
 };
 
 PLG_CALLBACK_FUNC(NodeEditorPlugin)
-
+} // end namespace wgt
 #endif // __PLG_NODE_EDITOR_H__

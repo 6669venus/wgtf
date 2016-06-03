@@ -13,8 +13,11 @@
 
 #include "version_control/i_depot_view.hpp"
 
-class IVersionControl;
 class ClientApi;
+
+namespace wgt
+{
+class IVersionControl;
 
 class PerforceDepotView : public IDepotView
 {
@@ -60,5 +63,5 @@ private:
 	struct PerforceDepotViewImplementation;
 	std::unique_ptr<PerforceDepotViewImplementation> impl_;
 };
-
+} // end namespace wgt
 #endif // PERFORCE_DEPOT_VIEW_H_

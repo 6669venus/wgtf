@@ -14,6 +14,8 @@
 #include "core_data_model/file_system/file_system_model.hpp"
 #include "core_serialization/i_file_system.hpp"
 
+namespace wgt
+{
 class ICustomModelInterface
 {
 	DECLARE_REFLECTED
@@ -163,16 +165,14 @@ void CustomModelInterfaceTest::initialise( IComponentContext & contextManager )
 		return;
 	}
 
-	defManager->registerDefinition( new TypeClassDefinition<
-		ICustomModelInterface >() );
-	defManager->registerDefinition( new TypeClassDefinition<
-		TestFixture >() );
+	defManager->registerDefinition< TypeClassDefinition< ICustomModelInterface > >();
+	defManager->registerDefinition< TypeClassDefinition< TestFixture > >();
 
 	auto testFixture = defManager->create< 
 		TestFixture >();
 	testFixture->init( defManager, fileSystem );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(
@@ -195,3 +195,4 @@ void CustomModelInterfaceTest::fini( IComponentContext & contextManager )
 		testView_.reset();
 	}
 }
+} // end namespace wgt

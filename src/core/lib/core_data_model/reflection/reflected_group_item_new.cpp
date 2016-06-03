@@ -12,6 +12,8 @@
 
 #include <codecvt>
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( itemId )
 
@@ -427,3 +429,4 @@ void ReflectedGroupItemNew::getChildValues( Variants & outChildValues ) const
 		return true;
 	} );
 }
+} // end namespace wgt

@@ -12,6 +12,9 @@
 #include <QVariant>
 
 class QAbstractItemModel;
+
+namespace wgt
+{
 class IQtFramework;
 
 class IExtensionData
@@ -80,5 +83,5 @@ protected:
 	IQtFramework * qtFramework_;
 	IExtensionData * extensionData_;
 };
-
+} // end namespace wgt
 #endif // I_MODEL_EXTENSION_HPP

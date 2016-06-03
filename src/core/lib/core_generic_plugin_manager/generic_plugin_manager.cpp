@@ -22,6 +22,8 @@
 #include <shlwapi.h>
 #endif // _WIN32
 
+namespace wgt
+{
 //==============================================================================
 GenericPluginManager::GenericPluginManager(bool applyDebugPostfix_)
 	: contextManager_( new PluginContextManager() )
@@ -82,7 +84,6 @@ void GenericPluginManager::unloadPlugins(
 	unloadPlugins( plgs );
 }
 
-using namespace std;
 
 //==============================================================================
 void GenericPluginManager::unloadPlugins( const PluginList& plugins )
@@ -277,3 +278,4 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 
 	return  temp;
 }
+} // end namespace wgt

@@ -1,4 +1,3 @@
-
 #ifndef __I_GRAPH_H__
 #define __I_GRAPH_H__
 
@@ -11,6 +10,8 @@
 #include "i_node.hpp"
 #include "i_connection.hpp"
 
+namespace wgt
+{
 /*!
 * \class IGraph
 *
@@ -82,5 +83,5 @@ protected:
     */
     virtual const IListModel* GetNodeClassesModel() const = 0;
 };
-
+} // end namespace wgt
 #endif // __I_GRAPH_H__

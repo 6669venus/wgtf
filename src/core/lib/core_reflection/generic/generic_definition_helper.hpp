@@ -3,6 +3,8 @@
 
 #include "core_reflection/interfaces/i_definition_helper.hpp"
 
+namespace wgt
+{
 class GenericDefinitionHelper : public IDefinitionHelper
 {
 public:
@@ -11,6 +13,5 @@ public:
 	virtual IClassDefinition * getDefinition( const ObjectHandle & object ) const override;
 
 };
-
+} // end namespace wgt
 #endif
-

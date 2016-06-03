@@ -1,6 +1,7 @@
-
 #include "node_editor.hpp"
 
+namespace wgt
+{
 void NodeEditor::SetGraph(std::shared_ptr<IGraph> graph)
 {
     if (graph == nullptr)
@@ -21,7 +22,9 @@ std::shared_ptr<INode> NodeEditor::CreateNode(std::string nodeClass, float x, fl
 
 void NodeEditor::onCreateNode(int x, int y, std::string nodeClass)
 {
-    std::shared_ptr<INode> node = graphModel.back()->CreateNode(nodeClass, x, y);
+	// TODO: Unify the x, y type between CreateNode() and onCreateNode()
+    std::shared_ptr<INode> node = graphModel.back()->CreateNode(
+		nodeClass, static_cast<float>(x), static_cast<float>(y));
 }
 
 void NodeEditor::onDeleteNode(size_t nodeID)
@@ -64,3 +67,4 @@ bool NodeEditor::Disconnect(size_t nodeIdFrom, size_t slotIdFrom,
     NGT_ERROR_MSG("METHOD IS NOT IMPLEMENTED\n");
 	return false;
 }
+} // end namespace wgt

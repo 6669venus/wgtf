@@ -10,6 +10,8 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_window.hpp"
 
+namespace wgt
+{
 //==============================================================================
 MainWindow::MainWindow()
 	: app_( nullptr )
@@ -99,3 +101,4 @@ void MainWindow::onStartUp()
 {
 	mainWindow_->show( true );
 }
+} // end namespace wgt

@@ -6,6 +6,8 @@
 #include "core_qt_common/models/wg_list_model.hpp"
 #include "core_qt_common/qt_image_provider_old.hpp"
 
+namespace wgt
+{
 ThumbnailExtension::ThumbnailExtension()
 {
 	qtFramework_ = Context::queryInterface< IQtFramework >();
@@ -59,3 +61,4 @@ bool ThumbnailExtension::setData( const QModelIndex &index, const QVariant &valu
 {
 	return false;
 }
+} // end namespace wgt

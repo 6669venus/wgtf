@@ -9,6 +9,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class GraphEditor : public QObject
 {
     Q_OBJECT
@@ -27,5 +29,5 @@ private:
 
     void CreateConnection(size_t outputUID, size_t inputUID);
 };
-
+} // end namespace wgt
 #endif // __GRAPHEDITOR_GRAPHEDITOR_H__

@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #endif // _WIN32
 
+namespace wgt
+{
 namespace
 {
 	
@@ -48,22 +50,10 @@ bool getPlugins (std::vector< std::wstring >& plugins, const wchar_t* configFile
 		return ConfigPluginLoader::getPlugins( plugins, path );
 	}
 }
-
 }
 
-#ifdef _WIN32
-int STDMETHODCALLTYPE WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-			 LPSTR lpCmdLine, int nShowCmd )
+int Main(int argc, char **argv)
 {
-	int argc = __argc;
-	char** argv = __argv;
-#endif // _WIN32
-	
-#ifdef __APPLE__
-int main(int argc, char **argv, char **envp, char **apple)
-{
-#endif // __APPLE__
-
 	CommandLineParser * clp = new CommandLineParser( argc, argv );
 #ifdef _WIN32
 	if (clp->getFlag( "-unattended" ))
@@ -113,4 +103,21 @@ int main(int argc, char **argv, char **envp, char **apple)
 		}
 	}
 	return result;
+}
+} // end namespace wgt
+
+#ifdef _WIN32
+int STDMETHODCALLTYPE WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+			 LPSTR lpCmdLine, int nShowCmd )
+{
+	int argc = __argc;
+	char** argv = __argv;
+#endif // _WIN32
+	
+#ifdef __APPLE__
+int main(int argc, char **argv, char **envp, char **apple)
+{
+#endif // __APPLE__
+
+	return wgt::Main( argc, argv );
 }

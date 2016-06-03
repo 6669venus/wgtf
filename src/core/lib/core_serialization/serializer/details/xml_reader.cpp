@@ -11,6 +11,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 XMLReader::StackItem::StackItem( Variant value ):
 	value( std::move( value ) ),
 	object(),
@@ -172,7 +174,7 @@ void XMLReader::elementStart( const char* elementName, const char* const* attrib
 			stack_.emplace_back( property->get( current.object, definitionManager_ ) );
 			stack_.back().property = property;
 		}
-		else if( current.collection )
+		else if( current.collection && current.collection->isValid() )
 		{
 			if( elementName != format_.collectionItemElement )
 			{
@@ -408,5 +410,4 @@ void XMLReader::characterData( const char* data, size_t length )
 		current.characterData.append( data, data + length );
 	}
 }
-
-
+} // end namespace wgt

@@ -4,16 +4,14 @@
 #include <memory>
 #include "core_dependency_system/depends.hpp"
 
-class IComponentContext;
-class IView;
-
 namespace wgt
 {
-	class IViewCreator;
-};
+class IComponentContext;
+class IView;
+class IViewCreator;
 
 class CustomModelInterfaceTest
-	: public Depends< wgt::IViewCreator >
+	: public Depends< IViewCreator >
 {
 public:
 	CustomModelInterfaceTest(IComponentContext & );
@@ -25,5 +23,5 @@ public:
 private:
 	std::unique_ptr< IView > testView_;
 };
-
+} // end namespace wgt
 #endif//CUSTOM_MODEL_INTERFACE_TEST__HPP

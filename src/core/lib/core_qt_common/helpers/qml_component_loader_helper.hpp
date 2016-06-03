@@ -9,6 +9,8 @@
 #include <QQmlComponent>
 
 
+namespace wgt
+{
 //==============================================================================
 struct QmlComponentLoaderHelper
 {
@@ -31,5 +33,5 @@ public:
 	void load( bool async );
 	QmlComponentLoaderHelperData * data_;
 };
-
+} // end namespace wgt
 #endif // QML_COMPONENT_LOADER_HELPER_H

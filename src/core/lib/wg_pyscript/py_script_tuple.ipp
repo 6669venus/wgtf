@@ -71,5 +71,3 @@ ScriptTuple ScriptTuple::getSlice( Py_ssize_t begin, Py_ssize_t end,
 	errorHandler.checkPtrError( pResult );
 	return ScriptTuple( pResult, ScriptTuple::FROM_NEW_REFERENCE );
 }
-
-

@@ -11,6 +11,8 @@
 
 #include <stdint.h>
 
+namespace wgt
+{
 ConnectionItem::ConnectionItem(QQuickItem* parent)
     : QQuickItem(parent)
 	, outputSlot( nullptr )
@@ -236,3 +238,4 @@ QSGNode* InteractiveConnectionItem::updatePaintNode(QSGNode* oldNode, UpdatePain
 
     return node;
 }
+} // end namespace wgt

@@ -8,6 +8,8 @@
 class QString;
 class QVariant;
 
+namespace wgt
+{
 /**
  *	WGStringFilter
  *	A basic string-based filter wrapper around a StringFilter implementation.
@@ -43,5 +45,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // WG_STRING_FILTER_HPP

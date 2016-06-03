@@ -4,6 +4,8 @@
 #include "core_data_model/i_item_role.hpp"
 #include "helpers/qt_helpers.hpp"
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( decoration )
 
@@ -236,7 +238,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		return QVariant();
 	}
 	
-	size_t roleId;
+	size_t roleId = role;
 	switch (role)
 	{
 	case Qt::DisplayRole:
@@ -248,7 +250,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		break;
 
 	default:
-		roleId = role;
+		decodeRole( role, roleId );
 		break;
 	}
 
@@ -418,3 +420,4 @@ bool QtTableModel::removeColumn( int column )
 {
 	return QtAbstractItemModel::removeColumn( column, nullptr ); 
 }
+} // end namespace wgt

@@ -136,6 +136,22 @@ Item
             }
         }
 
+
+        WGAction
+        {
+            active: true
+            actionId: qsTr("NodeEditor.node|.Delete Node")
+            onTriggered: {
+                deleteNode(nodeID);
+            }
+        }
+
+        ContextMenu
+        {
+            id: contextArea
+            menuPath: "NodeEditor.node"
+        }
+
         ColumnLayout
         {
             id : mainLayout
@@ -189,6 +205,8 @@ Item
                             z : nodeContainer.z + 10
                             slotObj: Value
                             isInput: Value.isInput
+                            connected: Value.isConnected
+                            parentNode: nodeContainer
                         }
                     }
                 }
@@ -222,15 +240,13 @@ Item
                             z : nodeContainer.z + 10
                             slotObj: Value
                             isInput: Value.isInput
+                            connected: Value.isConnected
+                            parentNode: nodeContainer
                             Layout.alignment : Qt.AlignTop | Qt.AlignRight
                         }
                     }
                 }
             }
-        }
-
-        NodeContextMenu
-        {
         }
     }
 }

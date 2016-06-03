@@ -9,6 +9,8 @@
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/reflected_method.hpp"
 
+namespace wgt
+{
 struct ReflectedMethodCommandParameters::Implementation
 {
 	Implementation(
@@ -253,3 +255,4 @@ bool InvokeReflectedMethodCommand::canUndo( const ObjectHandle& arguments ) cons
 	}
 	return method->getUndoMethod() != nullptr;
 }
+} // end namespace wgt

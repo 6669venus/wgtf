@@ -16,6 +16,8 @@
 #include <cwchar>
 
 
+namespace wgt
+{
 static bool ALLOCATOR_DEBUG_OUTPUT = false;
 static bool ALLOCATOR_STACK_TRACES = false;
 
@@ -628,3 +630,4 @@ void enableStackTraces( bool enable )
 }
 
 }
+} // end namespace wgt

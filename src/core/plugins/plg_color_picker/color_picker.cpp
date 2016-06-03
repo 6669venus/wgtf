@@ -4,6 +4,8 @@
 #include "color_picker_context.hpp"
 #include "core_reflection/property_accessor.hpp"
 
+namespace wgt
+{
 ColorPicker::ColorPicker( IComponentContext & context )
 	: Depends( context )
 {
@@ -14,7 +16,7 @@ ColorPicker::ColorPicker( IComponentContext & context )
 
 bool ColorPicker::addPanel()
 {
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	if (viewCreator)
 	{
 		viewCreator->createView(
@@ -37,5 +39,4 @@ void ColorPicker::removePanel()
 		uiApplication->removeView( *colorView_ );
 	}
 }
-
-
+} // end namespace wgt

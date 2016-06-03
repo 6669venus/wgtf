@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class MetaGroupObj;
 
 /**
@@ -51,5 +53,5 @@ private:
 	typedef std::function< bool( ReflectedTreeItemNew & ) > ReflectedItemCallback;
 	void enumerateChildren( const ReflectedItemCallback & callback ) const;
 };
-
+} // end namespace wgt
 #endif //_REFLECTED_GROUP_ITEM_NEW_HPP

@@ -3,6 +3,8 @@
 
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 
+namespace wgt
+{
 class ICommandManager;
 
 class ReflectionController
@@ -25,5 +27,5 @@ private:
 	class Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
+} // end namespace wgt
 #endif //COMMAND_SYSTEM_REFLECTION_PROPERTY_SETTER_HPP

@@ -5,6 +5,8 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 class DummyDependsType {};
 
 //==============================================================================
@@ -219,5 +221,5 @@ private:
 
 	IComponentContext & context_;
 };
-
+} // end namespace wgt
 #endif //DEPENDS_HPP

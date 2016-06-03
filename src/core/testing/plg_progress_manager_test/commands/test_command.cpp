@@ -6,6 +6,8 @@
 #include "core_common/ngt_windows.hpp"
 
 
+namespace wgt
+{
 //==============================================================================
 const char * TestCommand1::getId() const
 {
@@ -62,4 +64,4 @@ ObjectHandle TestCommand2::execute( const ObjectHandle & arguments ) const
 	NGT_TRACE_MSG( "TestCommand2::execute - end \n" );
 	return nullptr;
 }
-
+} // end namespace wgt

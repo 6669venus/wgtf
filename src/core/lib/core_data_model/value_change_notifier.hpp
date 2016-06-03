@@ -6,6 +6,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 /**
  *	Wraps a type T, and sends notification events when the value is changed.
  */
@@ -78,6 +80,5 @@ void ValueChangeNotifier< T >::value( const T& data )
 	value_ = data;
 	this->signalPostDataChanged();
 }
-
-
+} // end namespace wgt
 #endif // VALUE_CHANGE_NOTIFIER_HPP

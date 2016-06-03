@@ -1,6 +1,8 @@
 #include "test_tree_item.hpp"
 #include "core_data_model/i_item_role.hpp"
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( value )
 
@@ -156,3 +158,4 @@ bool TestTreeItem::setData( int column, size_t roleId, const Variant& data )
 {
 	return false;
 }
+} // end namespace wgt

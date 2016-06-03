@@ -8,6 +8,8 @@
 #include <QtCore>
 
 
+namespace wgt
+{
 /**
  *	Qt interface for dataAboutToBeChanged() and dataChanged() events.
  */
@@ -57,7 +59,5 @@ private:
 	SourceType* source_;
 	ConnectionHolder connections_;
 };
-
-
+} // end namespace wgt
 #endif // DATA_CHANGE_NOTIFIER_HPP
-

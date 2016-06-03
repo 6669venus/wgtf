@@ -17,6 +17,8 @@ Details: Search for NGT Reflection System on the Wargaming Confluence
 #include <QObject>
 #include <QVariant>
 
+namespace wgt
+{
 class IClassDefinition;
 class IDefinitionManager;
 class IUIApplication;
@@ -75,5 +77,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif//QT_SCRIPTING_ENGINE_HPP

@@ -6,6 +6,8 @@
 #include "core_logging/logging.hpp"
 #include <string>
 
+namespace wgt
+{
 /**
  *  This class acts as a base class for any object that needs to be able to pass
  *  up a failure message into an outer context.  This is necessitated by the
@@ -171,7 +173,5 @@ protected:
 			OBJ.failureMsg() );												\
 	}																		\
 
+} // end namespace wgt
 #endif // __MULTIPROC_TEST_CASE_HPP__
-
-
-// multiproc_test_case.hpp

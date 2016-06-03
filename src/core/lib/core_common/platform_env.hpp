@@ -7,6 +7,8 @@
 // TODO: Environment objects store and manage whole environment. Can be initialized
 // from current process environment, can replace current process environment.
 
+namespace wgt
+{
 /**
 Access process environment variables.
 
@@ -54,6 +56,5 @@ public:
 	static bool unsetValue( const char* name );
 
 };
-
-
+} // end namespace wgt
 #endif

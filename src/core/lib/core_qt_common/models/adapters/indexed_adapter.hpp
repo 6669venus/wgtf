@@ -4,6 +4,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 template< class Adapter >
 struct IndexedAdapter
 {
@@ -134,7 +136,5 @@ void isolateRedundantIndex(
 	// recursively check children for found indices
 	isolateRedundantIndices( redundantIndex, indices, redundantAdapters );
 }
-
-
+} // end namespace wgt
 #endif // INDEXED_ADAPTER_HPP
-

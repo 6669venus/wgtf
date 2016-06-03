@@ -5,6 +5,8 @@
 #include <cstring>
 
 
+namespace wgt
+{
 void BinaryStream::serializeBuffer( const void* buffer, std::streamsize size )
 {
 	if (size < 0)
@@ -89,5 +91,4 @@ BinaryStream& operator>>( BinaryStream& stream, std::string& value )
 	}
 	return stream;
 }
-
-
+} // end namespace wgt

@@ -27,6 +27,8 @@
 
 
 
+namespace wgt
+{
 	IDefinitionManager& definitionManager();
 
 	template< typename T >
@@ -35,7 +37,7 @@
 		static const IClassDefinition* s_classDefinitionPtr = nullptr;
 		if( !s_classDefinitionPtr )
 		{
-			s_classDefinitionPtr = definitionManager().registerDefinition( new TypeClassDefinition< T > );
+			s_classDefinitionPtr = definitionManager().registerDefinition< TypeClassDefinition< T > >();
 		}
 
 		return s_classDefinitionPtr;
@@ -313,5 +315,4 @@ TEST( XMLSerializer_reflected )
 	tmpTestObj->xs_obj_[ 1 ][ "obj1" ] = createObject<SimpleTestObject>( "value 1.1 modified" );
 	CHECK( *dstTestObj != *tmpTestObj );
 }
-
-
+} // end namespace wgt

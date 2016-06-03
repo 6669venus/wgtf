@@ -8,6 +8,8 @@
 #include "i_item_role.hpp"
 #include <sstream>
 
+namespace wgt
+{
 static const char * sDefaultActiveFiltersPropertyKey = "activefilters";
 static const char * sTempSavedFilterPrefix = "Filter";
 
@@ -316,3 +318,4 @@ void SimpleActiveFiltersModel::clearSavedFilters()
 	// TODO - can't even do this as GenericObject has no way to clear its properties
 	// JIRA: NGT-861
 }
+} // end namespace wgt

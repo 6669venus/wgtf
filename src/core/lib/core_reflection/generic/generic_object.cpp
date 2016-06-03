@@ -7,14 +7,15 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 GenericObjectPtr GenericObject::create(
 	IDefinitionManager & definitionManager, 
 	const RefObjectId & id, 
 	const char* classDefinitionName )
 {
-	auto defDetails = 
-		definitionManager.createGenericDefinition( classDefinitionName );
-	auto definition = definitionManager.registerDefinition( defDetails );
+	auto defDetails = definitionManager.createGenericDefinition( classDefinitionName );
+	auto definition = definitionManager.registerDefinition( std::move(defDetails) );
 	return safeCast< GenericObject >( definition->createManagedObject( id ) );
 }
 
@@ -33,3 +34,4 @@ ObjectHandle GenericObject::getDerivedType()
 	// ObjectHandleT will make a copy
 	return ObjectHandleT< GenericObject >( this );
 }
+} // end namespace wgt

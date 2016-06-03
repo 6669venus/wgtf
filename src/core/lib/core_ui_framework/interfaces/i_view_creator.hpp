@@ -4,11 +4,10 @@
 #include <memory>
 #include <functional>
 
-class IView;
-class ObjectHandle;
-
 namespace wgt
 {
+class IView;
+class ObjectHandle;
 
 class IViewCreator
 {
@@ -25,7 +24,5 @@ public:
 		std::function< void(std::unique_ptr< IView > &) >,
 		const char * uniqueName = nullptr ) = 0;
 };
-
-}
-
+} // end namespace wgt
 #endif //I_VIEW_CREATOR_HPP

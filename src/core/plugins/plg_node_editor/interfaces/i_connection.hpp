@@ -1,4 +1,3 @@
-
 #ifndef __I_CONNECTION_H__
 #define __I_CONNECTION_H__
 
@@ -7,6 +6,8 @@
 
 #include "i_slot.hpp"
 
+namespace wgt
+{
 /*!
 * \class IConnection
 *
@@ -49,5 +50,5 @@ public:
     */
     virtual bool UnBind() = 0;
 };
-
+} // end namespace wgt
 #endif //__I_CONNECTION_H__

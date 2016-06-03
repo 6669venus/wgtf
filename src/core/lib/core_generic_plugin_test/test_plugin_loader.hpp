@@ -8,6 +8,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 /**
  *	Plugin loader to be used by unit tests.
  */
@@ -27,6 +29,5 @@ public:
 	GenericPluginManager pluginManager_;
 	PluginList plugins_;
 };
-
+} // end namespace wgt
 #endif // TEST_PLUGIN_LOADER_HPP
-

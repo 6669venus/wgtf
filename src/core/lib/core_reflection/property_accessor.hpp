@@ -6,6 +6,8 @@
 #include "i_definition_manager.hpp"
 #include "core_variant/collection.hpp"
 
+namespace wgt
+{
 class TypeId;
 class ObjectHandle;
 class IBaseProperty;
@@ -77,5 +79,5 @@ private:
 	void setBaseProperty( const IBasePropertyPtr & property );
 	void setParent( const PropertyAccessor& parent );
 };
-
+} // end namespace wgt
 #endif // PROPERTY_ACCESSOR_HPP

@@ -19,9 +19,11 @@
 
 #include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
 class GraphEditorPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	GraphEditorPlugin(IComponentContext& context)
@@ -42,10 +44,10 @@ public:
 
 		Variant::setMetaTypeManager(context.queryInterface<IMetaTypeManager>());
 
-		RegisterGrapEditorTypes(*defMng);
+        RegisterGraphEditorTypes(*defMng);
 		editor = defMng->create<GraphEditor>(false);
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView("plg_graph_editor/GraphEditorView.qml", std::move(editor),
@@ -79,3 +81,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(GraphEditorPlugin)
+} // end namespace wgt

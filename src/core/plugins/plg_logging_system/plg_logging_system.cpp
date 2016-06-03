@@ -4,12 +4,14 @@
 #include <vector>
 #include <memory>
 
+
+namespace wgt
+{
 /**
  * LoggingSystemPlugin
  *
  * A plugin used to expose the core logging system for NGT.
  */
-
 class LoggingSystemPlugin
 	: public PluginMain
 {
@@ -56,3 +58,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( LoggingSystemPlugin )
+} // end namespace wgt

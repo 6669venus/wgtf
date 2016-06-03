@@ -3,6 +3,8 @@
 
 #include "core_command_system/command.hpp"
 
+namespace wgt
+{
 class ReflectedCollectionEraseCommand;
 
 class ReflectedCollectionEraseCommandParameters
@@ -38,5 +40,5 @@ public:
 private:
 	IDefinitionManager & definitionManager_;
 };
-
+} // end namespace wgt
 #endif // REFLECTED_COLLECTION_ERASE_COMMAND_HPP

@@ -7,6 +7,8 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 
+namespace wgt
+{
 class ReflectedTreeModelNew;
 
 class IBaseProperty;
@@ -92,5 +94,5 @@ private:
 
 	const ReflectedTreeModelNew * model_;
 };
-
+} // end namespace wgt
 #endif //_REFLECTED_TREE_ITEM_NEW_HPP

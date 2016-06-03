@@ -4,5 +4,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE(CustomGraph, MetaNone())
 END_EXPOSE()
+} // end namespace wgt

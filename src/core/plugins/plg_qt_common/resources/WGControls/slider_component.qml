@@ -8,25 +8,25 @@ import WGControls 2.0
 
 WGSliderControl {
     id: reflectedSlider
-    objectName:  itemData != null ? itemData.IndexPath : "slider_component"
+    objectName:  itemData != null ? itemData.indexPath : "slider_component"
     anchors.fill: parent
 
-    value: itemData.Value
+    value: itemData.value
 
-    //When metadata MetaMinMax has not been defined the itemData.MinValue and
-    //MaxValue get set to -2147483648, and 2147483647 respectively.
+    //When metadata MetaMinMax has not been defined the itemData.minValue and
+    //maxValue get set to -2147483648, and 2147483647 respectively.
     //This might be due to an int or double validator.
 
-    property bool maxSliderRangeExceeded: ((itemData.MaxValue - itemData.MinValue + 1) > 2147483647 )
+    property bool maxSliderRangeExceeded: ((itemData.maxValue - itemData.minValue + 1) > 2147483647 )
 
     // Slider will only allow 2147483647 values of range.
     // If your slider is using these values then you need to set metadata MetaMinMax values in your .mpp files
-    minimumValue: maxSliderRangeExceeded ? itemData.Value - Math.floor(maxSliderRange/2) : itemData.MinValue
-    maximumValue: maxSliderRangeExceeded ? itemData.Value + Math.floor(maxSliderRange/2) : itemData.MaxValue
+    minimumValue: maxSliderRangeExceeded ? itemData.value - Math.floor(maxSliderRange/2) : itemData.minValue
+    maximumValue: maxSliderRangeExceeded ? itemData.value + Math.floor(maxSliderRange/2) : itemData.maxValue
 
     Binding {
         target: itemData
-        property: "Value"
+        property: "value"
         value: reflectedSlider.value
     }
 }

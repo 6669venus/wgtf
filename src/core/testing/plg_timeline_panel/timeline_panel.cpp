@@ -2,6 +2,8 @@
 #include "core_reflection/object_handle.hpp"
  
  
+namespace wgt
+{
 TimelinePanel::TimelinePanel( IComponentContext & context )
     : Depends( context )
 {
@@ -10,7 +12,7 @@ TimelinePanel::TimelinePanel( IComponentContext & context )
  
 bool TimelinePanel::addPanel()
 {
-	auto viewCreator = this->get< wgt::IViewCreator >();
+	auto viewCreator = this->get< IViewCreator >();
 	if (viewCreator == nullptr)
 	{
 		return false;
@@ -31,3 +33,4 @@ void TimelinePanel::removePanel()
     }
     uiApplication->removeView( *timelineView_ );
 }
+} // end namespace wgt

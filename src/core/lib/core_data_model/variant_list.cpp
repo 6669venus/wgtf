@@ -6,6 +6,8 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 
 
+namespace wgt
+{
 class VariantListItem : public IItem
 {
 public:
@@ -510,3 +512,4 @@ const Variant & VariantList::operator[](size_t index) const
 
 	return value;
 }
+} // end namespace wgt

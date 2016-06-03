@@ -3,6 +3,8 @@
 #include "../interfaces_test/test_interface.hpp"
 #include "core_common/ngt_windows.hpp"
 
+namespace wgt
+{
 class TestClassB
 	: public Implements< TestInterface > //Always implement latest version
 {
@@ -47,4 +49,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( TestPlugin2 )
-
+} // end namespace wgt

@@ -5,6 +5,8 @@
 #include "core_serialization/serializer/xml_serializer.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 class Variant;
 class Collection;
 class ObjectHandle;
@@ -50,6 +52,5 @@ private:
 	}
 
 };
-
-
+} // end namespace wgt
 #endif//CUSTOM_XML_WRITER_HPP_INCLUDED

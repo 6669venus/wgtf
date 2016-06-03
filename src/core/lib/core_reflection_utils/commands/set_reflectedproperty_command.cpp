@@ -10,6 +10,8 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
+namespace wgt
+{
 //==============================================================================
 const char * ReflectedPropertyCommandArgument::s_ContextId = "PropertyContextId";
 const char * ReflectedPropertyCommandArgument::s_PropertyPath = "PropertyPath";
@@ -190,3 +192,4 @@ CommandThreadAffinity SetReflectedPropertyCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
 }
+} // end namespace wgt

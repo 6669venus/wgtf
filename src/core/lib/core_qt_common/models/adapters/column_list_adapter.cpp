@@ -3,6 +3,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 ColumnListAdapter::ColumnListAdapter( const QModelIndex & row )
 	: model_( row.model() )
 	, row_( row )
@@ -48,3 +50,4 @@ void ColumnListAdapter::onParentDataChanged(const QModelIndex &topLeft,
 			roles );
 	}
 }
+} // end namespace wgt

@@ -1,6 +1,7 @@
-
 #include "StringSlot.h"
 
+namespace wgt
+{
 const std::string STRING_SLOT_LABEL = "string";
 const std::string STRING_SLOT_ICON = "images/blueSlot.png";
 const std::string STRING_SLOT_COLOR = "darkCyan";
@@ -96,3 +97,4 @@ bool StringSlot::Disconnect(size_t connectionID, ObjectHandleT<ISlot> slot)
 
     return result;
 }
+} // end namespace wgt

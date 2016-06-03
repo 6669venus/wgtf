@@ -5,6 +5,8 @@
 
 #include <string>
 
+namespace wgt
+{
 namespace
 {
 	class FileItem;
@@ -178,4 +180,4 @@ int FileSystemModel::columnCount() const
 {
 	return 1;
 }
-
+} // end namespace wgt

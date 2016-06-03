@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.1
 
 
 ScrollView {
-    objectName:  itemData != null ? itemData.IndexPath : "TreeView"
+    objectName:  itemData != null ? itemData.indexPath : "TreeView"
     property variant model_ : source
 
     property int columnCount_ : 1
@@ -21,13 +21,13 @@ ScrollView {
 
     property Component columnDelegate_ : RowLayout {
         Image{
-            source: itemData_.Thumbnail
+            source: itemData_.thumbnail
         }
         Text{
             color : colorText_
-            clip : itemData_.Component == null ? false : true
+            clip : itemData_.component == null ? false : true
             text : itemData_ != null ? itemData_.display : ""
-            font.bold : itemData_.HasChildren
+            font.bold : itemData_.hasChildren
             verticalAlignment: Text.AlignVCenter
         }
         Text{}

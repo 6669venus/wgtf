@@ -3,6 +3,8 @@
 
 #include "core_common/signal.hpp"
 
+namespace wgt
+{
 class IItem;
 class Variant;
 
@@ -58,5 +60,5 @@ public:
 	SignalCount signalPostItemsRemoved;
 	SignalVoid signalDestructing;
 };
-
+} // end namespace wgt
 #endif // I_LIST_MODEL_HPP

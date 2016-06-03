@@ -13,6 +13,8 @@
 
 #include "i_asset_browser_view_model.hpp"
 
+namespace wgt
+{
 class IAssetBrowserModel;
 class IAssetBrowserEventModel;
 class IAssetBrowserContextMenuModel;
@@ -51,5 +53,5 @@ private:
 	struct AssetBrowserViewModelImplementation;
 	std::unique_ptr<AssetBrowserViewModelImplementation> impl_;
 };
-
+} // end namespace wgt
 #endif // ASSET_BROWSER_VIEW_MODEL_H_

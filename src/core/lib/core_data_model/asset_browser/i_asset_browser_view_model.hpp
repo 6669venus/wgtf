@@ -15,6 +15,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 class IAssetObjectItem;
 class IBreadcrumbsModel;
 class IListModel;
@@ -77,5 +79,5 @@ public:
 private:
 	int tempInt_;
 };
-
+} // end namespace wgt
 #endif // I_ASSET_BROWSER_VIEW_MODEL_H_

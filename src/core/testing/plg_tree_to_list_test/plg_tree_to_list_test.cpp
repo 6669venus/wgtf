@@ -11,14 +11,15 @@
 #include "core_ui_framework/i_window.hpp"
 #include "core_variant/variant.hpp"
 #include "test_tree_model.hpp"
-
 #include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
 //==============================================================================
 class TreeToListTest
 	: public PluginMain
-	, public Depends< wgt::IViewCreator >
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
@@ -47,7 +48,7 @@ public:
 		// Create the view and present it
 		auto model = std::unique_ptr< ITreeModel >( new TestTreeModel() );
 
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView(
@@ -78,4 +79,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TreeToListTest )
-
+} // end namespace wgt

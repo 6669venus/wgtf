@@ -4,6 +4,8 @@
 // TODO: move log_level to interface folder
 #include "../log_level.hpp"
 
+namespace wgt
+{
 class AlertManager;
 class ILogger;
 class LogMessage;
@@ -25,5 +27,5 @@ public:
 	virtual void shutdown() = 0;
 	virtual void process() = 0;
 };
-
+} // end namespace wgt
 #endif // I_LOGGING_SYSTEM_HPP

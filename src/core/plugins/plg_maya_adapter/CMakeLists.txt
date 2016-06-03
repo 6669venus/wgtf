@@ -29,6 +29,8 @@ SET( ALL_SRCS
 	${PLUGIN_QT_COMMON_DIR}/qt_preferences.hpp
 	${PLUGIN_QT_COMMON_DIR}/qt_copy_paste_manager.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_copy_paste_manager.hpp
+	${PLUGIN_QT_COMMON_DIR}/private/ui_view_creator.hpp
+	${PLUGIN_QT_COMMON_DIR}/private/ui_view_creator.cpp
 	${PLUGIN_QT_APP_DIR}/qt_application.cpp
 	${PLUGIN_QT_APP_DIR}/qt_application.hpp
     ${MAYA_APP_PLUGIN_DIR}/app/interfaces/i_application_adapter.hpp

@@ -14,9 +14,8 @@ GenericObjectPtr GenericObject::create(
 	const RefObjectId & id, 
 	const char* classDefinitionName )
 {
-	auto defDetails = 
-		definitionManager.createGenericDefinition( classDefinitionName );
-	auto definition = definitionManager.registerDefinition( defDetails );
+	auto defDetails = definitionManager.createGenericDefinition( classDefinitionName );
+	auto definition = definitionManager.registerDefinition( std::move(defDetails) );
 	return safeCast< GenericObject >( definition->createManagedObject( id ) );
 }
 

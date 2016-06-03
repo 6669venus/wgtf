@@ -5,10 +5,10 @@
 #include <string.h>
 #include <stdio.h>
 
-// BigWorld Modification - allow access to c string on both server and client,
+// Wargaming Modification - allow access to c string on both server and client,
 // avoiding deprecated methods on client.
 //
-// Note we don't want dependency on BigWorld bw_print type functions here.
+// Note we don't want dependency on Wargaming bw_print type functions here.
 // TODO: Remove to platform string header
 #if defined( _WIN32 )
 #define snprintf sprintf_s

@@ -120,7 +120,7 @@ Item {
         property var columnsList: columns;
 
         onPressed: {
-            if ((selectionExtension == null) || (typeof Selected == 'undefined'))
+            if ((selectionExtension == null) || (typeof selected == 'undefined'))
             {
                 return;
             }
@@ -131,14 +131,14 @@ Item {
 
                 if (mouse.modifiers & Qt.ControlModifier)
                 {
-                    Selected = !Selected;
+                    selected = !selected;
                 }
                 else if (mouse.modifiers & Qt.ShiftModifier)
                 {
                     if (multiSelect)
                     {
                         selectionExtension.prepareRangeSelect();
-                        Selected = true;
+                        selected = true;
                     }
                 }
                 else
@@ -148,7 +148,7 @@ Item {
                         selectionExtension.clearOnNextSelect();
                     }
 
-                    Selected = true;
+                    selected = true;
                 }
             }
         }
@@ -173,7 +173,7 @@ Item {
             color: hasActiveFocusDelegate ? palette.highlightShade : "grey"
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
-            visible: !itemMouseArea.pressed && typeof Selected != 'undefined' && Selected
+            visible: !itemMouseArea.pressed && typeof selected != 'undefined' && selected
         }
 
         Rectangle {
@@ -191,7 +191,7 @@ Item {
             // columns in the view.
             // @see WGListView.columnSequence
             model: WGSequenceList {
-                model: ColumnModel
+                model: columnModel
                 sequence: rowDelegate.columnSequence
             }
 

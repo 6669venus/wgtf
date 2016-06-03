@@ -1,4 +1,4 @@
-# BigWorld custom cppunit Makefile.
+# Wargaming custom cppunit Makefile.
 # We don't require all the autoconf setup, so just call our Makefile
 # in src/cppunit to get things going
 

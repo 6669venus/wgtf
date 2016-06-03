@@ -3,13 +3,13 @@ import QtQuick 2.3
 
 WGCheckBox{
     id: checkbox
-    objectName: itemData != null ? itemData.IndexPath : "boolean_component"
+    objectName: itemData != null ? itemData.indexPath : "boolean_component"
     anchors.left: parent.left
-    checked: itemData.Value
+    checked: itemData.value
 
     Binding {
         target: itemData
-        property: "Value"
+        property: "value"
         value: checkbox.checked
     }
 }

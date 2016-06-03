@@ -1,9 +1,9 @@
 ### Initialise compiler and linker flags ###
 
 IF( BW_PLATFORM_WINDOWS )
-	INCLUDE( BWCompiler_msvc )
+	INCLUDE( WGCompiler_msvc )
 ELSEIF( BW_PLATFORM_MAC )
-	INCLUDE( BWCompiler_clang )
+	INCLUDE( WGCompiler_clang )
 ELSE()
 	# TODO: Add compiler and linker support for other compilers/platforms here
 	# TODO: Split into per compiler files for the BW_* compiler and linker settings

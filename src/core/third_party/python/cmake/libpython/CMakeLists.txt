@@ -292,7 +292,7 @@ elseif(BUILD_STATIC)
 # BW Change end
 endif(BUILD_SHARED)
 
-# BigWorld: Disable warning 4819: non-ASCII characters due to dump docstring
+# Wargaming: Disable warning 4819: non-ASCII characters due to dump docstring
 SET_SOURCE_FILES_PROPERTIES( ${SRC_DIR}/Python/marshal.c
        PROPERTIES COMPILE_FLAGS "-wd4819" )
 

@@ -43,11 +43,11 @@ void NodeEditorPlugin::Initialise(IComponentContext& context)
     assert(uiFramework != nullptr);
 
     Variant::setMetaTypeManager(metaTypeManager);
-    definitionManager->registerDefinition(new TypeClassDefinition<INodeEditor>);
-    definitionManager->registerDefinition(new TypeClassDefinition<IGraph>);
-    definitionManager->registerDefinition(new TypeClassDefinition<INode>);
-    definitionManager->registerDefinition(new TypeClassDefinition<ISlot>);
-    definitionManager->registerDefinition(new TypeClassDefinition<IConnection>);
+    definitionManager->registerDefinition< TypeClassDefinition< INodeEditor > >();
+    definitionManager->registerDefinition< TypeClassDefinition< IGraph > >();
+    definitionManager->registerDefinition< TypeClassDefinition< INode > >();
+    definitionManager->registerDefinition< TypeClassDefinition< ISlot > >();
+    definitionManager->registerDefinition< TypeClassDefinition< IConnection > >();
     qmlRegisterType<ConnectionCurve>("CustomConnection", 1, 0, "ConnectionCurve");
 
     auto nodeEditor = std::unique_ptr<INodeEditor>(new NodeEditor());

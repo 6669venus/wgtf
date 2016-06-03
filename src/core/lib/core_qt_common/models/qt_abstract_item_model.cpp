@@ -130,10 +130,9 @@ struct QtAbstractItemModel::Impl
 QtAbstractItemModel::QtAbstractItemModel()
 	: impl_( new Impl )
 {
-	impl_->metaObject_.reset( new ItemData::MetaObject( *this ) );
 	QObject::connect( this, &QAbstractItemModel::modelReset, [&]() 
 	{ 
-		impl_->metaObject_.reset( new ItemData::MetaObject( *this ) ); 
+		impl_->metaObject_.reset(); 
 	});
 }
 
@@ -149,6 +148,10 @@ QModelIndex QtAbstractItemModel::itemToIndex( QObject * item ) const
 
 QObject * QtAbstractItemModel::indexToItem( const QModelIndex &index ) const
 {
+	if (impl_->metaObject_ == nullptr)
+	{
+		impl_->metaObject_.reset( new ItemData::MetaObject( const_cast< QtAbstractItemModel & >( *this ) ) );
+	}
 	return index.isValid() ? new ItemData( index, impl_->metaObject_ ) : nullptr;
 }
 

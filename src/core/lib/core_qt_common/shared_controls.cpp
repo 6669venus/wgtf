@@ -123,15 +123,13 @@ namespace wgt
 /*static */void SharedControls::initDefs(
 	IDefinitionManager & definitionManager )
 {
-	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserViewModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserEventModel >() );
-
-	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< ActiveFilterTerm >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< SavedActiveFilter >() );
-
-	definitionManager.registerDefinition( new TypeClassDefinition< IBreadcrumbsModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< BaseBreadcrumbItem >() );
+	definitionManager.registerDefinition<TypeClassDefinition< IAssetBrowserModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IAssetBrowserViewModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IAssetBrowserEventModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IActiveFiltersModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< ActiveFilterTerm >>();
+	definitionManager.registerDefinition<TypeClassDefinition< SavedActiveFilter >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IBreadcrumbsModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< BaseBreadcrumbItem >>();
 }
 } // end namespace wgt

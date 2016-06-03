@@ -18,7 +18,7 @@
 # module, but with modifications to recognize OS X frameworks and
 # additional Unix paths (FreeBSD, etc).
 
-# Modified by PaulH for BigWorld to deal with the distributed SDL for
+# Modified by PaulH for Wargaming to deal with the distributed SDL for
 # Visual Studio, which includes both 32-bit and 64-bit libs in lib/
 # Original version came from CMake 2.8.11 Win32 installation
 # See http://www.cmake.org/Bug/view.php?id=14029
@@ -53,7 +53,7 @@ if(NOT SDL_IMAGE_LIBRARY AND SDLIMAGE_LIBRARY)
 initialized from old variable name")
 endif()
 
-# BigWorld: Fix for not looking in arch specific dirs
+# Wargaming: Fix for not looking in arch specific dirs
 if(CMAKE_GENERATOR MATCHES Win64)
     set(MSVC_DEVEL_PATHSUFFIX lib/x64)
 else()
@@ -87,7 +87,7 @@ endif()
 set(SDL_IMAGE_LIBRARIES ${SDL_IMAGE_LIBRARY})
 set(SDL_IMAGE_INCLUDE_DIRS ${SDL_IMAGE_INCLUDE_DIR})
 
-# BigWorld: Find as module instead of file
+# Wargaming: Find as module instead of file
 include(FindPackageHandleStandardArgs)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(SDL_image

@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( generic_app )
 
 INCLUDE( WGToolsCoreProject )
-INCLUDE( BWProjectUserFile )
+INCLUDE( WGProjectUserFile )
 
 SET( APP_CODE_SRCS
 	app/main.cpp

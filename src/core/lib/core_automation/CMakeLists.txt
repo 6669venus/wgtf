@@ -25,5 +25,5 @@ ADD_CUSTOM_TARGET( core_automation SOURCES
 	${BLOB_SRCS}
 )
  
-BW_PROJECT_CATEGORY( core_automation "BigWorld Libs" )
+BW_PROJECT_CATEGORY( core_automation "Wargaming Libs" )
 

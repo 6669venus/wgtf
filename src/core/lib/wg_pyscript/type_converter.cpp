@@ -14,7 +14,7 @@ namespace PyScript
 {
 
 
-/// @see //bw/bigworld/branches/release/2/current/programming/bigworld/lib/pyscript/script.cpp
+/// @see //lib/pyscript/script.cpp
 namespace Script
 {
 

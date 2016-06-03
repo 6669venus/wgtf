@@ -50,7 +50,7 @@ ColumnLayout {
             delegate: WGCommandInstance {
                 id: batchChild
 
-                property variant itemData: Value
+                property variant itemData: value
 
                 // -- Begin Interface
                 displayObject: itemData

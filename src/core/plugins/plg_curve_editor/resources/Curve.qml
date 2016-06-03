@@ -138,7 +138,7 @@ Canvas {
         model: pointModel
         delegate: Point{
             objectName: index
-            point: Value;
+            point: value;
             parentCurve: curve;
             baseColor: curve.color;
             enabled: curve.enabled;

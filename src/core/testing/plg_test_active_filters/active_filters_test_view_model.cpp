@@ -1,5 +1,5 @@
 #include "active_filters_test_view_model.hpp"
-#include "active_filters_test_view_model.mpp"
+#include "metadata/active_filters_test_view_model.mpp"
 #include "core_data_model/simple_active_filters_model.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_data_model/i_item_role.hpp"

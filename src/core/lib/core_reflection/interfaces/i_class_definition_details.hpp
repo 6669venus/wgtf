@@ -99,5 +99,8 @@ public:
 
 	virtual IClassDefinitionModifier * getDefinitionModifier() const = 0;
 };
+
+typedef std::unique_ptr<IClassDefinitionDetails> IClassDefintionDetailsPtr;
+
 } // end namespace wgt
 #endif // I_CLASS_DEFINITION_DETAILS_HPP

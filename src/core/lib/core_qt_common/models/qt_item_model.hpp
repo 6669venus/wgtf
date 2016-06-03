@@ -3,6 +3,7 @@
 
 #include "qt_abstract_item_model.hpp"
 #include <memory>
+#include "role_provider.hpp"
 
 namespace wgt
 {
@@ -15,7 +16,7 @@ class AbstractTableModel;
 /**
  *	Adapter layer to allow any AbstractItemModel to be used by Qt and QML views.
  */
-class QtItemModel : public QtAbstractItemModel
+class QtItemModel : public QtAbstractItemModel, public RoleProvider
 {
 	Q_OBJECT
 

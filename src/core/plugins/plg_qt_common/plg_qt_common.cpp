@@ -69,7 +69,6 @@ public:
 	QtPlugin( IComponentContext & contextManager )
 		: qtCopyPasteManager_( new QtCopyPasteManager() )
 	{
-		qtCopyPasteManager_ = new QtCopyPasteManager();
 		contextManager.registerInterface(qtCopyPasteManager_);
 		contextManager.registerInterface(new UIViewCreator(contextManager));
 	}

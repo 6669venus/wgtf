@@ -30,16 +30,16 @@
 #include "models/wg_tree_list_adapter.hpp"
 #include "helpers/selection_helper.hpp"
 #include "core_data_model/asset_browser/i_asset_browser_model.hpp"
-#include "core_data_model/asset_browser/i_asset_browser_model.mpp"
 #include "core_data_model/asset_browser/i_asset_browser_view_model.hpp"
-#include "core_data_model/asset_browser/i_asset_browser_view_model.mpp"
 #include "core_data_model/asset_browser/i_asset_browser_event_model.hpp"
-#include "core_data_model/asset_browser/i_asset_browser_event_model.mpp"
 #include "core_data_model/asset_browser/asset_browser_breadcrumbs_model.hpp"
+#include "core_data_model/asset_browser/metadata/i_asset_browser_model.mpp"
+#include "core_data_model/asset_browser/metadata/i_asset_browser_event_model.mpp"
+#include "core_data_model/asset_browser/metadata/i_asset_browser_view_model.mpp"
 #include "core_data_model/i_active_filters_model.hpp"
-#include "core_data_model/i_active_filters_model.mpp"
 #include "core_data_model/i_breadcrumbs_model.hpp"
-#include "core_data_model/i_breadcrumbs_model.mpp"
+#include "core_data_model/metadata/i_active_filters_model.mpp"
+#include "core_data_model/metadata/i_breadcrumbs_model.mpp"
 #include <QtQuick>
 
 #include "core_reflection/i_definition_manager.hpp"
@@ -123,15 +123,13 @@ namespace wgt
 /*static */void SharedControls::initDefs(
 	IDefinitionManager & definitionManager )
 {
-	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserViewModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< IAssetBrowserEventModel >() );
-
-	definitionManager.registerDefinition( new TypeClassDefinition< IActiveFiltersModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< ActiveFilterTerm >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< SavedActiveFilter >() );
-
-	definitionManager.registerDefinition( new TypeClassDefinition< IBreadcrumbsModel >() );
-	definitionManager.registerDefinition( new TypeClassDefinition< BaseBreadcrumbItem >() );
+	definitionManager.registerDefinition<TypeClassDefinition< IAssetBrowserModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IAssetBrowserViewModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IAssetBrowserEventModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IActiveFiltersModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< ActiveFilterTerm >>();
+	definitionManager.registerDefinition<TypeClassDefinition< SavedActiveFilter >>();
+	definitionManager.registerDefinition<TypeClassDefinition< IBreadcrumbsModel >>();
+	definitionManager.registerDefinition<TypeClassDefinition< BaseBreadcrumbItem >>();
 }
 } // end namespace wgt

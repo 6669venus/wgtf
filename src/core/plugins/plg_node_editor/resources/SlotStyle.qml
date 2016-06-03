@@ -18,7 +18,7 @@ Item
 
         radius: width / 2
 
-        color: slot.enabled ? parentSlot.slotColor : "#999999"
+        color: parentSlot.enabled ? parentSlot.slotColor : "#999999"
 
         Rectangle {
             id: slotSocket
@@ -26,7 +26,7 @@ Item
             anchors.margins: defaultSpacing.doubleBorderSize
             radius: width / 2
 
-            color: slot.connected ? "#33FFFFFF" : "#66000000"
+            color: parentSlot.connected ? "#33FFFFFF" : "#66000000"
         }
     }
 

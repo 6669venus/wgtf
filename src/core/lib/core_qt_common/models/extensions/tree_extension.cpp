@@ -434,7 +434,7 @@ QModelIndex TreeExtension::getForwardIndex( const QModelIndex & index ) const
 		else
 		{
 			// Expand the current item
-			impl_->expand( index );
+			const_cast< TreeExtension * >( this )->setDataExt( index, true, ItemRole::expandedId );
 
 			// Emit the data change
 			int role = 0;
@@ -471,7 +471,7 @@ QModelIndex TreeExtension::getBackwardIndex( const QModelIndex & index ) const
 	if (pModel->hasChildren( index ) && impl_->expanded( index ))
 	{
 		// Collapse the current item
-		impl_->collapse( index );
+		const_cast< TreeExtension * >( this )->setDataExt( index, false, ItemRole::expandedId );
 
 		// Emit the data change
 		int role = 0;

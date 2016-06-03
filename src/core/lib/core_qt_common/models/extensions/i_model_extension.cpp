@@ -1,5 +1,7 @@
 #include "i_model_extension.hpp"
 
+namespace wgt
+{
 IModelExtension::IModelExtension()
 	: qtFramework_( nullptr )
 	, extensionData_( nullptr )
@@ -68,3 +70,4 @@ bool IModelExtension::setDataExt( const QModelIndex &index, const QVariant &valu
 
 	return true;
 }
+} // end namespace wgt

@@ -52,6 +52,7 @@ WGHeaderRow 1.0 WGHeaderRow.qml
 WGHeaderRow 2.0 WGHeaderRow20.qml
 WGHighlightFrame 1.0 WGHighlightFrame.qml
 WGInternalPanel 1.0 WGInternalPanel.qml
+WGImageDropDown 2.0 WGImageDropDown20.qml
 WGInvisTextBoxStyle 1.0 WGInvisTextBoxStyle.qml
 WGItemRow 2.0 WGItemRow20.qml
 WGLabel 1.0 WGLabel.qml

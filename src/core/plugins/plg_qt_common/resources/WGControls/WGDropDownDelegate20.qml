@@ -45,10 +45,12 @@ import Qt.labs.templates 1.0 as T
 T.ItemDelegate {
     id: control
 
-    implicitWidth: Math.max(background ? background.implicitWidth : 0,
-                            (label ? label.implicitWidth : 0) +
-                            (indicator ? indicator.implicitWidth : 0) +
-                            (label && indicator ? spacing : 0) + leftPadding + rightPadding)
+    property QtObject parentControl
+
+    implicitWidth: parentControl.labelMaxWidth + (parentControl.imageRole ? control.height : 0)
+                   + (parentControl.showRowIndicator ? indicator.implicitWidth : 0)
+                   + control.leftPadding + control.rightPadding
+                   + defaultSpacing.doubleMargin
     implicitHeight: Math.max(background ? background.implicitHeight : 0,
                              Math.max(label ? label.implicitHeight : 0,
                                       indicator ? indicator.implicitHeight : 0) + topPadding + bottomPadding)
@@ -63,7 +65,8 @@ T.ItemDelegate {
 
     //! [label]
     label: Item {
-        width: control.availableWidth - (control.checkable ? indicator.width + control.spacing : 0) + (delegateImage.visible? delegateImage.width : 0)
+        id: label
+        width: parentControl.labelMaxWidth + (parentControl.imageRole ? delegateImage.width : 0) + (parentControl.showRowIndicator ? indicator.width : 0)
         height: control.availableHeight
         x: control.mirrored ? control.width - width - control.rightPadding : control.leftPadding
         y: control.topPadding
@@ -78,6 +81,7 @@ T.ItemDelegate {
         }
 
         WGLabel {
+            id: delegateLabel
             anchors.left: delegateImage.visible ? delegateImage.right : parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -95,17 +99,18 @@ T.ItemDelegate {
 
     //! [indicator]
     indicator: Image {
+        id: indicator
         x: control.mirrored ? control.leftPadding : control.width - width - control.rightPadding
         y: control.topPadding + (control.availableHeight - height) / 2
 
-        visible: control.checked
+        visible: control.checked && parentControl.showRowIndicator
         source: control.checkable ? "qrc:/qt-project.org/imports/Qt/labs/controls/images/check.png" : ""
     }
     //! [indicator]
 
     //! [background]
     background: Rectangle {
-        implicitWidth: 100
+        implicitWidth: parent.width
         implicitHeight: defaultSpacing.minimumRowHeight
         visible: control.pressed || control.highlighted
         color: control.pressed ? palette.mainWindowColor : palette.darkHeaderColor
@@ -115,6 +120,7 @@ T.ItemDelegate {
 
     WGHighlightFrame {
         anchors.fill: parent
+        anchors.margins: defaultSpacing.standardBorderSize
         visible: hoverArea.containsMouse
         z: -1
     }

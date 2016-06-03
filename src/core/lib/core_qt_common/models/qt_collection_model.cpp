@@ -6,9 +6,25 @@
 
 namespace wgt
 {
+ITEMROLE( value )
+ITEMROLE( key )
+ITEMROLE( valueType )
+ITEMROLE( keyType )
+
 QtCollectionModel::QtCollectionModel( std::unique_ptr<CollectionModel>&& source )
 	: QtListModel( *source.get() ), model_( std::move( source ) )
-{}
+{
+}
+
+QHash< int, QByteArray > QtCollectionModel::roleNames() const
+{
+	auto roleNames = QtListModel::roleNames();
+	registerRole( ItemRole::valueName, roleNames );
+	registerRole( ItemRole::keyName, roleNames );
+	registerRole( ItemRole::valueTypeName, roleNames );
+	registerRole( ItemRole::keyTypeName, roleNames );
+	return roleNames;
+}
 
 const CollectionModel & QtCollectionModel::source() const
 {
@@ -91,15 +107,6 @@ QObject * QtCollectionModel::item( const QVariant & key ) const
 
 	// Check key types match
 	const auto variantKey = QtHelpers::toVariant( key );
-	const auto pMetaType = variantKey.type();
-	if (pMetaType == nullptr)
-	{
-		return nullptr;
-	}
-	if (pMetaType->typeId() != collection.keyType())
-	{
-		return nullptr;
-	}
 
 	int row = 0;
 	if (collection.isMapping())

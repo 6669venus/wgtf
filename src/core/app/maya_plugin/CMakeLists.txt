@@ -1,6 +1,6 @@
-INCLUDE( BWMacros )
-INCLUDE( BWMayaProject )
-INCLUDE( BWProjectUserFile )
+INCLUDE( WGMacros )
+INCLUDE( WGMayaProject )
+INCLUDE( WGProjectUserFile )
 
 IF( MAYA_THIRD_PARTY_NOT_FOUND )
     MESSAGE( "Maya third party directory is not found, skip building Maya plugin!" )

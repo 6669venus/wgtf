@@ -238,7 +238,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		return QVariant();
 	}
 	
-	size_t roleId;
+	size_t roleId = role;
 	switch (role)
 	{
 	case Qt::DisplayRole:
@@ -250,7 +250,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		break;
 
 	default:
-		roleId = role;
+		decodeRole( role, roleId );
 		break;
 	}
 

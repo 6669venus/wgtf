@@ -12,7 +12,7 @@ TestPolyCheckBox::TestPolyCheckBox()
 }
 
 TestPolyTextField::TestPolyTextField()
-	: text_( "BigWorld" )
+	: text_( "Wargaming" )
 	, num_( 55 )
 {
 

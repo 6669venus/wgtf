@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 PROJECT( plg_test_active_filters )
 
-INCLUDE( BWStandardProject )
+INCLUDE( WGStandardProject )
 FIND_PACKAGE( QT5 )
 
 # Find includes in corresponding build directories

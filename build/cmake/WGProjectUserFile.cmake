@@ -3,7 +3,7 @@
 GET_FILENAME_COMPONENT( _userFileTemplatePath
 	${CMAKE_CURRENT_LIST_FILE}
 	PATH )
-SET( _userFileTemplatePath "${_userFileTemplatePath}/BWUserFileTemplates" )
+SET( _userFileTemplatePath "${_userFileTemplatePath}/WGUserFileTemplates" )
 
 FUNCTION( BW_SET_WORKING_DIRECTORY TARGET_NAME PROJECT_PATH _WORKING_DIRECTORY )
 	IF(  ${CMAKE_GENERATOR} MATCHES "Visual Studio" )
@@ -20,7 +20,7 @@ FUNCTION( BW_SET_WORKING_DIRECTORY TARGET_NAME PROJECT_PATH _WORKING_DIRECTORY )
 			SET(BW_USERFILE_VC_VERSION 9.00)
 			SET(VCPROJ_TYPE vcproj)
 		ELSE()
-			MESSAGE( FATAL_ERROR "This MSVC version is not supported by BigWorld!" )
+			MESSAGE( FATAL_ERROR "This MSVC version is not supported by Wargaming!" )
 		ENDIF()
 
 		SET( TARGET_PATH "${PROJECT_PATH}/${TARGET_NAME}.${VCPROJ_TYPE}.user" )
@@ -37,7 +37,7 @@ FUNCTION( BW_SET_WORKING_DIRECTORY TARGET_NAME PROJECT_PATH _WORKING_DIRECTORY )
 
 		SET( BW_USERFILE_WORKING_DIRECTORY ${_WORKING_DIRECTORY} )
 
-		FILE( READ "${_userFileTemplatePath}/BWPerConfig.${VCPROJ_TYPE}.user.in" _perconfig)
+		FILE( READ "${_userFileTemplatePath}/WGPerConfig.${VCPROJ_TYPE}.user.in" _perconfig)
 
 		SET( BW_USERFILE_CONFIGSECTIONS )
 		FOREACH( BW_USERFILE_CONFIGNAME ${CMAKE_CONFIGURATION_TYPES} )
@@ -49,7 +49,7 @@ FUNCTION( BW_SET_WORKING_DIRECTORY TARGET_NAME PROJECT_PATH _WORKING_DIRECTORY )
 		ENDFOREACH()
 
 		MESSAGE( STATUS "Creating .user file ${TARGET_PATH}" )
-		CONFIGURE_FILE( "${_userFileTemplatePath}/BW${VCPROJ_TYPE}.user.in"
+		CONFIGURE_FILE( "${_userFileTemplatePath}/WG${VCPROJ_TYPE}.user.in"
 			${TARGET_PATH}
 			@ONLY )
 	ENDIF()

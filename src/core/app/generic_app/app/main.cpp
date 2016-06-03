@@ -40,7 +40,7 @@ bool getPlugins (std::vector< std::wstring >& plugins, const wchar_t* configFile
 
 		return
 			ConfigPluginLoader::getPlugins(
-			plugins, std::wstring( path ) + L"plugins.txt" ) ||
+			plugins, std::wstring( path ) + L"plugins_ui.txt" ) ||
 			FolderPluginLoader::getPluginsCustomPath( plugins, path );
 	}
 	else

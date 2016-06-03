@@ -24,17 +24,17 @@ directory and cmake must be in the wgtf/src/core/third_party/cmake directory
 
     a. Select **Visual Studio &lt;version&gt; &lt;arch&gt; - &lt;Qt version&gt;**
 
-    The version of Qt depends on the age of the branch. As of writing **VS2012, 
-    Win64, Qt 5.6.0** is used on **develop**. **VS2013** and **Win32** should 
+    The version of Qt depends on the age of the branch. As of writing **VS2012,
+    Win64, Qt 5.6.0** is used on **develop**. **VS2013** and **Win32** should
     also work. The **deploy** targets are for packaging relevant sources into the
     **bin** folder to give to other people. E.g. QA or consumers. The **deploy**
-    target does not require a git clone, only **bin**. The **non-deploy** 
+    target does not require a git clone, only **bin**. The **non-deploy**
     targets should be used for development.
 
-    b. The solution will be generated to 
+    b. The solution will be generated to
     **wgtf\build_generic_app_test_vc11_win64_qt5.6.0\generic_app_test_win64.sln**
 
-    If you want an out-of-tree build, pass in the desired output path to 
+    If you want an out-of-tree build, pass in the desired output path to
     **wg_cmake.bat** E.g. Edit **wg_cmake.bat**
 
     ```bat
@@ -43,12 +43,16 @@ directory and cmake must be in the wgtf/src/core/third_party/cmake directory
     ```
 
     ```
-    Some projects will be ignored if the 3rd party libraries are not available.
-    Add any other 3rd party dependencies if needed. For Python support, follow 
-    the instructions in wgtf\src\core\third_party\python_readme.txt
+    Qt and cmake are required to build WGTF. Read wgtf\src\core\third_party\qt_readme.txt and
+    wgtf\src\core\third_party\cmake_readme.txt for instructions on using them.
+
+    Some projects will be ignored if 3rd party libraries are not available.
+    Add any other 3rd party dependencies if needed. For Python support, follow
+    the instructions in wgtf\src\core\third_party\python_readme.txt, for Perforce
+    support, read wgtf\src\core\third_party\perforce_readme.txt
     ```
 
-2. Open the generated solution (**generic_app_test_win64.sln**) in _Visual 
+2. Open the generated solution (**generic_app_test_win64.sln**) in _Visual
 Studio 2012 Update 4._
 
 3. Selet the **Hybrid** (release) build configuration
@@ -81,14 +85,14 @@ project and select **Properties**
     ```
     Building ZERO_CHECK basically re-runs the CMake script with some cached
     settings. You can build it if you have added/deleted a file and want to
-    update the sln.  Sometimes Visual Studio isn't very good at detecting 
+    update the sln.  Sometimes Visual Studio isn't very good at detecting
     if it should build it.
     ```
-12. The Generic App UI Test should start. It has all of the features core to 
+12. The Generic App UI Test should start. It has all of the features core to
 the WGTF framework.
 
 13. Log output should appear in the Visual Studio Output window. To view logs
-without debugging, open 
+without debugging, open
 [Debug View](https://technet.microsoft.com/en-us/sysinternals/debugview.aspx)
 
 
@@ -102,30 +106,34 @@ without debugging, open
 
     b. Select **&lt;Qt version&gt;**
 
-    The version of Qt depends on the age of the branch. As of writing Qt 
+    The version of Qt depends on the age of the branch. As of writing Qt
     **5.6.0** is used on **develop**.
 
-    c. Select the **non-deploy** target. The **deploy** targets are for 
+    c. Select the **non-deploy** target. The **deploy** targets are for
     packaging relevant sources into the **bin** folder to give to other people.
-    E.g. QA or consumers. The **deploy** target does not require a git clone, 
+    E.g. QA or consumers. The **deploy** target does not require a git clone,
     only **bin**. The **non-deploy** targets should be used for development.
 
-    d. The Xcode project will be generated to 
+    d. The Xcode project will be generated to
     **wgtf\build_generic_app_test_xcode_qt5.6.0\generic_app_test_mac.xcodeproj**
     (depending on the selected Qt version).
 
     ```
-    Some projects will be ignored if the 3rd party libraries are not available.
-    Add any other 3rd party dependencies if needed. For Python support, follow 
-    the instructions in wgtf\src\core\third_party\python_readme.txt
+    Qt and cmake are required to build WGTF. Read wgtf\src\core\third_party\qt_readme.txt and
+    wgtf\src\core\third_party\cmake_readme.txt for instructions on using them.
+
+    Some projects will be ignored if 3rd party libraries are not available.
+    Add any other 3rd party dependencies if needed. For Python support, follow
+    the instructions in wgtf\src\core\third_party\python_readme.txt, for Perforce
+    support, read wgtf\src\core\third_party\perforce_readme.txt
     ```
 
-2. Open the generated solution (**generic_app_test_mac.xcodeproj**) in _OSX El 
+2. Open the generated solution (**generic_app_test_mac.xcodeproj**) in _OSX El
 Capitan 10.11.1 Xcode Version 7.1 (7B91b)_ by double clicking it in the finder.
 
 3. Select the **Automatically Create Schemes** at the prompt.
 
-4. Select the **ALL_BUILD** scheme from the **Scheme menu** in the toolbar at 
+4. Select the **ALL_BUILD** scheme from the **Scheme menu** in the toolbar at
 the top.
 
 5. Make sure the target is **My Mac (64-bit)**.
@@ -134,12 +142,12 @@ the top.
     steps if it says "The run destination My Mac is not valid" when you go to
     build.
 
-    b. Double-click on the **generic_app_test_mac** project in the **Navigation 
+    b. Double-click on the **generic_app_test_mac** project in the **Navigation
     area** on the left of the window.
 
     c. Select **Build Settings** and the **All** and **Levels** filters.
 
-    d. Make sure **Base SDK** is set to **Latest OS X (OS X 10.11)** for 
+    d. Make sure **Base SDK** is set to **Latest OS X (OS X 10.11)** for
     **ALL_BUILD** and **generic_app_test**
 
 6. Press **CMD+B** or select **Product->Build** to build.
@@ -147,14 +155,14 @@ the top.
 7. Change schemes to **generic_app**
 
 8. Find the plugins config you want to run. The plugins configs can be found in
-**wgtf\bin\generic_app_test\mac\generic_app.app\Contents\Resources\plugins** 
+**wgtf\bin\generic_app_test\mac\generic_app.app\Contents\Resources\plugins**
 (Show Package Contents in Finder). For this example we will use **plugins_ui.txt**.
 
 9. Edit the scheme
 
     a. In the **Product|Scheme** menu, scroll down to the bottom, **Edit Scheme...**
 
-    b. In the **Edit Scheme** dialog, find **Run -> Arguments -> Arguments -> 
+    b. In the **Edit Scheme** dialog, find **Run -> Arguments -> Arguments ->
     Arguments Passed On Launch** and enter
     ```
     --config plugins_ui.txt
@@ -167,7 +175,7 @@ scheme.
 
 12. If it asks for permissions, get permissions.
 
-13. The Generic App UI Test should start. It has all of the features core to 
+13. The Generic App UI Test should start. It has all of the features core to
 the WGTF framework.
 
 
@@ -202,7 +210,7 @@ Running the Maya Plug-in
 5. Select Open
 
 
-The WGTF Maya plug-in should open on the right side of the viewport. 
+The WGTF Maya plug-in should open on the right side of the viewport.
 
 The behavior of WGTF Maya Plugin should be the same as WGTF stand alone
 Generic_app.exe --config plugins_ui.txt. The features and panels should all

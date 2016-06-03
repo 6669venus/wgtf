@@ -60,5 +60,5 @@ BW_TARGET_LINK_LIBRARIES( core_reflection_utils INTERFACE
 	wg_types
 )
 
-BW_PROJECT_CATEGORY( core_reflection_utils "NGT Libs/Reflection" )
+BW_PROJECT_CATEGORY( core_reflection_utils "WGT Libs/Reflection" )
 

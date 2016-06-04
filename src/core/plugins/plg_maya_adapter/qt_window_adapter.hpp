@@ -5,8 +5,11 @@
 #include "i_window_adapter.hpp"
 #include "i_window_listener.hpp"
 
-class IQtFramework;
 class QIODevice;
+
+namespace wgt
+{
+class IQtFramework;
 
 class QtWindowAdapter : public QtWindow, public IWindowAdapter
 {
@@ -23,6 +26,5 @@ public:
 private:
 	std::vector< IWindowListener * >	listeners_;
 };
-
-
+} // end namespace wgt
 #endif//QML_WINDOW_ADAPTER_HPP

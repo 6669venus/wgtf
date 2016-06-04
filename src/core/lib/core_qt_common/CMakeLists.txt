@@ -13,8 +13,6 @@ include_directories(.)
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp
-	models/qt_abstract_item_model.cpp
-	models/qt_abstract_item_model.hpp
 	models/qt_collection_model.cpp
 	models/qt_collection_model.hpp
 	models/qt_item_model.cpp
@@ -30,6 +28,8 @@ SET( DATA_MODEL_SRCS
 	models/wg_list_model.hpp
 	models/role_provider.cpp
 	models/role_provider.hpp
+	models/qt_abstract_item_model.hpp
+	models/qt_abstract_item_model.cpp
 )
 SOURCE_GROUP( "DataModel" FILES ${DATA_MODEL_SRCS} )
 
@@ -71,6 +71,7 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/thumbnail_extension.hpp
 	models/extensions/image_extension.cpp
 	models/extensions/image_extension.hpp
+	models/extensions/i_model_extension.cpp
 	models/extensions/i_model_extension.hpp
 	models/extensions/header_footer_text_extension.cpp
 	models/extensions/header_footer_text_extension.hpp
@@ -91,15 +92,17 @@ SET( HELPERS_SRCS
 	helpers/wg_tokenized_string_filter.cpp
     helpers/selection_helper.cpp
     helpers/selection_helper.hpp
+	helpers/qml_component_loader_helper.hpp
+	helpers/qml_component_loader_helper.cpp
 	)
 SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
 
 SET( CONTROLS_SRC
-	controls/bw_copyable.hpp
-	controls/bw_copyable.cpp
-	controls/bw_filedialog_qi.hpp
-	controls/bw_filedialog_qi.cpp
+	controls/wg_copy_controller.hpp
+	controls/wg_copy_controller.cpp
+	controls/wg_filedialog_qi.hpp
+	controls/wg_filedialog_qi.cpp
 	controls/wg_action.hpp
 	controls/wg_action.cpp
 	controls/wg_context_menu.hpp
@@ -184,6 +187,7 @@ BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
 	core_data_model
 	core_logging
 	core_string_utils
+	core_qt_script
 )
 BW_TARGET_LINK_LIBRARIES( core_qt_common PRIVATE
 	Qt5::Core
@@ -196,5 +200,5 @@ BW_TARGET_LINK_LIBRARIES( core_qt_common PRIVATE
 
 INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})
 
-BW_PROJECT_CATEGORY( core_qt_common "NGT Libs" )
+BW_PROJECT_CATEGORY( core_qt_common "WGT Libs" )
 

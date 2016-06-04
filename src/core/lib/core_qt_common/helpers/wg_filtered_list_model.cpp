@@ -10,6 +10,8 @@
 
 #include <QRegExp>
 
+namespace wgt
+{
 struct WGFilteredListModel::Implementation
 {
 	Implementation( WGFilteredListModel & self );
@@ -91,7 +93,7 @@ WGFilteredListModel::~WGFilteredListModel()
 	impl_->qtConnections_.reset();
 
 	// Temporary hack to circumvent threading deadlock
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
+	// JIRA: NGT-227
 	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 
@@ -139,3 +141,4 @@ bool WGFilteredListModel::getIsFiltering() const
 {
 	return impl_->filteredModel_.isFiltering();
 }
+} // end namespace wgt

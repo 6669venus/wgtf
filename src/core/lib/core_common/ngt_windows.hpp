@@ -32,6 +32,7 @@
 #include <stddef.h>
 #include <inttypes.h>
 #include <time.h>
+#include <cstdarg>
 
 #define WCHAR wchar_t
 #define _TRUNCATE 0
@@ -180,7 +181,6 @@ HANDLE WINAPI FindNextFile(
 
 DWORD GetLastError();
 
-#include <cstdarg>
 DWORD WINAPI FormatMessageA(
   _In_     DWORD   dwFlags,
   _In_opt_ const void* lpSource,
@@ -282,8 +282,5 @@ VOID WINAPI Sleep(
 
 bool MoveFileA(const char* path, const char* new_path);
 
-
-
 #endif // __APPLE__
-
 #endif // NGT_WINDOWS_HPP_INCLUDED

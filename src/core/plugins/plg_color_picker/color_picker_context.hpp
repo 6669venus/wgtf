@@ -10,6 +10,8 @@
 
 #include <QPoint>
 
+namespace wgt
+{
 class ColorPickerContext
 {
 	DECLARE_REFLECTED
@@ -20,6 +22,5 @@ public:
 
 	Vector4 pixelColor_;
 };
-
-
+} // end namespace wgt
 #endif // COLOR_PICKER_CONTEXT_HPP

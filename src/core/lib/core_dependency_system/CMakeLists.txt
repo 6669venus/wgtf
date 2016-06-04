@@ -18,5 +18,5 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_dependency_system ${BLOB_SRCS} )
 
-BW_PROJECT_CATEGORY( core_dependency_system "NGT Libs" )
+BW_PROJECT_CATEGORY( core_dependency_system "WGT Libs" )
 

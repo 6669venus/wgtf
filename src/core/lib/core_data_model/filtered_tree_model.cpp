@@ -108,6 +108,8 @@ This is to tell the view to update its data.
 #include <atomic>
 #include <cassert>
 
+namespace wgt
+{
 struct FilteredTreeModel::Implementation
 {
 	enum class FilterUpdateType
@@ -1221,3 +1223,4 @@ void FilteredTreeModel::refresh( bool wait )
 	std::thread nextRefresh( std::bind( refreshMethod, impl_.get() ) );
 	nextRefresh.detach();
 }
+} // end namespace wgt

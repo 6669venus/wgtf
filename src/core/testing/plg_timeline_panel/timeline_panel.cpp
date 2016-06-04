@@ -1,7 +1,9 @@
 #include "timeline_panel.hpp"
-#include "core_variant/variant.hpp"
+#include "core_reflection/object_handle.hpp"
  
  
+namespace wgt
+{
 TimelinePanel::TimelinePanel( IComponentContext & context )
     : Depends( context )
 {
@@ -10,18 +12,14 @@ TimelinePanel::TimelinePanel( IComponentContext & context )
  
 bool TimelinePanel::addPanel()
 {
-    auto uiFramework = this->get< IUIFramework >();
-    auto uiApplication = this->get< IUIApplication >();
-     
-    if ((uiFramework == nullptr) ||
-        (uiApplication == nullptr))
-    {
-        return false;
-    }
-    timelineView_ = uiFramework->createView(
-        "PlgTimelinePanel/TimelinePanel.qml",
-        IUIFramework::ResourceType::Url );
-    uiApplication->addView( *timelineView_ );
+	auto viewCreator = this->get< IViewCreator >();
+	if (viewCreator == nullptr)
+	{
+		return false;
+	}
+	ObjectHandle handle;
+    viewCreator->createView(
+        "PlgTimelinePanel/TimelinePanel.qml", handle, timelineView_ );
     return true;
 }
  
@@ -35,3 +33,4 @@ void TimelinePanel::removePanel()
     }
     uiApplication->removeView( *timelineView_ );
 }
+} // end namespace wgt

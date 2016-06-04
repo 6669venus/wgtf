@@ -10,6 +10,8 @@
 #include "models/bezier_point.hpp"
 #include "models/point.hpp"
 
+namespace wgt
+{
 /*! Computes the Cubic Bezier position for the specified positions and control points at the given time t
 */
 template<class TVal>
@@ -104,3 +106,4 @@ void CubicBezierInterpolator::updateControlPoints(BezierPoint& point, BezierPoin
 		nextPoint->cp1->setY(0);
 	}
 }
+} // end namespace wgt

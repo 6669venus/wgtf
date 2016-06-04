@@ -23,5 +23,5 @@ core_common
 )
 
 
-BW_PROJECT_CATEGORY( core_logging "NGT Libs" )
+BW_PROJECT_CATEGORY( core_logging "WGT Libs" )
 

@@ -5,6 +5,8 @@
 #include "core_reflection/object_handle.hpp"
 
 
+namespace wgt
+{
 ScriptQtTypeConverter::ScriptQtTypeConverter(
 	QtScriptingEngine& scriptingEngine )
 	: IQtTypeConverter()
@@ -44,7 +46,7 @@ bool ScriptQtTypeConverter::toQVariant( const Variant& variant,
 			return false;
 		}
 
-		return this->toQVariant( provider, o_qVariant );
+		return this->toQVariant( provider, o_qVariant, parent );
 	}
 
 	return false;
@@ -52,7 +54,7 @@ bool ScriptQtTypeConverter::toQVariant( const Variant& variant,
 
 
 bool ScriptQtTypeConverter::toQVariant( const ObjectHandle& object,
-	QVariant& o_qVariant ) const
+	QVariant& o_qVariant, QObject* parent ) const
 {
 	if (!object.isValid())
 	{
@@ -60,7 +62,7 @@ bool ScriptQtTypeConverter::toQVariant( const ObjectHandle& object,
 		return true;
 	}
 
-	auto scriptObject = scriptingEngine_.createScriptObject( object );
+	auto scriptObject = scriptingEngine_.createScriptObject( object, parent );
 	if (scriptObject == nullptr)
 	{
 		return false;
@@ -69,4 +71,4 @@ bool ScriptQtTypeConverter::toQVariant( const ObjectHandle& object,
 	o_qVariant = QVariant::fromValue< QtScriptObject* >( scriptObject );
 	return true;
 }
-
+} // end namespace wgt

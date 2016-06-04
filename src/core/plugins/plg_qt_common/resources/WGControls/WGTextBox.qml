@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief Text entry field mostly intended for strings
@@ -24,9 +24,9 @@ TextField {
     property string label: ""
 
     /*! This property determines if the context menu for this control contains the "Find In AssetBrowser" option
-        The default value is \c true
+        The default value is \c false
     */
-    property bool assetBrowserContextMenu : true
+    property bool assetBrowserContextMenu : false
 
     /*! This alias holds the width of the text entered into the textbox.
       */
@@ -56,10 +56,12 @@ TextField {
     onActiveFocusChanged: {
         if (activeFocus)
         {
+            selectAll()
             setValueHelper( textBox, "oldText", text );
         }
         else
         {
+            deselect()
             if (acceptableInput && (text !== oldText))
             {
                 editAccepted();
@@ -88,7 +90,7 @@ TextField {
     WGCopyable {
         id: copyableControl
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {

@@ -6,6 +6,8 @@
 #include "../interfaces/i_base_property.hpp"
 #include "meta_base.hpp"
 
+namespace wgt
+{
 class IBaseProperty;
 
 //==============================================================================
@@ -58,6 +60,5 @@ const T * findFirstMetaData( const IClassDefinition & definition, const IDefinit
 	auto meta = findFirstMetaData( TypeId::getType< T >(), definition, definitionManager );
 	return MetaData< T >( meta, definitionManager );
 }
-
-
+} // end namespace wgt
 #endif //META_UTILITIES_HPP

@@ -8,6 +8,8 @@
 #include "variant_list.hpp"
 #include <string>
 
+namespace wgt
+{
 class IListModel;
 
 //------------------------------------------------------------------------------
@@ -110,5 +112,5 @@ public:
 	// Returns the number of top-level breadcrumbs stored in the model
 	virtual size_t size() const { return 0; }
 };
-
+} // end namespace wgt
 #endif //I_BREADCRUMBS_MODEL_HPP

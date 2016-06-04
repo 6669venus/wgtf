@@ -5,6 +5,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 /**
  *	Stores data for an entry in a data model or on the data model itself.
  */
@@ -108,5 +110,5 @@ private:
 		}); 
 	}
 };
-
+} // end namespace wgt
 #endif//ABSTRACT_ITEM_HPP

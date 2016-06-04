@@ -133,7 +133,7 @@
 
 
 #define REGISTER_DEFINITION( type )\
-	definitionManager.registerDefinition( new TypeClassDefinition< type > );
+	definitionManager.registerDefinition<TypeClassDefinition< type >>();
 
 #define DEREGISTER_DEFINITION( type ) \
 	{ \

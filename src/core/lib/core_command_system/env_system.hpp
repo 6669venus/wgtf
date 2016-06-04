@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+namespace wgt
+{
 class EnvState : public IEnvState
 {
 public:
@@ -47,5 +49,5 @@ private:
 	typedef std::vector<IEnvEventListener*> Listeners;
 	Listeners listeners_;
 };
-
+} // end namespace wgt
 #endif // ENV_SYSTEM

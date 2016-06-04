@@ -6,6 +6,8 @@
 ///
 /// TODO: Simpler copy of String_Ref, merge this once wg_types is created
 ///
+namespace wgt
+{
 class StringRef
 {
 public:
@@ -26,5 +28,5 @@ private:
 	const char *	pStart_;
 	size_t			length_;
 };
-
+} // end namespace wgt
 #endif // STRING_REF_HPP

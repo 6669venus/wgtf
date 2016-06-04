@@ -20,6 +20,8 @@
 #include "core_data_model/generic_list.hpp"
 #pragma warning( pop )
 
+namespace wgt
+{
 class ICurveInterpolator;
 class IDefinitionManager;
 class BezierPoint;
@@ -111,14 +113,14 @@ public:
 
 	/*! Redoes the last modification
 	*/
-	virtual void redo(const ObjectHandle& handle, Variant variant)
+	virtual void redo(const ObjectHandle& handle, Variant variant) override
 	{
 		modificationStack_[++currentState_].redo_();
 	}
 
 	/*! Undoes the last modification
 	*/
-	void undo(const ObjectHandle& handle, Variant variant)
+	void undo(const ObjectHandle& handle, Variant variant) override
 	{
 		modificationStack_[currentState_--].undo_();
 	}
@@ -158,5 +160,5 @@ private:
 	ValueChangeNotifier<bool> dirty_;
 	ICurveInterpolatorPtr interpolator_;
 };
-
+} // end namespace wgt
 #endif // CURVE_H_

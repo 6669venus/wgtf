@@ -12,6 +12,8 @@
 #include "core_string_utils/string_utils.hpp"
 #include <codecvt>
 
+namespace wgt
+{
 ReflectedGroupItem::ReflectedGroupItem( const MetaGroupObj * groupObj, ReflectedItem * parent, const std::string & inplacePath )
 	: ReflectedItem( parent, inplacePath )
 	, groupObj_( groupObj )
@@ -112,7 +114,7 @@ void ReflectedGroupItem::getChildValues(Variants &childValues) const
 		{
 			auto path = inplacePath + property->getName();
 			auto propertyAccessor = definition->bindProperty( path.c_str(), object );
-			Variant value = controller_->getValue(propertyAccessor);
+			Variant value = getController()->getValue(propertyAccessor);
 			childValues.emplace_back(value);
 		}
 		return true;
@@ -276,3 +278,4 @@ bool ReflectedGroupItem::postSetValue(
 	}
 	return false;
 }
+} // end namespace wgt

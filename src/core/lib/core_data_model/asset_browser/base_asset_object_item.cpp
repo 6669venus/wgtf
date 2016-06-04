@@ -2,6 +2,8 @@
 #include "core_data_model/i_item_role.hpp"
 #include "core_data_model/asset_browser/i_asset_presentation_provider.hpp"
 
+namespace wgt
+{
 struct BaseAssetObjectItem::Implementation
 {
 	typedef std::vector< BaseAssetObjectItem > BaseAssetObjectItems;
@@ -272,3 +274,4 @@ bool BaseAssetObjectItem::isCompressed() const
 {
 	return (impl_->fileInfo_->attributes() & FileAttributes::Compressed) == FileAttributes::Compressed;
 }
+} // end namespace wgt

@@ -13,10 +13,68 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+namespace wgt
+{
+ITEMROLE( itemId )
 ITEMROLE( modelIndex )
 
 namespace
 {
+	class ExtensionData : public IExtensionData
+	{
+	public:
+		void save()
+		{
+			// TODO
+		}
+
+		void load()
+		{
+			// TODO
+		}
+
+		void reset()
+		{
+			indexCache_.clear();
+		}
+
+		ItemData & getItemData( const QModelIndex& index )
+		{
+			{
+				auto it = indexCache_.find( index );
+				if (it != indexCache_.end())
+				{
+					return itemData_[*it];
+				}
+			}
+
+			QVariant id = index.model()->data( index, static_cast< int >( ItemRole::itemIdId ) );
+			{
+				auto it = itemIds_.find( id );
+				if (it != itemIds_.end())
+				{
+					indexCache_[index] = *it;
+					return itemData_[*it];
+				}
+			}
+
+			if (id.isValid())
+			{
+				itemIds_[id] = itemData_.count();
+			}
+
+			indexCache_[index] = itemData_.count();
+			itemData_.push_back( ItemData() );
+			return itemData_.back();
+		}
+
+	private:
+		QVector< ItemData > itemData_;
+		QMap< QVariant, int > itemIds_;
+
+		QMap< QPersistentModelIndex, int > indexCache_;
+	};
+
 	class ExtendedModel : public QtAbstractItemModel, public RoleProvider
 	{
 	public:
@@ -33,6 +91,7 @@ namespace
 			model_ = model;
 			connections_.reset();
 			roleNames_.clear();
+			extensionData_.reset();
 			if (model_ != nullptr)
 			{
 				connections_ += QObject::connect( model, &QAbstractItemModel::dataChanged, this, &ExtendedModel::onDataChanged );
@@ -67,6 +126,11 @@ namespace
 						itr.next();
 						registerRole( itr.value(), roleNames_ );
 					}
+				}
+
+				for (auto & extension : extensions_)
+				{
+					extension->init( extensionData_ );
 				}
 			}
 			endResetModel();
@@ -329,6 +393,7 @@ namespace
 		QStringList & roles_;
 		QList< IModelExtension * > & extensions_;
 		QHash< int, QByteArray > roleNames_;
+		ExtensionData extensionData_;
 	};
 
 	class HeaderData : public QObject
@@ -550,3 +615,4 @@ void WGItemView::refresh()
 	}
 	emit headerDataChanged();
 }
+} // end namespace wgt

@@ -4,6 +4,8 @@
 #include <memory>
 #include "core_command_system/i_command_event_listener.hpp"
 
+namespace wgt
+{
 class ObjectManager;
 class CommandManager;
 class ICommandManager;
@@ -39,4 +41,5 @@ private:
 	mutable ICommandEventListener::MultiCommandStatus multiCommandStatus_;
 
 };
+} // end namespace wgt
 #endif //TEST_COMMAND_SYSTEM_FIXTURE_HPP

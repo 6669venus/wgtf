@@ -9,12 +9,14 @@
 #include <memory>
 #include <unordered_map>
 
+namespace wgt
+{
 class IClassDefinitionDetails;
 
 class ClassDefinition : public IClassDefinition
 { 
 public: 
-	ClassDefinition( IClassDefinitionDetails * details );
+	ClassDefinition( std::unique_ptr<IClassDefinitionDetails> details );
 
 	const IClassDefinitionDetails & getDetails() const override;
 
@@ -51,7 +53,7 @@ private:
 	friend class PropertyIterator;
 	friend class PropertyAccessor;
 
-	IBasePropertyPtr findProperty( const char * name ) const override;
+	IBasePropertyPtr findProperty( const char * name, size_t length ) const override;
 	void setDefinitionManager( IDefinitionManager * defManager ) override;
 
 	void bindPropertyImpl(
@@ -59,6 +61,5 @@ private:
 		const ObjectHandle & pBase,
 		PropertyAccessor & o_PropertyAccessor ) const override;
 };
-
+} // end namespace wgt
 #endif // #define CLASS_DEFINITION_HPP
-

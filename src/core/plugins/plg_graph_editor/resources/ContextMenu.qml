@@ -26,11 +26,11 @@ WGContextArea
             onObjectRemoved: dynamicContextMenu.removeItem( object )
             delegate : MenuItem
             {
-                text : Value.title
+                text : value.title
                 onTriggered :
                 {
                     var pt = graphCanvas.viewTransform.inverseTransform(popupPoint)
-                    Value.trigger(pt.x, pt.y, contextObjectUid)
+                    value.trigger(pt.x, pt.y, contextObjectUid)
                 }
             }
         }

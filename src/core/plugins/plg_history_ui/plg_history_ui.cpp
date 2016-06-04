@@ -15,8 +15,13 @@
 
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "core_ui_framework/i_action.hpp"
 
+#include "core_dependency_system/depends.hpp"
+
+namespace wgt
+{
 class HistoryPanel : public IHistoryPanel
 {
 public:
@@ -52,9 +57,11 @@ private:
 
 class HistoryUIPlugin
 	: public PluginMain
+	, public Depends< IViewCreator >
 {
 public:
 	HistoryUIPlugin( IComponentContext& contextManager )
+		: Depends( contextManager )
 	{
 	}
 
@@ -144,7 +151,7 @@ public:
 		REGISTER_DEFINITION( DisplayObject );
 
 		commandSystemProvider_ =
-			Context::queryInterface< ICommandManager >();
+			contextManager.queryInterface< ICommandManager >();
 		if (commandSystemProvider_ == nullptr)
 		{
 			return;
@@ -156,33 +163,21 @@ public:
 		history_ = pHistoryDefinition->create();
 		history_.getBase< HistoryObject >()->init( *commandSystemProvider_, definitionManager );
 
+		auto viewCreator = get< IViewCreator >();
+		if (viewCreator)
+		{
+			viewCreator->createView(
+				"WGHistory/WGHistoryView.qml",
+				history_, panel_);
+		}
+
 		auto pQtFramework = contextManager.queryInterface< IQtFramework >();
 		if (pQtFramework == nullptr)
 		{
 			return;
 		}
-
-		panel_ = pQtFramework->createView( 
-			"WGHistory/WGHistoryView.qml",
-			IUIFramework::ResourceType::Url, history_ );
-
-		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		if (uiApplication == nullptr)
-		{
-			return;
-		}
-
-		if (panel_ != nullptr)
-		{
-			uiApplication->addView( *panel_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
-
-		createActions( *pQtFramework, *uiApplication );
-
+		auto uiApplication = contextManager.queryInterface< IUIApplication>();
+		createActions(*pQtFramework, *uiApplication);
         HistoryPanel * historyPanelinterface = new HistoryPanel();
         historyPanelinterface->init(history_, *pDefinitionManager);
         historyPanelInterface_.reset(historyPanelinterface);
@@ -222,4 +217,4 @@ private:
 
 
 PLG_CALLBACK_FUNC( HistoryUIPlugin )
-
+} // end namespace wgt

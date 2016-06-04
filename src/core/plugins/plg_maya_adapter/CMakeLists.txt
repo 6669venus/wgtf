@@ -29,6 +29,8 @@ SET( ALL_SRCS
 	${PLUGIN_QT_COMMON_DIR}/qt_preferences.hpp
 	${PLUGIN_QT_COMMON_DIR}/qt_copy_paste_manager.cpp
 	${PLUGIN_QT_COMMON_DIR}/qt_copy_paste_manager.hpp
+	${PLUGIN_QT_COMMON_DIR}/private/ui_view_creator.hpp
+	${PLUGIN_QT_COMMON_DIR}/private/ui_view_creator.cpp
 	${PLUGIN_QT_APP_DIR}/qt_application.cpp
 	${PLUGIN_QT_APP_DIR}/qt_application.hpp
     ${MAYA_APP_PLUGIN_DIR}/app/interfaces/i_application_adapter.hpp
@@ -62,3 +64,5 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 )
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )
+
+SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD_DEBUG True)

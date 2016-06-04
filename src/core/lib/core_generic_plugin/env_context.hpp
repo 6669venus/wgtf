@@ -3,6 +3,8 @@
 
 #include "core_common/platform_env.hpp"
 
+namespace wgt
+{
 namespace
 {
 	const char * ENV_VAR_NAME = "PLUGIN_CONTEXT_PTR";
@@ -78,5 +80,5 @@ namespace
 		return nullptr;
 	}
 }
-
+} // end namespace wgt
 #endif//ENV_CONTEXT_HPP

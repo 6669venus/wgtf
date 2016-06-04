@@ -8,6 +8,8 @@
 class QString;
 class QVariant;
 
+namespace wgt
+{
 /**
  *	WGTokenizedStringFilter
  *	A tokenized string filter wrapper around a TokenizedStringFilter implementation.
@@ -35,7 +37,7 @@ public:
 	virtual IItemFilter * getFilter() const override;
 
 protected:
-	virtual void updateInternalItemRole();
+	virtual void updateInternalItemRole() override;
 
 private:	
 	QString getFilterText() const;
@@ -52,5 +54,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // WG_TOKENIZED_STRING_FILTER_HPP

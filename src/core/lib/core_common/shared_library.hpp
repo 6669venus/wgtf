@@ -2,6 +2,8 @@
 #define SHARED_LIBRARY_HPP_INCLUDED
 
 
+namespace wgt
+{
 class SharedLibrary
 {
 public:
@@ -49,6 +51,5 @@ private:
 #define EXPORT extern "C" __attribute__ ((visibility("default")))
 
 #endif
-
-
+} // end namespace wgt
 #endif

@@ -11,11 +11,14 @@
 
 #include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
 #include "core_dependency_system/i_interface.hpp"
+#include "private/ui_view_creator.hpp"
 
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
 
+namespace wgt
+{
 class QtPluginContextCreator
 	: public Implements< IComponentContextCreator >
 {
@@ -63,18 +66,18 @@ class QtPlugin
 	: public PluginMain
 {
 public:
-	QtPlugin( IComponentContext & contextManager ){}
+	QtPlugin( IComponentContext & contextManager )
+		: qtCopyPasteManager_( new QtCopyPasteManager() )
+	{
+		contextManager.registerInterface(qtCopyPasteManager_);
+		contextManager.registerInterface(new UIViewCreator(contextManager));
+	}
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-        qtCopyPasteManager_ = new QtCopyPasteManager();
+		qtFramework_.reset(new QtFramework(contextManager));
 		types_.push_back(
-			contextManager.registerInterface( qtCopyPasteManager_ ) );
-
-		qtFramework_.reset( new QtFramework(contextManager) );
-		types_.push_back(
-			contextManager.registerInterface( new QtPluginContextCreator( qtFramework_.get() ) ) );
-
+			contextManager.registerInterface(new QtPluginContextCreator(qtFramework_.get())));
 		return true;
 	}
 
@@ -112,4 +115,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( QtPlugin )
-
+} // end namespace wgt

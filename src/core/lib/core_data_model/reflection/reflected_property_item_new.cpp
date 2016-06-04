@@ -20,6 +20,8 @@
 #include <codecvt>
 #include <limits>
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( value )
 ITEMROLE( valueType )
@@ -28,6 +30,7 @@ ITEMROLE( keyType )
 ITEMROLE( isCollection )
 ITEMROLE( elementValueType )
 ITEMROLE( elementKeyType )
+ITEMROLE( itemId )
 
 namespace
 {
@@ -167,9 +170,11 @@ ReflectedPropertyItemNew::Implementation::Implementation(
 ReflectedPropertyItemNew::ReflectedPropertyItemNew( IComponentContext & contextManager,
 	const IBasePropertyPtr & property,
 	ReflectedTreeItemNew * parent,
+	size_t index,
 	const std::string & inPlacePath )
 	: ReflectedTreeItemNew( contextManager,
 		parent,
+		index,
 		std::string( inPlacePath ) + property->getName() )
 	, impl_( new Implementation( contextManager ) )
 {
@@ -197,9 +202,11 @@ ReflectedPropertyItemNew::ReflectedPropertyItemNew( IComponentContext & contextM
 ReflectedPropertyItemNew::ReflectedPropertyItemNew( IComponentContext & contextManager,
 	const std::string & propertyName,
 	std::string displayName,
-	ReflectedTreeItemNew * parent )
+	ReflectedTreeItemNew * parent,
+	size_t index )
 	: ReflectedTreeItemNew( contextManager,
 		parent,
+		index,
 		parent ? parent->getPath() + propertyName : "" )
 	, impl_( new Implementation( contextManager ) )
 {
@@ -348,12 +355,12 @@ Variant ReflectedPropertyItemNew::getData( int column, size_t roleId ) const
 		}
 		return collection.keyType().getName();
 	}
-
-	if (roleId == IndexPathRole::roleId_)
+	else if (roleId == ItemRole::itemIdId)
 	{
-		return this->getPath();
+		return getId();
 	}
-	else if (roleId == ObjectRole::roleId_)
+
+	if (roleId == ObjectRole::roleId_)
 	{
 		return getObject();
 	}
@@ -760,7 +767,8 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 			child = new ReflectedPropertyItemNew( impl_->contextManager_,
 				propertyName,
 				std::move( displayName ),
-				const_cast< ReflectedPropertyItemNew * >( this ) );
+				const_cast< ReflectedPropertyItemNew * >( this ),
+				index );
 		}
 		impl_->children_[index] = std::unique_ptr< ReflectedTreeItemNew >( child );
 		return child;
@@ -777,7 +785,8 @@ ReflectedTreeItemNew * ReflectedPropertyItemNew::getChild( size_t index ) const
 	baseProvider = reflectedRoot( baseProvider, *pDefinitionManager );
 	child = new ReflectedObjectItemNew( impl_->contextManager_,
 		baseProvider ,
-		const_cast< ReflectedPropertyItemNew * >( this ) );
+		const_cast< ReflectedPropertyItemNew * >( this ),
+		index );
 	impl_->children_[index] = std::unique_ptr< ReflectedTreeItemNew >( child );
 	return child;
 }
@@ -1015,6 +1024,16 @@ bool ReflectedPropertyItemNew::postInserted( const PropertyAccessor & accessor, 
 		{
 			impl_->children_.emplace( impl_->children_.begin() + index, nullptr );
 		}
+		for (auto it = impl_->children_.begin() + index + count; it != impl_->children_.end(); ++it)
+		{
+			auto& item = *it;
+			if (item == nullptr)
+			{
+				continue;
+			}
+
+			item->setIndex( item->getIndex() + count );
+		}
 		if (!collection.isMapping())
 		{
 			for (auto i = index + count; i < impl_->children_.size(); ++i)
@@ -1127,6 +1146,16 @@ bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, si
 		assert( isCollection );
 
 		impl_->children_.erase( impl_->children_.begin() + index, impl_->children_.begin() + index + count );
+		for (auto it = impl_->children_.begin() + index; it != impl_->children_.end(); ++it)
+		{
+			auto& item = *it;
+			if (item == nullptr)
+			{
+				continue;
+			}
+
+			item->setIndex( item->getIndex() - count );
+		}
 		if (!collection.isMapping())
 		{
 			for (auto i = index; i < impl_->children_.size(); ++i)
@@ -1181,3 +1210,4 @@ bool ReflectedPropertyItemNew::postErased( const PropertyAccessor & accessor, si
 	}
 	return false;
 }
+} // end namespace wgt

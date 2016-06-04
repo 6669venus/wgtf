@@ -8,6 +8,8 @@
 #include "core_serialization/binary_stream.hpp"
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 //==============================================================================
 // ObjectHandle
 //==============================================================================
@@ -391,5 +393,4 @@ BinaryStream& operator>>( BinaryStream& stream, ObjectHandle& value )
 
 	return stream;
 }
-
-
+} // end namespace wgt

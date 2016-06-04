@@ -57,4 +57,4 @@ BW_TARGET_LINK_LIBRARIES( core_command_system INTERFACE
 	core_logging
 )
 
-BW_PROJECT_CATEGORY( core_command_system "NGT Libs" )
+BW_PROJECT_CATEGORY( core_command_system "WGT Libs" )

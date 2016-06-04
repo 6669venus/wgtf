@@ -15,7 +15,14 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
+#include "core_dependency_system/depends.hpp"
 
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
+
+#include <vector>
+
+namespace wgt
+{
 class Test1
 {
 	DECLARE_REFLECTED
@@ -116,9 +123,13 @@ private:
 
 class TestObjHandlePlugin
 	: public PluginMain
+	, public Depends< IViewCreator >
 {
 public:
-	TestObjHandlePlugin( IComponentContext & contextManager ) {}
+	TestObjHandlePlugin( IComponentContext & contextManager )
+		: Depends( contextManager )
+	{
+	}
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
@@ -126,12 +137,12 @@ public:
 
 		if (IDefinitionManager* dm = contextManager.queryInterface<IDefinitionManager>())
 		{
-			def1_ = dm->registerDefinition( new TypeClassDefinition< Test1 > );
-			def2_ = dm->registerDefinition( new TypeClassDefinition< Test2 > );
-			def3_ = dm->registerDefinition( new TypeClassDefinition< Test3 > );
+			def1_ = dm->registerDefinition< TypeClassDefinition< Test1 > >();
+			def2_ = dm->registerDefinition< TypeClassDefinition< Test2 > >();
+			def3_ = dm->registerDefinition< TypeClassDefinition< Test3 > >();
 
-			dm->registerDefinition( new TypeClassDefinition< Test1Stack > );
-			dm->registerDefinition( new TypeClassDefinition< Test2Stack > );
+			dm->registerDefinition< TypeClassDefinition< Test1Stack > >();
+			dm->registerDefinition< TypeClassDefinition< Test2Stack > >();
 		}
 		return true;
 	}
@@ -144,40 +155,23 @@ public:
 		glist_->addItem( Test2Stack( 58 ) );
 		glist_->addItem( Test1Stack( 7 ) );
 
-		if (IUIFramework* ui = contextManager.queryInterface<IUIFramework>())
+		auto viewCreator = get< IViewCreator >();
+		if( viewCreator == nullptr )
 		{
-			viewGL_ = ui->createView( "plg_list_model_test/test_list_panel.qml",
-				IUIFramework::ResourceType::Url, glist_->getList() );
-
-			test_ = std::unique_ptr<Test3>( new Test3(3) );
-			auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel(
-				ObjectHandle(*test_, def3_), 
-				*defManager,
-				contextManager.queryInterface<IReflectionController>() ) );
-
-			viewTest_ = ui->createView( "plg_tree_model_test/test_tree_panel.qml",
-				IUIFramework::ResourceType::Url, ObjectHandle(std::move( model )) );
-
-			if (IUIApplication* app = contextManager.queryInterface<IUIApplication>())
-			{
-				if (viewGL_ != nullptr)
-				{
-					app->addView( *viewGL_ );
-				}
-				else
-				{
-					NGT_ERROR_MSG( "Failed to load qml\n" );
-				}
-				if (viewTest_ != nullptr)
-				{
-					app->addView( *viewTest_ );
-				}
-				else
-				{
-					NGT_ERROR_MSG( "Failed to load qml\n" );
-				}
-			}
+			return;
 		}
+		
+		viewCreator->createView( "plg_list_model_test/test_list_panel.qml",
+			glist_->getList(), viewGL_ );
+
+		test_ = std::unique_ptr<Test3>( new Test3(3) );
+		auto model = std::unique_ptr< ITreeModel >( new ReflectedTreeModel(
+			ObjectHandle(*test_, def3_), 
+			*defManager,
+			contextManager.queryInterface<IReflectionController>() ) );
+
+		viewCreator->createView( "plg_tree_model_test/test_tree_panel.qml",
+			ObjectHandle(std::move( model )), viewTest_ );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
@@ -214,4 +208,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestObjHandlePlugin )
-
+} // end namespace wgt

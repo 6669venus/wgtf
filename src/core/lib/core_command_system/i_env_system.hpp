@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 struct ECGUID
 {
 	uint32_t a;
@@ -64,6 +66,5 @@ public:
 #define ENV_STATE_ADD( CL, var ) auto var = new CL; state->add( IEnvState::IEnvComponentPtr( var ) )
 #define ENV_STATE_REMOVE( CL, var ) auto __u_ptr__ = state->remove( CL::GUID ); auto var = static_cast<CL*>( __u_ptr__.get() )
 #define ENV_STATE_QUERY( CL, var ) auto var = static_cast<CL*>(state->query( CL::GUID )); assert(var)
-
-
+} // end namespace wgt
 #endif // I_ENV_SYSTEM

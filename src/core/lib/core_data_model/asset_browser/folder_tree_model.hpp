@@ -10,14 +10,16 @@
 
 #include <memory>
 
+namespace wgt
+{
+class IFileSystem;
+
 //------------------------------------------------------------------------------
 // FolderTreeModel
 //
 // Represents the tree model with all of the items for browsing assets based
 // on the registered IFileSystem for folder retrieval.
 //------------------------------------------------------------------------------
-class IFileSystem;
-
 class FolderTreeModel: public ITreeModel
 {
 public:
@@ -43,5 +45,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // FOLDER_TREE_MODEL_HPP

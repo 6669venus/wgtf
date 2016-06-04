@@ -1,6 +1,8 @@
 #include "plugin_memory_allocator.hpp"
 #include "wg_memory/allocator.hpp"
 
+namespace wgt
+{
 //==========================================================================
 namespace
 {
@@ -110,3 +112,4 @@ void PluginMemoryAllocator::mem_delete_array(
 	ScopedMemoryContext memoryContext( memoryContext_ );
 	NGTAllocator::deallocate( ptr );
 }
+} // end namespace wgt

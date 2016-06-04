@@ -3,11 +3,9 @@
 
 #include "core_ui_framework/i_preferences.hpp"
 
-class IComponentContext;
-namespace
+namespace wgt
 {
-    class QtPreferencesImpl;
-}
+class IComponentContext;
 
 class QtPreferences : public Implements< IPreferences >
 {
@@ -23,7 +21,8 @@ public:
     void loadPreferenceFromFile( const char * filePath ) override;
 
 private:
-    std::unique_ptr< class QtPreferencesImpl > pImpl_;
+    class Implementation;
+    std::unique_ptr< Implementation > pImpl_;
 };
-
+} // end namespace wgt
 #endif//QT_PREFERENCES_HPP

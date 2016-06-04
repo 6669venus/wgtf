@@ -97,4 +97,4 @@ BW_TARGET_LINK_LIBRARIES( core_reflection PRIVATE
 	wg_types
 )
 
-BW_PROJECT_CATEGORY( core_reflection "NGT Libs/Reflection" )
+BW_PROJECT_CATEGORY( core_reflection "WGT Libs/Reflection" )

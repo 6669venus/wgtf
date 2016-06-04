@@ -3,9 +3,11 @@
 
 #include <vector>
 #include "core_common/signal.hpp"
+namespace wgt
+{
 class IItem;
 
-// TODO: http://jira.bigworldtech.com/browse/NGT-849
+// TODO: NGT-849
 // Eventually, we need to remove this class
 
 class ISelectionHandler
@@ -23,6 +25,5 @@ public:
 	SignalVoid signalPreSelectionChanged;
 	SignalVoid signalPostSelectionChanged;
 };
-
-
+} // end namespace wgt
 #endif //I_SELECTION_HANDLER_HPP

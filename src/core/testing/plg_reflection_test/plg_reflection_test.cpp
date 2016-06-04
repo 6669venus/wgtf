@@ -6,6 +6,8 @@
 
 #include "test_class.hpp"
 
+namespace wgt
+{
 /**
  *	Test reflection system.
  */
@@ -170,3 +172,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( TestPluginReflection )
+} // end namespace wgt

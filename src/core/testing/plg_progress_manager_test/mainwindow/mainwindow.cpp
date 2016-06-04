@@ -8,6 +8,8 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_action.hpp"
 
+namespace wgt
+{
 //==============================================================================
 MainWindow::MainWindow()
 	: contextManager_( nullptr )
@@ -98,4 +100,4 @@ void MainWindow::executeTestCommand2( IAction * action )
 	auto commandIns = commandSystemProvider->queueCommand( commandId );
 	commandSystemProvider->waitForInstance( commandIns );
 }
-
+} // end namespace wgt

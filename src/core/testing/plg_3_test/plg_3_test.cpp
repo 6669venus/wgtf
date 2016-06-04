@@ -3,6 +3,8 @@
 #include "../interfaces_test/test_interface.hpp"
 #include "core_common/ngt_windows.hpp"
 
+namespace wgt
+{
 class TestClassA
 	: public Implements< INTERFACE_VERSION( TestInterface, 0, 0 ) > // TestInterface v0.0
 {
@@ -95,4 +97,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( TestPlugin3 )
-
+} // end namespace wgt

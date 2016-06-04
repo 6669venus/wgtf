@@ -5,6 +5,8 @@
 #include "core_reflection/object_manager.hpp"
 #include "core_unit_test/unit_test.hpp"
 
+namespace wgt
+{
 //---------------------------------------------------------------------------
 // List Model Tests
 //---------------------------------------------------------------------------
@@ -613,3 +615,4 @@ TEST_F( TestFixture, changeTreeItem )
 		CHECK( size == oldSize );
 	}
 }
+} // end namespace wgt

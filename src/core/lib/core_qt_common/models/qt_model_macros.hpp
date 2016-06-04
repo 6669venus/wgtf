@@ -199,4 +199,3 @@ void ClassName::end##Noun1##Verb1( const QModelIndex &parent, \
 
 
 #endif // QT_MODEL_MACROS_HPP
-

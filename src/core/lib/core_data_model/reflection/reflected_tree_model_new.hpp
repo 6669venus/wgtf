@@ -4,6 +4,8 @@
 
 #include "core_data_model/abstract_item_model.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 class ObjectHandle;
 
@@ -41,6 +43,7 @@ public:
 	 */
 	virtual int rowCount( const AbstractItem * item ) const override;
 	virtual int columnCount() const override;
+	virtual bool hasChildren( const AbstractItem * item ) const override;
 
 	virtual Connection connectPreItemDataChanged(
 		AbstractTreeModel::DataCallback callback ) override;
@@ -70,6 +73,5 @@ private:
 	class Implementation;
 	std::unique_ptr< Implementation > impl_;
 };
-
-
+} // end namespace wgt
 #endif // _REFLECTED_TREE_MODEL_NEW_HPP

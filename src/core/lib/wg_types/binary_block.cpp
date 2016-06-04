@@ -3,6 +3,8 @@
 #include <cassert>
 #include <memory>
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 BinaryBlock::BinaryBlock( const void * data, size_t len, bool externallyOwned )
 	: data_( nullptr )
@@ -76,4 +78,4 @@ int BinaryBlock::compare( BinaryBlock& that ) const
 	assert( this->length_ >= 0 );
 	return memcmp( this->data_, that.data_, (size_t)this->length_ );
 }
-
+} // end namespace wgt

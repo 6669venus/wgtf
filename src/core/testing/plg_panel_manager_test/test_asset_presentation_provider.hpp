@@ -4,6 +4,8 @@
 #include "core_data_model/asset_browser/i_asset_presentation_provider.hpp"
 #include <map>
 
+namespace wgt
+{
 /**
  TestAssetPresentationProvider
  This class provides a test platform for the asset presentation provider functionality. It may also serve as an
@@ -50,5 +52,5 @@ private:
 	std::map< unsigned int, ThumbnailData > testThumbnails_;
 	ThumbnailData testStatusIcon_;
 };
-
+} // end namespace wgt
 #endif // TEST_ASSET_PRESENTATION_PROVIDER_HPP

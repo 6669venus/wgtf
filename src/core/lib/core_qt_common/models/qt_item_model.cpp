@@ -4,6 +4,8 @@
 #include "core_data_model/i_item_role.hpp"
 #include "helpers/qt_helpers.hpp"
 
+namespace wgt
+{
 ITEMROLE( display )
 ITEMROLE( decoration )
 
@@ -218,6 +220,14 @@ int QtItemModel::columnCount( const QModelIndex &parent ) const
 	return impl_->source_.columnCount( parentItem );
 }
 
+bool QtItemModel::hasChildren( const QModelIndex &parent ) const
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr;
+
+	return impl_->source_.hasChildren( parentItem );
+}
+
 QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 {
 	auto item = index.isValid() ?
@@ -228,7 +238,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		return QVariant();
 	}
 	
-	size_t roleId;
+	size_t roleId = role;
 	switch (role)
 	{
 	case Qt::DisplayRole:
@@ -240,7 +250,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		break;
 
 	default:
-		roleId = role;
+		decodeRole( role, roleId );
 		break;
 	}
 
@@ -282,6 +292,34 @@ bool QtItemModel::setHeaderData( int section, Qt::Orientation orientation, const
 	auto column = orientation == Qt::Horizontal ? section : -1;
 	auto data = QtHelpers::toVariant( value );
 	return impl_->source_.setData( row, column, role, data );
+}
+
+bool QtItemModel::insertRows( int row, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.insertRows( row, count, parentItem );
+}
+
+bool QtItemModel::insertColumns( int column, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.insertColumns( column, count, parentItem );
+}
+
+bool QtItemModel::removeRows( int row, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.removeRows( row, count, parentItem );
+}
+
+bool QtItemModel::removeColumns( int column, int count, const QModelIndex &parent )
+{
+	auto parentItem = parent.isValid() ?
+		reinterpret_cast< AbstractItem * >( parent.internalId() ) : nullptr; 
+	return impl_->source_.removeColumns( column, count, parentItem );
 }
 
 QtListModel::QtListModel( AbstractListModel & source ) 
@@ -410,3 +448,4 @@ bool QtTableModel::removeColumn( int column )
 {
 	return QtAbstractItemModel::removeColumn( column, nullptr ); 
 }
+} // end namespace wgt

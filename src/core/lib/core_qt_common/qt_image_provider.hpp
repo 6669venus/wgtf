@@ -4,6 +4,8 @@
 #include <QQuickImageProvider>
 #include <QHash>
 
+namespace wgt
+{
 class QtImageProvider : public QQuickImageProvider
 {
 public:
@@ -22,5 +24,5 @@ private:
 	// TODO cap the size of this cache
 	QHash<qint64, QImage> imageCache_;
 };
-
+} // end namespace wgt
 #endif

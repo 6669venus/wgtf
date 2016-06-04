@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import WGControls 1.0
 
 /*!
     \brief An item that acts as a selectable border for copy/paste type functionality
@@ -10,7 +11,7 @@ Example:
 WGCopyable {
     id: copyableControl
 
-    BWCopyable {
+    WGCopyController {
         id: copyableObject
 
         onDataCopied : {

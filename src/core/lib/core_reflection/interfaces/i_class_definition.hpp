@@ -5,6 +5,8 @@
 #include "../ref_object_id.hpp"
 #include <functional>
 
+namespace wgt
+{
 class ObjectHandle;
 class IClassDefinitionDetails;
 class IBaseProperty;
@@ -132,7 +134,11 @@ public:
 	 *	Find the first property with the given ID.
 	 *	Searches all properties, direct and parent.
 	 */
-	virtual IBasePropertyPtr findProperty( const char * name ) const = 0;
+	virtual IBasePropertyPtr findProperty( const char * name, size_t length ) const = 0;
+	IBasePropertyPtr findProperty( const char * name ) const
+	{
+		return findProperty( name, strlen( name ) );
+	}
 
 	/**
 	 *	Get an identifier for this definition's type.
@@ -160,6 +166,5 @@ public:
 	 */
 	virtual ObjectHandle createManagedObject( const RefObjectId & id = RefObjectId::zero() ) const = 0;
 };
-
+} // end namespace wgt
 #endif // I_CLASS_DEFINITION_HPP
-

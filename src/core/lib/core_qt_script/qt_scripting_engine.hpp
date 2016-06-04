@@ -6,7 +6,7 @@ The QtScriptingEngine manages QtScriptObjects to allow C++ classes
 to be used in QML.
 This is used internally by the QtUIFramework to create
 context objects and properties.
-Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
+Details: Search for NGT Reflection System on the Wargaming Confluence
 */
 
 #include "core_reflection/utilities/reflection_utilities.hpp"
@@ -17,6 +17,8 @@ Details: https://confluence.wargaming.net/display/NGT/NGT+Reflection+System
 #include <QObject>
 #include <QVariant>
 
+namespace wgt
+{
 class IClassDefinition;
 class IDefinitionManager;
 class IUIApplication;
@@ -25,7 +27,7 @@ class IQtTypeConverter;
 class IComponentContext;
 class ICommandManager;
 class ICopyPasteManager;
-class BWCopyable;
+class WGCopyController;
 class ObjectHandle;
 class QtScriptObject;
 
@@ -42,8 +44,9 @@ public:
 
 	void finalise();
 
-	QtScriptObject * createScriptObject( const ObjectHandle & object );
+	QtScriptObject * createScriptObject( const ObjectHandle & object, QObject* parent );
 	void deregisterScriptObject( QtScriptObject & scriptObject );
+	void swapParent( QtScriptObject & scriptObject, QObject * parent );
 
 protected:
 	// TODO: These invokables need to be refactored into different modules to
@@ -54,8 +57,8 @@ protected:
 	Q_INVOKABLE void endUndoFrame();
 	Q_INVOKABLE void abortUndoFrame();
 	Q_INVOKABLE void deleteMacro( QString command );
-	Q_INVOKABLE void selectControl( BWCopyable* control, bool append = true );
-	Q_INVOKABLE void deselectControl( BWCopyable* control, bool reset = false );
+	Q_INVOKABLE void selectControl( WGCopyController* control, bool append = true );
+	Q_INVOKABLE void deselectControl( WGCopyController* control, bool reset = false );
 	Q_INVOKABLE QObject * iterator( const QVariant & collection );
 	// this function is used to resolve breaking binding issue for checkbox and pushbutton, since
 	// clicking on checkbox or pushbutton will break the "checked" property binding
@@ -74,5 +77,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif//QT_SCRIPTING_ENGINE_HPP

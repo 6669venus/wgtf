@@ -13,6 +13,8 @@
 
 #include "core_common/signal.hpp"
 
+namespace wgt
+{
 class Point
 {
 public:
@@ -47,5 +49,5 @@ Point operator/( const Point& lhs, float val );
 Point operator*( const Point& lhs, float val );
 Point operator*( float val, const Point& rhs );
 bool operator==( const Point& lhs, const Point& rhs );
-
+} // end namespace wgt
 #endif // POINT_H_

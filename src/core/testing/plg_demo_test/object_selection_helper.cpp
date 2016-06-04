@@ -3,6 +3,8 @@
 #include "core_command_system/i_command_manager.hpp"
 
 
+namespace wgt
+{
 ObjectSelectionHelper::ObjectSelectionHelper()
 {
 
@@ -59,3 +61,4 @@ void ObjectSelectionHelper::value( const ObjectHandle& data )
 	this->signalPostDataChanged();
 	selectionContext_->setContextObject( value_ );
 }
+} // end namespace wgt

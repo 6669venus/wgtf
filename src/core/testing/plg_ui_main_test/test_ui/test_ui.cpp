@@ -16,13 +16,16 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_window.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 //==============================================================================
 TestUI::TestUI( IComponentContext & context )
-	: DepsBase( context )
+	: Depends( context )
 	, context_( context )
 {
 }
@@ -76,27 +79,39 @@ void TestUI::createActions( IUIFramework & uiFramework )
 // =============================================================================
 void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int envIdx )
 {
-	test1Models_.emplace_back( new ReflectedTreeModelNew( context_, dataSrc->getTestPage() ) );
-    std::string uniqueName1 = dataSrc->description() + std::string("testing_ui_main/test_property_tree_panel.qml");
-	test1Views_.emplace_back( TestViews::value_type(
-		uiFramework.createView( uniqueName1.c_str(), "testing_ui_main/test_property_tree_panel.qml",
-		IUIFramework::ResourceType::Url, test1Models_.back().get() ), envIdx ) );
-
 	auto defManager = get<IDefinitionManager>(); 
 	assert( defManager != nullptr );
 	auto controller = get<IReflectionController>();
 	assert( controller != nullptr );
 
+	auto viewCreator = get< IViewCreator >();
+	assert(viewCreator != nullptr);
+
+	test1Models_.emplace_back( new ReflectedTreeModelNew( context_, dataSrc->getTestPage() ) );
+	std::string uniqueName1 = dataSrc->description() + std::string("testing_ui_main/test_property_tree_panel.qml");
+	viewCreator->createView(
+		"testing_ui_main/test_property_tree_panel.qml",
+		test1Models_.back().get(),
+		[ this, envIdx ] (std::unique_ptr< IView > & view )
+		{
+			test1Views_.emplace_back( TestViews::value_type( std::move( view ), envIdx ) );
+			test1Views_.back().first->registerListener(this);
+		},
+		uniqueName1.c_str() );
+
 	auto model = std::unique_ptr< ITreeModel >(
 		new ReflectedTreeModel( dataSrc->getTestPage2(), *defManager, controller ) );
+	std::string uniqueName2 = dataSrc->description() + std::string("testing_ui_main/test_reflected_tree_panel.qml");
 
-    std::string uniqueName2 = dataSrc->description() + std::string("testing_ui_main/test_reflected_tree_panel.qml");
-	test2Views_.emplace_back( TestViews::value_type(
-		uiFramework.createView( uniqueName2.c_str(), "testing_ui_main/test_reflected_tree_panel.qml",
-		IUIFramework::ResourceType::Url, std::move( model ) ), envIdx ) );
-
-    test1Views_.back().first->registerListener( this );
-	test2Views_.back().first->registerListener( this );
+	viewCreator->createView(
+		"testing_ui_main/test_reflected_tree_panel.qml",
+		std::move(model),
+		[ this, envIdx ] ( std::unique_ptr< IView > & view )
+		{
+			test2Views_.emplace_back(TestViews::value_type(std::move( view ), envIdx ) );
+			test2Views_.back().first->registerListener(this);
+		},
+		uniqueName2.c_str());
 }
 
 // =============================================================================
@@ -139,26 +154,6 @@ void TestUI::addActions( IUIApplication & uiApplication )
 }
 
 // =============================================================================
-void TestUI::addViews( IUIApplication & uiApplication )
-{
-	if (test1Views_.back().first != nullptr)
-	{
-		uiApplication.addView( *test1Views_.back().first );
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Failed to load qml\n" );
-	}
-	if (test2Views_.back().first != nullptr)
-	{
-		uiApplication.addView( *test2Views_.back().first );
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Failed to load qml\n" );
-	}
-}
-
 void TestUI::removeViews( size_t idx )
 {
 	assert( app_ != nullptr );
@@ -206,10 +201,9 @@ void TestUI::open()
 
 	IEnvManager* em = get<IEnvManager>();
 	int envIdx = em->addEnv( dataSrc->description() );
-    em->loadEnvState( envIdx );
+
 	dataSrcEnvPairs_.push_back( DataSrcEnvPairs::value_type( dataSrc, envIdx ) );
 	createViews( *fw_, dataSrc, envIdx );
-	addViews( *app_ );
 }
 
 void TestUI::close()
@@ -223,7 +217,6 @@ void TestUI::close()
 	destroyViews( dataSrcEnvPairs_.size() );
 
 	IEnvManager* em = get<IEnvManager>();
-    em->saveEnvState( envIdx );
 	em->removeEnv( envIdx );
 
 	auto dataSrcMngr = get<IDataSourceManager>();
@@ -241,4 +234,4 @@ bool TestUI::canClose() const
 	assert(test1Views_.size() == test2Views_.size());
 	return test1Views_.size() > 0;
 }
-
+} // end namespace wgt

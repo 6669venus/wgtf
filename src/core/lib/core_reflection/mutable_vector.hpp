@@ -7,6 +7,8 @@
 #include <set>
 #include <vector>
 
+namespace wgt
+{
 template< typename T >
 class ConstMutableIterator;
 
@@ -380,5 +382,5 @@ public:
 protected:
 	friend typename ConstMutableIterator<T>::collection;
 };
-
+} // end namespace wgt
 #endif//MUTABLE_VECTOR_HPP

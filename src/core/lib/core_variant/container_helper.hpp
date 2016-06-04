@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace wgt
+{
 template< typename Container >
 struct ContainerHelper
 {
@@ -111,5 +113,5 @@ struct ContainerHelper< Container< A1, A2, A3, A4 > >
 	typedef A3 ThirdArgType;
 	typedef A4 ForthArgType;
 };
-
+} // end namespace wgt
 #endif //CONTAINER_HELPER_HPP

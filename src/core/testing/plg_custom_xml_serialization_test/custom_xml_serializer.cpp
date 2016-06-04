@@ -2,6 +2,8 @@
 #include "custom_xml_writer.hpp"
 #include "custom_xml_reader.hpp"
 
+namespace wgt
+{
 CustomXmlSerializer::CustomXmlSerializer( IDataStream& dataStream )
 	: stream_( dataStream )
 {
@@ -24,3 +26,4 @@ bool CustomXmlSerializer::sync()
 {
 	return stream_.sync();
 }
+} // end namespace wgt

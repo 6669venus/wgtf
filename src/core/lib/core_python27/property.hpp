@@ -6,6 +6,8 @@
 #include "core_reflection/interfaces/i_base_property.hpp"
 
 
+namespace wgt
+{
 class IComponentContext;
 namespace PyScript
 {
@@ -60,6 +62,7 @@ public:
 		const IDefinitionManager & definitionManager ) const override;
 
 	Variant invoke( const ObjectHandle& object,
+		const IDefinitionManager & definitionManager,
 		const ReflectedMethodParameters& parameters ) override;
 
 	size_t parameterCount() const override;
@@ -71,5 +74,5 @@ private:
 
 
 } // namespace ReflectedPython
-
+} // end namespace wgt
 #endif // PYTHON_PROPERTY_HPP

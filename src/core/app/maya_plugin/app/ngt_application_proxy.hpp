@@ -11,6 +11,8 @@
 class QTimer;
 class QWinHost;
 
+namespace wgt
+{
 class NGTApplicationProxy : public QObject, public IApplicationListener, public IWindowListener
 {
 	Q_OBJECT
@@ -41,5 +43,5 @@ private:
 	bool started_;
 	bool visible_;
 };
-
+} // end namespace wgt
 #endif//NGT_APPLICATION_PROXY_HPP

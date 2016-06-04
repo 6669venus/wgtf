@@ -12,25 +12,27 @@
 #include <unordered_map>
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
-	: object_( other.object_ )
-	, property_( std::move( other.property_ ) )
-	, rootObject_( other.rootObject_ )
-	, path_( std::move( other.path_ ) )
-	, definitionManager_( other.definitionManager_ )
-	, parentAccessor_( std::move(other.parentAccessor_) )
+	: parentAccessor_( std::move(other.parentAccessor_) )
+    , object_( other.object_ )
+    , property_( std::move( other.property_ ) )
+    , rootObject_( other.rootObject_ )
+    , path_( std::move( other.path_ ) )
+    , definitionManager_( other.definitionManager_ )
 {
 }
 
 //==============================================================================
 PropertyAccessor::PropertyAccessor( const PropertyAccessor & other )
-: object_( other.object_ )
-, property_( other.property_ )
-, rootObject_( other.rootObject_ )
-, path_( other.path_ )
-, definitionManager_( other.definitionManager_ )
-, parentAccessor_( other.parentAccessor_ )
+    : parentAccessor_( other.parentAccessor_ )
+    , object_( other.object_ )
+    , property_( other.property_ )
+    , rootObject_( other.rootObject_ )
+    , path_( other.path_ )
+    , definitionManager_( other.definitionManager_ )
 {
 }
 
@@ -231,7 +233,7 @@ Variant PropertyAccessor::invoke( const ReflectedMethodParameters & parameters )
 		listener->preInvoke( *this, parameters, false );
 	}
 
-	result = getProperty()->invoke( object_, parameters );
+	result = getProperty()->invoke( object_, *definitionManager_, parameters );
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
@@ -269,7 +271,7 @@ void PropertyAccessor::invokeUndoRedo( const ReflectedMethodParameters & paramet
 	ReflectedMethodParameters paramsUndoRedo;
 	paramsUndoRedo.push_back( ObjectHandle(parameters) );
 	paramsUndoRedo.push_back( result );
-	method->invoke( object_, paramsUndoRedo );
+	method->invoke( object_, *definitionManager_, paramsUndoRedo );
 
 	for (auto itr = listeners.cbegin(); itr != listeners.cend(); ++itr)
 	{
@@ -530,3 +532,4 @@ const IDefinitionManager * PropertyAccessor::getDefinitionManager() const
 {
 	return definitionManager_;
 }
+} // end namespace wgt

@@ -16,6 +16,8 @@
 #include <cwchar>
 
 
+namespace wgt
+{
 static bool ALLOCATOR_DEBUG_OUTPUT = false;
 static bool ALLOCATOR_STACK_TRACES = false;
 
@@ -120,9 +122,10 @@ private:
 			::free( p );
 		}
 
-		void construct( pointer p, const T & val ) const
+		template<typename Arg>
+		void construct( pointer p, Arg && val ) const
 		{
-			new ((void*)p) T( val );
+			new ((void*)p) T( std::forward<Arg>(val) );
 		}
 
 
@@ -159,8 +162,10 @@ public:
 		, parentContext_( parentContext )
 	{
 		assert( parentContext_ != nullptr );
-		parentContext_->childContexts_.push_back( this );
 		wcscpy( name_, name );
+
+		std::lock_guard< std::mutex > childContextsGuard(parentContext_->childContextsLock_);
+		parentContext_->childContexts_.push_back( this );
 	}
 
 
@@ -168,6 +173,7 @@ public:
 	{
 		if (parentContext_ != nullptr)
 		{
+			std::lock_guard< std::mutex > childContextsGuard(parentContext_->childContextsLock_);
 			auto& childContexts = parentContext_->childContexts_;
 			auto foundIt = std::find( childContexts.cbegin(),
 				childContexts.cend(),
@@ -180,30 +186,36 @@ public:
 
 	void * allocate( size_t size )
 	{
-		Allocation * allocation = nullptr;
+		AllocationPtr allocation = AllocationPtr();
+
 		{
 			std::lock_guard< std::mutex > allocationPoolGuard(allocationPoolLock_);
-			if (allocationPool_.size() > 0)
+			if (!allocationPool_.empty())
 			{
-				allocation = allocationPool_.back();
+				allocation = std::move(allocationPool_.back());
 				allocationPool_.pop_back();
 			}
 		}
+
 		if(allocation == nullptr)
 		{
-			allocation =
-				static_cast< Allocation * >( ::malloc( sizeof( Allocation ) ) );
+			allocation.reset(new Allocation());
 		}
+
 		allocation->frames_ = 0;
 		if (ALLOCATOR_STACK_TRACES)
 		{
 			allocation->frames_ =
 				RtlCaptureStackBackTraceFunc(3, numFramesToCapture_, allocation->addrs_, NULL);
 		}
+
 		auto ptr = ::malloc( size );
-		std::lock_guard< std::mutex > allocationGuard(allocationLock_);
-		allocation->allocId_ = allocId_++;
-		liveAllocations_.insert( std::make_pair( ptr, allocation ) );
+
+		{
+			std::lock_guard< std::mutex > allocationGuard(allocationLock_);
+			allocation->allocId_ = allocId_++;
+			liveAllocations_.insert( std::make_pair( ptr, std::move( allocation ) ) );
+		}
 
 		if (ALLOCATOR_DEBUG_OUTPUT)
 		{
@@ -215,59 +227,29 @@ public:
 	}
 
 
-	bool deallocateInternal( void* ptr )
-	{
-		if (ALLOCATOR_DEBUG_OUTPUT)
-		{
-			std::hash<std::thread::id> h;
-			wprintf(L"dealloc ptr %#zx context %ls %#zx (thread %#zx)\n", (size_t)ptr, name_, (size_t)this, h(std::this_thread::get_id()));
-		}
-
-		std::lock_guard< std::mutex > allocationGuard(allocationLock_);
-		auto findIt = liveAllocations_.find( ptr );
-		if (findIt != liveAllocations_.end())
-		{
-			{
-				std::lock_guard< std::mutex > allocationPoolGuard(allocationPoolLock_);
-				allocationPool_.push_back( findIt->second );
-			}
-			liveAllocations_.erase( findIt );
-			::free( ptr );
-			return true;
-		}
-		return false;
-	}
-
-
 	void deallocate( void* ptr )
 	{
-		auto success = deallocateInternal( ptr );
-		if (success)
-		{
-			return;
-		}
-		if (parentContext_ == nullptr)
-		{
-			assert( false );
-			return;
-		}
-		if (parentContext_->deallocateInternal( ptr ))
+		// try to deallocate using this context or its children
+		if (deallocate( ptr, nullptr ))
 		{
 			return;
 		}
 
-		for (auto context : parentContext_->childContexts_)
+		// climb up to root context
+		auto parentContext = this;
+		while (parentContext->parentContext_)
 		{
-			if (context == this)
-			{
-				continue;
-			}
-			if(context->deallocateInternal( ptr ))
-			{
-				return;
-			}
+			parentContext = parentContext->parentContext_;
 		}
-		assert( success );
+
+		// try to deallocate using root context or its children, except this one
+		if (parentContext->deallocate( ptr, this ))
+		{
+			return;
+		}
+
+		// failed to find a proper context
+		assert( false );
 	}
 
 	void cleanup()
@@ -367,80 +349,85 @@ public:
 		swprintf( contextName, 2048, L"Destroying memory context for %s\n", name_ );
 		::OutputDebugString( contextName );
 
-		for( auto & liveAllocation : liveAllocations_)
 		{
-			// Allocate a buffer large enough to hold the symbol information on the stack and get
-			// a pointer to the buffer.  We also have to set the size of the symbol structure itself
-			// and the number of bytes reserved for the name.
-			const int MaxSymbolNameLength = 1024;
-			ULONG64 buffer[ (sizeof( SYMBOL_INFO ) + MaxSymbolNameLength + sizeof( ULONG64 ) - 1) / sizeof( ULONG64 ) ] = { 0 };
-			SYMBOL_INFO * info = (SYMBOL_INFO *) buffer;
-			info->SizeOfStruct = sizeof( SYMBOL_INFO );
-			info->MaxNameLen = MaxSymbolNameLength;
-
-			// Attempt to get information about the symbol and add it to our output parameter.
-			DWORD64 displacement64 = 0;
-			DWORD displacement = 0;
-
+			std::lock_guard< std::mutex > allocationGuard(allocationLock_);
+			for( auto & liveAllocation : liveAllocations_)
 			{
-				char allocIdBuffer[ 2048 ] = { 0 };
-				sprintf( allocIdBuffer, "Alloc Id: %lu\n", static_cast< unsigned long >( liveAllocation.second->allocId_ ) );
-				builder.append( allocIdBuffer );
-			}
-			const auto & allocStack = liveAllocation.second;
-			for( size_t i = 0; i < allocStack->frames_; ++i )
-			{
-				char nameBuf[ 1024 ] = { 0 };
-				if (SymFromAddrFunc(
-					currentProcess,
-					(DWORD64) liveAllocation.second->addrs_[ i ],
-					&displacement64, info ))
+				// Allocate a buffer large enough to hold the symbol information on the stack and get
+				// a pointer to the buffer.  We also have to set the size of the symbol structure itself
+				// and the number of bytes reserved for the name.
+				const int MaxSymbolNameLength = 1024;
+				ULONG64 buffer[ (sizeof( SYMBOL_INFO ) + MaxSymbolNameLength + sizeof( ULONG64 ) - 1) / sizeof( ULONG64 ) ] = { 0 };
+				SYMBOL_INFO * info = (SYMBOL_INFO *) buffer;
+				info->SizeOfStruct = sizeof( SYMBOL_INFO );
+				info->MaxNameLen = MaxSymbolNameLength;
+
+				// Attempt to get information about the symbol and add it to our output parameter.
+				DWORD64 displacement64 = 0;
+				DWORD displacement = 0;
+
 				{
-					strncat( nameBuf, info->Name, info->NameLen );
+					char allocIdBuffer[ 2048 ] = { 0 };
+					sprintf( allocIdBuffer, "Alloc Id: %lu\n", static_cast< unsigned long >( liveAllocation.second->allocId_ ) );
+					builder.append( allocIdBuffer );
 				}
-				else
+				const auto & allocStack = liveAllocation.second;
+				for( size_t i = 0; i < allocStack->frames_; ++i )
 				{
-					// Unable to find the name, so lets get the module or address
-					MEMORY_BASIC_INFORMATION mbi;
-					char fullPath[MAX_PATH];
-					if (VirtualQuery( liveAllocation.second->addrs_[ i ], &mbi, sizeof(mbi) ) &&
-						GetModuleFileNameA( (HMODULE)mbi.AllocationBase, fullPath, sizeof(fullPath) ))
+					char nameBuf[ 1024 ] = { 0 };
+					if (SymFromAddrFunc(
+						currentProcess,
+						(DWORD64) liveAllocation.second->addrs_[ i ],
+						&displacement64, info ))
 					{
-						// Get base name of DLL
-						char * filename = strrchr( fullPath, '\\' );
-						strncpy_s( nameBuf, sizeof( nameBuf ), filename == NULL ? fullPath : (filename + 1), _TRUNCATE );
+						strncat( nameBuf, info->Name, info->NameLen );
 					}
 					else
 					{
-						sprintf_s( nameBuf, sizeof( nameBuf ), "0x%p", liveAllocation.second->addrs_[ i ] );
+						// Unable to find the name, so lets get the module or address
+						MEMORY_BASIC_INFORMATION mbi;
+						char fullPath[MAX_PATH];
+						if (VirtualQuery( liveAllocation.second->addrs_[ i ], &mbi, sizeof(mbi) ) &&
+							GetModuleFileNameA( (HMODULE)mbi.AllocationBase, fullPath, sizeof(fullPath) ))
+						{
+							// Get base name of DLL
+							char * filename = strrchr( fullPath, '\\' );
+							strncpy_s( nameBuf, sizeof( nameBuf ), filename == NULL ? fullPath : (filename + 1), _TRUNCATE );
+						}
+						else
+						{
+							sprintf_s( nameBuf, sizeof( nameBuf ), "0x%p", liveAllocation.second->addrs_[ i ] );
+						}
 					}
-				}
 
-				IMAGEHLP_LINE64 source_info;
-				char lineBuffer[ 1024 ] = { 0 };
-				::ZeroMemory( &source_info, sizeof(IMAGEHLP_LINE64) );
-				source_info.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
-				if(SymGetLineFromAddr64Func(
-					currentProcess,
-					(DWORD64) liveAllocation.second->addrs_[ i ],
-					&displacement, &source_info ))
-				{
-					sprintf( lineBuffer, "%s(%d)", source_info.FileName, source_info.LineNumber );
+					IMAGEHLP_LINE64 source_info;
+					char lineBuffer[ 1024 ] = { 0 };
+					::ZeroMemory( &source_info, sizeof(IMAGEHLP_LINE64) );
+					source_info.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+					if(SymGetLineFromAddr64Func(
+						currentProcess,
+						(DWORD64) liveAllocation.second->addrs_[ i ],
+						&displacement, &source_info ))
+					{
+						sprintf( lineBuffer, "%s(%d)", source_info.FileName, source_info.LineNumber );
+					}
+					char outputBuffer[ 2048 ] = { 0 };
+					sprintf( outputBuffer, "%s : %s\n", lineBuffer, nameBuf );
+					builder.append( outputBuffer );
 				}
-				char outputBuffer[ 2048 ] = { 0 };
-				sprintf( outputBuffer, "%s : %s\n", lineBuffer, nameBuf );
-				builder.append( outputBuffer );
+				liveAllocation.second.reset();
+				builder.append( "\n\n" );
+
+				::OutputDebugStringA( builder.c_str() );
+
+				builder.clear();
 			}
-			::free( liveAllocation.second );
-			builder.append( "\n\n" );
-
-			::OutputDebugStringA( builder.c_str() );
-
-			builder.clear();
+			liveAllocations_.clear();
 		}
-		for( auto allocation : allocationPool_ )
+
 		{
-			::free( allocation );
+			std::lock_guard< std::mutex > allocationPoolGuard(allocationPoolLock_);
+			allocationPool_.clear();
 		}
 	}
 
@@ -450,20 +437,83 @@ private:
 		void *	addrs_[ numFramesToCapture_ ];
 		size_t	frames_;
 		size_t	allocId_;
+
+		static void* operator new(size_t sz)
+		{
+			return ::malloc(sz);
+		}
+
+		static void operator delete(void* ptr)
+		{
+			return ::free(ptr);
+		}
 	};
+
+	typedef std::unique_ptr< Allocation > AllocationPtr;
+
 	wchar_t name_[ 255 ];
-	size_t	allocId_;
 	MemoryContext * parentContext_;
-	std::mutex allocationLock_;
+
 	std::mutex allocationPoolLock_;
-	std::vector< Allocation *, UntrackedAllocator< Allocation * > > allocationPool_;
+	std::vector< AllocationPtr, UntrackedAllocator< AllocationPtr > > allocationPool_;
+
+	std::mutex childContextsLock_;
 	std::vector< MemoryContext *, UntrackedAllocator< MemoryContext * > > childContexts_;
+
+	std::mutex allocationLock_;
+	size_t allocId_;
 	std::unordered_map<
 		void *,
-		Allocation *,
+		AllocationPtr,
 		std::hash< void *>,
 		std::equal_to< void * >,
-		UntrackedAllocator< std::pair< void * const, Allocation * > > > liveAllocations_;
+		UntrackedAllocator< std::pair< void * const, AllocationPtr > > > liveAllocations_;
+
+
+	/**
+	Deallocate using this context or its children recursively.
+	*/
+	bool deallocate( void* ptr, MemoryContext* skip )
+	{
+		if (this == skip)
+		{
+			return false;
+		}
+
+		{
+			std::lock_guard< std::mutex > allocationGuard(allocationLock_);
+			auto findIt = liveAllocations_.find( ptr );
+			if (findIt != liveAllocations_.end())
+			{
+				if (ALLOCATOR_DEBUG_OUTPUT)
+				{
+					std::hash<std::thread::id> h;
+					wprintf(L"dealloc ptr %#zx context %ls %#zx (thread %#zx)\n", (size_t)ptr, name_, (size_t)this, h(std::this_thread::get_id()));
+				}
+
+				{
+					std::lock_guard< std::mutex > allocationPoolGuard(allocationPoolLock_);
+					allocationPool_.push_back(std::move(findIt->second));
+				}
+
+				liveAllocations_.erase( findIt );
+				::free( ptr );
+				return true;
+			}
+		}
+
+		std::lock_guard< std::mutex > childContextsGuard(childContextsLock_);
+		for (auto context : childContexts_)
+		{
+			if(context->deallocate( ptr, skip ))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 };
 
 
@@ -580,3 +630,4 @@ void enableStackTraces( bool enable )
 }
 
 }
+} // end namespace wgt

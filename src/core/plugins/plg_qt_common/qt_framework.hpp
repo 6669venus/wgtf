@@ -10,9 +10,12 @@
 #include <tuple>
 
 class QUrl;
-class IQtTypeConverter;
 class QQmlComponent;
-class QmlComponent;
+class QString;
+
+namespace wgt
+{
+class IQtTypeConverter;
 class QtScriptingEngine;
 class IComponentContext;
 class QtDefaultSpacing;
@@ -20,8 +23,8 @@ class QtGlobalSettings;
 class QmlWindow;
 class QtWindow;
 class QtPreferences;
-class QString;
 class ICommandManager;
+class QmlComponent;
 
 namespace QtFramework_Locals
 {
@@ -63,16 +66,23 @@ public:
 		std::function<bool( const IAction* )> checkedFunc ) override;
 	std::unique_ptr< IComponent > createComponent( 
 		const char * resource, ResourceType type ) override;
-	std::unique_ptr< IView > createView( 
+
+	std::unique_ptr< IView > createView(
 		const char * resource, ResourceType type,
-		const ObjectHandle & context ) override;
-	std::unique_ptr< IWindow > createWindow( 
+		const ObjectHandle & context ) override; 
+	std::unique_ptr< IView > createView(const char* uniqueName,
 		const char * resource, ResourceType type,
 		const ObjectHandle & context ) override;
 
-    std::unique_ptr< IView > createView( const char* uniqueName,
-        const char * resource, ResourceType type,
-        const ObjectHandle & context ) override;
+	void createViewAsync( 
+		const char* uniqueName,
+		const char * resource, ResourceType type,
+		const ObjectHandle & context,
+		std::function< void(std::unique_ptr< IView > &) > loadedHandler ) override;
+
+	std::unique_ptr< IWindow > createWindow( 
+		const char * resource, ResourceType type,
+		const ObjectHandle & context ) override;
 
 	void loadActionData( const char * resource, ResourceType type ) override;
 	void registerComponent( const char * id, IComponent & component ) override;
@@ -93,6 +103,11 @@ protected:
 
 private:
 	QmlComponent * createComponent( const QUrl & resource );
+	void createViewInternal(
+		const char* uniqueName,
+		const char * resource, ResourceType type,
+		const ObjectHandle & context,
+		std::function< void(std::unique_ptr< IView > &) > loadedHandler, bool async );
 
 	void registerDefaultComponents();
 	void registerDefaultComponentProviders();
@@ -123,5 +138,5 @@ private:
 	DIRef< ICommandManager > commandManager_;
 	std::unique_ptr< QtFramework_Locals::QtCommandEventListener > commandEventListener_;
 };
-
+} // end namespace wgt
 #endif

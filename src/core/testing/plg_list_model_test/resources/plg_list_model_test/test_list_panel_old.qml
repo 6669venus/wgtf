@@ -64,12 +64,12 @@ WGPanel {
                     anchors.fill: parent
                     anchors.margins: 1
                     color: {
-                        if (typeof itemData.Value === "string")
+                        if (typeof itemData.value === "string")
                         {
                             return "transparent";
                         }
 						
-                        var colour = itemData.Value;
+                        var colour = itemData.value;
                         var r = colour > 9999 ? (colour / 10000) % 100 + 156 : 0;
                         var g = colour > 99 ? (colour / 100) % 100 + 156 : 0;
                         var b = colour % 100 + 156;
@@ -85,8 +85,8 @@ WGPanel {
                     anchors.bottom: parent.bottom
                     anchors.margins: 4
                     verticalAlignment: Text.AlignVCenter
-                    visible: typeof itemData.Value === "string"
-                    text: typeof itemData.Value === "string" ? itemData.Value : ""
+                    visible: typeof itemData.value === "string"
+                    text: typeof itemData.value === "string" ? itemData.value : ""
                     color: palette.textColor
                 }
             }

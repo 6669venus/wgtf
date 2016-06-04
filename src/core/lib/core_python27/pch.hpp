@@ -5,4 +5,3 @@
 #include "Python.h"
 
 #endif // PLG_PYTHON27_PCH_HPP
-

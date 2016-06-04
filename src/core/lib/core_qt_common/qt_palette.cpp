@@ -4,6 +4,8 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QStyleFactory>
 
+namespace wgt
+{
 QtPalette::QtPalette(QQuickItem* parent)
 	: QQuickItem( parent ), timerid_( 0 )
 {
@@ -427,3 +429,4 @@ void QtPalette::onPaletteChanged()
 		emit qApp->paletteChanged(palette);
 	}
 }
+} // end namespace wgt

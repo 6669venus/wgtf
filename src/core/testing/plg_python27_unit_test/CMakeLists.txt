@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.2.3 )
 PROJECT( plg_python27_unit_test )
 
-INCLUDE( BWMacros )
+INCLUDE( WGMacros )
 INCLUDE( WGPython27Common )
 INCLUDE( WGPython27Project )
 

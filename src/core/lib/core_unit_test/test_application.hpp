@@ -6,6 +6,8 @@
 
 #include "core_generic_plugin/interfaces/i_application.hpp"
 
+namespace wgt
+{
 class TestApplication : public IApplication
 {
 public:
@@ -19,5 +21,5 @@ private:
 	std::atomic<bool> exiting_;
 	std::thread thread_;
 };
-
+} // end namespace wgt
 #endif

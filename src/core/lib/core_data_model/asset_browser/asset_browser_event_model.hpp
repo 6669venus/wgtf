@@ -16,6 +16,8 @@
 
 #include <vector>
 
+namespace wgt
+{
 typedef Signal<void(const Variant&)> SignalVariant;
 typedef Signal<void(bool)> SignalBool;
 typedef Signal<void(void)> SignalVoid;
@@ -40,4 +42,5 @@ private:
 	SignalVariant signalFolderSelectionChanged;
 	SignalAsset signalUseSelectedAsset;
 };
+} // end namespace wgt
 #endif // ASSET_BROWSER_EVENT_MODEL_H_

@@ -5,6 +5,8 @@
 #include <QQmlComponent>
 #include <QModelIndex>
 
+namespace wgt
+{
 ITEMROLE( valueType )
 ITEMROLE( component )
 
@@ -64,3 +66,4 @@ bool ComponentExtension::setData( const QModelIndex &index, const QVariant &valu
 {
 	return false;
 }
+} // end namespace wgt

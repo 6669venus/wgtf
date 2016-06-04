@@ -4,6 +4,8 @@
 #include "generic_plugin_manager.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 
+namespace wgt
+{
 typedef bool(*CallbackFunc)(GenericPluginLoadState loadState);
 class NotifyPlugin
 {
@@ -33,5 +35,5 @@ public:
 private:
 	std::vector< HMODULE > pluginsToUnload_;
 };
-
+} // end namespace wgt
 #endif //NOTIFY_PLUGIN_HPP

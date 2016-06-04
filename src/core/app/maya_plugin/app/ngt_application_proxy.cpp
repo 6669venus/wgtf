@@ -12,6 +12,8 @@
 
 #include <maya/MQtUtil.h>
 
+namespace wgt
+{
 NGTApplicationProxy::NGTApplicationProxy( IUIApplication* application, QObject* parent)
 	: timer_( new QTimer( this ) )
 	, application_( application )
@@ -162,4 +164,4 @@ void NGTApplicationProxy::hide()
 	}
 	visible_ = false;
 }
-
+} // end namespace wgt

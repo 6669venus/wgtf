@@ -6,10 +6,12 @@
 #include <QVariant>
 #include "core_qt_common/qt_new_handler.hpp"
 
+namespace wgt
+{
 class ISelectionHandler;
 
 
-// TODO: http://jira.bigworldtech.com/browse/NGT-849
+// TODO: NGT-849
 // Eventually, we need to remove this class
 class SelectionHelper
     : public QObject
@@ -46,6 +48,5 @@ private:
 	std::vector<QModelIndex> selectionSet_;
 
 };
-
-
+} // end namespace wgt
 #endif //SELECTION_HELPER_HPP

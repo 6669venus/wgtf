@@ -7,6 +7,8 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 
+namespace wgt
+{
 class ReflectedTreeModelNew;
 
 class IBaseProperty;
@@ -27,9 +29,11 @@ public:
 		const ReflectedTreeModelNew & model );
 	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
+		size_t index,
 		const char * path );
 	ReflectedTreeItemNew( IComponentContext & contextManager,
 		ReflectedTreeItemNew * parent,
+		size_t index,
 		const std::string & path );
 	virtual ~ReflectedTreeItemNew();
 
@@ -51,6 +55,7 @@ public:
 	virtual bool preErase( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
 	virtual bool postErased( const PropertyAccessor & accessor, size_t index, size_t count ) = 0;
 
+	uint64_t getId() const;
 	const std::string & getPath() const;
 	IReflectionController * getController() const;
 	IDefinitionManager * getDefinitionManager() const;
@@ -62,10 +67,14 @@ public:
 	const ReflectedTreeModelNew * getModel() const;
 	const ReflectedTreeItemNew * getParent() const;
 	ReflectedTreeItemNew * getParent();
+	size_t getIndex() const;
+	void setIndex( size_t index );
 
 protected:
 	ReflectedTreeItemNew * parent_;
+	uint64_t id_;
 	std::string path_;
+	size_t index_;
 	DIRef< IReflectionController > controller_;
 	DIRef< IDefinitionManager > definitionManager_;
 
@@ -85,5 +94,5 @@ private:
 
 	const ReflectedTreeModelNew * model_;
 };
-
+} // end namespace wgt
 #endif //_REFLECTED_TREE_ITEM_NEW_HPP

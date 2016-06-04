@@ -8,8 +8,6 @@
 #include <QObject>
 #include <QQuickWindow>
 
-class IQtFramework;
-class IUIApplication;
 class QUrl;
 class QQmlContext;
 class QQmlEngine;
@@ -17,6 +15,11 @@ class QQuickWidget;
 class QString;
 class QVariant;
 class QWindow;
+
+namespace wgt
+{
+class IQtFramework;
+class IUIApplication;
 
 class QmlWindow : public QObject, public IWindow
 {
@@ -74,5 +77,5 @@ private:
     bool isMaximizedInPreference_;
     bool firstTimeShow_;
 };
-
+} // end namespace wgt
 #endif//QML_WINDOW_HPP

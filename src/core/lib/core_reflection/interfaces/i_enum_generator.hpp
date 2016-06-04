@@ -1,6 +1,8 @@
 #ifndef I_ENUM_GENERATOR_HPP
 #define I_ENUM_GENERATOR_HPP
 
+namespace wgt
+{
 class ObjectHandle;
 class Collection;
 
@@ -12,5 +14,5 @@ public:
 };
 
 typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
-
+} // end namespace wgt
 #endif //I_ENUM_GENERATOR_HPP

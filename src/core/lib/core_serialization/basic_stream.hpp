@@ -1,10 +1,12 @@
 #ifndef BASIC_STREAM_HPP_INCLUDED
 #define BASIC_STREAM_HPP_INCLUDED
 
-//#include "i_datastream.hpp" // break cyclic include: i_datastream.hpp -> variant.hpp -> text_stream.hpp -> basic_stream.hpp -> i_datastream.hpp
-class IDataStream;
 #include <ios>
 
+//#include "i_datastream.hpp" // break cyclic include: i_datastream.hpp -> variant.hpp -> text_stream.hpp -> basic_stream.hpp -> i_datastream.hpp
+namespace wgt
+{
+class IDataStream;
 
 /**
 Basic IDataStream wrapper for more convenient IO.
@@ -228,6 +230,5 @@ private:
 	bool resetReadBuffer();
 
 };
-
-
+} // end namespace wgt
 #endif // BASIC_STREAM_HPP_INCLUDED

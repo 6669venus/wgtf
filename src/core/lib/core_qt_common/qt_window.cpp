@@ -30,6 +30,8 @@
 #include <thread>
 #include "qt_global_settings.hpp"
 
+namespace wgt
+{
 namespace
 {
 	template< typename T >
@@ -549,3 +551,4 @@ bool QtWindow::isLoadingPreferences() const
 {
     return loadingPreferences_;
 }
+} // end namespace wgt

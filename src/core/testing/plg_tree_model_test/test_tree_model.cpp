@@ -11,6 +11,8 @@
 #include <memory>
 #include <thread>
 
+namespace wgt
+{
 struct StringList
 {
 	StringList()
@@ -409,7 +411,7 @@ struct TestTreeModel::Implementation
 	Implementation( TestTreeModel& main );
 	~Implementation();
 
-	std::vector<TestTreeItem*> getSection( const TestTreeItem* parent );
+	const std::vector<TestTreeItem*> & getSection( const TestTreeItem* parent );
 	char* copyString( const std::string& s ) const;
 	void generateData( const TestTreeItem* parent, size_t level );
 
@@ -447,7 +449,7 @@ TestTreeModel::Implementation::~Implementation()
 	data_.clear();
 }
 
-std::vector<TestTreeItem*> TestTreeModel::Implementation::getSection(
+const std::vector<TestTreeItem*> & TestTreeModel::Implementation::getSection(
 	const TestTreeItem* parent )
 {
 	auto itr = data_.find( parent );
@@ -511,7 +513,9 @@ TestTreeModel& TestTreeModel::operator=( const TestTreeModel& rhs )
 AbstractItem* TestTreeModel::item( const ItemIndex & index ) const
 {
 	auto temp = static_cast<const TestTreeItem*>( index.parent_ );
-	return impl_->getSection( temp )[index.row_];
+	const auto & section = impl_->getSection( temp );
+	assert( index.row_ < static_cast< int >( section.size() ) );
+	return section[ index.row_ ];
 }
 
 AbstractTreeModel::ItemIndex TestTreeModel::index( const AbstractItem * item ) const
@@ -563,3 +567,4 @@ bool TestTreeModel::setData( int row, int column, size_t roleId, const Variant &
 {
     return false;
 }
+} // end namespace wgt

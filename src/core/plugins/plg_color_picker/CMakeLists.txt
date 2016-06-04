@@ -24,7 +24,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS}
 )
 
-BW_QT_ADD_QRC( ${PROJECT_NAME} resources/WGColorPicker )
+BW_QT_ADD_QRC( WGColorPicker resources/WGColorPicker )
 BW_GLOB_RESOURCE_FILES()
 
 BW_ADD_TOOL_PLUGIN( ${PROJECT_NAME} SHARED
@@ -38,6 +38,8 @@ BW_TARGET_LINK_LIBRARIES( ${PROJECT_NAME} PRIVATE
 	core_qt_common
 	core_ui_framework
 	Qt5::Core
+	Qt5::Gui
+	Qt5::QuickWidgets
 )
 
 BW_PROJECT_CATEGORY( ${PROJECT_NAME} "Plugins" )

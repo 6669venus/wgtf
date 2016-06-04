@@ -33,11 +33,13 @@ namespace
 
 	public:
 		CollectionElementHolder(
+			const Collection& collection,
 			const Collection::Iterator& collectionIt,
 			const TypeId& valueType,
 			std::string propName ):
 
 			base( "", valueType ),
+			collection_( collection ),
 			collectionIt_( collectionIt ),
 			propName_( std::move( propName ) )
 		{
@@ -63,16 +65,37 @@ namespace
 		bool set( const ObjectHandle &, const Variant & value, const IDefinitionManager & definitionManager ) const override
 		{
 			assert( !this->readOnly() );
+
+			auto valueType = collectionIt_.valueType();
+			if (valueType.isPointer())
+			{
+				auto targetType = valueType.removePointer();
+				auto targetDefinition = definitionManager.getDefinition( targetType.getName() );
+				ObjectHandle source;
+				if (value.tryCast( source ))
+				{
+					auto target = reflectedCast( source, targetType, definitionManager );
+					return collectionIt_.setValue( target );
+				}
+			}
+
 			return collectionIt_.setValue( value );
 		}
 
 	private:
+		Collection collection_; // need to keep Collection data alive to keep iterator valid
 		Collection::Iterator collectionIt_;
 		std::string propName_;
 
 	};
 
 }
+
+
+const char INDEX_OPEN = '[';
+const char INDEX_CLOSE = ']';
+const char DOT_OPERATOR = '.';
+
 
 //------------------------------------------------------------------------------
 ClassDefinition::ClassDefinition( IClassDefinitionDetails * details )
@@ -131,10 +154,6 @@ void ClassDefinition::bindPropertyImpl(
 	const ObjectHandle & pBase,
 	PropertyAccessor & o_PropertyAccessor ) const
 {
-	const char INDEX_OPEN = '[';
-	const char INDEX_CLOSE = ']';
-	const char DOT_OPERATOR = '.';
-
 	if (!*name)
 	{
 		// empty name causes noop
@@ -238,6 +257,7 @@ void ClassDefinition::bindPropertyImpl(
 			{
 				// name parsing is completed
 				auto baseProp = std::make_shared< CollectionElementHolder >(
+					collection,
 					it,
 					collection.valueType(),
 					wholeIndex );
@@ -277,6 +297,7 @@ void ClassDefinition::bindPropertyImpl(
 			return;
 		}
 
+		o_PropertyAccessor.setParent(o_PropertyAccessor);
 		return definition->bindPropertyImpl(
 			propOperator + 1, // skip dot
 			propObject,
@@ -292,6 +313,13 @@ void ClassDefinition::bindPropertyImpl(
 //==============================================================================
 IBasePropertyPtr ClassDefinition::findProperty( const char * name ) const
 {
+	// Some definitions allow you to lookup by name directly
+	if (details_->canDirectLookupProperty())
+	{
+		return details_->directLookupProperty( name );
+	}
+
+	// Otherwise, perform a search
 	auto nameHash = HashUtilities::compute( name );
 	auto properties = allProperties();
 	for (auto it = properties.begin(); it != properties.end(); ++it)
@@ -316,11 +344,10 @@ bool ClassDefinition::isGeneric() const
 bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 {
 	const IClassDefinition * baseDefinition = this;
-	const char * definitionName = definition.getName();
 	while( baseDefinition != NULL )
 	{
-		const char * baseName = baseDefinition->getName();
-		if (strcmp( baseName, definitionName ) == 0)
+		// Assuming definitions are shared we only need to check the pointer
+		if ( baseDefinition == &definition )
 		{
 			return true;
 		}
@@ -333,13 +360,11 @@ bool ClassDefinition::canBeCastTo( const IClassDefinition & definition ) const
 //------------------------------------------------------------------------------
 void * ClassDefinition::castTo( const IClassDefinition & definition, void * object ) const
 {
-	const char * definitionName = definition.getName();
-
 	const IClassDefinition * baseDefinition = this;
 	while( baseDefinition != NULL )
 	{
-		const char * baseName = baseDefinition->getName();
-		if (strcmp( baseName, definitionName ) == 0)
+		// Assuming definitions are shared we only need to check the pointer
+		if ( baseDefinition == &definition )
 		{
 			return object;
 		}

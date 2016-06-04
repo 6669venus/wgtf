@@ -3,7 +3,7 @@
 #include "core_data_model/i_list_model.hpp"
 #include "core_data_model/asset_browser/i_asset_object_item.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
-#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_common/models/wg_list_model.hpp"
 #include "core_reflection/object_handle.hpp"
@@ -21,15 +21,15 @@ AssetItemExtension::~AssetItemExtension()
 QHash< int, QByteArray > AssetItemExtension::roleNames() const
 {
 	QHash< int, QByteArray > roleNames;
-	registerRole( StatusIconRole::role_, roleNames );
-	registerRole( TypeIconRole::role_, roleNames );
-	registerRole( SizeRole::role_, roleNames );
-	registerRole( CreatedTimeRole::role_, roleNames );
-	registerRole( ModifiedTimeRole::role_, roleNames );
-	registerRole( AccessedTimeRole::role_, roleNames );
-	registerRole( IsDirectoryRole::role_, roleNames );
-	registerRole( IsReadOnlyRole::role_, roleNames );
-	registerRole( IsCompressedRole::role_, roleNames );
+	registerRole( StatusIconRole::roleName_, roleNames );
+	registerRole( TypeIconRole::roleName_, roleNames );
+	registerRole( SizeRole::roleName_, roleNames );
+	registerRole( CreatedTimeRole::roleName_, roleNames );
+	registerRole( ModifiedTimeRole::roleName_, roleNames );
+	registerRole( AccessedTimeRole::roleName_, roleNames );
+	registerRole( IsDirectoryRole::roleName_, roleNames );
+	registerRole( IsReadOnlyRole::roleName_, roleNames );
+	registerRole( IsCompressedRole::roleName_, roleNames );
 
 	return roleNames;
 }
@@ -60,7 +60,7 @@ QVariant AssetItemExtension::data( const QModelIndex &index, int role ) const
 		roleId == IsReadOnlyRole::roleId_ ||
 		roleId == IsCompressedRole::roleId_)
 	{
-		return QtHelpers::toQVariant( item->getData( column, roleId ) );
+		return QtHelpers::toQVariant( item->getData( column, roleId ), const_cast<QAbstractItemModel*>(index.model()) );
 	}
 	else if (roleId == StatusIconRole::roleId_)
 	{		
@@ -71,8 +71,8 @@ QVariant AssetItemExtension::data( const QModelIndex &index, int role ) const
 		auto status = assetObjectItem->getStatusIconData();
 		if (status != nullptr)
 		{
-			auto qtImageProvider = dynamic_cast< QtImageProvider * >(
-				qtFramework_->qmlEngine()->imageProvider( QtImageProvider::providerId() ) );
+			auto qtImageProvider = dynamic_cast< QtImageProviderOld * >(
+				qtFramework_->qmlEngine()->imageProvider( QtImageProviderOld::providerId() ) );
 			if (qtImageProvider != nullptr)
 			{
 				return qtImageProvider->encodeImage( status );
@@ -90,6 +90,9 @@ bool AssetItemExtension::setData( const QModelIndex &index, const QVariant &valu
 
 void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, const QVariant &value )
 {
+	auto model = index.model();
+	assert( model != nullptr );
+
 	size_t roleId;
 	if (!decodeRole( role, roleId ))
 	{
@@ -108,6 +111,6 @@ void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, cons
 	{
 		QVector<int> roles;
 		roles.append( role );
-		emit model_->dataChanged( index, index, roles );
+		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 	}
 }

@@ -21,8 +21,7 @@ TextField {
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*! This property determines if the context menu for this control contains the "Find In AssetBrowser" option
         The default value is \c true
@@ -34,33 +33,55 @@ TextField {
     property alias contentWidth: textBox.__contentWidth
 
     /*! This property is used by the setValueHelper function which requires documenting */
-    //TODO This requires documenting
     property string oldText
+
+    /*! This signal is emitted when test field loses focus and text changes is accepted */
+    signal editAccepted();
+
+    Keys.onPressed: {
+        if (activeFocus)
+        {
+            if(event.key == Qt.Key_Enter || event.key == Qt.Key_Return)
+            {
+                textBox.focus = false;
+            }
+            else if (event.key == Qt.Key_Escape)
+            {
+                setValueHelper( textBox, "text", oldText );
+                textBox.focus = false;
+            }
+        }
+    }
+
+    onActiveFocusChanged: {
+        if (activeFocus)
+        {
+            setValueHelper( textBox, "oldText", text );
+        }
+        else
+        {
+            if (acceptableInput && (text !== oldText))
+            {
+                editAccepted();
+            }
+        }
+    }
 
     activeFocusOnTab: readOnly ? false : true
 
     verticalAlignment: TextInput.AlignVCenter
 
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    // provide default heights
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
 
-    /*! This property holds the target control's id to be bound to this controls b_Value */
-    property alias b_Target: dataBinding.target
+    /*! This property denotes if the control's text should be scaled appropriately as it is resized */
+    smooth: true
 
-    /*! This property determines b_Target's property which is to be bound to this controls b_Value */
-    property alias b_Property: dataBinding.property
+    //Placeholder text in italics
+    font.italic: text == "" ? true : false
 
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
-			
-	/*! This property denotes if the control's text should be scaled appropriately as it is resized */
-	smooth: true
-
-
-    /*! This signal is emitted when test field loses focus and text changes is accepted */
-    signal editAccepted();
-
-    Binding {
-        id: dataBinding
+    style: WGTextBoxStyle {
     }
 
     // support copy&paste
@@ -91,26 +112,6 @@ TextField {
         }
     }
 
-    //Placeholder text in italics
-    font.italic: text == "" ? true : false
-
-    onActiveFocusChanged: {
-        if (activeFocus)
-        {
-            setValueHelper( textBox, "oldText", text );
-        }
-        else
-        {
-            if (acceptableInput && (text !== oldText))
-            {
-                editAccepted();
-            }
-        }
-    }
-
-    style: WGTextBoxStyle {
-    }
-
     MouseArea {
         id: mouseAreaContextMenu
         acceptedButtons: Qt.RightButton
@@ -127,28 +128,15 @@ TextField {
         }
     }
 
-    Keys.onPressed: {
-        if (activeFocus)
-        {
-            if(event.key == Qt.Key_Enter || event.key == Qt.Key_Return)
-            {
-                textBox.focus = false;
-            }
-            else if (event.key == Qt.Key_Escape)
-            {
-                setValueHelper( textBox, "text", oldText );
-                textBox.focus = false;
-            }
-        }
-    }
-
     // Some context menu items may be data driven.
     // I have added a visibility switch to contextMenu
     WGMenu {
         id: contextMenu
+        objectName: "Menu"
         title: "Edit"
 
         MenuItem {
+            objectName: "Cut"
             text: "Cut"
             shortcut: "Ctrl+X"
             enabled: readOnly == true ? false : true
@@ -158,6 +146,7 @@ TextField {
         }
 
         MenuItem {
+            objectName: "Copy"
             text: "Copy"
             shortcut: "Ctrl+C"
             onTriggered: {
@@ -166,6 +155,7 @@ TextField {
         }
 
         MenuItem {
+            objectName: "Paste"
             text: "Paste"
             shortcut: "Ctrl+V"
             enabled: canPaste == true ? true : false
@@ -177,6 +167,7 @@ TextField {
         MenuSeparator { }
 
         MenuItem {
+            objectName: "SelectAll"
             text: "Select All"
             shortcut: "Ctrl+A"
             onTriggered: {
@@ -187,6 +178,7 @@ TextField {
         MenuSeparator { }
 
         MenuItem {
+            objectName: "FindInAssetBrowser"
             text: "Find In AssetBrowser"
             shortcut: "Ctrl+?"
             visible: assetBrowserContextMenu == true ? true : false
@@ -195,4 +187,7 @@ TextField {
             }
         }
     }
+
+    /*! Deprecated */
+    property alias label_: textBox.label
 }

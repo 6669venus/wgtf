@@ -6,7 +6,7 @@
 
 #include "core_python27/definition_details.hpp"
 #include "core_python27/defined_instance.hpp"
-#include "core_python27/type_converters/i_type_converter.hpp"
+#include "core_python27/type_converters/converters.hpp"
 
 #include "core/interfaces/core_script/type_converter_queue.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
@@ -20,11 +20,21 @@
 namespace
 {
 
+//PlatformHelpers until we upgrade to VS 2015
+namespace PlatformHelpers
+{
+	void sprintfSize_t(char * buffer, size_t value)
+	{
+#if _MSC_VER >= 1900
+		sprintf(buffer, "%zd", value);
+#else
+		sprintf(buffer, "%d", value);
+#endif /*_MSC_VER >= 1900 */
+	}
+}
+
 /// State storage for static functions attached to Python
 static ReflectionTestModule * g_module = nullptr;
-
-
-typedef TypeConverterQueue<PythonType::IConverter, PyScript::ScriptObject> PythonTypeConverters;
 
 
 /**
@@ -160,6 +170,15 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	const char * m_name,
 	TestResult & result_ );
+void newPropertyTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+void pathTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
+void compareTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ );
 
 
 /**
@@ -222,6 +241,9 @@ static PyObject * commonConversionTest(
 	tupleConversionTest( instance, m_name, result_ );
 	dictConversionTest( instance, m_name, result_ );
 	methodConversionTest( instance, m_name, result_ );
+	newPropertyTest( instance, m_name, result_ );
+	pathTest( instance, m_name, result_ );
+	compareTest( instance, m_name, result_ );
 
 	// Return none to pass the test
 	Py_RETURN_NONE;
@@ -755,7 +777,7 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t erasureId = originalSize - 1;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", erasureId );
+		PlatformHelpers::sprintfSize_t(buffer, erasureId);
 		Variant key( buffer );
 		auto erasureCount = listResult.erase( key );
 		CHECK( erasureCount == 1 );
@@ -800,7 +822,8 @@ void listConversionTest( ReflectedPython::DefinedInstance & instance,
 		{
 			const size_t maxDigits = 10;
 			char buffer[ maxDigits ];
-			sprintf( buffer, "%d", erasureId );
+
+			PlatformHelpers::sprintfSize_t(buffer, erasureId);
 			const Variant key( buffer );
 			auto itr = listResult.find( key );
 			CHECK( itr != listResult.end() );
@@ -1895,7 +1918,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t insertionId = originalSize;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", insertionId );
+		PlatformHelpers::sprintfSize_t(buffer, insertionId);
 		Variant key( buffer );
 		auto insertionItr = dictResult.insert( key );
 		CHECK( insertionItr != dictResult.end() );
@@ -1934,7 +1957,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t erasureId = originalSize - 1;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", erasureId );
+		PlatformHelpers::sprintfSize_t(buffer, erasureId);
 		Variant key( buffer );
 		auto erasureCount = dictResult.erase( key );
 		CHECK( erasureCount == 1 );
@@ -1979,7 +2002,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		{
 			const size_t maxDigits = 10;
 			char buffer[ maxDigits ];
-			sprintf( buffer, "%d", erasureId );
+			PlatformHelpers::sprintfSize_t( buffer, erasureId );
 			const Variant key( buffer );
 			auto itr = dictResult.find( key );
 			CHECK( itr != dictResult.end() );
@@ -2058,9 +2081,9 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t endId = 3;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", startId );
+		PlatformHelpers::sprintfSize_t( buffer, startId );
 		const Variant startKey( buffer );
-		sprintf( buffer, "%d", endId );
+		PlatformHelpers::sprintfSize_t(buffer, endId );
 		const Variant endKey( buffer );
 
 		const auto startItr = dictResult.find( startKey );
@@ -2094,7 +2117,7 @@ void dictConversionTest( ReflectedPython::DefinedInstance & instance,
 		const size_t erasureId = 1;
 		const size_t maxDigits = 10;
 		char buffer[ maxDigits ];
-		sprintf( buffer, "%d", erasureId );
+		PlatformHelpers::sprintfSize_t(buffer, erasureId );
 		const Variant erasureKey( buffer );
 
 		const auto startItr = dictResult.find( erasureKey );
@@ -2344,10 +2367,58 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "noneTest", parameters );
+		CHECK( result.isVoid() );
+	}
+	{
+		const auto property = instance.findProperty( "noneTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( !baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 0;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "methodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
 		CHECK_EQUAL( "Method test was run", returnValue );
+	}
+	{
+		const auto property = instance.findProperty( "methodTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -2358,12 +2429,54 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK_EQUAL( "Class method test was run", returnValue );
 	}
 	{
+		const auto property = instance.findProperty( "classMethodTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "staticMethodTest", parameters );
 
 		const std::string returnValue = result.value< std::string >();
 		CHECK_EQUAL( "Static method test was run", returnValue );
+	}
+	{
+		const auto property = instance.findProperty( "staticMethodTest" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
 	}
 	{
 		ReflectedMethodParameters parameters;
@@ -2374,12 +2487,400 @@ void methodConversionTest( ReflectedPython::DefinedInstance & instance,
 		CHECK_EQUAL( "Function test was run", returnValue );
 	}
 	{
+		const auto property = instance.findProperty( "functionTest1" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
 		ReflectedMethodParameters parameters;
 		parameters.push_back( Variant( "was run" ) );
 		const Variant result = instance.invoke( "functionTest2", parameters );
 
 		const std::string returnValue = result.value< std::string >();
 		CHECK_EQUAL( "Callable class test was run", returnValue );
+	}
+	{
+		const auto property = instance.findProperty( "functionTest2" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "functionTest3", parameters );
+
+		const std::string returnValue = result.value< std::string >();
+		CHECK_EQUAL( "Callable class test was run", returnValue );
+	}
+	{
+		const auto property = instance.findProperty( "functionTest3" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
+		ReflectedMethodParameters parameters;
+		parameters.push_back( Variant( "was run" ) );
+		const Variant result = instance.invoke( "ConstructorTest1", parameters );
+
+		// __init__() should return None
+		const void * returnValue = result.value< void * >();
+		CHECK( returnValue == nullptr );
+	}
+	{
+		const auto property = instance.findProperty( "ConstructorTest1" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 1;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+	{
+		ReflectedMethodParameters parameters;
+		const Variant result = instance.invoke( "ConstructorTest2", parameters );
+
+		// __init__() should return None
+		const void * returnValue = result.value< void * >();
+		CHECK( returnValue == nullptr );
+	}
+	{
+		const auto property = instance.findProperty( "ConstructorTest2" );
+		CHECK( property.isValid() );
+		if (!property.isValid())
+		{
+			return;
+		}
+		const auto baseProperty = property.getProperty();
+		CHECK( baseProperty != nullptr );
+		if (baseProperty == nullptr)
+		{
+			return;
+		}
+
+		CHECK( baseProperty->isMethod() );
+		CHECK( baseProperty->isValue() );
+
+		const auto parameterCount = baseProperty->parameterCount();
+		const size_t expected = 0;
+		CHECK_EQUAL( expected, parameterCount );
+	}
+}
+
+
+void newPropertyTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	{
+		// @see Py_None
+		void * noneType = nullptr;
+		const bool setSuccess = instance.set< void * >(
+			"newPropertyTest", noneType );
+
+		CHECK( setSuccess );
+
+		void * noneResult;
+		const bool getSuccess = instance.get< void * >(
+			"newPropertyTest", noneResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( noneType, noneResult );
+	}
+
+	{
+		// @see PyIntObject
+		const int intExpected = 2;
+		const bool setSuccess = instance.set< int >( "newIntTest", intExpected );
+
+		CHECK( setSuccess );
+
+		int intResult = 1;
+		const bool getSuccess = instance.get< int >( "newIntTest", intResult );
+
+		CHECK( getSuccess );
+		CHECK_EQUAL( intExpected, intResult );
+	}
+}
+
+
+/**
+ *	Access "childTest", then "collectionName" in two steps.
+ */
+void getCollectionPath1( const ReflectedPython::DefinedInstance & instance,
+	Collection & outCollection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	ObjectHandle childHandle;
+	const bool getChildSuccess = instance.get< ObjectHandle >(
+		"childTest", childHandle );
+
+	CHECK( getChildSuccess );
+	CHECK( childHandle.isValid() );
+	if (!childHandle.isValid())
+	{
+		return;
+	}
+
+	const auto pInstance = childHandle.getBase< ReflectedPython::DefinedInstance >();
+	CHECK( pInstance != nullptr );
+	if (pInstance == nullptr)
+	{
+		return;
+	}
+	const auto & child = (*pInstance);
+
+	const bool getCollectionSuccess = child.get< Collection >(
+		collectionName, outCollection );
+
+	CHECK( getCollectionSuccess );
+	CHECK( outCollection.isValid() );
+}
+
+
+/**
+ *	Access "childTest.collectionName" in one step.
+ */
+void getCollectionPath2( const ReflectedPython::DefinedInstance & instance,
+	Collection & outCollection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	std::string pathName = "childTest";
+	pathName += DOT_OPERATOR;
+	pathName += collectionName;
+	const bool getCollectionSuccess = instance.get< Collection >(
+		pathName.c_str(), outCollection );
+
+	CHECK( getCollectionSuccess );
+	CHECK( outCollection.isValid() );
+}
+
+
+/**
+ *	Test if items in a sequence have the correct paths.
+ */
+void checkSequencePaths( const ReflectedPython::DefinedInstance & instance,
+	const Collection & collection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	auto expectedKey = 0;
+	for (auto itr = collection.cbegin();
+		itr != collection.cend();
+		++itr, ++expectedKey)
+	{
+		int key = -1;
+		const auto keySuccess = itr.key().tryCast( key );
+		CHECK( keySuccess );
+		CHECK_EQUAL( expectedKey, key );
+
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest";
+		expectedValueFullPath += DOT_OPERATOR;
+		expectedValueFullPath += collectionName;
+		expectedValueFullPath += INDEX_OPEN;
+		expectedValueFullPath += std::to_string( expectedKey );
+		expectedValueFullPath += INDEX_CLOSE;
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+
+		int valueValue = -1;
+		valueInstance.get< int >( "value", valueValue );
+		CHECK_EQUAL( valueValue, expectedKey );
+	}
+}
+
+
+/**
+ *	Test if items in a dictionary have the correct paths.
+ */
+void checkMappingPaths( const ReflectedPython::DefinedInstance & instance,
+	const Collection & collection,
+	const char * collectionName,
+	const char * m_name,
+	TestResult & result_ )
+{
+	for (auto itr = collection.cbegin(); itr != collection.cend(); ++itr)
+	{
+		ObjectHandle key;
+		const auto keySuccess = itr.key().tryCast( key );
+
+		const auto pKeyInstance = key.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pKeyInstance != nullptr );
+		if (pKeyInstance == nullptr)
+		{
+			return;
+		}
+		const auto & keyInstance = (*pKeyInstance);
+
+		const auto & keyRoot = keyInstance.root();
+		CHECK_EQUAL( &keyInstance, &keyRoot );
+
+		const auto & keyFullPath = keyInstance.fullPath();
+		const std::string expectedKeyFullPath =
+			keyInstance.pythonObject().str( PyScript::ScriptErrorPrint() ).c_str();
+		CHECK_EQUAL( expectedKeyFullPath, keyFullPath );
+
+		ObjectHandle value;
+		const auto valueSuccess = itr.value().tryCast( value );
+
+		const auto pValueInstance = value.getBase< ReflectedPython::DefinedInstance >();
+		CHECK( pValueInstance != nullptr );
+		if (pValueInstance == nullptr)
+		{
+			return;
+		}
+		const auto & valueInstance = (*pValueInstance);
+
+		const auto & valueRoot = valueInstance.root();
+		CHECK_EQUAL( &instance, &valueRoot );
+
+		const auto & valueFullPath = valueInstance.fullPath();
+
+		std::string expectedValueFullPath = "childTest";
+		expectedValueFullPath += DOT_OPERATOR;
+		expectedValueFullPath += collectionName;
+		expectedValueFullPath += INDEX_OPEN;
+		expectedValueFullPath += expectedKeyFullPath;
+		expectedValueFullPath += INDEX_CLOSE;
+		CHECK_EQUAL( expectedValueFullPath, valueFullPath );
+	}
+}
+
+
+void pathTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Access root (no path)
+	{
+		const auto & root = instance.root();
+		CHECK_EQUAL( &instance, &root );
+
+		const auto & fullPath = instance.fullPath();
+		const char * expectedFullPath = "";
+		CHECK_EQUAL( expectedFullPath, fullPath );
+	}
+
+	Collection collection;
+
+	// Access "childTest", then "listTest"
+	getCollectionPath1( instance, collection, "listTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "listTest", m_name, result_ );
+
+	// Access "childTest.listTest"
+	getCollectionPath2( instance, collection, "listTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "listTest", m_name, result_ );
+	
+	// Access "childTest", then "tupleTest"
+	getCollectionPath1( instance, collection, "tupleTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "tupleTest", m_name, result_ );
+
+	// Access "childTest.tupleTest"
+	getCollectionPath2( instance, collection, "tupleTest", m_name, result_ );
+	checkSequencePaths( instance, collection, "tupleTest", m_name, result_ );
+	
+	// Access "childTest", then "dictTest"
+	getCollectionPath1( instance, collection, "dictTest", m_name, result_ );
+	checkMappingPaths( instance, collection, "dictTest", m_name, result_ );
+
+	// Access "childTest.dictTest"
+	getCollectionPath2( instance, collection, "dictTest", m_name, result_ );
+	checkMappingPaths( instance, collection, "dictTest", m_name, result_ );
+}
+
+
+void compareTest( ReflectedPython::DefinedInstance & instance,
+	const char * m_name,
+	TestResult & result_ )
+{
+	// Access object that cannot be compared to other objects
+	{
+		ObjectHandle result;
+		const bool getSuccess = instance.get< ObjectHandle >(
+			"badComparison", result );
+
+		CHECK( getSuccess );
+		CHECK( result.isValid() );
+		CHECK( result.getBase< ReflectedPython::DefinedInstance >() != nullptr );
 	}
 }
 
@@ -2419,9 +2920,13 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 
-	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
+	ObjectHandle parentHandle;
+	const char * childPath = "";
+	ObjectHandle handle = ReflectedPython::DefinedInstance::findOrCreate(
 		g_module->context_,
-		scriptObject );
+		scriptObject,
+		parentHandle,
+		childPath );
 	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
 	auto & instance = (*pInstance);
@@ -2436,7 +2941,7 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 	CHECK( definitionManager != nullptr );
 
 	// @see types.ClassType for expectedType.
-	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
+	auto checkObjectType = [&]( const char* attribute, const char* expectedTypeBase )
 	{
 		ObjectHandle handle;
 		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
@@ -2446,32 +2951,49 @@ static PyObject * py_oldStyleConversionTest( PyObject * self,
 		CHECK( definition != nullptr );
 
 		auto actualType = definition->getName();
-		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+
+		const auto & details = static_cast< const ReflectedPython::DefinitionDetails & >(
+			definition->getDetails() );
+		std::string expectedType = expectedTypeBase;
+		expectedType += " at ";
+		expectedType += std::to_string( details.object().id().asUnsignedLongLong(
+			PyScript::ScriptErrorRetain() ) );
+
+		// Check for overflow
+		CHECK( !PyScript::Script::hasError() );
+		PyScript::Script::clearError();
+
+		CHECK_EQUAL( expectedType, actualType );
 	};
 
 	// Convert Python types -> C++ TypeIds
-	checkObjectType( "typeTest1", "__builtin__.classobj");
-	checkObjectType( "typeTest2", "__builtin__.type");
-	checkObjectType( "classTest1", "python27_test.OldClassTest");
-	checkObjectType( "classTest2", "python27_test.OldClassTest");
-	checkObjectType( "instanceTest", "__builtin__.instance");
+	checkObjectType( "typeTest1", "__builtin__.classobj" );
+	checkObjectType( "typeTest2", "__builtin__.type" );
+	checkObjectType( "classTest1", "python27_test.OldClassTest" );
+	checkObjectType( "classTest2", "python27_test.OldClassTest" );
+	checkObjectType( "instanceTest", "__builtin__.instance" );
 	
 	// Convert Python type <- C++ TypeId
 	{
-		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		auto typeConverters = g_module->context_.queryInterface< PythonType::Converters >();
 		CHECK( typeConverters != nullptr );
+		if (typeConverters == nullptr)
+		{
+			Py_RETURN_NONE;
+		}
 
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		bool success = typeConverters->toVariant( scriptObject, intType );
+		ObjectHandle parent;
+		const char * childPath = "";
+		bool success = typeConverters->toVariant( scriptObject, intType, parent, childPath );
 		CHECK( success );
 
 		success = instance.set( "typeTest1", intType );
 		CHECK( success );
 
-		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
-		checkObjectType( "typeTest1", expectedType.c_str() );
+		checkObjectType( "typeTest1", "__builtin__.int" );
 	}
 	
 	Py_RETURN_NONE;
@@ -2513,9 +3035,13 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	}
 	PyScript::ScriptObject scriptObject( pyObject );
 
-	ObjectHandle handle = ReflectedPython::DefinedInstance::create(
+	ObjectHandle parentHandle;
+	const char * childPath = "";
+	ObjectHandle handle = ReflectedPython::DefinedInstance::findOrCreate(
 		g_module->context_,
-		scriptObject );
+		scriptObject,
+		parentHandle,
+		childPath );
 	auto pInstance = static_cast< ReflectedPython::DefinedInstance * >( handle.data() );
 	assert( pInstance != nullptr );
 	auto & instance = (*pInstance);
@@ -2530,7 +3056,7 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 	CHECK( definitionManager != nullptr );
 
 	// @see types.ClassType for expectedType.
-	auto checkObjectType = [&]( const char* attribute, const char* expectedType )
+	auto checkObjectType = [&]( const char* attribute, const char* expectedTypeBase )
 	{
 		ObjectHandle handle;
 		const bool getSuccess = instance.get<ObjectHandle>( attribute, handle );
@@ -2540,32 +3066,51 @@ static PyObject * py_newStyleConversionTest( PyObject * self,
 		CHECK( definition != nullptr );
 
 		auto actualType = definition->getName();
-		CHECK_EQUAL( strcmp( expectedType, actualType ), 0 );
+
+		const auto & details = static_cast< const ReflectedPython::DefinitionDetails & >(
+			definition->getDetails() );
+		std::string expectedType = expectedTypeBase;
+		expectedType += " at ";
+		expectedType += std::to_string( details.object().id().asUnsignedLongLong(
+			PyScript::ScriptErrorRetain() ) );
+
+		// Check for overflow
+		assert( !PyScript::Script::hasError() );
+#if defined( _DEBUG )
+		PyScript::Script::clearError();
+#endif // defined( _DEBUG )
+
+		CHECK_EQUAL( expectedType, actualType );
 	};
 
 	// Convert Python types -> C++ TypeIds
-	checkObjectType( "typeTest1", "__builtin__.type");
-	checkObjectType( "typeTest2", "__builtin__.type");
-	checkObjectType( "classTest1", "python27_test.NewClassTest");
-	checkObjectType( "classTest2", "python27_test.NewClassTest");
-	checkObjectType( "instanceTest", "python27_test.NewClassTest");
+	checkObjectType( "typeTest1", "__builtin__.type" );
+	checkObjectType( "typeTest2", "__builtin__.type" );
+	checkObjectType( "classTest1", "python27_test.NewClassTest" );
+	checkObjectType( "classTest2", "python27_test.NewClassTest" );
+	checkObjectType( "instanceTest", "python27_test.NewClassTest" );
 
 	// Convert Python type <- C++ TypeId
 	{
-		auto typeConverters = g_module->context_.queryInterface<PythonTypeConverters>();
+		auto typeConverters = g_module->context_.queryInterface< PythonType::Converters >();
 		CHECK( typeConverters != nullptr );
+		if (typeConverters == nullptr)
+		{
+			Py_RETURN_NONE;
+		}
 
 		Variant intType;
 		PyScript::ScriptType scriptObject( &PyInt_Type, PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
 
-		bool success = typeConverters->toVariant( scriptObject, intType );
+		ObjectHandle parent;
+		const char * childPath = "";
+		bool success = typeConverters->toVariant( scriptObject, intType, parent, childPath );
 		CHECK( success );
 
 		success = instance.set( "typeTest1", intType );
 		CHECK( success );
 
-		const std::string expectedType = ReflectedPython::DefinitionDetails::generateName( scriptObject );
-		checkObjectType( "typeTest1", expectedType.c_str() );
+		checkObjectType( "typeTest1", "__builtin__.int" );
 	}
 
 	{

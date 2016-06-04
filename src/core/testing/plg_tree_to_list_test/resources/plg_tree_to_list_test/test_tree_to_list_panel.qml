@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import BWControls 1.0
 import WGControls 1.0
+import WGCopyableFunctions 1.0
 
 WGPanel {
 	id: rootFrame
@@ -10,7 +11,7 @@ WGPanel {
 	layoutHints: { 'test': 0.1 }
 	property var sourceModel: source
 	property var topControlsHeight: 20
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	z: 1
 
 	// Internal bool to track what view was clicked for a selection
@@ -68,6 +69,9 @@ WGPanel {
 				id: searchBox
 				Layout.fillWidth: true
 				height: topControlsHeight
+				Component.onCompleted: {
+					WGCopyableHelper.disableChildrenCopyable(searchBox);
+				}
 			}
 		}//searchRowLayout
 

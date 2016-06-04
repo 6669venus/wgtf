@@ -74,9 +74,9 @@ void ValueChangeNotifier< T >::value( const T& data )
 	{
 		return;
 	}
-	this->notifyPreDataChanged();
+	this->signalPreDataChanged();
 	value_ = data;
-	this->notifyPostDataChanged();
+	this->signalPostDataChanged();
 }
 
 

@@ -9,9 +9,73 @@
 #include <cassert>
 
 
+struct CurrentIndexNotifier: public IValueChangeNotifier
+{
+	CurrentIndexNotifier( ICommandManager& commandManager )
+		: commandManager_( commandManager )
+	{
+	}
+
+	~CurrentIndexNotifier()
+	{
+		disconnect();
+	}
+
+	void connect()
+	{
+		using namespace std::placeholders;
+		callbacks_ += commandManager_.signalPreCommandIndexChanged.connect( std::bind(
+			&CurrentIndexNotifier::onPreCommandIndexChanged, this, _1 ) );
+		callbacks_ += commandManager_.signalPostCommandIndexChanged.connect( std::bind(
+			&CurrentIndexNotifier::onPostCommandIndexChanged, this, _1 ) );
+	}
+
+	void disconnect()
+	{
+		callbacks_.clear();
+	}
+
+	void onPreCommandIndexChanged( int index )
+	{
+		signalPreDataChanged();
+	}
+
+	void onPostCommandIndexChanged( int index )
+	{
+		signalPostDataChanged();
+	}
+
+	Variant variantValue() const override
+	{
+		return commandManager_.commandIndex();
+	}
+
+	bool variantValue( const Variant& data ) override
+	{
+		int value;
+
+		if (!data.tryCast<int>( value ))
+		{
+			return false;
+		}
+
+		if (value != commandManager_.commandIndex())
+		{
+			commandManager_.moveCommandIndex( value );
+		}
+
+		return true;
+	}
+
+	ICommandManager& commandManager_;
+	ConnectionHolder callbacks_;
+};
+
 //==============================================================================
 HistoryObject::HistoryObject()
 	: commandSystem_( nullptr )
+    , clearButtonVisible(true)
+    , makeMacroButtonVisible(true)
 {
 }
 
@@ -21,38 +85,41 @@ void HistoryObject::init( ICommandManager& commandSystem, IDefinitionManager& de
 	commandSystem_ = &commandSystem;
 	defManager_ = &defManager;
 
+	currentIndexNotifier_.reset( new CurrentIndexNotifier( *commandSystem_ ) );
 	pushHistoryItems( commandSystem_->getHistory() );
 
-	historyItems_.onPostItemsRemoved().add<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
+	using namespace std::placeholders;
+	postHistoryItemsRemoved_ = historyItems_.signalPostItemsRemoved.connect( std::bind( &HistoryObject::onPostHistoryItemsRemoved, this, _1, _2 ) );
 
-		bindCommandHistoryCallbacks();
+	bindCommandHistoryCallbacks();
 }
 
 //==============================================================================
 void HistoryObject::bindCommandHistoryCallbacks()
 {
-	commandSystem_->onHistoryPostInserted().add< HistoryObject,
-		&HistoryObject::onPostCommandHistoryInserted >( this );
-	commandSystem_->onHistoryPostRemoved().add< HistoryObject,
-		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	commandSystem_->onHistoryPreReset().add< HistoryObject,
-		&HistoryObject::onCommandHistoryPreReset >( this );
-	commandSystem_->onHistoryPostReset().add< HistoryObject,
-		&HistoryObject::onCommandHistoryPostReset >( this );
+	using namespace std::placeholders;
+	historyCallbacks_ += commandSystem_->signalHistoryPostInserted.connect( std::bind(
+		&HistoryObject::onPostCommandHistoryInserted, this, _1, _2, _3 ) );
+	historyCallbacks_ += commandSystem_->signalHistoryPostRemoved.connect( std::bind(
+		&HistoryObject::onPostCommandHistoryRemoved, this, _1, _2, _3 ) );
+	historyCallbacks_ += commandSystem_->signalHistoryPreReset.connect( std::bind(
+		&HistoryObject::onCommandHistoryPreReset, this, _1 ) );
+	historyCallbacks_ += commandSystem_->signalHistoryPostReset.connect( std::bind(
+		&HistoryObject::onCommandHistoryPostReset, this, _1 ) );
+
+	CurrentIndexNotifier* cin =
+		static_cast<CurrentIndexNotifier*>( currentIndexNotifier_.get() );
+	cin->connect();
 }
 
 //==============================================================================
 void HistoryObject::unbindCommandHistoryCallbacks()
 {
-	commandSystem_->onHistoryPostInserted().remove< HistoryObject,
-		&HistoryObject::onPostCommandHistoryInserted >( this );
-	commandSystem_->onHistoryPostRemoved().remove< HistoryObject,
-		&HistoryObject::onPostCommandHistoryRemoved >( this );
-	commandSystem_->onHistoryPreReset().remove< HistoryObject,
-		&HistoryObject::onCommandHistoryPreReset >( this );
-	commandSystem_->onHistoryPostReset().remove< HistoryObject,
-		&HistoryObject::onCommandHistoryPostReset >( this );
+	CurrentIndexNotifier* cin =
+		static_cast<CurrentIndexNotifier*>( currentIndexNotifier_.get() );
+	cin->disconnect();
+
+	historyCallbacks_.clear();
 }
 
 //==============================================================================
@@ -74,8 +141,7 @@ void HistoryObject::fini()
 
 	unbindCommandHistoryCallbacks();
 
-	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
+	postHistoryItemsRemoved_.disconnect();
 }
 
 //==============================================================================
@@ -87,7 +153,7 @@ const IListModel * HistoryObject::getHistory() const
 //==============================================================================
 const IValueChangeNotifier * HistoryObject::currentIndexSource() const
 {
-	return &commandSystem_->currentIndex();
+	return currentIndexNotifier_.get();
 }
 
 //==============================================================================
@@ -121,17 +187,32 @@ ObjectHandle HistoryObject::createMacro() const
 	return nullptr;
 }
 
+void HistoryObject::setClearButtonVisible(const bool& isVisible)
+{
+    clearButtonVisible = isVisible;
+}
+
+bool HistoryObject::isClearButtonVisible() const
+{
+    return clearButtonVisible;
+}
+
+void HistoryObject::setMakeMacroButtonVisible(const bool& isVisible)
+{
+    makeMacroButtonVisible = isVisible;
+}
+
+bool HistoryObject::isMakeMacroButtonVisible() const
+{
+    return makeMacroButtonVisible;
+}
+
 //==============================================================================
-void HistoryObject::onPostCommandHistoryInserted( const ICommandManager* sender,
-																								const ICommandManager::HistoryPostInsertedArgs& args )
+void HistoryObject::onPostCommandHistoryInserted( const VariantList & history, size_t index, size_t count )
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
-	assert( sender != nullptr );
-	const VariantList & history = args.history_;
 	size_t historySize = history.size();
-	size_t index = args.index_;
-	size_t count = args.count_;
 	historyItems_.resize( index );
 	for (size_t i = 0; i < count; i++)
 	{
@@ -145,60 +226,40 @@ void HistoryObject::onPostCommandHistoryInserted( const ICommandManager* sender,
 }
 
 //==============================================================================
-void HistoryObject::onPostCommandHistoryRemoved( const ICommandManager* sender,
-																								const ICommandManager::HistoryPostRemovedArgs& args )
+void HistoryObject::onPostCommandHistoryRemoved( const VariantList & history, size_t index, size_t count )
 {
 	assert( commandSystem_ != nullptr );
 	assert( defManager_ != nullptr );
-	assert( sender != nullptr );
-	
-	size_t index = args.index_;
-	size_t count = args.count_;
 
 	// detach listener to avoid event loop
-	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
-
+	postHistoryItemsRemoved_.disable();
 	historyItems_.erase( historyItems_.begin() + index, historyItems_.begin() + index + count );
+	postHistoryItemsRemoved_.enable();
 
-	historyItems_.onPostItemsRemoved().add<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
-
-	assert( historyItems_.size() == args.history_.size() );
+	assert( historyItems_.size() == history.size() );
 }
 
 //==============================================================================
-void HistoryObject::onCommandHistoryPreReset( const ICommandManager* sender,
-																					const ICommandManager::HistoryPreResetArgs& args)
+void HistoryObject::onCommandHistoryPreReset( const VariantList & history )
 {
-	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
-
+	postHistoryItemsRemoved_.disable();
 	historyItems_.clear();
-
-	historyItems_.onPostItemsRemoved().add<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
+	postHistoryItemsRemoved_.enable();
 }
 
 //==============================================================================
-void HistoryObject::onCommandHistoryPostReset( const ICommandManager* sender,
-																						 const ICommandManager::HistoryPostResetArgs& args)
+void HistoryObject::onCommandHistoryPostReset( const VariantList & history )
 {
-	historyItems_.onPostItemsRemoved().remove<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
-
-	pushHistoryItems( args.history_ );
-
-	historyItems_.onPostItemsRemoved().add<HistoryObject, 
-		&HistoryObject::onPostHistoryItemsRemoved>( this );
+	postHistoryItemsRemoved_.disable();
+	pushHistoryItems( history );
+	postHistoryItemsRemoved_.enable();
 
 	selectionHandler_.setSelectedRows( std::vector< int >() );
 	selectionHandler_.setSelectedItems( std::vector< IItem* >() );
 }
 
 //==============================================================================
-void HistoryObject::onPostHistoryItemsRemoved( const IListModel* sender, 
-							   const IListModel::PostItemsRemovedArgs& args )
+void HistoryObject::onPostHistoryItemsRemoved( size_t index, size_t count )
 {
 	// handling user click on clear button
 	assert( commandSystem_ != nullptr );
@@ -207,7 +268,7 @@ void HistoryObject::onPostHistoryItemsRemoved( const IListModel* sender,
 	unbindCommandHistoryCallbacks();
 
 	VariantList & history = const_cast<VariantList &>(commandSystem_->getHistory());
-	history.erase( history.begin() + args.index_, history.begin() + args.index_ + args.count_ );
+	history.erase( history.begin() + index, history.begin() + index + count );
 
 	bindCommandHistoryCallbacks();
 

@@ -18,6 +18,7 @@ namespace PyScript
 class ScriptDict;
 class ScriptIter;
 class ScriptList;
+class ScriptLong;
 class ScriptTuple;
 class ScriptString;
 class ScriptArgs;
@@ -372,6 +373,24 @@ public:
 	}
 
 
+	/**
+	 *	This method removes an attribute on the ScriptObject
+	 *
+	 *	@param key			The key to set the value of on the ScriptObject
+	 *	@param errorHandler The type of error handling to use if this method
+	 *		fails
+	 *	@return				True on success, false otherwise
+	 */
+	template <class ERROR_HANDLER>
+	bool delAttribute( const char * key,
+			const ERROR_HANDLER & errorHandler ) const
+	{
+		int result = PyObject_DelAttrString( this->get(), key );
+		errorHandler.checkMinusOne( result );
+		return result != -1;
+	}
+
+
 	template <class ERROR_HANDLER>
 	ScriptObject callMethod( const char * methodName,
 			const ERROR_HANDLER & errorHandler,
@@ -413,6 +432,7 @@ public:
 
 	template <class ERROR_HANDLER>
 	inline ScriptString str( const ERROR_HANDLER & errorHandler ) const;
+	inline ScriptLong id() const;
 
 
 	/**
@@ -862,6 +882,13 @@ public:
 	}
 
 	/**
+	 *	This method gets the dict from a type.
+	 *
+	 *	@returns		The dict for the given type.
+	 */
+	inline ScriptDict getDict() const;
+
+	/**
 	 *	This method allocates a new object of this type
 	 *	@param errorHandler The type of error handling to use if this method
 	 *		fails
@@ -875,6 +902,11 @@ public:
 			(PyTypeObject*)this->get(), 0 );
 		errorHandler.checkPtrError( pObject );
 		return pObject;
+	}
+
+	void modified()
+	{
+		PyType_Modified( reinterpret_cast< PyTypeObject * >( this->get() ) );
 	}
 };
 
@@ -1089,6 +1121,30 @@ public:
 
 
 // -----------------------------------------------------------------------------
+// Section: ScriptBool
+// -----------------------------------------------------------------------------
+
+/**
+ *	This class provides the ability to create and use boolean objects
+ */
+class ScriptBool : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptBool, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptBool object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptBool object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyBool_Check( object.get() );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
 // Section: ScriptInt
 // -----------------------------------------------------------------------------
 
@@ -1234,6 +1290,18 @@ public:
 	}
 
 	/**
+	 *	This method creates a new ScriptLong from a long.
+	 *	@param value	The value to create the ScriptLong from
+	 *	@return			A new ScriptLong with the value of value
+	 */
+	static ScriptLong create( long value )
+	{
+		PyObject * pLong = PyLong_FromLong( value );
+		assert( pLong );
+		return ScriptLong( pLong, ScriptObject::FROM_NEW_REFERENCE );
+	}
+
+	/**
 	 *	This method creates a new ScriptLong from a unsigned int
 	 *	@param value	The value to create the ScriptLong from
 	 *	@return			A new ScriptLong with the value of value
@@ -1272,11 +1340,28 @@ public:
 	/**
 	 *	This method gets the long value from the ScriptLong
 	 *	@return A long representation of the ScriptLong
+	 *		or -1 on overflow error.
 	 */
-	long asLong() const
+	template < class ERROR_HANDLER >
+	long asLong( const ERROR_HANDLER & errorHandler ) const
 	{
-		// TODO: -1 is error?
-		return PyLong_AsLong( this->get() );
+		const long result = PyLong_AsLong( this->get() );
+		errorHandler.checkErrorOccured();
+		return result;
+	}
+
+
+	/**
+	 *	This method gets the unsigned long long value from the ScriptLong.
+	 *	@return A long representation of the ScriptLong
+	 *		or -1 on overflow error.
+	 */
+	template < class ERROR_HANDLER >
+	unsigned PY_LONG_LONG asUnsignedLongLong( const ERROR_HANDLER & errorHandler ) const
+	{
+		const unsigned PY_LONG_LONG result = PyLong_AsUnsignedLongLong( this->get() );
+		errorHandler.checkErrorOccured();
+		return result;
 	}
 };
 
@@ -1420,6 +1505,31 @@ inline std::ostream & operator<<( std::ostream & o, const ScriptObject & obj )
 // -----------------------------------------------------------------------------
 
 typedef ScriptString ScriptBlob;
+
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptUnicode
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create unicode strings.
+ */
+class ScriptUnicode : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptUnicode, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptUnicode object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptUnicode object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyUnicode_Check( object.get() );
+	}
+};
+
 
 // -----------------------------------------------------------------------------
 // Section: ScriptMapping
@@ -1577,6 +1687,18 @@ public:
 		errorHandler.checkPtrError( pClass );
 		return ScriptClass( pClass, ScriptObject::FROM_NEW_REFERENCE );
 	}
+
+
+	/**
+	 *	This method gets the dict from a type.
+	 *
+	 *	@returns		The dict for the given type.
+	 */
+	ScriptDict getDict() const
+	{
+		return ScriptDict( reinterpret_cast< PyClassObject * >( this->get() )->cl_dict,
+			ScriptObject::FROM_BORROWED_REFERENCE );
+	}
 };
 
 
@@ -1696,6 +1818,160 @@ public:
 };
 
 
+// -----------------------------------------------------------------------------
+// Section: ScriptCode
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create code objects.
+ */
+class ScriptCode : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptCode, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptCode object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptCode object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyCode_Check( object.get() );
+	}
+
+
+	/**
+	 *	Get the number of arguments required by this code object.
+	 *	@pre code object must not be null.
+	 *	@return the number of arguments required by this code object.
+	 */
+	int argCount()
+	{
+		auto pCode = reinterpret_cast< PyCodeObject * >( this->get() );
+		return pCode->co_argcount;
+	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptFunction
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create functions.
+ */
+class ScriptFunction : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptFunction, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptFunction object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptFunction object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyFunction_Check( object.get() );
+	}
+
+
+	/**
+	 *	Get the code object inside this function.
+	 *	@pre function must not be null.
+	 *	@return the code object inside this function.
+	 */
+	ScriptCode code()
+	{
+		assert( this->exists() );
+		return ScriptCode( PyFunction_GET_CODE( this->get() ),
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptMethod
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create methods.
+ *	Methods take "self" as the first argument.
+ */
+class ScriptMethod : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptMethod, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptMethod object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptMethod object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return PyMethod_Check( object.get() );
+	}
+
+	/**
+	 *	Get the function inside this method.
+	 *	@pre method must not be null.
+	 *	@return the function inside this method.
+	 */
+	ScriptFunction function()
+	{
+		assert( this->exists() );
+		return ScriptFunction( PyMethod_GET_FUNCTION( this->get() ),
+			PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	}
+};
+
+
+// -----------------------------------------------------------------------------
+// Section: ScriptDescrWrapper
+// -----------------------------------------------------------------------------
+/**
+ *	This class provides the ability to create wrapper descriptors.
+ */
+class ScriptDescrWrapper : public ScriptObject
+{
+public:
+	STANDARD_SCRIPT_OBJECT_IMP( ScriptDescrWrapper, ScriptObject )
+
+	/**
+	 *	This method checks if the given object is a ScriptDescrWrapper object
+	 *	@param object The object to check
+	 *	@return True if object is a ScriptDescrWrapper object, false otherwise
+	 */
+	static bool check( const ScriptObject & object )
+	{
+		return (object.get()->ob_type == &PyWrapperDescr_Type);
+	}
+
+	/**
+	 *	This method creates a new ScriptDescrWrapper from a type,
+	 *	wrapper definition and wrapped function.
+	 */
+	static ScriptDescrWrapper create( const ScriptType & type,
+		wrapperbase & base,
+		void * pFunctionToBeWrapped )
+	{
+		auto pyWrapper = PyDescr_NewWrapper(
+			reinterpret_cast< PyTypeObject * >( type.get() ),
+			&base,
+			pFunctionToBeWrapped );
+		return ScriptDescrWrapper( pyWrapper, FROM_NEW_REFERENCE );
+	}
+
+	ScriptString name() const
+	{
+		const PyWrapperDescrObject * pWrapperDescr =
+			reinterpret_cast< PyWrapperDescrObject * >( this->get() );
+		assert( pWrapperDescr->d_base != nullptr );
+		return ScriptString( pWrapperDescr->d_base->name_strobj,
+			FROM_BORROWED_REFERENCE );
+	}
+};
+
+
 /**
  *	This script error handler fetches the exception type, value and traceback
  *	object, and clears the error state. They can be retrieved via accessors on
@@ -1807,6 +2083,7 @@ inline int setData( PyObject * pObj, ScriptObject & rScriptObject,
 #include "py_script_dict.ipp"
 #include "py_script_sequence.ipp"
 #include "py_script_tuple.ipp"
+#include "py_script_type.ipp"
 #include "py_script_list.ipp"
 
 

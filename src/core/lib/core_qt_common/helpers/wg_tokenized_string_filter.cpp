@@ -31,7 +31,7 @@ void WGTokenizedStringFilter::Implementation::setFilterText( const QString & fil
 	}
 
 	filter_.updateFilterTokens( inputValue.c_str() );
-	filter_.notifyFilterChanged();
+	filter_.signalFilterChanged();
 }
 
 void WGTokenizedStringFilter::Implementation::setSplitter( const QString & splitter )
@@ -56,7 +56,7 @@ WGTokenizedStringFilter::~WGTokenizedStringFilter()
 
 void WGTokenizedStringFilter::updateInternalItemRole()
 {
-	impl_->filter_.setRole( itemRole_.second );
+	impl_->filter_.setRole( roleId_ );
 }
 
 QString WGTokenizedStringFilter::getFilterText() const

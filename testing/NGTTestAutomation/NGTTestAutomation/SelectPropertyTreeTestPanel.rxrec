@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<recordtable
+rxversion="5.4.5.19886"
+id="a167d7f1-18e8-4104-8333-35233bf382c8"
+embeddedrepository="false"
+mode="Global">
+	<name>
+		SelectPropertyTreeTestPanel
+	</name>
+	<repeatcount>
+		1
+	</repeatcount>
+	<turbomode>
+		False
+	</turbomode>
+	<genreport>
+		True
+	</genreport>
+	<speedfactor>
+		1
+	</speedfactor>
+	<useDefaultItemLogging>
+		True
+	</useDefaultItemLogging>
+	<codegen
+	classname="SelectPropertyTreeTestPanel"
+	namespace="NGTTestAutomation"/>
+	<variables/>
+	<recorditems>
+		<mouseitem
+		enabled="True"
+		optional="False"
+		duration="500ms"
+		searchpropertyid="cfad331b-29a3-4bfe-963b-4c37423e7f2e"
+		action="Click"
+		button="Left"
+		movetime="300ms"
+		sx="3732"
+		sy="887"
+		loc="Center">
+			<comment/>
+			<bindings/>
+			<info
+			sourcename="Recorder"
+			id="5e855b1d-a287-4e18-bc92-c3af076fbe62">
+				<element
+				role="tabpage"
+				prefcap="tabpage"
+				capabilities=""
+				flavor="qt"
+				visible="True"
+				valid="True"
+				enabled="True"
+				hasfocus="False"
+				dontcache="False"
+				index="7"
+				rect="3698,874,71,26"
+				snapElem="">
+					<attribute
+					name="index"
+					type="System.Int32">
+						7
+					</attribute>
+					<attribute
+					name="selected"
+					type="System.Boolean">
+						False
+					</attribute>
+					<attribute
+					name="title"
+					type="System.String">
+						PropertyTree Test
+					</attribute>
+				</element>
+				<path>
+					/form[@name='MainWindow']/?/?/tabpage[@index='7']
+				</path>
+			</info>
+			<helperscreenshot
+			guid="502e13e9-a301-4d2c-8c5d-ba42990817d2">
+				/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDABwTFRgVERwYFhgfHRwhKUUtKSYmKVQ8QDJFZFhpZ2JY
+YF9ufJ6GbnWWd19giruLlqOpsbOxa4TC0MGszp6usar/2wBDAR0fHykkKVEtLVGqcmByqqqqqqqq
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr/wAARCAD8AOkDASIA
+AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDLooop
+gFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFA6D6UUDoPp
+QAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
+BQOg+lFA6D6UAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUU
+AFFFFABRRRQAUDoPpRQOg+lABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRR
+QAUUUUAFFFFABRRRQAUUUUAFA6D6UUDoPpQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
+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
+RQAUHoaKD0NAEVFFFAz/2Q==
+			</helperscreenshot>
+		</mouseitem>
+	</recorditems>
+	<repository
+	name="NGTTestAutomationRepository"
+	id="0f1dd445-65cb-47c8-a69d-e0f2154f9e50"
+	rxversion="5.4.5.19886"
+	relativepath="NGTTestAutomationRepository.rxrep">
+		<codegen
+		classname="NGTTestAutomationRepository"
+		namespace="NGTTestAutomation"/>
+		<rootfolder
+		name="_rootdummy_"
+		id="3936ed74-78e9-40c3-8819-a806f6a02759"/>
+	</repository>
+	<usercodefile
+	lang="CSharp">
+		SelectPropertyTreeTestPanel.UserCode.cs
+	</usercodefile>
+	<references/>
+</recordtable>

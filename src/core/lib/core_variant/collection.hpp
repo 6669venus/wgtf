@@ -1,20 +1,14 @@
 #ifndef COLLECTION_HPP
 #define COLLECTION_HPP
 
-#include <vector>
-#include <array>
-#include <map>
-#include <unordered_map>
-#include <iostream>
 #include <iterator>
 #include <type_traits>
 #include <memory>
 
+#include "core_common/signal.hpp"
 #include "core_variant/type_id.hpp"
 #include "core_variant/variant.hpp"
-#include <cassert>
 
-class Collection;
 
 // collection and iterator implementations base
 
@@ -27,13 +21,57 @@ public:
 	typedef std::forward_iterator_tag iterator_category;
 	typedef ptrdiff_t difference_type;
 
+	/**
+	Return element key type.
+
+	Variant type itself shouldn't be returned. In case when key is stored in
+	Variant, you should return actual type stored in Variant.
+	*/
 	virtual const TypeId& keyType() const = 0;
+
+	/**
+	Return element value type.
+
+	Variant type itself shouldn't be returned. In case when value is stored in
+	Variant, you should return actual type stored in Variant.
+	*/
 	virtual const TypeId& valueType() const = 0;
+
+	/**
+	Return element key.
+	*/
 	virtual Variant key() const = 0;
+
+	/**
+	Return element value.
+	*/
 	virtual Variant value() const = 0;
+
+	/**
+	Set new element value.
+
+	Note that you can't change element key once it's inserted into Collection.
+	The only way to change element key is to delete it and re-add the same value
+	with another key.
+	*/
 	virtual bool setValue(const Variant& v) const = 0;
+
+	/**
+	Advance iterator one step forward.
+
+	Note that Collection iterators are forward-only - you can't step backwards
+	or advance by multiple steps at once. Indexing is not supported as well.
+	*/
 	virtual void inc() = 0;
+
+	/**
+	Check two iterators for equality.
+	*/
 	virtual bool equals(const CollectionIteratorImplBase& that) const = 0;
+
+	/**
+	Create a new copy of this iterator.
+	*/
 	virtual CollectionIteratorImplPtr clone() const = 0;
 };
 
@@ -49,31 +87,119 @@ public:
 		GET_AUTO // find existing element or insert new one
 	};
 
-	virtual bool empty() const = 0;
+	enum Flag
+	{
+		/**
+		Container uses sparse keys (as opposed to indices from `0` to `size - 1`).
+		*/
+		MAPPING = 1,
+
+		/**
+		Element data can be changed.
+
+		Note that setting new values can still fail even with this flag.
+		*/
+		WRITABLE = 2,
+
+		/**
+		Elements can be inserted and erased.
+
+		Note that in some cases insert() or erase() can still fail even with
+		this flag.
+		*/
+		RESIZABLE = 4,
+
+		/**
+		Elements are always sorted by key.
+
+		Sorting predicate is defined by a concrete implementation.
+		*/
+		ORDERED = 8,
+
+		/**
+		Container may have multiple elements with equal key.
+		*/
+		NON_UNIQUE_KEYS = 16
+	};
+
+	typedef void ElementRangeCallbackSignature(
+		const CollectionIteratorImplPtr& pos,
+		size_t count );
+	typedef void ElementPreChangeCallbackSignature(
+		const CollectionIteratorImplPtr& pos,
+		const Variant& newValue );
+	typedef void ElementPostChangedCallbackSignature(
+		const CollectionIteratorImplPtr& pos,
+		const Variant& oldValue );
+
+	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
+	typedef std::function< ElementPreChangeCallbackSignature > ElementPreChangeCallback;
+	typedef std::function< ElementPostChangedCallbackSignature > ElementPostChangedCallback;
+
 	virtual size_t size() const = 0;
 	virtual CollectionIteratorImplPtr begin() = 0;
 	virtual CollectionIteratorImplPtr end() = 0;
-	virtual std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy) = 0;
-	virtual CollectionIteratorImplPtr erase(const CollectionIteratorImplPtr& pos) = 0;
-	virtual size_t erase(const Variant& key) = 0;
+	virtual std::pair< CollectionIteratorImplPtr, bool > get( const Variant& key, GetPolicy policy ) = 0;
+	virtual CollectionIteratorImplPtr erase( const CollectionIteratorImplPtr& pos ) = 0;
+	virtual size_t erase( const Variant& key ) = 0;
 	virtual CollectionIteratorImplPtr erase(
-		const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) = 0;
+		const CollectionIteratorImplPtr& first,
+		const CollectionIteratorImplPtr& last ) = 0;
 
 	virtual const TypeId& keyType() const = 0;
 	virtual const TypeId& valueType() const = 0;
 
+	/**
+	Return type of underlying container itself.
+
+	This function together with container() can be used to optimize
+	Collection comparison, copying, etc.
+	*/
 	virtual const TypeId& containerType() const = 0;
-	virtual void* containerData() const = 0;
+
 	/**
-	 *	Check if the underlying container type is a map.
-	 *	@return true if the container is a map.
-	 */
-	virtual bool isMapping() const = 0;
+	Return pointer to underlying container.
+
+	This function may return null pointer to indicate that optimized comparison
+	and copying are not applicable.
+	*/
+	virtual const void* container() const = 0;
+
 	/**
-	 *	Check if the underlying container type can append/erase elements.
-	 *	@return true if the container can change size.
-	 */
-	virtual bool canResize() const = 0;
+	Return combination of Flag values that describe some Collection properties.
+	*/
+	virtual int flags() const = 0;
+
+	virtual Connection connectPreInsert( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPostInserted( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPreErase( ElementRangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPostErased( ElementRangeCallback callback)
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPreChange( ElementPreChangeCallback callback )
+	{
+		return Connection();
+	}
+
+	virtual Connection connectPostChanged( ElementPostChangedCallback callback )
+	{
+		return Connection();
+	}
+
 };
 
 typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
@@ -82,1075 +208,17 @@ typedef std::shared_ptr<CollectionImplBase> CollectionImplPtr;
 namespace collection_details
 {
 
-	// linear collection
-
-	template<typename Container>
-	class LinearCollectionIteratorImpl:
-		public CollectionIteratorImplBase
-	{
-	public:
-		typedef Container container_type;
-		typedef typename container_type::size_type key_type;
-		typedef typename container_type::value_type value_type;
-		typedef LinearCollectionIteratorImpl<container_type> this_type;
-
-		static const bool can_set =
-			Variant::traits<value_type>::can_downcast &&
-			!std::is_const<container_type>::value &&
-			!std::is_const<value_type>::value;
-
-		LinearCollectionIteratorImpl(container_type& container, key_type index):
-			container_(container),
-			index_(index)
-		{
-		}
-
-		container_type& container() const
-		{
-			return container_;
-		}
-
-		key_type index() const
-		{
-			return index_;
-		}
-
-		const TypeId& keyType() const override
-		{
-			return TypeId::getType<key_type>();
-		}
-
-		const TypeId& valueType() const override
-		{
-			return GetTypeImpl<value_type>::valueType(this);
-		}
-
-		Variant key() const override
-		{
-			return index_;
-		}
-
-		Variant value() const override
-		{
-			if(index_ < container_.size())
-			{
-				return GetImpl<value_type>::value(this);
-			}
-			else
-			{
-				return Variant();
-			}
-		}
-
-		bool setValue(const Variant& v) const override
-		{
-			return SetImpl<can_set>::setValue(this, v);
-		}
-
-		void inc() override
-		{
-			index_ += 1;
-		}
-
-		bool equals(const CollectionIteratorImplBase& that) const override
-		{
-			const this_type* t = dynamic_cast<const this_type*>(&that);
-			if(!t)
-			{
-				return false;
-			}
-
-			return
-				&container_ == &t->container_ &&
-				index_ == t->index_;
-		}
-
-		CollectionIteratorImplPtr clone() const override
-		{
-			return std::make_shared< this_type >(*this);
-		}
-
-	private:
-		container_type& container_;
-		key_type index_;
-
-		// SetImpl
-		template<bool can_set, typename Dummy = void>
-		struct SetImpl
-		{
-			static bool setValue(const this_type* impl, const Variant& v)
-			{
-				if(impl->index_ >= impl->container_.size())
-				{
-					return false;
-				}
-
-				return v.with<value_type>([impl](const value_type& val)
-				{
-					impl->container_[impl->index_] = val;
-				});
-			}
-		};
-
-		template<typename Dummy>
-		struct SetImpl<false, Dummy>
-		{
-			static bool setValue(const this_type*, const Variant&)
-			{
-				// nop
-				return false;
-			}
-		};
-
-		// GetImpl
-		template<typename T, typename Dummy = void>
-		struct GetImpl
-		{
-			static Variant value(const this_type* impl)
-			{
-				return impl->container_[impl->index_];
-			}
-		};
-
-		template<typename Dummy>
-		struct GetImpl<bool, Dummy>
-		{
-			static Variant value(const this_type* impl)
-			{
-				return (bool)impl->container_[impl->index_];
-			}
-		};
-
-		// GetTypeImpl
-		template<typename T, typename Dummy = void>
-		struct GetTypeImpl
-		{
-			static const TypeId& valueType(const this_type*)
-			{
-				return TypeId::getType<T>();
-			}
-		};
-
-		template<typename Dummy>
-		struct GetTypeImpl<Variant, Dummy>
-		{
-			static const TypeId& valueType(const this_type* impl)
-			{
-				if(impl->index_ < impl->container_.size())
-				{
-					return impl->container_[impl->index_].type()->typeId();
-				}
-				else
-				{
-					return TypeId::getType<void>();
-				}
-			}
-		};
-
-	};
-
-
-	template<typename Container>
-	struct linear_collection_container_traits
-	{
-		typedef Container container_type;
-
-		static void insertDefaultAt(container_type& container, const typename container_type::iterator& pos)
-		{
-			container.emplace(pos);
-		}
-	};
-
-	template<typename Allocator>
-	struct linear_collection_container_traits<std::vector<bool, Allocator>>
-	{
-		typedef std::vector<bool, Allocator> container_type;
-
-		static void insertDefaultAt(container_type& container, const typename container_type::iterator& pos)
-		{
-			// std::vector<bool> doesn't have emplace
-			container.insert(pos, false);
-		}
-	};
-
-
-	template<typename Container, bool can_resize>
-	class LinearCollectionImpl:
-		public CollectionImplBase
-	{
-	public:
-		typedef Container container_type;
-		typedef typename container_type::size_type key_type;
-		typedef typename container_type::value_type value_type;
-		typedef LinearCollectionIteratorImpl<container_type> iterator_impl_type;
-
-		template<bool can_set, typename Dummy = void>
-		struct downcaster_impl
-		{
-			static bool downcast(container_type* v, const Collection& storage);
-		};
-
-		template<typename Dummy>
-		struct downcaster_impl<false, Dummy>
-		{
-		};
-
-		typedef typename std::conditional<
-			iterator_impl_type::can_set,
-			downcaster_impl<iterator_impl_type::can_set>,
-			void>::type downcaster;
-
-		explicit LinearCollectionImpl(container_type& container):
-			container_(container)
-		{
-		}
-
-
-		const TypeId& keyType() const override
-		{
-			return TypeId::getType< key_type >();
-		}
-
-
-		const TypeId& valueType() const override
-		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
-		}
-
-
-		bool empty() const override
-		{
-			return container_.empty();
-		}
-
-
-		size_t size() const override
-		{
-			return container_.size();
-		}
-
-		CollectionIteratorImplPtr begin() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, 0);
-		}
-
-		CollectionIteratorImplPtr end() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, container_.size());
-		}
-
-		std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy) override
-		{
-			typedef std::pair<CollectionIteratorImplPtr, bool> result_type;
-
-			key_type i;
-			if(!key.tryCast(i))
-			{
-				return result_type(end(), false);
-			}
-
-			switch(policy)
-			{
-			case GET_EXISTING:
-				if(i < container_.size())
-				{
-					return result_type(
-						std::make_shared< iterator_impl_type >(container_, i), false);
-				}
-				else
-				{
-					return result_type(end(), false);
-				}
-
-			case GET_NEW:
-				if(i > container_.size())
-				{
-					container_.resize(i + 1);
-				}
-				else
-				{
-					linear_collection_container_traits<container_type>::insertDefaultAt(container_, container_.begin() + i);
-				}
-
-				return result_type(
-					std::make_shared< iterator_impl_type >(container_, i), true);
-
-			case GET_AUTO:
-				{
-					bool found = i < container_.size();
-					if(!found)
-					{
-						container_.resize(i + 1);
-					}
-
-					return result_type(
-						std::make_shared< iterator_impl_type >(container_, i), !found);
-				}
-
-			default:
-				return result_type(end(), false);
-
-			}
-		}
-
-		CollectionIteratorImplPtr erase(const CollectionIteratorImplPtr& pos) override
-		{
-			iterator_impl_type* ii = dynamic_cast<iterator_impl_type*>(pos.get());
-			assert(ii);
-			assert(&ii->container() == &container_);
-			assert(ii->index() < container_.size());
-
-			auto r = container_.erase(container_.begin() + ii->index());
-			return std::make_shared< iterator_impl_type >(
-				container_,
-				r - container_.begin());
-		}
-
-		size_t erase(const Variant& key) override
-		{
-			key_type i;
-			if(!key.tryCast(i))
-			{
-				return 0;
-			}
-
-			if(i >= container_.size())
-			{
-				return 0;
-			}
-
-			container_.erase(container_.begin() + i);
-			return 1;
-		}
-
-		CollectionIteratorImplPtr erase(
-			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
-		{
-			iterator_impl_type* ii_first = dynamic_cast<iterator_impl_type*>(first.get());
-			iterator_impl_type* ii_last = dynamic_cast<iterator_impl_type*>(first.get());
-			assert(ii_first && ii_last);
-			assert(&ii_first->container() == &container_ && &ii_last->container() == &container_);
-			assert(ii_first->index() < container_.size() && ii_last->index() < container_.size());
-
-			auto r = container_.erase(
-				container_.begin() + ii_first->index(), container_.begin() + ii_last->index());
-			return std::make_shared< iterator_impl_type >(
-				container_,
-				r - container_.begin());
-		}
-
-		bool isMapping() const override
-		{
-			return false;
-		}
-
-		bool canResize() const override
-		{
-			return can_resize;
-		}
-
-	private:
-		container_type& container_;
-
-	};
-
-
-	template<typename Container>
-	class LinearCollectionImpl<Container, false>:
-		public CollectionImplBase
-	{
-	public:
-		typedef Container container_type;
-		typedef typename container_type::size_type key_type;
-		typedef typename container_type::value_type value_type;
-		typedef LinearCollectionIteratorImpl<container_type> iterator_impl_type;
-
-		template<bool can_set, typename Dummy = void>
-		struct downcaster_impl
-		{
-			static bool downcast(container_type* v, const Collection& storage);
-		};
-
-		template<typename Dummy>
-		struct downcaster_impl<false, Dummy>
-		{
-		};
-
-		typedef typename std::conditional<
-			iterator_impl_type::can_set,
-			downcaster_impl<iterator_impl_type::can_set>,
-			void>::type downcaster;
-
-		explicit LinearCollectionImpl(container_type& container):
-			container_(container)
-		{
-		}
-
-
-		const TypeId& keyType() const override
-		{
-			return TypeId::getType< key_type >();
-		}
-
-
-		const TypeId& valueType() const override
-		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
-		}
-
-
-		bool empty() const override
-		{
-			return container_.empty();
-		}
-
-
-		size_t size() const override
-		{
-			return container_.size();
-		}
-
-		CollectionIteratorImplPtr begin() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, 0);
-		}
-
-		CollectionIteratorImplPtr end() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, container_.size());
-		}
-
-		std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy) override
-		{
-			typedef std::pair<CollectionIteratorImplPtr, bool> result_type;
-
-			key_type i;
-			if(!key.tryCast(i))
-			{
-				return result_type(end(), false);
-			}
-
-			switch(policy)
-			{
-			case GET_EXISTING:
-			case GET_AUTO:
-				if(i < container_.size())
-				{
-					return result_type(
-						std::make_shared< iterator_impl_type >(container_, i), false);
-				}
-				else
-				{
-					return result_type(end(), false);
-				}
-
-			case GET_NEW:
-			default:
-				return result_type(end(), false);
-
-			}
-		}
-
-		CollectionIteratorImplPtr erase(const CollectionIteratorImplPtr& pos) override
-		{
-			return end();
-		}
-
-		size_t erase(const Variant& key) override
-		{
-			return 0;
-		}
-
-		CollectionIteratorImplPtr erase(
-			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
-		{
-			return end();
-		}
-
-		bool isMapping() const override
-		{
-			return false;
-		}
-
-		bool canResize() const override
-		{
-			return false;
-		}
-
-	private:
-		container_type& container_;
-
-	};
-
-	// map collection
-
-	template<typename Map>
-	class MapCollectionIteratorImpl:
-		public CollectionIteratorImplBase
-	{
-	public:
-		typedef typename Map::key_type key_type;
-		typedef typename Map::mapped_type value_type;
-		typedef Map container_type;
-		typedef MapCollectionIteratorImpl<container_type> this_type;
-
-		static const bool is_const_container = std::is_const<container_type>::value;
-		static const bool can_set =
-			Variant::traits<value_type>::can_downcast &&
-			!is_const_container &&
-			!std::is_const<value_type>::value;
-
-		typedef typename std::conditional<
-			is_const_container,
-			typename container_type::const_iterator,
-			typename container_type::iterator
-		>::type iterator_type;
-
-		MapCollectionIteratorImpl(container_type& container, const iterator_type& iterator):
-			container_(container),
-			iterator_(iterator)
-		{
-		}
-
-		container_type& container() const
-		{
-			return container_;
-		}
-
-		const iterator_type& base() const
-		{
-			return iterator_;
-		}
-
-		const TypeId& keyType() const override
-		{
-			return GetTypeImpl<key_type>::keyType(this);
-		}
-
-		const TypeId& valueType() const override
-		{
-			return GetTypeImpl<value_type>::valueType(this);
-		}
-
-		Variant key() const override
-		{
-			if(iterator_ != container_.end())
-			{
-				return iterator_->first;
-			}
-			else
-			{
-				return Variant();
-			}
-		}
-
-		Variant value() const override
-		{
-			if(iterator_ != container_.end())
-			{
-				return iterator_->second;
-			}
-			else
-			{
-				return Variant();
-			}
-		}
-
-		bool setValue(const Variant& v) const override
-		{
-			return SetImpl<can_set>::setValue(this, v);
-		}
-
-		void inc() override
-		{
-			++iterator_;
-		}
-
-		bool equals(const CollectionIteratorImplBase& that) const override
-		{
-			const this_type* t = dynamic_cast<const this_type*>(&that);
-			if(!t)
-			{
-				return false;
-			}
-
-			return
-				&container_ == &t->container_ &&
-				iterator_ == t->iterator_;
-		}
-
-		CollectionIteratorImplPtr clone() const override
-		{
-			return std::make_shared< this_type >(*this);
-		}
-
-	private:
-		container_type& container_;
-		iterator_type iterator_;
-
-		// SetImpl
-		template<bool can_set, typename Dummy = void>
-		struct SetImpl
-		{
-			static bool setValue(const this_type* impl, const Variant& v)
-			{
-				if(impl->iterator_ == impl->container_.end())
-				{
-					return false;
-				}
-
-				return v.with<value_type>([impl](const value_type& val)
-				{
-					impl->iterator_->second = val;
-				});
-			}
-		};
-
-		template<typename Dummy>
-		struct SetImpl<false, Dummy>
-		{
-			static bool setValue(const this_type* impl, const Variant& v)
-			{
-				// nop
-				return false;
-			}
-		};
-
-		// GetTypeImpl
-		template<typename T, typename Dummy = void>
-		struct GetTypeImpl
-		{
-			static const TypeId& keyType(const this_type*)
-			{
-				return TypeId::getType<T>();
-			}
-
-			static const TypeId& valueType(const this_type*)
-			{
-				return TypeId::getType<T>();
-			}
-		};
-
-		template<typename Dummy>
-		struct GetTypeImpl<Variant, Dummy>
-		{
-			static const TypeId& keyType(const this_type* impl)
-			{
-				if(impl->iterator_ != impl->container_.end())
-				{
-					return impl->iterator_->first.type()->typeId();
-				}
-				else
-				{
-					return TypeId::getType<void>();
-				}
-			}
-
-			static const TypeId& valueType(const this_type* impl)
-			{
-				if(impl->iterator_ != impl->container_.end())
-				{
-					return impl->iterator_->second.type()->typeId();
-				}
-				else
-				{
-					return TypeId::getType<void>();
-				}
-			}
-		};
-
-	};
-
-
-	template<typename Map, bool can_resize>
-	class MapCollectionImpl:
-		public CollectionImplBase
-	{
-	public:
-		typedef typename Map::key_type key_type;
-		typedef typename Map::mapped_type value_type;
-		typedef Map container_type;
-		typedef MapCollectionIteratorImpl<container_type> iterator_impl_type;
-
-		template<bool can_set, typename Dummy = void>
-		struct downcaster_impl
-		{
-			static bool downcast(container_type* v, const Collection& storage);
-		};
-
-		template<typename Dummy>
-		struct downcaster_impl<false, Dummy>
-		{
-		};
-
-		typedef typename std::conditional<
-			iterator_impl_type::can_set,
-			downcaster_impl<iterator_impl_type::can_set>,
-			void>::type downcaster;
-
-		explicit MapCollectionImpl(container_type& container):
-			container_(container)
-		{
-		}
-
-
-		const TypeId& keyType() const override
-		{
-			return TypeId::getType< key_type >();
-		}
-
-
-		const TypeId& valueType() const override
-		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
-		}
-
-
-		bool empty() const override
-		{
-			return container_.empty();
-		}
-
-
-		size_t size() const override
-		{
-			return container_.size();
-		}
-
-		CollectionIteratorImplPtr begin() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, container_.begin());
-		}
-
-		CollectionIteratorImplPtr end() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, container_.end());
-		}
-
-		std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy) override
-		{
-			typedef std::pair<CollectionIteratorImplPtr, bool> result_type;
-
-			key_type k;
-			if(!key.tryCast(k))
-			{
-				return result_type(end(), false);
-			}
-
-			switch(policy)
-			{
-			case GET_EXISTING:
-				return result_type(
-					std::make_shared< iterator_impl_type >(container_, container_.find(k)),
-					false);
-
-			case GET_NEW:
-				{
-					// insert a new one
-					auto oldSize = container_.size();
-					auto insertionPoint = container_.equal_range(k).second;
-					auto r = container_.emplace_hint(insertionPoint, k, value_type());
-					if(container_.size() == oldSize)
-					{
-						return result_type(end(), false);
-					}
-					else
-					{
-						return result_type(
-							std::make_shared< iterator_impl_type >(container_, r),
-							true);
-					}
-				}
-
-			case GET_AUTO:
-				{
-					auto range = container_.equal_range(k);
-					if(range.first != range.second)
-					{
-						// key exists
-						auto itr = range.first;
-						decltype(itr) resultItr;
-
-						while (itr != range.second)
-						{
-							resultItr = itr;
-							++itr;
-						}
-
-						return result_type(
-							std::make_shared< iterator_impl_type >(container_, resultItr), false);
-					}
-
-					// insert a new one
-					auto r = container_.emplace_hint(range.second, k, value_type());
-					return result_type(
-						std::make_shared< iterator_impl_type >(container_, r),
-						true);
-				}
-
-			default:
-				return result_type(end(), false);
-
-			}
-		}
-
-		CollectionIteratorImplPtr erase(const CollectionIteratorImplPtr& pos) override
-		{
-			iterator_impl_type* ii = dynamic_cast<iterator_impl_type*>(pos.get());
-			assert(ii);
-			assert(&ii->container() == &container_);
-
-			return std::make_shared< iterator_impl_type >(
-				container_,
-				container_.erase(ii->base()));
-		}
-
-		size_t erase(const Variant& key) override
-		{
-			key_type k;
-			if(!key.tryCast(k))
-			{
-				return 0;
-			}
-
-			return container_.erase(k);
-		}
-
-		CollectionIteratorImplPtr erase(
-			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
-		{
-			iterator_impl_type* ii_first = dynamic_cast<iterator_impl_type*>(first.get());
-			iterator_impl_type* ii_last = dynamic_cast<iterator_impl_type*>(last.get());
-			assert(ii_first && ii_last);
-			assert(&ii_first->container() == &container_ && &ii_last->container() == &container_);
-
-			return std::make_shared< iterator_impl_type >(
-				container_,
-				container_.erase(ii_first->base(), ii_last->base()));
-		}
-
-		bool isMapping() const override
-		{
-			return true;
-		}
-
-		bool canResize() const override
-		{
-			return can_resize;
-		}
-
-	private:
-		container_type& container_;
-
-	};
-
-
-	template<typename Map>
-	class MapCollectionImpl<Map, false>:
-		public CollectionImplBase
-	{
-	public:
-		typedef typename Map::key_type key_type;
-		typedef typename Map::mapped_type value_type;
-		typedef Map container_type;
-		typedef MapCollectionIteratorImpl<container_type> iterator_impl_type;
-
-		typedef void downcaster;
-
-		explicit MapCollectionImpl(container_type& container):
-			container_(container)
-		{
-		}
-
-
-		const TypeId& keyType() const override
-		{
-			return TypeId::getType< key_type >();
-		}
-
-
-		const TypeId& valueType() const override
-		{
-			return TypeId::getType< value_type >();
-		}
-
-
-		const TypeId& containerType() const override
-		{
-			return TypeId::getType< container_type >();
-		}
-
-
-		void* containerData() const override
-		{
-			return ( void* )&container_;
-		}
-
-
-		bool empty() const override
-		{
-			return container_.empty();
-		}
-
-
-		size_t size() const override
-		{
-			return container_.size();
-		}
-
-		CollectionIteratorImplPtr begin() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, container_.begin());
-		}
-
-		CollectionIteratorImplPtr end() override
-		{
-			return std::make_shared< iterator_impl_type >(container_, container_.end());
-		}
-
-		std::pair<CollectionIteratorImplPtr, bool> get(const Variant& key, GetPolicy policy) override
-		{
-			typedef std::pair<CollectionIteratorImplPtr, bool> result_type;
-
-			key_type k;
-			if(!key.tryCast(k))
-			{
-				return result_type(end(), false);
-			}
-
-			switch(policy)
-			{
-			case GET_EXISTING:
-			case GET_AUTO:
-				return result_type(
-					std::make_shared< iterator_impl_type >(container_, container_.find(k)),
-					false);
-
-			case GET_NEW:
-			default:
-				return result_type(end(), false);
-
-			}
-		}
-
-		CollectionIteratorImplPtr erase(const CollectionIteratorImplPtr& pos) override
-		{
-			return end();
-		}
-
-		size_t erase(const Variant& key) override
-		{
-			return 0;
-		}
-
-		CollectionIteratorImplPtr erase(
-			const CollectionIteratorImplPtr& first, const CollectionIteratorImplPtr& last) override
-		{
-			return end();
-		}
-
-		bool isMapping() const override
-		{
-			return true;
-		}
-
-		bool canResize() const override
-		{
-			return false;
-		}
-
-	private:
-		container_type& container_;
-
-	};
-
-
 	void deduceCollectionImplType(...);
 
-	// std::vector
+}
 
-	template<typename T, typename Alloc>
-	LinearCollectionImpl<std::vector<T, Alloc>, true> deduceCollectionImplType(std::vector<T, Alloc>&);
 
-	template<typename T, typename Alloc>
-	LinearCollectionImpl<const std::vector<T, Alloc>, false> deduceCollectionImplType(const std::vector<T, Alloc>&);
+#include "stl_container/linear_collection.hpp"
+#include "stl_container/map_collection.hpp"
 
-	// std::array
 
-	template<typename T, size_t N>
-	LinearCollectionImpl<std::array<T, N>, false> deduceCollectionImplType(std::array<T, N>&);
-
-	template<typename T, size_t N>
-	LinearCollectionImpl<const std::array<T, N>, false> deduceCollectionImplType(const std::array<T, N>&);
-
-	// std::map
-
-	template<typename Key, typename T, typename Compare, typename Alloc>
-	MapCollectionImpl<std::map<Key, T, Compare, Alloc>, true> deduceCollectionImplType(std::map<Key, T, Compare, Alloc>&);
-
-	template<typename Key, typename T, typename Compare, typename Alloc>
-	MapCollectionImpl<const std::map<Key, T, Compare, Alloc>, false> deduceCollectionImplType(const std::map<Key, T, Compare, Alloc>&);
-
-	// std::unordered_map
-
-	template<typename Key, typename T, typename Hash, typename Pred, typename Alloc>
-	MapCollectionImpl<std::unordered_map<Key, T, Hash, Pred, Alloc>, true> deduceCollectionImplType(std::unordered_map<Key, T, Hash, Pred, Alloc>&);
-
-	template<typename Key, typename T, typename Hash, typename Pred, typename Alloc>
-	MapCollectionImpl<const std::unordered_map<Key, T, Hash, Pred, Alloc>, false> deduceCollectionImplType(const std::unordered_map<Key, T, Hash, Pred, Alloc>&);
-
-	// std::multimap
-
-	template<typename Key, typename T, typename Compare, typename Alloc>
-	MapCollectionImpl<std::multimap<Key, T, Compare, Alloc>, true> deduceCollectionImplType(std::multimap<Key, T, Compare, Alloc>&);
-
-	template<typename Key, typename T, typename Compare, typename Alloc>
-	MapCollectionImpl<const std::multimap<Key, T, Compare, Alloc>, false> deduceCollectionImplType(const std::multimap<Key, T, Compare, Alloc>&);
-
-	// std::unordered_multimap
-
-	template<typename Key, typename T, typename Hash, typename Pred, typename Alloc>
-	MapCollectionImpl<std::unordered_multimap<Key, T, Hash, Pred, Alloc>, true> deduceCollectionImplType(std::unordered_multimap<Key, T, Hash, Pred, Alloc>&);
-
-	template<typename Key, typename T, typename Hash, typename Pred, typename Alloc>
-	MapCollectionImpl<const std::unordered_multimap<Key, T, Hash, Pred, Alloc>, false> deduceCollectionImplType(const std::unordered_multimap<Key, T, Hash, Pred, Alloc>&);
-
+namespace collection_details
+{
 
 	template<typename Container>
 	struct CollectionImpl
@@ -1198,8 +266,6 @@ Wrapper for generic container.
 class Collection
 {
 public:
-	class Iterator;
-
 	/**
 	Proxy value that provides transparent read-write access to element value.
 	*/
@@ -1429,6 +495,20 @@ public:
 		static const bool can_downcast = !std::is_same<downcaster, void>::value;
 	};
 
+	typedef void ElementRangeCallbackSignature(
+		const Iterator& pos,
+		size_t count );
+	typedef void ElementPreChangeCallbackSignature(
+		const Iterator& pos,
+		const Variant& newValue );
+	typedef void ElementPostChangedCallbackSignature(
+		const Iterator& pos,
+		const Variant& oldValue );
+
+	typedef std::function< ElementRangeCallbackSignature > ElementRangeCallback;
+	typedef std::function< ElementPreChangeCallbackSignature > ElementPreChangeCallback;
+	typedef std::function< ElementPostChangedCallbackSignature > ElementPostChangedCallback;
+
 	/**
 	Construct Collection using given implementation.
 	*/
@@ -1465,6 +545,9 @@ public:
 
 	/**
 	Try to cast underlying container pointer.
+
+	Please note that cv-qualifiers are not checked, so casting to non-const
+	container may be unsafe. This is subject of future improvements.
 	*/
 	template<typename Container>
 	Container* container() const
@@ -1474,12 +557,9 @@ public:
 			return nullptr;
 		}
 
-		const TypeId& containerType = impl_->containerType();
-		if( containerType == TypeId::getType< Container >() ||
-			( std::is_const< Container >::value &&
-			containerType == TypeId::getType< typename std::remove_const< Container >::type >() ) )
+		if( impl_->containerType() == TypeId::getType< Container >() )
 		{
-			return ( Container* )impl_->containerData();
+			return ( Container* )impl_->container();
 		}
 
 		return nullptr;
@@ -1591,14 +671,45 @@ public:
 	bool operator==(const Collection& that) const;
 
 	/**
+	Return combination of Flag values that describe some Collection properties.
+	*/
+	int flags() const;
+
+	/**
+	Convenience function to test Flag or combination of Flags.
+	*/
+	bool testFlags( int f ) const
+	{
+		return ( flags() & f ) == f;
+	}
+
+	/**
 	Test if the collection is a mapping.
 	*/
-	bool isMapping() const;
+	bool isMapping() const
+	{
+		return testFlags( CollectionImplBase::MAPPING );
+	}
 
 	/**
 	Test if the collection can be resized larger or smaller.
 	*/
-	bool canResize() const;
+	bool canResize() const
+	{
+		return testFlags( CollectionImplBase::RESIZABLE );
+	}
+
+	const CollectionImplPtr& impl() const
+	{
+		return impl_;
+	}
+
+	Connection connectPreInsert( ElementRangeCallback callback );
+	Connection connectPostInserted( ElementRangeCallback callback );
+	Connection connectPreErase( ElementRangeCallback callback );
+	Connection connectPostErased( ElementRangeCallback callback);
+	Connection connectPreChange( ElementPreChangeCallback callback );
+	Connection connectPostChanged( ElementPostChangedCallback callback );
 
     CollectionImplPtr getImpl()
     {
@@ -1635,7 +746,14 @@ typename std::enable_if<
 	bool
 >::type downcast(T* v, const Collection& storage)
 {
-	return Collection::traits<T>::downcaster::downcast(v, storage);
+	if(auto impl = storage.impl())
+	{
+		return Collection::traits<T>::downcaster::downcast(v, *impl);
+	}
+	else
+	{
+		return false;
+	}
 }
 
 template<typename T>
@@ -1670,156 +788,6 @@ private:
 	T collection_;
 
 };
-
-// Collection implementations for standard containers
-
-namespace collection_details
-{
-
-	template<typename Container, bool can_resize>
-	template<bool can_set, typename Dummy>
-	bool LinearCollectionImpl<Container, can_resize>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
-	{
-		if( storage.isSame( v ) )
-		{
-			// don't copy to itself
-			return true;
-		}
-
-		if( auto container = storage.container< container_type >() )
-		{
-			// short circuit
-			if( v )
-			{
-				*v = *container;
-			}
-			return true;
-		}
-
-		if(v)
-		{
-			v->clear();
-			v->reserve(storage.size());
-			for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
-			{
-				key_type i;
-				if(!it.key().tryCast(i))
-				{
-					return false;
-				}
-
-				value_type val;
-				if(!it.value().tryCast(val))
-				{
-					return false;
-				}
-
-				if(i >= v->size())
-				{
-					v->resize(i + 1);
-				}
-
-				(*v)[i] = val;
-			}
-		}
-
-		return true;
-	}
-
-	template<typename Container>
-	template<bool can_set, typename Dummy>
-	bool LinearCollectionImpl<Container, false>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
-	{
-		if( storage.isSame( v ) )
-		{
-			// don't copy to itself
-			return true;
-		}
-
-		if( auto container = storage.container< container_type >() )
-		{
-			// short circuit
-			if( v )
-			{
-				*v = *container;
-			}
-			return true;
-		}
-
-		if(v)
-		{
-			v->fill(value_type());
-			for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
-			{
-				key_type i;
-				if(!it.key().tryCast(i))
-				{
-					return false;
-				}
-
-				if(i >= v->size())
-				{
-					return false;
-				}
-
-				value_type val;
-				if(!it.value().tryCast(val))
-				{
-					return false;
-				}
-
-				(*v)[i] = val;
-			}
-		}
-
-		return true;
-	}
-
-	template<typename Map, bool can_resize>
-	template<bool can_set, typename Dummy>
-	bool MapCollectionImpl<Map, can_resize>::downcaster_impl<can_set, Dummy>::downcast(container_type* v, const Collection& storage)
-	{
-		if( storage.isSame( v ) )
-		{
-			// don't copy to itself
-			return true;
-		}
-
-		if( auto container = storage.container< container_type >() )
-		{
-			// short circuit
-			if( v )
-			{
-				*v = *container;
-			}
-			return true;
-		}
-
-		if(v)
-		{
-			v->clear();
-			for(auto it = storage.begin(), end = storage.end(); it != end; ++it)
-			{
-				key_type i;
-				if(!it.key().tryCast(i))
-				{
-					return false;
-				}
-
-				value_type val;
-				if(!it.value().tryCast(val))
-				{
-					return false;
-				}
-
-				v->emplace(i, val);
-			}
-		}
-
-		return true;
-	}
-
-}
 
 #endif
 

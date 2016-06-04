@@ -8,6 +8,11 @@ import QtQuick.Layouts 1.1
 Example:
 \code{.js}
 WGSplitTextFrame {
+    decimalSeparator: true
+    height: 24
+    Layout.preferredWidth: 130
+    label: "IP Address:"
+
     boxList: [
         WGNumberBox{
             value: 192
@@ -30,10 +35,6 @@ WGSplitTextFrame {
             maximumValue: 255
         }
     ]
-    decimalSeparator: true
-    height: 24
-    Layout.preferredWidth: 130
-    label_: "IP Address:"
 }
 \endcode
 */
@@ -51,18 +52,15 @@ WGTextBoxFrame {
     property bool decimalSeparator: false
 
     /*! \internal */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property int totalBoxes : boxList.length //number of textboxes
+    property int __totalBoxes : boxList.length
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*! \internal */
-    //TODO: This should be an internal control and should be marked as private by "__" prefix
-    property int totalWidth: 0
+    property int __totalWidth: 0 //calculates total width based on number of boxes
 
     /*!
         This property defines whether the width alocated to each box is evenly distributed.
@@ -74,18 +72,33 @@ WGTextBoxFrame {
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
-    implicitWidth: 40 * boxList.length
+    implicitWidth: boxList.length === 0 ? warningtext.contentWidth + defaultSpacing.standardMargin * 2 : 40 * boxList.length
 
-    Layout.preferredWidth: totalWidth
-    width: totalWidth
+    Layout.preferredWidth: __totalWidth == 0 ? warningtext.contentWidth + defaultSpacing.standardMargin * 2 : __totalWidth
+
+    width: __totalWidth == 0 ? warningtext.contentWidth + defaultSpacing.standardMargin * 2: __totalWidth
+
+    // Placeholder text prevents zero size UI components
+    Text {
+        id: warningtext
+        text: "Warning: WGSplitTextFrame has no boxList"
+        visible: boxList.length == 0
+        color: "white"
+        anchors.left: mainFrame.left
+        anchors.bottom: mainFrame.bottom
+        anchors.margins: defaultSpacing.standardMargin
+    }
 
     //TODO give this frame a disabled state
-
     Row {
         Repeater {
             model: boxList
             Rectangle {
                 id: boxContainer
+                color: "transparent"
+
+                height: mainFrame.height
+
                 width: {
                     if(evenBoxes)
                     {
@@ -97,14 +110,10 @@ WGTextBoxFrame {
                     }
                 }
 
-                height: mainFrame.height
-                color: "transparent"
-
-
                 Component.onCompleted: {
                     if(boxList[index].text != undefined)
                     {
-                        totalWidth += boxList[index].width
+                        __totalWidth += boxList[index].width
                         boxList[index].style = invisibleStyle
                         boxList[index].horizontalAlignment = Text.AlignHCenter
                         boxList[index].parent = this
@@ -112,7 +121,7 @@ WGTextBoxFrame {
                     }
                     else if (boxList[index].value != undefined)
                     {
-                        totalWidth += boxList[index].width
+                        __totalWidth += boxList[index].width
                         boxList[index].hasArrows = false
                         boxList[index].textBoxStyle = invisibleStyle
                         boxList[index].horizontalAlignment = Text.AlignHCenter
@@ -123,7 +132,6 @@ WGTextBoxFrame {
                     {
                         boxContainer.color = "red"
                     }
-
                 }
 
                 WGLabel {
@@ -140,7 +148,7 @@ WGTextBoxFrame {
                     anchors.horizontalCenter: parent.left
                     height: mainFrame.height - defaultSpacing.doubleBorderSize
                     anchors.verticalCenter: parent.verticalCenter
-                    vertical_: true
+                    vertical: true
 
                     //first separator is invisible
                     visible: index != 0 && !decimalSeparator ? true : false
@@ -148,4 +156,13 @@ WGTextBoxFrame {
             }
         }
     }
+
+    /*! Deprecated */
+    property alias totalBoxes: mainFrame.__totalBoxes
+
+    /*! Deprecated */
+    property alias totalWidth: mainFrame.__totalWidth
+
+    /*! Deprecated */
+    property alias label_: mainFrame.label
 }

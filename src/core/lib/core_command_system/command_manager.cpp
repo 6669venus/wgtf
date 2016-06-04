@@ -21,14 +21,16 @@
 #include "batch_command.hpp"
 #include <atomic>
 #include <deque>
-#include <thread>
 #include <map>
 #include <mutex>
 #include "core_common/wg_condition_variable.hpp"
 #include "core_common/thread_local_value.hpp"
 #include "i_env_system.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
+#include "wg_types/binary_block.hpp"
+#include "reflection_undo_redo_data.hpp"
+#include <memory>
 
 // TODO: Remove to platform string header
 #if defined( _WIN32 )
@@ -41,6 +43,7 @@ namespace
 	static const char * s_historyVersion = "_ui_main_ver_1_0_14";
 	typedef XMLSerializer HistorySerializer;
 	const int NO_SELECTION = -1;
+	static const char* s_macro_file = "macro";
 
 	struct CommandFrame
 	{
@@ -91,7 +94,11 @@ class CommandManagerImpl : public IEnvEventListener
 public:
 
 	CommandManagerImpl( CommandManager* pCommandManager )
-		: workerMutex_()
+		: historyState_( &nullHistoryState_ )
+		, currentIndex_( NO_SELECTION )
+		, ownerThreadId_( std::this_thread::get_id() )
+		, workerThreadId_()
+		, workerMutex_()
 		, workerWakeUp_()
 		, ownerWakeUp_( false )
 		, commands_()
@@ -100,42 +107,23 @@ public:
 		, globalEventListener_()
 		, exiting_( false )
 		, enableWorker_( true )
-		, ownerThreadId_( std::this_thread::get_id() )
-		, workerThreadId_()
 		, pCommandManager_( pCommandManager )
 		, workerThread_()
 		, batchCommand_( pCommandManager )
 		, undoRedoCommand_( pCommandManager )
 		, application_( nullptr )
 		, envManager_( nullptr )
-		, historyState_( &nullHistoryState_ )
-		, currentIndex_( NO_SELECTION )
+        , historySerializationEnabled(true)
 	{
 	}
 
 	~CommandManagerImpl()
 	{
-		{
-			// mutex lock is needed here to ensure new exiting_ value
-			// is visible in other thread (due to memory barrier introduced by lock/unlock)
-			std::unique_lock<std::mutex> lock( workerMutex_ );
-			exiting_ = true;
-			workerWakeUp_.notify_all();
-		}
-
-		if (enableWorker_)
-		{
-			workerThread_.join();
-		}
-
-		unbindHistoryCallbacks();
-
-		pCommandManager_ = nullptr;
 	}
 
 	void init( IApplication & application, IEnvManager & envManager );
 	void fini();
-	void update( const IApplication * sender, const IApplication::UpdateArgs & args );
+	void update();
 	void registerCommand( Command * command );
 	void deregisterCommand( const char * commandName );
 	Command * findCommand(const char * commandName ) const;
@@ -147,14 +135,15 @@ public:
 	void deregisterCommandStatusListener( ICommandEventListener * listener );
 	void fireCommandStatusChanged( const CommandInstance & command ) const;
 	void fireProgressMade( const CommandInstance & command ) const;
+    void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const;
 	void updateSelected( const int & value );
 
 	void undo();
 	void redo();
 	bool canUndo() const;
 	bool canRedo() const;
+    void removeCommands(const ICommandManager::TRemoveFunctor & functor);
 	VariantList & getHistory();
-	ValueChangeNotifier< int > & getCurrentIndex();
 	IListModel & getMacros();
 
 	void beginBatchCommand();
@@ -170,9 +159,14 @@ public:
 	void popFrame();
 	bool createCompoundCommand( const VariantList & commandInstanceList, const char * id );
 	bool deleteCompoundCommand( const char * id );
+	void saveMacroList();
+	void serializeMacroList( ISerializer & serializer );
+	void loadMacroList();
+	void deserializeMacroList( ISerializer & serializer );
 	void addToHistory( const CommandInstancePtr & instance );
 	void processCommands();
 	void flush();
+    void SetHistorySerializationEnabled(bool isEnabled);
 	bool SaveCommandHistory( ISerializer & serializer, const HistoryEnvCom* ec ) const;
 	bool LoadCommandHistory( ISerializer & serializer, HistoryEnvCom* ec ) const;
 	void threadFunc();
@@ -181,12 +175,22 @@ public:
 	virtual void onAddEnv( IEnvState* state ) override;
 	virtual void onRemoveEnv( IEnvState* state ) override;
 	virtual void onSelectEnv( IEnvState* state ) override;
+    virtual void onSaveEnvState( IEnvState* state ) override;
+    virtual void onLoadEnvState( IEnvState* state ) override;
 
 	HistoryEnvCom nullHistoryState_;
 	HistoryEnvCom* historyState_;
-	ValueChangeNotifier< int >				currentIndex_;
+	ValueChangeNotifier< int > currentIndex_;
+	ConnectionHolder indexConnections_;
+	ConnectionHolder historyConnections_;
+	Connection updateConnection_;
+
+	std::thread::id ownerThreadId_;
+	std::thread::id workerThreadId_;
 
 private:
+	void bindIndexCallbacks();
+	void unbindIndexCallbacks();
 	void bindHistoryCallbacks();
 	void unbindHistoryCallbacks();
 
@@ -218,8 +222,6 @@ private:
 
 	bool									exiting_;
 	bool									enableWorker_;
-	std::thread::id							ownerThreadId_;
-	std::thread::id							workerThreadId_;
 	CommandManager*							pCommandManager_;
 	std::thread								workerThread_;
 	BatchCommand							batchCommand_;
@@ -227,16 +229,13 @@ private:
 
 	IApplication *							application_;
 	IEnvManager *								envManager_;
+    bool historySerializationEnabled;
 
 	void multiCommandStatusChanged( ICommandEventListener::MultiCommandStatus status );
-	void onPreDataChanged( const IValueChangeNotifier* sender,
-		const IValueChangeNotifier::PreDataChangedArgs& args );
-	void onPostDataChanged( const IValueChangeNotifier* sender,
-		const IValueChangeNotifier::PostDataChangedArgs& args );
-	void onPostItemsInserted( const IListModel* sender,
-		const IListModel::PostItemsInsertedArgs& args );
-	void onPostItemsRemoved( const IListModel* sender,
-		const IListModel::PostItemsRemovedArgs& args );
+	void onPreDataChanged();
+	void onPostDataChanged();
+	void onPostItemsInserted( size_t index, size_t count );
+	void onPostItemsRemoved( size_t index, size_t count );
 
 	void addBatchCommandToCompoundCommand(
 		const ObjectHandleT<CompoundCommand> & compoundCommand,
@@ -247,7 +246,7 @@ private:
 void CommandManagerImpl::init( IApplication & application, IEnvManager & envManager )
 {
 	application_ = &application;
-	application_->onUpdate().add<CommandManagerImpl, &CommandManagerImpl::update>( this );
+	updateConnection_ = application_->signalUpdate.connect( std::bind( &CommandManagerImpl::update, this ) );
 
 	CommandManagerEventListener *
 		listener = new CommandManagerEventListener();
@@ -257,6 +256,7 @@ void CommandManagerImpl::init( IApplication & application, IEnvManager & envMana
 	registerCommand( &batchCommand_ );
 	registerCommand( &undoRedoCommand_ );
 
+	bindIndexCallbacks();
 	bindHistoryCallbacks();
 
 	if (enableWorker_)
@@ -271,22 +271,41 @@ void CommandManagerImpl::init( IApplication & application, IEnvManager & envMana
 
 	envManager_ = &envManager;
 	envManager_->registerListener( this );
+
+	//loadMacroList();
 }
 
 //==============================================================================
 void CommandManagerImpl::fini()
 {
+	//saveMacroList();
+
 	abortBatchCommand();
 
 	assert( envManager_ != nullptr );
 	envManager_->deregisterListener( this );
 
-	assert( application_ != nullptr );
-	application_->onUpdate().remove<CommandManagerImpl, &CommandManagerImpl::update>( this );
+	updateConnection_.disconnect();
+
+	{
+		// mutex lock is needed here to ensure new exiting_ value
+		// is visible in other thread (due to memory barrier introduced by lock/unlock)
+		std::unique_lock<std::mutex> lock( workerMutex_ );
+		exiting_ = true;
+		workerWakeUp_.notify_all();
+	}
+
+	if (enableWorker_)
+	{
+		workerThread_.join();
+	}
+
+	unbindIndexCallbacks();
+	unbindHistoryCallbacks();
 }
 
 //==============================================================================
-void CommandManagerImpl::update( const IApplication * sender, const IApplication::UpdateArgs & args )
+void CommandManagerImpl::update()
 {
 	// Optimisation to early out before calling processCommands which will attempt to acquire a mutex
 	if (!ownerWakeUp_)
@@ -354,7 +373,6 @@ CommandInstancePtr CommandManagerImpl::queueCommand(
 	instance->setCommandId( command ->getId() );
 	instance->setArguments( arguments );
 	instance->setDefinitionManager( pCommandManager_->getDefManager() );
-	instance->init();
 	instance->setStatus( Queued );
 	queueCommand( instance );
 	return instance;
@@ -422,15 +440,30 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 	// command 4 until the BatchCommand it belongs to has completed.
 
 	std::deque< CommandInstancePtr > stackQueue;
+	std::deque< CommandInstancePtr > commandQueue;
+	CommandInstancePtr batchFrame = nullptr;
 	{
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		auto commandFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
 		stackQueue = commandFrame->stackQueue_;
+		commandQueue = commandFrame->commandQueue_;
 	}
-	assert( std::find( stackQueue.begin(), stackQueue.end(), instance ) == stackQueue.end() );
 
+	auto first = commandQueue.begin();
+	auto last = std::find( commandQueue.begin(), commandQueue.end(), instance );
+	for (auto batch = stackQueue.rbegin(); batch != stackQueue.rend(); ++batch)
+	{
+		auto it = std::find( first, last, *batch );
+		if (it != last)
+		{
+			first = it;
+			break;
+		}
+	}
+
+	auto it = last;
 	auto waitFor = instance;
-	while (std::find( stackQueue.begin(), stackQueue.end(), waitFor ) == stackQueue.end())
+	while (waitFor != nullptr)
 	{
 		while (waitFor->status_ != Complete)
 		{
@@ -440,11 +473,18 @@ void CommandManagerImpl::waitForInstance( const CommandInstancePtr & instance )
 			// This needs to be revised.
 			fireProgressMade( *waitFor );
 		}
-		waitFor = waitFor->parent_;
-		if (waitFor == nullptr)
+
+		CommandInstancePtr parent = nullptr;
+		while (it != first)
 		{
-			break;
+			--it;
+			if (std::find( (*it)->children_.begin(), (*it)->children_.end(), waitFor ) != (*it)->children_.end())
+			{
+				parent = *it;
+				break;
+			}
 		}
+		waitFor = parent;
 	}
 }
 
@@ -497,22 +537,30 @@ void CommandManagerImpl::fireProgressMade( const CommandInstance & command ) con
 }
 
 
+void CommandManagerImpl::fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const
+{
+    EventListenerCollection::const_iterator it =
+        eventListenerCollection_.begin();
+    EventListenerCollection::const_iterator itEnd =
+        eventListenerCollection_.end();
+    for (; it != itEnd; ++it)
+    {
+        (*it)->commandExecuted(command, operation);
+    }
+}
+
 //==============================================================================
 void CommandManagerImpl::updateSelected( const int & value )
 {
-	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
+	unbindIndexCallbacks();
+	pCommandManager_->signalPreCommandIndexChanged( currentIndex_.value() );
 
+    historyState_->index_ = value;
+    historyState_->previousSelectedIndex_ = value;
 	currentIndex_.value( value );
-	historyState_->index_ = value;
-	historyState_->previousSelectedIndex_ = value;
 
-	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
+	pCommandManager_->signalPostCommandIndexChanged( currentIndex_.value() );
+	bindIndexCallbacks();
 }
 
 
@@ -536,12 +584,69 @@ bool CommandManagerImpl::canRedo() const
 	}
 	return false;
 }
+    
+void CommandManagerImpl::removeCommands(const ICommandManager::TRemoveFunctor & functor)
+{
+    flush();
+    unbindHistoryCallbacks();
+	unbindIndexCallbacks();
+
+    int currentIndexValue = 0;
+    {
+        std::unique_lock<std::mutex> lock(workerMutex_);
+        currentIndexValue = currentIndex_.value();
+        int commandIndex = 0;
+
+        int prevSelecetedIndexValue = historyState_->previousSelectedIndex_;
+        int prevSelecetedIndex = 0;
+
+        pCommandManager_->signalPreCommandIndexChanged(currentIndexValue);
+        pCommandManager_->signalHistoryPreReset(historyState_->history_);
+
+        VariantList::Iterator iter = historyState_->history_.begin();
+        while (iter != historyState_->history_.end())
+        {
+            if (functor((*iter).value<CommandInstancePtr>()))
+            {
+                iter = historyState_->history_.erase(iter);
+                if (commandIndex <= currentIndexValue)
+                {
+                    currentIndexValue = std::max(currentIndexValue - 1, -1);
+                }
+
+                if (prevSelecetedIndex <= prevSelecetedIndexValue)
+                {
+                    prevSelecetedIndexValue = std::max(prevSelecetedIndexValue - 1, -1);
+                }
+            }
+            else
+            {
+                ++iter;
+                ++commandIndex;
+                ++prevSelecetedIndex;
+            }
+        }
+
+
+        historyState_->previousSelectedIndex_ = prevSelecetedIndexValue;
+        currentIndex_.variantValue(currentIndexValue);
+        historyState_->index_ = currentIndexValue;
+    }
+
+	pCommandManager_->signalHistoryPostReset( historyState_->history_ );
+	pCommandManager_->signalPostCommandIndexChanged( currentIndexValue );
+
+    bindIndexCallbacks();
+    bindHistoryCallbacks();
+}
 
 //==============================================================================
 void CommandManagerImpl::undo()
 {
+
 	flush();
 	assert(currentIndex_.value() >= 0);
+	assert(canUndo());
 	currentIndex_.value( currentIndex_.value() - 1 );
 }
 
@@ -550,10 +655,10 @@ void CommandManagerImpl::undo()
 void CommandManagerImpl::redo()
 {
 	flush();
-	assert(currentIndex_.value() < ( int ) historyState_->history_.size());
-	currentIndex_.value( currentIndex_.value() + 1 );
+	assert(currentIndex_.value() < (int)historyState_->history_.size());
+	assert(canRedo());
+	currentIndex_.value(currentIndex_.value() + 1);
 }
-
 
 //==============================================================================
 VariantList & CommandManagerImpl::getHistory()
@@ -567,13 +672,6 @@ IListModel & CommandManagerImpl::getMacros()
 {
 	return macros_;
 }
-
-
-ValueChangeNotifier< int > & CommandManagerImpl::getCurrentIndex()
-{
-	return currentIndex_;
-}
-
 
 //==============================================================================
 void CommandManagerImpl::beginBatchCommand()
@@ -631,58 +729,6 @@ void CommandManagerImpl::notifyNonBlockingProcessExecution( const char * command
 }
 
 //==============================================================================
-void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
-{
-	assert( !historyState_->commandFrames_.empty() );
-	assert( instance != nullptr );
-
-	instance->setStatus( Running );
-
-	if (historyState_->commandFrames_.size() == 1 &&
-		historyState_->commandFrames_.front()->commandStack_.size() == 1)
-	{
-		// If the frame we are pushing is a root frame, we need to prep it
-		// to monitor changes to the reflection data
-		assert( instance != nullptr );
-		instance->connectEvent();
-	}
-	else
-	{
-		auto currentFrame = historyState_->commandFrames_.back();
-		auto parentInstance = currentFrame->commandStack_.back();
-
-		// TODO: support for custom undo
-		/*if (instance->customUndo() || parentInstance->customUndo())
-		{
-			parentInstance->disconnectEvent();
-			instance->connectEvent();
-		}*/
-
-		assert( instance->parent_ == nullptr );
-		if (parentInstance != nullptr)
-		{
-			instance->parent_ = parentInstance;
-			parentInstance->children_.push_back( instance );
-		}
-	}
-
-	if (strcmp( instance->getCommandId(), typeid( BatchCommand ).name() ) == 0)
-	{
-		auto stage = instance->getArguments().getBase<BatchCommandStage>();
-		assert( stage != nullptr );
-		if (*stage == BatchCommandStage::Begin)
-		{
-			// The command stack represents BatchCommand groups within a frame.
-			// On BeginBatchCommand we need to add a group to the stack
-			historyState_->commandFrames_.back()->commandStack_.push_back( instance );
-		}
-	}
-
-	historyState_->commandFrames_.push_back( new CommandFrame( instance ) );
-}
-
-
-//==============================================================================
 namespace
 {
 	bool isBatchCommand(const ObjectHandleT<CommandInstance>& cmd)
@@ -691,6 +737,38 @@ namespace
 	}
 }
 
+//==============================================================================
+void CommandManagerImpl::pushFrame( const CommandInstancePtr & instance )
+{
+	assert( instance != nullptr );
+	assert( !historyState_->commandFrames_.empty() );
+	auto currentFrame = historyState_->commandFrames_.back();
+	assert ( !currentFrame->commandStack_.empty() );
+	auto parentInstance = currentFrame->commandStack_.back();
+
+	instance->setStatus( Running );
+
+	historyState_->commandFrames_.push_back( new CommandFrame( instance ) );
+
+	if (isBatchCommand( instance ))
+	{
+		auto stage = instance->getArguments().getBase<BatchCommandStage>();
+		assert( stage != nullptr );
+		if (*stage != BatchCommandStage::Begin)
+		{
+			return;
+		}
+
+		// The command stack represents BatchCommand groups within a frame.
+		// On BeginBatchCommand we need to add a group to the stack
+		currentFrame->commandStack_.push_back( instance );
+	}
+
+	if (parentInstance != nullptr)
+	{
+		parentInstance->children_.push_back( instance );
+	}
+}
 
 //==============================================================================
 void CommandManagerImpl::popFrame()
@@ -706,6 +784,7 @@ void CommandManagerImpl::popFrame()
 	historyState_->commandFrames_.pop_back();
 	assert( !historyState_->commandFrames_.empty() );
 	currentFrame = historyState_->commandFrames_.back();
+	auto parentInstance = currentFrame->commandStack_.back();
 
 	if (isBatchCommand( instance ))
 	{
@@ -714,61 +793,46 @@ void CommandManagerImpl::popFrame()
 		// Set the arguments to nullptr since there is no need to serialize BatchCommand arguments
 		instance->setArguments( nullptr );
 
-		if (*stage != BatchCommandStage::Begin)
+		if (*stage == BatchCommandStage::Begin)
 		{
-			// If we are ending or aborting a BatchCommand, we need to remove its group from the stack
-			assert ( !currentFrame->commandStack_.empty() );
-			auto group = currentFrame->commandStack_.back();
-			if ( group != nullptr )
-			{
-				currentFrame->commandStack_.pop_back();
-				instance = group;
-			}
-			else
-			{
-				NGT_WARNING_MSG( "Remmoving from an empty batch command group\n" );
-			}
-			assert ( !currentFrame->commandStack_.empty() );
+			return;
+		}
+
+		// If we are ending or aborting a BatchCommand, we need to remove its group from the stack
+		if ( parentInstance != nullptr )
+		{
+			currentFrame->commandStack_.pop_back();
+			auto errorCode = instance->errorCode_;
+			instance = parentInstance;
+			instance->errorCode_ = errorCode;
+			parentInstance = currentFrame->commandStack_.back();
+		}
+		else
+		{
+			NGT_WARNING_MSG( "Remmoving from an empty batch command group\n" );
 		}
 	}
 
-	if (historyState_->commandFrames_.size() == 1 &&
-		historyState_->commandFrames_.front()->commandStack_.size() == 1)
+    if (instance->getErrorCode() != CommandErrorCode::COMMAND_NO_ERROR)
 	{
-		// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
-		instance->disconnectEvent();
-
-		if (instance->getErrorCode() == CommandErrorCode::NO_ERROR)
-		{
-			addToHistory( instance );
-			if (instance->isMultiCommand())
-			{
-				notifyCompleteMultiCommand();
-			}
-		}
-	}
-	else
-	{
-		auto parentInstance = currentFrame->commandStack_.back();
-		/*if (instance->customUndo() || parentInstance->customUndo())
-		{
-			instance->disconnectEvent();
-			parentInstance->connectEvent();
-		}*/
-	}
-
-	// TODO: This does not actually work for sub commands. No undo data is stored
-	// for sub commands so calling undo does nothing.
-	if (instance->getErrorCode() != CommandErrorCode::NO_ERROR)
-	{
+		instance->consolidateUndoRedoData( nullptr );
 		instance->undo();
 		if (instance->isMultiCommand())
 		{
 			notifyCancelMultiCommand();
 		}
-		if (!isBatchCommand( instance ) || instance->getErrorCode() != CommandErrorCode::ABORTED)
+	}
+	else
+	{
+		instance->consolidateUndoRedoData( parentInstance.get() );
+		if (parentInstance == nullptr)
 		{
-			NGT_ERROR_MSG( "Failed to execute command %s \n", instance->getCommandId() );
+			// If we are popping a root command frame, finalise the undo/redo stream and add the command to history
+			addToHistory( instance );
+			if (instance->isMultiCommand())
+			{
+				notifyCompleteMultiCommand();
+			}
 		}
 	}
 
@@ -787,23 +851,41 @@ void CommandManagerImpl::addToHistory( const CommandInstancePtr & instance )
 //==============================================================================
 bool CommandManagerImpl::SaveCommandHistory( ISerializer & serializer, const HistoryEnvCom* ec ) const
 {
+    if (!historySerializationEnabled)
+        return true;
+
+	NGT_WARNING_MSG( "History serialization functionality temporarily disabled" );
 	// save objects
-	size_t count = ec->history_.size();
+	/*size_t count = ec->history_.size();
 	serializer.serialize( count );
-	for(size_t i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
-		serializer.serialize( ec->history_[i] );
+        const CommandInstancePtr& cmdIns = ec->history_[i].value<CommandInstancePtr>();
+		serializer.serialize( cmdIns );
+        auto undoData = cmdIns->reflectionUndoRedoData_.getUndoData();
+        auto redoData = cmdIns->reflectionUndoRedoData_.getRedoData();
+        serializer.serialize( undoData );
+        serializer.serialize( redoData );
 	}
 	// save history index
-	serializer.serialize( ec->index_ );
+	serializer.serialize( ec->index_ );*/
 	return true;
+}
+
+void CommandManagerImpl::SetHistorySerializationEnabled(bool isEnabled)
+{
+    historySerializationEnabled = isEnabled;
 }
 
 //==============================================================================
 bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEnvCom* ec ) const
 {
+    if (!historySerializationEnabled)
+        return false;
+
+	NGT_WARNING_MSG( "History serialization functionality temporarily disabled" );
 	// read history data
-	size_t count = 0;
+	/*size_t count = 0;
 	serializer.deserialize( count );
 	for(size_t i = 0; i < count; i++)
 	{
@@ -813,14 +895,19 @@ bool CommandManagerImpl::LoadCommandHistory( ISerializer & serializer, HistoryEn
 		bool isOk = variant.tryCast( ins );
 		assert( isOk );
 		assert( ins != nullptr );
+        std::shared_ptr<BinaryBlock> undoData;
+        std::shared_ptr<BinaryBlock> redoData;
+        serializer.deserialize( undoData );
+        serializer.deserialize( redoData );
+        ins->reflectionUndoRedoData_.setUndoData( undoData );
+        ins->reflectionUndoRedoData_.setRedoData( redoData );
 		ins->setCommandSystemProvider( pCommandManager_ );
 		ins->setDefinitionManager( pCommandManager_->getDefManager() );
 		ec->history_.emplace_back( std::move( variant ) );
 	}
 	int index = NO_SELECTION;
 	serializer.deserialize( ec->index_ );
-	ec->previousSelectedIndex_ = ec->index_;
-
+	ec->previousSelectedIndex_ = ec->index_;*/
 	return true;
 }
 
@@ -834,33 +921,31 @@ void CommandManagerImpl::multiCommandStatusChanged( ICommandEventListener::Multi
 }
 
 //==============================================================================
-void CommandManagerImpl::onPreDataChanged( const IValueChangeNotifier* sender,
-										  const IValueChangeNotifier::PreDataChangedArgs& args )
+void CommandManagerImpl::onPreDataChanged()
 {
 	historyState_->previousSelectedIndex_ = currentIndex_.value();
+	pCommandManager_->signalPreCommandIndexChanged( historyState_->previousSelectedIndex_ );
 }
 
 //==============================================================================
-void CommandManagerImpl::onPostDataChanged( const IValueChangeNotifier* sender,
-										   const IValueChangeNotifier::PostDataChangedArgs& args )
+void CommandManagerImpl::onPostDataChanged()
 {
 	static const char* id = typeid( UndoRedoCommand ).name();
 	auto instance = queueCommand( id, currentIndex_.value() );
 	waitForInstance( instance );
 
 	historyState_->index_ = currentIndex_.value();
+	pCommandManager_->signalPostCommandIndexChanged( historyState_->index_ );
 }
 
 //==============================================================================
-void CommandManagerImpl::onPostItemsInserted( const IListModel* sender,
-																						const IListModel::PostItemsInsertedArgs& args )
+void CommandManagerImpl::onPostItemsInserted( size_t index, size_t count )
 {
-	pCommandManager_->notifyHistoryPostInserted( historyState_->history_, args.index_, args.count_);
+	pCommandManager_->signalHistoryPostInserted( historyState_->history_, index, count);
 }
 
 //==============================================================================
-void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
-						const IListModel::PostItemsRemovedArgs& args )
+void CommandManagerImpl::onPostItemsRemoved( size_t index, size_t count )
 {
 	// update currentIndex when history_ items removed
 	if(historyState_->history_.empty())
@@ -876,107 +961,109 @@ void CommandManagerImpl::onPostItemsRemoved( const IListModel* sender,
 			assert( false );
 		}
 	}
-	pCommandManager_->notifyHistoryPostRemoved(historyState_->history_, args.index_, args.count_);
+	pCommandManager_->signalHistoryPostRemoved(historyState_->history_, index, count);
 }
 
 
 //==============================================================================
 void CommandManagerImpl::processCommands()
 {
-	std::thread::id currentThreadId = std::this_thread::get_id();
+    {
+        std::thread::id currentThreadId = std::this_thread::get_id();
 
-	std::unique_lock<std::mutex> lock( workerMutex_ );
+        std::unique_lock<std::mutex> lock( workerMutex_ );
 
-	for (;;)
-	{
-		auto commandFrame = historyState_->commandFrames_.back();		
-		if (commandFrame->commandQueue_.empty())
-		{
-			break;
-		}
+        for (;;)
+        {
+            auto commandFrame = historyState_->commandFrames_.back();		
+            if (commandFrame->commandQueue_.empty())
+            {
+                break;
+            }
 
-		auto job = commandFrame->commandQueue_.front();
-		auto threadAffinity = job->getCommand()->threadAffinity();
-		if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
-			currentThreadId != ownerThreadId_)
-		{
-			// The next command in the queue needs to be run on the UI thread.
-			// Notify the owner thread
-			ownerWakeUp_ = true;
-			break;
-		}
-		else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
-			currentThreadId != workerThreadId_)
-		{
-			// The next command in the queue needs to be run on the command thread.
-			// Notify the worker thread
-			workerWakeUp_.notify_all();
-			break;
-		}
+            auto job = commandFrame->commandQueue_.front();
+            auto threadAffinity = job->getCommand()->threadAffinity();
+            if (threadAffinity == CommandThreadAffinity::UI_THREAD &&
+                currentThreadId != ownerThreadId_)
+            {
+                // The next command in the queue needs to be run on the UI thread.
+                // Notify the owner thread
+                ownerWakeUp_ = true;
+                break;
+            }
+            else if (threadAffinity == CommandThreadAffinity::COMMAND_THREAD &&
+                currentThreadId != workerThreadId_)
+            {
+                // The next command in the queue needs to be run on the command thread.
+                // Notify the worker thread
+                workerWakeUp_.notify_all();
+                break;
+            }
 
-		commandFrame->commandQueue_.pop_front();
+            commandFrame->commandQueue_.pop_front();
 
-		if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
-		{
-			//execute undo/redo
-			lock.unlock(); // release lock while running commands
-			job->setStatus( Running );
-			job->execute();
-			job->setStatus( Complete );
-			lock.lock();
-		}
-		else
-		{
-			// Push a command frame for this job
-			auto previousFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
-			pushFrame( job );
-			auto currentFrame = historyState_->commandFrames_.back();
-			THREAD_LOCAL_SET( historyState_->currentFrame_, currentFrame );
+            if (strcmp( job->getCommandId(), typeid( UndoRedoCommand ).name() ) == 0)
+            {
+                //execute undo/redo
+                lock.unlock(); // release lock while running commands
+                job->setStatus( Running );
+                job->execute();
+                job->setStatus( Complete );
+                lock.lock();
+            }
+            else
+            {
+                // Push a command frame for this job
+                auto previousFrame = THREAD_LOCAL_GET( historyState_->currentFrame_ );
+                pushFrame( job );
+                auto currentFrame = historyState_->commandFrames_.back();
+                THREAD_LOCAL_SET( historyState_->currentFrame_, currentFrame );
 
-			lock.unlock(); // release lock while running commands
-			job->execute();
-			lock.lock();
+                lock.unlock(); // release lock while running commands
+                job->execute();
+                lock.lock();
 
-			// Spin and process commands until all sub commands for this frame have been executed
-			while (!currentFrame->commandQueue_.empty() || historyState_->commandFrames_.back() != currentFrame )
-			{
-				lock.unlock();
-				processCommands();
-				lock.lock();
-			}
+                // Spin and process commands until all sub commands for this frame have been executed
+                while (!currentFrame->commandQueue_.empty() || historyState_->commandFrames_.back() != currentFrame )
+                {
+                    lock.unlock();
+                    processCommands();
+                    lock.lock();
+                }
 
-			// Pop the command frame
-			THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
-			popFrame();
-		}
-	}
+                // Pop the command frame
+                THREAD_LOCAL_SET( historyState_->currentFrame_, previousFrame );
+                popFrame();
+            }
+        }
 
-	if (currentThreadId != ownerThreadId_)
-	{
-		if (!historyState_->pendingHistory_.empty())
-		{
-			ownerWakeUp_ = true;
-		}
-		return;
-	}
+        if (currentThreadId != ownerThreadId_)
+        {
+            if (!historyState_->pendingHistory_.empty())
+            {
+                ownerWakeUp_ = true;
+            }
+            return;
+        }
 
-	if (historyState_->pendingHistory_.empty())
-	{
-		return;
-	}
+        if (historyState_->pendingHistory_.empty())
+        {
+            return;
+        }
 
-	if (static_cast<int>(historyState_->history_.size()) > currentIndex_.value() + 1)
-	{
-		// erase all history after the current index as we have pending
-		// history that will make this invalid
-		historyState_->history_.resize( currentIndex_.value() + 1 );
-	}
+        if (static_cast<int>(historyState_->history_.size()) > currentIndex_.value() + 1)
+        {
+            // erase all history after the current index as we have pending
+            // history that will make this invalid
+            historyState_->history_.resize( currentIndex_.value() + 1 );
+        }
 
-	while (!historyState_->pendingHistory_.empty())
-	{
-		historyState_->history_.push_back( historyState_->pendingHistory_.front() );
-		historyState_->pendingHistory_.pop_front();
-	}
+        while (!historyState_->pendingHistory_.empty())
+        {
+            historyState_->history_.push_back( historyState_->pendingHistory_.front() );
+            historyState_->pendingHistory_.pop_front();
+        }
+    }
 	updateSelected( static_cast< int >( historyState_->history_.size() - 1 ) );
 }
 
@@ -997,7 +1084,6 @@ void CommandManagerImpl::flush()
 		lock.lock();
 	}
 }
-
 
 //==============================================================================
 /*static */void CommandManagerImpl::threadFunc()
@@ -1024,49 +1110,15 @@ void CommandManagerImpl::flush()
 void CommandManagerImpl::onAddEnv( IEnvState* state )
 {
 	ENV_STATE_ADD( HistoryEnvCom, ec );
-
-	std::string file = state->description();
-	file += s_historyVersion;
-
-	const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
-
-	if (fileSystem->exists( file.c_str() ))
-	{
-		IDefinitionManager& defManager = pCommandManager_->getDefManager();
-
-		IFileSystem::istream_uptr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
-		HistorySerializer serializer( *fileStream, defManager );
-		std::string version;
-		serializer.deserialize( version );
-		if( version == s_historyVersion)
-		{
-			LoadCommandHistory( serializer, ec );
-		}
-	}
 }
 
 void CommandManagerImpl::onRemoveEnv( IEnvState* state )
 {
-	ENV_STATE_REMOVE( HistoryEnvCom, ec );
-	if (ec == historyState_)
-	{
-		switchEnvContext( &nullHistoryState_ );
-	}
-
-	IDefinitionManager& defManager = pCommandManager_->getDefManager();
-	ResizingMemoryStream stream;
-	HistorySerializer serializer( stream, defManager );
-
-	serializer.serialize( s_historyVersion );
-
-	SaveCommandHistory( serializer, ec );
-
-	std::string file = state->description();
-	file += s_historyVersion;
-	IFileSystem* fileSystem = pCommandManager_->getFileSystem();
-	assert( fileSystem );
-	fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+    ENV_STATE_REMOVE( HistoryEnvCom, ec );
+    if (ec == historyState_)
+    {
+        switchEnvContext( &nullHistoryState_ );
+    }
 }
 
 void CommandManagerImpl::onSelectEnv( IEnvState* state )
@@ -1078,56 +1130,95 @@ void CommandManagerImpl::onSelectEnv( IEnvState* state )
 	}
 }
 
+void CommandManagerImpl::onLoadEnvState( IEnvState* state )
+{
+    ENV_STATE_QUERY( HistoryEnvCom, ec );
+    std::string file = state->description();
+    file += s_historyVersion;
+
+    const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+    assert( fileSystem );
+
+    if (fileSystem->exists( file.c_str() ))
+    {
+        IDefinitionManager& defManager = pCommandManager_->getDefManager();
+
+        IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+        HistorySerializer serializer( *fileStream, defManager );
+        std::string version;
+        serializer.deserialize( version );
+        if( version == s_historyVersion)
+        {
+            LoadCommandHistory( serializer, ec );
+        }
+    }
+}
+void CommandManagerImpl::onSaveEnvState( IEnvState* state )
+{
+    ENV_STATE_QUERY( HistoryEnvCom, ec );
+    IDefinitionManager& defManager = pCommandManager_->getDefManager();
+    ResizingMemoryStream stream;
+    HistorySerializer serializer( stream, defManager );
+
+    serializer.serialize( s_historyVersion );
+
+    SaveCommandHistory( serializer, ec );
+
+    std::string file = state->description();
+    file += s_historyVersion;
+    IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+    assert( fileSystem );
+    fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+}
+
 void CommandManagerImpl::switchEnvContext(HistoryEnvCom* ec)
 {
+    flush();
 	unbindHistoryCallbacks();
+	unbindIndexCallbacks();
+	pCommandManager_->signalPreCommandIndexChanged( currentIndex_.value() );
 	currentIndex_.value( NO_SELECTION );
-	pCommandManager_->notifyHistoryPreReset( historyState_->history_ );
+	pCommandManager_->signalHistoryPreReset( historyState_->history_ );
 	{
-		pCommandManager_->abortBatchCommand();
 		std::unique_lock<std::mutex> lock( workerMutex_ );
 		historyState_ = ec;
 	}
-	pCommandManager_->notifyHistoryPostReset( historyState_->history_ );
+	pCommandManager_->signalHistoryPostReset( historyState_->history_ );
 	currentIndex_.value( historyState_->index_ );
+	pCommandManager_->signalPostCommandIndexChanged( currentIndex_.value() );
+	bindIndexCallbacks();
 	bindHistoryCallbacks();
+}
+
+void CommandManagerImpl::bindIndexCallbacks()
+{
+	using namespace std::placeholders;
+	indexConnections_ += currentIndex_.signalPreDataChanged.connect( std::bind( &CommandManagerImpl::onPreDataChanged, this ) );
+	indexConnections_ += currentIndex_.signalPostDataChanged.connect( std::bind( &CommandManagerImpl::onPostDataChanged, this ) );
+}
+
+void CommandManagerImpl::unbindIndexCallbacks()
+{
+	indexConnections_.clear();
 }
 
 void CommandManagerImpl::bindHistoryCallbacks()
 {
-	currentIndex_.onPreDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-
-	currentIndex_.onPostDataChanged().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
-
-	historyState_->history_.onPostItemsInserted().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsInserted >( this );
-
-	historyState_->history_.onPostItemsRemoved().add< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsRemoved >( this );
+	using namespace std::placeholders;
+	historyConnections_ += historyState_->history_.signalPostItemsInserted.connect( std::bind( &CommandManagerImpl::onPostItemsInserted, this, _1, _2 ) );
+	historyConnections_ += historyState_->history_.signalPostItemsRemoved.connect( std::bind( &CommandManagerImpl::onPostItemsRemoved, this, _1, _2 ) );
 }
 
 void CommandManagerImpl::unbindHistoryCallbacks()
 {
-	historyState_->history_.onPostItemsRemoved().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsRemoved >( this );
-
-	historyState_->history_.onPostItemsInserted().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostItemsInserted >( this );
-
-	currentIndex_.onPreDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPreDataChanged >( this );
-
-	currentIndex_.onPostDataChanged().remove< CommandManagerImpl,
-		&CommandManagerImpl::onPostDataChanged >( this );
+	historyConnections_.clear();
 }
 
 }
 
 //==============================================================================
 CommandManager::CommandManager( IDefinitionManager & defManager )
-	: pImpl_( nullptr )
+	: pImpl_( new CommandManagerImpl( this ) )
 	, defManager_( defManager )
 	, fileSystem_( nullptr )
 {
@@ -1137,10 +1228,6 @@ CommandManager::CommandManager( IDefinitionManager & defManager )
 //==============================================================================
 CommandManager::~CommandManager()
 {
-	if(pImpl_ != nullptr)
-	{
-		fini();
-	}
 }
 
 //==============================================================================
@@ -1149,10 +1236,6 @@ void CommandManager::init( IApplication & application, IEnvManager & envManager,
 {
 	fileSystem_ = fileSystem;
 	controller_ = controller;
-	if (pImpl_ == nullptr)
-	{
-		pImpl_ = new CommandManagerImpl( this );
-	}
 	pImpl_->init( application, envManager );
 }
 
@@ -1160,12 +1243,7 @@ void CommandManager::init( IApplication & application, IEnvManager & envManager,
 //==============================================================================
 void CommandManager::fini()
 {
-	if (pImpl_ != nullptr)
-	{
-		pImpl_->fini();
-	}
-	delete pImpl_;
-	pImpl_ = nullptr;
+	pImpl_->fini();
 }
 
 
@@ -1235,6 +1313,11 @@ void CommandManager::fireProgressMade( const CommandInstance & command ) const
 }
 
 
+void CommandManager::fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const
+{
+    return pImpl_->fireCommandExecuted(command, operation);
+}
+
 //==============================================================================
 bool CommandManager::canUndo() const
 {
@@ -1246,6 +1329,11 @@ bool CommandManager::canUndo() const
 bool CommandManager::canRedo() const
 {
 	return pImpl_->canRedo();
+}
+
+void CommandManager::removeCommands(const TRemoveFunctor & functor)
+{
+    pImpl_->removeCommands(functor);
 }
 
 
@@ -1275,12 +1363,15 @@ const IListModel & CommandManager::getMacros() const
 	return pImpl_->getMacros();
 }
 
-
-IValueChangeNotifier& CommandManager::currentIndex()
+const int CommandManager::commandIndex() const
 {
-	return pImpl_->getCurrentIndex();
+	return pImpl_->currentIndex_.value();
 }
 
+void CommandManager::moveCommandIndex( int newIndex )
+{
+	pImpl_->currentIndex_.value( newIndex );
+}
 
 //==============================================================================
 IDefinitionManager & CommandManager::getDefManager() const
@@ -1316,6 +1407,12 @@ bool CommandManager::LoadHistory( ISerializer & serializer )
 ISelectionContext& CommandManager::selectionContext()
 {
 	return selectionContext_;
+}
+
+
+std::thread::id CommandManager::ownerThreadId() /* override */
+{
+	return pImpl_->ownerThreadId_;
 }
 
 //==============================================================================
@@ -1363,6 +1460,11 @@ void CommandManager::notifyHandleCommandQueued( const char * commandId )
 void CommandManager::notifyNonBlockingProcessExecution( const char * commandId )
 {
 	pImpl_->notifyNonBlockingProcessExecution( commandId );
+}
+
+void CommandManager::SetHistorySerializationEnabled(bool isEnabled)
+{
+    pImpl_->SetHistorySerializationEnabled(isEnabled);
 }
 
 //==============================================================================
@@ -1492,6 +1594,71 @@ bool CommandManagerImpl::deleteCompoundCommand( const char * id )
 		}
 	}
 	return bSuccess;
+}
+
+void CommandManagerImpl::saveMacroList()
+{
+	IDefinitionManager& defManager = pCommandManager_->getDefManager();
+	ResizingMemoryStream stream;
+	XMLSerializer serializer( stream, defManager );
+	serializer.serialize( s_historyVersion );
+	serializeMacroList( serializer );
+	std::string file = "macro";
+	file += s_historyVersion;
+	IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+	assert( fileSystem );
+	fileSystem->writeFile( file.c_str(), stream.buffer().c_str(), stream.buffer().size(), std::ios::out | std::ios::binary );
+}
+
+void CommandManagerImpl::serializeMacroList( ISerializer & serializer )
+{
+	serializer.serialize( macros_.size() );
+	for (auto& m : macros_)
+	{
+		m->serialize( serializer );
+	}
+}
+
+void CommandManagerImpl::loadMacroList()
+{
+	std::string file = s_macro_file;
+	file += s_historyVersion;
+
+	const IFileSystem* fileSystem = pCommandManager_->getFileSystem();
+	assert( fileSystem );
+
+	if (fileSystem->exists( file.c_str() ))
+	{
+		IDefinitionManager& defManager = pCommandManager_->getDefManager();
+
+		IFileSystem::IStreamPtr fileStream = fileSystem->readFile( file.c_str(), std::ios::in | std::ios::binary );
+		XMLSerializer serializer( *fileStream, defManager );
+		std::string version;
+		serializer.deserialize( version );
+		if (version == s_historyVersion)
+		{
+			deserializeMacroList( serializer );
+		}
+	}
+}
+
+void CommandManagerImpl::deserializeMacroList( ISerializer & serializer )
+{
+	macros_.clear();
+	size_t size = 0;
+	serializer.deserialize( size );
+	std::string id;
+	for (size_t i = 0; i < size; ++i)
+	{
+		auto macro = pCommandManager_->getDefManager().create<CompoundCommand>( false );
+		serializer.deserialize( id );
+		macro->setId( id.c_str() );
+		pCommandManager_->registerCommand( macro.get() );
+		macro->initDisplayData( pCommandManager_->getDefManager(), pCommandManager_->getReflectionController() );
+
+		macro->deserialize( serializer );
+		macros_.emplace_back( std::move( macro ) );
+	}
 }
 
 //==============================================================================

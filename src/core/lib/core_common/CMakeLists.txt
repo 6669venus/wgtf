@@ -24,6 +24,7 @@ SET( ALL_SRCS
 	platform_std.hpp
 	shared_library.cpp
 	shared_library.hpp
+	signal.cpp
 	signal.hpp
 	thread_local_value.hpp
 	thread_local_value_impl.hpp
@@ -42,7 +43,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_common ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( core_common PRIVATE
+BW_TARGET_LINK_LIBRARIES( core_common INTERFACE
 	${PLATFORM_LIBRARIES}
 )
 

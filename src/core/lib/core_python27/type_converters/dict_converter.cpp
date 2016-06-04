@@ -2,8 +2,10 @@
 
 #include "dict_converter.hpp"
 
+#include "converters.hpp"
 #include "mapping_collection.hpp"
 
+#include "core_python27/defined_instance.hpp"
 #include "core_variant/variant.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
@@ -12,25 +14,35 @@ namespace PythonType
 {
 
 
-DictConverter::DictConverter( const PythonTypeConverters & typeConverters )
-	: IConverter()
+DictConverter::DictConverter( IComponentContext & context,
+	const Converters & typeConverters )
+	: IParentConverter()
+	, context_( context )
 	, typeConverters_( typeConverters )
 {
 }
 
 
 bool DictConverter::toVariant( const PyScript::ScriptObject & inObject,
-	Variant & outVariant ) /* override */
+	Variant & outVariant,
+	const ObjectHandle & parentHandle,
+	const std::string & childPath ) /* override */
 {
 	if (!PyScript::ScriptDict::check( inObject ))
 	{
 		return false;
 	}
-	PyScript::ScriptDict ScriptDict( inObject.get(),
+	PyScript::ScriptDict scriptDict( inObject.get(),
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
+	auto dictHandle = ReflectedPython::DefinedInstance::findOrCreate( context_,
+		scriptDict,
+		parentHandle,
+		childPath );
+	assert( dictHandle.isValid() );
 
 	auto collectionHolder = std::make_shared< Mapping >(
-		ScriptDict,
+		scriptDict,
+		dictHandle,
 		typeConverters_ );
 	Collection collection( collectionHolder );
 	outVariant = Variant( collection );
@@ -39,7 +51,7 @@ bool DictConverter::toVariant( const PyScript::ScriptObject & inObject,
 
 
 bool DictConverter::toScriptType( const Variant & inVariant,
-	PyScript::ScriptObject & outObject ) /* override */
+	PyScript::ScriptObject & outObject, void* userData ) /* override */
 {
 	if (!inVariant.typeIs< Variant::traits< Collection >::storage_type >())
 	{

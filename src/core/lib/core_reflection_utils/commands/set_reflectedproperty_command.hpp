@@ -24,7 +24,7 @@ public:
 	static const char * contextIdPropertyName();
 	static const char * pathPropertyName();
 	static const char * valuePropertyName();
-
+    
 private:
 	RefObjectId contextId_;
 	std::string propertyPath_;
@@ -38,18 +38,14 @@ private:
 class SetReflectedPropertyCommand
 	: public Command
 {
-
 public:
 	SetReflectedPropertyCommand( IDefinitionManager & definitionManager );
 	~SetReflectedPropertyCommand() override;
 
 	const char * getId() const override;
-	ObjectHandle execute(
-		const ObjectHandle & arguments ) const override;
+	ObjectHandle execute(const ObjectHandle & arguments ) const override;
+	bool validateArguments(const ObjectHandle& arguments) const override;
 	CommandThreadAffinity threadAffinity() const override;
-
-	virtual void undo( IDataStream & dataStore ) const override;
-	virtual void redo( IDataStream & dataStore ) const override;
 
 private:
 	IDefinitionManager & definitionManager_;

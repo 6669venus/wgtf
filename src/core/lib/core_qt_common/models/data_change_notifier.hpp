@@ -44,12 +44,9 @@ private:
 	QVariant getData() const;
 	bool setData( const QVariant& value );
 
-	void onPreDataChanged( const SourceType* sender,
-		const SourceType::PreDataChangedArgs& args );
-	void onPostDataChanged( const SourceType* sender,
-		const SourceType::PostDataChangedArgs& args );
-	void onDestructing( const SourceType* sender,
-		const SourceType::DestructingArgs& args);
+	void onPreDataChanged();
+	void onPostDataChanged();
+	void onDestructing();
 
 signals:
 	void sourceChanged();
@@ -58,6 +55,7 @@ signals:
 
 private:
 	SourceType* source_;
+	ConnectionHolder connections_;
 };
 
 

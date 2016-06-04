@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief A vector3 variation of the vectorN control which is bound to reflected data
@@ -8,6 +8,7 @@ import BWControls 1.0
 
 WGVector3 {
     id: vector3
+    objectName: itemData != null ? itemData.IndexPath : "vector3_component"
     value: itemData.Value
 
     Binding {

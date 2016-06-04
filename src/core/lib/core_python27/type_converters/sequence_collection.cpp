@@ -16,10 +16,11 @@ namespace Detail
 
 template< typename T >
 typename std::enable_if< Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
-insert( typename Sequence< T >::container_type & container_,
+insert( const ObjectHandle & containerHandle,
+	typename Sequence< T >::container_type & container,
 	const typename Sequence< T >::key_type i,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters )
 {
 	auto noneType = PyScript::ScriptObject( Py_None,
 		PyScript::ScriptObject::FROM_BORROWED_REFERENCE );
@@ -31,18 +32,18 @@ insert( typename Sequence< T >::container_type & container_,
 	{
 		// Only add 1 at start
 		resultIndex = 0;
-		const bool success = container_.insert( 0, noneType );
+		const bool success = container.insert( 0, noneType );
 		if (!success)
 		{
 			return Sequence< T >::result_type( end, false );
 		}
 	}
 	// Append to end
-	else if (i >= container_.size())
+	else if (i >= container.size())
 	{
 		// Only add 1 at end
-		resultIndex = container_.size();
-		const bool success = container_.append( noneType );
+		resultIndex = container.size();
+		const bool success = container.append( noneType );
 		if (!success)
 		{
 			return Sequence< T >::result_type( end, false );
@@ -52,7 +53,7 @@ insert( typename Sequence< T >::container_type & container_,
 	else
 	{
 		// Add 1 in middle
-		const bool success = container_.insert( i, noneType );
+		const bool success = container.insert( i, noneType );
 		if (!success)
 		{
 			return Sequence< T >::result_type( end, false );
@@ -60,19 +61,21 @@ insert( typename Sequence< T >::container_type & container_,
 	}
 
 	return Sequence< T >::result_type(
-		std::make_shared< Sequence< T >::iterator_impl_type >( container_,
+		std::make_shared< Sequence< T >::iterator_impl_type >( containerHandle,
+			container,
 			resultIndex,
-			typeConverters_ ),
+			typeConverters ),
 		true );
 }
 
 
 template< typename T >
 typename std::enable_if< !Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
-insert( typename Sequence< T >::container_type & container_,
+insert( const ObjectHandle & containerHandle,
+	typename Sequence< T >::container_type & container,
 	const typename Sequence< T >::key_type i,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters )
 {
 	NGT_ERROR_MSG( "Cannot insert into container that does not resize\n" );
 	return Sequence< T >::result_type( end, false );
@@ -81,20 +84,21 @@ insert( typename Sequence< T >::container_type & container_,
 
 template< typename T >
 typename std::enable_if< Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
-erase( typename Sequence< T >::container_type & container_,
+erase( const ObjectHandle & containerHandle,
+	typename Sequence< T >::container_type & container,
 	const typename Sequence< T >::key_type first,
 	const typename Sequence< T >::key_type last,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters )
 {
 	// [begin,end)
-	if ((first < 0) || (first >= container_.size()))
+	if ((first < 0) || (first >= container.size()))
 	{
 		NGT_ERROR_MSG( "First index is not within sequence\n" );
 		return Sequence< T >::result_type( end, false );
 	}
 	// (begin,end]
-	if ((last <= 0) || (last > container_.size()))
+	if ((last <= 0) || (last > container.size()))
 	{
 		NGT_ERROR_MSG( "Last index is not within sequence\n" );
 		return Sequence< T >::result_type( end, false );
@@ -107,7 +111,7 @@ erase( typename Sequence< T >::container_type & container_,
 	}
 
 	const PyScript::ScriptList erase( nullptr );
-	const bool success = container_.setSlice( first,
+	const bool success = container.setSlice( first,
 		last,
 		erase,
 		PyScript::ScriptErrorPrint() );
@@ -126,20 +130,22 @@ erase( typename Sequence< T >::container_type & container_,
 	const size_t numErased = (last - first);
 	const Sequence< T >::key_type newLastIndex = last - numErased;
 	return Sequence< T >::result_type(
-		std::make_shared< Sequence< T >::iterator_impl_type >( container_,
+		std::make_shared< Sequence< T >::iterator_impl_type >( containerHandle,
+			container,
 			newLastIndex,
-			typeConverters_ ),
+			typeConverters ),
 		true );
 }
 
 
 template< typename T >
 typename std::enable_if< !Sequence< T >::can_resize, typename Sequence< T >::result_type >::type
-erase( typename Sequence< T >::container_type & container_,
+erase( const ObjectHandle & containerHandle,
+	typename Sequence< T >::container_type & container,
 	const typename Sequence< T >::key_type first,
 	const typename Sequence< T >::key_type last,
 	const CollectionIteratorImplPtr & end,
-	const PythonTypeConverters & typeConverters_ )
+	const Converters & typeConverters )
 {
 	NGT_ERROR_MSG( "Cannot erase from container that does not resize\n" );
 	return Sequence< T >::result_type( end, false );
@@ -152,18 +158,13 @@ erase( typename Sequence< T >::container_type & container_,
 template< typename T >
 Sequence< T >::Sequence(
 	const typename Sequence< T >::container_type & container,
-	const PythonTypeConverters & typeConverters )
+	const ObjectHandle & containerHandle,
+	const Converters & typeConverters )
 	: CollectionImplBase()
 	, container_( container )
+	, containerHandle_( containerHandle )
 	, typeConverters_( typeConverters )
 {
-}
-
-
-template< typename T >
-bool Sequence< T >::empty() const /* override */
-{
-	return (container_.size() == 0);
 }
 
 
@@ -178,7 +179,8 @@ template< typename T >
 CollectionIteratorImplPtr Sequence< T >::begin() /* override */
 {
 	const key_type startIndex = 0;
-	return std::make_shared< iterator_impl_type >( container_,
+	return std::make_shared< iterator_impl_type >( containerHandle_,
+		container_,
 		startIndex,
 		typeConverters_ );
 }
@@ -188,7 +190,8 @@ template< typename T >
 CollectionIteratorImplPtr Sequence< T >::end() /* override */
 {
 	const key_type endIndex = container_.size();
-	return std::make_shared< iterator_impl_type >( container_,
+	return std::make_shared< iterator_impl_type >( containerHandle_,
+		container_,
 		endIndex,
 		typeConverters_ );
 }
@@ -222,7 +225,8 @@ typename Sequence< T >::result_type Sequence< T >::get( const Variant & key,
 		if (i < container_.size())
 		{
 			return result_type(
-				std::make_shared< iterator_impl_type >( container_,
+				std::make_shared< iterator_impl_type >( containerHandle_,
+				container_,
 					i,
 					typeConverters_ ),
 				false );
@@ -234,7 +238,11 @@ typename Sequence< T >::result_type Sequence< T >::get( const Variant & key,
 	}
 	else if (policy == GET_NEW)
 	{
-		return Detail::insert< T >( container_, i, this->end(), typeConverters_ );
+		return Detail::insert< T >( containerHandle_,
+			container_,
+			i,
+			this->end(),
+			typeConverters_ );
 	}
 	else if (policy == GET_AUTO)
 	{
@@ -243,14 +251,19 @@ typename Sequence< T >::result_type Sequence< T >::get( const Variant & key,
 		{
 			// Get existing
 			return result_type(
-				std::make_shared< iterator_impl_type >( container_,
+				std::make_shared< iterator_impl_type >( containerHandle_,
+				container_,
 					i,
 					typeConverters_ ),
 				false );
 		}
 
 		// Insert new at start or end
-		return Detail::insert< T >( container_, i, this->end(), typeConverters_ );
+		return Detail::insert< T >( containerHandle_,
+			container_,
+			i,
+			this->end(),
+			typeConverters_ );
 	}
 	else
 	{
@@ -276,7 +289,8 @@ CollectionIteratorImplPtr Sequence< T >::erase(
 		return this->end();
 	}
 
-	auto result = Detail::erase< T >( container_,
+	auto result = Detail::erase< T >( containerHandle_,
+		container_,
 		pItr->rawIndex(),
 		pItr->rawIndex() + 1,
 		this->end(),
@@ -295,7 +309,8 @@ size_t Sequence< T >::erase( const Variant & key ) /* override */
 		return 0;
 	}
 
-	const auto result = Detail::erase< T >( container_,
+	const auto result = Detail::erase< T >( containerHandle_,
+		container_,
 		index,
 		index + 1,
 		this->end(),
@@ -322,7 +337,8 @@ CollectionIteratorImplPtr Sequence< T >::erase( const CollectionIteratorImplPtr 
 		return this->end();
 	}
 
-	auto result = Detail::erase< T >( container_,
+	auto result = Detail::erase< T >( containerHandle_,
+		container_,
 		pFirst->rawIndex(),
 		pLast->rawIndex(),
 		this->end(),
@@ -354,23 +370,28 @@ const TypeId & Sequence< T >::containerType() const /* override */
 
 
 template< typename T >
-void * Sequence< T >::containerData() const /* override */
+const void * Sequence< T >::container() const /* override */
 {
-	return const_cast< void * >( static_cast< const void * >( &container_ ) );
+	return &container_;
 }
 
 
 template< typename T >
-bool Sequence< T >::isMapping() const /* override */
+int Sequence< T >::flags() const /* override */
 {
-	return false;
+	return
+		WRITABLE |
+		RESIZABLE |
+		ORDERED;
 }
 
 
-template< typename T >
-bool Sequence< T >::canResize() const /* override */
+template<>
+int Sequence< PyScript::ScriptTuple >::flags() const /* override */
 {
-	return can_resize;
+	return
+		WRITABLE |
+		ORDERED;
 }
 
 

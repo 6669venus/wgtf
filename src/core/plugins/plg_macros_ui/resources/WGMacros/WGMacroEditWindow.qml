@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.2
 import WGControls 1.0
+import WGCopyableFunctions 1.0
 
 Window {
 	id: root
@@ -10,7 +11,7 @@ Window {
 	minimumWidth: defaultSpacing.minimumPanelWidth
 
 	flags: Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	modality: Qt.ApplicationModal
 	property bool accepted: false
 	property variant sourceData;
@@ -31,6 +32,9 @@ Window {
 			y: 2
 			anchors.left: searchBoxLabel.right
 			anchors.right: parent.right
+			Component.onCompleted: {
+				WGCopyableHelper.disableChildrenCopyable(searchBox);
+			}
 		}
 
 		WGFilteredTreeModel {

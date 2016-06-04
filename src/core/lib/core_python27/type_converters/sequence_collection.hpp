@@ -7,14 +7,10 @@
 
 #include "sequence_iterator.hpp"
 
-#include "core_script/type_converter_queue.hpp"
+#include "converters.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 #include <type_traits>
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 namespace PythonType
@@ -47,9 +43,9 @@ public:
 	typedef SequenceIterator< T > iterator_impl_type;
 
 	Sequence( const container_type & container,
-		const PythonTypeConverters & typeConverters );
+		const ObjectHandle & containerHandle,
+		const Converters & typeConverters );
 
-	virtual bool empty() const override;
 	virtual size_t size() const override;
 
 	virtual CollectionIteratorImplPtr begin() override;
@@ -69,13 +65,13 @@ public:
 	virtual const TypeId & keyType() const override;
 	virtual const TypeId & valueType() const override;
 	virtual const TypeId & containerType() const override;
-	virtual void * containerData() const override;
-	virtual bool isMapping() const override;
-	virtual bool canResize() const override;
+	virtual const void * container() const override;
+	virtual int flags() const override;
 
 private:
 	container_type container_;
-	const PythonTypeConverters & typeConverters_;
+	const ObjectHandle containerHandle_;
+	const Converters & typeConverters_;
 };
 
 

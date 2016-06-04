@@ -33,6 +33,11 @@ SET( ALL_SRCS
 	i_env_system.hpp
 	env_system.hpp
 	env_system.cpp
+	undo_redo_data.hpp
+	custom_undo_redo_data.hpp
+	custom_undo_redo_data.cpp
+	reflection_undo_redo_data.hpp
+	reflection_undo_redo_data.cpp
 )
 SOURCE_GROUP( "Source" FILES ${ALL_SRCS} )
 
@@ -43,7 +48,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_command_system ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( core_command_system PUBLIC
+BW_TARGET_LINK_LIBRARIES( core_command_system INTERFACE
 	core_common
 	core_reflection
 	core_reflection_utils

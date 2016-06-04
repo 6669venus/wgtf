@@ -98,8 +98,8 @@ namespace
 	}
 }
 
-ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent )
-	: ReflectedItem( parent, parent ? parent->getPath() + property->getName() : "" )
+ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent, const std::string & inplacePath )
+	: ReflectedItem( parent, std::string(inplacePath) + property->getName() )
 {
 	// Must have a parent
 	assert( parent != nullptr );
@@ -118,7 +118,7 @@ ReflectedPropertyItem::ReflectedPropertyItem( const IBasePropertyPtr & property,
 
 
 ReflectedPropertyItem::ReflectedPropertyItem( const std::string & propertyName,
-	std::string && displayName,
+	std::string displayName,
 	ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + propertyName : "" )
 	, displayName_( std::move( displayName ) )
@@ -181,7 +181,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	{
 		return this->getPath();
 	}
-	if (roleId == ValueTypeRole::roleId_)
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
+	else if (roleId == ValueTypeRole::roleId_)
 	{
 		return propertyAccessor.getType().getName();
 	}
@@ -224,13 +232,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			const float & value = minMaxObj->getMin();
 			float minValue = .0f;
 			bool isOk = variant.tryCast( minValue );
-			assert( isOk );
-			float diff = minValue - value;
-			float epsilon = std::numeric_limits<float>::epsilon();
-			if (diff > epsilon )
+			if (isOk)
 			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
-				return variant;
+				float diff = minValue - value;
+				float epsilon = std::numeric_limits<float>::epsilon();
+				if (diff > epsilon )
+				{
+					NGT_ERROR_MSG("Property %s: MetaMinMaxObj min value exceeded limits.\n", path_.c_str());
+					return variant;
+				}
 			}
 			return value;
 		}
@@ -250,13 +260,15 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			const float & value = minMaxObj->getMax();
 			float maxValue = .0f;
 			bool isOk = variant.tryCast( maxValue );
-			assert( isOk );
-			float diff = value - maxValue;
-			float epsilon = std::numeric_limits<float>::epsilon();
-			if (diff > epsilon)
+			if (isOk)
 			{
-				NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
-				return variant;
+				float diff = value - maxValue;
+				float epsilon = std::numeric_limits<float>::epsilon();
+				if (diff > epsilon)
+				{
+					NGT_ERROR_MSG("Property %s: MetaMinMaxObj max value exceeded limits.\n", path_.c_str());
+					return variant;
+				}
 			}
 			return value;
 		}
@@ -347,7 +359,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogTitleRole::roleId_)
 	{
-		const char * title;
+		const char * title = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -358,7 +370,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogDefaultFolderRole::roleId_)
 	{
-		const char * folder;
+		const char * folder = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -369,7 +381,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogNameFiltersRole::roleId_)
 	{
-		const char * nameFilters;
+		const char * nameFilters = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -380,7 +392,7 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 	}
 	else if (roleId == UrlDialogSelectedNameFilterRole::roleId_)
 	{
-		const char * selectedFilter;
+		const char * selectedFilter = nullptr;
 		auto urlObj =
 			findFirstMetaData< MetaUrlObj >( propertyAccessor, *getDefinitionManager() );
 		if( urlObj != nullptr)
@@ -403,6 +415,17 @@ Variant ReflectedPropertyItem::getData( int column, size_t roleId ) const
 			}
 		}
 		return modality;
+	}
+	else if ( roleId == IsReadOnlyRole::roleId_ )
+	{
+		TypeId typeId = propertyAccessor.getType();
+		auto readonly =
+			findFirstMetaData< MetaReadOnlyObj >( propertyAccessor, *getDefinitionManager() );
+		if ( readonly != nullptr )
+		{
+			return true;
+		}
+		return false;
 	}
 	return Variant();
 }
@@ -561,11 +584,13 @@ bool ReflectedPropertyItem::empty() const
 		return true;
 	}
 
-	const Variant & value = propertyAccessor.getValue();
+	Variant value = propertyAccessor.getValue();
 	const bool isCollection = value.typeIs< Collection >();
+
 	if (isCollection)
 	{
-		return false;
+		const Collection & collection = value.castRef< const Collection >();
+		return collection.empty();
 	}
 
 	ObjectHandle handle;
@@ -574,10 +599,11 @@ bool ReflectedPropertyItem::empty() const
 	{
 		handle = reflectedRoot( handle, *getDefinitionManager() );
 		auto def = handle.getDefinition( *getDefinitionManager() );
-		if(def != nullptr)
+
+		if (def != nullptr)
 		{
-            PropertyIteratorRange iterRange = def->allProperties();
-			return iterRange.begin() == iterRange.end();
+			PropertyIteratorRange range = def->allProperties();
+			return range.begin() == range.end();
 		}
 	}
 
@@ -624,7 +650,7 @@ bool ReflectedPropertyItem::preSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
 	auto obj = getObject();
-	auto otherObj = accessor.getRootObject();
+	auto otherObj = accessor.getObject();
 	auto otherPath = accessor.getFullPath();
 
 	if (obj == otherObj && path_ == otherPath)
@@ -633,9 +659,6 @@ bool ReflectedPropertyItem::preSetValue(
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
-
-		ObjectHandle handle;
-		bool isObjectHandle = value.tryCast( handle );
 		if(isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;
@@ -644,11 +667,11 @@ bool ReflectedPropertyItem::preSetValue(
 			{
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
-			getModel()->notifyPreDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPreItemDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->notifyPreDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPreItemDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}
@@ -674,7 +697,7 @@ bool ReflectedPropertyItem::postSetValue(
 	const PropertyAccessor & accessor, const Variant & value )
 {
 	auto obj = getObject();
-	auto otherObj = accessor.getRootObject();
+	auto otherObj = accessor.getObject();
 	auto otherPath = accessor.getFullPath();
 
 	if (obj == otherObj && path_ == otherPath)
@@ -683,9 +706,6 @@ bool ReflectedPropertyItem::postSetValue(
 		bool isReflectedObject = 
 			typeId.isPointer() &&
 			getDefinitionManager()->getDefinition( typeId.removePointer().getName() ) != nullptr;
-
-		ObjectHandle handle;
-		bool isObjectHandle = value.tryCast( handle );
 		if(isReflectedObject)
 		{
 			const IClassDefinition * definition = nullptr;
@@ -695,11 +715,11 @@ bool ReflectedPropertyItem::postSetValue(
 				definition = handle.getDefinition( *getDefinitionManager() );
 			}
 			children_.clear();
-			getModel()->notifyPostDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
+			getModel()->signalPostItemDataChanged( this, 1, DefinitionRole::roleId_, ObjectHandle( definition ) );
 			return true;
 		}
 
-		getModel()->notifyPostDataChanged( this, 1, ValueRole::roleId_,
+		getModel()->signalPostItemDataChanged( this, 1, ValueRole::roleId_,
 			value );
 		return true;
 	}
@@ -712,168 +732,6 @@ bool ReflectedPropertyItem::postSetValue(
 		}
 
 		if ((*it)->postSetValue( accessor, value ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::preItemsInserted( const PropertyAccessor & accessor,
-										  const Collection::ConstIterator & pos, size_t count )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != pos; assert( it != collection.end() ), ++it, ++index) {}
-
-		getModel()->notifyPreItemsInserted( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsInserted( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::postItemsInserted( const PropertyAccessor & accessor,
-										   const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != begin; assert( it != collection.end() ), ++it, ++index) {}
-
-		size_t count = 0;
-		for (; it != end; assert( it != collection.end() ), ++it, ++count) {}
-
-		auto insertIt = children_.begin();
-		for (size_t i = 0; i < index && insertIt != children_.end(); ++i, ++insertIt) {}
-
-		for (size_t i = 0; i < count; ++i)
-		{
-			insertIt = children_.emplace( insertIt, nullptr );
-		}
-
-		getModel()->notifyPostItemsInserted( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsInserted( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::preItemsRemoved( const PropertyAccessor & accessor,
-										 const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != begin; assert( it != collection.end() ), ++it, ++index) {}
-
-		size_t count = 0;
-		for (; it != end; assert( it != collection.end() ), ++it, ++count) {}
-
-		getModel()->notifyPreItemsRemoved( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->preItemsRemoved( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedPropertyItem::postItemsRemoved( const PropertyAccessor & accessor,
-										  const Collection::ConstIterator & pos, size_t count )
-{
-	auto obj = getObject();
-	auto propertyAccessor = obj.getDefinition( *getDefinitionManager() )->bindProperty(
-		path_.c_str(), obj );
-
-	if (accessor.getProperty() == propertyAccessor.getProperty())
-	{
-		Collection collection;
-		propertyAccessor.getValue().tryCast( collection );
-		auto it = collection.begin();
-
-		size_t index = 0;
-		for (; it != pos; assert( it != collection.end() ), ++it, ++index) {}
-
-		auto eraseBeginIt = children_.begin();
-		for (size_t i = 0; i < index && eraseBeginIt != children_.end(); ++i, ++eraseBeginIt) {}
-
-		auto eraseEndIt = eraseBeginIt;
-		for (size_t i = 0; i < count && eraseEndIt != children_.end(); ++i, ++eraseEndIt) {}
-
-		children_.erase( eraseBeginIt, eraseEndIt );
-
-		getModel()->notifyPostItemsRemoved( this, index, count );
-		return true;
-	}
-
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsRemoved( accessor, pos, count ))
 		{
 			return true;
 		}

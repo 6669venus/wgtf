@@ -209,6 +209,7 @@ GridLayout {
 
             MouseArea {
                 id: clickArea
+                objectName: "shadeSquareButton"
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor

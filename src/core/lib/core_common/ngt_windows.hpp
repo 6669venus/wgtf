@@ -13,12 +13,13 @@
 #include <DbgHelp.h>
 #pragma warning (pop)
 
+#if ( _MSC_VER < 1900 )
 	#if !defined(HAVE_SNPRINTF) && !defined(snprintf)
 	# define HAVE_SNPRINTF
 	# define snprintf _snprintf
 	# define vsnprintf _vsnprintf
 	#endif
-
+#endif
 	typedef unsigned __int64 __uint64;
 #endif
 

@@ -6,6 +6,7 @@
 #include "../types/reflected_collection.hpp"
 
 class IEnumGenerator;
+typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
 
 /**
  *	Depricated: only for use with EXPOSE macros.
@@ -19,13 +20,13 @@ MetaHandle MetaDecimals( int decimals );
 
 #define MetaEnumFunc( getterFunc ) \
 	MetaEnum(\
-		new ReflectedCollectionImpl(\
+		std::unique_ptr<IEnumGenerator>(new ReflectedCollectionImpl(\
 			IBasePropertyPtr(\
 				new FunctionProperty< std::map< int, std::wstring >,SelfType, true, true >(\
 					"EnumTypes", &SelfType::getterFunc, NULL,\
-					TypeId::getType< std::map< int, std::wstring > >() ) ) ) )
+					TypeId::getType< std::map< int, std::wstring > >() ) ) ) ) )
 
-MetaHandle MetaEnum( IEnumGenerator * enumGenerator );
+MetaHandle MetaEnum( IEnumGeneratorPtr enumGenerator );
 MetaHandle MetaEnum( const wchar_t * enumString );
 
 MetaHandle MetaSlider();
@@ -35,6 +36,8 @@ MetaHandle MetaGroup( const wchar_t * groupName );
 MetaHandle MetaAttributeDisplayName( const char * attributePath );
 
 MetaHandle MetaDisplayName( const wchar_t * displayName );
+
+MetaHandle MetaDescription( const wchar_t * displayName );
 
 MetaHandle MetaPanelLayout( const char * layoutFile, const char * bindingsFile = NULL );
 
@@ -103,8 +106,25 @@ MetaHandle MetaCommandBase(
 
 MetaHandle MetaNoSerialization();
 
-MetaHandle MetaUniqueId( const char * id);
+MetaHandle MetaUniqueId( const char * id );
 
 MetaHandle MetaOnStack();
+
+MetaHandle MetaUnique();
+
+MetaHandle MetaParamHelp( const char* paramName, const MetaParamTypes::MetaParamType paramType, const char* paramDesc );
+
+MetaHandle MetaReturnHelp( const char* returnName, const MetaParamTypes::MetaParamType returnType, const char* returnDesc );
+
+MetaHandle MetaConsoleHelp( const char* text );
+
+MetaHandle MetaScriptFunctionHelp( const char* name );
+
+MetaHandle MetaTooltip( const char* tooltip );
+
+MetaHandle MetaPassword();
+
+MetaHandle MetaMultiline();
+
 
 #endif //META_TYPES_HPP

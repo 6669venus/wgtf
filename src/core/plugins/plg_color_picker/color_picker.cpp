@@ -1,4 +1,5 @@
 #include "color_picker.hpp"
+#include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
 #include "color_picker_context.hpp"
 #include "core_reflection/property_accessor.hpp"
@@ -9,11 +10,11 @@ ColorPicker::ColorPicker( IComponentContext & context )
 	auto definitionManager = this->get< IDefinitionManager >();
 	colorPickerContext_ = definitionManager->create< ColorPickerContext >();
 }
- 
- 
+
+
 bool ColorPicker::addPanel()
 {
-    auto uiFramework = this->get< IUIFramework >();
+	auto uiFramework = this->get< IUIFramework >();
 	auto uiApplication = this->get< IUIApplication >();
 	
 	if ((uiFramework == nullptr) ||
@@ -24,10 +25,17 @@ bool ColorPicker::addPanel()
 
 	
 	colorView_ = uiFramework->createView(
-		"plg_color_picker/color_picker_panel.qml",
+		"WGColorPicker/WGColorPickerPanel.qml",
 		IUIFramework::ResourceType::Url, colorPickerContext_ );
 
-	uiApplication->addView( *colorView_ );
+	if (colorView_ != nullptr)
+	{
+		uiApplication->addView( *colorView_ );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
 	return true;
 }
  
@@ -40,7 +48,10 @@ void ColorPicker::removePanel()
 		return;
 	}
 
-	uiApplication->removeView( *colorView_ );
+	if (colorView_ != nullptr)
+	{
+		uiApplication->removeView( *colorView_ );
+	}
 }
 
 

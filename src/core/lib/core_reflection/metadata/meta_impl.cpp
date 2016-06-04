@@ -58,9 +58,29 @@ MetaDecimalsObj::MetaDecimalsObj(int decimals)
 
 
 //==============================================================================
+MetaEnumObj::MetaEnumObj()
+	: enumGenerator_(nullptr)
+	, enumString_(nullptr)
+{
+}
+
+//==============================================================================
+MetaEnumObj::MetaEnumObj(IEnumGeneratorPtr enumGenerator)
+	: enumGenerator_(std::move(enumGenerator))
+	, enumString_(nullptr)
+{
+}
+
+//==============================================================================
+MetaEnumObj::MetaEnumObj(const wchar_t * enumString)
+	: enumGenerator_(nullptr)
+	, enumString_(enumString)
+{
+}
+
+//==============================================================================
 MetaEnumObj::~MetaEnumObj()
 {
-	delete enumGenerator_;
 }
 
 
@@ -94,6 +114,7 @@ END_EXPOSE()
 //==============================================================================
 MetaGroupObj::MetaGroupObj( const wchar_t * groupName )
 	: groupName_( groupName )
+	, groupNameHash_( HashUtilities::compute(groupName_) )
 {
 }
 
@@ -101,6 +122,12 @@ MetaGroupObj::MetaGroupObj( const wchar_t * groupName )
 const wchar_t * MetaGroupObj::getGroupName() const
 {
 	return groupName_;
+}
+
+//==============================================================================
+uint64_t MetaGroupObj::getGroupNameHash() const
+{
+	return groupNameHash_;
 }
 
 
@@ -141,6 +168,26 @@ MetaDisplayNameObj::MetaDisplayNameObj( const wchar_t * displayName )
 const wchar_t * MetaDisplayNameObj::getDisplayName() const
 {
 	return displayName_;
+}
+
+
+//==============================================================================
+BEGIN_EXPOSE( MetaDescriptionObj, MetaBase, MetaNone() )
+	EXPOSE( "description", getDescription )
+END_EXPOSE()
+
+
+//==============================================================================
+MetaDescriptionObj::MetaDescriptionObj(const wchar_t * description)
+	: description_( description )
+{
+}
+
+
+//==============================================================================
+const wchar_t * MetaDescriptionObj::getDescription() const
+{
+	return description_;
 }
 
 //==============================================================================
@@ -297,4 +344,14 @@ const char * MetaUrlObj::getDialogSelectedNameFilter() const
 
 //==============================================================================
 BEGIN_EXPOSE( MetaUrlObj, MetaBase, MetaNone() )
+END_EXPOSE()
+
+
+//==============================================================================
+BEGIN_EXPOSE(MetaPasswordObj, MetaBase, MetaNone())
+END_EXPOSE()
+
+
+//==============================================================================
+BEGIN_EXPOSE(MetaMultilineObj, MetaBase, MetaNone())
 END_EXPOSE()

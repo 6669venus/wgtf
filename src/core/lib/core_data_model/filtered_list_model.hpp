@@ -9,6 +9,8 @@
 
 class FilteredListModel : public IListModel
 {
+	typedef Signal< void( void ) > SignalVoid;
+
 public:
 	FilteredListModel();
 	FilteredListModel( const FilteredListModel & rhs );
@@ -22,6 +24,9 @@ public:
 	virtual size_t size() const override;
 	virtual int columnCount() const override;
 
+	virtual Variant getData( int column, size_t roleId ) const;
+	virtual bool setData( int column, size_t roleId, const Variant & data );
+
 	void setSource( IListModel * source );
 	void setFilter( IItemFilter * filter );
 
@@ -32,8 +37,8 @@ public:
 
 	bool isFiltering() const;
 
-	PUBLIC_EVENT( FilteredListModel, FilteringBegin );
-	PUBLIC_EVENT( FilteredListModel, FilteringEnd );
+	SignalVoid onFilteringBegin;
+	SignalVoid onFilteringEnd;
 
 private:
 	struct Implementation;

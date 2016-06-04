@@ -38,11 +38,11 @@
 
 #define EXPOSE_METHOD_2( name, method )\
 	properties_.addProperty( IBasePropertyPtr(\
-		ReflectedMethodFactory::create( name, &SelfType::method, nullptr ) ) );
+		ReflectedMethodFactory::create( name, &SelfType::method, nullptr, nullptr ) ) );
 
-#define EXPOSE_METHOD_3( name, method, undoMethod )\
+#define EXPOSE_METHOD_4( name, method, undoMethod, redoMethod )\
 	properties_.addProperty( IBasePropertyPtr(\
-		ReflectedMethodFactory::create( name, &SelfType::method, &SelfType::undoMethod ) ) );
+		ReflectedMethodFactory::create( name, &SelfType::method, &SelfType::undoMethod, &SelfType::redoMethod ) ) );
 
 #define EXPOSE_2( name, _1 )\
 	properties_.addProperty( IBasePropertyPtr(\
@@ -134,5 +134,11 @@
 
 #define REGISTER_DEFINITION( type )\
 	definitionManager.registerDefinition( new TypeClassDefinition< type > );
+
+#define DEREGISTER_DEFINITION( type ) \
+	{ \
+		const auto pDefinition = definitionManager.getDefinition( getClassIdentifier< type >() ); \
+		definitionManager.deregisterDefinition( pDefinition ); \
+	}
 
 #endif // REFLECTION_MACROS_HPP

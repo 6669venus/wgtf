@@ -15,8 +15,13 @@ class ListModelTestPlugin
 {
 private:
 	std::vector<IInterface*> types_;
+	std::unique_ptr<IView> oldListView_;
+	std::unique_ptr<IView> oldShortListView_;
 	std::unique_ptr<IView> listView_;
 	std::unique_ptr<IView> shortListView_;
+	std::unique_ptr<IView> multiColumnListView_;
+	std::shared_ptr<AbstractListModel> listModel_;
+
 public:
 	//==========================================================================
 	ListModelTestPlugin(IComponentContext & contextManager )
@@ -39,19 +44,46 @@ public:
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		auto uiFramework = contextManager.queryInterface< IUIFramework >();
 		assert( (uiFramework != nullptr) && (uiApplication != nullptr) );
-
-		std::unique_ptr< IListModel > listModel( new TestListModel() );
+		
+		std::unique_ptr< IListModel > oldListModel( new OldTestListModel() );
+		oldListView_ = uiFramework->createView(
+			"plg_list_model_test/test_list_panel_old.qml",
+			IUIFramework::ResourceType::Url, std::move( oldListModel ) );
+		
+		std::unique_ptr< IListModel > oldShortListModel( new OldTestListModel( true ) );
+		oldShortListView_ = uiFramework->createView(
+			"plg_list_model_test/test_short_list_panel_old.qml",
+			IUIFramework::ResourceType::Url, std::move( oldShortListModel ) );
+		
+		listModel_ = std::make_shared<TestListModel>();
 		listView_ = uiFramework->createView(
 			"plg_list_model_test/test_list_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( listModel ) );
-		
-		std::unique_ptr< IListModel > shortListModel( new TestListModel( true ) );
-		shortListView_ = uiFramework->createView(
-			"plg_list_model_test/test_short_list_panel.qml",
-			IUIFramework::ResourceType::Url, std::move( shortListModel ) );
-		
-		uiApplication->addView( *listView_ );
-		uiApplication->addView( *shortListView_ );
+			IUIFramework::ResourceType::Url, listModel_ );
+
+		if (oldListView_ != nullptr)
+		{
+			uiApplication->addView( *oldListView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
+		if (oldShortListView_ != nullptr)
+		{
+			uiApplication->addView( *oldShortListView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
+		if (listView_ != nullptr)
+		{
+			uiApplication->addView( *listView_ );
+		}
+		else
+		{
+			NGT_ERROR_MSG( "Failed to load qml\n" );
+		}
 
 	}
 	//==========================================================================
@@ -59,10 +91,24 @@ public:
 	{
 		auto uiApplication = contextManager.queryInterface< IUIApplication >();
 		assert( uiApplication != nullptr );
-		uiApplication->removeView( *shortListView_ );
-		uiApplication->removeView( *listView_ );
+		if (listView_ != nullptr)
+		{
+			uiApplication->removeView( *listView_ );
+		}
+		if (oldShortListView_ != nullptr)
+		{
+			uiApplication->removeView( *oldShortListView_ );
+		}
+		if (oldListView_ != nullptr)
+		{
+			uiApplication->removeView( *oldListView_ );
+		}
+		listModel_ = nullptr;
 		listView_ = nullptr;
 		shortListView_ = nullptr;
+		multiColumnListView_ = nullptr;
+		oldListView_ = nullptr;
+		oldShortListView_ = nullptr;
 		return true;
 	}
 	//==========================================================================

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGControls 2.0
 import WGColorPicker 1.0
 
 /*!
@@ -103,15 +104,25 @@ ColumnLayout {
 
         WGColorSlider {
             id: rSlider
+            objectName: "redColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1
             stepSize: useHexValue ? 1 : 0.001
-            colorData: [Qt.rgba(0,rgbSlider.greenVal,rgbSlider.blueVal,1), Qt.rgba(1,rgbSlider.greenVal,rgbSlider.blueVal,1)]
-            positionData: [minimumValue, maximumValue]
+
+            gradient: Gradient {
+                GradientStop {
+                    position: 0
+                    color: Qt.rgba(0,rgbSlider.greenVal,rgbSlider.blueVal,1)
+                }
+                GradientStop {
+                    position: 1
+                    color: Qt.rgba(1,rgbSlider.greenVal,rgbSlider.blueVal,1)
+                }
+            }
+
             value: useHexValue ? rgbSlider.redVal * 255 : rgbSlider.redVal
-            linkColorsToHandles: false
 
             onValueChanged: {
                 if (useHexValue)
@@ -133,6 +144,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: rBox
+            objectName: "redColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1
@@ -170,15 +182,25 @@ ColumnLayout {
 
         WGColorSlider {
             id: gSlider
+            objectName: "greenColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1
             stepSize: useHexValue ? 1 : 0.001
-            colorData: [Qt.rgba(rgbSlider.redVal,0,rgbSlider.blueVal,1), Qt.rgba(rgbSlider.redVal,1,rgbSlider.blueVal,1)]
-            positionData: [minimumValue, maximumValue]
+
+            gradient: Gradient {
+                GradientStop {
+                    position: 0
+                    color: Qt.rgba(rgbSlider.redVal,0,rgbSlider.blueVal,1)
+                }
+                GradientStop {
+                    position: 1
+                    color:Qt.rgba(rgbSlider.redVal,1,rgbSlider.blueVal,1)
+                }
+            }
+
             value: useHexValue ? rgbSlider.greenVal * 255 : rgbSlider.greenVal
-            linkColorsToHandles: false
 
             onValueChanged: {
                 if (useHexValue)
@@ -200,6 +222,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: gBox
+            objectName: "greenColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1
@@ -237,15 +260,25 @@ ColumnLayout {
 
         WGColorSlider {
             id: bSlider
+            objectName: "blueColorSlider"
             Layout.fillWidth: true
             Layout.preferredHeight: defaultSpacing.minimumRowHeight
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1
             stepSize: useHexValue ? 1 : 0.001
-            colorData: [Qt.rgba(rgbSlider.redVal,rgbSlider.greenVal,0,1), Qt.rgba(rgbSlider.redVal,rgbSlider.greenVal,1,1)]
-            positionData: [minimumValue, maximumValue]
+
+            gradient: Gradient {
+                GradientStop {
+                    position: 0
+                    color: Qt.rgba(rgbSlider.redVal,rgbSlider.greenVal,0,1)
+                }
+                GradientStop {
+                    position: 1
+                    color: Qt.rgba(rgbSlider.redVal,rgbSlider.greenVal,1,1)
+                }
+            }
+
             value: useHexValue ? rgbSlider.blueVal * 255 : rgbSlider.blueVal
-            linkColorsToHandles: false
 
             onValueChanged: {
                 if (useHexValue)
@@ -267,6 +300,7 @@ ColumnLayout {
 
         WGNumberBox {
             id: bBox
+            objectName: "blueColorValue"
             Layout.preferredWidth: numBoxWidth
             minimumValue: 0
             maximumValue: useHexValue ? 255 : 1

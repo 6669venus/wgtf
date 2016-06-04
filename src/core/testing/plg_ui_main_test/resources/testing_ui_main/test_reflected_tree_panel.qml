@@ -3,9 +3,10 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import BWControls 1.0
 import WGControls 1.0
+import WGCopyableFunctions 1.0
 
 Rectangle {
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     property var title: "PropertyTree Test"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: source
@@ -23,6 +24,9 @@ Rectangle {
         y: 2
         anchors.left: searchBoxLabel.right
         anchors.right: parent.right
+        Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
     }
 
     WGFilteredTreeModel {

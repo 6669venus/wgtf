@@ -19,6 +19,13 @@ WGTabView{
 */
 
 TabView {
-    style: WGTabViewStyle{}
+    id: baseTabView
+    objectName: "WGTabView"
+
     clip: true
+
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
+
+    style: WGTabViewStyle{}
 }

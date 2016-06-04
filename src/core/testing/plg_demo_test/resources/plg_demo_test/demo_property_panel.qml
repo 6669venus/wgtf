@@ -3,10 +3,11 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import BWControls 1.0
 import WGControls 1.0
+import WGCopyableFunctions 1.0
 
 Rectangle {
     id: root
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     property var title: "Demo"
     property var layoutHints: { 'test': 0.1 }
     property var sourceModel: treeSource
@@ -16,6 +17,9 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         placeholderText: "Search (Ctrl+p)"
+		Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
 
         WGToolButton {
             id: clearSearchBox

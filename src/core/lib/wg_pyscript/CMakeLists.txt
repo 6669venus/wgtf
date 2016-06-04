@@ -21,6 +21,7 @@ SET( ALL_SRCS
 	py_script_output_writer.hpp
 	py_script_sequence.ipp
 	py_script_tuple.ipp
+	py_script_type.ipp
 	pyobject_pointer.hpp
 	type_converter.cpp
 	type_converter.hpp
@@ -31,6 +32,8 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${ALL_SRCS} 
 )
 BW_ADD_LIBRARY( wg_pyscript ${BLOB_SRCS} )
+
+WG_TARGET_LINK_PYTHON()
 
 BW_PRECOMPILED_HEADER( wg_pyscript pch.hpp )
 BW_PROJECT_CATEGORY( wg_pyscript "Wargaming Libs" )

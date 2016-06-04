@@ -332,6 +332,56 @@ TEST_F(VectorFixture, Collection_vector_erase_iterator)
 }
 
 
+TEST_F(VectorFixture, Collection_vector_erase_iterator_range)
+{
+	auto rangeEnd = collection.find(2);
+	CHECK(rangeEnd != collection.end());
+	auto it = collection.erase(collection.begin(), rangeEnd);
+	CHECK(it != collection.end());
+	CHECK(*it == 2);
+
+	const CheckValue<size_t, int> check[] =
+	{
+		{0, 2}
+	};
+
+	checkContents(EXTRA_ARGS, check);
+}
+
+
+TEST_F(VectorFixture, Collection_vector_erase_iterator_range_end)
+{
+	auto rangeBegin = collection.find(1);
+	CHECK(rangeBegin != collection.end());
+	auto it = collection.erase(rangeBegin, collection.end());
+	CHECK(it == collection.end());
+
+	const CheckValue<size_t, int> check[] =
+	{
+		{0, 0}
+	};
+
+	checkContents(EXTRA_ARGS, check);
+}
+
+
+TEST_F(VectorFixture, Collection_vector_erase_iterator_empty_range)
+{
+	auto it = collection.erase(collection.begin(), collection.begin());
+	CHECK(it != collection.end());
+	CHECK(*it == 0);
+
+	const CheckValue<size_t, int> check[] =
+	{
+		{0, 0},
+		{1, 1},
+		{2, 2}
+	};
+
+	checkContents(EXTRA_ARGS, check);
+}
+
+
 TEST_F(VectorFixture, Collection_vector_erase_key)
 {
 	CHECK(collection.erase(1) == 1);
@@ -902,8 +952,8 @@ TEST(Collection_multimap)
 	{
 		{"one", 1},
 		{"one", 11},
-		{"two", 2},
 		{"two", 22},
+		{"two", 2},
 		{"zero", 0}
 	};
 
@@ -989,4 +1039,181 @@ TEST(Collection_downcast)
 	CHECK(v.tryCast(test));
 	CHECK(test == fixture);
 }
+
+
+TEST(Collection_linear_notifications)
+{
+	std::vector< int > fixture;
+	fixture.push_back( 10 );
+	fixture.push_back( 11 );
+	fixture.push_back( 12 );
+
+	Collection c( fixture );
+	size_t counter = 0;
+
+	c.connectPreErase( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 0, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 3, c.size() );
+		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 2, pos.key().cast< size_t >() );
+		CHECK_EQUAL( 12, pos.value().cast< int >() );
+	} );
+
+	c.connectPostErased( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 1, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 2, c.size() );
+		CHECK_EQUAL(c.end(), pos);
+	} );
+
+	c.connectPreInsert( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 2, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 1, pos.key().cast< size_t >() );
+		CHECK_EQUAL( 11, pos.value().cast< int >() );
+	} );
+
+	c.connectPostInserted( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 3, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( 1, pos.key().cast< size_t >() );
+		CHECK_EQUAL( 0, pos.value().cast< int >() );
+	} );
+
+	c.connectPreChange( [&]( Collection::Iterator pos, const Variant& newValue )
+	{
+		CHECK_EQUAL( 4, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 21, newValue.cast< int >() );
+		CHECK_EQUAL( 1, pos.key().cast< size_t >() );
+		CHECK_EQUAL( 0, pos.value().cast< int >() );
+	} );
+
+	c.connectPostChanged( [&]( Collection::Iterator pos, const Variant& oldValue )
+	{
+		CHECK_EQUAL( 5, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 0, oldValue.cast< int >() );
+		CHECK_EQUAL( 1, pos.key().cast< size_t >() );
+		CHECK_EQUAL( 21, pos.value().cast< int >() );
+	} );
+
+	CHECK_EQUAL( 0, counter );
+
+	c.erase( 2 );
+	CHECK_EQUAL( 2, counter );
+
+	auto it = c.insert( 1 );
+	CHECK_EQUAL( 4, counter );
+	CHECK( it.key() == 1 );
+	CHECK( it.value() == 0 );
+
+	it.setValue( 21 );
+	CHECK_EQUAL( 6, counter );
+	CHECK( it.value() == 21 );
+}
+
+
+TEST(Collection_mapping_notifications)
+{
+	std::map< std::string, int > fixture;
+	fixture[ "0 zero" ] = 0;
+	fixture[ "1 one" ] = 1;
+	fixture[ "2 two" ] = 2;
+
+	Collection c( fixture );
+	size_t counter = 0;
+
+	c.connectPreErase( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 0, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 3, c.size() );
+		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( "1 one", pos.key().castRef< const std::string >() );
+		CHECK_EQUAL( 1, pos.value().cast< int >() );
+	} );
+
+	c.connectPostErased( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 1, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 2, c.size() );
+		CHECK_EQUAL(1, count);
+
+		CHECK_EQUAL("2 two", pos.key().castRef< const std::string >());
+		CHECK_EQUAL(2, pos.value().cast< int >());
+	} );
+
+	c.connectPreInsert( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 2, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( "2 two", pos.key().castRef< const std::string >() );
+		CHECK_EQUAL( 2, pos.value().cast< int >() );
+	} );
+
+	c.connectPostInserted( [&]( Collection::Iterator pos, size_t count )
+	{
+		CHECK_EQUAL( 3, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 1, count );
+		CHECK_EQUAL( "1 uno", pos.key().castRef< const std::string >() );
+		CHECK_EQUAL( 0, pos.value().cast< int >() );
+	} );
+
+	c.connectPreChange( [&]( Collection::Iterator pos, const Variant& newValue )
+	{
+		CHECK_EQUAL( 4, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 1, newValue.cast< int >() );
+		CHECK_EQUAL( "1 uno", pos.key().castRef< const std::string >() );
+		CHECK_EQUAL( 0, pos.value().cast< int >() );
+	} );
+
+	c.connectPostChanged( [&]( Collection::Iterator pos, const Variant& oldValue )
+	{
+		CHECK_EQUAL( 5, counter );
+		counter += 1;
+
+		CHECK_EQUAL( 0, oldValue.cast< int >() );
+		CHECK_EQUAL( "1 uno", pos.key().castRef< const std::string >() );
+		CHECK_EQUAL( 1, pos.value().cast< int >() );
+	} );
+
+	CHECK_EQUAL( 0, counter );
+
+	c.erase( "1 one" );
+	CHECK_EQUAL( 2, counter );
+
+	auto it = c.insert( "1 uno" );
+	CHECK_EQUAL( 4, counter );
+	CHECK( it.key() == "1 uno" );
+	CHECK( it.value() == 0 );
+
+	it.setValue( 1 );
+	CHECK_EQUAL( 6, counter );
+	CHECK( it.value() == 1 );
+}
+
 

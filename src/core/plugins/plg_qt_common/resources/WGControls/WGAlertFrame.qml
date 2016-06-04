@@ -26,6 +26,7 @@ WGListView {
 */
 
 Rectangle {
+    id: baseAlertFrame
     objectName: "WGAlertFrame"
 
     /*! This property holds the index of the item within the list of alert messages.
@@ -38,10 +39,12 @@ Rectangle {
     // This can cause binding loops very easily though so we have to be careful that none of the children look to the parent for their height
 
     implicitHeight: childrenRect.height
+    implicitWidth: defaultSpacing.standardMargin
+
     radius: defaultSpacing.standardRadius
     border.width: 1
-    border.color: palette.DarkestShade
-    color: palette.LightShade
+    border.color: palette.darkestShade
+    color: palette.lightShade
 
     // Remove alert when the timer is triggered
 
@@ -100,6 +103,7 @@ Rectangle {
         // Text is an odd exception where it doesn't need a specific height or width - it gets this from the font.pixelSize and the text itself.
         WGMultiLineText {
             id: message
+            objectName: "message"
             text: Value.message
             font.pixelSize: 22
             horizontalAlignment: Text.AlignRight
@@ -111,6 +115,7 @@ Rectangle {
     // Remove the alert on mouse click
     // MouseArea is also outside the Layout and at the bottom so it is highest in the Zorder.
     MouseArea {
+        objectName: "removeAlert"
         anchors.fill: parent
         onClicked: {
             removeAlertAt( index )

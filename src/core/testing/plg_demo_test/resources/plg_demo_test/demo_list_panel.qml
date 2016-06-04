@@ -3,13 +3,14 @@ import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.0
 import BWControls 1.0
 import WGControls 1.0
+import WGCopyableFunctions 1.0
 
 Rectangle {
 	id: root
 	property var title: "SceneBrowser"
 	property var layoutHints: { 'scenebrowser': 0.1 }
 	property var sourceModel: listSource
-	color: palette.MainWindowColor
+	color: palette.mainWindowColor
 	
 	Label {
 		id: searchBoxLabel
@@ -23,6 +24,9 @@ Rectangle {
 		y: 2
 		anchors.left: searchBoxLabel.right
 		anchors.right: parent.right
+		Component.onCompleted: {
+            WGCopyableHelper.disableChildrenCopyable(searchBox);
+        }
 	}
 
 	BWDataChangeNotifier {
@@ -88,7 +92,7 @@ Rectangle {
 					verticalAlignment: Text.AlignVCenter
 					visible: true
 					text: itemData != null ? itemData.Value.name : ""
-					color: palette.TextColor
+					color: palette.textColor
 				}
 			}
 		}

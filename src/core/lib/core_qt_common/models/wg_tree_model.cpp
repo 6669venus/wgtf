@@ -5,7 +5,7 @@
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_qt_common/models/extensions/i_model_extension.hpp"
 #include "core_qt_common/qt_connection_holder.hpp"
-#include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "qt_model_helpers.hpp"
 #include "core_reflection/object_handle.hpp"
 
@@ -17,7 +17,7 @@ class WGTreeModel::Impl
 {
 public:
 	Impl();
-	static QModelIndex calculateParentIndex( const WGTreeModel& self,
+	static QModelIndex calculateModelIndex( const WGTreeModel& self,
 		const IItem* pItem,
 		int column );
 
@@ -25,7 +25,8 @@ public:
 	ITreeModel* model_;
 	QVariant source_;
 	QtModelHelpers::Extensions extensions_;
-	QtConnectionHolder connections_;
+	QtConnectionHolder qtConnections_;
+	ConnectionHolder connections_;
 	QHash< int, QByteArray > roleNames_;
 	QHash< int, QByteArray > defaultRoleNames_;
 };
@@ -34,26 +35,23 @@ public:
 WGTreeModel::Impl::Impl()
 	: qtFramework_( nullptr )
 	, model_( nullptr )
-	, source_()
-	, extensions_()
-	, connections_()
 {
 }
 
 
-QModelIndex WGTreeModel::Impl::calculateParentIndex( const WGTreeModel& self,
-	const IItem* pParentItem,
+QModelIndex WGTreeModel::Impl::calculateModelIndex( const WGTreeModel& self,
+	const IItem* item,
 	int column )
 {
 	ITreeModel* model = self.getModel();
-	if (pParentItem == nullptr || model == nullptr)
+	if (item == nullptr || model == nullptr)
 	{
 		return QModelIndex();
 	}
 
-	auto itemIndex = model->index( pParentItem );
+	auto itemIndex = model->index( item );
 	const int row = static_cast< int >( itemIndex.first );
-	return self.createIndex( row, column, const_cast< IItem * >( pParentItem ) );
+	return self.createIndex( row, column, const_cast< IItem * >( item ) );
 }
 
 
@@ -65,30 +63,34 @@ WGTreeModel::WGTreeModel()
 
 	impl_->qtFramework_ = Context::queryInterface< IQtFramework >();
 
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::sourceChanged, 
 		this, &WGTreeModel::onSourceChanged );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect(
+		this, &WGTreeModel::headerDataChangedThread,
+		this, &WGTreeModel::changeHeaderData,
+		Qt::BlockingQueuedConnection );
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::itemDataAboutToBeChangedThread, 
 		this, &WGTreeModel::beginChangeData,
 		Qt::BlockingQueuedConnection );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::itemDataChangedThread, 
 		this, &WGTreeModel::endChangeData,
 		Qt::BlockingQueuedConnection );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsAboutToBeInsertedThread, 
 		this, &WGTreeModel::beginInsertRows,
 		Qt::BlockingQueuedConnection );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsInsertedThread, 
 		this, &WGTreeModel::endInsertRows,
 		Qt::BlockingQueuedConnection );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsAboutToBeRemovedThread, 
 		this, &WGTreeModel::beginRemoveRows,
 		Qt::BlockingQueuedConnection );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsRemovedThread, 
 		this, &WGTreeModel::endRemoveRows,
 		Qt::BlockingQueuedConnection );
@@ -113,31 +115,31 @@ ITreeModel * WGTreeModel::getModel() const
 void WGTreeModel::registerExtension( IModelExtension * extension )
 {
 	beginResetModel();
-	extension->init( this, impl_->qtFramework_ );
+	extension->init( impl_->qtFramework_ );
 	std::string modelName = this->objectName().toUtf8().constData();
 	extension->loadStates( modelName.c_str() );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::itemDataAboutToBeChanged, 
 		extension, &IModelExtension::onDataAboutToBeChanged );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::itemDataChanged, 
 		extension, &IModelExtension::onDataChanged );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::layoutAboutToBeChanged, 
 		extension, &IModelExtension::onLayoutAboutToBeChanged );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::layoutChanged, 
 		extension, &IModelExtension::onLayoutChanged );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsAboutToBeInserted, 
 		extension, &IModelExtension::onRowsAboutToBeInserted );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsInserted, 
 		extension, &IModelExtension::onRowsInserted );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsAboutToBeRemoved, 
 		extension, &IModelExtension::onRowsAboutToBeRemoved );
-	impl_->connections_ += QObject::connect( 
+	impl_->qtConnections_ += QObject::connect( 
 		this, &WGTreeModel::rowsRemoved, 
 		extension, &IModelExtension::onRowsRemoved );
 	impl_->extensions_.emplace_back( extension );
@@ -151,6 +153,19 @@ void WGTreeModel::registerExtension( IModelExtension * extension )
 	}
 
 	endResetModel();
+}
+
+bool WGTreeModel::decodeRole( int role, size_t & o_RoleId ) const
+{
+	for (const auto& extension: impl_->extensions_)
+	{
+		if (extension->decodeRole( role, o_RoleId ))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 QHash< int, QByteArray > WGTreeModel::roleNames() const
@@ -200,7 +215,7 @@ QModelIndex WGTreeModel::parent( const QModelIndex &child ) const
 	if (parentItem != nullptr)
 	{
 		const int column = 0;
-		return Impl::calculateParentIndex( *this, parentItem, column );
+		return Impl::calculateModelIndex( *this, parentItem, column );
 	}
 
 	return QModelIndex();
@@ -244,6 +259,44 @@ int WGTreeModel::columnCount( const QModelIndex &parent ) const
 	return model->columnCount();
 }
 
+QVariant WGTreeModel::headerData(
+	int section, Qt::Orientation orientation, int role ) const
+{
+	auto model = getModel();
+
+	if (model == nullptr)
+	{
+		return QVariant::Invalid;
+	}
+
+	if (role < Qt::UserRole)
+	{
+		return QVariant( QVariant::Invalid );
+	}
+
+	size_t roleId;
+
+	if (!decodeRole( role, roleId ))
+	{
+		return QVariant::Invalid;
+	}
+
+	return QtHelpers::toQVariant( model->getData( section, roleId ), const_cast<WGTreeModel*>(this) );
+}
+
+QVariant WGTreeModel::headerData( int column, QString roleName ) const
+{
+	auto roles = roleNames().keys( roleName.toUtf8() );
+	
+	if (roles.empty())
+	{
+		return QVariant::Invalid;
+	}
+
+	int roleId = roles.first();
+	return headerData( column, Qt::Horizontal, roleId );
+}
+
 bool WGTreeModel::hasChildren( const QModelIndex &parent ) const
 {
 	ITreeModel* model = getModel();
@@ -284,8 +337,8 @@ QVariant WGTreeModel::data( const QModelIndex &index, int role ) const
 		auto thumbnail = item->getThumbnail( index.column() );
 		if (thumbnail != nullptr)
 		{
-			auto qtImageProvider = dynamic_cast< QtImageProvider * >(
-				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProvider::providerId() ) );
+			auto qtImageProvider = dynamic_cast< QtImageProviderOld * >(
+				impl_->qtFramework_->qmlEngine()->imageProvider( QtImageProviderOld::providerId() ) );
 			if (qtImageProvider != nullptr)
 			{
 				auto imagePath = qtImageProvider->encodeImage( thumbnail );
@@ -337,29 +390,21 @@ const QVariant & WGTreeModel::getSource() const
 void WGTreeModel::setSource( const QVariant & source )
 {
 	beginResetModel();
-	ITreeModel* model = getModel();
-	if (model != nullptr)
-	{
-		model->onPreDataChanged().remove< WGTreeModel, &WGTreeModel::onPreDataChanged >( this );
-		model->onPostDataChanged().remove< WGTreeModel, &WGTreeModel::onPostDataChanged >( this );
-		model->onPreItemsInserted().remove< WGTreeModel, &WGTreeModel::onPreItemsInserted >( this );
-		model->onPostItemsInserted().remove< WGTreeModel, &WGTreeModel::onPostItemsInserted >( this );
-		model->onPreItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPreItemsRemoved >( this );
-		model->onPostItemsRemoved().remove< WGTreeModel, &WGTreeModel::onPostItemsRemoved >( this );
-		model->onDestructing().remove< WGTreeModel, &WGTreeModel::onDestructing >( this );
-	}
+	impl_->connections_.clear();
 	impl_->source_ = source;
 	emit sourceChanged();
-	model = getModel();
+	auto model = getModel();
 	if ( model != nullptr )
 	{
-		model->onDestructing().add< WGTreeModel, &WGTreeModel::onDestructing >( this );
-		model->onPreDataChanged().add< WGTreeModel, &WGTreeModel::onPreDataChanged >( this );
-		model->onPostDataChanged().add< WGTreeModel, &WGTreeModel::onPostDataChanged >( this );
-		model->onPreItemsInserted().add< WGTreeModel, &WGTreeModel::onPreItemsInserted >( this );
-		model->onPostItemsInserted().add< WGTreeModel, &WGTreeModel::onPostItemsInserted >( this );
-		model->onPreItemsRemoved().add< WGTreeModel, &WGTreeModel::onPreItemsRemoved >( this );
-		model->onPostItemsRemoved().add< WGTreeModel, &WGTreeModel::onPostItemsRemoved >( this );
+		using namespace std::placeholders;
+		impl_->connections_ += model->signalDestructing.connect( std::bind( &WGTreeModel::onDestructing, this ) );
+		impl_->connections_ += model->signalModelDataChanged.connect( std::bind( &WGTreeModel::onModelDataChanged, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPreItemDataChanged.connect( std::bind( &WGTreeModel::onPreItemDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalPostItemDataChanged.connect( std::bind( &WGTreeModel::onPostItemDataChanged, this, _1, _2, _3, _4 ) );
+		impl_->connections_ += model->signalPreItemsInserted.connect( std::bind( &WGTreeModel::onPreItemsInserted, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPostItemsInserted.connect( std::bind( &WGTreeModel::onPostItemsInserted, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPreItemsRemoved.connect( std::bind( &WGTreeModel::onPreItemsRemoved, this, _1, _2, _3 ) );
+		impl_->connections_ += model->signalPostItemsRemoved.connect( std::bind( &WGTreeModel::onPostItemsRemoved, this, _1, _2, _3 ) );
 	}
 	endResetModel();
 }
@@ -429,7 +474,7 @@ void WGTreeModel::clearExtensions(
 	}
 
 	treeModel->beginResetModel();
-	treeModel->impl_->connections_.reset();
+	treeModel->impl_->qtConnections_.reset();
 	treeModel->impl_->extensions_.clear();
 	treeModel->impl_->roleNames_ = treeModel->impl_->defaultRoleNames_;
 	treeModel->endResetModel();
@@ -447,16 +492,179 @@ int WGTreeModel::countExtensions(
 	return static_cast< int >( treeModel->impl_->extensions_.size() );
 }
 
-void WGTreeModel::onDestructing(class ITreeModel const *, struct ITreeModel::DestructingArgs const &)
+void WGTreeModel::onDestructing()
 {
 	setSource( QVariant() );
 }
 
-EVENT_IMPL1( WGTreeModel, ITreeModel, DataChanged, ChangeData )
-EVENT_IMPL2( WGTreeModel, ITreeModel, ItemsInserted, InsertRows )
-EVENT_IMPL2( WGTreeModel, ITreeModel, ItemsRemoved, RemoveRows )
+void WGTreeModel::onModelDataChanged( int column, size_t roleId, const Variant & data )
+{
+	auto model = getModel();
+	assert( model != nullptr );
+	this->changeHeaderData( Qt::Orientation::Horizontal, column, column );
+}
 
+void WGTreeModel::onPreItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+{
+	auto model = getModel();
+	assert( model != nullptr );
+	if (item == nullptr)
+	{
+		return;
+	}
 
-EMIT_IMPL1( WGTreeModel, Data, Change, itemData, Changed )
-EMIT_IMPL2( WGTreeModel, QAbstractItemModel, Insert, Rows, rows, Inserted )
-EMIT_IMPL2( WGTreeModel, QAbstractItemModel, Remove, Rows, rows, Removed )
+	const int role = QtModelHelpers::encodeRole( roleId, impl_->extensions_ );
+	if (role < Qt::UserRole)
+	{
+		return;
+	}
+
+	auto index = Impl::calculateModelIndex( *this, item, column );
+	// NGT-1619 Temporary workaround from @s_yuan
+	auto value = QtHelpers::toQVariant( data, this );
+	//this->beginChangeData( index, role, value );
+	this->beginChangeData(index, role, value);
+}
+
+void WGTreeModel::onPostItemDataChanged( const IItem * item, int column, size_t roleId, const Variant & data )
+{
+	auto model = getModel();
+	assert( model != nullptr );
+	if (item == nullptr)
+	{
+		return;
+	}
+
+	const int role = QtModelHelpers::encodeRole( roleId, impl_->extensions_ );
+	if (role < Qt::UserRole)
+	{
+		return;
+	}
+
+	auto index = Impl::calculateModelIndex( *this, item, column );
+	// NGT-1619 Temporary workaround from @s_yuan
+	auto value = QtHelpers::toQVariant( data, this );
+	this->endChangeData( index, role, value );
+	//this->endChangeData( index, role, QVariant() );
+}
+
+void WGTreeModel::onPreItemsInserted( const IItem * parent, size_t index, size_t count )
+{
+	assert( getModel() != nullptr );
+	auto parentIndex = Impl::calculateModelIndex( *this, parent, 0 );
+	const int first = QtModelHelpers::calculateFirst( index );
+	const int last = QtModelHelpers::calculateLast( index, count );
+	this->beginInsertRows( parentIndex, first, last );
+}
+
+void WGTreeModel::onPostItemsInserted( const IItem * parent, size_t index, size_t count )
+{
+	assert( getModel() != nullptr );
+	auto parentIndex = Impl::calculateModelIndex( *this, parent, 0 );
+	const int first = QtModelHelpers::calculateFirst( index );
+	const int last = QtModelHelpers::calculateLast( index, count );
+	this->endInsertRows( parentIndex, first, last );
+}
+
+void WGTreeModel::onPreItemsRemoved( const IItem * parent, size_t index, size_t count )
+{
+	assert( getModel() != nullptr );
+	auto parentIndex = Impl::calculateModelIndex( *this, parent, 0 );
+	const int first = QtModelHelpers::calculateFirst( index );
+	const int last = QtModelHelpers::calculateLast( index, count );
+	this->beginRemoveRows( parentIndex, first, last );
+}
+
+void WGTreeModel::onPostItemsRemoved( const IItem * parent, size_t index, size_t count )
+{
+	assert( getModel() != nullptr );
+	auto parentIndex = Impl::calculateModelIndex( *this, parent, 0 );
+	const int first = QtModelHelpers::calculateFirst( index );
+	const int last = QtModelHelpers::calculateLast( index, count );
+	this->endRemoveRows( parentIndex, first, last );
+}
+
+void WGTreeModel::changeHeaderData( Qt::Orientation orientation, int first, int last )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit headerDataChanged( orientation, first, last );
+	}
+	else
+	{
+		emit headerDataChangedThread( orientation, first, last, QPrivateSignal() );
+	}
+}
+
+void WGTreeModel::beginChangeData( const QModelIndex& index, int role, const QVariant& value )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit itemDataAboutToBeChanged( index, role, value );
+	}
+	else
+	{
+		emit itemDataAboutToBeChangedThread( index, role, value, QPrivateSignal() );
+	}
+}
+
+void WGTreeModel::endChangeData( const QModelIndex &index, int role, const QVariant &value )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit itemDataChanged( index, role, value );
+	}
+	else
+	{
+		emit itemDataChangedThread( index, role, value, QPrivateSignal() );
+	}
+}
+
+void WGTreeModel::beginInsertRows( const QModelIndex &parent, int first, int last )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit QAbstractItemModel::beginInsertRows( parent, first, last );
+	}
+	else
+	{
+		emit rowsAboutToBeInsertedThread( parent, first, last, QPrivateSignal() );
+	}
+}
+
+void WGTreeModel::endInsertRows( const QModelIndex &parent,	int first, int last )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit QAbstractItemModel::endInsertRows();
+	}
+	else
+	{
+		emit rowsInsertedThread( parent, first, last, QPrivateSignal() );
+	}
+}
+
+void WGTreeModel::beginRemoveRows( const QModelIndex &parent, int first, int last )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit QAbstractItemModel::beginRemoveRows( parent, first, last );
+	}
+	else
+	{
+		emit rowsAboutToBeRemovedThread( parent, first, last, QPrivateSignal() );
+	}
+}
+
+void WGTreeModel::endRemoveRows( const QModelIndex &parent,	int first, int last )
+{
+	if (QThread::currentThread() == QCoreApplication::instance()->thread())
+	{
+		emit QAbstractItemModel::endRemoveRows();
+	}
+	else
+	{
+		emit rowsRemovedThread( parent, first, last, QPrivateSignal() );
+	}
+}
+

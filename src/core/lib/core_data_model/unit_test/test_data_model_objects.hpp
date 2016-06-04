@@ -11,6 +11,31 @@
 #include <memory>
 #include <vector>
 
+class TestStringFilter: public StringFilter
+{
+public:
+	TestStringFilter()
+		: filterDescendantsOfMatchingItems_( false )
+	{}
+
+	virtual ~TestStringFilter()
+	{}
+
+	virtual bool filterDescendantsOfMatchingItems() override
+	{
+		return filterDescendantsOfMatchingItems_;
+	}
+
+	void filterDescendantsOfMatchingItems( bool value )
+	{
+		filterDescendantsOfMatchingItems_ = value;
+		signalFilterChanged();
+	}
+
+private:
+	bool filterDescendantsOfMatchingItems_;
+};
+
 //------------------------------------------------------------------------------
 // Test Fixture
 //------------------------------------------------------------------------------
@@ -50,7 +75,7 @@ public:
 
 	// Filters
 	std::vector< std::string > filterTerms_;
-	StringFilter filter_;
+	TestStringFilter filter_;
 };
 
 

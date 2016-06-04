@@ -8,14 +8,11 @@ import BWControls 1.0
  WGListViewRowDelegate will load custom column delegates in its delegate or fall back to a default if none exists.
  WGListViewRowDelegate should only be used within the contexts of a ListView.
  See WGTreeItem for an example of its use.
-
 */
 
 Item {
     id: rowDelegate
-    objectName: "WGListViewRowDelegate"
-    height: minimumRowHeight
-    clip: true
+    objectName: typeof(model.display) != "undefined" ? "WGListViewRowDelegate_" + model.display : "WGListViewRowDelegate"
 
     /*!
         This property defines the indentation before the first element on each row
@@ -45,12 +42,14 @@ Item {
     */
     property var columnDelegates: []
 
-	/*! This property contains the column widths */
+    property var columnSequence: []
+
+    /*! This property contains the column widths */
     property var columnWidths: []
-	
+
     property real columnSpacing: 0
 
-	/*!
+    /*!
         This property describes mouse selection behaviour
     */
     property var selectionExtension: null
@@ -63,10 +62,10 @@ Item {
     property bool showBackgroundColour: false
 
     /*! This property specifies the main colour for the row background */
-    property color backgroundColour: palette.MidDarkColor
+    property color backgroundColour: palette.midDarkColor
 
     /*! This property specifies the alternate colour for the row background */
-    property color alternateBackgroundColour: Qt.darker(palette.MidLightColor,1.2)
+    property color alternateBackgroundColour: Qt.darker(palette.midLightColor,1.2)
 
     /*! This signal is sent on a single click
     */
@@ -107,6 +106,9 @@ Item {
 
         return maxTextWidth;
     }
+
+    height: minimumRowHeight
+    clip: true
 
     MouseArea {
         id: itemMouseArea
@@ -167,7 +169,7 @@ Item {
 
         Rectangle {
             id: selectionHighlight
-            color: hasActiveFocusDelegate ? palette.HighlightShade : "grey"
+            color: hasActiveFocusDelegate ? palette.highlightShade : "grey"
             anchors.fill: itemMouseArea
             anchors.margins: selectionMargin
             visible: !itemMouseArea.pressed && typeof Selected != 'undefined' && Selected
@@ -178,12 +180,20 @@ Item {
             anchors.fill: itemMouseArea
             visible: itemMouseArea.containsMouse
             opacity: 0.5
-            color: palette.HighlightShade
+            color: palette.highlightShade
         }
 
         ListView {
             id: columns
-            model: ColumnModel
+
+            // Adapt from number of columns in the model to the number of
+            // columns in the view.
+            // @see WGListView.columnSequence
+            model: SequenceList {
+                model: ColumnModel
+                sequence: rowDelegate.columnSequence
+            }
+
             x: indentation
             width: Math.max(0, parent.width - indentation)
             anchors.top: parent.top
@@ -215,7 +225,7 @@ Item {
 
                         if (columnWidths.length === 0)
                         {
-                            columnWidth = Math.ceil((rowDelegate.width - rowDelegate.columnSpacing) / columns.count);
+                            columnWidth = Math.ceil(rowDelegate.width / columns.count - rowDelegate.columnSpacing);
                         }
                         else if (columnIndex < columnWidths.length)
                         {

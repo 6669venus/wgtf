@@ -3,22 +3,13 @@
 #define _PYTHON_MAPPING_ITERATOR_HPP
 
 
-#include "core_variant/collection.hpp"
+#include "converters.hpp"
 
-#include "core_script/type_converter_queue.hpp"
+#include "core_reflection/object_handle.hpp"
+#include "core_variant/collection.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
 #include <type_traits>
-
-
-namespace PythonType
-{
-class IConverter;
-} // namespace PythonType
-
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
 
 
 namespace PythonType
@@ -37,12 +28,14 @@ public:
 	typedef PyScript::ScriptObject value_type;
 	typedef MappingIterator this_type;
 
-	MappingIterator( const container_type & container,
+	MappingIterator( const ObjectHandle & containerHandle,
+		const container_type & container,
 		const PyScript::ScriptList::size_type index,
-		const PythonTypeConverters & typeConverters );
-	MappingIterator( const container_type & container,
+		const Converters & typeConverters );
+	MappingIterator( const ObjectHandle & containerHandle,
+		const container_type & container,
 		const key_type & key,
-		const PythonTypeConverters & typeConverters );
+		const Converters & typeConverters );
 
 	const container_type & container() const;
 	key_type rawKey() const;
@@ -58,6 +51,7 @@ public:
 	virtual CollectionIteratorImplPtr clone() const override;
 
 private:
+	ObjectHandle containerHandle_;
 	container_type container_;
 
 	// List and index used for ordering iterators
@@ -67,7 +61,7 @@ private:
 	PyScript::ScriptList::size_type index_;
 
 	key_type key_;
-	const PythonTypeConverters & typeConverters_;
+	const Converters & typeConverters_;
 };
 
 

@@ -57,6 +57,15 @@ Item {
     /*! This property defines what sliderstyle styling component to use for this control */
     property alias style: slider.style
 
+    /*! This property defines what Slider Handle component will be used for the slider handle */
+    property alias handleType: slider.handleType
+
+    /*! This property defines what frame component will be used for the numberbox text box */
+    property alias textBoxStyle: sliderUpperValue.textBoxStyle
+
+    /*! This property defines what frame component will be used for the numberbox buttons */
+    property alias buttonFrame: sliderUpperValue.buttonFrame
+
     /*! This property defines the lower value indicated by the control
         The default value is \c 0.0
     */
@@ -71,10 +80,6 @@ Item {
 
     /*! This property defines the colour of the slider */
     property alias barColor: slider.barColor
-
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias slider: slider
 
     /*! This property determines the prefix string displayed within the slider textbox.
         Typically used to display unit type.
@@ -93,11 +98,10 @@ Item {
     */
     property int decimals: 1
 
-    /*! This property is used to define the buttons label when used in a WGFormLayout
+    /*! This property is used to define the sliders label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*! This property is used to define the width of the number box.
         The default value is the implicit width.
@@ -125,34 +129,11 @@ Item {
     */
     property alias handleClamp: slider.handleClamp
 
-    property alias lowerTextBoxStyle: sliderLowerValue.textBoxStyle
-    property alias lowerButtonFrame: sliderLowerValue.buttonFrame
+    /*! \internal */
+    property bool __horizontal: orientation === Qt.Horizontal
 
-    property alias upperTextBoxStyle: sliderUpperValue.textBoxStyle
-    property alias upperButtonFrame: sliderUpperValue.buttonFrame
-
-    implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
-
-    property alias b_Target: dataBinding.target
-    property alias b_Property: dataBinding.property
-    property alias b_Value: dataBinding.value
-
-    /*! This property holds the target control's id to be bound to this controls b_Value2 */
-    property alias b_Target2: dataBinding2.target
-
-    /*! This property determines b_Target's property which is to be bound to this controls b_Value2 */
-    property alias b_Property2: dataBinding2.property
-
-    /*! This property determines this control's value which will drive b_Target2's b_Property2 */
-    property alias b_Value2: dataBinding2.value
-
-    Binding {
-        id: dataBinding
-    }
-
-    Binding {
-        id: dataBinding2
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
 
     onLowerValueChanged: {
         setValueHelper(slider, "value", sliderFrame.lowerValue);
@@ -199,242 +180,199 @@ Item {
         setValueHelper(slider, "value", sliderFrame.value);
     }
 
-    WGExpandingRowLayout {
+    RowLayout {
+        anchors.fill: parent
+        visible: __horizontal
+
+        Item {
+            id: horizLower
+            visible: showValue
+            Layout.fillHeight: true
+            Layout.preferredWidth: valueBoxWidth
+        }
+        Item {
+            id: horizSlider
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+        Item {
+            id: horizUpper
+            visible: showValue
+            Layout.fillHeight: true
+            Layout.preferredWidth: valueBoxWidth
+        }
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        visible: !__horizontal
+
+        Item {
+            id: vertUpper
+            visible: showValue
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            Layout.preferredWidth: valueBoxWidth
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        }
+
+        Item {
+            id: vertSlider
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+
+        Item {
+            id: vertLower
+            visible: showValue
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            Layout.preferredWidth: valueBoxWidth
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        }
+    }
+
+    WGNumberBox {
+        objectName: "sliderLowerValue"
+        id: sliderLowerValue
+
+        parent: __horizontal ? horizLower : vertLower
+
+        width:  valueBoxWidth
+        height:  defaultSpacing.minimumRowHeight
+
+        visible: showValue
+        decimals: sliderFrame.decimals
+
+        prefix: sliderFrame.prefix
+        suffix: sliderFrame.suffix
+
+        value: sliderFrame.lowerValue
+
+        minimumValue: sliderMinHandle.minimumValue
+        maximumValue: sliderMinHandle.maximumValue
+
+        stepSize: slider.stepSize
+        buttonFrame: sliderFrame.buttonFrame
+        textBoxStyle: sliderFrame.textBoxStyle
+
+        onEditingFinished: {
+            setValueHelper(sliderFrame, "value", value);
+        }
+
+        onValueChanged: {
+            sliderFrame.lowerValue = value
+        }
+
+
+        Binding {
+            target: sliderLowerValue
+            property: "value"
+            value: sliderFrame.lowerValue
+        }
+    }
+
+    WGSlider {
+        objectName: "slider"
+        id: slider
+
+        property bool showValue: true
+
+        stepSize: 1.0
+
+        activeFocusOnPress: true
+
+        parent: __horizontal ? horizSlider : vertSlider
+
         anchors.fill: parent
 
-
-        WGNumberBox {
-            id: sliderLowerValue
-
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-            visible: showValue
-            decimals: decimals
-            Layout.preferredWidth: visible ? valueBoxWidth : 0
-
-            prefix: sliderFrame.prefix
-            suffix: sliderFrame.suffix
-
-            value: sliderFrame.lowerValue
-
-            minimumValue: sliderMinHandle.minimumValue
-            maximumValue: sliderMinHandle.maximumValue
-
-            stepSize: slider.stepSize
-
-            onEditingFinished: {
+        onPressedChanged:{
+            if(!pressed)
+            {
                 setValueHelper(sliderFrame, "value", value);
             }
+        }
+
+
+        WGRangeSliderHandle {
+            id: sliderMinHandle
+            minimumValue: slider.minimumValue
+            maximumValue: sliderMaxHandle.value
+            showBar: false
+            rangePartnerHandle: sliderMaxHandle
+            value: sliderFrame.lowerValue
+            maxHandle: false
 
             onValueChanged: {
                 sliderFrame.lowerValue = value
             }
 
-
             Binding {
-                target: sliderLowerValue
+                target: sliderMinHandle
                 property: "value"
                 value: sliderFrame.lowerValue
             }
         }
 
-        WGSlider {
-            id: slider
-
-            property bool showValue: true
-
-            stepSize: 1.0
-
-            activeFocusOnPress: true
-
-            Layout.fillWidth: true
-
-            Layout.preferredHeight: Math.round(sliderFrame.height)
-
-            onPressedChanged:{
-                if(!pressed)
-                {
-                    setValueHelper(sliderFrame, "value", value);
-                }
-            }
-
-            WGSliderHandle {
-                id: sliderMinHandle
-                minimumValue: 0
-                maximumValue: sliderMaxHandle.value
-                showBar: false
-                rangePartnerHandle: sliderMaxHandle
-                value: sliderFrame.lowerValue
-                maxHandle: false
-
-                onValueChanged: {
-                    sliderFrame.lowerValue = value
-                }
-
-                Binding {
-                    target: sliderMinHandle
-                    property: "value"
-                    value: sliderFrame.lowerValue
-                }
-            }
-
-            WGSliderHandle {
-                id: sliderMaxHandle
-                minimumValue: sliderMinHandle.value
-                maximumValue: 100
-                showBar: true
-                barMinPos: sliderMinHandle.range.position
-                rangePartnerHandle: sliderMinHandle
-                value: sliderFrame.upperValue
-                maxHandle: true
-
-                onValueChanged: {
-                    sliderFrame.upperValue = value
-                }
-
-                Binding {
-                    target: sliderMaxHandle
-                    property: "value"
-                    value: sliderFrame.upperValue
-                }
-            }
-
-            style : WGSliderStyle{
-
-                handle: Item {
-                    id: handleFrame
-                    implicitWidth: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-                    implicitHeight: defaultSpacing.minimumRowHeight - defaultSpacing.rowSpacing * 2
-
-                    WGButtonFrame {
-                        color: control.enabled ? control.__handlePosList.children[buttonid].handleColor : palette.MainWindowColor
-                        borderColor: control.enabled ? palette.DarkerShade : palette.DarkShade
-                        highlightColor: control.__hoveredHandle === buttonid ? palette.LighterShade : "transparent"
-                        innerBorderColor: control.__activeHandle === buttonid && control.activeFocus ? palette.HighlightShade : "transparent"
-
-                        anchors.top: {
-                            if(__horizontal)
-                            {
-                                !control.__handlePosList.children[buttonid].maxHandle ? parent.top : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-                        anchors.bottom: {
-                            if(__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].maxHandle ? parent.bottom : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-                        anchors.left: {
-                            if(!__horizontal)
-                            {
-                                !control.__handlePosList.children[buttonid].maxHandle ? parent.left : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-                        anchors.right: {
-                            if(!__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].maxHandle ? parent.right : undefined
-                            }
-                            else
-                            {
-                                undefined
-                            }
-                        }
-
-                        height:{
-                            if(__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].__overlapping ? parent.height / 2 : parent.height
-                            }
-                            else
-                            {
-                                parent.implicitHeight
-                            }
-                        }
-
-                        width: {
-                            if(!__horizontal)
-                            {
-                                control.__handlePosList.children[buttonid].__overlapping ? parent.width / 2 : parent.width
-                            }
-                            else
-                            {
-                                parent.implicitWidth
-                            }
-                        }
-
-                        Behavior on height{
-                            enabled: __horizontal
-                            NumberAnimation {
-                                duration: 120
-                                easing {
-                                    type: Easing.OutCirc
-                                    amplitude: 1.0
-                                    period: 0.5
-                                }
-                            }
-                        }
-
-                        Behavior on width{
-                            enabled: !__horizontal
-                            NumberAnimation {
-                                duration: 120
-                                easing {
-                                    type: Easing.OutCirc
-                                    amplitude: 1.0
-                                    period: 0.5
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        WGNumberBox {
-            id: sliderUpperValue
-
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-            visible: showValue
-            decimals: decimals
-            Layout.preferredWidth: visible ? valueBoxWidth : 0
-
-            prefix: sliderFrame.prefix
-            suffix: sliderFrame.suffix
-
+        WGRangeSliderHandle {
+            id: sliderMaxHandle
+            minimumValue: sliderMinHandle.value
+            maximumValue: slider.maximumValue
+            showBar: true
+            barMinPos: Math.round((((sliderMinHandle.value - slider.minimumValue) / (slider.maximumValue - slider.minimumValue)) * parentSlider.__clampedLength) + slider.__visualMinPos)
+            rangePartnerHandle: sliderMinHandle
             value: sliderFrame.upperValue
-
-            minimumValue: sliderMaxHandle.minimumValue
-
-            maximumValue: sliderMaxHandle.maximumValue
-
-            stepSize: slider.stepSize
-
-            onEditingFinished: {
-                setValueHelper(sliderFrame, "value", value);
-            }
+            maxHandle: true
 
             onValueChanged: {
                 sliderFrame.upperValue = value
             }
 
-
             Binding {
-                target: sliderUpperValue
+                target: sliderMaxHandle
                 property: "value"
                 value: sliderFrame.upperValue
             }
         }
     }
+
+    WGNumberBox {
+        objectName: "sliderUpperValue"
+        id: sliderUpperValue
+
+        parent: __horizontal ? horizUpper : vertUpper
+
+        width:  valueBoxWidth
+        height:  defaultSpacing.minimumRowHeight
+
+        visible: showValue
+        decimals: sliderFrame.decimals
+
+        prefix: sliderFrame.prefix
+        suffix: sliderFrame.suffix
+
+        value: sliderFrame.upperValue
+
+        minimumValue: sliderMaxHandle.minimumValue
+
+        maximumValue: sliderMaxHandle.maximumValue
+
+        stepSize: slider.stepSize
+
+        onEditingFinished: {
+            setValueHelper(sliderFrame, "value", value);
+        }
+
+        onValueChanged: {
+            sliderFrame.upperValue = value
+        }
+
+
+        Binding {
+            target: sliderUpperValue
+            property: "value"
+            value: sliderFrame.upperValue
+        }
+    }
+
+    /*! Deprecated */
+    property alias label_: sliderFrame.label
 }

@@ -257,7 +257,7 @@ int UnitTestTreeModel::columnCount() const
 UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem * parent, std::string & data, InsertAt where )
 {
 	size_t index = where == InsertAt::BACK ? size( parent ) : 0;
-	notifyPreItemsInserted( parent, index, 1 );
+	signalPreItemsInserted( parent, index, 1 );
 	
 	UnitTestTreeItem* item = new UnitTestTreeItem( impl_->copyString( data ), parent );
 	impl_->data_.emplace( item, std::vector< UnitTestTreeItem * >() );
@@ -272,13 +272,13 @@ UnitTestTreeItem * UnitTestTreeModel::insert( const UnitTestTreeItem * parent, s
 		impl_->data_[parent].push_back( item );
 	}
 
-	notifyPostItemsInserted( parent, index, 1 );
+	signalPostItemsInserted( parent, index, 1 );
 	return item;
 }
 
 void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem * parent )
 {
-	notifyPreItemsRemoved( parent, index, 1 );
+	signalPreItemsRemoved( parent, index, 1 );
 
 	// Remove this item's children first
 	auto subItem = item( index, parent );
@@ -292,7 +292,7 @@ void UnitTestTreeModel::erase( size_t index, const UnitTestTreeItem * parent )
 	impl_->data_.erase( impl_->data_[parent][index] );
 	impl_->data_[parent].erase( impl_->data_[parent].begin() + index );
 
-	notifyPostItemsRemoved( parent, index, 1 );
+	signalPostItemsRemoved( parent, index, 1 );
 }
 
 void UnitTestTreeModel::update( size_t index, const UnitTestTreeItem * parent, std::string & data )
@@ -309,11 +309,11 @@ void UnitTestTreeModel::update( size_t index, const UnitTestTreeItem * parent, s
 		return;
 	}
 
-	notifyPreDataChanged( treeItem, 0, ValueRole::roleId_, data );
+	signalPreItemDataChanged( treeItem, 0, ValueRole::roleId_, data );
 
 	unitTestTreeItem->setName( impl_->copyString( data ) );
 	
-	notifyPostDataChanged( treeItem, 0, ValueRole::roleId_, data );
+	signalPostItemDataChanged( treeItem, 0, ValueRole::roleId_, data );
 }
 
 
@@ -457,11 +457,11 @@ void TestFixture::updateListItemAtIndex( unsigned int index, const char * value 
 	auto item = list.item( index );
 	assert( item );
 
-	list.notifyPreDataChanged( item, 0, ValueRole::roleId_, value );
+	list.signalPreItemDataChanged( item, 0, ValueRole::roleId_, value );
 
 	item->setData( 0, ValueRole::roleId_, value );
 
-	list.notifyPostDataChanged( item, 0, ValueRole::roleId_, value );
+	list.signalPostItemDataChanged( item, 0, ValueRole::roleId_, value );
 }
 
 

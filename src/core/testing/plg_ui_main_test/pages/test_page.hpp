@@ -30,8 +30,8 @@ private:
 	void setTextField( const std::wstring & text );
 	void getTextField( std::wstring * text ) const;
 
-	void setSlideData( const int & length );
-	void getSlideData( int * length ) const;
+	void setSlideData(const double & length);
+	void getSlideData(double * length) const;
 
 	static int getSlideMaxData();
 	static int getSlideMinData();
@@ -90,7 +90,7 @@ private:
 	bool bChecked_;
 	bool boolTest_;
 	std::wstring text_;
-	int curSlideData_;
+	double curSlideData_;
 	int curNum_;
 	int curSelected_;
 	int enumValue_;

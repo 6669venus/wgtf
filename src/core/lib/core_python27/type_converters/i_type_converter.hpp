@@ -46,7 +46,7 @@ public:
 	 *	@return true on success.
 	 */
 	virtual bool toScriptType( const Variant & inVariant,
-		PyScript::ScriptObject & outObject ) = 0;
+		PyScript::ScriptObject & outObject, void* userData = nullptr ) = 0;
 };
 
 

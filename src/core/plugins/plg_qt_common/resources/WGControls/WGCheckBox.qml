@@ -8,49 +8,50 @@ import BWControls 1.0
 Example:
 \code{.js}
 WGCheckBox {
-    label_: "Option"
+    label: "Option"
     text: "Save Automatically?"
 }
 \endcode
 */
 
-CheckBox {
+WGCheckBase {
     id: checkBox
     objectName: "WGCheckBox"
 
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
-    /*! This property determines the default checked state of the control
-        The default value is \c false
+    /*! This property determines the checked state of the control
+        The default value is false
     */
-    property bool checkState: false
+    property bool checked: false
+
+    checkedState: Qt.Unchecked
 
     activeFocusOnTab: enabled
 
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    implicitHeight: defaultSpacing.minimumRowHeight
 
-    /*! This property holds the target control's id to be bound to this control's b_Value */
-    property alias b_Target: dataBinding.target
-
-    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
-    property alias b_Property: dataBinding.property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
-
-    onClicked: {
-        setValueHelper( checkBox, "checkState", (checkedState === Qt.Checked) ? true : false );
-    }
-    onCheckStateChanged: {
-        checked = checkState ? true : false;
+    onCheckedStateChanged: {
+        if (checkedState === Qt.PartiallyChecked) {
+            partiallyCheckedEnabled = true;
+            setValueHelper( checkBox, "checked", false);
+        } else {
+            setValueHelper( checkBox, "checked", checkedState === Qt.Checked);
+        }
     }
 
-    Binding {
-        id: dataBinding
+    onCheckedChanged: {
+        if (!partiallyCheckedEnabled)
+        {
+            checkedState = checked ? Qt.Checked : Qt.Unchecked
+        }
+        else if (checked)
+        {
+            checkedState = Qt.Checked
+        }
     }
 
     // support copy&paste
@@ -61,11 +62,11 @@ CheckBox {
             id: copyableObject
 
             onDataCopied : {
-                setValue( checkBox.checkState )
+                setValue( checkBox.checked )
             }
 
             onDataPasted : {
-                setValueHelper( checkBox, "checkState", data );
+                setValueHelper( checkBox, "checked", data );
             }
         }
 
@@ -89,4 +90,6 @@ CheckBox {
     style: WGCheckStyle {
     }
 
+    /*! Deprecated */
+    property alias label_: checkBox.label
 }

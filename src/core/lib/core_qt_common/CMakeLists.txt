@@ -10,12 +10,15 @@ find_package(QT5)
 
 include_directories(.)
 
-ADD_DEFINITIONS( -DQT_DECLARATIVE_DEBUG )
-ADD_DEFINITIONS( -DQT_QML_DEBUG )
-
 SET( DATA_MODEL_SRCS
 	models/data_change_notifier.cpp
 	models/data_change_notifier.hpp
+	models/qt_abstract_item_model.cpp
+	models/qt_abstract_item_model.hpp
+	models/qt_collection_model.cpp
+	models/qt_collection_model.hpp
+	models/qt_item_model.cpp
+	models/qt_item_model.hpp
 	models/qt_model_helpers.cpp
 	models/qt_model_helpers.hpp
 	models/qt_model_macros.hpp
@@ -50,22 +53,33 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/asset_item_extension.hpp
 	models/extensions/column_extension.cpp
 	models/extensions/column_extension.hpp
+	models/extensions/column_extension_old.cpp
+	models/extensions/column_extension_old.hpp
 	models/extensions/component_extension.cpp
 	models/extensions/component_extension.hpp
+	models/extensions/component_extension_old.cpp
+	models/extensions/component_extension_old.hpp
+	models/extensions/list_extension.cpp
+	models/extensions/list_extension.hpp
 	models/extensions/selection_extension.cpp
 	models/extensions/selection_extension.hpp
 	models/extensions/tree_extension.cpp
 	models/extensions/tree_extension.hpp
+	models/extensions/tree_extension_old.cpp
+	models/extensions/tree_extension_old.hpp
 	models/extensions/value_extension.cpp
 	models/extensions/value_extension.hpp
 	models/extensions/thumbnail_extension.cpp
 	models/extensions/thumbnail_extension.hpp
-	models/extensions/i_model_extension.hpp
+	models/extensions/image_extension.cpp
+	models/extensions/image_extension.hpp
 	models/extensions/i_model_extension.hpp
 	models/extensions/buttons_model_extension.hpp
 	models/extensions/buttons_model_extension.cpp
 	models/extensions/buttons_definition_extension.hpp
 	models/extensions/buttons_definition_extension.cpp
+	models/extensions/header_footer_text_extension.cpp
+	models/extensions/header_footer_text_extension.hpp
 )
 SOURCE_GROUP( "DataModel\\Extensions" FILES ${DATA_MODEL_EXTENSIONS_SRCS} )
 
@@ -88,25 +102,16 @@ SOURCE_GROUP( "Helpers" FILES ${HELPERS_SRCS} )
 
 
 SET( CONTROLS_SRC
-	controls/bw_checkbox.hpp
-	controls/bw_checkbox.cpp
-	controls/bw_checkbox.qml
-	controls/bw_combobox.hpp
-	controls/bw_combobox.cpp
-	controls/bw_combobox.qml
 	controls/bw_copyable.hpp
 	controls/bw_copyable.cpp
 	controls/bw_filedialog_qi.hpp
 	controls/bw_filedialog_qi.cpp
-	controls/bw_textfield.hpp
-	controls/bw_textfield.cpp
-	controls/bw_textfield.qml
-	controls/popup_window.hpp
-	controls/popup_window.cpp
 	controls/wg_action.hpp
 	controls/wg_action.cpp
 	controls/wg_context_menu.hpp
 	controls/wg_context_menu.cpp
+	controls/wg_item_view.hpp
+	controls/wg_item_view.cpp
 )
 SOURCE_GROUP( "Controls" FILES ${CONTROLS_SRC} )
 
@@ -116,20 +121,16 @@ SET( INTERFACES
 SOURCE_GROUP( "Interface" FILES ${INTERFACES} )
 
 
-SET( RESOURCE_FILES
-	qt_common.qrc
-)
-SOURCE_GROUP( "Resource Files" FILES ${RESOURCE_FILES} )
-qt5_add_resources( COMPILED_RESOURCES ${RESOURCE_FILES} )
-SOURCE_GROUP( "Compiled Resources" FILES ${COMPILED_RESOURCES} )
-
-
 SET( ALL_SRCS
 	shared_controls.hpp
 	shared_controls.cpp
 	i_qt_framework.hpp
 	i_qt_type_converter.hpp
 	i_qt_view.hpp
+	image_qt_type_converter.hpp
+	image_qt_type_converter.cpp
+	model_qt_type_converter.hpp
+	model_qt_type_converter.cpp
 	string_qt_type_converter.hpp
 	vector_qt_type_converter.hpp
 	qml_component.cpp
@@ -140,6 +141,8 @@ SET( ALL_SRCS
 	qt_action_manager.hpp
 	qt_image_provider.cpp
 	qt_image_provider.hpp
+	qt_image_provider_old.cpp
+	qt_image_provider_old.hpp
 	qt_connection_holder.hpp
 	qt_connection_holder.cpp
 	qt_new_handler.hpp
@@ -166,6 +169,7 @@ SET( ALL_SRCS
 	qt_tool_bar.hpp
 	qt_context_menu.cpp
 	qt_context_menu.hpp
+	qt_qlist_memory_fix.hpp
 )
 SOURCE_GROUP( "" FILES ${ALL_SRCS} )
 
@@ -179,22 +183,24 @@ BW_BLOB_SOURCES( BLOB_SRCS
 	${INTERFACES}
 )
 BW_ADD_LIBRARY( core_qt_common ${BLOB_SRCS}
-	${RESOURCE_FILES}
-	${COMPILED_RESOURCES}
 )
 
-BW_TARGET_LINK_LIBRARIES( core_qt_common
-    core_reflection
+BW_TARGET_LINK_LIBRARIES( core_qt_common INTERFACE
+	core_reflection
 	core_data_model
 	core_logging
 	core_string_utils
-    Qt5::Core
-    Qt5::Gui
-    Qt5::QuickWidgets
-    Qt5::Quick
-    Qt5::UiTools
-    Qt5::Xml
 )
+BW_TARGET_LINK_LIBRARIES( core_qt_common PRIVATE
+	Qt5::Core
+	Qt5::Gui
+	Qt5::QuickWidgets
+	Qt5::Quick
+	Qt5::UiTools
+	Qt5::Xml
+)
+
+INCLUDE_DIRECTORIES(${Qt5Core_PRIVATE_INCLUDE_DIRS})
 
 BW_PROJECT_CATEGORY( core_qt_common "NGT Libs" )
 

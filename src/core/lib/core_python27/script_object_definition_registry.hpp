@@ -1,17 +1,24 @@
 #pragma once
+
 #include "core_dependency_system/di_ref.hpp"
 #include "core_dependency_system/i_interface.hpp"
 #include "i_script_object_definition_registry.hpp"
 #include "wg_pyscript/py_script_object.hpp"
 
-#include <map>
 #include <mutex>
+#include <vector>
 
 
 class IClassDefinition;
 class IComponentContext;
 class IDefinitionHelper;
 class IDefinitionManager;
+
+
+namespace ReflectedPython
+{
+
+
 struct ScriptObjectDefinitionDeleter;
 
 
@@ -37,7 +44,12 @@ public:
 	 *		Must not be null.
 	 *	@return an existing definition or a newly added definition.
 	 */
-	virtual std::shared_ptr<IClassDefinition> getDefinition( const PyScript::ScriptObject& object ) override;
+	virtual std::shared_ptr< IClassDefinition > findOrCreateDefinition(
+		const PyScript::ScriptObject & object ) override;
+
+	virtual std::shared_ptr< IClassDefinition > findDefinition(
+		const PyScript::ScriptObject & object ) override;
+
 	virtual const RefObjectId & getID(
 		const PyScript::ScriptObject & object ) override;
 
@@ -47,30 +59,25 @@ private:
 
 	friend struct ScriptObjectDefinitionDeleter;
 
-	/**
-	 *	Key compare functor.
-	 *	Need to do a deep compare on PyScript::ScriptObject to prevent getting
-	 *	copies of the same object added to the map.
-	 */
-	class ScriptObjectCompare
-	{
-	public:
-		bool operator()( const PyScript::ScriptObject & a,
-			const PyScript::ScriptObject & b ) const
-		{
-			return a.compareTo( b, PyScript::ScriptErrorPrint() ) < 0;
-		}
-	};
-	typedef std::map< PyScript::ScriptObject,
-		std::weak_ptr< IClassDefinition >,
-		ScriptObjectCompare > DefinitionMap;
-	DefinitionMap definitions_;
+	template< typename PAIR_T >
+	friend class PairMatch;
+	typedef std::pair< PyScript::ScriptObject, std::weak_ptr< IClassDefinition > >
+		DefinitionPair;
+	typedef std::vector< DefinitionPair > DefinitionLookup;
+	DefinitionLookup definitions_;
+	// TODO replace mutex with a check that it's the main thread
+	// because Python scripts should only be run from a single thread
 	std::mutex definitionsMutex_;
+
 	IComponentContext& context_;
 	DIRef< IDefinitionManager > definitionManager_;
 	std::unique_ptr< IDefinitionHelper > definitionHelper_;
-	typedef std::map< PyScript::ScriptObject,
-		RefObjectId,
-		ScriptObjectCompare > IDMap;
-	IDMap idMap_;
+
+	typedef std::pair< PyScript::ScriptObject, RefObjectId > IdPair;
+	typedef std::vector< IdPair > IdLookup;
+	IdLookup ids_;
 };
+
+
+} // namespace ReflectedPython
+

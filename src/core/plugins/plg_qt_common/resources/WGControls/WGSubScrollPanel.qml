@@ -9,9 +9,9 @@ Example:
 \code{.js}
 WGSubScrollPanel {
     implicitHeight: 100
-    childObject_:
+    childObject:
         WGFormLayout {
-        localForm_: true
+        localForm: true
             WGLabel{
                 text: "Some text"
             }
@@ -20,7 +20,7 @@ WGSubScrollPanel {
                 model: 10
                 WGPushButton {
                     text: "Button"
-                    label_: "Repeated Label: "
+                    label: "Repeated Label: "
                 }
             }
         }
@@ -31,4 +31,11 @@ WGSubScrollPanel {
 WGScrollPanel {
     objectName: "WGSubScrollPanel"
     anchors.bottom: undefined
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+
+    childObject_:
+        Text {
+            text: "Warning: WGSubScrollPanel has no childObject defined"
+            color: "orange"
+        }
 }

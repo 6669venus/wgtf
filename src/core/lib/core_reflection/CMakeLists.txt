@@ -20,6 +20,7 @@ SOURCE_GROUP( "Interfaces" FILES ${INTERFACES_SRCS} )
 SET( ALL_SRCS
 	object_handle.cpp
 	object_handle.hpp
+	object_handle_storage.cpp
 	object_handle_storage.hpp
 	object_handle_storage_shared.hpp
 	object_handle_variant_storage.cpp
@@ -90,7 +91,7 @@ BW_BLOB_SOURCES( BLOB_SRCS
 )
 BW_ADD_LIBRARY( core_reflection ${BLOB_SRCS} )
 
-BW_TARGET_LINK_LIBRARIES( core_reflection INTERFACE
+BW_TARGET_LINK_LIBRARIES( core_reflection PRIVATE
 	core_variant
 	core_logging
 	wg_types

@@ -2,8 +2,10 @@
 
 #include "sequence_iterator.hpp"
 
-#include "i_type_converter.hpp"
+#include "converters.hpp"
 
+#include "core_reflection/interfaces/i_class_definition.hpp"
+#include "core_reflection/object_handle.hpp"
 #include "core_variant/variant.hpp"
 
 #include <cassert>
@@ -58,10 +60,12 @@ bool setItem< PyScript::ScriptSequence >(
 
 
 template< typename T >
-SequenceIterator< T >::SequenceIterator( const container_type & container,
+SequenceIterator< T >::SequenceIterator( const ObjectHandle & containerHandle,
+	const container_type & container,
 	typename SequenceIterator< T >::key_type index,
-	const PythonTypeConverters & typeConverters )
-	: container_( container )
+	const Converters & typeConverters )
+	: containerHandle_( containerHandle )
+	, container_( container )
 	, index_( index )
 	, typeConverters_( typeConverters )
 {
@@ -119,7 +123,11 @@ Variant SequenceIterator< T >::value() const /* override */
 	PyScript::ScriptObject item = Detail::getItem< T >( container_, index_ );
 	
 	Variant result;
-	const bool success = typeConverters_.toVariant( item, result );
+	std::string childPath;
+	childPath += INDEX_OPEN;
+	childPath += std::to_string( index_ );
+	childPath += INDEX_CLOSE;
+	const bool success = typeConverters_.toVariant( item, result, containerHandle_, childPath );
 	return result;
 }
 

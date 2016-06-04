@@ -10,9 +10,15 @@
 
 #include <codecvt>
 
+bool CompareWStrings(const wchar_t * a, const wchar_t * b)
+{
+	return wcscmp(a, b) < 0;
+}
+
 ReflectedObjectItem::ReflectedObjectItem( const ObjectHandle & object, ReflectedItem * parent )
 	: ReflectedItem( parent, parent ? parent->getPath() + "." : "" )
 	, object_( object )
+	, groups_(CompareWStrings)
 {
 }
 
@@ -78,132 +84,92 @@ Variant ReflectedObjectItem::getData( int column, size_t roleId ) const
 	{
 		return this->getPath();
 	}
+    else if (roleId == ObjectRole::roleId_)
+    {
+        return getObject();;
+    }
+    else if (roleId == RootObjectRole::roleId_)
+    {
+        return getRootObject();
+    }
 
 	return Variant();
 }
 
 bool ReflectedObjectItem::setData(int column, size_t roleId, const Variant & data)
 {
-	assert( false && "Not implemented" );
+	if(roleId == ValueRole::roleId_)
+	{
+		ObjectHandle other;
+		if(!data.tryCast(other))
+			return false;
+
+		auto definitionManager = getDefinitionManager();
+		if(definitionManager == nullptr)
+			return false;
+
+		auto obj = getRootObject();
+		auto definition = obj.getDefinition(*definitionManager);
+		auto otherDef = other.getDefinition(*definitionManager);
+		if(definition != otherDef)
+			return false;
+
+		for(auto prop : definition->allProperties())
+		{
+			auto accessor = definition->bindProperty(prop->getName(), obj);
+			auto otherAccessor = definition->bindProperty(prop->getName(), other);
+			if(accessor.canSetValue())
+			{
+				assert(otherAccessor.canGetValue());
+				accessor.setValue(otherAccessor.getValue());
+			}
+		}
+		if(getParent())
+		{
+			return getParent()->setData(column, roleId, obj);
+		}
+		return true;
+	}
 	return false;
 }
 
 
 GenericTreeItem * ReflectedObjectItem::getChild( size_t index ) const
 {
-	if (children_.size() <= index )
-	{
-		children_.reserve( index + 1 );
-		while (children_.size() <= index)
-		{
-			children_.emplace_back( nullptr );
-		}
-	}
+	if(children_.size() > index)
+		return children_[index].get();
 
-	auto child = children_[index].get();
-	if (child != NULL)
-	{
-		return child;
-	}
+	size_t currentIndex = 0;
+	EnumerateChildren([&currentIndex, index](ReflectedItem& item){
+		return (currentIndex++ == index);
+	});
 
-	size_t i = 0;
-
-	IBasePropertyPtr property = nullptr;
-	const MetaGroupObj * groupObj = nullptr;
-
-	auto definition = getDefinition();
-	if (definition == nullptr)
-	{
-		return nullptr;
-	}
-
-	auto properties = definition->allProperties();
-	auto it = properties.begin();
-
-	auto comp = []( const wchar_t * a, const wchar_t * b )
-	{
-		return wcscmp( a, b ) < 0;
-	};
-	std::set< const wchar_t *, bool (*)( const wchar_t *, const wchar_t * ) > groups( comp );
-	for (; i <= index && it != properties.end(); ++it)
-	{
-		property = *it;
-		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
-		if (groupObj == nullptr ||
-			!groups.insert( groupObj->getGroupName() ).second)
-		{
-			continue;
-		}
-		++i;
-	}
-
-	if (i > index)
-	{
-		child = new ReflectedGroupItem( groupObj, 
-			const_cast< ReflectedObjectItem * >( this ) );
-		children_[index] = std::unique_ptr< ReflectedItem >( child );
-		return child;
-	}
-
-	it = properties.begin();
-	for (; i <= index && it != properties.end(); ++it)
-	{
-		property =*it;
-		groupObj = findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
-		if (groupObj != nullptr)
-		{
-			continue;
-		}
-		++i;
-	}
-
-	// Must always return at least 1 child
-	// @see ReflectedObjectItem::size()
-	assert( property != nullptr );
-	child = new ReflectedPropertyItem( property, 
-		const_cast< ReflectedObjectItem * >( this ) );
-	children_[index] = std::unique_ptr< ReflectedItem >( child );
-	return child;
+	if(currentIndex > 0)
+		return children_[--currentIndex].get();
+	return nullptr;
 }
 
 bool ReflectedObjectItem::empty() const
 {
-	// always return at least one child
-	return false;
+	bool isEmpty = true;
+	EnumerateChildren([&isEmpty](ReflectedItem&){
+		isEmpty = false;
+		return false;
+	});
+	return isEmpty;
 }
 
 size_t ReflectedObjectItem::size() const
 {
-	auto definition = getDefinition();
-	if (definition == nullptr)
-	{
-		return 1;
-	}
-
-	auto properties = definition->allProperties();
 	size_t count = 0;
 
-	auto comp = []( const wchar_t * a, const wchar_t * b )
-	{
-		return wcscmp( a, b ) < 0;
-	};
-	std::set< const wchar_t *, bool (*)( const wchar_t *, const wchar_t * ) > groups( comp );
-	for (auto it = properties.begin(); it != properties.end(); ++it)
-	{
-		auto property = *it;
-		auto groupObj =	findFirstMetaData< MetaGroupObj >( *property, *getDefinitionManager() );
-		if (groupObj != nullptr &&
-			!groups.insert( groupObj->getGroupName() ).second)
-		{
-			continue;
-		}
+	EnumerateChildren([&count](ReflectedItem&){
 		++count;
-	}
+		return true;
+	});
 
-	// always return at least one child
-	return count > 0 ? count : 1;
+	return count;
 }
-
 
 //==============================================================================
 bool ReflectedObjectItem::preSetValue(
@@ -244,74 +210,54 @@ bool ReflectedObjectItem::postSetValue(
 	return false;
 }
 
-bool ReflectedObjectItem::preItemsInserted( const PropertyAccessor & accessor, 
-	const Collection::ConstIterator & pos, size_t count )
+void ReflectedObjectItem::EnumerateChildren(const ReflectedItemCallback& callback) const
 {
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
+	// Get the groups and iterate them first
+	const auto& groups = GetGroups();
 
-		if ((*it)->preItemsInserted( accessor, pos, count ))
-		{
-			return true;
-		}
+	// This will iterate all the groups and any cached children
+	for(auto& child : children_)
+	{
+		if(!callback(*child.get()))
+			return;
 	}
-	return false;
+
+	// ReflectedGroupItem children handle grouped items
+	int skipChildCount = static_cast<int>(children_.size() - groups.size());
+	auto parent = const_cast<ReflectedObjectItem*>(this);
+	EnumerateVisibleProperties([&](IBasePropertyPtr property, const std::string & inplacePath)
+	{
+		bool isGrouped = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager()) != nullptr;
+		if ( !isGrouped )
+		{
+			// Skip already iterated children
+			if ( --skipChildCount < 0 )
+			{
+				children_.emplace_back(new ReflectedPropertyItem(property, parent, inplacePath));
+				return callback(*children_.back().get());
+			}
+		}
+		return true;
+	});
+	return;
 }
 
-bool ReflectedObjectItem::postItemsInserted( const PropertyAccessor & accessor, 
-	const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
+ReflectedObjectItem::Groups& ReflectedObjectItem::GetGroups() const
 {
-	for (auto it = children_.begin(); it != children_.end(); ++it)
+	auto definition = getDefinition();
+	if ( !groups_.empty() || definition == nullptr)
 	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsInserted( accessor, begin, end ))
-		{
-			return true;
-		}
+		return groups_;
 	}
-	return false;
-}
 
-bool ReflectedObjectItem::preItemsRemoved( const PropertyAccessor & accessor,
-	const Collection::ConstIterator & begin, const Collection::ConstIterator & end )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
+	auto parent = const_cast<ReflectedObjectItem *>( this );
+	EnumerateVisibleProperties([this, parent](IBasePropertyPtr property, const std::string & inplacePath){
+		const MetaGroupObj * groupObj = findFirstMetaData< MetaGroupObj >(*property, *getDefinitionManager());
+		if ( groupObj != nullptr && groups_.insert(groupObj->getGroupName()).second )
 		{
-			continue;
+			children_.emplace_back( new ReflectedGroupItem( groupObj, parent, inplacePath ) );
 		}
-
-		if ((*it)->preItemsRemoved( accessor, begin, end ))
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ReflectedObjectItem::postItemsRemoved( const PropertyAccessor & accessor,
-	const Collection::ConstIterator & pos, size_t count )
-{
-	for (auto it = children_.begin(); it != children_.end(); ++it)
-	{
-		if ((*it) == nullptr)
-		{
-			continue;
-		}
-
-		if ((*it)->postItemsRemoved( accessor, pos, count ))
-		{
-			return true;
-		}
-	}
-	return false;
+		return true;
+	});
+	return groups_;
 }

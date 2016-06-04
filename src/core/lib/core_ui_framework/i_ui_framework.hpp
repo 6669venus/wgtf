@@ -58,6 +58,9 @@ public:
 	virtual std::unique_ptr< IWindow > createWindow( 
 		const char * resource, ResourceType type,
 		const ObjectHandle & context = ObjectHandle() ) = 0;
+    virtual std::unique_ptr< IView > createView( const char* uniqueName,
+        const char * resource, ResourceType type, 
+        const ObjectHandle & context = ObjectHandle() ) = 0;
 
 	virtual void loadActionData( const char * resource, ResourceType type ) = 0;
 	virtual void registerComponent( const char * id, IComponent & component ) = 0;
@@ -67,6 +70,18 @@ public:
 
 	virtual void setPluginPath( const std::string& path ) = 0;
 	virtual const std::string& getPluginPath() const = 0; 
+
+	enum MessageBoxButtons
+	{
+		Ok = 0x1,
+		Cancel = 0x2,
+		Save = 0x4,
+		SaveAll = 0x8,
+		Yes = 0x10,
+		No = 0x20,
+	};
+
+	virtual int displayMessageBox( const char* title, const char* message, int buttons ) = 0;
 
 	virtual IPreferences * getPreferences() = 0;
 };

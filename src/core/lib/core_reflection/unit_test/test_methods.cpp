@@ -20,7 +20,6 @@ struct TestMethodsFixture
 	TestMethodsFixture()
 	{
 		IDefinitionManager& definitionManager = getDefinitionManager();
-		testObjects_.initDefs( definitionManager );
 		klass_ = definitionManager.getDefinition<TestMethodsObject>();
 	}
 
@@ -42,7 +41,6 @@ struct TestMethodsFixture
 
 
 public:
-	TestObjects testObjects_;
 	IClassDefinition* klass_;
 };
 

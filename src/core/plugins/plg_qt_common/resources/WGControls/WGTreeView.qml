@@ -1,378 +1,161 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtQuick.Layouts 1.1
+import QtQml.Models 2.2
+import WGControls 2.0
 
-//TODO: Test with various configurations of depthColourisation and flatColourisation
-//TODO: Requires extensive testing with indentation and leafNodeIndentation
 
 /*!
- \brief
-    Creates a TreeView of data with branches and leaf nodes.
-    The TreeView loads WGTreeItems and passes it a columnDelegates list of contents for each row.
-    If a columnDelegate is not defined the defaultColumnDelegate will be used.
+ \brief WGTreeView displays data from a model defined by its delegate.
+ The WGTreeView is contructed from a WGTreeViewBase which creates rows and columns.
 
 Example:
 \code{.js}
+
+ScrollView {
+    anchors.top: lastControl.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+
     WGTreeView {
-        id: testTreeView
-        anchors.top: searchBox.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        model: testModel
-        rightMargin: 8 // leaves just enought space for conventional slider
-        columnDelegates: [defaultColumnDelegate, propertyDelegate]
-        selectionExtension: treeModelSelection
-        childRowMargin: 2
-        columnSpacing: 4
-        lineSeparator: false
+        id: example
+        model: sourceModel
+        columnWidth: 50
+        columnSpacing: 1
+        headerDelegates: [exampleHeaderDelegate]
+        footerDelegates: [exampleFooterDelegate]
+        headerDelegate: exampleHeaderDelegate
+        footerDelegate: exampleFooterDelegate
+        columnDelegates: [columnDelegate, exampleDelegate]
+        roles: ["value", "headerText", "footerText"]
+        model: sourceModel
 
-        flatColourisation: false
-        depthColourisation: 5
+        Component {
+            id: exampleHeaderDelegate
 
-        property Component propertyDelegate: Loader {
-            clip: true
-            sourceComponent: itemData != null ? itemData.Component : null
+            Text {
+                id: textBoxHeader
+                color: palette.textColor
+                text: headerData.headerText
+                height: 24
+            }
+        }
+
+        Component {
+            id: exampleFooterDelegate
+
+            Text {
+                id: textBoxFooter
+                color: palette.textColor
+                text: headerData.footerText
+                height: 24
+            }
+        }
+
+        Component {
+            id: exampleDelegate
+
+            Text {
+                id: textItem
+
+                visible: typeof itemData.value === "string"
+                text: typeof itemData.value === "string" ? itemData.value : ""
+                color: palette.textColor
+            }
         }
     }
+}
+
 \endcode
 */
 
-Item {
-    id: treeView
 
-    /*! This property holds the dataModel information that will be displayed in the tree view
+
+WGTreeViewBase {
+	id: treeView
+	clip: true
+	view: itemView
+
+	property alias roles: itemView.roles
+
+    /*! The default component to be used for columns that are not specified
+        by columnDelegates.
     */
-    property var model
+	property alias columnDelegate: itemView.columnDelegate
 
-    /*! This property determines the gap between the left edge of the entire control and the list contents.
-        The default value is \c 2
+    /*! A list of components to be used for each column.
+        Item 0 for column 0, item 1 for column 1 etc.
+        If a column is not in the list, then it will default to columnDelegate.
+        The default value is an empty list.
     */
-    property real leftMargin: 2
+	property alias columnDelegates: itemView.columnDelegates
 
-    /*! This property determines the gap between the right edge of the entire control and the list contents.
-        The default value of \c 8 is given to allow for enough room for the vertical scrollbar
-        The default value is \c 8
+    /*! This property holds a list of indexes to adapt from the model's columns
+        to the view's columns.
+        e.g. if the input model has 1 column, but columnSequence is [0,0,0]
+             then the view can have 3 columns that lookup column 0 in the model.
+        The default value is an empty list
     */
-    property real rightMargin: 2
-
-    /*! This property determines the gap between the top edge of the entire control and the list contents.
-        The default value is \c 2
-    */
-    property real topMargin: 2
-
-    /*! This property determines the gap between the bottom edge of the entire control and the list contents.
-        The default value is \c 2
-    */
-    property real bottomMargin: 2
-
-    /*! This property adds vertical spacing under each sibling object in the list.
-        This will not add spacing between a child and its parent.
-        See the childListMargin: for spacing between parents and children.
-        The default value is \c 0
-    */
-    property real spacing: 0
-
-    /*! This property will add space to the right of each column element.
-        The default value is \c 1
-    */
-    property real columnSpacing: 2
-
-    /*! This property determines the margin around the selection highlight.
-        A value of \c 0 will cause the highlights to fill the same space as the frame that takes up the entire row.
-        The default value is \c 0
-    */
-    property real selectionMargin: 0
-
-    /*! This property determines the space to the left and right of the expand/contract icon.
-        The default value is \c 3
-    */
-    property real expandIconMargin: 3
-
-    /*! This property determines the font height of the expand icon (triangle).
-        The default value is \c 16 */
-    readonly property real expandIconSize: 16
-
-    /*! This property adds vertical spacing under each parent object.
-        The default value is \c 0
-    */
-    property real childListMargin: 0
-
-    /*! This property adds spacing beneath each control.
-        Increases row height.
-        The default value is \c 0
-    */
-    property real footerSpacing: 0
-
-    /*! This property adds top and bottom margin spacing for branch nodes
-        Modifies row height
-        The default value is \c 0
-    */
-    property real headerRowMargin: 0
-
-    /*! This property adds top and bottom margin spacing for leaf nodes
-        Modifies row height
-        The default value is \c 0
-    */
-    property real childRowMargin: 0
-
-    /*! This property sets the minimum row height.
-        Unlike Row Margin changes this change will alter the space available for controls within each row.
-        If controls automatically fill the row height their size will change.
-        The default value is \c defaultSpacing.minimumRowHeight
-    */
-    property real minimumRowHeight: defaultSpacing.minimumRowHeight
-
-    /*! This property determines the indentation of all nodes (child and branch), excluding the root node
-        When depthColourisation is used, indentation is set to \c 0 by default as the entire row is indented instead.
-        The default value is \c 12
-    */
-    property int indentation: 12
-
-    property var selectionExtension: null
-    property var treeExtension: null
-
-    /*! This property holds the list of columns that are displayed within each row
-    */
-    property var columnDelegates: []
-
-	/*! This property causes the first column to resize based on the largest label width
-        when a row item is expanded or contracted.
-        The default value is \c true if the column handle is visible */
-	property bool autoUpdateLabelWidths: false
-
-    /*!  This property enables the vertical scrollbar (both flickable and conventional).
-        Mouse wheel scrolling is unaffected by this setting.
-        The default value is \c true.
-    */
-    property bool enableVerticalScrollBar: true
-
-
-    /*! This property adds a horizontal line separator between rows.
-        The default value is \c true.
-    */
-    property bool lineSeparator: true
-
-    /*! Specifies the way the background is coloured, can be one of the constants:
-        noBackgroundColour
-        uniformRowBackgroundColours
-        alternatingRowBackgroundColours
-        incrementalGroupBackgroundColours */
-    property int backgroundColourMode: noBackgroundColour
-
-    /*! Colour mode with no background */
-    readonly property int noBackgroundColour: 0
-    /*! Colour mode with a sigle background colour */
-    readonly property int uniformRowBackgroundColours: 1
-    /*! Colour mode with a sigle background colour */
-    readonly property int alternatingRowBackgroundColours: 2
-    /*! Colour mode with a sigle background colour */
-    readonly property int incrementalGroupBackgroundColours: 3
-
-    /*! Number of shades to use for incremental colours per level until starting over using the first shade */
-    property int backgroundColourIncrements: 3
-
-    readonly property color backgroundColour: palette.MidDarkColor
-    readonly property color alternateBackgroundColour:
-        backgroundColourMode === uniformRowBackgroundColours ? backgroundColour
-        : Qt.darker(palette.MidLightColor,1.2)
-
-    /*! This property contains the number of columns */
-    property int columnCount: 0
+	property alias columnSequence: itemView.columnSequence
+	property alias columnWidth: itemView.columnWidth
+	property alias columnWidths: itemView.columnWidths
+	property alias columnSpacing: itemView.columnSpacing
     
-    Component.onCompleted: updateColumnCount()
 
-    Connections {
-        target: typeof(model) === "undefined" ? null : model
-        
-        onModelReset: {
-            updateColumnCount();
-        }
-    }
+	property alias internalModel: treeView.model
 
-    /*! This property contains the column widths */
-    property var columnWidths: []
-
-    /*! This property contains the initial column widths */
-    property var initialColumnWidths: []
-
-    /*! This property determines if the column sizing handles are shown */
-    property bool showColumnsFrame: false
-
-    property var depthLevelGroups: []
-    //property var maximumColumnText: []
-
-    readonly property real minimumScrollbarWidth:
-        enableVerticalScrollBar ? rootItem.verticalScrollBar.collapsedWidth + defaultSpacing.standardBorderSize : 0
-
-    readonly property real maximumScrollbarWidth:
-        enableVerticalScrollBar ? rootItem.verticalScrollBar.expandedWidth + defaultSpacing.standardBorderSize : 0
-
-    readonly property real rowMargins: leftMargin + rightMargin + minimumScrollbarWidth
-
-    readonly property real minimumRowWidth: width - rowMargins
-
-    readonly property real initialColumnsFrameWidth:
-        minimumRowWidth + (showColumnsFrame ? minimumScrollbarWidth - maximumScrollbarWidth : 0)
-
-    property real expandIconWidth: 0
-
-    /*! This property allow users to explicitly set tree view root node default expansion status.
-        The default value is \c true */
-    property bool rootExpanded: true
-
-    /*! This signal is emitted when the row is clicked.
+    /*! This property holds the data model information that will be displayed
+        in the view.
     */
-    signal rowClicked(var mouse, var modelIndex)
+	property alias model: itemView.model
 
-    /*! This signal is emitted when the row is double clicked.
+	internalModel: itemView.extendedModel
+
+    /*! A list of components to be used for each header/footer column.
+        Item 0 for column 0, item 1 for column 1 etc.
+        If a column is not in the list, then it will default to headerDelegate/footerDelegate.
+        The default value is an empty list.
     */
-    signal rowDoubleClicked(var mouse, var modelIndex)
-
-    function updateColumnCount()
-    {
-        if (showColumnsFrame)
-        {
-            columnCount = model === null ? 0 : model.columnCount();
-        }
-    }
-
-    function calculateMaxTextWidth(column)
-    {
-        return calculateMaxTextWidthHelper(rootItem, 0, column);
-    }
-
-    // searches through all the TreeViews children in a column for visible text objects
-    // gets their paintedWidths and calculates a new maxTextWidth
-    function calculateMaxTextWidthHelper(parentObject, currentDepth, column){
-        var maxTextWidth = 0;
-
-        // for loop checks all the children
-        for (var i=0; i<parentObject.children.length; i++)
-        {
-            var childObject = parentObject.children[i]
-            var checkColumn = column
-            var checkDepth = currentDepth
-
-            // if the child has a columnIndex set column to it
-            if (typeof childObject.columnIndex != "undefined")
-            {
-                checkColumn = childObject.columnIndex
-            }
-
-            // if the child is visible keep going
-            if (childObject.visible)
-            {
-                //if the child has a depth value... remember it so we can add more indentation
-                if (typeof childObject.depth != "undefined")
-                {
-                    checkDepth = childObject.depth
-                }
-
-                // if it has a painted width, turn off elide,
-                // check if its painted width + depth indentation is the longest
-                // then update and reset elide
-                if (typeof childObject.__treeLabel != "undefined")
-                {
-                    var childElide = Text.ElideNone
-
-                    if (childObject.elide != Text.ElideNone)
-                    {
-                        childElide = childObject.elide
-                        childObject.elide = Text.ElideNone
-                    }
-
-                    var indent = column > 0 ? 0 : indentation * checkDepth + expandIconWidth;
-                    var testWidth = childObject.paintedWidth + indent
-                    maxTextWidth = Math.max(maxTextWidth, testWidth);
-
-                    if(childElide != childObject.elide)
-                    {
-                        childObject.elide = childElide
-                    }
-                }
-                // if the column is the same as the checked column
-                // rerun this function with the child object
-                if (checkColumn == column)
-                {
-                    maxTextWidth = Math.max(maxTextWidth, calculateMaxTextWidthHelper(childObject, checkDepth, column));
-                }
-            }
-        }
-
-        return maxTextWidth;
-    }
-
-    function addDepthLevel(depth)
-    {
-    	if (depth >= depthLevelGroups.length)
-    	{
-    		depthLevelGroups.push(1);
-    	}
-
-    	++depthLevelGroups[depth];
-    }
-
-    function removeDepthLevel(depth)
-    {
-    	if (--depthLevelGroups[depth] == 0)
-    	{
-    		depthLevelGroups.pop();
-    	}
-    }
-
-    function setExpandIconWidth(width)
-    {
-        expandIconWidth = width
-    }
-
-    /*! This Component is used by the property columnDelegate if no other column delegate is defined
+    property alias headerDelegates: itemView.headerDelegates
+    property alias footerDelegates: itemView.footerDelegates
+    /*! The default component to be used for header/footer columns that are not specified
+        by headerDelegates/footerDelegates.
     */
-    property Component defaultColumnDelegate: Text {
-        property bool __treeLabel: true
-        color: palette.TextColor
-        clip: itemData != null && itemData.Component != null
-        text: itemData != null ? itemData.display : ""
-        font.bold: itemData != null && itemData.HasChildren
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
-    }
+    property alias headerDelegate: itemView.headerDelegate
+    property alias footerDelegate: itemView.footerDelegate
 
-    WGTreeItem {
-        id: rootItem
-        y: treeView.topMargin
-        leftMargin: treeView.leftMargin
-        rightMargin: treeView.rightMargin
-        width: Math.max(columnsFrame.width, treeView.minimumRowWidth) + treeView.rowMargins
-        height: columnsFrame.height
-        model: treeView.model
-        enableVerticalScrollBar: true
-        
-        onContentHeightChanged: {
-            if (autoUpdateLabelWidths)
-            {
-                columnsFrame.resizeColumnToIdealSize(0)
-            }
-        }
-    }
+	property var extensions: []
 
-    WGColumnsFrame {
-        id: columnsFrame
-        columnCount: treeView.columnCount
-        y: treeView.topMargin
-        x: treeView.leftMargin
-        height: treeView.height - treeView.topMargin - treeView.bottomMargin
-        width: initialColumnsFrameWidth
-        handleWidth: treeView.columnSpacing
-        drawHandles: showColumnsFrame && treeView.columnSpacing > 1
-        resizableColumns: showColumnsFrame
-        initialColumnWidths: treeView.initialColumnWidths
-        defaultInitialColumnWidth: treeView.columnCount === 0 ? 0 : initialColumnsFrameWidth / treeView.columnCount - handleWidth
-        idealColumnSizeFunction: calculateMaxTextWidth
-        firstColumnIndentation: expandIconWidth + (depthLevelGroups.length - 1) * indentation
-		
-        onColumnsChanged: {
-            treeView.columnWidths = columnWidths;
-        }
-    }
+    // Data holder for various C++ extensions.
+    // Pass it down to children
+	WGItemViewCommon {
+		id: itemView
+
+		TreeExtension {
+			id: treeExtension
+		}
+
+		property var treeExtensions: treeView.extensions.concat(commonExtensions.concat([treeExtension]))
+		extensions: treeExtensions
+
+		Connections {
+			target: treeView
+			onItemPressed: {
+				if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
+					var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
+					itemView.selectionModel.select(selection, 0x0002) // Select
+				}
+				else if (mouse.modifiers & Qt.ShiftModifier) {
+					var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
+					itemView.selectionModel.select(selection, 0x0001 | 0x0002) // Clear || Select
+				}
+				else if (mouse.modifiers & Qt.ControlModifier) {
+					itemView.selectionModel.setCurrentIndex(rowIndex, 0x0008) // Toggle
+				}
+				else {
+					itemView.selectionModel.setCurrentIndex(rowIndex, 0x0001 | 0x0002) // Clear | Select
+				}
+			}
+		}
+	}
 }

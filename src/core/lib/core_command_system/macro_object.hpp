@@ -5,6 +5,7 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_variant/variant.hpp"
 #include "core_data_model/variant_list.hpp"
+#include "command_instance.hpp"
 
 class ICommandManager;
 class IDefinitionManager;
@@ -21,7 +22,10 @@ public:
 	void init( size_t count );
 	const ObjectHandle & getCommandArgument( size_t id ) const;
 	const ObjectHandle & getCommandArgController( size_t id ) const;
+	size_t getArgCount() const{ return args_.size(); }
 	void setCommandHandlers( size_t id, const ObjectHandle & controller, const ObjectHandle & arg );
+
+	void resolveDependecy( size_t command, const std::vector<CommandInstance*>& instances );
 private:
 	std::vector< ObjectHandle > args_;
 	std::vector< ObjectHandle > controllers_;
@@ -35,7 +39,7 @@ class ReflectedPropertyCommandArgumentController
 public:
 	ReflectedPropertyCommandArgumentController();
 
-	void init( ObjectHandle arguments, IDefinitionManager* defMngr );
+	void init( size_t subCommandIdx, ObjectHandle arguments, IDefinitionManager* defMngr );
 
 	void setValue( const std::string& value );
 	std::string getValue() const;
@@ -45,6 +49,8 @@ public:
 
 	void getObject( int * o_EnumValue ) const;
 	void setObject( const int & o_EnumValue );
+	int getDependencyOffset() { return dependencyOffset_; }
+	void resolve( const std::vector<CommandInstance*>& instances );
 	void generateObjList( std::map< int, std::wstring > * o_enumMap ) const;
 
 private:
@@ -54,6 +60,8 @@ private:
 	IDefinitionManager* defMngr_;
 
 	mutable EnumMap enumMap_;
+	size_t subCommandIdx_;
+	int dependencyOffset_;
 };
 
 class MethodParam
@@ -104,15 +112,24 @@ public:
 
 	void init( ICommandManager& commandSystem, IDefinitionManager & defManager,
 		IReflectionController* controller, const char * cmdId );
+	
+	bool validateArgsObject(const ObjectHandle & obj) const;
+	bool setArgumentObject(const ObjectHandle& args);
+	bool setArgumentObjectForCommand(size_t idx, const ObjectHandle& args);
 
-	void setContextObject( const ObjectHandle & obj );
 	ObjectHandle executeMacro() const;
+	ObjectHandle executeMacro(const ObjectHandle& contextObject ) const;
 	ObjectHandle getTreeModel() const;
+
+	void serialize(ISerializer & serializer) const;
+	void deserialize(ISerializer & serializer);
 
 private:
 	void bindMacroArgumenets();
-	std::pair<ObjectHandle, ObjectHandle> bind( ReflectedPropertyCommandArgument* rpca ) const;
-	std::pair<ObjectHandle, ObjectHandle> bind( ReflectedMethodCommandParameters* rmcp ) const;
+	ObjectHandle createController(size_t idx, const ObjectHandle & args) const;
+
+	std::pair<ObjectHandle, ObjectHandle> bind( size_t idx, ReflectedPropertyCommandArgument* rpca ) const;
+	std::pair<ObjectHandle, ObjectHandle> bind( size_t idx, ReflectedMethodCommandParameters* rmcp ) const;
 
 	ICommandManager* commandSystem_;
 	IDefinitionManager* pDefManager_;

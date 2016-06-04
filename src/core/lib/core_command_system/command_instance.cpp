@@ -14,131 +14,13 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/property_iterator.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
+#include "core_reflection_utils/commands/set_reflectedproperty_command.hpp"
 #include "wg_types/binary_block.hpp"
 #include "core_logging/logging.hpp"
-
+#include "custom_undo_redo_data.hpp"
+#include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
-namespace
-{
-
-	//==========================================================================
-	class PropertyAccessorWrapper
-		: public PropertyAccessorListener
-	{
-	public:
-		PropertyAccessorWrapper( RPURU::UndoRedoHelperList & undoRedoHelperList )
-			: undoRedoHelperList_( undoRedoHelperList ) 
-		{
-		}
-
-		~PropertyAccessorWrapper()
-		{
-		}
-
-		//======================================================================
-		void preSetValue(
-			const PropertyAccessor & accessor, const Variant & value ) override
-		{
-			const auto & obj = accessor.getRootObject();
-			assert( obj != nullptr );
-			RefObjectId id;
-			bool ok = obj.getId( id );
-			if (!ok)
-			{
-				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
-				// evgenys: we have to split notifications for managed and unmanaged objects
-				return;
-			}
-			const char * propertyPath = accessor.getFullPath();
-			const TypeId type = accessor.getType();
-			Variant prevalue = accessor.getValue();
-			auto pHelper = this->findUndoRedoHelper( id, propertyPath );
-			if (pHelper != nullptr)
-			{
-				return;
-			}
-			auto helper = new RPURU::ReflectedPropertyUndoRedoHelper();
-			helper->objectId_ = id;
-			helper->path_ = propertyPath;
-			helper->typeName_ = type.getName();
-			helper->preValue_ = std::move( prevalue );
-			undoRedoHelperList_.emplace_back( helper );
-		}
-
-
-		//======================================================================
-		void postSetValue(
-			const PropertyAccessor & accessor, const Variant & value ) override
-		{
-			const auto & obj = accessor.getRootObject();
-			assert( obj != nullptr );
-			RefObjectId id;
-			bool ok = obj.getId( id );
-			if (!ok)
-			{
-				NGT_ERROR_MSG( "Trying to create undo/redo helper for unmanaged object\n" );
-				// evgenys: we have to split notifications for managed and unmanaged objects
-				return;
-			}
-			const char * propertyPath = accessor.getFullPath();
-			 Variant postValue = accessor.getValue();
-			RPURU::ReflectedPropertyUndoRedoHelper* pHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>(
-				this->findUndoRedoHelper( id, propertyPath ) );
-			assert( pHelper != nullptr );
-			pHelper->postValue_ = std::move( postValue );
-		}
-
-
-		void preInvoke(
-			const PropertyAccessor & accessor, const ReflectedMethodParameters& parameters, bool undo ) override
-		{
-			const char* path = accessor.getFullPath();
-			const auto& object = accessor.getRootObject();
-			assert( object != nullptr );
-
-			RefObjectId id;
-			bool ok = object.getId( id );
-			assert(ok);
-
-			RPURU::ReflectedMethodUndoRedoHelper* helper = static_cast<RPURU::ReflectedMethodUndoRedoHelper*>(
-				this->findUndoRedoHelper( id, path ) );
-
-			if (helper == nullptr)
-			{
-				auto helper = new RPURU::ReflectedMethodUndoRedoHelper();
-				helper->objectId_ = id;
-				helper->path_ = path;
-				helper->parameters_ = parameters;
-				undoRedoHelperList_.emplace_back( helper );
-			}
-			else
-			{
-				helper->parameters_ = parameters;
-			}
-		}
-
-
-	private:
-		RPURU::ReflectedClassMemberUndoRedoHelper* findUndoRedoHelper( 
-			const RefObjectId & id, const char * propertyPath )
-		{
-			RPURU::ReflectedClassMemberUndoRedoHelper* helper = nullptr;
-			for (auto& findIt : undoRedoHelperList_)
-			{
-				if (findIt->objectId_ == id && findIt->path_ == propertyPath)
-				{
-					helper = findIt.get();
-					break;
-				}
-			}
-			return helper;
-		}
-	private:
-		RPURU::UndoRedoHelperList &	undoRedoHelperList_;
-	};
-
-}
 
 //==============================================================================
 CommandInstance::CommandInstance()
@@ -148,9 +30,10 @@ CommandInstance::CommandInstance()
 	, pCmdSysProvider_( nullptr )
 	, commandId_("")
 	, contextObject_( nullptr )
-	, errorCode_( CommandErrorCode::NO_ERROR )
+	, errorCode_( CommandErrorCode::COMMAND_NO_ERROR )
 {
 }
+
 
 //==============================================================================
 CommandInstance::CommandInstance( const CommandInstance& )
@@ -158,19 +41,10 @@ CommandInstance::CommandInstance( const CommandInstance& )
 	assert(!"Not copyable");
 }
 
-//==============================================================================
-/*virtual */void CommandInstance::init()
-{
-	paListener_ = std::make_shared< PropertyAccessorWrapper >( undoRedoHelperList_ );
-}
-
 
 //==============================================================================
 CommandInstance::~CommandInstance()
 {
-	assert( undoRedoHelperList_.empty() );
-	defManager_->deregisterPropertyAccessorListener( paListener_ );
-	paListener_ = nullptr;
 }
 
 
@@ -200,30 +74,27 @@ void CommandInstance::waitForCompletion()
 //==============================================================================
 CommandErrorCode CommandInstance::getErrorCode() const
 {
-	if (children_.empty())
+	if (errorCode_ != CommandErrorCode::COMMAND_NO_ERROR)
 	{
 		return errorCode_;
 	}
 
-	//batchcommand(parent command) failure only when:
-	//all sub-commands failed(errorcode != NO_ERROR) or as long as one of sub-commands' errorcode == ABORTED
-	CommandErrorCode errorCode = CommandErrorCode::ABORTED;
+	if (children_.empty())
+	{
+		return CommandErrorCode::COMMAND_NO_ERROR;
+	}
+
 	for (const auto & child : children_)
 	{
-		CommandErrorCode childErrorCode = child->getErrorCode();
-		if (childErrorCode == CommandErrorCode::NO_ERROR)
+        if (child->getErrorCode() == CommandErrorCode::COMMAND_NO_ERROR)
 		{
-			errorCode = childErrorCode;
-			continue;
-		}
-		if (childErrorCode == CommandErrorCode::ABORTED)
-		{
-			errorCode = childErrorCode;
-			break;
+			return CommandErrorCode::COMMAND_NO_ERROR;
 		}
 	}
-	return errorCode;
+
+	return CommandErrorCode::ABORTED;
 }
+
 
 //==============================================================================
 bool CommandInstance::isMultiCommand() const
@@ -231,17 +102,20 @@ bool CommandInstance::isMultiCommand() const
 	return !children_.empty();
 }
 
+
 //==============================================================================
 void CommandInstance::setArguments( const ObjectHandle & arguments )
 {
 	arguments_ = arguments;
 }
 
+
 //==============================================================================
 void CommandInstance::setDefinitionManager( IDefinitionManager & defManager )
 {
 	defManager_ = &defManager;
 }
+
 
 //==============================================================================
 const char * CommandInstance::getCommandId() const
@@ -256,6 +130,7 @@ void CommandInstance::setCommandId( const char * commandName )
 	commandId_ = commandName;
 }
 
+
 //==============================================================================
 Command * CommandInstance::getCommand()
 {
@@ -266,6 +141,7 @@ Command * CommandInstance::getCommand()
 }
 
 
+//==============================================================================
 const Command * CommandInstance::getCommand() const
 {
 	assert( pCmdSysProvider_ != nullptr );
@@ -274,55 +150,65 @@ const Command * CommandInstance::getCommand() const
 	return pCommand;
 }
 
-//==============================================================================
-/*virtual */void CommandInstance::setStatus( ExecutionStatus status )
-{
-	std::unique_lock<std::mutex> lock( mutex_ );
 
-	status_ = status;
+//==============================================================================
+void CommandInstance::setStatus( ExecutionStatus status )
+{
+	// Lock is required for CommandInstance::waitForCompletion()
+	{
+		std::unique_lock<std::mutex> lock( mutex_ );
+		status_ = status;
+	}
 	getCommand()->fireCommandStatusChanged( *this );
-	if (status_ == Complete)
+	if (status == Complete)
 	{
 		completeStatus_.notify_all();
 	}
 }
 
+
 //==============================================================================
 void CommandInstance::undo()
 {
-	assert( defManager_ != nullptr );
-	const auto pObjectManager = defManager_->getObjectManager();
-	assert( pObjectManager != nullptr );
-	if (!undoData_.buffer().empty())
+	for (auto it = undoRedoData_.rbegin(); it != undoRedoData_.rend(); ++it)
 	{
-		undoData_.seek( 0 );
-		UndoRedoSerializer serializer( undoData_, *defManager_ );
-		RPURU::performReflectedUndo( serializer, *pObjectManager, *defManager_ );
+		(*it)->undo();
 	}
-	getCommand()->undo( undoData_ );
+    const Command * command = getCommand();
+    command->fireCommandExecuted(*this, CommandOperation::UNDO);
 }
 
 
 //==============================================================================
 void CommandInstance::redo()
 {
-	assert( defManager_ != nullptr );
-	const auto pObjectManager = defManager_->getObjectManager();
-	assert( pObjectManager != nullptr );
-	if (!redoData_.buffer().empty())
+	for (auto it = undoRedoData_.begin(); it != undoRedoData_.end(); ++it)
 	{
-		redoData_.seek( 0 );
-		UndoRedoSerializer serializer( redoData_, *defManager_ );
-		RPURU::performReflectedRedo( serializer, *pObjectManager, *defManager_ );
+		(*it)->redo();
 	}
-	getCommand()->redo( redoData_ );
+    const Command * command = getCommand();
+    command->fireCommandExecuted(*this, CommandOperation::REDO);
 }
 
 
 //==============================================================================
 void CommandInstance::execute()
 {
-	returnValue_ = getCommand()->execute( arguments_ );
+    const Command * command = getCommand();
+	if (command->customUndo())
+	{
+		returnValue_ = command->execute( arguments_ );
+		undoRedoData_.emplace_back( new CustomUndoRedoData( *this ) );
+	}
+	else
+	{
+		auto undoRedoData = new ReflectionUndoRedoData( *this );
+		undoRedoData->connect();
+		returnValue_ = command->execute( arguments_ );
+		undoRedoData->disconnect();
+		undoRedoData_.emplace_back( undoRedoData );
+	}
+    command->fireCommandExecuted(*this, CommandOperation::EXECUTE);
 	auto errorCode = returnValue_.getBase<CommandErrorCode>();
 	if (errorCode != nullptr)
 	{
@@ -330,61 +216,20 @@ void CommandInstance::execute()
 	}
 }
 
-//==============================================================================
-void CommandInstance::connectEvent()
-{
-	assert( paListener_ );
-	assert( defManager_ != nullptr );
-	defManager_->registerPropertyAccessorListener( paListener_ );
-}
 
 //==============================================================================
-void CommandInstance::disconnectEvent()
+bool CommandInstance::isComplete() const
 {
-	assert( paListener_ );
-	assert( defManager_ != nullptr );
-	defManager_->deregisterPropertyAccessorListener( paListener_ );
-
-	UndoRedoSerializer undoSerializer( undoData_, *defManager_ );
-	undoSerializer.serialize( RPURU::getUndoStreamHeaderTag() );
-	undoSerializer.serialize( undoRedoHelperList_.size() );
-
-	UndoRedoSerializer redoSerializer( redoData_, *defManager_ );
-	redoSerializer.serialize( RPURU::getRedoStreamHeaderTag() );
-	redoSerializer.serialize( undoRedoHelperList_.size() );
-
-	for (const auto& helper : undoRedoHelperList_)
-	{
-		RPURU::saveUndoData( undoSerializer, *helper );
-		RPURU::saveRedoData( redoSerializer, *helper );
-	}
-
-	undoRedoHelperList_.clear();
+	return status_ == Complete;
 }
+
 
 //==============================================================================
-std::shared_ptr< BinaryBlock > CommandInstance::getUndoData() const
+ExecutionStatus CommandInstance::getExecutionStatus() const
 {
-	return std::make_shared< BinaryBlock >( undoData_.buffer().c_str(), undoData_.buffer().length(), true );
+	return status_;
 }
 
-//==============================================================================
-void CommandInstance::setUndoData( const std::shared_ptr< BinaryBlock > & undoData )
-{
-	undoData_.setBuffer( std::string( undoData->cdata(), undoData->length()) );
-}
-
-//==============================================================================
-std::shared_ptr< BinaryBlock > CommandInstance::getRedoData() const
-{
-	return std::make_shared< BinaryBlock >( redoData_.buffer().c_str(), redoData_.buffer().length(), true );
-}
-
-//==============================================================================
-void CommandInstance::setRedoData( const std::shared_ptr< BinaryBlock > & redoData )
-{
-	redoData_.setBuffer( std::string( redoData->cdata(), redoData->length()) );
-}
 
 //==============================================================================
 void CommandInstance::setContextObject( const ObjectHandle & contextObject )
@@ -392,8 +237,104 @@ void CommandInstance::setContextObject( const ObjectHandle & contextObject )
 	contextObject_ = contextObject;
 }
 
+
+//==============================================================================
+ObjectHandle CommandInstance::getCommandDescription() const
+{
+    auto description = getCommand()->getCommandDescription(getArguments());
+	if (description != nullptr)
+	{
+		return description;
+	}
+
+	if (undoRedoData_.size() != 1)
+	{
+		return nullptr;
+	}
+
+	auto reflectionUndoRedoData = dynamic_cast< ReflectionUndoRedoData * >( undoRedoData_[0].get() );
+	if (reflectionUndoRedoData == nullptr)
+	{
+		return nullptr;
+	}
+
+	return reflectionUndoRedoData->getCommandDescription();
+}
+
+
 //==============================================================================
 void CommandInstance::setCommandSystemProvider( ICommandManager * pCmdSysProvider )
 {
 	pCmdSysProvider_ = pCmdSysProvider;
+}
+
+
+//==============================================================================
+void CommandInstance::consolidateUndoRedoData( CommandInstance * parentInstance )
+{
+	if (parentInstance == nullptr)
+	{
+		for (auto & data : undoRedoData_)
+		{
+			auto reflectionUndoRedoData = dynamic_cast< ReflectionUndoRedoData * >( data.get() );
+			if (reflectionUndoRedoData != nullptr)
+			{
+				reflectionUndoRedoData->consolidate();
+			}
+		}
+		return;
+	}
+
+	auto lastParent = parentInstance->undoRedoData_.empty() ? nullptr : dynamic_cast< ReflectionUndoRedoData * >( parentInstance->undoRedoData_.back().get() );
+	if (lastParent != nullptr)
+	{
+		if (lastParent->undoRedoHelperList_.size() == 1 &&
+			lastParent->undoRedoHelperList_[0]->isMethod())
+		{
+			lastParent = nullptr;
+		}
+	}
+
+	auto firstChild = undoRedoData_.empty() ? nullptr : dynamic_cast< ReflectionUndoRedoData * >( undoRedoData_.front().get() );
+	if (firstChild != nullptr)
+	{
+		if (firstChild->undoRedoHelperList_.size() == 1 &&
+			firstChild->undoRedoHelperList_[0]->isMethod())
+		{
+			firstChild = nullptr;
+		}
+	}
+
+	if (lastParent != nullptr && firstChild != nullptr)
+	{
+		for (auto & childHelper : firstChild->undoRedoHelperList_)
+		{
+			auto it = std::find_if( lastParent->undoRedoHelperList_.begin(), lastParent->undoRedoHelperList_.end(),
+				[ &childHelper ]( std::unique_ptr< RPURU::ReflectedClassMemberUndoRedoHelper > & item )
+				{
+					return childHelper->objectId_ == item->objectId_ && childHelper->path_ == item->path_;
+				} );
+			if (it != lastParent->undoRedoHelperList_.end())
+			{
+				auto & helper = *it;
+				assert( !helper->isMethod() );
+				assert( !childHelper->isMethod() );
+				auto propertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( helper.get() );
+				auto childPropertyHelper = static_cast<RPURU::ReflectedPropertyUndoRedoHelper*>( childHelper.get() );
+				propertyHelper->postValue_ = childPropertyHelper->postValue_;
+			}
+			else
+			{
+				assert( !childHelper->isMethod() );
+				lastParent->undoRedoHelperList_.emplace_back( childHelper.release() );
+			}
+		}
+		undoRedoData_.erase( undoRedoData_.begin() );
+	}
+
+	for (auto & data : undoRedoData_)
+	{
+		parentInstance->undoRedoData_.emplace_back( data.release() );
+	}
+	undoRedoData_.clear();
 }

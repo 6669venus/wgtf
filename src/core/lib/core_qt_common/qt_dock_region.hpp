@@ -20,6 +20,7 @@ public:
 
 	void addView( IView & view ) override;
 	void removeView( IView & view ) override;
+    void restoreDockWidgets();
 
 private:
 	void setDefaultPreferenceForDockWidget( QDockWidget * qDockWidget );

@@ -18,11 +18,6 @@ Button {
     id: thumbnailButton
     objectName: "WGThumbnailButton"
 
-    /*! This property contains mouse over information string intended for WGToolTip, currently not working.
-        The default value is an empty string */
-    //TODO: Determine if valid approach for tooltips
-    property string mouseOverInfo: ""
-
     /*! This property contains the default text string that will be shown when \c iconSource: is an empty string.
         The default value is \c "Default text has not been set"*/
     property string defaultText: "Default text has not been set"
@@ -34,8 +29,7 @@ Button {
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    property string label: ""
 
     /*! This property holds the url of the thumbnail displayed on the button
         The default value is an empty string
@@ -43,21 +37,6 @@ Button {
     iconSource: ""
 
     property alias source: icon.source
-
-    /*! This property holds the target control's id to be bound to this control's b_Value */
-    property alias b_Target: dataBinding.target
-
-    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
-    property alias b_Property: dataBinding.property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
-
-
-    Binding {
-        id: dataBinding
-
-    }
 
     // support copy&paste
     WGCopyable {
@@ -123,6 +102,7 @@ Button {
         }
 
         WGLabel{
+            objectName: "Label"
             id: defaulttext1
             anchors.centerIn: parent
             width: (parent.width - (defaultSpacing.leftMargin + defaultSpacing.rightMargin))
@@ -135,6 +115,7 @@ Button {
     }
 
     FileDialog {
+        objectName: "FileDialog"
         id: fileDialog
         title: "Choose a texture"
         visible: false
@@ -144,4 +125,7 @@ Button {
             defaulttext1.visible = false
         }
     }
+
+    /*! Deprecated */
+    property alias label_: thumbnailButton.label
 }

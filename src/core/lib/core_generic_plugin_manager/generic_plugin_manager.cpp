@@ -1,15 +1,6 @@
-#ifdef _WIN32
-#if _WIN32_WINNT < 0x0502
-#undef _WIN32_WINNT
-#undef NTDDI_VERSION
-#define _WIN32_WINNT _WIN32_WINNT_WS03 //required for SetDllDirectory
-#define NTDDI_VERSION NTDDI_WS03
-#include <windows.h>
-#endif // _WIN32_WINNT
-#endif // _WIN32
-
 #include "generic_plugin_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
+#include "core_generic_plugin/env_context.hpp"
 #include "core_generic_plugin/generic_plugin.hpp"
 #include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
 #include "core_generic_plugin/interfaces/i_memory_allocator.hpp"
@@ -31,120 +22,11 @@
 #include <shlwapi.h>
 #endif // _WIN32
 
-#ifdef __APPLE__
-#include <dlfcn.h>
-#include <libgen.h>
-#include <codecvt>
-#include <locale>
-#endif // __APPLE__
-
-namespace
-{
-
-	static char ngtHome[MAX_PATH];
-	static wchar_t exePath[MAX_PATH];
-
-	const char NGT_HOME[] = "NGT_HOME";
-	const char NGT_PATH[] = "PATH";
-
-	void setContext( IComponentContext* context )
-	{
-		const char ENV_VAR_NAME[] = "PLUGIN_CONTEXT_PTR";
-		if (context)
-		{
-			auto ptr = reinterpret_cast< uintptr_t >( context );
-			char buf[33] = {};
-			size_t i = sizeof(buf) - 2;
-			while (true)
-			{
-				char digit = ptr % 16;
-
-				if (digit < 10)
-				{
-					buf[i] = '0' + digit;
-				}
-				else
-				{
-					buf[i] = 'a' + digit - 10;
-				}
-
-				ptr = ptr / 16;
-
-				if (ptr == 0 || i == 0)
-				{
-					break;
-				}
-
-				--i;
-			}
-
-			Environment::setValue( ENV_VAR_NAME, buf + i );
-		}
-		else
-		{
-			Environment::unsetValue( ENV_VAR_NAME );
-		}
-	}
-}
-
-
 //==============================================================================
 GenericPluginManager::GenericPluginManager(bool applyDebugPostfix_)
 	: contextManager_( new PluginContextManager() )
     , applyDebugPostfix(applyDebugPostfix_)
 {
-	if (!Environment::getValue<MAX_PATH>( NGT_HOME, ngtHome ))
-	{
-#ifdef _WIN32
-		GetModuleFileNameA( NULL, ngtHome, MAX_PATH );
-		PathRemoveFileSpecA( ngtHome );
-		Environment::setValue( NGT_HOME, ngtHome );
-#endif // _WIN32
-
-#ifdef __APPLE__
-		Dl_info info;
-		if (!dladdr( reinterpret_cast<void*>(setContext), &info ))
-		{
-			NGT_ERROR_MSG( "Generic plugin manager: failed to get current module file name%s", "\n" );
-		}
-		strcpy(ngtHome, info.dli_fname);
-		const char* dir = dirname(ngtHome);
-		Environment::setValue( NGT_HOME, dir);
-
-		std::string dlybs = dir;
-		dlybs += "/../PlugIns";
-		Environment::setValue( "LD_LIBRARY_PATH", dlybs.c_str() );
-#endif // __APPLE__
-	}
-
-#ifdef _WIN32
-	size_t convertedChars = 0;
-	mbstowcs_s( &convertedChars, exePath, MAX_PATH, ngtHome, _TRUNCATE );
-	assert( convertedChars );
-#endif // _WIN32
-
-#ifdef __APPLE__
-	std::wstring_convert< std::codecvt_utf8<wchar_t> > conv;
-	wcscpy(exePath, conv.from_bytes( ngtHome ).c_str());
-#endif // __APPLE__
-
-	char path[2048];
-	if(Environment::getValue<2048>( NGT_PATH, path ))
-	{
-		std::string newPath( "\"" );
-		newPath += ngtHome;
-#ifdef __APPLE__
-        newPath += "\":";
-#else
-		newPath += "\";";
-#endif
-		newPath += path;
-		Environment::setValue( NGT_PATH, newPath.c_str() );
-	}
-
-#ifdef _WIN32
-	SetDllDirectoryA( ngtHome );
-#endif // _WIN32
 }
 
 
@@ -251,9 +133,9 @@ HMODULE GenericPluginManager::loadPlugin( const std::wstring & filename )
 {
 	auto processedFileName = processPluginFilename( filename );
 
-	setContext( contextManager_->createContext( filename ) );
+	setEnvContext( contextManager_->createContext( filename ) );
 	HMODULE hPlugin = ::LoadLibraryW( processedFileName.c_str() );
-	setContext( nullptr );
+	setEnvContext( nullptr );
 
 	if (hPlugin != nullptr)
 	{
@@ -380,16 +262,16 @@ std::wstring GenericPluginManager::processPluginFilename(const std::wstring& fil
 
 	PathRemoveExtension(temp);
 
-    if (applyDebugPostfix)
-    {
 #ifdef _DEBUG
-        const size_t len = ::wcsnlen(temp, MAX_PATH);
-        if (::wcsncmp(temp + len - 2, L"_d", 2) != 0)
-        {
-            wcscat(temp, L"_d");
-        }
+	if (applyDebugPostfix)
+	{
+		const size_t len = ::wcsnlen(temp, MAX_PATH);
+		if (::wcsncmp(temp + len - 2, L"_d", 2) != 0)
+		{
+			wcscat(temp, L"_d");
+		}
+	}
 #endif
-    }
 
 	AddDllExtension(temp);
 

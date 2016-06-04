@@ -41,7 +41,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
-import BWControls 1.0
+import WGControls 2.0
 
 /*!
  \brief A rewrite of the default QML Slider control that allows 'x'
@@ -51,17 +51,21 @@ import BWControls 1.0
  would use WGSliderControl or WGRangeSlider which includes the required
  number boxes.
 
+ The WGSliderHandle range will default to the WGSlider range unless explicitely
+ assigned
+
+
 Example:
 \code{.js}
 WGSlider {
     Layout.fillWidth: true
     minimumValue: 0
-    maximumValue: 10
+    maximumValue: 100
     stepSize: 1.0
 
     WGSliderHandle {
-        minimumValue: 0
-        maximumValue: 100
+        minimumValue: 20
+        maximumValue: 80
         value: 50
     }
 }
@@ -69,6 +73,7 @@ WGSlider {
 */
 
 Control {
+    objectName: "WGSlider"
     id: slider
 
     /*!
@@ -127,16 +132,23 @@ Control {
 
         The default value is \ctrue
     */
-
     property bool handleClamp: true
 
     /*!
-        This property determines the color of the bar that 'fills' the slider if is enabled
+        This property the specifieid amount of clickable area outside the visible groovearea at each end of the slider.
+        This is useful if the handles project outside the groove but still need to be clickable
 
-        The default value is \c palette.HighlightColor
+        The default value adds half the handle width if handleClamp = true
+    */
+    property int clickAreaBuffer: handleClamp ? 0 : (__horizontal ? __handleWidth / 2 : __handleHeight / 2)
+
+    /*!
+        This property determines the default color of the bar that 'fills' the slider if is enabled
+
+        The default value is \c palette.highlightColor
     */
 
-    property color barColor: palette.HighlightColor
+    property color barColor: palette.highlightColor
 
     /*! This property indicates the slider step size.
 
@@ -159,15 +171,52 @@ Control {
 
     /*!
         This property determines if the user can click the bar itself to
-        move the handle to that position. Setting this to false gives better control
+        move the active handle to that position. Setting this to false gives better control
         and makes it harder to move the handles by accident.
 
         The default value is \c true
     */
     property bool grooveClickable: true
 
+    /*!
+        This property determines if the slider handles can be moved using the mouse wheel.
+
+        The default value is \c true
+    */
+
+    property bool allowMouseWheel: true
+
+    /*!
+        This property determines if the slider will create a handle if none are initialised.
+
+        The default value is \c true
+    */
+
+    property bool createInitialHandle: true
+
+    /*!
+        This string determines the the component for the slider handle.
+
+        The default value is WGColorSliderHandle.
+        It can be set to any Item based component.
+    */
+    property Component handleType: WGSliderHandle{}
+
+    /*!
+        The cursorShape within the slider area.
+
+        This is changed by hoverCursor and dragCursor in slider handles.
+
+        The default value is Qt.ArrowCursor
+    */
+    property var cursorShape: Qt.ArrowCursor
+
+    /*! The index of the currently hovered handle */
+
+    property int hoveredHandle: -1
+
     /*! \internal */
-    property bool __draggable: true
+    property bool __draggable: grooveClickable
 
     /*! \internal */
     property bool __horizontal: orientation === Qt.Horizontal
@@ -176,35 +225,45 @@ Control {
     property int __activeHandle: 0
 
     /*! \internal */
-    property int __hoveredHandle: -1
+    property int __handleHeight: defaultSpacing.minimumRowHeight
 
     /*! \internal */
-    property int __handleHeight
-
-    /*! \internal */
-    property int __handleWidth
+    property int __handleWidth: defaultSpacing.minimumRowHeight
 
     property alias pressed: mouseArea.pressed
 
+    /*!
+        This property holds the handle objects.
+    */
+    property var __handlePosList: []
 
     /*!
-        This property holds of the handle objects.
+        This property holds the number of handle objects.
     */
-
-    default property alias defaultProperty: __handlePosList.children
-
-    property alias __handlePosList: __handlePosList
-
-    Item {
-        id: __handlePosList
-        anchors.fill: parent
-    }
+    property int __handleCount: 0
 
     activeFocusOnTab: true
 
+    /*! \internal */
+    property var __currentCursor: cursorShape
 
     /*! \internal */
     property bool __handleMoving: false
+
+    /*! \internal */
+    property real __grabbedValue: 0
+
+    /*! \internal */
+    property real __sliderLength: __horizontal ? slider.width : slider.height
+
+    /*! \internal */
+    property real __clampedLength: __visualMaxPos - __visualMinPos
+
+    /*! \internal */
+    property real __visualMinPos: handleClamp ? __handleWidth / 2 : 0
+
+    /*! \internal */
+    property real __visualMaxPos: handleClamp ? __sliderLength - __handleWidth / 2 : __sliderLength
 
     //Accessible.role: Accessible.Slider
     /*! \internal */
@@ -218,17 +277,23 @@ Control {
 
     style: Qt.createComponent("WGSliderStyle.qml", slider)
 
-    Keys.onRightPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.increaseSingleStep()
-    Keys.onLeftPressed: if (__horizontal) __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+    Keys.onRightPressed: {
+        if (__horizontal) __handlePosList[__activeHandle].range.increaseSingleStep()
+    }
 
-    Keys.onUpPressed: __handlePosList.children[__activeHandle].range.increaseSingleStep()
-    Keys.onDownPressed: __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+    Keys.onLeftPressed: {
+        if (__horizontal) __handlePosList[__activeHandle].range.decreaseSingleStep()
+    }
 
-    property int internalWidth: handleClamp ? mouseArea.width - __handleWidth : mouseArea.width
-    property int internalHeight: handleClamp ? mouseArea.height - __handleHeight : mouseArea.height
+    Keys.onUpPressed: {
+        __handlePosList[__activeHandle].range.increaseSingleStep()
+    }
 
-    x: __horizontal ? __handleWidth / 2 : 0
-    y: !__horizontal ? __handleHeight / 2 : 0
+    Keys.onDownPressed: {
+        __handlePosList[__activeHandle].range.decreaseSingleStep()
+    }
+
+    // TODO This might be better with one clicked event and some mouse.modifier parameters
 
     /*!
         This signal is fired when the bar is double clicked
@@ -236,52 +301,275 @@ Control {
     signal sliderDoubleClicked(int index)
 
     /*!
-        This signal is fired when a handle (handleIndex == index) is left pressed when holding the Ctrl key
+        This signal is fired when a handle (index) is pressed with the mouse button (mouseButton) and mouse modifiers (mouseModifiers)
     */
-    signal handleCtrlClicked(int index)
+    signal handleClicked(int index, int mouseButton, int mouseModifiers)
+
+    /*!
+        This signal is fired when a handle (index) is added
+    */
+    signal handleAdded(int index)
+
+    /*!
+        This signal is fired when a handle (index) is removed
+    */
+    signal handleRemoved(int index)
+
+    /*!
+        This signal is fired when the mouse is pressed anywhere in the groove.
+
+        If the handle is able to be moved, draggable will be true
+    */
+    signal sliderPressed(bool draggable, point mouse)
+
+    /*!
+        This signal is fired when a handle (index) value (val) is changed
+    */
+    signal changeValue (real val, int index)
+
+    /*!
+        This signal is fired when a handle (index) begins dragging
+    */
+    signal beginDrag (int index)
+
+    /*!
+        This signal is fired when a handle (index) has finished dragging
+    */
+    signal endDrag (int index)
+
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
+
+    /*!
+        This function creates a new WGSliderHandle object (handle) with value (val) at (index)
+        and automatically adds it to __handlePosList.
+
+        Only the value is actually required.
+    */
+    function createHandle(val, handle, index, emitSignal)
+    {
+        if (typeof emitSignal == "undefined")
+        {
+            var emitSignal = true
+        }
+
+        if (typeof handle !== "undefined")
+        {
+            var newHandle = handle.createObject(slider, {
+                                        "value": val,
+                                        "parentSlider": slider
+                                    });
+        }
+        else
+        {
+
+            var newHandle = slider.handleType.createObject(slider, {
+                                        "value": val,
+                                        "parentSlider": slider
+                                    });
+        }
+        if (typeof index != "undefined")
+        {
+            addHandle(newHandle, index)
+            if (emitSignal)
+            {
+                handleAdded(index)
+            }
+        }
+        else
+        {
+            addHandle(newHandle, __handlePosList.length)
+            if (emitSignal)
+            {
+                handleAdded(index)
+            }
+        }
+        return newHandle
+    }
+
+    /*!
+        Removes the handle (index) from __handlePosList and destroys it.
+    */
+    function removeHandle(index) {
+        var handleToRemove = __handlePosList[index]
+        if(__handleCount > 0)
+        {
+            // Remove the bindings from the new head to the handle being removed
+            if(index === 0 && __handleCount > 1)
+            {
+                __handlePosList[index+1].minimumValue = handleToRemove.minimumValue
+            }
+            // Remove the bindings from the new tail to the handle being removed
+            if(index === (__handleCount - 1) && index > 0)
+            {
+                __handlePosList[index-1].maximumValue = handleToRemove.maximumValue
+            }
+            __handlePosList.splice(index,1)
+            __handleCount = __handlePosList.length
+            handleRemoved(index)
+        }
+        handleToRemove.destroy()
+    }
+
+    /*! Internal */
+    function addHandle(handle, index) {
+        handle.parentSlider = slider
+        __handlePosList.splice(index,0,handle)
+        __handleCount = __handlePosList.length
+    }
+
+    /*!
+        Returns the handle value at a given index (index) or -1 if the handle doesn't exist
+    */
+    function getHandleValue(index) {
+        index = typeof index !== "undefined" ? index : 0
+
+        if (index <= __handleCount - 1)
+        {
+            return __handlePosList[index].value
+        }
+        else
+        {
+            return -1
+        }
+    }
+
+    /*!
+        Sets the handle value at a given index (index) to val or sets the values of an array of handle indexes to an array of values.
+
+        TODO: Make it possible to set multiple handles to one value?
+    */
+    function setHandleValue(val, index) {
+
+        index = typeof index !== "undefined" ? index : 0
+        index = Array.isArray(index) ? index : [index]
+        val = Array.isArray(val) ? val : [val]
+
+        for (var i = 0; i < index.length; i++)
+        {
+            var indexToMove = index[i]
+            if (indexToMove <= __handleCount - 1)
+            {
+                if (val[i] < __handlePosList[indexToMove].minimumValue)
+                {
+                    console.log("WARNING WGSlider: Tried to set the value of handle " + indexToMove + " to less than its minimum value")
+                    setValueHelper(slider.__handlePosList[indexToMove], "value", __handlePosList[indexToMove].minimumValue);
+                }
+                else if ( val[i] > __handlePosList[indexToMove].maximumValue )
+                {
+                    console.log("WARNING WGSlider: Tried to set the value of handle " + indexToMove + " to more than its maximum value")
+                    setValueHelper(slider.__handlePosList[indexToMove], "value", __handlePosList[indexToMove].maximumValue);
+                }
+                else
+                {
+                    setValueHelper(slider.__handlePosList[indexToMove], "value", val[i]);
+                }
+            }
+            else
+            {
+                console.log("WARNING WGSlider: Tried to change the value of a handle that does not exist")
+            }
+        }
+    }
+
+    /*!
+        Attempts to find a handle at a particular value and returns the index.
+
+        Pretty hacky..
+    */
+
+    function getHandleAtValue(val)
+    {
+        var roundedPos
+        for (var i = 0; i < __handlePosList.length; i++)
+        {
+            roundedPos = Number(Math.round(__handlePosList[i].value + 'e2') + 'e-2')
+            if (roundedPos == val)
+            {
+                return i
+            }
+        }
+        console.log("WARNING WGSlider: No handle found at position " + val)
+        return -1
+    }
+
+    onValueChanged: {
+        if (__handleCount == 1 && !__handleMoving)
+        {
+            setValueHelper(__handlePosList[0], "value", value);
+        }
+    }
+
+    onChangeValue: {
+        if (__handleCount == 1)
+        {
+            setValueHelper(slider, "value", val);
+        }
+    }
+
+    onHoveredHandleChanged: {
+        if (hoveredHandle == -1)
+        {
+            __currentCursor = cursorShape
+        }
+        else
+        {
+            __currentCursor = __handlePosList[hoveredHandle].hoverCursor
+        }
+    }
+
+    Component.onCompleted: {
+        //collect any child handles and put them in __handlePosList
+        for (var i = 0; i < slider.children.length; i++)
+        {
+            if (slider.children[i].objectName == "SliderHandle")
+            {
+                addHandle(slider.children[i],__handlePosList.length)
+            }
+        }
+
+        //create a handle if none were collected
+        if(__handlePosList.length == 0 && createInitialHandle)
+        {
+            var newHandle = createHandle(slider.value)
+        }
+    }
 
     MouseArea {
         id: mouseArea
+        objectName: "sliderDragArea"
 
         z:-1
 
         anchors.centerIn: parent
 
-        width: parent.width
-        height: parent.height
+        height: __horizontal ? parent.height : parent.width
+        width: (__horizontal ? parent.width : parent.height) + clickAreaBuffer
+
+        rotation: __horizontal ? 0 : -90
+        transformOrigin: Item.Center
 
         hoverEnabled: true
 
-        property int clickOffset: 0
-        property real pressX: 0
-        property real pressY: 0
-
-        property bool dragStarted: false
+        cursorShape: slider.__currentCursor
 
         function clamp ( val ) {
-            return Math.max(__handlePosList.children[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList.children[__activeHandle].range.positionAtMaximum, val))
+            return Math.max(__handlePosList[__activeHandle].range.positionAtMinimum, Math.min(__handlePosList[__activeHandle].range.positionAtMaximum, val))
         }
 
         function updateHandlePosition(mouse, force) {
 
             if (__draggable)
                 {
-                var pos, overThreshold
-                if (__horizontal) {
-                    pos = clamp (mouse.x + clickOffset)
-                    overThreshold = Math.abs(mouse.x - pressX) >= Settings.dragThreshold
-                    if (overThreshold)
-                        preventStealing = true
-                    if (overThreshold || force)
-                        __handlePosList.children[__activeHandle].x = pos
-                } else if (!__horizontal) {
-                    pos = clamp (mouse.y + clickOffset)
-                    overThreshold = Math.abs(mouse.y - pressY) >= Settings.dragThreshold
-                    if (overThreshold)
-                        preventStealing = true
-                    if (overThreshold || force)
-                        __handlePosList.children[__activeHandle].y = pos
+                var pos
+
+                if (slider.clickAreaBuffer > 0)
+                {
+                    mouse = mouseArea.mapToItem(sliderArea,mouse.x,mouse.y)
                 }
+
+                pos = clamp (mouse.x)
+                __handlePosList[__activeHandle].range.position = pos
             }
         }
 
@@ -291,55 +579,42 @@ Control {
         }
 
         onPressed: {
+            preventStealing = true
+            sliderPressed(__draggable, Qt.point(mouse.x,mouse.y))
             if (__draggable)
-                {
+            {
+                beginDrag(__activeHandle)
+                slider.__currentCursor = __handlePosList[__activeHandle].dragCursor
+                beginUndoFrame();
                 __handleMoving = true
+                __grabbedValue = value;
                 if (slider.activeFocusOnPress)
                     slider.forceActiveFocus();
 
-                if(!grooveClickable)
-                {
-                    if(dragStarted) {
-                        pressX = mouse.x
-                        pressY = mouse.y
-
-                        updateHandlePosition(mouse, !Settings.hasTouchScreen)
-                    }
-                }
-                else
-                {
-                    pressX = mouse.x
-                    pressY = mouse.y
-
-                    updateHandlePosition(mouse, !Settings.hasTouchScreen)
-                }
+                updateHandlePosition(mouse, !Settings.hasTouchScreen)
+            }
+            else
+            {
+                mouse.accepted = false
             }
         }
 
         onReleased: {
+            if(__draggable) {
 
-            if (!grooveClickable)
-            {
-                if(dragStarted) {
-                    updateHandlePosition(mouse, Settings.hasTouchScreen)
-                    // If we don't update while dragging, this is the only
-                    // moment that the range is updated.
-                }
-            }
-            else
-            {
                 updateHandlePosition(mouse, Settings.hasTouchScreen)
+
+                endUndoFrame();
+                slider.__currentCursor = slider.cursorShape
+
+                endDrag(__activeHandle)
+
+                preventStealing = false
+
+                __handleMoving = false
+
+                __draggable = grooveClickable
             }
-
-
-            clickOffset = 0
-            preventStealing = false
-
-            __handleMoving = false
-
-            dragStarted = false
-
-            __draggable = true
         }
 
         //signal when bar is double clicked.
@@ -349,16 +624,35 @@ Control {
         }
 
         onWheel: {
-            if(slider.activeFocus){
+            if(slider.activeFocus && allowMouseWheel){
                 if (wheel.angleDelta.y > 0)
                 {
-                    __horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+                    __handlePosList[__activeHandle].range.increaseSingleStep()
                 }
                 else
                 {
-                    !__horizontal ? __handlePosList.children[__activeHandle].range.increaseSingleStep() : __handlePosList.children[__activeHandle].range.decreaseSingleStep()
+                    __handlePosList[__activeHandle].range.decreaseSingleStep()
                 }
+            }
+            else
+            {
+                wheel.accepted = false
             }
         }
     }
+
+    //an invisible object to represent the area the handles can actually move
+    Item {
+        id: sliderArea
+        anchors.centerIn: parent
+
+        height: __horizontal ? parent.height : parent.width
+        width: __horizontal ? parent.width : parent.height
+
+        rotation: __horizontal ? 0 : -90
+        transformOrigin: Item.Center
+    }
+
+    /* Deprecated */
+    property alias handleStyle: slider.handleType;
 }

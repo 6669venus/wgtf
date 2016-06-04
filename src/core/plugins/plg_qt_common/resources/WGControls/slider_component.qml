@@ -1,12 +1,14 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
+import WGControls 2.0
 
 //TODO: WGSlider needs to be modified so that it can use much larger range, negating the need for min/maximumValue calculations
 //TODO: How can we warn the user that no metaData has been set. A range of 2 billion is not a usable UI.
 
 WGSliderControl {
     id: reflectedSlider
+    objectName:  itemData != null ? itemData.IndexPath : "slider_component"
     anchors.fill: parent
 
     value: itemData.Value

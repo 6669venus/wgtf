@@ -2,6 +2,7 @@
 
 #include "core_dependency_system/di_ref.hpp"
 #include "core_python27/defined_instance.hpp"
+#include "core_python27/listener_hooks.hpp"
 #include "core_python27/scripting_engine.hpp"
 #include "core_python27/script_object_definition_registry.hpp"
 
@@ -31,7 +32,20 @@ public:
 		, scriptingEngine_( contextManager )
 		, definitionRegistry_( contextManager )
 		, typeConverterQueue_( contextManager )
+		, hookListener_( new ReflectedPython::HookListener() )
 	{
+		// Initialize listener hooks
+		const auto pDefinitionManager = contextManager.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Could not get IDefinitionManager\n" );
+			return;
+		}
+		pDefinitionManager->registerPropertyAccessorListener(
+			std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
+		g_pHookContext = &contextManager;
+		g_listener = hookListener_;
+
 		scriptingEngine_.init();
 
 		const bool transferOwnership = false;
@@ -47,16 +61,30 @@ public:
 		contextManager_.deregisterInterface( pDefinitionRegistryInterface_ );
 		definitionRegistry_.fini();
 		scriptingEngine_.fini();
+
+		// Finalize listener hooks
+		// All reflected Python objects should have been removed by this point
+		const auto pDefinitionManager = contextManager_.queryInterface< IDefinitionManager >();
+		if (pDefinitionManager == nullptr)
+		{
+			NGT_ERROR_MSG( "Could not get IDefinitionManager\n" );
+			return;
+		}
+		pDefinitionManager->deregisterPropertyAccessorListener(
+			std::static_pointer_cast< PropertyAccessorListener >( hookListener_ ) );
+		g_listener.reset();
+		g_pHookContext = nullptr;
 	}
 
 	IComponentContext & contextManager_;
 
 	Python27ScriptingEngine scriptingEngine_;
 
-	ScriptObjectDefinitionRegistry definitionRegistry_;
+	ReflectedPython::ScriptObjectDefinitionRegistry definitionRegistry_;
 	IInterface * pDefinitionRegistryInterface_;
 
 	PythonType::ConverterQueue typeConverterQueue_;
+	std::shared_ptr< ReflectedPython::HookListener > hookListener_;
 };
 
 
@@ -103,17 +131,14 @@ TEST( Python27 )
 
 	// Import the test module and run it
 	{
-		const wchar_t* path =
-			L"..\\..\\..\\src\\core\\testing\\plg_python27_unit_test\\scripts";
-		const bool pathAppended = scriptingEngine->appendPath( path );
-		CHECK( pathAppended );
-		// Python failed to set path to test script.
-		if (!pathAppended)
-		{
-			return;
-		}
-
-		ObjectHandle module = scriptingEngine->import( "python27_test" );
+		const wchar_t * sourcePath = L"../../../src/core/testing/plg_python27_unit_test/scripts";
+		const wchar_t * deployPath = L"./scripts/plg_python27_unit_test";
+		const char * moduleName = "python27_test";
+		const bool sourcePathSet = scriptingEngine->appendSourcePath( sourcePath );
+		CHECK( sourcePathSet );
+		const bool deployPathSet =  scriptingEngine->appendBinPath( deployPath );
+		CHECK( deployPathSet );
+		auto module = scriptingEngine->import( moduleName );
 		CHECK( module.isValid() );
 		// Python failed to import test script.
 		if (!module.isValid())

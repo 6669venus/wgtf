@@ -138,7 +138,7 @@ void TestPage::getTextField( std::wstring * text ) const
 	*text = text_;
 }
 
-void TestPage::setSlideData( const int & length )
+void TestPage::setSlideData( const double & length )
 {
 	if ((length < this->getSlideMinData()) || (length > this->getSlideMaxData()))
 	{
@@ -146,7 +146,7 @@ void TestPage::setSlideData( const int & length )
 	}
 	curSlideData_ = length;
 }
-void TestPage::getSlideData( int * length ) const
+void TestPage::getSlideData(double * length) const
 {
 	*length = curSlideData_;
 }
@@ -263,10 +263,26 @@ const TestPolyStructPtr & TestPage::getTestPolyStruct() const
 void TestPage::generateEnumFunc(
 	std::map< int, std::wstring > * o_enumMap ) const
 {
-	o_enumMap->insert( std::make_pair( 0, L"First Value" ) );
-	o_enumMap->insert( std::make_pair( 1, L"Second Value" ) );
-	o_enumMap->insert( std::make_pair( 2, L"third Value" ) );
-	o_enumMap->insert( std::make_pair( 3, L"Forth Value" ) );
+    // change the case just for the purpose of demonstrating dynamically generating dropdown list 
+    // when users click on the dropdownbox
+    static int i = 0;
+    if(i == 0)
+    {
+        o_enumMap->clear();
+        o_enumMap->insert( std::make_pair( 0, L"First Value" ) );
+        o_enumMap->insert( std::make_pair( 1, L"Second Value" ) );
+        o_enumMap->insert( std::make_pair( 2, L"third Value" ) );
+        o_enumMap->insert( std::make_pair( 3, L"Forth Value" ) );
+        i = 1;
+        return;
+    }
+    o_enumMap->clear();
+    o_enumMap->insert( std::make_pair( 0, L"1st Value" ) );
+    o_enumMap->insert( std::make_pair( 1, L"2nd Value" ) );
+    o_enumMap->insert( std::make_pair( 2, L"3rd Value" ) );
+    o_enumMap->insert( std::make_pair( 3, L"4th Value" ) );
+    i = 0;
+
 }
 
 const std::string & TestPage::getFileUrl() const

@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief A generic vector control that can be used to represent any number of vectors.
@@ -10,10 +10,7 @@ import BWControls 1.0
 
 WGExpandingRowLayout {
     id: mainLayout
-    Layout.fillWidth: true
-    spacing: 0
-
-    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
+    objectName: "WGVectorN"
 
     /*! This property holds each individual vectors label */
     property variant vectorLabels: []
@@ -21,19 +18,22 @@ WGExpandingRowLayout {
     property variant vectorData: []
 
     //properties for controlling spinner behaviour
-    property real stepsize: 0.1
-    property real maximumValue: 2147483647
-    property real minimumValue: -2147483647
-    property int decimals: 3
-    property real defaultValue: minimumValue
+    property var stepSizes: [0.1, 0.1, 0.1, 0.1]
+    property var maximumValues: [2147483647, 2147483647, 2147483647, 2147483647]
+    property var minimumValues: [-2147483647, -2147483647, -2147483647, -2147483647]
+    property var decimals: [3, 3, 3, 3]
+    property var defaultValues: minimumValues
 
     //binding changes in value back to data
-
     signal elementChanged (var value_, int index)
 
     onElementChanged: {
         vectorData[index] = value_
     }
+
+    Layout.fillWidth: true
+    spacing: 0
+    implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
     Repeater {
         id: spinBoxRepeater
@@ -91,11 +91,11 @@ WGExpandingRowLayout {
                             mainLayout.elementChanged(number, index)
                         }
 
-                        maximumValue: mainLayout.maximumValue
-                        minimumValue: mainLayout.minimumValue
-                        stepSize: mainLayout.stepsize
-                        decimals: mainLayout.decimals
-                        defaultValue: mainLayout.defaultValue
+                        maximumValue: mainLayout.maximumValues[index]
+                        minimumValue: mainLayout.minimumValues[index]
+                        stepSize: mainLayout.stepSizes[index]
+                        decimals: mainLayout.decimals[index]
+                        defaultValue: mainLayout.defaultValues[index]
                     }
                 }
                 WGExpandingRowLayout {

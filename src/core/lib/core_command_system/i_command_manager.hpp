@@ -3,7 +3,9 @@
 
 #include "command_instance.hpp"
 #include "i_command_event_listener.hpp"
-#include "wg_types/event.hpp"
+#include "core_common/signal.hpp"
+
+#include <thread>
 
 class IValueChangeNotifier;
 class VariantList;
@@ -23,6 +25,10 @@ public:
 
 class ICommandManager
 {
+	typedef Signal<void(const VariantList &, size_t, size_t)> SignalModified;
+	typedef Signal<void(const VariantList &)> SignalReset;
+	typedef Signal<void(int)> SignalIndexChanged;
+
 public:
 	virtual ~ICommandManager() {}
 	virtual void fini() = 0;
@@ -37,20 +43,24 @@ public:
 	virtual void fireCommandStatusChanged(
 		const CommandInstance & command ) const = 0;
 	virtual void fireProgressMade( const CommandInstance & command ) const = 0;
+    virtual void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const = 0;
 
 	virtual void undo() = 0;
 	virtual void redo() = 0;
 
 	virtual bool canUndo() const = 0;
 	virtual bool canRedo() const = 0;
+    
+    typedef std::function<bool (const CommandInstancePtr&)> TRemoveFunctor;
+    virtual void removeCommands(const TRemoveFunctor & functor) = 0;
 
 	virtual const VariantList & getHistory() const = 0;
-	virtual IValueChangeNotifier& currentIndex() = 0;
+	virtual const int commandIndex() const = 0;
+	virtual void moveCommandIndex( int newIndex ) = 0;
 	virtual const IListModel & getMacros() const = 0;
 	virtual bool createMacro( const VariantList & commandInstanceList, const char * id = "" ) = 0;
 	virtual bool deleteMacroByName( const char * id ) = 0;
 
-	
 	virtual void beginBatchCommand() = 0;
 	virtual void endBatchCommand() = 0;
 	virtual void abortBatchCommand() = 0;
@@ -62,15 +72,20 @@ public:
 	virtual void notifyHandleCommandQueued( const char * commandId ) = 0;
 	virtual void notifyNonBlockingProcessExecution( const char * commandId ) = 0;
 
+    virtual void SetHistorySerializationEnabled(bool isEnabled) = 0; // enabled default 
 	virtual bool SaveHistory( ISerializer & serializer ) = 0;
 	virtual bool LoadHistory( ISerializer & serializer ) = 0;
 
 	virtual ISelectionContext& selectionContext() = 0;
 
-	PUBLIC_EVENT( ICommandManager, HistoryPostInserted, const VariantList &, history, size_t, index, size_t, count );
-	PUBLIC_EVENT( ICommandManager, HistoryPostRemoved, const VariantList &, history, size_t, index, size_t, count );
-	PUBLIC_EVENT( ICommandManager, HistoryPreReset, const VariantList &, history );
-	PUBLIC_EVENT( ICommandManager, HistoryPostReset, const VariantList &, history );
+	virtual std::thread::id ownerThreadId() = 0;
+
+	SignalModified signalHistoryPostInserted;
+	SignalModified signalHistoryPostRemoved;
+	SignalReset signalHistoryPreReset;
+	SignalReset signalHistoryPostReset;
+	SignalIndexChanged signalPreCommandIndexChanged;
+	SignalIndexChanged signalPostCommandIndexChanged;
 };
 
 #endif//I_COMMAND_MANAGER_HPP

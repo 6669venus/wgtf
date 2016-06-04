@@ -46,15 +46,3 @@ CommandThreadAffinity BatchCommand::threadAffinity() const
 { 
 	return CommandThreadAffinity::ANY_THREAD;
 }
-
-
-//--------------------------------------------------------------------------
-void BatchCommand::undo( IDataStream & stream ) const
-{
-}
-
-
-//--------------------------------------------------------------------------
-void BatchCommand::redo( IDataStream & stream ) const
-{
-}

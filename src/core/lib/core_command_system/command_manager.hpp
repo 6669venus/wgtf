@@ -3,7 +3,8 @@
 
 #include "command_instance.hpp"
 #include "i_command_manager.hpp"
-#include "wg_types/event.hpp"
+
+#include <functional>
 
 class IApplication;
 class IDefinitionManager;
@@ -55,12 +56,17 @@ public:
 	void deregisterCommandStatusListener( ICommandEventListener * listener ) override;
 	void fireCommandStatusChanged( const CommandInstance & command ) const override;
 	void fireProgressMade( const CommandInstance & command ) const override;
+    void fireCommandExecuted(const CommandInstance & command, CommandOperation operation) const override;
 	void undo() override;
 	void redo() override;
 	bool canUndo() const override;
 	bool canRedo() const override;
+    
+    void removeCommands(const TRemoveFunctor & functor) override;
+    
 	const VariantList & getHistory() const override;
-	IValueChangeNotifier& currentIndex() override;
+	const int commandIndex() const override;
+	void moveCommandIndex( int newIndex ) override;
 	const IListModel & getMacros() const override;
 	bool createMacro( const VariantList & commandInstanceList, const char * id = "" ) override;
 	bool deleteMacroByName( const char * id ) override;
@@ -73,9 +79,11 @@ public:
 	void notifyCancelMultiCommand() override;
 	void notifyHandleCommandQueued( const char * commandId ) override;
 	void notifyNonBlockingProcessExecution( const char * commandId ) override;
+    void SetHistorySerializationEnabled(bool isEnabled) override;
 	bool SaveHistory( ISerializer & serializer ) override;
 	bool LoadHistory( ISerializer & serializer ) override;
 	ISelectionContext& selectionContext() override;
+	virtual std::thread::id ownerThreadId() override;
 	//From ICommandManager end
 
 	IDefinitionManager & getDefManager() const;
@@ -86,7 +94,7 @@ private:
 	friend UndoRedoCommand;
 	void addToHistory( const CommandInstancePtr & instance );
 	bool undoRedo( const int & desiredIndex );
-	class CommandManagerImpl * pImpl_;
+	std::unique_ptr< class CommandManagerImpl > pImpl_;
 	IDefinitionManager & defManager_;
 	IFileSystem * fileSystem_;
 	IReflectionController * controller_;
@@ -116,6 +124,11 @@ private:
 	{
 		commandSystemProvider_->fireProgressMade( commandInstance );
 	}
+
+    void commandExecuted(const CommandInstance & commandInstance, CommandOperation operation) override
+    {
+        commandSystemProvider_->fireCommandExecuted(commandInstance, operation);
+    }
 };
 
 #endif //COMMAND_MANAGER_HPP

@@ -10,7 +10,7 @@ import QtGraphicalEffects 1.0
 \code{.js}
 WGToolButton {
     checkable: true
-    checkState: true
+    checked: true
     exclusiveGroup: toolbarGroup
     iconSource: "icons/pause_16x16.png"
 }
@@ -22,4 +22,6 @@ WGPushButton {
     implicitHeight: defaultSpacing.minimumRowHeight
     text: ""
     style: WGToolButtonStyle {}
+    // A default icon to prevent invisible buttons during UI creation
+    iconSource: text == "" ? "icons/placeholder_icon_16x16.png" : ""
 }

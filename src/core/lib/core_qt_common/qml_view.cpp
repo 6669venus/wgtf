@@ -12,10 +12,12 @@
 #include <QQuickItem>
 #include <QVariantMap>
 #include <QFileSystemWatcher>
+#include <QApplication>
 
 QmlView::QmlView( const char * id, IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	: id_( id )
 	, qtFramework_( qtFramework )
+    , qmlEngine_( qmlEngine )
 	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
 	, quickView_( new QQuickWidget( &qmlEngine, nullptr ) )
 	, watcher_( nullptr )
@@ -32,6 +34,9 @@ QmlView::~QmlView()
 	{
 		delete quickView_;
 	}
+    qmlEngine_.collectGarbage();
+    // call sendPostedEvents to give chance to QScriptObject's DeferredDeleted event get handled in time
+    QApplication::sendPostedEvents( nullptr, QEvent::DeferredDelete );
 }
 
 const char * QmlView::id() const
@@ -78,12 +83,21 @@ void QmlView::update()
 
 void QmlView::setContextObject( QObject * object )
 {
+    object->setParent( qmlContext_.get() );
 	qmlContext_->setContextObject( object );
 }
 
 void QmlView::setContextProperty(
 	const QString & name, const QVariant & property )
 {
+    if (property.canConvert< QObject * >())
+    {
+        auto object = property.value< QObject * >();
+        if(!object->isWidgetType() && !object->isWindowType())
+        {
+            object->setParent( qmlContext_.get() );
+        }
+    }
 	qmlContext_->setContextProperty( name, property );
 }
 
@@ -93,15 +107,19 @@ void QmlView::error( QQuickWindow::SceneGraphError error, const QString &message
 		message.toLatin1().constData() );
 }
 
-bool QmlView::load( const QUrl & qUrl )
+bool QmlView::load( const QUrl & qUrl, const char * uniqueName )
 {
 	url_ = qUrl;
-
+    if(uniqueName)
+    {
+        id_ += uniqueName;
+    }
+  
 	auto preferences = qtFramework_.getPreferences();
 	auto preference = preferences->getPreference( id_.c_str() );
-	auto value = qtFramework_.toQVariant( preference );
-	this->setContextProperty( QString( "Preference" ), value );
-	this->setContextProperty( QString( "ViewId" ), id_.c_str() );
+	auto value = qtFramework_.toQVariant( preference, qmlContext_.get() );
+	this->setContextProperty( QString( "preference" ), value );
+	this->setContextProperty( QString( "viewId" ), id_.c_str() );
 	this->setContextProperty( QString( "View" ), QVariant::fromValue( quickView_ ) );
 
 	return doLoad( qUrl );
@@ -193,6 +211,8 @@ void QmlView::focusInEvent()
 	{
 		l->onFocusIn( this );
 	}
+
+	quickView_->rootObject()->setFocus(true);
 }
 
 void QmlView::focusOutEvent()
@@ -201,6 +221,7 @@ void QmlView::focusOutEvent()
 	{
 		l->onFocusOut( this );
 	}
+	quickView_->rootObject()->setFocus(false);
 }
 
 void QmlView::registerListener(IViewEventListener* listener)

@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Private 1.0
 import QtQuick.Layouts 1.1
@@ -57,8 +57,17 @@ Item {
        A separate vertical slider should probably be made */
     property alias orientation: slider.orientation
 
-    /*! This property defines what sliderstyle styling component to use for this control */
+    /*! This property defines what SliderStyle component will be used for the slider */
     property alias style: slider.style
+
+    /*! This property defines what Slider Handle component will be used for the slider handle */
+    property alias handleType: slider.handleType
+
+    /*! This property defines what frame component will be used for the numberbox text box */
+    property alias textBoxStyle: sliderValue.textBoxStyle
+
+    /*! This property defines what frame component will be used for the numberbox buttons */
+    property alias buttonFrame: sliderValue.buttonFrame
 
     /*! This property defines the value indicated by the control
         The default value is \c 0.0
@@ -68,9 +77,8 @@ Item {
     /*! This property defines the colour of the slider */
     property alias barColor: slider.barColor
 
-    //TODO: Review this, should it be internal? If so rename with "__" prefix
-    /*! \internal */
-    property alias slider: slider
+    /*! This property defines whether the tickmarks are displayed or not */
+    property alias tickmarksEnabled: slider.tickmarksEnabled
 
     /*! This property determines the prefix string displayed within the slider textbox.
         Typically used to display unit type.
@@ -84,9 +92,6 @@ Item {
     */
     property string suffix: ""
 
-    /*! TODO: Make timeObjects work
-    */
-    property bool timeObject: false
 
     /*! This property defines the number of decimal places displayed in the textbox
         The default value is \c 1
@@ -127,28 +132,29 @@ Item {
     */
     property alias handleClamp: slider.handleClamp
 
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
+    /*! This property is used to define the slider's label when used in a WGFormLayout
+        The default value is an empty string
+    */
+    property string label: ""
 
-    property alias textBoxStyle: sliderValue.textBoxStyle
-    property alias buttonFrame: sliderValue.buttonFrame
+    /*! \internal */
+    property alias __slider: slider
 
-    implicitHeight: parent.rowHeight_ ? parent.rowHeight_ : 22
+    /*! \internal */
+    property bool __horizontal: orientation === Qt.Horizontal
 
-    property alias b_Target: dataBinding.target
-    property alias b_Property: dataBinding.property
-    property alias b_Value: dataBinding.value
-
-    Binding {
-        id: dataBinding
-    }
+    implicitHeight: defaultSpacing.minimumRowHeight
+    implicitWidth: defaultSpacing.standardMargin
 
     onValueChanged: {
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
+        setValueHelper(slider.__handlePosList[0], "value", sliderFrame.value);
     }
 
     // support copy&paste
     WGCopyable {
+        objectName: "copyableControl"
         id: copyableControl
 
         BWCopyable {
@@ -182,123 +188,167 @@ Item {
     Component.onCompleted: {
         copyableControl.disableChildrenCopyable( sliderFrame );
         setValueHelper(slider, "value", sliderFrame.value);
+        setValueHelper(sliderValue, "value", sliderFrame.value);
+    }
+    RowLayout {
+        anchors.fill: parent
+        visible: __horizontal
+
+        Item {
+            id: horizLower
+            visible: fakeLowerValue
+            Layout.fillHeight: true
+            Layout.preferredWidth: valueBoxWidth
+        }
+        Item {
+            id: horizSlider
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+        Item {
+            id: horizUpper
+            visible: showValue
+            Layout.fillHeight: true
+            Layout.preferredWidth: valueBoxWidth
+        }
     }
 
-    WGExpandingRowLayout {
-        id: sliderLayout
+    ColumnLayout {
+        anchors.fill: parent
+        visible: !__horizontal
+
+        Item {
+            id: vertLower
+            visible: fakeLowerValue
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            Layout.preferredWidth: valueBoxWidth
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        }
+
+        Item {
+            id: vertSlider
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+
+        Item {
+            id: vertUpper
+            visible: showValue
+            Layout.preferredHeight: defaultSpacing.minimumRowHeight
+            Layout.preferredWidth: valueBoxWidth
+            Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        }
+    }
+
+    Rectangle {
+        id: fakeValue
+        color: "transparent"
+
+        parent: __horizontal ? horizLower : vertLower
+
+        width:  valueBoxWidth
+        height:  defaultSpacing.minimumRowHeight
+        visible: fakeLowerValue ? true : false
+    }
+
+    WGSlider {
+        id: slider
+        opacity: 1.0
+
+        property bool showValue: true
+
+        stepSize: 1.0
+
+        parent: __horizontal ? horizSlider : vertSlider
+
         anchors.fill: parent
 
-        Rectangle {
-            id: fakeValue
-            color: "transparent"
-            Layout.preferredWidth: fakeLowerValue ? valueBoxWidth : 0
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-            visible: fakeLowerValue ? true : false
-        }
+        activeFocusOnPress: true
 
-        WGSlider {
-            id: slider
-            opacity: 1.0
+        Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
 
-            property bool showValue: true
+        value: sliderFrame.value;
 
-            stepSize: 1.0
-
-            Layout.fillWidth: __horizontal ? true : false
-            Layout.fillHeight: __horizontal ? false : true
-
-            activeFocusOnPress: true
-
-            Layout.preferredHeight: __horizontal ? Math.round(sliderFrame.height) : -1
-
-            WGSliderHandle {
-                id: sliderHandle
-                minimumValue: slider.minimumValue
-                maximumValue: slider.maximumValue
-                showBar: true
-
-                value: sliderFrame.value
-
-
-                Binding {
-                    target: sliderFrame
-                    property: "value"
-                    value: sliderHandle.value //sliderHandle.value?
-                }
-            }
-
-            style : WGSliderStyle{
-
-            }
-
-            states: [
-                State {
-                    name: ""
-                    when: sliderFrame.width < sliderValue.Layout.preferredWidth + sliderHandle.width
-                    PropertyChanges {target: slider; opacity: 0}
-                    PropertyChanges {target: sliderLayout; spacing: 0}
-                    PropertyChanges {target: slider; visible: false}
-                },
-                State {
-                    name: "HIDDENSLIDER"
-                    when: sliderFrame.width >= sliderValue.Layout.preferredWidth + sliderHandle.width
-                    PropertyChanges {target: slider; opacity: 1}
-                    PropertyChanges {target: sliderLayout; spacing: defaultSpacing.rowSpacing}
-                    PropertyChanges {target: slider; visible: true}
-                }
-            ]
-
-            transitions: [
-                Transition {
-                    from: ""
-                    to: "HIDDENSLIDER"
-                    NumberAnimation { properties: "opacity"; duration: 200 }
-                },
-                Transition {
-                    from: "HIDDENSLIDER"
-                    to: ""
-                    NumberAnimation { properties: "opacity"; duration: 200 }
-                }
-            ]
-        }
-
-        WGNumberBox {
-            id: sliderValue
-
-            Layout.fillWidth: true
-            Layout.preferredWidth: visible ? valueBoxWidth : 0
-
-            //This will ensure the last thing visible is the value
-            Layout.minimumWidth: visible ? sliderValue.contentWidth : 0
-
-            Layout.preferredHeight: defaultSpacing.minimumRowHeight
-            visible: showValue
-            decimals: sliderFrame.decimals
-
-
-            prefix: sliderFrame.prefix
-            suffix: sliderFrame.suffix
-
-            value: sliderFrame.value
-
-            minimumValue: sliderFrame.minimumValue
-            maximumValue: sliderFrame.maximumValue
-
-            stepSize: slider.stepSize
-
-            onEditingFinished: {
+        onValueChanged: {
+            if ( __handleMoving ) {
                 setValueHelper(sliderFrame, "value", value);
             }
+        }
 
-            onValueChanged: {
-                sliderFrame.value = value
-            }
+        onChangeValue: {
+            setValueHelper(sliderFrame, "value", value);
+        }
 
-            Binding {
-                target: sliderValue
-                property: "value"
-                value: sliderFrame.value
+        style : WGSliderStyle{
+
+        }
+
+        states: [
+            State {
+                name: ""
+                when: sliderFrame.width < sliderValue.Layout.preferredWidth + sliderHandle.width
+                PropertyChanges {target: slider; opacity: 0}
+                PropertyChanges {target: sliderLayout; spacing: 0}
+                PropertyChanges {target: slider; visible: false}
+            },
+            State {
+                name: "HIDDENSLIDER"
+                when: sliderFrame.width >= sliderValue.Layout.preferredWidth + sliderHandle.width
+                PropertyChanges {target: slider; opacity: 1}
+                PropertyChanges {target: sliderLayout; spacing: defaultSpacing.rowSpacing}
+                PropertyChanges {target: slider; visible: true}
             }
+        ]
+
+        transitions: [
+            Transition {
+                from: ""
+                to: "HIDDENSLIDER"
+                NumberAnimation { properties: "opacity"; duration: 200 }
+            },
+            Transition {
+                from: "HIDDENSLIDER"
+                to: ""
+                NumberAnimation { properties: "opacity"; duration: 200 }
+            }
+        ]
+    }
+
+    WGNumberBox {
+        objectName: "NumberBox"
+        id: sliderValue
+        parent: __horizontal ? horizUpper : vertUpper
+
+        width:  valueBoxWidth
+        height:  defaultSpacing.minimumRowHeight
+
+        Layout.preferredHeight: defaultSpacing.minimumRowHeight
+        visible: showValue
+        decimals: sliderFrame.decimals
+
+        prefix: sliderFrame.prefix
+        suffix: sliderFrame.suffix
+
+        value: sliderFrame.value
+
+        minimumValue: sliderFrame.minimumValue
+        maximumValue: sliderFrame.maximumValue
+
+        stepSize: slider.stepSize
+
+        //Keyboard enter key input
+        onEditingFinished: {
+            setValueHelper(sliderFrame, "value", value);
+        }
+
+        onValueChanged: {
+            setValueHelper(sliderFrame, "value", value);
         }
     }
+
+    /*! Deprecated */
+    property alias label_: sliderFrame.label
+
+    /*! Deprecated */
+    property bool timeObject: false
 }

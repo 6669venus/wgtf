@@ -11,4 +11,6 @@ public:
 	virtual Collection getCollection( const ObjectHandle & provider, const IDefinitionManager & definitionManager ) = 0;
 };
 
+typedef std::unique_ptr<IEnumGenerator> IEnumGeneratorPtr;
+
 #endif //I_ENUM_GENERATOR_HPP

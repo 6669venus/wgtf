@@ -1,4 +1,5 @@
 #include "custom_panel.hpp"
+#include "core_logging/logging.hpp"
 #include "core_variant/variant.hpp"
  
 CustomPanel::CustomPanel( IComponentContext & context )
@@ -9,7 +10,7 @@ CustomPanel::CustomPanel( IComponentContext & context )
  
 bool CustomPanel::addPanel()
 {
-    auto uiFramework = this->get< IUIFramework >();
+	auto uiFramework = this->get< IUIFramework >();
 	auto uiApplication = this->get< IUIApplication >();
 	
 	if ((uiFramework == nullptr) ||
@@ -22,7 +23,14 @@ bool CustomPanel::addPanel()
 		"plg_custom_panel/custom_panel.qml",
 		IUIFramework::ResourceType::Url );
 
-	uiApplication->addView( *customView_ );
+	if (customView_ != nullptr)
+	{
+		uiApplication->addView( *customView_ );
+	}
+	else
+	{
+		NGT_ERROR_MSG( "Failed to load qml\n" );
+	}
 	return true;
 }
  
@@ -35,5 +43,9 @@ void CustomPanel::removePanel()
 		return;
 	}
 
-	uiApplication->removeView( *customView_ );
+	if (customView_ != nullptr)
+	{
+		uiApplication->removeView( *customView_ );
+		customView_ = nullptr;
+	}
 }

@@ -10,21 +10,21 @@ Rectangle {
     objectName: "WGButtonFrame"
 
     /*! This property defines the color of the inner border
-        The default value is \c palette.LighterShade
+        The default value is \c palette.lighterShade
     */
-    property color innerBorderColor: palette.LightShade
+    property color innerBorderColor: palette.lightShade
 
     /*! This property defines the color of the border
-        The default value is \c palette.DarkerShade
+        The default value is \c palette.darkerShade
     */
-    property color borderColor: palette.DarkerShade
+    property color borderColor: palette.darkerShade
 
     /*! This property defines the color of a highlight overlay
         The default value is \c "transparent"
     */
     property color highlightColor: "transparent"
 
-    color: palette.LightShade
+    color: palette.lightShade
 
     border.width: defaultSpacing.standardBorderSize
     border.color: borderColor
@@ -37,7 +37,7 @@ Rectangle {
         id: innerFrame
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardBorderSize
-        radius: outerFrame.radius == defaultSpacing.standardRadius ? defaultSpacing.halfRadius : 0
+        radius: parent.radius /2
 
         border.width: defaultSpacing.standardBorderSize
         border.color: innerBorderColor
@@ -49,7 +49,7 @@ Rectangle {
         id: pressHighlight
         anchors.fill: parent
         anchors.margins: defaultSpacing.standardBorderSize
-        radius: outerFrame.radius == defaultSpacing.standardRadius ? defaultSpacing.halfRadius : 0
+        radius: parent.radius /2
         color: highlightColor
     }
 }

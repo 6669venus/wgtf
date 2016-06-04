@@ -24,7 +24,7 @@ Rectangle {
     id: colorWheel
     objectName: "WGColorWheel"
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     /*!
         The hue value or hue of the chosen color from 0 to 1.0
@@ -119,7 +119,7 @@ Rectangle {
         height: parent.height
         width: height
 
-        color: palette.DarkColor
+        color: palette.darkColor
 
         radius: width
 
@@ -179,6 +179,7 @@ Rectangle {
 
             MouseArea {
                 id: ringDrag
+                objectName: "hueRingDragWheel"
                 anchors.fill: parent
 
                 property real initOffset: 0
@@ -294,12 +295,13 @@ Rectangle {
 
                 radius: width
 
-                color: palette.MainWindowColor
+                color: palette.mainWindowColor
 
                 clip: true
 
                 MouseArea {
                     id: triangleArea
+                    objectName: "colorTriangleDragArea"
                     anchors.top: map.top
                     anchors.bottom: map.bottom
                     anchors.left: map.left
@@ -642,7 +644,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(hue,0,0,1)
                     MouseArea {
                         anchors.fill: parent
@@ -668,7 +670,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(hue,0,0.5,1)
                     MouseArea {
                         anchors.fill: parent
@@ -694,7 +696,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(hue,0,1,1)
                     MouseArea {
                         anchors.fill: parent
@@ -722,7 +724,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(0,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
@@ -749,7 +751,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(0.333,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
@@ -776,7 +778,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(0.667,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
@@ -805,7 +807,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(0.167,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
@@ -832,7 +834,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(0.5,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
@@ -858,7 +860,7 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
+                    border.color: palette.darkColor
                     color: Qt.hsla(0.833,1,0.5,1)
                     MouseArea {
                         anchors.fill: parent
@@ -887,15 +889,15 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
-                    color: palette.LightShade
+                    border.color: palette.darkColor
+                    color: palette.lightShade
                     Text {
                         anchors.centerIn: parent
 
                         anchors.horizontalCenterOffset: 1
                         anchors.verticalCenterOffset: 1
 
-                        color : palette.NeutralTextColor
+                        color : palette.neutralTextColor
 
                         rotation: 10
 
@@ -941,15 +943,15 @@ Rectangle {
                     width: __shortCutButtonSize
                     radius: height
                     border.width: 1
-                    border.color: palette.DarkColor
-                    color: palette.LightShade
+                    border.color: palette.darkColor
+                    color: palette.lightShade
                     Text {
                         anchors.centerIn: parent
 
                         anchors.horizontalCenterOffset: 1
                         anchors.verticalCenterOffset: 1
 
-                        color : palette.NeutralTextColor
+                        color : palette.neutralTextColor
 
                         rotation: -10
 

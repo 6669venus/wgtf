@@ -1,6 +1,9 @@
 #ifndef COMMAND_INSTANCE_HPP
 #define COMMAND_INSTANCE_HPP
 
+#include "reflection_undo_redo_data.hpp"
+#include "custom_undo_redo_data.hpp"
+
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "core_serialization/serializer/xml_serializer.hpp"
 
@@ -39,6 +42,9 @@ public:
 class CommandInstance;
 typedef ObjectHandleT< CommandInstance > CommandInstancePtr;
 
+class UndoRedoData;
+typedef std::unique_ptr< UndoRedoData > UndoRedoDataPtr;
+
 //TODO: Pull out interface to remove linkage
 /**
  *	CommandInstance stores per-instance data for a type of Command.
@@ -50,21 +56,21 @@ class CommandInstance
 
 public:
 	friend CommandManagerImpl;
+	friend ReflectionUndoRedoData;
+	friend CustomUndoRedoData;
 
 	typedef XMLSerializer UndoRedoSerializer;
 
 	CommandInstance();
 	CommandInstance( const CommandInstance& );
 	virtual ~CommandInstance();
-	
-	virtual void init();
 
 	void cancel();
 
 	void execute();
-	bool isComplete() const { return status_ == Complete; }
+	bool isComplete() const;
 
-	ExecutionStatus getExecutionStatus() const { return status_; }
+	ExecutionStatus getExecutionStatus() const;
 	ObjectHandle getArguments() const { return arguments_; }
 	ObjectHandle getReturnValue() const { return returnValue_; }
 
@@ -75,27 +81,20 @@ public:
 	void undo();
 	void redo();
 
-	const ResizingMemoryStream& getUndoStream() const { return undoData_; }
-	const ResizingMemoryStream& getRedoStream() const { return redoData_; }
-
 	const char * getCommandId() const;
 	void setContextObject( const ObjectHandle & contextObject );
 
-	
 	ICommandManager * getCommandSystemProvider() { return pCmdSysProvider_; }
+
+    ObjectHandle getCommandDescription() const;
+
+	void consolidateUndoRedoData( CommandInstance * parentInstance );
 
 private:
 	void waitForCompletion();
 
-	std::shared_ptr< BinaryBlock > getUndoData() const;
-	void setUndoData( const std::shared_ptr< BinaryBlock > & undoData );
-	std::shared_ptr< BinaryBlock > getRedoData(  ) const;
-	void setRedoData( const std::shared_ptr< BinaryBlock > & undoData );
-
-
 	Command * getCommand();
 	const Command * getCommand() const;
-	const wchar_t* displayName() const;
 
 	void setStatus( ExecutionStatus status );
 	void setArguments( const ObjectHandle & arguments );
@@ -104,25 +103,18 @@ private:
 	void setCommandSystemProvider( ICommandManager * pCmdSysProvider );
 	void setDefinitionManager( IDefinitionManager & defManager );
 
-	void connectEvent();
-	void disconnectEvent();
-
 	std::mutex					mutex_;
 	IDefinitionManager *		defManager_;
-	ExecutionStatus				status_;
+	std::atomic< ExecutionStatus > status_;
 	wg_condition_variable		completeStatus_; // assumed predicate: status_ == Complete
 	ObjectHandle				arguments_;
 	ObjectHandle				returnValue_;
-	CommandInstancePtr			parent_;
 	std::vector< CommandInstancePtr > children_;
-	ResizingMemoryStream		undoData_;
-	ResizingMemoryStream		redoData_;
-	ICommandManager *		pCmdSysProvider_;
-	std::shared_ptr< PropertyAccessorListener > paListener_;
-	ReflectedPropertyUndoRedoUtility::UndoRedoHelperList	undoRedoHelperList_;
-	std::string commandId_;
+	ICommandManager *			pCmdSysProvider_;
+	std::string					commandId_;
 	ObjectHandle				contextObject_;
 	CommandErrorCode			errorCode_;
+	std::vector< UndoRedoDataPtr > undoRedoData_;
 };
 
 #endif //COMMAND_INSTANCE_HPP

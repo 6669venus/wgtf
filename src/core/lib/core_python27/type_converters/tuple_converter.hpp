@@ -2,32 +2,34 @@
 #ifndef _PYTHON_TUPLE_CONVERTER_HPP
 #define _PYTHON_TUPLE_CONVERTER_HPP
 
-#include "i_type_converter.hpp"
-#include "core_script/type_converter_queue.hpp"
+#include "i_parent_type_converter.hpp"
 
-
-typedef TypeConverterQueue< PythonType::IConverter,
-	PyScript::ScriptObject > PythonTypeConverters;
-
+class IComponentContext;
 
 namespace PythonType
 {
+
+class Converters;
 
 
 /**
  *	Attempts to convert ScriptTuple<->Collection<->Variant.
  */
-class TupleConverter final : public IConverter
+class TupleConverter final : public IParentConverter
 {
 public:
-	TupleConverter( const PythonTypeConverters & typeConverters );
+	TupleConverter( IComponentContext & context,
+		const Converters & typeConverters );
 
 	virtual bool toVariant( const PyScript::ScriptObject & inObject,
-		Variant & outVariant ) override;
+		Variant & outVariant,
+		const ObjectHandle & parentHandle,
+		const std::string & childPath ) override;
 	virtual bool toScriptType( const Variant & inVariant,
-		PyScript::ScriptObject & outObject ) override;
+		PyScript::ScriptObject & outObject, void* userData = nullptr ) override;
 private:
-	const PythonTypeConverters & typeConverters_;
+	IComponentContext & context_;
+	const Converters & typeConverters_;
 };
 
 

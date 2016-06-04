@@ -86,40 +86,14 @@ public:
 
 
 protected:
-	/**
-	 *	Default implementation can be overridden by derived classes.
-	 */
-	virtual Variant invokeProperty( const char * name,
+	Variant invokeProperty( const char * name,
 		const ReflectedMethodParameters& parameters );
 
 
-	/**
-	 *	Default implementation can be overridden by derived classes.
-	 */
-	virtual Variant getProperty( const char * name ) const;
+	Variant getProperty( const char * name ) const;
 
 
-	/**
-	 *	Default implementation can be overridden by derived classes.
-	 */
-	virtual bool setProperty( const char * name,
-		const TypeId & typeId,
-		Variant & value );
-
-
-	/**
-	 *	Construct a property and add it to the definition.
-	 *	
-	 *	@param name name of property to be added.
-	 *	@param typeId type of property to be added.
-	 *	@param metaData metadata about property to be added.
-	 *  @param value value of the of property to be added
-	 *	@return the newly added property or null on failure.
-	 */
-	virtual IBasePropertyPtr addProperty( const char * name,
-		const TypeId & typeId,
-		MetaHandle metaData,
-		Variant & value ) = 0;
+	bool setProperty( const char * name, const Variant & value );
 
 
 	/**
@@ -155,9 +129,8 @@ bool BaseGenericObject::get( const char * name, T & value ) const
 template< typename T >
 bool BaseGenericObject::set( const char * name, const T & value )
 {
-	const TypeId typeId = TypeId::getType< T >();
 	auto variantValue = ReflectionUtilities::reference( value );
-	return this->setProperty( name, typeId, variantValue );
+	return this->setProperty( name, variantValue );
 }
 
 

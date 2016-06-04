@@ -37,11 +37,6 @@ public:
 	{		
  		Variant::setMetaTypeManager( 
  			contextManager.queryInterface< IMetaTypeManager >() );
-
-		IDefinitionManager* defManager =
-			contextManager.queryInterface< IDefinitionManager >();
-		assert (defManager != nullptr);
-		SharedControls::initDefs( *defManager );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override

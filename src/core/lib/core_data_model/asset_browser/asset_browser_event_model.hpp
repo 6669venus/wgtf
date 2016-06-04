@@ -35,9 +35,9 @@ public:
 	virtual void connectUseSelectedAsset(AssetCallback) override;
 
 private:
-	SignalAsset onAssetSelectionChanged;
-	SignalVariant onBreadcrumbSelected;
-	SignalVariant onFolderSelectionChanged;
-	SignalAsset onUseSelectedAsset;
+	SignalAsset signalAssetSelectionChanged;
+	SignalVariant signalBreadcrumbSelected;
+	SignalVariant signalFolderSelectionChanged;
+	SignalAsset signalUseSelectedAsset;
 };
 #endif // ASSET_BROWSER_EVENT_MODEL_H_

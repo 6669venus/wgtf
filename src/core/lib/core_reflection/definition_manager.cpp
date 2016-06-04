@@ -91,7 +91,9 @@ IClassDefinition * DefinitionManager::registerDefinition( IClassDefinitionDetail
 {
 	assert( defDetails );
 	IClassDefinition * definition = new ClassDefinition( defDetails );
-	definitions_.insert( std::make_pair( definition->getName(), definition ) );
+	const auto result =
+		definitions_.insert( std::make_pair( definition->getName(), definition ) );
+	assert( result.second && "Duplicate definition overwritten in map." );
 	definition->setDefinitionManager( this );
 
 	return definition;
@@ -182,7 +184,7 @@ void DefinitionManager::deregisterDefinitionHelper( const IDefinitionHelper & he
 void DefinitionManager::registerPropertyAccessorListener(
 	std::shared_ptr< PropertyAccessorListener > & listener )
 {
-	listeners_.push_back( Connection< PropertyAccessorListener >( listener ) );
+	listeners_.push_back( listener );
 }
 
 
@@ -190,7 +192,7 @@ void DefinitionManager::registerPropertyAccessorListener(
 void DefinitionManager::deregisterPropertyAccessorListener(
 	std::shared_ptr< PropertyAccessorListener > & listener )
 {
-	listeners_.erase( Connection< PropertyAccessorListener>( listener ) );
+	listeners_.erase( listener );
 }
 
 //==============================================================================

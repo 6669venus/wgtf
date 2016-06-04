@@ -25,7 +25,6 @@ MainWindow::~MainWindow()
 //==============================================================================
 void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramework )
 {
-	uiApplication.onStartUp().add< MainWindow, &MainWindow::onStartUp >( this );
 	uiFramework.loadActionData( 
 		":/plg_window_test/actions.xml", IUIFramework::ResourceType::File );
 	mainWindow_ = uiFramework.createWindow( 
@@ -35,18 +34,21 @@ void MainWindow::init( IUIApplication & uiApplication, IUIFramework & uiFramewor
 	createActions( uiFramework );
 	addMenuBar( uiApplication );
 	app_ = &uiApplication;
-	mainWindow_->onCloseEvent().add< MainWindow, &MainWindow::onCloseEvent >( this );
+	uiFramework_ = &uiFramework;
+
+	connections_ += mainWindow_->signalClose.connect( std::bind( &MainWindow::onClose, this ) );
+	connections_ += mainWindow_->signalTryClose.connect( std::bind( &MainWindow::onTryClose, this, std::placeholders::_1 ) );
+	connections_ += uiApplication.signalStartUp.connect( std::bind( &MainWindow::onStartUp, this ) );
 }
 
 //------------------------------------------------------------------------------
 void MainWindow::fini()
 {
-	mainWindow_->onCloseEvent().remove< MainWindow, &MainWindow::onCloseEvent >( this );
 	app_->removeAction( *testExit_ );
 	app_->removeWindow( *mainWindow_ );
 	destroyActions();
 	mainWindow_.reset();
-	app_->onStartUp().remove< MainWindow, &MainWindow::onStartUp >( this );
+	connections_.clear();
 }
 
 void MainWindow::close( IAction * action )
@@ -54,11 +56,25 @@ void MainWindow::close( IAction * action )
 	mainWindow_->close();
 }
 
-void MainWindow::onCloseEvent( const IWindow* sender,
-							  const IWindow::CloseEventArgs& args )
+void MainWindow::onClose()
 {
 	assert( app_ != nullptr );
 	app_->quitApplication();
+}
+
+void MainWindow::onTryClose( bool& shouldClose )
+{
+	if (shouldClose)
+	{
+		int result = uiFramework_->displayMessageBox( "Do you want to close?", 
+														"Are you sure you want to close the Generic App?",
+														IUIFramework::Cancel| IUIFramework::Ok );
+
+		if ( result == IUIFramework::Cancel )
+		{
+			shouldClose = false;
+		}
+	}
 }
 
 void MainWindow::createActions( IUIFramework & uiFramework )
@@ -79,8 +95,7 @@ void MainWindow::addMenuBar( IUIApplication & uiApplication )
 	uiApplication.addAction( *testExit_ );
 }
 
-void MainWindow::onStartUp( const IApplication * sender, const IApplication::StartUpArgs & args )
+void MainWindow::onStartUp()
 {
-	assert( app_ == sender );
-	mainWindow_->showMaximized( true );
+	mainWindow_->show( true );
 }

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 
 import BWControls 1.0
 import WGControls 1.0
+import WGControls 2.0
 import WGColorPicker 1.0
 
 /*!
@@ -79,13 +80,13 @@ Rectangle {
     property var savedColors: ["#000000","#FFFFFF","#959595","#FF0000","#00FF00","#0000FF","#00FFFF","#FF00FF","#FFFF00"]
 
     /*!
-        This property determines if the color picker allows editing the transparency or not.
+        This property determines if the color picker shows the alpha value at all.
 
-        If false, the alpha value will be locked at 1.0 and the alpha slider disabled.
+        If false, the alpha value will be locked at 1.0 and the alpha controls will not be displayed.
 
         The default is true
     */
-    property bool useAlpha: true
+    property bool showAlphaChannel: true
 
     /*!
         This property determines if the Ok and Cancel Dialog buttons are displayed.
@@ -136,7 +137,7 @@ Rectangle {
     property bool __updateRGB: false
 
     /*! \internal */
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
 
     /*!
         This signal is fired when the Ok dialog button is clicked.
@@ -443,7 +444,7 @@ Rectangle {
                         anchors.horizontalCenter: parent.horizontalCenter
                         height: parent.height - defaultSpacing.standardRadius
                         width: parent.width
-                        color: palette.DarkColor
+                        color: palette.darkColor
 
                         GridLayout {
                             id: paletteGrid
@@ -486,7 +487,7 @@ Rectangle {
                                         width: height
                                         color: typeof swatchColor != "undefined" ? swatchColor : "transparent"
                                         border.width: containsColor ? 0 : 1
-                                        border.color: containsColor ? "transparent" : palette.MidLightColor
+                                        border.color: containsColor ? "transparent" : palette.midLightColor
 
                                         Image {
                                             source: "icons/bw_check_6x6.png"
@@ -497,6 +498,7 @@ Rectangle {
                                         }
 
                                         MouseArea {
+                                            objectName: "paletteSwatchButton"
                                             anchors.fill: parent
                                             cursorShape: containsColor ? Qt.PointingHandCursor : Qt.ArrowCursor
                                             enabled: containsColor
@@ -505,14 +507,7 @@ Rectangle {
                                                 // pick as new currentColor
                                                 if (mouse.button == Qt.LeftButton)
                                                 {
-                                                    if (useAlpha)
-                                                    {
-                                                        setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,swatchColor.a)
-                                                    }
-                                                    else
-                                                    {
-                                                        setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,1.0)
-                                                    }
+                                                    setColorRGBA(swatchColor.r,swatchColor.g,swatchColor.b,swatchColor.a)
                                                 }
                                                 // if Right Mouse button, delete color from palette
                                                 else if (mouse.button == Qt.RightButton)
@@ -536,6 +531,7 @@ Rectangle {
                                 Layout.preferredHeight: width
 
                                 WGPushButton {
+                                    objectName: "addColorToPaletteButton"
                                     anchors.centerIn: parent
                                     height: parent.height - defaultSpacing.standardRadius
                                     width: height
@@ -595,7 +591,7 @@ Rectangle {
                                 id: secondSquareBorder
                                 height: Math.round(parent.height * 0.75)
                                 width: height
-                                color: palette.DarkColor
+                                color: palette.darkColor
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
                             }
@@ -603,7 +599,7 @@ Rectangle {
                             Rectangle {
                                 height: Math.round(parent.height * 0.75)
                                 width: height
-                                color: palette.DarkColor
+                                color: palette.darkColor
 
                                 // Initial square. Can be clicked to reset currentColor to initialColor
                                 Rectangle {
@@ -614,6 +610,7 @@ Rectangle {
                                     color: initialColor
 
                                     MouseArea {
+                                        objectName: "resetColorSquare"
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
                                         onClicked: {
@@ -664,6 +661,7 @@ Rectangle {
 
                         WGPushButton {
                             id: pickButton
+                            objectName: "pickFromScreenButton"
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
                             text: "Pick from screen"
@@ -719,21 +717,15 @@ Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: defaultSpacing.minimumRowHeight
 
-                            WGPushButton {
-                                id: alphaToggle
-                                text: "Use Alpha"
-                                checkable: true
-                                checked: useAlpha
-                                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                            Item {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                                onClicked: {
-                                    useAlpha = !useAlpha
-                                    if (!useAlpha)
-                                    {
-                                        basePanel.alphaValue = 1.0
-                                    }
-                                }
+                                Layout.preferredHeight: 1
+                            }
+
+                            WGLabel {
+                                text: "Hex Value (#RRGGBB): "
+                                enabled: true
+                                horizontalAlignment: Text.AlignRight
                             }
 
                             WGTextBox {
@@ -877,7 +869,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: defaultSpacing.minimumRowHeight
-                    enabled: useAlpha
+                    visible: showAlphaChannel
 
                     WGLabel {
                         text: "A:"
@@ -895,24 +887,25 @@ Rectangle {
 
                     WGColorSlider {
                         id: aSlider
+                        objectName: "alphaColorSlider"
                         Layout.fillWidth: true
                         Layout.preferredHeight: defaultSpacing.minimumRowHeight
                         minimumValue: 0
                         maximumValue: 1.0
                         stepSize: 0.001
-                        colorData: {
-                            if (useAlpha)
-                            {
-                                [Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0), Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)]
+
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 0
+                                color: Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,0)
                             }
-                            else
-                            {
-                                [palette.MainWindowColor,palette.MainWindowColor]
+                            GradientStop {
+                                position: 1
+                                color: Qt.hsla(basePanel.hueValue,basePanel.satValue,basePanel.lightValue,1)
                             }
                         }
-                        positionData: [0, 1]
+
                         value: basePanel.alphaValue
-                        linkColorsToHandles: false
 
                         onValueChanged: {
                             if (value != basePanel.alphaValue)
@@ -924,6 +917,7 @@ Rectangle {
 
                     WGNumberBox {
                         id: aBox
+                        objectName: "alphaColorValue"
                         Layout.preferredWidth: rgbSlider.numBoxWidth
                         minimumValue: 0
                         maximumValue: 1.0

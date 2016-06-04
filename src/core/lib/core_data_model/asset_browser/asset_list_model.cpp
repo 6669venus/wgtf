@@ -77,15 +77,15 @@ void AssetListModel::resize( size_t newSize )
 	auto oldSize = size();
 	if (newSize < oldSize)
 	{
-		notifyPreItemsRemoved( nullptr, newSize, oldSize - newSize );
+		signalPreItemsRemoved( newSize, oldSize - newSize );
 		items_.resize( newSize );
-		notifyPostItemsRemoved( nullptr, newSize, oldSize - newSize );
+		signalPostItemsRemoved( newSize, oldSize - newSize );
 	}
 	else if (newSize > oldSize)
 	{
-		notifyPreItemsInserted( nullptr, oldSize, newSize - oldSize );
+		signalPreItemsInserted( oldSize, newSize - oldSize );
 		items_.resize( newSize );
-		notifyPostItemsInserted( nullptr, oldSize, newSize - oldSize );
+		signalPostItemsInserted( oldSize, newSize - oldSize );
 	}
 }
 
@@ -93,9 +93,9 @@ AssetListModel::Iterator AssetListModel::insert( const AssetListModel::Iterator 
 {
 	auto index = std::distance( items_.cbegin(), position.iterator() );
 
-	notifyPreItemsInserted( nullptr, index, 1 );
+	signalPreItemsInserted( index, 1 );
 	auto it = items_.emplace( position.iterator(), std::move( value ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
+	signalPostItemsInserted( index, 1 );
 
 	return it;
 }
@@ -104,9 +104,9 @@ AssetListModel::Iterator AssetListModel::erase( const AssetListModel::Iterator &
 {
 	auto index = std::distance( items_.cbegin(), position.iterator() );
 
-	notifyPreItemsRemoved( nullptr, index, 1 );
+	signalPreItemsRemoved( index, 1 );
 	auto it = items_.erase( position.iterator() );
-	notifyPostItemsRemoved( nullptr, index, 1 );
+	signalPostItemsRemoved( index, 1 );
 
 	return it;
 }
@@ -117,9 +117,9 @@ AssetListModel::Iterator AssetListModel::erase(
 	auto index = std::distance( items_.cbegin(), first.iterator() );
 	auto count = std::distance( first.iterator(), last.iterator() );
 
-	notifyPreItemsRemoved( nullptr, index, count );
+	signalPreItemsRemoved( index, count );
 	auto it = items_.erase( first.iterator(), last.iterator() );
-	notifyPostItemsRemoved( nullptr, index, count );
+	signalPostItemsRemoved( index, count );
 
 	return it;
 }
@@ -128,18 +128,18 @@ void AssetListModel::push_back( IAssetObjectItem * value )
 {
 	auto index = items_.size();
 
-	notifyPreItemsInserted( nullptr, index, 1 );
+	signalPreItemsInserted( index, 1 );
 	items_.emplace( items_.end(), std::move( value ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
+	signalPostItemsInserted( index, 1 );
 }
 
 void AssetListModel::push_front( IAssetObjectItem * value )
 {
 	auto index = 0;
 
-	notifyPreItemsInserted( nullptr, index, 1 );
+	signalPreItemsInserted( index, 1 );
 	items_.emplace( items_.begin(), std::move( value ) );
-	notifyPostItemsInserted( nullptr, index, 1 );
+	signalPostItemsInserted( index, 1 );
 }
 
 const IAssetObjectItem & AssetListModel::back() const

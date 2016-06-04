@@ -29,7 +29,7 @@ public:
 	 *		Cannot be null.
 	 *		@warning the parent *must* correspond to the property.
 	 */
-	ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent );
+	ReflectedPropertyItem( const IBasePropertyPtr & property, ReflectedItem * parent, const std::string & inplacePath );
 
 	/**
 	 *	Construct a data model by reflecting over the given property.
@@ -42,13 +42,13 @@ public:
 	 *		Cannot be null.
 	 */
 	ReflectedPropertyItem( const std::string & propertyName,
-		std::string && displayName,
+		std::string displayName,
 		ReflectedItem * parent );
 	virtual ~ReflectedPropertyItem();
 
 	// ReflectedItem
-	const ObjectHandle & getObject() const override { return parent_->getObject(); }
-
+	const ObjectHandle & getRootObject() const override { return parent_->getRootObject(); }
+    const ObjectHandle & getObject() const override { return parent_->getObject(); }
 	// IItem
 	const char * getDisplayText( int column ) const override;
 	ThumbnailData getThumbnail( int column ) const override;
@@ -65,18 +65,6 @@ public:
 		const PropertyAccessor & accessor, const Variant & value ) override;
 	bool postSetValue(
 		const PropertyAccessor & accessor, const Variant & value ) override;
-	bool preItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & pos,
-		size_t count ) override;
-	bool postItemsInserted( const PropertyAccessor & accessor, 
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool preItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & begin,
-		const Collection::ConstIterator & end ) override;
-	bool postItemsRemoved( const PropertyAccessor & accessor,
-		const Collection::ConstIterator & pos,
-		size_t count ) override;
 
 private:
 	std::string displayName_;

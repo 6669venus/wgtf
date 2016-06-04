@@ -40,7 +40,7 @@ const SelectionHelper::SourceType* SelectionHelper::source() const
 QVariant SelectionHelper::getSource() const
 {
 	Variant variant = ObjectHandle( const_cast< SourceType* >( source_ ) );
-	return QtHelpers::toQVariant( variant );
+	return QtHelpers::toQVariant( variant, const_cast<SelectionHelper*>(this) );
 }
 
 
@@ -81,8 +81,8 @@ void SelectionHelper::select( const QList<QVariant>& selectionList )
 		IItem* item = reinterpret_cast< IItem* >( index.internalId() );
 		selectedItems.push_back( item );
 	}
-	source_->notifyPreSelectionChanged();
+	source_->signalPreSelectionChanged();
 	source_->setSelectedItems( selectedItems );
 	source_->setSelectedRows( selectedRows );
-	source_->notifyPostSelectionChanged();
+	source_->signalPostSelectionChanged();
 }

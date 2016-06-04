@@ -6,8 +6,6 @@
 
 BEGIN_EXPOSE( CommandInstance, MetaInPlace( "CommandId" ) )
 	EXPOSE( "CommandId", commandId_, MetaHidden() )
-	EXPOSE( "Undo", getUndoData, setUndoData, MetaHidden() )
-	EXPOSE( "Redo", getRedoData, setRedoData, MetaHidden() )
 	EXPOSE( "Children", children_, MetaHidden() )
 	EXPOSE( "CommandArguments", arguments_, MetaHidden() )
 END_EXPOSE()

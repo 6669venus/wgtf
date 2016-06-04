@@ -57,7 +57,10 @@ public:
 
 private:
 	void waitForWindowExposed();
+    void savePreference();
+    bool loadPreference();
 	IQtFramework & qtFramework_;
+    QQmlEngine  & qmlEngine_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget* mainWindow_;
 	std::string id_;
@@ -68,6 +71,8 @@ private:
 	bool released_;
 	Qt::WindowModality modalityFlag_;
 	IUIApplication * application_;
+    bool isMaximizedInPreference_;
+    bool firstTimeShow_;
 };
 
 #endif//QML_WINDOW_HPP

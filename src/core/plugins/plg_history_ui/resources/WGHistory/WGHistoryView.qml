@@ -7,7 +7,8 @@ import WGControls 1.0
 // This component is for displaying the history panel
 WGPanel {
     id: root
-    color: palette.MainWindowColor
+    objectName: "WGHistoryView"
+    color: palette.mainWindowColor
 
     title: "History"
     layoutHints: { 'history': 1.0 }
@@ -51,6 +52,7 @@ WGPanel {
 
     WGFrame {
         id: mainFrame
+        objectName: "historyMainFrame"
         anchors.fill: parent
 
         WGColumnLayout {
@@ -61,11 +63,14 @@ WGPanel {
             //Placeholder buttons add to as required
             WGExpandingRowLayout {
                 id: buttons
+                visible: IsClearButtonVisible || IsMakeMacroButtonVisible
                 Layout.preferredHeight: defaultSpacing.minimumRowHeight + defaultSpacing.doubleBorderSize
                 Layout.fillWidth: true
 
                 WGPushButton {
                     id: clearButton
+                    objectName: "clearButton"
+                    visible: IsClearButtonVisible
                     text: "Clear"
                     onClicked: {
                         console.assert( historyModel.canClear(),
@@ -82,7 +87,9 @@ WGPanel {
 
                 WGPushButton {
                     id: macroButton
+                    objectName: "macroButton"
                     text: "Make Macro..."
+                    visible: IsMakeMacroButtonVisible
                     tooltip: "Select a history to make a macro."
                     onClicked: {
                         CreateMacro;
@@ -99,6 +106,7 @@ WGPanel {
                 // History list
                 WGListView {
                     id: history
+                    objectName: "historyList"
                     model: historyModel
                     anchors.fill: parent
                     anchors.margins: defaultSpacing.standardMargin
@@ -113,12 +121,8 @@ WGPanel {
                         }
                     }
 
-                    onCurrentIndexChanged: {
-                        historySelection.data = currentIndex
-                    }
-
                     onRowDoubleClicked: {
-                        history.currentIndex = historyModel.indexRow(modelIndex);
+                        historySelection.data = historyModel.indexRow(modelIndex);
                     }
                 }
             }

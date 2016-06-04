@@ -22,6 +22,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 		core_common_unit_test 			    core/lib/core_common/unit_test
 		reflection_unit_test 				core/lib/core_reflection/unit_test
 		data_model_unit_test				core/lib/core_data_model/unit_test
+		string_utils_unit_test				core/lib/core_string_utils/unit_test
 		)
 
 	IF(MSVC)
@@ -33,6 +34,7 @@ IF( BW_UNIT_TESTS_ENABLED )
 	LIST( APPEND BW_TOOLS_UNIT_TEST_PLUGINS
 		plg_plugin1_test 					core/lib/core_generic_plugin_manager/unit_test/plugin1_test
 		plg_plugin2_test 					core/lib/core_generic_plugin_manager/unit_test/plugin2_test
+		plg_python27_unit_test					core/testing/plg_python27_unit_test
 		)
 
 	MESSAGE( STATUS "Unit tests enabled for tools." )
@@ -60,9 +62,8 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_progress_manager_test	    core/testing/plg_progress_manager_test
 	plg_python27_interface_test		core/testing/plg_python27_interface_test
 	plg_python27_ui_test			core/testing/plg_python27_ui_test
-	plg_python27_unit_test			core/testing/plg_python27_unit_test
+	plg_curve_editor_test			core/testing/plg_curve_editor_test
 	plg_ui_main_test			    core/testing/plg_ui_main_test
-    plg_tree_expansion_status_test  core/testing/plg_tree_expansion_status_test
     plg_list_model_test  			core/testing/plg_list_model_test
 	plg_tree_model_test  			core/testing/plg_tree_model_test
 	plg_data_model_test			    core/testing/plg_data_model_test
@@ -76,6 +77,9 @@ LIST( APPEND BW_PLUGIN_PROJECTS
 	plg_controls_test				core/testing/plg_controls_test
 	plg_custom_panel				core/testing/plg_custom_panel
 	plg_tree_to_list_test			core/testing/plg_tree_to_list_test
+	plg_custom_xml_serialization_test core/testing/plg_custom_xml_serialization_test
+	plg_timeline_panel				core/testing/plg_timeline_panel
+	plg_environment_test			core/testing/plg_environment_test
 
 	# Unit test plugins
 	${BW_TOOLS_UNIT_TEST_PLUGINS}

@@ -38,7 +38,7 @@ public:
 	void setContextObject( QObject * object );
 	void setContextProperty( const QString & name, const QVariant & property );
 
-	bool load( const QUrl & qUrl );
+	bool load(const QUrl & qUrl, const char * uniqueName = 0 );
 
 	virtual void focusInEvent() override;
 	virtual void focusOutEvent() override;
@@ -51,9 +51,10 @@ public slots:
 	void reload();
 
 private:
-	bool doLoad(const QUrl & qUrl);
+	bool doLoad(const QUrl & qUrl );
 
 	IQtFramework & qtFramework_;
+    QQmlEngine & qmlEngine_;
 	std::unique_ptr< QQmlContext > qmlContext_;
 	QQuickWidget * quickView_;
 	std::string id_;

@@ -23,17 +23,19 @@ private:
 	void destroyActions();
 
 	void close( IAction * action );
-	void onCloseEvent( const IWindow* sender,
-		const IWindow::CloseEventArgs& args );
+	void onTryClose( bool& shouldClose );
+	void onClose();
 
-	void onStartUp( const IApplication * sender, const IApplication::StartUpArgs & args );
+	void onStartUp();
 
 	void addMenuBar( IUIApplication & uiApplication );
 
 private:
 	IUIApplication*			   app_;
+	IUIFramework*			   uiFramework_;
 	std::unique_ptr< IWindow > mainWindow_;
 	std::unique_ptr< IAction > testExit_;
+	ConnectionHolder connections_;
 };
 
 

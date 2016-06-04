@@ -8,7 +8,7 @@ import WGControls 1.0
 Rectangle {
 	id: root
 
-    color: palette.MainWindowColor
+    color: palette.mainWindowColor
     width: 500
     height: 100
 
@@ -17,14 +17,7 @@ Rectangle {
 	property int progValue: 0
 	property string commandId: "Progress Manager..."
 
-	signal progressCancelled(bool cancelled)
-
-	Component.onCompleted: {
-		// Setup the color info for that the WGProgressControl is expecting
-		palette.HighlightColor = "#3399ff"
-		palette.TextColor = "#FFFFFF"
-		palette.DarkShade = "#20000000"
-	}
+    signal progressCancelled(bool cancelled)
 	
     WGScrollPanel {
         childObject_ :
@@ -40,9 +33,9 @@ Rectangle {
 
 					WGProgressControl {
 						Layout.fillWidth: true
-						fakeProgress_: false
+						fakeProgress: false
 						text: commandId
-						units_: "%"
+						units: "%"
 						value: progValue
 						maximumValue: 100
 

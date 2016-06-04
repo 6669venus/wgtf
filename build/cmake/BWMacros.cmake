@@ -398,8 +398,8 @@ MACRO( BW_ADD_TOOL_EXE _PROJNAME )
 	BW_GET_EXECUTABLE_DST_DIR(EXE_DIR)
 	BW_SET_BINARY_DIR( ${_PROJNAME} "${EXE_DIR}" )
 
-	FIND_PACKAGE( Python )
-	IF( PYTHON_FOUND AND BW_PYTHON_DLL_SUPPORT )
+	FIND_PACKAGE( CorePython )
+	IF( CORE_PYTHON_FOUND AND BW_PYTHON_DLL_SUPPORT )
 		BW_COPY_TARGET( ${_PROJNAME} libpython-shared )
 		BW_COPY_TARGET_PDB( ${_PROJNAME} libpython-shared )
 	ENDIF()
@@ -656,15 +656,14 @@ endmacro()
 
 MACRO( BW_CUSTOM_COPY_TO_PROJECT_OUTPUT _TARGET_DIR _RESOURCES )
     FOREACH( resFile ${_RESOURCES} )
-			GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
-            MESSAGE( STATUS "Configration for copying ${resFile} to ${_TARGET_DIR}" )
-			ADD_CUSTOM_COMMAND( TARGET ${PROJECT_NAME} POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}/${_fileName}
-				COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
-				COMMENT "Copying ${resFile} to target directory: ${_TARGET_DIR} ..."
-				MAIN_DEPENDENCY "${resFile}"
-				VERBATIM
-		  )
+		GET_FILENAME_COMPONENT(_fileName ${resFile} NAME)
+		ADD_CUSTOM_COMMAND( OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${_TARGET_DIR}/${_fileName}"
+			# Copy the file to our desired location
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different "${resFile}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_TARGET_DIR}/${_fileName}
+			COMMENT "Verifying ${resFile} in target directory: ${_TARGET_DIR} ..."
+			MAIN_DEPENDENCY "${resFile}"
+			VERBATIM
+		)
     ENDFOREACH()
 ENDMACRO()
 

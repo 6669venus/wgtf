@@ -7,6 +7,7 @@
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/base_property_with_metadata.hpp"
+#include "generic_property.hpp"
 
 const char * GenericDefinition::getName() const
 {
@@ -39,8 +40,13 @@ PropertyIteratorImplPtr GenericDefinition::getPropertyIterator() const
 
 
 //------------------------------------------------------------------------------
-void GenericDefinition::addProperty( const IBasePropertyPtr & reflectedProperty, MetaHandle metaData )
+IBasePropertyPtr GenericDefinition::addProperty( const char * name, const TypeId & typeId, MetaHandle metaData )
 {
-	properties_.addProperty( metaData != nullptr ?
-		std::make_shared< BasePropertyWithMetaData >( reflectedProperty, metaData ) : reflectedProperty );
+	IBasePropertyPtr property = std::make_shared< GenericProperty >( name, typeId );
+	if (metaData != nullptr)
+	{
+		property = std::make_shared< BasePropertyWithMetaData >( property, metaData );
+	}
+	properties_.addProperty( property );
+	return property;
 }

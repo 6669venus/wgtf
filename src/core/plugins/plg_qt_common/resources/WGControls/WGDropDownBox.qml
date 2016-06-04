@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Controls.Private 1.0
@@ -35,21 +35,11 @@ ComboBox {
     /*! This property is used to define the buttons label when used in a WGFormLayout
         The default value is an empty string
     */
-    //TODO: This should be renamed, it does not require "_"
-    property string label_: ""
-
-    /*! This property holds the target control's id to be bound to this control's b_Value */
-    property alias b_Target: dataBinding.target
-
-    /*! This property determines b_Target's property which is to be bound to this control's b_Value */
-    property alias b_Property: dataBinding.property
-
-    /*! This property determines this control's value which will drive b_Target's b_Property */
-    property alias b_Value: dataBinding.value
+    property string label: ""
 
     /*! \internal */
     // helper property for text color so states can all be in the background object
-    property color __textColor: palette.NeutralTextColor
+    property color __textColor: palette.neutralTextColor
 
     activeFocusOnTab: true
 
@@ -57,29 +47,29 @@ ComboBox {
 
     currentIndex: 0
 
-    implicitWidth: fakeText.paintedWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
+    implicitWidth: textMetricsCreator.maxWidth + defaultSpacing.leftMargin + defaultSpacing.rightMargin + defaultSpacing.doubleMargin
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
 
-    Binding {
-        id: dataBinding
-    }
 
-    /*! \internal */
-    function getMaxWidth (model){
+    //find the widest text in model
+    Repeater {
+        id: textMetricsCreator
+        model: box.model
+        property real maxWidth: 0
 
-        var longestItem = "";
-        var itemText = "";
+        Item {
+            id:itemWrapper
+            property var lineText: model.display ? model.display : model.text
 
-        for (var i=0; i < model.count; i++)
-        {
-            itemText = model.get(i).text
-            if (itemText.length > longestItem.length)
-            {
-                longestItem = itemText;
+            TextMetrics {
+                id: fakeText
+                text: lineText
+                onTextChanged: {
+                    textMetricsCreator.maxWidth = Math.max(textMetricsCreator.maxWidth, width)
+                }
             }
         }
-        return longestItem;
     }
 
     // support copy&paste
@@ -119,46 +109,39 @@ ComboBox {
         }
     }
 
-    Text {
-        //fake text to make the implicit width large enough for the longest item
-        id: fakeText
-        anchors.fill: parent
-        visible: false
-        text: getMaxWidth(model)
-    }
-
     style: ComboBoxStyle {
         id: comboBox
-        renderType: Text.NativeRendering
+        objectName: "comboBox"
+        renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         background: WGButtonFrame {
             id: buttonFrame
 
-            color: palette.LightShade
+            color: palette.lightShade
 
             states: [
                 State {
                     name: "PRESSED"
                     when: control.pressed && control.enabled
-                    PropertyChanges {target: buttonFrame; color: palette.DarkShade}
+                    PropertyChanges {target: buttonFrame; color: palette.darkShade}
                     PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
                 },
                 State {
                     name: "HOVERED"
                     when: control.hovered && control.enabled
-                    PropertyChanges {target: box; __textColor: palette.TextColor}
+                    PropertyChanges {target: box; __textColor: palette.textColor}
                 },
                 State {
                     name: "DISABLED"
                     when: !control.enabled
                     PropertyChanges {target: buttonFrame; color: "transparent"}
-                    PropertyChanges {target: buttonFrame; borderColor: palette.DarkShade}
+                    PropertyChanges {target: buttonFrame; borderColor: palette.darkShade}
                     PropertyChanges {target: buttonFrame; innerBorderColor: "transparent"}
-                    PropertyChanges {target: box; __textColor: palette.DisabledTextColor}
+                    PropertyChanges {target: box; __textColor: palette.disabledTextColor}
                 },
                 State {
                     name: "ACTIVE FOCUS"
                     when: control.enabled && control.activeFocus
-                    PropertyChanges {target: buttonFrame; innerBorderColor: palette.LightestShade}
+                    PropertyChanges {target: buttonFrame; innerBorderColor: palette.lightestShade}
                 }
 
             ]
@@ -172,7 +155,7 @@ ComboBox {
 
                 font.family : "Marlett"
                 font.pixelSize: parent.height / 2
-                renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
                 text : "\uF075"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
@@ -184,7 +167,7 @@ ComboBox {
             horizontalAlignment: Text.AlignLeft
             color : box.__textColor
             text: control.currentText
-            renderType: Text.NativeRendering
+            renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
         }
 
         // drop-down customization here
@@ -193,18 +176,18 @@ ComboBox {
             __menuItemType: "comboboxitem"
 
             frame: Rectangle {              // background
-                color: palette.MainWindowColor
+                color: palette.mainWindowColor
                 border.width: defaultSpacing.standardBorderSize
-                border.color: palette.DarkColor
+                border.color: palette.darkColor
             }
 
             itemDelegate.label:             // an item text
                 Text {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
-                color: styleData.selected ? palette.TextColor : palette.HighlightTextColor
+                color: styleData.selected ? palette.textColor : palette.highlightTextColor
                 text: styleData.text
-				renderType: Text.NativeRendering
+                renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
             }
 
             itemDelegate.background: WGHighlightFrame {  // selection of an item
@@ -214,4 +197,7 @@ ComboBox {
             __scrollerStyle: ScrollViewStyle { }
         }
     }
+
+    /*! Deprecatead */
+    property alias label_: box.label
 }

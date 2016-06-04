@@ -4,34 +4,35 @@ import WGControls 1.0
 import BWControls 1.0
 
 WGDropDownBox {
-	id: combobox
-	anchors.left: parent.left
-	anchors.right: parent.right
- 
-	WGListModel {
-		id: polyModel
-		source: itemData.DefinitionModel
- 
-		ValueExtension {}
-	}
- 
-	model: polyModel
-	textRole: "display"
- 
-	Component.onCompleted: {
-		currentIndex = Qt.binding( function() { 
-			var modelIndex = polyModel.find( itemData.Definition, "Value" );
-			return polyModel.indexRow( modelIndex ); } )
-	}
+    id: combobox
+    objectName:  itemData != null ? itemData.IndexPath : "polystruct_component"
+    anchors.left: parent.left
+    anchors.right: parent.right
 
-	Connections {
-		target: combobox
-		onCurrentIndexChanged: {
-			if (currentIndex < 0) {
-				return;
-			}
-			var modelIndex = polyModel.index( currentIndex );
-			itemData.Definition = polyModel.data( modelIndex, "Value" );
-		}
-	}
+    Component.onCompleted: {
+        currentIndex = Qt.binding( function() {
+            var modelIndex = polyModel.find( itemData.Definition, "Value" );
+            return polyModel.indexRow( modelIndex ); } )
+    }
+
+    model: polyModel
+    textRole: "display"
+
+    WGListModel {
+        id: polyModel
+        source: itemData.DefinitionModel
+
+        ValueExtension {}
+    }
+
+    Connections {
+        target: combobox
+        onCurrentIndexChanged: {
+            if (currentIndex < 0) {
+                return;
+            }
+            var modelIndex = polyModel.index( currentIndex );
+            itemData.Definition = polyModel.data( modelIndex, "Value" );
+        }
+    }
 }

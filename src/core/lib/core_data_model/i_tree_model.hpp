@@ -1,9 +1,10 @@
 #ifndef I_TREE_MODEL_HPP
 #define I_TREE_MODEL_HPP
 
-#include "wg_types/event.hpp"
-#include "i_item.hpp"
+#include "core_common/signal.hpp"
 
+class IItem;
+class Variant;
 
 /**
  *	This is our generic data model of a tree.
@@ -13,41 +14,39 @@
  */
 class ITreeModel
 {
+	typedef Signal< void( int, size_t, const Variant & ) > SignalModelData;
+	typedef Signal< void( const IItem *, int, size_t, const Variant & ) > SignalItemData;
+	typedef Signal< void( const IItem *, size_t, size_t ) > SignalCount;
+	typedef Signal< void( void ) > SignalVoid;
+
 public:
 	typedef std::pair< size_t, const IItem * > ItemIndex;
 
 	virtual ~ITreeModel()
 	{
-		notifyDestructing();
+		signalDestructing();
 	}
 
 	virtual IItem * item( size_t index, const IItem * parent ) const = 0;
-	virtual IItem * item( ItemIndex index ) const;
+	IItem * item( ItemIndex index ) const;
 	virtual ItemIndex index( const IItem * item ) const = 0;
 
 	virtual bool empty( const IItem * item ) const;
 	virtual size_t size( const IItem * item ) const = 0;
 	virtual int columnCount() const = 0;
 
-	PUBLIC_EVENT( ITreeModel, PreDataChanged, 
-		const IItem *, item, int, column, uint64_t, roleId, const Variant &, data )
+	// ITreeModel signals
+	virtual Variant getData( int column, size_t roleId ) const;
+	virtual bool setData( int column, size_t roleId, const Variant & data );
 
-	PUBLIC_EVENT( ITreeModel, PostDataChanged, 
-		const IItem *, item, int, column, uint64_t, roleId, const Variant &, data)
-
-	PUBLIC_EVENT( ITreeModel, PreItemsInserted,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, PostItemsInserted,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, PreItemsRemoved,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, PostItemsRemoved,
-		const IItem *, item, size_t, index, size_t, count )
-
-	PUBLIC_EVENT( ITreeModel, Destructing )
+	SignalModelData signalModelDataChanged;
+	SignalItemData signalPreItemDataChanged;
+	SignalItemData signalPostItemDataChanged;
+	SignalCount signalPreItemsInserted;
+	SignalCount signalPostItemsInserted;
+	SignalCount signalPreItemsRemoved;
+	SignalCount signalPostItemsRemoved;
+	SignalVoid signalDestructing;
 
 };
 

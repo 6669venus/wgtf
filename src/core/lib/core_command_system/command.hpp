@@ -10,13 +10,13 @@ class ICommandManager;
 
 enum class CommandErrorCode : uint8_t
 {
-	NO_ERROR = 0,
+	COMMAND_NO_ERROR = 0,
 	ABORTED,
 	FAILED,
 	INVALID_VALUE,
 	INVALID_ARGUMENTS,
 	INVALID_OPERATIONS,
-	NOT_SUPPORTED,
+	NOT_SUPPORTED
 };
 
 enum class CommandThreadAffinity : uint8_t
@@ -30,18 +30,30 @@ enum class CommandThreadAffinity : uint8_t
 /**
  *	Command specifies the type of actions to be performed.
  */
+
 class Command
 {
 public:
 	virtual ~Command();
 	virtual const char * getId() const = 0;
-	virtual ObjectHandle execute( const ObjectHandle & arguments ) const = 0;
+	virtual ObjectHandle execute(const ObjectHandle & arguments) const = 0;
+
+
+	virtual bool validateArguments(const ObjectHandle & arguments) const 
+	{
+		//NOTE(aidan): 
+		//If there are any conditions that argument objects must follow, override this function. It should
+		//just return if the command could execute correctly with the given arguments
+		return true; 
+	}
 
 	virtual CommandThreadAffinity threadAffinity() const { return CommandThreadAffinity::COMMAND_THREAD; }
 
+	virtual bool customUndo() const { return false; }
 	virtual bool canUndo( const ObjectHandle & arguments ) const { return true; }
-	virtual void undo( IDataStream & dataStore ) const {}
-	virtual void redo( IDataStream & dataStore ) const {}
+	virtual bool undo( const ObjectHandle & arguments ) const { return false; }
+	virtual bool redo( const ObjectHandle & arguments ) const { return false; }
+    virtual ObjectHandle getCommandDescription(const ObjectHandle & arguments) const { return ObjectHandle(); }
 
 	virtual void setCommandSystemProvider( ICommandManager * commandSystemProvider );
 	virtual void registerCommandStatusListener( ICommandEventListener * listener );
@@ -50,6 +62,7 @@ public:
 
 	virtual void fireCommandStatusChanged( const CommandInstance & command ) const;
 	virtual void fireProgressMade( const CommandInstance & command ) const;
+    virtual void fireCommandExecuted( const CommandInstance & command, CommandOperation operation) const;
 
 private:
 	typedef std::list< ICommandEventListener * > EventListenerCollection;

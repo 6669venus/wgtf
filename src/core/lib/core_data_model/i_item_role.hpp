@@ -1,10 +1,25 @@
 #ifndef I_ITEM_ROLE_HPP
 #define I_ITEM_ROLE_HPP
 
-#include <Utility>
+#include "wg_types/hash_utilities.hpp"
 
-typedef std::pair< const char *, unsigned int > ItemRole;
+namespace ItemRole
+{
+	inline unsigned int compute( const char * roleName )
+	{
+		return static_cast<unsigned int>(HashUtilities::compute( roleName ));
+	}
+}
 
+#define ITEMROLE( ROLE )														\
+namespace ItemRole {															\
+	namespace {																	\
+		const char * ROLE##Name = #ROLE;										\
+		const unsigned int ROLE##Id = ItemRole::compute( #ROLE );				\
+	}																			\
+};
+
+// DEPRECATED
 // Add new role types here
 #define ITEM_ROLES																\
 	/* Tree Adapter */															\
@@ -33,6 +48,8 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( Decimals )																\
 	X( EnumModel )																\
 	X( Definition )																\
+    X( Object )                                                                 \
+    X( RootObject )                                                             \
 	X( DefinitionModel )														\
 	X( UrlIsAssetBrowser )														\
 	X( UrlDialogTitle )															\
@@ -52,12 +69,13 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	X( IsCompressed )															\
 	/* Thumbnail Extension */													\
 	X( Thumbnail )																\
+	X( headerText )																\
+	X( footerText )																\
     /*Buttons Extensions*/                                                      \
-    X( ButtonsDefinition )                                                      \
-    X( ButtonIcon )                                                             \
-    X( ButtonEnabled )                                                          \
-    X( ButtonClicked )                                                          \
-
+    X( buttonsDefinition )                                                      \
+    X( buttonIcon )                                                             \
+    X( buttonEnabled )                                                          \
+    X( buttonClicked )                                                          \
 
 #define X( ROLE ) 																\
 	class ROLE##Role															\
@@ -65,7 +83,6 @@ typedef std::pair< const char *, unsigned int > ItemRole;
 	public:																		\
 		static const char * roleName_;											\
 		static unsigned int roleId_;											\
-		static ItemRole role_;													\
 	};
 	ITEM_ROLES
 #undef X

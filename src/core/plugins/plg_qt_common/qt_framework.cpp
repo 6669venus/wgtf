@@ -14,6 +14,7 @@
 #include "core_qt_common/string_qt_type_converter.hpp"
 #include "core_qt_common/vector_qt_type_converter.hpp"
 #include "core_qt_common/qt_image_provider.hpp"
+#include "core_qt_common/qt_image_provider_old.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
@@ -25,13 +26,17 @@
 
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_serialization/serializer/i_serialization_manager.hpp"
-#include "core_serialization/interfaces/i_file_system.hpp"
+#include "core_serialization/i_file_system.hpp"
 #include "core_command_system/i_command_event_listener.hpp"
 #include "core_command_system/i_command_manager.hpp"
 
 #include "core_ui_framework/i_action.hpp"
 #include "core_ui_framework/i_component_provider.hpp"
 #include "core_ui_framework/generic_component_provider.hpp"
+
+#include "core_data_model/i_tree_model.hpp"
+#include "core_data_model/i_list_model.hpp"
+#include "core_data_model/i_item.hpp"
 
 #include "wg_types/string_ref.hpp"
 #include "core_common/ngt_windows.hpp"
@@ -45,6 +50,7 @@
 #include <QString>
 #include <QWidget>
 #include <QDir>
+#include <QMessageBox>
 
 #ifdef QT_NAMESPACE
 namespace QT_NAMESPACE {
@@ -110,8 +116,6 @@ void QtFramework::initialise( IComponentContext & contextManager )
 		qmlEngine_->addImportPath(pPluginContextManager->getExecutablePath());
 	}
 
-	Q_INIT_RESOURCE( qt_common );
-
 	SharedControls::init();
 	registerDefaultComponents();
 	registerDefaultComponentProviders();
@@ -126,9 +130,10 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	rootContext->setContextProperty( "globalSettings", globalQmlSettings_.get() );
 			
 	ObjectHandle obj = ObjectHandle( &contextManager );
-	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj ) );
+	rootContext->setContextProperty( "componentContext", QtHelpers::toQVariant( obj, rootContext ) );
 	
 	qmlEngine_->addImageProvider( QtImageProvider::providerId(), new QtImageProvider() );
+	qmlEngine_->addImageProvider( QtImageProviderOld::providerId(), new QtImageProviderOld() );
 
 	if (commandManager_ != nullptr)
 	{
@@ -137,11 +142,10 @@ void QtFramework::initialise( IComponentContext & contextManager )
 	}
 
 	auto definitionManager = contextManager.queryInterface< IDefinitionManager >();
-	auto serializationManger = contextManager.queryInterface< ISerializationManager >();
-	auto fileSystem = contextManager.queryInterface< IFileSystem >();
-	auto metaTypeManager = contextManager.queryInterface<IMetaTypeManager>();
-	preferences_.reset( new QtPreferences( *definitionManager, *serializationManger, *fileSystem, *metaTypeManager ) );
-	preferences_->loadPreferences();
+	preferences_.reset( new QtPreferences() );
+    preferences_->init( contextManager );
+
+	SharedControls::initDefs( *definitionManager );
 }
 
 void QtFramework::finalise()
@@ -152,9 +156,10 @@ void QtFramework::finalise()
 	}
 
 	unregisterResources();
+    preferences_->fini();
+	qmlEngine_->removeImageProvider( QtImageProviderOld::providerId() );
 	qmlEngine_->removeImageProvider( QtImageProvider::providerId() );
 	scriptingEngine_->finalise();
-	preferences_->savePrferences();
 	globalQmlSettings_ = nullptr;
 	defaultQmlSpacing_ = nullptr;
 	palette_ = nullptr;
@@ -165,8 +170,6 @@ void QtFramework::finalise()
 	defaultTypeConverters_.clear();
 	defaultComponentProviders_.clear();
 	defaultComponents_.clear();
-
-	Q_CLEANUP_RESOURCE( qt_common );
 }
 
 QQmlEngine * QtFramework::qmlEngine() const
@@ -215,10 +218,10 @@ bool QtFramework::registerResourceData( const unsigned char * qrc_struct, const 
 	return true;
 }
 
-QVariant QtFramework::toQVariant( const Variant & variant ) const
+QVariant QtFramework::toQVariant(const Variant & variant, QObject* parent) const
 {
 	QVariant qVariant( QVariant::Invalid );
-	typeConverters_.toScriptType( variant, qVariant );
+	typeConverters_.toScriptType(variant, qVariant, parent);
 	return qVariant;
 }
 
@@ -348,11 +351,59 @@ std::unique_ptr< IView > QtFramework::createView(
 	}
 	else
 	{
-		auto source = toQVariant( context );
+		auto source = toQVariant( context,  view->view() );
 		view->setContextProperty( QString( "source" ), source );
 	}
-	view->load( qUrl );
+
+	if(!view->load( qUrl, nullptr ))
+    {
+        delete view;
+        return nullptr;
+    }
 	return std::unique_ptr< IView >( view );
+}
+
+std::unique_ptr< IView > QtFramework::createView( 
+    const char* uniqueName, const char * resource, 
+    ResourceType type, const ObjectHandle & context )
+{
+    // TODO: This function assumes the resource is a qml file
+
+    QUrl qUrl;
+
+    switch (type)
+    {
+    case IUIFramework::ResourceType::File:
+        qUrl = QUrl::fromLocalFile( resource );
+        break;
+
+    case IUIFramework::ResourceType::Url:
+        qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
+        break;
+
+    default:
+        return nullptr;
+    }
+
+    auto scriptObject = scriptingEngine_->createScriptObject( context );
+    auto view = new QmlView( resource, *this, *qmlEngine_ );
+
+    if (scriptObject)
+    {
+        view->setContextObject( scriptObject );
+    }
+    else
+    {
+        auto source = toQVariant( context,  view->view() );
+        view->setContextProperty( QString( "source" ), source );
+    }
+
+    if(!view->load( qUrl, uniqueName ))
+    {
+        delete view;
+        return nullptr;
+    }
+    return std::unique_ptr< IView >( view );
 }
 
 QmlWindow * QtFramework::createQmlWindow()
@@ -395,11 +446,15 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 			}
 			else
 			{
-				auto source = toQVariant( context );
+				auto source = toQVariant( context, qmlWindow->window() );
 				qmlWindow->setContextProperty( QString( "source" ), source );
 			}
 
-			qmlWindow->load( qUrl );
+			if(!qmlWindow->load( qUrl ))
+            {
+                delete qmlWindow;
+                return nullptr;
+            }
 			window = qmlWindow;
 		}
 		break;
@@ -480,6 +535,59 @@ const std::string& QtFramework::getPluginPath() const
 {
 	return pluginPath_;
 }
+
+int QtFramework::displayMessageBox( const char* title, const char* message, int buttons ) 
+{
+	struct MessageBoxQtMapping
+	{
+		MessageBoxButtons uiButton;
+		QMessageBox::StandardButton qtButton;
+	};
+
+	static MessageBoxQtMapping buttonMappings[] = 
+	{
+		{ Ok, QMessageBox::StandardButton::Ok },
+		{ Cancel, QMessageBox::StandardButton::Cancel },
+		{ Save, QMessageBox::StandardButton::Save },
+		{ SaveAll, QMessageBox::StandardButton::SaveAll },
+		{ Yes, QMessageBox::StandardButton::Yes },
+		{ No, QMessageBox::StandardButton::No },
+	};
+
+	static size_t count = sizeof( buttonMappings ) / sizeof( buttonMappings[0] );
+	
+	int desiredButtons = 0;
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		if (buttons & buttonMappings[i].uiButton)
+		{
+			desiredButtons |= buttonMappings[i].qtButton;
+		}
+	}
+
+	assert( desiredButtons != 0 );
+
+	QMessageBox messageBox( QMessageBox::Icon::NoIcon, title, message, (QMessageBox::StandardButton)desiredButtons );
+
+	int retValue = messageBox.exec();
+
+	int result = 0;
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		if (retValue == buttonMappings[i].qtButton)
+		{
+			result = buttonMappings[i].uiButton;
+			break;
+		}
+	}
+
+	assert( result != 0 );
+
+	return result;
+}
+
 
 void QtFramework::registerDefaultComponents()
 {

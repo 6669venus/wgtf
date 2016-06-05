@@ -44,6 +44,11 @@ public:
 	QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
 	bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) override;
 
+	bool insertRows( int row, int count, const QModelIndex &parent ) override;
+	bool insertColumns( int column, int count, const QModelIndex &parent ) override;
+	bool removeRows( int row, int count, const QModelIndex &parent ) override;
+	bool removeColumns( int column, int count, const QModelIndex &parent ) override;
+
 private:
 	struct Impl;
 	std::unique_ptr< Impl > impl_;

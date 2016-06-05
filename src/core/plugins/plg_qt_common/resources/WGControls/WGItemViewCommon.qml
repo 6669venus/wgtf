@@ -19,6 +19,7 @@ WGItemView {
     property var columnSequence: []
     property real columnWidth: 0
     property var columnWidths: []
+    property var implicitColumnWidths: []
     property real columnSpacing: 0
 
     property var headerDelegates: []

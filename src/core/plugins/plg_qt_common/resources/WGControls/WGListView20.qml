@@ -139,6 +139,8 @@ WGListViewBase {
         WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, listExtension);
     }
 
+	contentItem.x: -originX
+	contentItem.y: -originY
     clip: true
     view: itemView
     internalModel: itemView.extendedModel

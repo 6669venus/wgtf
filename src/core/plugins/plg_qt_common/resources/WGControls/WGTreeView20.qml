@@ -155,6 +155,8 @@ WGTreeViewBase {
         WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
     }
 
+	contentItem.x: -originX
+	contentItem.y: -originY
     clip: true
     view: itemView
     internalModel: itemView.extendedModel

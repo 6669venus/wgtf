@@ -6,9 +6,9 @@
 QHash<int, QByteArray> ButtonsModelExtension::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    registerRole(ButtonIconRole::role_, roles);
-    registerRole(ButtonEnabledRole::role_, roles);
-    registerRole(ButtonClickedRole::role_, roles);
+    registerRole(buttonIconRole::roleName_, roles);
+    registerRole(buttonEnabledRole::roleName_, roles);
+    registerRole(buttonClickedRole::roleName_, roles);
     return roles;
 }
 
@@ -27,11 +27,11 @@ QVariant ButtonsModelExtension::data(const QModelIndex & index, int role) const
         return QVariant();
     }
 
-    unsigned int supportedRoles[] = { ButtonIconRole::roleId_, ButtonEnabledRole::roleId_, ButtonClickedRole::roleId_ };
+    unsigned int supportedRoles[] = { buttonIconRole::roleId_, buttonEnabledRole::roleId_, buttonClickedRole::roleId_ };
 
     if (std::find(std::begin(supportedRoles), std::end(supportedRoles), roleId) != std::end(supportedRoles))
     {
-        return QtHelpers::toQVariant(item->getData(index.column(), roleId));
+        return QtHelpers::toQVariant(item->getData(index.column(), roleId), nullptr);
     }
 
     return QVariant();
@@ -52,7 +52,7 @@ bool ButtonsModelExtension::setData(const QModelIndex & index, const QVariant & 
         return false;
     }
 
-    unsigned int supportedRoles[] = { ButtonIconRole::roleId_, ButtonEnabledRole::roleId_, ButtonClickedRole::roleId_ };
+    unsigned int supportedRoles[] = { buttonIconRole::roleId_, buttonEnabledRole::roleId_, buttonClickedRole::roleId_ };
 
     if (std::find(std::begin(supportedRoles), std::end(supportedRoles), roleId) != std::end(supportedRoles))
     {

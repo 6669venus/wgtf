@@ -91,9 +91,55 @@ Variant getMinValue(const TypeId & typeId)
 {
     return getValuePair(typeId).minValue_;
 }
+
+class BatchHolder
+{
+public:
+    BatchHolder(ICommandManager& commandManager_, size_t objectsCount)
+        : commandManager(commandManager_)
+        , batchStarted(false)
+        , batchSuccessed(false)
+    {
+        if (objectsCount > 1)
+        {
+            batchStarted = true;
+            commandManager.beginBatchCommand();
+        }
+    }
+
+    ~BatchHolder()
+    {
+        if (batchStarted == true)
+        {
+            if (batchSuccessed)
+            {
+                commandManager.endBatchCommand();
+            }
+            else
+            {
+                commandManager.abortBatchCommand();
+            }
+        }
+    }
+
+    void MarkAsSuccessed()
+    {
+        batchSuccessed = true;
+    }
+
+private:
+    bool batchStarted;
+    bool batchSuccessed;
+    ICommandManager& commandManager;
+};
 }
 
-Variant DefaultGetterExtension::getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager& defMng) const
+DefaultSetterGetterExtension::DefaultSetterGetterExtension(IComponentContext& context)
+    : reflectionControllerHolder(context)
+{
+}
+
+Variant DefaultSetterGetterExtension::getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager& defMng) const
 {
     if (roleId == ValueTypeRole::roleId_)
     {
@@ -230,7 +276,75 @@ Variant DefaultGetterExtension::getValue(const RefPropertyItem* item, int column
         }
     }
 
-    return GetterExtension::getValue(item, column, roleId, defMng);
+    return SetterGetterExtension::getValue(item, column, roleId, defMng);
+}
+
+bool DefaultSetterGetterExtension::setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
+    IDefinitionManager & definitionManager, ICommandManager & commandManager) const
+{
+    IReflectionController* controllerPtr = reflectionControllerHolder.get<IReflectionController>();
+    if (controllerPtr == nullptr)
+    {
+        return false;
+    }
+
+    if (roleId != ValueRole::roleId_ &&
+        roleId != DefinitionRole::roleId_)
+    {
+        return SetterGetterExtension::setValue(item, column, roleId, data, definitionManager, commandManager);
+    }
+
+    const std::vector<std::shared_ptr<const PropertyNode>>& objects = item->getObjects();
+    DPMEDetails::BatchHolder batchHolder(commandManager, objects.size());
+
+    for (const std::shared_ptr<const PropertyNode>& object : objects)
+    {
+        ObjectHandle obj = object->object;
+        if (obj.getDefinition(definitionManager) == nullptr)
+        {
+            continue;
+        }
+        auto propertyAccessor = obj.getDefinition(definitionManager)->bindProperty(object->propertyInstance->getName(), obj);
+
+        if (roleId == ValueRole::roleId_)
+        {
+            controllerPtr->setValue(propertyAccessor, data);
+        }
+        else if (roleId == DefinitionRole::roleId_)
+        {
+            TypeId typeId = propertyAccessor.getType();
+            if (!typeId.isPointer())
+            {
+                return false;
+            }
+
+            auto baseDefinition = definitionManager.getDefinition(typeId.removePointer().getName());
+            if (baseDefinition == nullptr)
+            {
+                return false;
+            }
+
+            ObjectHandle provider;
+            if (!data.tryCast< ObjectHandle >(provider))
+            {
+                return false;
+            }
+
+            auto valueDefinition = provider.getBase< IClassDefinition >();
+            if (valueDefinition == nullptr)
+            {
+                return false;
+            }
+
+            ObjectHandle value;
+            value = valueDefinition->create();
+            controllerPtr->setValue(propertyAccessor, value);
+        }
+    }
+
+    batchHolder.MarkAsSuccessed();
+
+    return true;
 }
 
 Variant UrlGetterExtension::getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager & defMng) const
@@ -304,7 +418,7 @@ Variant UrlGetterExtension::getValue(const RefPropertyItem* item, int column, si
         return modality;
     }
 
-    return GetterExtension::getValue(item, column, roleId, defMng);
+    return SetterGetterExtension::getValue(item, column, roleId, defMng);
 }
 
 void DefaultChildCheatorExtension::exposeChildren(const std::shared_ptr<const PropertyNode>& node, std::vector<std::shared_ptr<const PropertyNode>>& children, IDefinitionManager& defMng) const
@@ -456,115 +570,4 @@ RefPropertyItem * DefaultMergeValueExtension::lookUpItem(const std::shared_ptr<c
     }
 
     return result;
-}
-
-DefaultSetterExtension::DefaultSetterExtension(IReflectionController& reflectionController_)
-    : controller(reflectionController_)
-{
-}
-
-namespace DSetterExtensionDetails
-{
-class BatchHolder
-{
-public:
-    BatchHolder(ICommandManager& commandManager_, size_t objectsCount)
-        : commandManager(commandManager_)
-        , batchStarted(false)
-        , batchSuccessed(false)
-    {
-        if (objectsCount > 1)
-        {
-            batchStarted = true;
-            commandManager.beginBatchCommand();
-        }
-    }
-
-    ~BatchHolder()
-    {
-        if (batchStarted == true)
-        {
-            if (batchSuccessed)
-            {
-                commandManager.endBatchCommand();
-            }
-            else
-            {
-                commandManager.abortBatchCommand();
-            }
-        }
-    }
-
-    void MarkAsSuccessed()
-    {
-        batchSuccessed = true;
-    }
-
-private:
-    bool batchStarted;
-    bool batchSuccessed;
-    ICommandManager& commandManager;
-};
-}
-
-bool DefaultSetterExtension::setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
-                                      IDefinitionManager & definitionManager, ICommandManager & commandManager) const
-{
-    if (roleId != ValueRole::roleId_ &&
-        roleId != DefinitionRole::roleId_)
-    {
-        return SetterExtension::setValue(item, column, roleId, data, definitionManager, commandManager);
-    }
-
-    const std::vector<std::shared_ptr<const PropertyNode>>& objects = item->getObjects();
-    DSetterExtensionDetails::BatchHolder batchHolder(commandManager, objects.size());
-
-    for (const std::shared_ptr<const PropertyNode>& object : objects)
-    {
-        ObjectHandle obj = object->object;
-        if (obj.getDefinition(definitionManager) == nullptr)
-        {
-            continue;
-        }
-        auto propertyAccessor = obj.getDefinition(definitionManager)->bindProperty(object->propertyInstance->getName(), obj);
-
-        if (roleId == ValueRole::roleId_)
-        {
-            controller.setValue(propertyAccessor, data);
-        }
-        else if (roleId == DefinitionRole::roleId_)
-        {
-            TypeId typeId = propertyAccessor.getType();
-            if (!typeId.isPointer())
-            {
-                return false;
-            }
-
-            auto baseDefinition = definitionManager.getDefinition(typeId.removePointer().getName());
-            if (baseDefinition == nullptr)
-            {
-                return false;
-            }
-
-            ObjectHandle provider;
-            if (!data.tryCast< ObjectHandle >(provider))
-            {
-                return false;
-            }
-
-            auto valueDefinition = provider.getBase< IClassDefinition >();
-            if (valueDefinition == nullptr)
-            {
-                return false;
-            }
-
-            ObjectHandle value;
-            value = valueDefinition->create();
-            controller.setValue(propertyAccessor, value);
-        }
-    }
-
-    batchHolder.MarkAsSuccessed();
-
-    return true;
 }

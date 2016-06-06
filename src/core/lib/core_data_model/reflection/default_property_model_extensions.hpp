@@ -2,31 +2,26 @@
 #define DEFAULT_PROPERTY_MODEL_EXTENSION
 
 #include "property_model_extensions.hpp"
+#include "core_dependency_system/depends.hpp"
 
 class IDefinitionManager;
 class IReflectionController;
-class DefaultGetterExtension : public GetterExtension
+class DefaultSetterGetterExtension : public SetterGetterExtension
 {
 public:
+    DefaultSetterGetterExtension(IComponentContext& context);
     Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager& defMng) const override;
-};
-
-class UrlGetterExtension: public GetterExtension
-{
-public:
-    Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager& defMng) const override;
-};
-
-class DefaultSetterExtension: public SetterExtension
-{
-public:
-    DefaultSetterExtension(IReflectionController& reflectionController);
-
     bool setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
                   IDefinitionManager & definitionManager, ICommandManager & commandManager) const;
 
 private:
-    IReflectionController& controller;
+    Depends<IReflectionController> reflectionControllerHolder;
+};
+
+class UrlGetterExtension: public SetterGetterExtension
+{
+public:
+    Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager& defMng) const override;
 };
 
 class DefaultChildCheatorExtension: public ChildCreatorExtension

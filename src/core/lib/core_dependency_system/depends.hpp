@@ -10,6 +10,13 @@ class DummyDependsType {};
 // Change this to support as many classes as we need to inherit, until we have
 // support for variadic templates
 //==============================================================================
+
+#define INTERFACE_REQUEST(type, var, holder, retOnFalse)\
+    type* var##Pointer = holder.get<type>(); \
+    if (var##Pointer == nullptr)\
+        return retOnFalse;\
+    type& var = *var##Pointer;
+
 template<
 	typename T1,
 	typename T2 = DummyDependsType,

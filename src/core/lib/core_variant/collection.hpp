@@ -711,11 +711,6 @@ public:
 	Connection connectPreChange( ElementPreChangeCallback callback );
 	Connection connectPostChanged( ElementPostChangedCallback callback );
 
-    CollectionImplPtr getImpl()
-    {
-        return impl_;
-    }
-
 private:
 	CollectionImplPtr impl_;
 

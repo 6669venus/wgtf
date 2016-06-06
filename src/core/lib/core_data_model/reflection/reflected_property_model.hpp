@@ -9,6 +9,9 @@
 
 #include "core_reflection/ref_object_id.hpp"
 #include "core_reflection/object_handle.hpp"
+#include "core_variant/type_id.hpp"
+#include "core_dependency_system/depends.hpp"
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 class ICommandManager;
 class IDefinitionManager;
@@ -79,8 +82,7 @@ private:
 class ReflectedPropertyModel: public ITreeModel
 {
 public:
-    ReflectedPropertyModel(IDefinitionManager & definitionManager,
-                           ICommandManager & commandManager, IReflectionController& refController);
+    ReflectedPropertyModel(IComponentContext& context);
     ~ReflectedPropertyModel();
 
     void update();
@@ -92,20 +94,11 @@ public:
     size_t size(const IItem * item) const override;
     int columnCount() const override;
 
-    void registerExtension(GetterExtension* extension);
-    void unregisterExtension(GetterExtension* extension);
+    template<typename T>
+    void registerExtension(ExtensionChain<T>* extension);
 
-    void registerExtension(SetterExtension* extension);
-    void unregisterExtension(SetterExtension* extension);
-
-    void registerExtension(MergeValuesExtension* extension);
-    void unregisterExtension(MergeValuesExtension* extension);
-
-    void registerExtension(ChildCreatorExtension* extension);
-    void unregisterExtension(ChildCreatorExtension* extension);
-
-    void registerExtension(InjectDataExtension* extension);
-    void unregisterExtension(InjectDataExtension* extension);
+    template<typename T>
+    void unregisterExtension(ExtensionChain<T>* extension);
 
 private:
     void childAdded(const std::shared_ptr<const PropertyNode>& parent, const std::shared_ptr<const PropertyNode>& node, size_t childPosition);
@@ -119,21 +112,117 @@ private:
 
     void update(RefPropertyItem* item);
 
+    template<typename T>
+    T* getExtensionChain() const;
+    template<typename T>
+    T* registerDummyExtension() const;
+
 private:
     friend class RefPropertyItem;
     Variant getData(const RefPropertyItem * item, int column, size_t roleId) const;
     bool setData(RefPropertyItem * item, int column, size_t roleId, const Variant & data);
 
-    IDefinitionManager & definitionManager;
-    ICommandManager & commandManager;
+    Depends<IDefinitionManager, ICommandManager> interfacesHolder;
     std::unique_ptr<RefPropertyItem> rootItem;
-    std::map<std::shared_ptr<const PropertyNode>, RefPropertyItem*> nodeToItem;
+    std::unordered_map<std::shared_ptr<const PropertyNode>, RefPropertyItem*> nodeToItem;
 
-    GetterExtension* getterExtension;
-    SetterExtension* setterExtension;
-    MergeValuesExtension* mergeExtension;
-    InjectDataExtension* injectExtension;
     ChildCreator childCreator;
+    mutable std::map<TypeId, ExtensionChainBase*> extensions;
+
+    typedef std::function<void(ExtensionChainBase*)> ChaindDestructionFn;
+    mutable std::map<TypeId, ChaindDestructionFn> extensionsDestructors;
 };
+
+template<typename Dst, typename Src>
+Dst* polymorphCast(Src* ptr)
+{
+    assert(dynamic_cast<Dst*>(ptr) != nullptr);
+    return static_cast<Dst*>(ptr);
+}
+
+template<typename T>
+void destroyExtensionChain(ExtensionChainBase* extensionChain)
+{
+    ExtensionChain<T>::deleteExtensionChain(polymorphCast<T>(extensionChain));
+}
+
+template<typename T>
+void ReflectedPropertyModel::registerExtension(ExtensionChain<T>* extension)
+{
+    TypeId typeId = TypeId::getType<T>();
+    auto iter = extensions.find(typeId);
+    if (iter == extensions.end())
+    {
+        registerDummyExtension<T>();
+        registerExtension(extension);
+        return;
+    }
+    
+    ExtensionChainBase* baseChain = iter->second;
+    T* chain = polymorphCast<T>(baseChain);
+    iter->second = chain->addExtension(polymorphCast<T>(extension));
+}
+
+template<typename T>
+void ReflectedPropertyModel::unregisterExtension(ExtensionChain<T>* extension)
+{
+    TypeId typeId = TypeId::getType<ExtensionChain<T>>();
+    auto iter = extensions.find(typeId);
+    if (iter == extensions.end())
+    {
+        /// you do something wrong
+        assert(false);
+        return;
+    }
+
+    ExtensionChainBase* baseChain = iter->second;
+    assert(dynamic_cast<ExtensionChain<T>*>(baseChain) != nullptr);
+    T* chain = polymorphCast<T>(baseChain);
+    iter->second = chain->removeExtension(polymorphCast<T>(extension));
+}
+
+template<>
+inline void ReflectedPropertyModel::registerExtension<ChildCreatorExtension>(ExtensionChain<ChildCreatorExtension>* extension)
+{
+    childCreator.registerExtension(polymorphCast<ChildCreatorExtension>(extension));
+}
+
+template<>
+inline void ReflectedPropertyModel::unregisterExtension<ChildCreatorExtension>(ExtensionChain<ChildCreatorExtension>* extension)
+{
+    childCreator.unregisterExtension(polymorphCast<ChildCreatorExtension>(extension));
+}
+
+template<typename T>
+T* ReflectedPropertyModel::getExtensionChain() const
+{
+    static_assert(!std::is_same<T, ChildCreatorExtension>::value, "There is no reason to request ChildCreatorExtension");
+    static_assert(std::is_base_of<ExtensionChain<T>, T>::value, "ExtensionChain should be base of extension");
+    TypeId typeId = TypeId::getType<ExtensionChain<T>>();
+    auto iter = extensions.find(typeId);
+    if (iter == extensions.end())
+    {
+        return registerDummyExtension<T>();
+    }
+
+    ExtensionChainBase* baseChain = iter->second;
+    assert(dynamic_cast<T*>(baseChain) != nullptr);
+    return static_cast<T*>(baseChain);
+}
+
+template<typename T>
+T* ReflectedPropertyModel::registerDummyExtension() const
+{
+    static_assert(!std::is_same<T, ChildCreatorExtension>::value, "There is no reason to request ChildCreatorExtension");
+    static_assert(std::is_base_of<ExtensionChain<T>, T>::value, "ExtensionChain should be base of extension");
+    TypeId typeId = TypeId::getType<ExtensionChain<T>>();
+    assert(extensions.count(typeId) == 0);
+
+    extensionsDestructors.emplace(typeId, std::bind(&destroyExtensionChain<T>, std::placeholders::_1));
+    auto iter = extensions.emplace(typeId, T::createDummy()).first;
+    ExtensionChainBase* baseExtension = iter->second;
+    assert(dynamic_cast<T*>(baseExtension) != nullptr);
+    return static_cast<T*>(baseExtension);
+}
 
 #endif

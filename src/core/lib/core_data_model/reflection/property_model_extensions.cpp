@@ -69,18 +69,14 @@ public:
     void exposeChildren(const std::shared_ptr<const PropertyNode>&, std::vector<std::shared_ptr<const PropertyNode>>&, IDefinitionManager&) const override {}
 };
 
-class DummyGetter: public GetterExtension
+class DummySetterGetter: public SetterGetterExtension
 {
 public:
     Variant getValue(const RefPropertyItem *, int, size_t, IDefinitionManager&) const override
     {
         return Variant();
     }
-};
 
-class DummySetter: public SetterExtension
-{
-public:
     bool setValue(RefPropertyItem*, int, size_t, const Variant&, IDefinitionManager&, ICommandManager&) const override
     {
         return false;
@@ -157,26 +153,21 @@ void ChildCreatorExtension::setAllocator(std::shared_ptr<IChildAllocator> alloca
     allocator = allocator_;
 }
 
-Variant GetterExtension::getValue(const RefPropertyItem * item, int column, size_t roleId, IDefinitionManager & definitionManager) const
+Variant SetterGetterExtension::getValue(const RefPropertyItem * item, int column, size_t roleId, IDefinitionManager & definitionManager) const
 {
     assert(nextExtension != nullptr);
     return nextExtension->getValue(item, column, roleId, definitionManager);
 }
 
-GetterExtension * GetterExtension::createDummy()
-{
-    return new PMEDetails::DummyGetter();
-}
-
-bool SetterExtension::setValue(RefPropertyItem* item, int column, size_t roleId, const Variant& data, IDefinitionManager& definitionManager, ICommandManager& commandManager) const
+bool SetterGetterExtension::setValue(RefPropertyItem* item, int column, size_t roleId, const Variant& data, IDefinitionManager& definitionManager, ICommandManager& commandManager) const
 {
     assert(nextExtension != nullptr);
     return nextExtension->setValue(item, column, roleId, data, definitionManager, commandManager);
 }
 
-SetterExtension * SetterExtension::createDummy()
+SetterGetterExtension * SetterGetterExtension::createDummy()
 {
-    return new PMEDetails::DummySetter();
+    return new PMEDetails::DummySetterGetter();
 }
 
 RefPropertyItem * MergeValuesExtension::lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,

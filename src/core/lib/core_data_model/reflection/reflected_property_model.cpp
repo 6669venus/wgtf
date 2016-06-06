@@ -5,13 +5,10 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/base_property.hpp"
 
-#include <set>
-
 namespace RPMDetails
 {
 const int ValueColumn = 1;
 }
-
 
 RefPropertyItem::RefPropertyItem(ReflectedPropertyModel & model_)
     : model(model_)
@@ -222,15 +219,9 @@ bool RefPropertyItem::hasObjects() const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-ReflectedPropertyModel::ReflectedPropertyModel(IDefinitionManager & definitionManager_,
-    ICommandManager & commandManager_, IReflectionController& refController)
-    : definitionManager(definitionManager_)
-    , commandManager(commandManager_)
-    , getterExtension(GetterExtension::createDummy())
-    , setterExtension(SetterExtension::createDummy())
-    , mergeExtension(MergeValuesExtension::createDummy())
-    , injectExtension(InjectDataExtension::createDummy())
-    , childCreator(definitionManager_)
+ReflectedPropertyModel::ReflectedPropertyModel(IComponentContext& context)
+    : interfacesHolder(context)
+    , childCreator(context)
 {
     rootItem.reset(new RefPropertyItem(*this));
 
@@ -238,8 +229,7 @@ ReflectedPropertyModel::ReflectedPropertyModel(IDefinitionManager & definitionMa
     childCreator.nodeCreated.connect(std::bind(&ReflectedPropertyModel::childAdded, this, _1, _2, _3));
     childCreator.nodeRemoved.connect(std::bind(&ReflectedPropertyModel::childRemoved, this, _1));
 
-    registerExtension(new DefaultGetterExtension());
-    registerExtension(new DefaultSetterExtension(refController));
+    registerExtension(new DefaultSetterGetterExtension(context));
     registerExtension(new UrlGetterExtension());
     registerExtension(new DefaultChildCheatorExtension());
     registerExtension(new DefaultMergeValueExtension());
@@ -248,10 +238,12 @@ ReflectedPropertyModel::ReflectedPropertyModel(IDefinitionManager & definitionMa
 ReflectedPropertyModel::~ReflectedPropertyModel()
 {
     rootItem.reset();
-    GetterExtension::deleteExtensionChain(getterExtension);
-    SetterExtension::deleteExtensionChain(setterExtension);
-    MergeValuesExtension::deleteExtensionChain(mergeExtension);
-    InjectDataExtension::deleteExtensionChain(injectExtension);
+    for (std::pair<TypeId, ExtensionChainBase*> extension : extensions)
+    {
+        ChaindDestructionFn & destructFn = extensionsDestructors[extension.first];
+        assert(destructFn);
+        destructFn(extension.second);
+    }
 }
 
 void ReflectedPropertyModel::update()
@@ -264,6 +256,8 @@ void ReflectedPropertyModel::update()
 
 void ReflectedPropertyModel::update(RefPropertyItem* item)
 {
+    INTERFACE_REQUEST(IDefinitionManager, defManager, interfacesHolder, void());
+
     for (const std::shared_ptr<const PropertyNode> & node : item->nodes)
     {
         childCreator.updateSubTree(node);
@@ -274,12 +268,12 @@ void ReflectedPropertyModel::update(RefPropertyItem* item)
         update(child.get());
     }
 
-    Variant value = item->evalValue(definitionManager);
+    Variant value = item->evalValue(defManager);
     if (value != item->itemValue)
     {
-        notifyPreDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
+        signalPreItemDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
         item->setValue(std::move(value));
-        notifyPostDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
+        signalPostItemDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
     }
 }
 
@@ -289,9 +283,9 @@ void ReflectedPropertyModel::setObjects(const std::vector<ObjectHandle>& objects
     if (childCount != 0)
     {
         nodeToItem.clear();
-        notifyPreItemsRemoved(nullptr, 0, childCount);
+        signalPreItemsRemoved(nullptr, 0, childCount);
         rootItem->removeChildren();
-        notifyPostItemsRemoved(nullptr, 0, childCount);
+        signalPostItemsRemoved(nullptr, 0, childCount);
         rootItem->removeObjects();
         childCreator.clear();
     }
@@ -328,64 +322,17 @@ int ReflectedPropertyModel::columnCount() const
     return 2;
 }
 
-void ReflectedPropertyModel::registerExtension(GetterExtension* extension)
-{
-    getterExtension = getterExtension->addExtension(extension);
-}
-
-void ReflectedPropertyModel::unregisterExtension(GetterExtension* extension)
-{
-    getterExtension = getterExtension->removeExtension(extension);
-}
-
-void ReflectedPropertyModel::registerExtension(SetterExtension * extension)
-{
-    setterExtension = setterExtension->addExtension(extension);
-}
-
-void ReflectedPropertyModel::unregisterExtension(SetterExtension * extension)
-{
-    setterExtension = setterExtension->removeExtension(extension);
-}
-
-void ReflectedPropertyModel::registerExtension(MergeValuesExtension * extension)
-{
-    mergeExtension = mergeExtension->addExtension(extension);
-}
-
-void ReflectedPropertyModel::unregisterExtension(MergeValuesExtension * extension)
-{
-    mergeExtension = mergeExtension->removeExtension(extension);
-}
-
-void ReflectedPropertyModel::registerExtension(ChildCreatorExtension * extension)
-{
-    childCreator.registerExtension(extension);
-}
-
-void ReflectedPropertyModel::unregisterExtension(ChildCreatorExtension * extension)
-{
-    childCreator.unregisterExtension(extension);
-}
-
-void ReflectedPropertyModel::registerExtension(InjectDataExtension* extension)
-{
-    injectExtension = injectExtension->addExtension(extension);
-}
-
-void ReflectedPropertyModel::unregisterExtension(InjectDataExtension* extension)
-{
-    injectExtension = injectExtension->removeExtension(extension);
-}
-
 void ReflectedPropertyModel::childAdded(const std::shared_ptr<const PropertyNode>& parent, const std::shared_ptr<const PropertyNode>& node, size_t childPosition)
 {
+    INTERFACE_REQUEST(IDefinitionManager, defManager, interfacesHolder, void());
+
     auto iter = nodeToItem.find(parent);
     assert(iter != nodeToItem.end());
 
     RefPropertyItem* parentItem = iter->second;
 
-    RefPropertyItem* childItem = mergeExtension->lookUpItem(node, parentItem->children, definitionManager);
+    InjectDataExtension* injectExtension = getExtensionChain<InjectDataExtension>();
+    RefPropertyItem* childItem = getExtensionChain<MergeValuesExtension>()->lookUpItem(node, parentItem->children, defManager);
     if (childItem != nullptr)
     {
         childItem->addObject(node);
@@ -396,11 +343,10 @@ void ReflectedPropertyModel::childAdded(const std::shared_ptr<const PropertyNode
         size_t childCount = parentItem->getChildCount();
         const IItem* modelParent = getModelParent(parentItem);
 
-        notifyPreItemsInserted(modelParent, childCount, 1);
+        signalPreItemsInserted(modelParent, childCount, 1);
         childItem = parentItem->createChild();
         childItem->addObject(node);
-        notifyPostItemsInserted(modelParent, childCount, 1);
-        using namespace std::placeholders;
+        signalPostItemsInserted(modelParent, childCount, 1);
         injectExtension->inject(childItem);
     }
 
@@ -422,13 +368,13 @@ void ReflectedPropertyModel::childRemoved(const std::shared_ptr<const PropertyNo
         RefPropertyItem* parent = item->getNonConstParent();
         size_t positionIndex = item->getPosition();
         const IItem* modelParent = getModelParent(parent);
-        notifyPreItemsRemoved(modelParent, positionIndex, 1);
+        signalPreItemsRemoved(modelParent, positionIndex, 1);
         parent->removeChild(positionIndex);
-        notifyPostItemsRemoved(modelParent, positionIndex, 1);
+        signalPostItemsRemoved(modelParent, positionIndex, 1);
     }
     else
     {
-        injectExtension->updateInjection(item);
+        getExtensionChain<InjectDataExtension>()->updateInjection(item);
     }
 }
 
@@ -454,10 +400,13 @@ IItem * ReflectedPropertyModel::getModelParent(RefPropertyItem * effectiveParent
 
 Variant ReflectedPropertyModel::getData(const RefPropertyItem * item, int column, size_t roleId) const
 {
-    return getterExtension->getValue(item, column, roleId, definitionManager);
+    INTERFACE_REQUEST(IDefinitionManager, defManager, interfacesHolder, Variant());
+    return getExtensionChain<SetterGetterExtension>()->getValue(item, column, roleId, defManager);
 }
 
 bool ReflectedPropertyModel::setData(RefPropertyItem * item, int column, size_t roleId, const Variant & data)
 {
-    return setterExtension->setValue(item, column, roleId, data, definitionManager, commandManager);
+    INTERFACE_REQUEST(IDefinitionManager, defManager, interfacesHolder, false);
+    INTERFACE_REQUEST(ICommandManager, commandManager, interfacesHolder, false);
+    return getExtensionChain<SetterGetterExtension>()->setValue(item, column, roleId, data, defManager, commandManager);
 }

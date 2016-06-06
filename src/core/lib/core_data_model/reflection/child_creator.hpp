@@ -4,13 +4,13 @@
 #include "property_model_extensions.hpp"
 
 #include "core_common/signal.hpp"
-
-#include <set>
+#include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_dependency_system/depends.hpp"
 
 class ChildCreator
 {
 public:
-    ChildCreator(IDefinitionManager& defMng);
+    ChildCreator(IComponentContext& context);
     ~ChildCreator();
 
     std::shared_ptr<const PropertyNode> createRoot(const ObjectHandle& handle);
@@ -26,7 +26,7 @@ public:
 
 private:
     ChildCreatorExtension * extensions;
-    IDefinitionManager& definitionManager;
+    Depends<IDefinitionManager> interfaceHolder;
 
     std::unordered_map<std::shared_ptr<const PropertyNode>, std::vector<std::shared_ptr<const PropertyNode>>> propertiesIndex;
     std::shared_ptr<IChildAllocator> allocator;

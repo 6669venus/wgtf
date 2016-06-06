@@ -47,8 +47,14 @@ public:
 
 std::shared_ptr<const PropertyNode> MakeRootNode(ObjectHandle handle, IChildAllocator& allocator);
 
+class ExtensionChainBase
+{
+public:
+    virtual ~ExtensionChainBase() {}
+};
+
 template<typename T>
-class ExtensionChain
+class ExtensionChain : public ExtensionChainBase
 {
 public:
     ExtensionChain()
@@ -112,19 +118,13 @@ protected:
     std::shared_ptr<IChildAllocator> allocator;
 };
 
-class GetterExtension: public ExtensionChain<GetterExtension>
+class SetterGetterExtension: public ExtensionChain<SetterGetterExtension>
 {
 public:
     virtual Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager & definitionManager) const;
-    static GetterExtension* createDummy();
-};
-
-class SetterExtension: public ExtensionChain<SetterExtension>
-{
-public:
     virtual bool setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
                           IDefinitionManager & definitionManager, ICommandManager & commandManager) const;
-    static SetterExtension* createDummy();
+    static SetterGetterExtension* createDummy();
 };
 
 class MergeValuesExtension: public ExtensionChain<MergeValuesExtension>

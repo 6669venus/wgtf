@@ -38,8 +38,8 @@ struct PropertyNodeEqual
 
 }
 
-ChildCreator::ChildCreator(IDefinitionManager& defMng)
-    : definitionManager(defMng)
+ChildCreator::ChildCreator(IComponentContext& context)
+    : interfaceHolder(context)
     , extensions(ChildCreatorExtension::createDummy())
     , allocator(createDefaultAllocator())
 {
@@ -60,9 +60,15 @@ std::shared_ptr<const PropertyNode> ChildCreator::createRoot(const ObjectHandle&
 
 void ChildCreator::updateSubTree(const std::shared_ptr<const PropertyNode>& parent)
 {
+    IDefinitionManager* defManager = interfaceHolder.get<IDefinitionManager>();
+    if (defManager == nullptr)
+    {
+        return;
+    }
+
     assert(parent != nullptr);
     std::vector<std::shared_ptr<const PropertyNode>> children;
-    extensions->exposeChildren(parent, children, definitionManager);
+    extensions->exposeChildren(parent, children, *defManager);
 
     auto iter = propertiesIndex.find(parent);
     if (iter == propertiesIndex.end())

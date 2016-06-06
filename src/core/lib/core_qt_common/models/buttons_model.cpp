@@ -21,11 +21,11 @@ ThumbnailData ButtonItem::getThumbnail(int column) const
 
 Variant ButtonItem::getData(int column, size_t roleId) const
 {
-    if (roleId == ButtonIconRole::roleId_)
+    if (roleId == buttonIconRole::roleId_)
     {
         return Variant(iconUri);
     }
-    else if (roleId == ButtonEnabledRole::roleId_)
+    else if (roleId == buttonEnabledRole::roleId_)
     {
         return Variant(isEnabled);
     }
@@ -35,7 +35,7 @@ Variant ButtonItem::getData(int column, size_t roleId) const
 
 bool ButtonItem::setData(int column, size_t roleId, const Variant & data)
 {
-    if (roleId == ButtonClickedRole::roleId_)
+    if (roleId == buttonClickedRole::roleId_)
     {
         clickCallback();
         return true;
@@ -62,9 +62,9 @@ void ButtonsModel::setEnabled(size_t index, bool isEnabled)
     {
         return;
     }
-    notifyPreDataChanged(button, 0, ButtonEnabledRole::roleId_, button->isEnabled);
+    signalPreItemDataChanged(button, 0, buttonEnabledRole::roleId_, button->isEnabled);
     button->isEnabled = isEnabled;
-    notifyPostDataChanged(button, 0, ButtonEnabledRole::roleId_, isEnabled);
+    signalPostItemDataChanged(button, 0, buttonEnabledRole::roleId_, isEnabled);
 }
 
 const std::string& ButtonsModel::getIconUri(size_t index) const
@@ -80,9 +80,9 @@ void ButtonsModel::setIconUri(size_t index, const std::string& iconUri)
     {
         return;
     }
-    notifyPreDataChanged(button, 0, ButtonIconRole::roleId_, button->iconUri);
+    signalPreItemDataChanged(button, 0, buttonIconRole::roleId_, button->iconUri);
     button->iconUri = iconUri;
-    notifyPostDataChanged(button, 0, ButtonIconRole::roleId_, iconUri);
+    signalPostItemDataChanged(button, 0, buttonIconRole::roleId_, iconUri);
 }
 
 IItem * ButtonsModel::item(size_t index) const

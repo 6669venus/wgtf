@@ -479,12 +479,12 @@ void QtScriptingEngine::deleteMacro( QString command )
 	impl_->commandSystemProvider_->deleteMacroByName( commandId.c_str() );
 }
 
-void QtScriptingEngine::selectControl( WGCopyController* control, bool append )
+void QtScriptingEngine::selectControl( wgt::WGCopyController* control, bool append )
 {
 	impl_->copyPasteManager_->onSelect( control, append );
 }
 
-void QtScriptingEngine::deselectControl( WGCopyController* control, bool reset )
+void QtScriptingEngine::deselectControl( wgt::WGCopyController* control, bool reset )
 {
 	impl_->copyPasteManager_->onDeselect( control, reset );
 }

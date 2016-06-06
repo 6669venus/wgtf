@@ -19,8 +19,8 @@ def main():
 	# Compile new *.pyc files
 	print "Compiling *.py files in", sourceDir
 	result = compileall.compile_dir(sourceDir)
-	# Returns 1 on failure
-	if result == 1:
+	# Returns 0 on failure
+	if result == 0:
 		sys.exit( 1 )
 
 	# Clear deployment directory

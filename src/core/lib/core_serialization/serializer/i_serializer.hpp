@@ -6,6 +6,8 @@
 #include "core_reflection/object_handle.hpp"
 #include <utility>
 
+namespace wgt
+{
 class IDataStream;
 class ISerializationManager;
 
@@ -60,4 +62,5 @@ private:
 		IDataStream * dataStream, Variant & variant );
 
 };
+} // end namespace wgt
 #endif // I_SERIALIZER_HPP

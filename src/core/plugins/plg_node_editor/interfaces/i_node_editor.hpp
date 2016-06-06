@@ -1,4 +1,3 @@
-
 #ifndef __I_NODE_EDITOR_H__
 #define __I_NODE_EDITOR_H__
 
@@ -15,6 +14,8 @@
 
 #include "i_graph.hpp"
 
+namespace wgt
+{
 /*!
 * \class INodeEditor
 *
@@ -96,5 +97,5 @@ protected:
     */
     virtual const IListModel* GetGraphModel() const = 0;
 };
-
+} // end namespace wgt
 #endif // __I_NODE_EDITOR_H__

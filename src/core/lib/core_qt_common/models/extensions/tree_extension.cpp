@@ -4,6 +4,8 @@
 #include "core_variant/variant.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 
+namespace wgt
+{
 ITEMROLE( childModel )
 ITEMROLE( hasChildren )
 ITEMROLE( expanded )
@@ -12,14 +14,11 @@ struct TreeExtension::Implementation
 {
 	Implementation( TreeExtension& self );
 	~Implementation();
-	void expand( const QModelIndex& index );
-	void collapse( const QModelIndex& index );
 	bool expanded( const QModelIndex& index ) const;
 
 	TreeExtension& self_;
 	std::vector< IndexedAdapter< ChildListAdapter > > childModels_;
 	std::vector< std::unique_ptr< ChildListAdapter > > redundantChildModels_;
-	std::vector< QPersistentModelIndex > expanded_;
 };
 
 TreeExtension::Implementation::Implementation( TreeExtension & self )
@@ -32,33 +31,10 @@ TreeExtension::Implementation::~Implementation()
 {
 }
 
-void TreeExtension::Implementation::expand( const QModelIndex& index )
-{
-	if (!expanded( index ))
-	{
-		expanded_.push_back( index );
-	}
-}
-
-
-void TreeExtension::Implementation::collapse( const QModelIndex& index )
-{
-	auto it = std::find( expanded_.begin(), expanded_.end(), index );
-	if (it != expanded_.end())
-	{
-		std::swap( 
-			expanded_[ it - expanded_.begin() ], 
-			expanded_[ expanded_.size() - 1 ] );
-		expanded_.pop_back();
-	}
-}
-
 
 bool TreeExtension::Implementation::expanded( const QModelIndex& index ) const
 {
-	return 
-		std::find( expanded_.cbegin(), expanded_.cend(), index ) != 
-		expanded_.cend();
+	return self_.dataExt( index, ItemRole::expandedId ).toBool();
 }
 
 
@@ -96,8 +72,7 @@ QVariant TreeExtension::data( const QModelIndex &index, int role ) const
 
 	if (roleId == ItemRole::childModelId)
 	{
-		if (!model->hasChildren(index) ||
-			!impl_->expanded( index ))
+		if (!model->hasChildren(index))
 		{
 			return QVariant( QVariant::Invalid );
 		}
@@ -142,21 +117,7 @@ bool TreeExtension::setData(
 
 	if (roleId == ItemRole::expandedId)
 	{
-		// Change the data
-		auto expand = value.toBool();
-		if (impl_->expanded( index ) == expand)
-		{
-			return false;
-		}
-
-		expand ? impl_->expand( index ) : impl_->collapse( index );
-
-		// Emit the data change
-		QVector< int > roles;
-		roles.append( role );
-		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
-
-		return true;
+		return setDataExt( index, value, roleId );
 	}
 
 	return false;
@@ -473,7 +434,7 @@ QModelIndex TreeExtension::getForwardIndex( const QModelIndex & index ) const
 		else
 		{
 			// Expand the current item
-			impl_->expand( index );
+			const_cast< TreeExtension * >( this )->setDataExt( index, true, ItemRole::expandedId );
 
 			// Emit the data change
 			int role = 0;
@@ -510,7 +471,7 @@ QModelIndex TreeExtension::getBackwardIndex( const QModelIndex & index ) const
 	if (pModel->hasChildren( index ) && impl_->expanded( index ))
 	{
 		// Collapse the current item
-		impl_->collapse( index );
+		const_cast< TreeExtension * >( this )->setDataExt( index, false, ItemRole::expandedId );
 
 		// Emit the data change
 		int role = 0;
@@ -527,3 +488,4 @@ QModelIndex TreeExtension::getBackwardIndex( const QModelIndex & index ) const
 
 	return this->getPreviousIndex( index );
 }
+} // end namespace wgt

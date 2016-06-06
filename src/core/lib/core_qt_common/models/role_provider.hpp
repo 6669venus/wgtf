@@ -7,6 +7,8 @@
 #include <QHash>
 #include <QByteArray>
 
+namespace wgt
+{
 class RoleProvider
 {
 public:
@@ -21,5 +23,5 @@ public:
 private:
 	mutable std::map< int, size_t > roleMap_;
 };
-
+} // end namespace wgt
 #endif

@@ -5,13 +5,15 @@
 #include "windows_debug_logger.hpp"
 #include <vector>
 
+
+namespace wgt
+{
 /*
 	IDEDebugLoggerPlugin
 
 	Registers a logger specific to the IDE. May be configured to support
 	additional IDEs. At this time it supports Windows/Visual Studio output.
  */
-
 class IDEDebugLoggerPlugin
 	: public PluginMain
 {
@@ -79,3 +81,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( IDEDebugLoggerPlugin )
+} // end namespace wgt

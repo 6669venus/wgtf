@@ -13,6 +13,8 @@
 
 #include "interfaces/i_curve_interpolator.hpp"
 
+namespace wgt
+{
 class LinearInterpolator : public ICurveInterpolator
 {
 public:
@@ -22,5 +24,5 @@ public:
 
 	virtual void updateControlPoints(BezierPoint& point, BezierPoint* prevPoint, BezierPoint* nextPoint) override;
 };
-
+} // end namespace wgt
 #endif // LINEAR_INTERPOLATOR_H_

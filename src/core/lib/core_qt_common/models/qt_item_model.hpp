@@ -3,7 +3,10 @@
 
 #include "qt_abstract_item_model.hpp"
 #include <memory>
+#include "role_provider.hpp"
 
+namespace wgt
+{
 class AbstractItemModel;
 class AbstractListModel;
 class AbstractTreeModel;
@@ -13,7 +16,7 @@ class AbstractTableModel;
 /**
  *	Adapter layer to allow any AbstractItemModel to be used by Qt and QML views.
  */
-class QtItemModel : public QtAbstractItemModel
+class QtItemModel : public QtAbstractItemModel, public RoleProvider
 {
 	Q_OBJECT
 
@@ -40,6 +43,11 @@ public:
 
 	QVariant headerData( int section, Qt::Orientation orientation, int role ) const override;
 	bool setHeaderData( int section, Qt::Orientation orientation, const QVariant &value, int role ) override;
+
+	bool insertRows( int row, int count, const QModelIndex &parent ) override;
+	bool insertColumns( int column, int count, const QModelIndex &parent ) override;
+	bool removeRows( int row, int count, const QModelIndex &parent ) override;
+	bool removeColumns( int column, int count, const QModelIndex &parent ) override;
 
 private:
 	struct Impl;
@@ -214,5 +222,5 @@ private:
 	using QtItemModel::rowCount;
 	using QtItemModel::columnCount;
 };
-
+} // end namespace wgt
 #endif//QT_ITEM_MODEL_HPP

@@ -2,6 +2,8 @@
 #define HISTORY_SELECTION_HANDLER_HPP
 
 #include <vector>
+namespace wgt
+{
 class Variant;
 class Collection;
 
@@ -19,6 +21,5 @@ public:
 private:
 	Selection selectionSet_;
 };
-
-
+} // end namespace wgt
 #endif //HISTORY_SELECTION_HANDLER_HPP

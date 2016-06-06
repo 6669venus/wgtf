@@ -456,8 +456,8 @@ Rectangle {
                 delegate: Curve{
                     objectName: index
                     curveIndex: index
-                    points: Value.points
-                    curveModel: Value
+                    points: value.points
+                    curveModel: value
                     viewTransform: timeline.viewTransform;
                     Component.onCompleted:{
                         // Assign and don't bind the color, otherwise we get qml errors when the curvesModel changes

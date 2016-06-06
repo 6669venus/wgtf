@@ -13,7 +13,10 @@
 #include <codecvt>
 #include <set>
 
+namespace wgt
+{
 ITEMROLE( display )
+ITEMROLE( itemId )
 
 namespace
 {
@@ -165,6 +168,10 @@ Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* ov
 			return definition->getName();
 		}
 	}
+	else if (roleId == ItemRole::itemIdId)
+	{
+		return getId();
+	}
 
 	if (roleId == ValueRole::roleId_)
 	{
@@ -173,10 +180,6 @@ Variant ReflectedObjectItemNew::getData( int column, size_t roleId ) const /* ov
 	if (roleId == ValueTypeRole::roleId_)
 	{
 		return TypeId::getType< ObjectHandle >().getName();
-	}
-	else if (roleId == IndexPathRole::roleId_)
-	{
-		return this->getPath();
 	}
 	else if (roleId == ObjectRole::roleId_)
 	{
@@ -458,3 +461,4 @@ void ReflectedObjectItemNew::enumerateChildren(
 		return true;
 	} );
 }
+} // end namespace wgt

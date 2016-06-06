@@ -4,6 +4,8 @@
 #include "core_reflection/object_manager.hpp"
 #include "core_reflection/reflected_types.hpp"
 
+namespace wgt
+{
 //==============================================================================
 TestReflectionFixture::TestReflectionFixture()
 	: objectManager_( new ObjectManager() )
@@ -44,3 +46,4 @@ TestStructure & TestReflectionFixture::getTestStructure()
 {
 	return testObjects_.getTestStructure();
 }
+} // end namespace wgt

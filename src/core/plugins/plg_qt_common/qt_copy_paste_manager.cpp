@@ -10,6 +10,8 @@
 #include <QtGui/QClipboard>
 #include <QApplication>
 
+namespace wgt
+{
 namespace
 {
 	const char * s_ValueHintTag = "DATAHINT";
@@ -230,5 +232,4 @@ void QtCopyPasteManager::fini()
 	definitionManager_ = nullptr;
 	commandManager_ = nullptr;
 }
-
-
+} // end namespace wgt

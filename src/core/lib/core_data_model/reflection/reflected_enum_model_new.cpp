@@ -11,6 +11,8 @@
 #include <codecvt>
 #include <iterator>
 
+namespace wgt
+{
 namespace
 {
 	class ReflectedEnumItem : public AbstractListItem
@@ -30,10 +32,6 @@ namespace
 			else if (roleId == ValueTypeRole::roleId_)
 			{
 				return TypeId::getType< int >().getName();
-			}
-			else if (roleId == IndexPathRole::roleId_)
-			{
-				return text_ + std::to_string( index_ );
 			}
 			return Variant();
 		}
@@ -140,3 +138,4 @@ int ReflectedEnumModelNew::columnCount() const /* override */
 {
 	return 1;
 }
+} // end namespace wgt

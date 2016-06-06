@@ -5,6 +5,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE( MetaBase, MetaNone() )
 END_EXPOSE()
 
@@ -42,3 +44,4 @@ const MetaHandle & operator + ( const MetaHandle & left, const MetaHandle & righ
 
 	return left; 
 }
+} // end namespace wgt

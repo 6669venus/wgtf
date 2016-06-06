@@ -5,6 +5,8 @@
 #include "command_manager.hpp"
 
 
+namespace wgt
+{
 //--------------------------------------------------------------------------
 UndoRedoCommand::UndoRedoCommand( CommandManager * pCommandManager )
     : pCommandManager_( pCommandManager )
@@ -44,3 +46,4 @@ CommandThreadAffinity UndoRedoCommand::threadAffinity() const
 {
 	return CommandThreadAffinity::UI_THREAD;
 }
+} // end namespace wgt

@@ -2,6 +2,8 @@
 
 #include <string>
 
+namespace wgt
+{
 namespace PyScript
 {
 	class ScriptObject;
@@ -58,4 +60,4 @@ public:
 
 
 } // namespace PythonType
-
+} // end namespace wgt

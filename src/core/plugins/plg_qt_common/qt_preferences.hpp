@@ -3,6 +3,8 @@
 
 #include "core_ui_framework/i_preferences.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 
 class QtPreferences : public Implements< IPreferences >
@@ -22,5 +24,5 @@ private:
     class Implementation;
     std::unique_ptr< Implementation > pImpl_;
 };
-
+} // end namespace wgt
 #endif//QT_PREFERENCES_HPP

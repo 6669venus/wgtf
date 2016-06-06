@@ -10,6 +10,8 @@
 
 #include <QRegExp>
 
+namespace wgt
+{
 struct WGFilteredTreeModel::Implementation
 {
 	Implementation( WGFilteredTreeModel & self );
@@ -113,3 +115,4 @@ void WGFilteredTreeModel::setFilter( QObject * filter )
 	auto wgFilter = qobject_cast< WGFilter * >( filter );
 	impl_->setFilter( wgFilter );
 }
+} // end namespace wgt

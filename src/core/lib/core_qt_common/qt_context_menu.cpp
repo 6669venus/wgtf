@@ -8,6 +8,8 @@
 #include <assert.h>
 #include <sstream>
 
+namespace wgt
+{
 QtContextMenu::QtContextMenu( QMenu & qMenu, QWidget * qView, const char * windowId )
 	: QtMenu( qMenu, windowId )
 	, qMenu_( qMenu )
@@ -71,3 +73,4 @@ void QtContextMenu::removeAction( IAction & action )
 
 	destroyQAction( action );
 }
+} // end namespace wgt

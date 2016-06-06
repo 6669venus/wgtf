@@ -3,6 +3,12 @@
 #include "core_variant/collection.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 
+namespace wgt
+{
+ITEMROLE( value )
+ITEMROLE( key )
+ITEMROLE( valueType )
+ITEMROLE( keyType )
 namespace
 {
 	class CollectionItem : public AbstractItem
@@ -18,11 +24,11 @@ namespace
 		Variant getData(int row, int column, size_t roleId) const override
 		{
 			auto & collection = model_.getSource();
-			if (roleId == ValueTypeRole::roleId_)
+			if (roleId == ItemRole::valueTypeId)
 			{
 				return collection.valueType().getName();
 			}
-			else if (roleId == KeyTypeRole::roleId_)
+			else if (roleId == ItemRole::keyTypeId)
 			{
 				return collection.keyType().getName();
 			}
@@ -34,20 +40,11 @@ namespace
 				return Variant();
 			}
 
-			if (roleId == IndexPathRole::roleId_)
-			{
-				ResizingMemoryStream dataStream;
-				TextStream s(dataStream);
-				Variant value = it.value();
-				s << value;
-				return dataStream.takeBuffer();
-			}
-
-			if (roleId == ValueRole::roleId_)
+			if (roleId == ItemRole::valueId)
 			{
 				return it.value();
 			}
-			else if (roleId == KeyRole::roleId_)
+			else if (roleId == ItemRole::keyId)
 			{
 				return it.key();
 			}
@@ -248,3 +245,4 @@ int CollectionModel::columnCount() const
 {
 	return 1;
 }
+} // end namespace wgt

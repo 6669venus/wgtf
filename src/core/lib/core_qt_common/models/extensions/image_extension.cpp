@@ -4,6 +4,8 @@
 
 #include <QIcon>
 
+namespace wgt
+{
 ITEMROLE( image )
 
 ImageExtension::ImageExtension()
@@ -79,3 +81,4 @@ bool ImageExtension::setData( const QModelIndex &index, const QVariant &value, i
 {
 	return false;
 }
+} // end namespace wgt

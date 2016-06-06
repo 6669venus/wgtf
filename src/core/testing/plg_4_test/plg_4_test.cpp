@@ -4,6 +4,8 @@
 #include "../interfaces_test/auto_populate.hpp"
 #include "core_dependency_system/di_ref.hpp"
 
+namespace wgt
+{
 class TestClassF
 	: public Implements< AutoPopulate >
 {
@@ -46,4 +48,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( TestPlugin4 )
-
+} // end namespace wgt

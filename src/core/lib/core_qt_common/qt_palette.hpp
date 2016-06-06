@@ -3,6 +3,8 @@
 
 #include <QQuickItem>
 
+namespace wgt
+{
 class QtPalette : public QQuickItem
 {
 	Q_OBJECT
@@ -165,5 +167,5 @@ protected:
 	virtual void timerEvent(QTimerEvent* event) override;
 
 };
-
+} // end namespace wgt
 #endif // QT_PALETTE_H

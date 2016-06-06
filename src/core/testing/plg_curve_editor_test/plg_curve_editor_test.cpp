@@ -6,6 +6,8 @@
 #include "plugins/plg_curve_editor/interfaces/i_curve.hpp"
 
 
+namespace wgt
+{
 //==============================================================================
 class CurveEditorTestPlugin
 	: public PluginMain
@@ -72,4 +74,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( CurveEditorTestPlugin )
-
+} // end namespace wgt

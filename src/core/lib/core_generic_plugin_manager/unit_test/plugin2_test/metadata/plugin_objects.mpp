@@ -7,6 +7,8 @@
 
 #include "core_generic_plugin_manager/unit_test/plugin2_test/plugin_objects.hpp"
 
+namespace wgt
+{
 BEGIN_EXPOSE(TestPlugin2TestObject, MetaNone())
 	EXPOSE("counter", counter_, MetaNone())
 	EXPOSE("text", text_, MetaNone())
@@ -19,3 +21,4 @@ END_EXPOSE()
 
 BEGIN_EXPOSE( TestPlugin2Interface, MetaNone() )
 END_EXPOSE()
+} // end namespace wgt

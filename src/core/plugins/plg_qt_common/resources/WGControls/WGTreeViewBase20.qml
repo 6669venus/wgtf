@@ -59,6 +59,22 @@ ListView {
             onItemPressed: treeViewBase.itemPressed(mouse, itemIndex, modelIndex)
             onItemClicked: treeViewBase.itemClicked(mouse, itemIndex, modelIndex)
             onItemDoubleClicked: treeViewBase.itemDoubleClicked(mouse, itemIndex, modelIndex)
+
+            onImplicitColumnWidthsChanged: {
+                var viewWidths = view.implicitColumnWidths;
+
+                while (viewWidths.length < implicitColumnWidths.length)
+                {
+                    viewWidths.push(0);
+                }
+
+                for (var i = 0; i < implicitColumnWidths.length; ++i)
+                {
+                    viewWidths[i] = Math.max(viewWidths[i], implicitColumnWidths[i]);
+                }
+
+                view.implicitColumnWidths = viewWidths;
+            }
         }
 
         Item {

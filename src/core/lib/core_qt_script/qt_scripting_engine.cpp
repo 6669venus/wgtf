@@ -34,9 +34,10 @@
 #include <QQmlContext>
 #include <QPointer>
 
-Q_DECLARE_METATYPE( ObjectHandle );
+Q_DECLARE_METATYPE( wgt::ObjectHandle );
 
-
+namespace wgt
+{
 struct QtScriptingEngine::Implementation
 {
 	Implementation( QtScriptingEngine& self )
@@ -568,3 +569,4 @@ void QtScriptingEngine::swapParent(QtScriptObject & scriptObject, QObject * newP
 	parentMap.erase(parentIt);
 	parentMap.insert( std::make_pair(newParent, &scriptObject ) );
 }
+} // end namespace wgt

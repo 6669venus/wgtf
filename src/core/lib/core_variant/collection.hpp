@@ -10,8 +10,9 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 // collection and iterator implementations base
-
 class CollectionIteratorImplBase;
 typedef std::shared_ptr<CollectionIteratorImplBase> CollectionIteratorImplPtr;
 
@@ -211,12 +212,13 @@ namespace collection_details
 	void deduceCollectionImplType(...);
 
 }
-
+} // end namespace wgt
 
 #include "stl_container/linear_collection.hpp"
 #include "stl_container/map_collection.hpp"
 
-
+namespace wgt
+{
 namespace collection_details
 {
 
@@ -717,24 +719,6 @@ private:
 };
 
 
-namespace std
-{
-
-	// store compatible type from std namespace in Variant as Collection
-	template<typename T>
-	typename std::enable_if<Collection::traits<T>::is_supported, Collection>::type upcast(T&& v)
-	{
-		return Collection(v);
-	}
-
-	template<typename T>
-	typename std::enable_if<Collection::traits<T>::is_supported, Collection>::type upcast(const T& v)
-	{
-		return Collection(v);
-	}
-
-}
-
 template<typename T>
 typename std::enable_if<
 	Collection::traits<T>::is_supported && Collection::traits<T>::can_downcast,
@@ -783,6 +767,24 @@ private:
 	T collection_;
 
 };
+} // end namespace wgt
+
+namespace std
+{
+
+	// store compatible type from std namespace in Variant as Collection
+	template<typename T>
+	typename enable_if<wgt::Collection::traits<T>::is_supported, wgt::Collection>::type upcast(T&& v)
+	{
+		return wgt::Collection(v);
+	}
+
+	template<typename T>
+	typename enable_if<wgt::Collection::traits<T>::is_supported, wgt::Collection>::type upcast(const T& v)
+	{
+		return wgt::Collection(v);
+	}
+
+}
 
 #endif
-

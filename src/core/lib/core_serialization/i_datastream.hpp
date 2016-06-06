@@ -12,6 +12,8 @@
 #include <type_traits>
 
 
+namespace wgt
+{
 /**
 Base class for data streams.
 
@@ -122,6 +124,5 @@ private:
 	DEPRECATED virtual bool readValue( Variant & variant );
 
 };
-
-
+} // end namespace wgt
 #endif

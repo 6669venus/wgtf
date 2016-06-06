@@ -3,6 +3,8 @@
 
 #include "i_tree_model.hpp"
 
+namespace wgt
+{
 class GenericTreeItem;
 
 
@@ -34,5 +36,5 @@ private:
 	std::vector< GenericTreeItem * > rootItems_;
 	int columnCount_;
 };
-
+} // end namespace wgt
 #endif

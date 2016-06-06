@@ -110,4 +110,19 @@ ConnectionCurve
         if (secondSlotView || endPos)
             toPoint = (secondSlotView) ? secondSlotView.getSlotAnchor() : endPos;
     }
+
+    Connections {
+        ignoreUnknownSignals: true
+        target: firstSlotView ? firstSlotView : null
+        onRemoveConnection: {
+            deleteConnection(connectionID)
+        }
+    }
+    Connections {
+        ignoreUnknownSignals: true
+        target: secondSlotView ? secondSlotView : null
+        onRemoveConnection: {
+            deleteConnection(connectionID)
+        }
+    }
 }

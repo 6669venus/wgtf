@@ -8,6 +8,8 @@
 
 #include <QPointF>
 
+namespace wgt
+{
 class GraphNode;
 
 class ConnectionSlot
@@ -41,5 +43,5 @@ private:
     std::string icon;
     ObjectHandleT<GraphNode> parent;
 };
-
+} // end namespace wgt
 #endif // __GRAPHEDITOR_CONNECTIONSLOT_H__

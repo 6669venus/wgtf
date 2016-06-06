@@ -1,5 +1,4 @@
 #include "core_generic_plugin/generic_plugin.hpp"
-#include "core_qt_common/shared_controls.hpp"
 #include "core_reflection/type_class_definition.hpp"
 #include <QWidget>
 #include <QQmlEngine>
@@ -27,9 +26,21 @@
 #include "models/curve.hpp"
 #include "metadata/i_curve_editor.mpp"
 
+void initQtResources()
+{
+	Q_INIT_RESOURCE( plg_curve_editor );
+}
+
+void cleanupQtResources()
+{
+	Q_CLEANUP_RESOURCE( plg_curve_editor );
+}
+
+namespace wgt
+{
 class CurveEditorPlugin
 	: public PluginMain
-	, public Depends< wgt::IViewCreator, ICurveEditor >
+	, public Depends< IViewCreator, ICurveEditor >
 {
 public:
 	CurveEditorPlugin(IComponentContext & contextManager)
@@ -39,7 +50,7 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		Q_INIT_RESOURCE(plg_curve_editor);
+		initQtResources();
 
 		auto metaTypeMgr = contextManager.queryInterface< IMetaTypeManager >();
 		assert(metaTypeMgr);
@@ -53,10 +64,10 @@ public:
 			return false;
 
 		// Setup the models for the view
-		definitionManager->registerDefinition(new TypeClassDefinition<Point>);
-		definitionManager->registerDefinition(new TypeClassDefinition<BezierPoint>);
-		definitionManager->registerDefinition(new TypeClassDefinition<ICurve>);
-		definitionManager->registerDefinition(new TypeClassDefinition<ICurveEditor>);
+		definitionManager->registerDefinition<TypeClassDefinition<Point>>();
+		definitionManager->registerDefinition<TypeClassDefinition<BezierPoint>>();
+		definitionManager->registerDefinition<TypeClassDefinition<ICurve>>();
+		definitionManager->registerDefinition<TypeClassDefinition<ICurveEditor>>();
 
 		contextManager.registerInterface( new CurveEditor() );
 
@@ -65,7 +76,7 @@ public:
 
 	void Initialise( IComponentContext & contextManager ) override
 	{
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		auto curveModel = get< ICurveEditor >();
 
 		if (viewCreator != nullptr)
@@ -93,7 +104,8 @@ public:
 		{
 			contextManager.deregisterInterface(type);
 		}
-		Q_CLEANUP_RESOURCE(plg_curve_editor);
+
+		cleanupQtResources();
 	}
 
 private:
@@ -102,4 +114,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(CurveEditorPlugin)
-
+} // end namespace wgt

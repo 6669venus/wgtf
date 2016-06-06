@@ -15,6 +15,8 @@
 
 class QFileDialog;
 
+namespace wgt
+{
 class WGFileDialogQI
 	: public QObject
 {
@@ -57,5 +59,5 @@ private:
 	QStringList getFileNames();
 	void createFileDialog();
 };
-
+} // end namespace wgt
 #endif //WG_FILEDIALO_QI_HPP

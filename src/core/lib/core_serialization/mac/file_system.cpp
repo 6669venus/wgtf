@@ -18,6 +18,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+namespace wgt
+{
 using namespace FileAttributes;
 
 namespace
@@ -137,3 +139,4 @@ bool FileSystem::writeFile(const char* path, const void* data, size_t len, std::
     }
 	return false;
 }
+} // end namespace wgt

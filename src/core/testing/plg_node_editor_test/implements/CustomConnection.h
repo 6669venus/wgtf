@@ -1,9 +1,10 @@
-
 #ifndef __CUSTOM_CONNECTION_H__
 #define __CUSTOM_CONNECTION_H__
 
 #include "plugins/plg_node_editor/interfaces/i_connection.hpp"
 
+namespace wgt
+{
 class CustomConnection : public Implements<IConnection>
 {
     DECLARE_REFLECTED
@@ -23,5 +24,5 @@ private:
 
     bool isConnected;
 };
-
+} // end namespace wgt
 #endif //__CUSTOM_CONNECTION_H__

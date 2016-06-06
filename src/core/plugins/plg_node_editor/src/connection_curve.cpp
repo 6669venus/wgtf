@@ -1,6 +1,8 @@
 #include "connection_curve.hpp"
 #include <qpainter.h>
 
+namespace wgt
+{
 ConnectionCurve::ConnectionCurve(QQuickItem *parent) : QQuickPaintedItem(parent)
 {
     setAntialiasing(true);
@@ -148,3 +150,4 @@ void ConnectionCurve::mousePressEvent(QMouseEvent *event)
         emit connectionClicked();
     }        
 }
+} // end namespace wgt

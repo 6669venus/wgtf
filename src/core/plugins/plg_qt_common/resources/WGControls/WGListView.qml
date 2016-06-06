@@ -200,7 +200,7 @@ Item {
                 anchors.bottom: parent.bottom
                 anchors.margins: 4
                 verticalAlignment: Text.AlignVCenter
-                text: typeof itemData.Value === "string" ? itemData.Value : typeof itemData.Value
+                text: typeof itemData.value === "string" ? itemData.value : typeof itemData.value
                 color: palette.textColor
             }
         }

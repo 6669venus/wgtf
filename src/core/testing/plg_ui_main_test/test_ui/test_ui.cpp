@@ -21,6 +21,8 @@
 #include "core_copy_paste/i_copy_paste_manager.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
 //==============================================================================
 TestUI::TestUI( IComponentContext & context )
 	: Depends( context )
@@ -82,7 +84,7 @@ void TestUI::createViews( IUIFramework & uiFramework, IDataSource* dataSrc, int 
 	auto controller = get<IReflectionController>();
 	assert( controller != nullptr );
 
-	auto viewCreator = get< wgt::IViewCreator >();
+	auto viewCreator = get< IViewCreator >();
 	assert(viewCreator != nullptr);
 
 	test1Models_.emplace_back( new ReflectedTreeModelNew( context_, dataSrc->getTestPage() ) );
@@ -232,4 +234,4 @@ bool TestUI::canClose() const
 	assert(test1Views_.size() == test2Views_.size());
 	return test1Views_.size() > 0;
 }
-
+} // end namespace wgt

@@ -4,7 +4,10 @@
 #include <stdint.h>
 #include <functional>
 #include <typeinfo>
+#include <string>
 
+namespace wgt
+{
 class TypeId
 {
 private:
@@ -46,15 +49,16 @@ private:
 	uint64_t		hashCode_;
 	bool			owns_;
 };
+} // end namespace wgt
 
 namespace std
 {
 	template<>
-	struct hash< const TypeId >
-		: public unary_function< const TypeId, size_t >
+	struct hash< const wgt::TypeId >
+		: public unary_function< const wgt::TypeId, size_t >
 	{
 	public:
-		size_t operator()( const TypeId & v ) const
+		size_t operator()( const wgt::TypeId & v ) const
 		{
 			hash< uint64_t > hash_fn;
 			return hash_fn( v.getHashcode() );

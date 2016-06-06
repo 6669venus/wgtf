@@ -3,13 +3,13 @@ import QtQuick 2.3
 
 WGTextBox {
     id: textField
-    objectName:  itemData != null ? itemData.IndexPath : "string_component"
+    objectName:  itemData != null ? itemData.indexPath : "string_component"
     anchors.left: parent.left
     anchors.right: parent.right
-    text: itemData.Value
+    text: itemData.value
 
     onEditAccepted: {
-        itemData.Value = text;
+        itemData.value = text;
     }
 }
 

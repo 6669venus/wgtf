@@ -4,6 +4,8 @@
 
 #include <core_reflection/i_definition_manager.hpp>
 
-void RegisterGrapEditorTypes(IDefinitionManager& mng);
-
+namespace wgt
+{
+void RegisterGraphEditorTypes(IDefinitionManager& mng);
+} // end namespace wgt
 #endif // __GRAPHEDITOR_TYPEREGISTRATION_H__

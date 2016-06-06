@@ -11,6 +11,8 @@
 #include <utility>
 #include <cstdint>
 
+namespace wgt
+{
 class ObjectHandle;
 class IBaseProperty;
 class IDefinitionManager;
@@ -59,7 +61,5 @@ private:
 	void characterData( const char* data, size_t length ) override;
 
 };
-
-
+} // end namespace wgt
 #endif
-

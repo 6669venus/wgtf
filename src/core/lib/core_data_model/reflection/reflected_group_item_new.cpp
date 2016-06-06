@@ -12,7 +12,10 @@
 
 #include <codecvt>
 
+namespace wgt
+{
 ITEMROLE( display )
+ITEMROLE( itemId )
 
 namespace
 {
@@ -67,7 +70,7 @@ ReflectedGroupItemNew::ReflectedGroupItemNew( IComponentContext & contextManager
 	{
 		impl_->displayName_ = conversion.to_bytes( impl_->groupObj_->getGroupName() );
 	}
-	
+	HashUtilities::combine( id_, impl_->displayName_ );
 }
 
 
@@ -102,17 +105,12 @@ Variant ReflectedGroupItemNew::getData( int column, size_t roleId ) const /* ove
 			return "Reflected Group";
 		}
 	}
-
-	if (roleId == IndexPathRole::roleId_)
+	else if (roleId == ItemRole::itemIdId)
 	{
-		if (parent_ == nullptr)
-		{
-			return impl_->displayName_;
-		}
-		std::string parentIndexPath = parent_->getPath();
-		return parentIndexPath + impl_->displayName_;
+		return getId();
 	}
-	else if (roleId == ObjectRole::roleId_)
+
+	if (roleId == ObjectRole::roleId_)
 	{
 		return this->getObject();
 	}
@@ -431,3 +429,4 @@ void ReflectedGroupItemNew::getChildValues( Variants & outChildValues ) const
 		return true;
 	} );
 }
+} // end namespace wgt

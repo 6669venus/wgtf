@@ -5,6 +5,8 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 #include "core_reflection_utils/commands/reflectedproperty_undoredo_helper.hpp"
 
+namespace wgt
+{
 class CommandInstance;
 class PropertyAccessorListener;
 class BinaryBlock;
@@ -37,5 +39,5 @@ private:
 	std::shared_ptr< PropertyAccessorListener > paListener_;
 	ReflectedPropertyUndoRedoUtility::UndoRedoHelperList	undoRedoHelperList_;
 };
-
+} // end namespace wgt
 #endif

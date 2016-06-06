@@ -2,6 +2,8 @@
 #include "i_alert_presenter.hpp"
 #include "basic_alert_logger.hpp"
 
+namespace wgt
+{
 AlertManager::AlertManager()
 {
 }
@@ -56,3 +58,4 @@ bool AlertManager::add( const char* text )
 
 	return true;
 }
+} // end namespace wgt

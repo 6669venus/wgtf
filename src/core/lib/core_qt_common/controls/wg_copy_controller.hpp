@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QVariant>
 
+namespace wgt
+{
 class WGCopyController
 	: public QObject
 	, public ICopyableObject
@@ -39,5 +41,5 @@ private:
 	Variant value_;
 	bool bPasted_;
 };
-
+} // end namespace wgt
 #endif //WG_COPY_CONTROLLER_HPP

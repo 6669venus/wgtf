@@ -84,6 +84,7 @@ WGRadioButton 1.0 WGRadioButton.qml
 WGRadioStyle 1.0 WGRadioStyle.qml
 WGRangeSlider 1.0 WGRangeSlider.qml
 WGRangeSlider 2.0 WGRangeSlider20.qml
+WGResizeableFrame 2.0 WGResizeableFrame.qml
 WGScrollBar 1.0 WGScrollBar.qml
 WGScrollBarStyle 1.0 WGScrollBarStyle.qml
 WGScrollPanel 1.0 WGScrollPanel.qml
@@ -101,6 +102,7 @@ WGSpinBox 1.0 WGSpinBox.qml
 WGSplitTextFrame 1.0 WGSplitTextFrame.qml
 WGSubPanel 1.0 WGSubPanel.qml
 WGSubScrollPanel 1.0 WGSubScrollPanel.qml
+WGTableView 1.0 WGTableView.qml
 WGTabView 1.0 WGTabView.qml
 WGTabViewStyle 1.0 WGTabViewStyle.qml
 WGTagButtonStyle 1.0 WGTagButtonStyle.qml

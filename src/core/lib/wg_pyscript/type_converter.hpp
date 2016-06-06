@@ -9,6 +9,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 namespace PyScript
 {
 
@@ -17,7 +19,7 @@ class PyObjectPtr;
 
 /**
  *	Collection of helper functions for converting between C++ and Python types.
- *	@see //bw/bigworld/branches/release/2/current/programming/bigworld/lib/pyscript/script.cpp
+ *	@see //lib/pyscript/script.cpp
  */
 namespace Script
 {
@@ -175,7 +177,5 @@ namespace Script
 
 
 } // namespace PyScript
-
-
+} // end namespace wgt
 #endif // TYPE_CONVERTER_HPP
-

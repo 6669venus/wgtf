@@ -3,6 +3,8 @@
 #define I_PYTHON_TYPE_CONVERTER_HPP
 
 
+namespace wgt
+{
 namespace PyScript
 {
 	class ScriptObject;
@@ -51,7 +53,5 @@ public:
 
 
 } // namespace PythonType
-
-
+} // end namespace wgt
 #endif // I_PYTHON_TYPE_CONVERTER_HPP
-

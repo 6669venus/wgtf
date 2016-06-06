@@ -10,6 +10,8 @@
 
 #include <sstream>
 
+namespace wgt
+{
 PerforceResult::PerforceResult(const char* output, const char* errors)
 	: output_(output), errors_(errors)
 {
@@ -65,5 +67,4 @@ const char* MultiResult::output() const
 	}
 	return output_.c_str();
 }
-
-
+} // end namespace wgt

@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include "core_variant/variant.hpp"
 
+namespace wgt
+{
 //==============================================================================
 PropertyAccessor::PropertyAccessor( PropertyAccessor && other )
 	: parentAccessor_( std::move(other.parentAccessor_) )
@@ -530,3 +532,4 @@ const IDefinitionManager * PropertyAccessor::getDefinitionManager() const
 {
 	return definitionManager_;
 }
+} // end namespace wgt

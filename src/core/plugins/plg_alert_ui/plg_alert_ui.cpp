@@ -10,6 +10,9 @@
 #include "popup_alert_presenter.hpp"
 #include <vector>
 
+
+namespace wgt
+{
 /**
  * AlertUIPlugin
  *
@@ -19,7 +22,6 @@
  * IAlertPresenter is registered with the AlertManager and an ILogger invokes
  * the add() functionality on the AlertManager.
  */
-
 class AlertUIPlugin
 	: public PluginMain
 {
@@ -36,10 +38,8 @@ public:
 			contextManager.queryInterface<IDefinitionManager>();
 		assert( definitionManager != nullptr );
 
-		definitionManager->registerDefinition(
-			new TypeClassDefinition<AlertPageModel>() );
-		definitionManager->registerDefinition(
-			new TypeClassDefinition<AlertObjectModel>() );
+		definitionManager->registerDefinition<TypeClassDefinition<AlertPageModel>>();
+		definitionManager->registerDefinition<TypeClassDefinition<AlertObjectModel>>();
 
 		return true;
 	}
@@ -101,3 +101,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( AlertUIPlugin )
+} // end namespace wgt

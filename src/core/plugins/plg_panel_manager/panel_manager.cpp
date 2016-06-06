@@ -15,6 +15,8 @@
 #include <QQmlComponent>
 #include <QObject>
 
+namespace wgt
+{
 PanelManager::PanelManager( IComponentContext & contextManager )
 	: contextManager_( contextManager )
 	, Depends( contextManager )
@@ -64,10 +66,11 @@ void PanelManager::createAssetBrowser(
 		auto assetBrowserEventModel = ObjectHandleT<IAssetBrowserEventModel>(std::move(eventModel), eventDef);
 		auto viewModel = std::unique_ptr<IAssetBrowserViewModel>(new AssetBrowserViewModel(*definitionManager, dataModel, assetBrowserEventModel));
 		
-		auto viewCreator = get< wgt::IViewCreator >();
+		auto viewCreator = get< IViewCreator >();
 		if (viewCreator)
 		{
 			viewCreator->createView("plg_panel_manager/asset_browser_panel.qml", ObjectHandle(std::move(viewModel), viewDef), o_AssetBrowser );
 		}
 	}
 }
+} // end namespace wgt

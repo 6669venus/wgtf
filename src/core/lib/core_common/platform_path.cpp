@@ -4,6 +4,8 @@
 #include <shlwapi.h>
 #endif
 
+namespace wgt
+{
 void AddDllExtension(wchar_t* file)
 {
 #ifdef _WIN32
@@ -12,7 +14,7 @@ void AddDllExtension(wchar_t* file)
 	PathAddExtension(file, L".dylib");
 #endif
 }
-
+} // end namespace wgt
 #ifdef __APPLE__
 
 #include <codecvt>
@@ -108,6 +110,8 @@ bool PathAppend(wchar_t* path, const wchar_t* more)
 	return PathAppendW(path, more);
 }
 
+namespace wgt
+{
 void PathFileName(wchar_t* file, const wchar_t* path)
 {
 	const wchar_t* f = path;
@@ -115,5 +119,6 @@ void PathFileName(wchar_t* file, const wchar_t* path)
 		f = p + 1;
 	wcscpy(file, f);
 }
+} // end namespace wgt
 
 #endif // __APPLE__

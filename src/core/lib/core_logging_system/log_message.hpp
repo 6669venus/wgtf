@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+namespace wgt
+{
 class LogMessage
 {
 public:
@@ -47,5 +49,5 @@ private:
 	// satisfied by existing LogLevel options.
 	std::vector< std::string > tags_;
 };
-
+} // end namespace wgt
 #endif // LOG_MESSAGE_HPP

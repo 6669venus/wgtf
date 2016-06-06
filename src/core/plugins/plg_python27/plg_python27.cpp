@@ -10,6 +10,8 @@
 #include "core_reflection/reflection_macros.hpp"
 
 
+namespace wgt
+{
 /**
  *	Controls initialization and finalization of Python and
  *	registers the Python interface to be used by other plugins.
@@ -100,4 +102,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( Python27Plugin )
-
+} // end namespace wgt

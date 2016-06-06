@@ -9,6 +9,8 @@
 #include <QString>
 #include <memory>
 
+namespace wgt
+{
 class IItemFilter;
 
 /**
@@ -51,7 +53,7 @@ protected:
 	QString roleName_;
 	unsigned int roleId_;
 };
+} // end namespace wgt
 
-QML_DECLARE_TYPE( WGFilter )
-
+QML_DECLARE_TYPE( wgt::WGFilter )
 #endif // WG_FILTER_HPP

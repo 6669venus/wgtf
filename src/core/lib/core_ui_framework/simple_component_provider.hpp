@@ -5,6 +5,8 @@
 
 #include <array>
 
+namespace wgt
+{
 class SimpleComponentProvider : public IComponentProvider
 {
 public:
@@ -41,5 +43,5 @@ private:
 	std::string component_;
 	std::vector< size_t > roles_;
 };
-
+} // end namespace wgt
 #endif

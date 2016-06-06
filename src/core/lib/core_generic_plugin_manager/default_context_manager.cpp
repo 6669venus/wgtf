@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <unordered_map>
 
+namespace wgt
+{
 namespace
 {
 	static const TypeId s_ComponentContextCreatorTypeId =
@@ -233,3 +235,4 @@ void DefaultComponentContext::deregisterListener(
 	assert( listenerIt != listeners_.end() );
 	listeners_.erase( listenerIt );
 }
+} // end namespace wgt

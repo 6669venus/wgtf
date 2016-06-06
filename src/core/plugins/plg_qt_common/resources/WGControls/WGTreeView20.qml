@@ -100,7 +100,6 @@ WGTreeViewBase {
     property alias columnWidths: itemView.columnWidths
     property alias columnSpacing: itemView.columnSpacing
     
-
     property alias internalModel: treeView.model
 
     /*! This property holds the data model information that will be displayed
@@ -125,6 +124,9 @@ WGTreeViewBase {
         on header column.
     */
     property alias sortIndicator: itemView.sortIndicator
+
+	property alias currentIndex: itemView.currentIndex
+
     property var extensions: []
 
     /*! Move the keyboard highlight up.
@@ -160,7 +162,6 @@ WGTreeViewBase {
     clip: true
     view: itemView
     internalModel: itemView.extendedModel
-    keyboardHighlightModelIndex: itemView.currentIndex
 
     Keys.onUpPressed: {
         moveKeyHighlightPrevious(event);

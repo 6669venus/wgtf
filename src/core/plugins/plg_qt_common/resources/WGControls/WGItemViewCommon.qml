@@ -61,9 +61,6 @@ WGItemView {
 
     property var commonExtensions: [columnExtension, imageExtension]
 
-    // Pass property up to parent
-    property alias currentIndex: itemSelectionModel.currentIndex
-
     // Pass signals up to parent
     signal currentChanged(var current, var previous)
     signal selectionChanged(var selected, var deselected)
@@ -170,5 +167,12 @@ WGItemView {
         // Pass signals up to parent
         onCurrentChanged: root.currentChanged(current, previous);
         onSelectionChanged: root.selectionChanged(selected, deselected)
+
+		property var connections: null
+
+		Component.onCompleted: {
+			connections = Qt.binding( function() { setCurrentIndex( root.currentIndex, ItemSelectionModel.NoUpdate ); } );
+			root.currentIndex = Qt.binding( function() { return currentIndex; } );
+		}
     }
 }

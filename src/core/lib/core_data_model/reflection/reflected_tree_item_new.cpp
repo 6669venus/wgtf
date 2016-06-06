@@ -175,6 +175,13 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 	for (const auto & property : definition->allProperties())
 	{
 		assert( property != nullptr );
+
+		// Method-only properties should be hidden from the UI
+		if (property->isMethod() && !property->isValue())
+		{
+			continue;
+		}
+
 		auto inPlace = findFirstMetaData< MetaInPlaceObj >( *property, definitionManager );
 		if (inPlace != nullptr)
 		{

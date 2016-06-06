@@ -296,7 +296,7 @@ endif(BUILD_SHARED)
 SET_SOURCE_FILES_PROPERTIES( ${SRC_DIR}/Python/marshal.c
        PROPERTIES COMPILE_FLAGS "-wd4819" )
 
-# NGT: Deploy *.pycs from Lib directory to <deployment_dir>/scripts/common/Lib
+# WGT: Deploy *.pycs from Lib directory to <deployment_dir>/scripts/common/Lib
 if(BUILD_STATIC)
 	WG_DEPLOY_PYTHON( libpython ${CORE_PYTHON_LIB_DIR} scripts/common/Lib )
 elseif(BUILD_SHARED)

@@ -262,7 +262,9 @@ if(BUILD_SHARED)
 		)
 		
 	BW_PROJECT_CATEGORY( libpython-shared "ThirdParty" )
-	BW_SET_BINARY_DIR( libpython-shared "dll" INCLUDE_COMPILER_TOKEN )
+
+	BW_GET_EXECUTABLE_DST_DIR( EXE_DIR )
+	BW_SET_BINARY_DIR( libpython-shared ${EXE_DIR} INCLUDE_COMPILER_TOKEN )
 #BW Change End
 
     set_target_properties(libpython-shared PROPERTIES

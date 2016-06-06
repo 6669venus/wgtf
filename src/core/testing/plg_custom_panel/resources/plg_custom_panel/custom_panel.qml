@@ -461,8 +461,17 @@ WGPanel {
                                                 color: "transparent"
                                                 Layout.preferredWidth: 60
                                             }
-                                            WGComboBoxImage {
+                                            WGDropDownBox {
                                                 id: openImage
+
+                                                textRole: "label"
+                                                imageRole: "icon"
+
+                                                model: ListModel {
+                                                    ListElement { label: "Option 1"; icon: "icons/file_16x16.png"}
+                                                    ListElement { label: "Option 2"; icon: "icons/add_16x16.png"}
+                                                    ListElement { label: "Option 3"; icon: "icons/close_16x16.png"}
+                                                }
                                             }
                                             Rectangle {
                                                 color: "transparent"
@@ -1071,8 +1080,17 @@ WGPanel {
                                                 color: "transparent"
                                                 Layout.preferredWidth: 60
                                             }
-                                            WGComboBoxImage {
+                                            WGDropDownBox {
                                                 id: openImageClone
+
+                                                textRole: "label"
+                                                imageRole: "icon"
+
+                                                model: ListModel {
+                                                    ListElement { label: "Option 1"; icon: "icons/file_16x16.png"}
+                                                    ListElement { label: "Option 2"; icon: "icons/add_16x16.png"}
+                                                    ListElement { label: "Option 3"; icon: "icons/close_16x16.png"}
+                                                }
                                             }
                                             Rectangle {
                                                 color: "transparent"

@@ -17,9 +17,9 @@ WGDropDownBox {
     imageRole: "icon"
 
     model: ListModel {
-        ListElement { label: "Option 1", icon: "icons/icon1.png"}
-        ListElement { label: "Option 2", icon: "icons/icon2.png"}
-        ListElement { label: "Option 3", icon: "icons/icon3.png"}
+        ListElement { label: "Option 1"; icon: "icons/icon1.png"}
+        ListElement { label: "Option 2"; icon: "icons/icon2.png"}
+        ListElement { label: "Option 3"; icon: "icons/icon3.png"}
     }
 }
 \endcode
@@ -34,18 +34,35 @@ Labs.ComboBox {
     */
     property string label: ""
 
+    /*! the property in the model that contains an image next to the text in the drop down.
+    */
+    property string imageRole: ""
+
+    /*! shows a tick icon next to the selected item in the menu
+        The default value is true
+    */
+    property bool showRowIndicator: true
+
+    /*! shows a small down arrow in the collapsed state to indicate a drop down
+        The default value is true
+    */
+    property bool showDropDownIndicator: true
+
+    /*! The maximum width of labels in the drop down menu.
+        The default is set to the largest label in the menu but this can be overridden. If shorter than the largest label, text will elide.
+    */
+    property int labelMaxWidth: textMetricsCreator.maxWidth
+
     /*! \internal */
     // helper property for text color so states can all be in the background object
     property color __textColor: palette.neutralTextColor
 
-    // the property in the model that contains an image next to the text in the drop down.
-    property string imageRole: ""
-
     currentIndex: 0
 
     implicitHeight: defaultSpacing.minimumRowHeight ? defaultSpacing.minimumRowHeight : 22
-    implicitWidth: textMetricsCreator.maxWidth + defaultSpacing.doubleMargin * 2 + defaultSpacing.minimumRowHeight
+    implicitWidth: labelMaxWidth + defaultSpacing.doubleMargin + defaultSpacing.minimumRowHeight
                    + (imageRole ? control.height + defaultSpacing.standardMargin : 0)
+                   + (showDropDownIndicator ? defaultSpacing.doubleMargin + defaultSpacing.standardMargin : 0)
 
     //find the widest text in model to help set control width
     Repeater {
@@ -86,8 +103,10 @@ Labs.ComboBox {
     }
 
     delegate: WGDropDownDelegate {
+        id: listDelegate
         property string image: control.imageRole ? (Array.isArray(control.model) ? modelData[control.imageRole] : model[control.imageRole]) : ""
-        width: control.width
+        parentControl: control
+        width: Math.max(parentControl.labelMaxWidth + (parentControl.imageRole ? control.height : 0) + (showRowIndicator ? control.height : 0) + (defaultSpacing.doubleMargin * 2), control.width)
         text: control.textRole ? (Array.isArray(control.model) ? modelData[control.textRole] : model[control.textRole]) : modelData
         checkable: true
         autoExclusive: true
@@ -102,7 +121,7 @@ Labs.ComboBox {
             anchors.verticalCenter: parent.verticalCenter
             source: control.imageRole ? model.get(control.currentIndex)[control.imageRole] : ""
             visible: control.imageRole
-            height: control.height - defaultSpacing.doubleBorderSize
+            height: Math.min(sourceSize.height,control.height - defaultSpacing.doubleBorderSize)
             width: height
         }
 
@@ -137,6 +156,8 @@ Labs.ComboBox {
             x: parent.width - width - control.rightPadding
             y: (parent.height - height) / 2
 
+            visible: showDropDownIndicator
+
             font.family : "Marlett"
             font.pixelSize: parent.height / 2
             renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
@@ -169,10 +190,10 @@ Labs.ComboBox {
 
     popup: T.Popup {
         y: control.height - 1
-        implicitWidth: control.width
+        implicitWidth: Math.max(labelMaxWidth + (imageRole ? control.height : 0) + (showRowIndicator ? control.height : 0) + (defaultSpacing.doubleMargin * 2), control.width)
         implicitHeight: Math.min(396, listview.contentHeight)
-        topMargin: 6
-        bottomMargin: 6
+        topMargin: defaultSpacing.standardMargin
+        bottomMargin: defaultSpacing.standardMargin
 
         contentItem: ListView {
             id: listview

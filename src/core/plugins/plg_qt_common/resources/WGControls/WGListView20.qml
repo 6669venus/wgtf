@@ -2,7 +2,6 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
-import "wg_view_selection.js" as WGViewSelection
 
 
 /*!
@@ -126,20 +125,6 @@ WGListViewBase {
 
     property var extensions: []
 
-    /*! Move the keyboard highlight up/left.
-     */
-    function moveKeyHighlightPrevious(event) {
-        var newIndex = listExtension.getPreviousIndex(itemView.selectionModel.currentIndex);
-        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, listExtension);
-    }
-    
-    /*! Move the keyboard highlight down/right.
-     */
-    function moveKeyHighlightNext(event) {
-        var newIndex = listExtension.getNextIndex(itemView.selectionModel.currentIndex);
-        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, listExtension);
-    }
-
 	contentItem.x: -originX
 	contentItem.y: -originY
     clip: true
@@ -148,22 +133,22 @@ WGListViewBase {
 
     Keys.onUpPressed: {
         if (orientation == ListView.Vertical) {
-            moveKeyHighlightPrevious(event);
+            itemView.movePrevious(event);
         }
     }
     Keys.onDownPressed: {
         if (orientation == ListView.Vertical) {
-            moveKeyHighlightNext(event);
+            itemView.moveNext(event);
         }
     }
     Keys.onLeftPressed: {
         if (orientation == ListView.Horizontal) {
-            moveKeyHighlightPrevious(event);
+            itemView.movePrevious(event);
         }
     }
     Keys.onRightPressed: {
         if (orientation == ListView.Horizontal) {
-            moveKeyHighlightNext(event);
+            itemView.moveNext(event);
         }
     }
 
@@ -177,13 +162,7 @@ WGListViewBase {
             id: listExtension
         }
 
-        property var listExtensions: listView.extensions.concat(commonExtensions.concat([listExtension]))
-        extensions: listExtensions
-
-        Connections {
-            target: listView
-            onItemPressed: WGViewSelection.itemPressed(mouse, itemView, listExtension, rowIndex)
-        }
+		viewExtension: listExtension
     }
 }
 

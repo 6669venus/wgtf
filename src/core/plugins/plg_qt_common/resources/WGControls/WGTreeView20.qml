@@ -125,6 +125,7 @@ WGTreeViewBase {
         on header column.
     */
     property alias sortIndicator: itemView.sortIndicator
+    property alias clamp: itemView.clamp
     property var extensions: []
 
     /*! Move the keyboard highlight up.

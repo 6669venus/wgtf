@@ -17,10 +17,11 @@ WGItemView {
     }
     property var columnDelegates: []
     property var columnSequence: []
-    property real columnWidth: 0
+    property real columnWidth: 100
     property var columnWidths: []
     property var implicitColumnWidths: []
     property real columnSpacing: 0
+    property bool clamp: false
 
     property var headerDelegates: []
     property var footerDelegates: []
@@ -157,6 +158,8 @@ WGItemView {
         columnWidths: root.view.columnWidths
         columnSpacing: root.view.columnSpacing
         availableWidth: root.view.width - Math.max(contentItem.x, 0)
+        implicitColumnWidths: root.implicitColumnWidths
+        clamp: root.clamp
 
         Component.onCompleted: {
             root.view.columnWidths = Qt.binding( function() { return columnsFrame.columnWidths } );

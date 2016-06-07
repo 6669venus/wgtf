@@ -94,11 +94,8 @@ public:
     size_t size(const IItem * item) const override;
     int columnCount() const override;
 
-    template<typename T>
-    void registerExtension(ExtensionChain<T>* extension);
-
-    template<typename T>
-    void unregisterExtension(ExtensionChain<T>* extension);
+    void registerExtension(const std::shared_ptr<ExtensionChain>& extension);
+    void unregisterExtension(const std::shared_ptr<ExtensionChain>& extension);
 
 private:
     void childAdded(const std::shared_ptr<const PropertyNode>& parent, const std::shared_ptr<const PropertyNode>& node, size_t childPosition);
@@ -113,9 +110,7 @@ private:
     void update(RefPropertyItem* item);
 
     template<typename T>
-    T* getExtensionChain() const;
-    template<typename T>
-    T* registerDummyExtension() const;
+    std::shared_ptr<T> getExtensionChain() const;
 
 private:
     friend class RefPropertyItem;
@@ -127,102 +122,30 @@ private:
     std::unordered_map<std::shared_ptr<const PropertyNode>, RefPropertyItem*> nodeToItem;
 
     ChildCreator childCreator;
-    mutable std::map<TypeId, ExtensionChainBase*> extensions;
-
-    typedef std::function<void(ExtensionChainBase*)> ChaindDestructionFn;
-    mutable std::map<TypeId, ChaindDestructionFn> extensionsDestructors;
+    std::map<TypeId, std::shared_ptr<ExtensionChain>> extensions;
 };
 
 template<typename Dst, typename Src>
-Dst* polymorphCast(Src* ptr)
+std::shared_ptr<Dst> polymorphCast(std::shared_ptr<Src> ptr)
 {
-    assert(dynamic_cast<Dst*>(ptr) != nullptr);
-    return static_cast<Dst*>(ptr);
+    assert(dynamic_cast<Dst*>(ptr.get()) != nullptr);
+    return std::static_pointer_cast<Dst>(ptr);
 }
 
 template<typename T>
-void destroyExtensionChain(ExtensionChainBase* extensionChain)
+std::shared_ptr<T> ReflectedPropertyModel::getExtensionChain() const
 {
-    ExtensionChain<T>::deleteExtensionChain(polymorphCast<T>(extensionChain));
-}
-
-template<typename T>
-void ReflectedPropertyModel::registerExtension(ExtensionChain<T>* extension)
-{
+    static_assert(!std::is_same<T, ChildCreatorExtension>::value, "There is no reason to request ChildCreatorExtension");
+    static_assert(std::is_base_of<ExtensionChain, T>::value, "ExtensionChain should be base of extension");
     TypeId typeId = TypeId::getType<T>();
     auto iter = extensions.find(typeId);
     if (iter == extensions.end())
     {
-        registerDummyExtension<T>();
-        registerExtension(extension);
-        return;
-    }
-    
-    ExtensionChainBase* baseChain = iter->second;
-    T* chain = polymorphCast<T>(baseChain);
-    iter->second = chain->addExtension(polymorphCast<T>(extension));
-}
-
-template<typename T>
-void ReflectedPropertyModel::unregisterExtension(ExtensionChain<T>* extension)
-{
-    TypeId typeId = TypeId::getType<ExtensionChain<T>>();
-    auto iter = extensions.find(typeId);
-    if (iter == extensions.end())
-    {
-        /// you do something wrong
         assert(false);
-        return;
+        return nullptr;
     }
 
-    ExtensionChainBase* baseChain = iter->second;
-    assert(dynamic_cast<ExtensionChain<T>*>(baseChain) != nullptr);
-    T* chain = polymorphCast<T>(baseChain);
-    iter->second = chain->removeExtension(polymorphCast<T>(extension));
-}
-
-template<>
-inline void ReflectedPropertyModel::registerExtension<ChildCreatorExtension>(ExtensionChain<ChildCreatorExtension>* extension)
-{
-    childCreator.registerExtension(polymorphCast<ChildCreatorExtension>(extension));
-}
-
-template<>
-inline void ReflectedPropertyModel::unregisterExtension<ChildCreatorExtension>(ExtensionChain<ChildCreatorExtension>* extension)
-{
-    childCreator.unregisterExtension(polymorphCast<ChildCreatorExtension>(extension));
-}
-
-template<typename T>
-T* ReflectedPropertyModel::getExtensionChain() const
-{
-    static_assert(!std::is_same<T, ChildCreatorExtension>::value, "There is no reason to request ChildCreatorExtension");
-    static_assert(std::is_base_of<ExtensionChain<T>, T>::value, "ExtensionChain should be base of extension");
-    TypeId typeId = TypeId::getType<ExtensionChain<T>>();
-    auto iter = extensions.find(typeId);
-    if (iter == extensions.end())
-    {
-        return registerDummyExtension<T>();
-    }
-
-    ExtensionChainBase* baseChain = iter->second;
-    assert(dynamic_cast<T*>(baseChain) != nullptr);
-    return static_cast<T*>(baseChain);
-}
-
-template<typename T>
-T* ReflectedPropertyModel::registerDummyExtension() const
-{
-    static_assert(!std::is_same<T, ChildCreatorExtension>::value, "There is no reason to request ChildCreatorExtension");
-    static_assert(std::is_base_of<ExtensionChain<T>, T>::value, "ExtensionChain should be base of extension");
-    TypeId typeId = TypeId::getType<ExtensionChain<T>>();
-    assert(extensions.count(typeId) == 0);
-
-    extensionsDestructors.emplace(typeId, std::bind(&destroyExtensionChain<T>, std::placeholders::_1));
-    auto iter = extensions.emplace(typeId, T::createDummy()).first;
-    ExtensionChainBase* baseExtension = iter->second;
-    assert(dynamic_cast<T*>(baseExtension) != nullptr);
-    return static_cast<T*>(baseExtension);
+    return polymorphCast<T>(iter->second);
 }
 
 #endif

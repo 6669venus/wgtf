@@ -48,7 +48,6 @@ ChildCreator::ChildCreator(IComponentContext& context)
 ChildCreator::~ChildCreator()
 {
     assert(propertiesIndex.empty());
-    ChildCreatorExtension::deleteExtensionChain(extensions);
 }
 
 std::shared_ptr<const PropertyNode> ChildCreator::createRoot(const ObjectHandle& handle)
@@ -140,15 +139,15 @@ void ChildCreator::clear()
     propertiesIndex.clear();
 }
 
-void ChildCreator::registerExtension(ChildCreatorExtension* extension)
+void ChildCreator::registerExtension(const std::shared_ptr<ChildCreatorExtension>& extension)
 {
     extension->setAllocator(allocator);
-    extensions = extensions->addExtension(extension);
+    extensions = std::static_pointer_cast<ChildCreatorExtension>(ChildCreatorExtension::addExtension(extensions, extension));
 }
 
-void ChildCreator::unregisterExtension(ChildCreatorExtension* extension)
+void ChildCreator::unregisterExtension(const std::shared_ptr<ChildCreatorExtension>& extension)
 {
     extension->setAllocator(nullptr);
-    extensions = extensions->removeExtension(extension);
+    extensions = std::static_pointer_cast<ChildCreatorExtension>(ChildCreatorExtension::removeExtension(extensions, extension));
 }
 

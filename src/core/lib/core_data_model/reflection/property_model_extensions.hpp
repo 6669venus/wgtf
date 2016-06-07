@@ -47,18 +47,11 @@ public:
 
 std::shared_ptr<const PropertyNode> MakeRootNode(ObjectHandle handle, IChildAllocator& allocator);
 
-class ExtensionChainBase
+class ExtensionChain
 {
 public:
-    virtual ~ExtensionChainBase() {}
-};
-
-template<typename T>
-class ExtensionChain : public ExtensionChainBase
-{
-public:
-    ExtensionChain()
-        : nextExtension(nullptr)
+    ExtensionChain(const TypeId& type)
+        : typeId(type)
     {
     }
 
@@ -67,50 +60,71 @@ public:
         assert(nextExtension == nullptr);
     }
 
-    T* addExtension(T* extension)
+    static std::shared_ptr<ExtensionChain> addExtension(std::shared_ptr<ExtensionChain> head, const std::shared_ptr<ExtensionChain>& extension)
     {
-        static_assert(std::is_base_of<ExtensionChain<T>, T>::value, "Extension should inherit IExtensionChain");
-        extension->nextExtension = dynamic_cast<T *>(this);
+        if (extension->typeId != head->typeId)
+        {
+            assert(false);
+            return head;
+        }
+
+        extension->nextExtension = head;
         assert(extension->nextExtension != nullptr);
         return extension;
     }
 
-    T* removeExtension(T* extension)
+    static std::shared_ptr<ExtensionChain> removeExtension(std::shared_ptr<ExtensionChain> head, const std::shared_ptr<ExtensionChain>& extension)
     {
-        static_assert(std::is_base_of<ExtensionChain<T>, T>::value, "Extension should inherit IExtensionChain");
-        if (this == extension)
+        if (extension->typeId != head->typeId)
         {
-            T * result = extension->nextExtension;
-            extension->nextExtension = nullptr;
+            assert(false);
+            return head;
+        }
+
+        if (head == extension)
+        {
+            std::shared_ptr<ExtensionChain> result = extension->nextExtension;
+            extension->nextExtension.reset();
             return result;
         }
 
-        nextExtension = nextExtension->removeExtension(extension);
-        T * result = extension->nextExtension = dynamic_cast<T *>(this);
-        assert(result != nullptr);
-        return result;
+        head->nextExtension = removeExtension(head->nextExtension, extension);
+        return head;
     }
 
-    static void deleteExtensionChain(T * chain)
+    const TypeId& getType() const
     {
-        static_assert(std::is_base_of<ExtensionChain<T>, T>::value, "Extension should inherit IExtensionChain");
-        while (chain != nullptr)
-        {
-            T * toDelete = chain;
-            chain = chain->removeExtension(chain);
-            delete toDelete;
-        }
+        return typeId;
     }
 
 protected:
-    T * nextExtension;
+    template<typename T>
+    T* getNext()
+    {
+        assert(nextExtension != nullptr);
+        assert(dynamic_cast<T*>(nextExtension.get()));
+        return static_cast<T*>(nextExtension.get());
+    }
+
+    template<typename T>
+    const T* getNext() const
+    {
+        assert(nextExtension != nullptr);
+        assert(dynamic_cast<const T*>(nextExtension.get()));
+        return static_cast<const T*>(nextExtension.get());
+    }
+
+private:
+    TypeId typeId;
+    std::shared_ptr<ExtensionChain> nextExtension;
 };
 
-class ChildCreatorExtension: public ExtensionChain<ChildCreatorExtension>
+class ChildCreatorExtension: public ExtensionChain
 {
 public:
+    ChildCreatorExtension();
     virtual void exposeChildren(const std::shared_ptr<const PropertyNode>&, std::vector<std::shared_ptr<const PropertyNode>> & children, IDefinitionManager& defMng) const;
-    static ChildCreatorExtension* createDummy();
+    static std::shared_ptr<ChildCreatorExtension> createDummy();
 
     void setAllocator(std::shared_ptr<IChildAllocator> allocator);
 
@@ -118,29 +132,32 @@ protected:
     std::shared_ptr<IChildAllocator> allocator;
 };
 
-class SetterGetterExtension: public ExtensionChain<SetterGetterExtension>
+class SetterGetterExtension: public ExtensionChain
 {
 public:
+    SetterGetterExtension();
     virtual Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager & definitionManager) const;
     virtual bool setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
                           IDefinitionManager & definitionManager, ICommandManager & commandManager) const;
-    static SetterGetterExtension* createDummy();
+    static std::shared_ptr<SetterGetterExtension> createDummy();
 };
 
-class MergeValuesExtension: public ExtensionChain<MergeValuesExtension>
+class MergeValuesExtension: public ExtensionChain
 {
 public:
+    MergeValuesExtension();
     virtual RefPropertyItem* lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                         IDefinitionManager & definitionManager) const;
-    static MergeValuesExtension* createDummy();
+    static std::shared_ptr<MergeValuesExtension> createDummy();
 };
 
-class InjectDataExtension: public ExtensionChain<InjectDataExtension>
+class InjectDataExtension: public ExtensionChain
 {
 public:
+    InjectDataExtension();
     virtual void inject(RefPropertyItem* item);
     virtual void updateInjection(RefPropertyItem* item);
-    static InjectDataExtension* createDummy();
+    static std::shared_ptr<InjectDataExtension> createDummy();
 };
 
 #endif

@@ -137,15 +137,19 @@ std::shared_ptr<const PropertyNode> MakeRootNode(ObjectHandle handle, IChildAllo
     return allocator.createPropertyNode(PMEDetails::selfRootProperty, handle, PropertyNode::SelfRoot);
 }
 
-void ChildCreatorExtension::exposeChildren(const std::shared_ptr<const PropertyNode>& node, std::vector<std::shared_ptr<const PropertyNode>>& children, IDefinitionManager & defMng) const
+ChildCreatorExtension::ChildCreatorExtension()
+    : ExtensionChain(TypeId::getType<ChildCreatorExtension>())
 {
-    assert(nextExtension != nullptr);
-    nextExtension->exposeChildren(node, children, defMng);
 }
 
-ChildCreatorExtension * ChildCreatorExtension::createDummy()
+void ChildCreatorExtension::exposeChildren(const std::shared_ptr<const PropertyNode>& node, std::vector<std::shared_ptr<const PropertyNode>>& children, IDefinitionManager & defMng) const
 {
-    return new PMEDetails::DummyChildCreator();
+    getNext<ChildCreatorExtension>()->exposeChildren(node, children, defMng);
+}
+
+std::shared_ptr<ChildCreatorExtension> ChildCreatorExtension::createDummy()
+{
+    return std::make_shared<PMEDetails::DummyChildCreator>();
 }
 
 void ChildCreatorExtension::setAllocator(std::shared_ptr<IChildAllocator> allocator_)
@@ -153,48 +157,58 @@ void ChildCreatorExtension::setAllocator(std::shared_ptr<IChildAllocator> alloca
     allocator = allocator_;
 }
 
+SetterGetterExtension::SetterGetterExtension()
+    : ExtensionChain(TypeId::getType<SetterGetterExtension>())
+{
+}
+
 Variant SetterGetterExtension::getValue(const RefPropertyItem * item, int column, size_t roleId, IDefinitionManager & definitionManager) const
 {
-    assert(nextExtension != nullptr);
-    return nextExtension->getValue(item, column, roleId, definitionManager);
+    return getNext<SetterGetterExtension>()->getValue(item, column, roleId, definitionManager);
 }
 
 bool SetterGetterExtension::setValue(RefPropertyItem* item, int column, size_t roleId, const Variant& data, IDefinitionManager& definitionManager, ICommandManager& commandManager) const
 {
-    assert(nextExtension != nullptr);
-    return nextExtension->setValue(item, column, roleId, data, definitionManager, commandManager);
+    return getNext<SetterGetterExtension>()->setValue(item, column, roleId, data, definitionManager, commandManager);
 }
 
-SetterGetterExtension * SetterGetterExtension::createDummy()
+std::shared_ptr<SetterGetterExtension> SetterGetterExtension::createDummy()
 {
-    return new PMEDetails::DummySetterGetter();
+    return std::make_shared<PMEDetails::DummySetterGetter>();
+}
+
+MergeValuesExtension::MergeValuesExtension()
+    : ExtensionChain(TypeId::getType<MergeValuesExtension>())
+{
 }
 
 RefPropertyItem * MergeValuesExtension::lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
                                                    IDefinitionManager & definitionManager) const
 {
-    assert(nextExtension != nullptr);
-    return nextExtension->lookUpItem(node, items, definitionManager);
+    return getNext<MergeValuesExtension>()->lookUpItem(node, items, definitionManager);
 }
 
-MergeValuesExtension * MergeValuesExtension::createDummy()
+std::shared_ptr<MergeValuesExtension> MergeValuesExtension::createDummy()
 {
-    return new PMEDetails::DummyMerger();
+    return std::make_shared<PMEDetails::DummyMerger>();
+}
+
+InjectDataExtension::InjectDataExtension()
+    :ExtensionChain(TypeId::getType<InjectDataExtension>())
+{
 }
 
 void InjectDataExtension::inject(RefPropertyItem* item)
 {
-    assert(nextExtension != nullptr);
-    return nextExtension->inject(item);
+    return getNext<InjectDataExtension>()->inject(item);
 }
 
 void InjectDataExtension::updateInjection(RefPropertyItem * item)
 {
-    assert(nextExtension != nullptr);
-    return nextExtension->updateInjection(item);
+    return getNext<InjectDataExtension>()->updateInjection(item);
 }
 
-InjectDataExtension* InjectDataExtension::createDummy()
+std::shared_ptr<InjectDataExtension> InjectDataExtension::createDummy()
 {
-    return new PMEDetails::DummyInjector();
+    return std::make_shared<PMEDetails::DummyInjector>();
 }

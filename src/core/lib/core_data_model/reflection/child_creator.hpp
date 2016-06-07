@@ -18,14 +18,14 @@ public:
     void removeNode(const std::shared_ptr<const PropertyNode>& parent);
     void clear();
 
-    void registerExtension(ChildCreatorExtension* extension);
-    void unregisterExtension(ChildCreatorExtension* extension);
+    void registerExtension(const std::shared_ptr<ChildCreatorExtension>& extension);
+    void unregisterExtension(const std::shared_ptr<ChildCreatorExtension>& extension);
 
     ::Signal<void(std::shared_ptr<const PropertyNode> parent, std::shared_ptr<const PropertyNode> child, size_t childPosition)> nodeCreated;
     ::Signal<void(std::shared_ptr<const PropertyNode> child)> nodeRemoved;
 
 private:
-    ChildCreatorExtension * extensions;
+    std::shared_ptr<ChildCreatorExtension> extensions;
     Depends<IDefinitionManager> interfaceHolder;
 
     std::unordered_map<std::shared_ptr<const PropertyNode>, std::vector<std::shared_ptr<const PropertyNode>>> propertiesIndex;

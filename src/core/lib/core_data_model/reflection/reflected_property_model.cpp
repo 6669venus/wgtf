@@ -225,25 +225,23 @@ ReflectedPropertyModel::ReflectedPropertyModel(IComponentContext& context)
 {
     rootItem.reset(new RefPropertyItem(*this));
 
+    registerExtension(SetterGetterExtension::createDummy());
+    registerExtension(MergeValuesExtension::createDummy());
+    registerExtension(InjectDataExtension::createDummy());
+
     using namespace std::placeholders;
     childCreator.nodeCreated.connect(std::bind(&ReflectedPropertyModel::childAdded, this, _1, _2, _3));
     childCreator.nodeRemoved.connect(std::bind(&ReflectedPropertyModel::childRemoved, this, _1));
 
-    registerExtension(new DefaultSetterGetterExtension(context));
-    registerExtension(new UrlGetterExtension());
-    registerExtension(new DefaultChildCheatorExtension());
-    registerExtension(new DefaultMergeValueExtension());
+    registerExtension(std::make_shared<DefaultSetterGetterExtension>(context));
+    registerExtension(std::make_shared<UrlGetterExtension>());
+    registerExtension(std::make_shared<DefaultChildCheatorExtension>());
+    registerExtension(std::make_shared<DefaultMergeValueExtension>());
 }
 
 ReflectedPropertyModel::~ReflectedPropertyModel()
 {
     rootItem.reset();
-    for (std::pair<TypeId, ExtensionChainBase*> extension : extensions)
-    {
-        ChaindDestructionFn & destructFn = extensionsDestructors[extension.first];
-        assert(destructFn);
-        destructFn(extension.second);
-    }
 }
 
 void ReflectedPropertyModel::update()
@@ -331,7 +329,7 @@ void ReflectedPropertyModel::childAdded(const std::shared_ptr<const PropertyNode
 
     RefPropertyItem* parentItem = iter->second;
 
-    InjectDataExtension* injectExtension = getExtensionChain<InjectDataExtension>();
+    std::shared_ptr<InjectDataExtension> injectExtension = getExtensionChain<InjectDataExtension>();
     RefPropertyItem* childItem = getExtensionChain<MergeValuesExtension>()->lookUpItem(node, parentItem->children, defManager);
     if (childItem != nullptr)
     {
@@ -409,4 +407,43 @@ bool ReflectedPropertyModel::setData(RefPropertyItem * item, int column, size_t 
     INTERFACE_REQUEST(IDefinitionManager, defManager, interfacesHolder, false);
     INTERFACE_REQUEST(ICommandManager, commandManager, interfacesHolder, false);
     return getExtensionChain<SetterGetterExtension>()->setValue(item, column, roleId, data, defManager, commandManager);
+}
+
+void ReflectedPropertyModel::registerExtension(const std::shared_ptr<ExtensionChain>& extension)
+{
+    const TypeId& extType = extension->getType();
+    if (extType == TypeId::getType<ChildCreatorExtension>())
+    {
+        childCreator.registerExtension(polymorphCast<ChildCreatorExtension>(extension));
+        return;
+    }
+
+    auto iter = extensions.find(extType);
+    if (iter == extensions.end())
+    {
+        extensions.emplace(extType, extension);
+        return;
+    }
+
+    iter->second = ExtensionChain::addExtension(iter->second, extension);
+}
+
+void ReflectedPropertyModel::unregisterExtension(const std::shared_ptr<ExtensionChain>& extension)
+{
+    const TypeId& extType = extension->getType();
+    if (extType == TypeId::getType<ChildCreatorExtension>())
+    {
+        childCreator.unregisterExtension(polymorphCast<ChildCreatorExtension>(extension));
+        return;
+    }
+
+    auto iter = extensions.find(extType);
+    if (iter == extensions.end())
+    {
+        /// you do something wrong
+        assert(false);
+        return;
+    }
+
+    iter->second = ExtensionChain::removeExtension(iter->second, extension);
 }

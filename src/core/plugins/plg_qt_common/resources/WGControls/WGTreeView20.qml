@@ -2,7 +2,6 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
-import "wg_view_selection.js" as WGViewSelection
 
 
 /*!
@@ -124,38 +123,9 @@ WGTreeViewBase {
         on header column.
     */
     property alias sortIndicator: itemView.sortIndicator
-
+    property alias clamp: itemView.clamp
 	property alias currentIndex: itemView.currentIndex
-
     property var extensions: []
-
-    /*! Move the keyboard highlight up.
-     */
-    function moveKeyHighlightPrevious(event) {
-        var newIndex = treeExtension.getPreviousIndex(itemView.selectionModel.currentIndex);
-        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
-    }
-
-    /*! Move the keyboard highlight down.
-     */
-    function moveKeyHighlightNext(event) {
-        var newIndex = treeExtension.getNextIndex(itemView.selectionModel.currentIndex);
-        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
-    }
-
-    /*! Move the keyboard highlight left.
-     */
-    function moveKeyHighlightBack(event) {
-        var newIndex = treeExtension.getBackwardIndex(itemView.selectionModel.currentIndex);
-        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
-    }
-
-    /*! Move the keyboard highlight right.
-     */
-    function moveKeyHighlightForward(event) {
-        var newIndex = treeExtension.getForwardIndex(itemView.selectionModel.currentIndex);
-        WGViewSelection.updateKeyboardSelection(event, newIndex, itemView, treeExtension);
-    }
 
 	contentItem.x: -originX
 	contentItem.y: -originY
@@ -164,16 +134,16 @@ WGTreeViewBase {
     internalModel: itemView.extendedModel
 
     Keys.onUpPressed: {
-        moveKeyHighlightPrevious(event);
+        itemView.movePrevious(event);
     }
     Keys.onDownPressed: {
-        moveKeyHighlightNext(event);
+        itemView.moveNext(event);
     }
     Keys.onLeftPressed: {
-        moveKeyHighlightBack(event);
+        itemView.moveBackwards(event);
     }
     Keys.onRightPressed: {
-        moveKeyHighlightForward(event);
+        itemView.moveForwards(event);
     }
 
     // Data holder for various C++ extensions.
@@ -185,27 +155,6 @@ WGTreeViewBase {
             id: treeExtension
         }
 
-        property var treeExtensions: treeView.extensions.concat(commonExtensions.concat([treeExtension]))
-        extensions: treeExtensions
-
-        Connections {
-            target: treeView
-            onItemPressed: {
-                if ((mouse.modifiers & Qt.ShiftModifier) && (mouse.modifiers & Qt.ControlModifier)) {
-                    var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-                    itemView.selectionModel.select(selection, 0x0002) // Select
-                }
-                else if (mouse.modifiers & Qt.ShiftModifier) {
-                    var selection = treeExtension.itemSelection(itemView.selectionModel.currentIndex, rowIndex)
-                    itemView.selectionModel.select(selection, 0x0001 | 0x0002) // Clear || Select
-                }
-                else if (mouse.modifiers & Qt.ControlModifier) {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0008) // Toggle
-                }
-                else {
-                    itemView.selectionModel.setCurrentIndex(rowIndex, 0x0001 | 0x0002) // Clear | Select
-                }
-            }
-        }
+		viewExtension: treeExtension
     }
 }

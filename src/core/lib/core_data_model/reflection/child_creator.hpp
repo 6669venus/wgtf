@@ -7,6 +7,9 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
+
 class ChildCreator
 {
 public:
@@ -21,8 +24,8 @@ public:
     void registerExtension(const std::shared_ptr<ChildCreatorExtension>& extension);
     void unregisterExtension(const std::shared_ptr<ChildCreatorExtension>& extension);
 
-    ::Signal<void(std::shared_ptr<const PropertyNode> parent, std::shared_ptr<const PropertyNode> child, size_t childPosition)> nodeCreated;
-    ::Signal<void(std::shared_ptr<const PropertyNode> child)> nodeRemoved;
+    Signal<void(std::shared_ptr<const PropertyNode> parent, std::shared_ptr<const PropertyNode> child, size_t childPosition)> nodeCreated;
+    Signal<void(std::shared_ptr<const PropertyNode> child)> nodeRemoved;
 
 private:
     std::shared_ptr<ChildCreatorExtension> extensions;
@@ -32,4 +35,5 @@ private:
     std::shared_ptr<IChildAllocator> allocator;
 };
 
+} // namespace wgt
 #endif

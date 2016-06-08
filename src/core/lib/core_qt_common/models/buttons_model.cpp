@@ -2,6 +2,9 @@
 
 #include "core_data_model/i_item_role.hpp"
 
+namespace wgt
+{
+
 ButtonItem::ButtonItem(bool isEnabled_, const std::string& iconUrl_, const std::function<void(void)>& clickCallback_)
     : isEnabled(isEnabled_)
     , iconUri(iconUrl_)
@@ -116,3 +119,5 @@ int ButtonsModel::columnCount() const
 {
     return 1;
 }
+
+} //namespace wgt

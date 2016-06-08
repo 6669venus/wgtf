@@ -3,6 +3,9 @@
 
 #include "i_model_extension.hpp"
 
+namespace wgt
+{
+
 class ButtonsDefinitionExtension: public IModelExtension
 {
 public:
@@ -10,5 +13,7 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 };
+
+} // namespace wgt
 
 #endif

@@ -2,6 +2,9 @@
 #include "default_property_model_extensions.hpp"
 #include "reflected_collection_item.hpp"
 
+namespace wgt
+{
+
 namespace CCDetails
 {
 
@@ -17,7 +20,7 @@ struct PropertyNodeEqual
         }
 
         bool isEqualProperty = left->propertyType == right->propertyType &&
-                               left->propertyInstance == right->propertyInstance;
+            left->propertyInstance == right->propertyInstance;
 
         if (!isEqualProperty)
             return false;
@@ -36,7 +39,7 @@ struct PropertyNodeEqual
     }
 };
 
-}
+} // namespace CCDetails
 
 ChildCreator::ChildCreator(IComponentContext& context)
     : interfaceHolder(context)
@@ -151,3 +154,4 @@ void ChildCreator::unregisterExtension(const std::shared_ptr<ChildCreatorExtensi
     extensions = std::static_pointer_cast<ChildCreatorExtension>(ChildCreatorExtension::removeExtension(extensions, extension));
 }
 
+} // namespace wgt

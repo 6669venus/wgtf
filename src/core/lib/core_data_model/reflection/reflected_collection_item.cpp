@@ -5,6 +5,9 @@
 
 #include <sstream>
 
+namespace wgt
+{
+
 ReflectedIteratorProperty::ReflectedIteratorProperty(std::string&& name_, const TypeId& type_, IDefinitionManager& defMng)
     : name(std::move(name_))
     , nameHash(HashUtilities::compute(name))
@@ -68,7 +71,7 @@ bool ReflectedIteratorProperty::isMethod() const
     return false;
 }
 
-Variant ReflectedIteratorProperty::invoke(const ObjectHandle & object, const ReflectedMethodParameters & parameters)
+Variant ReflectedIteratorProperty::invoke(const ObjectHandle&, const IDefinitionManager&, const ReflectedMethodParameters&)
 {
     return Variant();
 }
@@ -89,3 +92,5 @@ std::string BuildIteratorPropertyName(const Collection::Iterator& iterator)
 
     return ss.str();
 }
+
+} // namespace wgt

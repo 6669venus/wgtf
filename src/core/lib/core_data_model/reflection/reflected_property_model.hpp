@@ -13,6 +13,9 @@
 #include "core_dependency_system/depends.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
+namespace wgt
+{
+
 class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
@@ -147,5 +150,7 @@ std::shared_ptr<T> ReflectedPropertyModel::getExtensionChain() const
 
     return polymorphCast<T>(iter->second);
 }
+
+} // namespace wgt
 
 #endif

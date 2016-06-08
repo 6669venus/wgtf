@@ -74,10 +74,10 @@ namespace ItemRole
 	X( headerText, headerText )													\
 	X( footerText, footerText )													\
 	/*Buttons Extensions*/                                                      \
-    X( buttonsDefinition )                                                      \
-    X( buttonIcon )                                                             \
-    X( buttonEnabled )                                                          \
-    X( buttonClicked )
+    X( buttonsDefinition, buttonsDefinition )                                   \
+    X( buttonIcon, buttonIcon )                                                 \
+    X( buttonEnabled, buttonEnabled )                                           \
+    X( buttonClicked, buttonClicked )
 
 #define X( ROLE, ROLENAME ) 													\
 	class ROLE##Role															\

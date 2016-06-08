@@ -14,6 +14,9 @@
 
 #include "core_common/objects_pool.hpp"
 
+namespace wgt
+{
+
 namespace DPMEDetails
 {
 struct MaxMinRangePair
@@ -132,7 +135,7 @@ private:
     bool batchSuccessed;
     ICommandManager& commandManager;
 };
-}
+} // namespace DPMEDetails
 
 DefaultSetterGetterExtension::DefaultSetterGetterExtension(IComponentContext& context)
     : reflectionControllerHolder(context)
@@ -258,7 +261,7 @@ Variant DefaultSetterGetterExtension::getValue(const RefPropertyItem* item, int 
 
         provider = reflectedRoot(provider, defMng);
         IClassDefinition * definition = const_cast<IClassDefinition *>(provider.isValid() ? provider.getDefinition(defMng)
-                                                                                          : nullptr);
+            : nullptr);
         return ObjectHandle(definition);
     }
     else if (roleId == DefinitionModelRole::roleId_)
@@ -471,7 +474,7 @@ private:
     struct EmptyDeleter
         : public std::unary_function<ReflectedIteratorProperty *, void>
     {
-        void operator()(ReflectedIteratorProperty *){}
+        void operator()(ReflectedIteratorProperty *) {}
     };
 
     struct PropertyHash
@@ -488,7 +491,7 @@ private:
 
     struct PropertyEqual
         : public std::binary_function<const std::shared_ptr<ReflectedIteratorProperty>,
-                                    const std::shared_ptr<ReflectedIteratorProperty>, bool>
+        const std::shared_ptr<ReflectedIteratorProperty>, bool>
     {
         bool operator()(const std::shared_ptr<ReflectedIteratorProperty> & v1, const std::shared_ptr<ReflectedIteratorProperty> & v2) const
         {
@@ -540,7 +543,7 @@ std::shared_ptr<IChildAllocator> createDefaultAllocator()
 }
 
 RefPropertyItem * DefaultMergeValueExtension::lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
-                                                         IDefinitionManager & definitionManager) const
+    IDefinitionManager & definitionManager) const
 {
     RefPropertyItem* result = nullptr;
     Variant nodeValue = node->propertyInstance->get(node->object, definitionManager);
@@ -571,3 +574,5 @@ RefPropertyItem * DefaultMergeValueExtension::lookUpItem(const std::shared_ptr<c
 
     return result;
 }
+
+} // namespace wgt

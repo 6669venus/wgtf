@@ -3,6 +3,9 @@
 #include "helpers/qt_helpers.hpp"
 #include "core_data_model/i_item.hpp"
 
+namespace wgt
+{
+
 QHash<int, QByteArray> ButtonsModelExtension::roleNames() const
 {
     QHash<int, QByteArray> roles;
@@ -61,3 +64,5 @@ bool ButtonsModelExtension::setData(const QModelIndex & index, const QVariant & 
 
     return false;
 }
+
+} // namespace wgt

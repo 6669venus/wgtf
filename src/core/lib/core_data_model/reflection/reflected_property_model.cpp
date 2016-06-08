@@ -5,10 +5,13 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/base_property.hpp"
 
+namespace wgt
+{
+
 namespace RPMDetails
 {
 const int ValueColumn = 1;
-}
+} // namespace RPMDetails
 
 RefPropertyItem::RefPropertyItem(ReflectedPropertyModel & model_)
     : model(model_)

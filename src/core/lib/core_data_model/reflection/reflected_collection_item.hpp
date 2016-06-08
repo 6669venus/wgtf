@@ -5,6 +5,8 @@
 #include "core_reflection/metadata/meta_base.hpp"
 #include "core_variant/collection.hpp"
 
+namespace wgt
+{
 struct ReflectedIteratorValue
 {
     Collection::Iterator iterator;
@@ -27,7 +29,7 @@ public:
 
     MetaHandle getMetaData() const override;
     bool isMethod() const override;
-    Variant invoke(const ObjectHandle & object, const ReflectedMethodParameters & parameters) override;
+    Variant invoke(const ObjectHandle& object, const IDefinitionManager& definitionManager, const ReflectedMethodParameters& parameters) override;
     size_t parameterCount() const override;
 
 private:
@@ -38,5 +40,6 @@ private:
 };
 
 std::string BuildIteratorPropertyName(const Collection::Iterator& iterator);
+} // namespace wgt
 
 #endif

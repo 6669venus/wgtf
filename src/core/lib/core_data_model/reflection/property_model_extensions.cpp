@@ -3,6 +3,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 namespace PMEDetails
 {
 
@@ -60,10 +62,13 @@ public:
         return 0;
     }
 
-    Variant invoke(const ObjectHandle&, const ReflectedMethodParameters&) { return Variant(); }
+    Variant invoke(const ObjectHandle&, const IDefinitionManager&, const ReflectedMethodParameters&) override
+    {
+        return Variant();
+    }
 };
 
-class DummyChildCreator : public ChildCreatorExtension
+class DummyChildCreator: public ChildCreatorExtension
 {
 public:
     void exposeChildren(const std::shared_ptr<const PropertyNode>&, std::vector<std::shared_ptr<const PropertyNode>>&, IDefinitionManager&) const override {}
@@ -87,7 +92,7 @@ class DummyMerger: public MergeValuesExtension
 {
 public:
     RefPropertyItem* lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
-                                IDefinitionManager & definitionManager) const override
+        IDefinitionManager & definitionManager) const override
     {
         return nullptr;
     }
@@ -96,8 +101,8 @@ public:
 class DummyInjector: public InjectDataExtension
 {
 public:
-    void inject(RefPropertyItem* item) override{}
-    void updateInjection(RefPropertyItem * item) override{}
+    void inject(RefPropertyItem* item) override {}
+    void updateInjection(RefPropertyItem * item) override {}
 };
 
 IBasePropertyPtr selfRootProperty = std::make_shared<SelfProperty>();
@@ -183,7 +188,7 @@ MergeValuesExtension::MergeValuesExtension()
 }
 
 RefPropertyItem * MergeValuesExtension::lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
-                                                   IDefinitionManager & definitionManager) const
+    IDefinitionManager & definitionManager) const
 {
     return getNext<MergeValuesExtension>()->lookUpItem(node, items, definitionManager);
 }
@@ -212,3 +217,5 @@ std::shared_ptr<InjectDataExtension> InjectDataExtension::createDummy()
 {
     return std::make_shared<PMEDetails::DummyInjector>();
 }
+
+} // namespace wgt

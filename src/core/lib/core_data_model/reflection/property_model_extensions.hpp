@@ -5,6 +5,8 @@
 #include "core_reflection/base_property.hpp"
 #include "core_reflection/object_handle.hpp"
 
+namespace wgt
+{
 class ICommandManager;
 class IDefinitionManager;
 class RefPropertyItem;
@@ -20,9 +22,9 @@ struct PropertyNode
         GroupProperty,
         VirtualProperty, // reserve some range for generic types. I don't know what types it will be now,
                              // but reserve some values is good idea in my opinion
-        DomainSpecificProperty = 255
-        // use can use values DomainSpecificProperty, DomainSpecificProperty + 1, ... , DomainSpecificProperty + n
-        // on you own purpose. It's only way to transfer some information between iterations
+                             DomainSpecificProperty = 255
+                             // use can use values DomainSpecificProperty, DomainSpecificProperty + 1, ... , DomainSpecificProperty + n
+                             // on you own purpose. It's only way to transfer some information between iterations
     };
 
     PropertyNode();
@@ -138,7 +140,7 @@ public:
     SetterGetterExtension();
     virtual Variant getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager & definitionManager) const;
     virtual bool setValue(RefPropertyItem * item, int column, size_t roleId, const Variant & data,
-                          IDefinitionManager & definitionManager, ICommandManager & commandManager) const;
+        IDefinitionManager & definitionManager, ICommandManager & commandManager) const;
     static std::shared_ptr<SetterGetterExtension> createDummy();
 };
 
@@ -147,7 +149,7 @@ class MergeValuesExtension: public ExtensionChain
 public:
     MergeValuesExtension();
     virtual RefPropertyItem* lookUpItem(const std::shared_ptr<const PropertyNode>& node, const std::vector<std::unique_ptr<RefPropertyItem>>& items,
-                                        IDefinitionManager & definitionManager) const;
+        IDefinitionManager & definitionManager) const;
     static std::shared_ptr<MergeValuesExtension> createDummy();
 };
 
@@ -159,5 +161,6 @@ public:
     virtual void updateInjection(RefPropertyItem* item);
     static std::shared_ptr<InjectDataExtension> createDummy();
 };
+} // namespace wgt
 
 #endif

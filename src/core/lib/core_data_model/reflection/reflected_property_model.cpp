@@ -66,7 +66,7 @@ Variant RefPropertyItem::getData(int column, size_t roleId) const
         }
     }
 
-    return model.getData(this, column, roleId);
+    return model.getDataImpl(this, column, roleId);
 }
 
 bool RefPropertyItem::setData(int column, size_t roleId, const Variant & data)
@@ -396,13 +396,13 @@ IItem * ReflectedPropertyModel::getModelParent(RefPropertyItem * effectiveParent
     return effectiveParent == rootItem.get() ? nullptr : effectiveParent;
 }
 
-Variant ReflectedPropertyModel::getData(const RefPropertyItem * item, int column, size_t roleId) const
+Variant ReflectedPropertyModel::getDataImpl(const RefPropertyItem * item, int column, size_t roleId) const
 {
     INTERFACE_REQUEST(IDefinitionManager, defManager, interfacesHolder, Variant());
     return getExtensionChain<SetterGetterExtension>()->getValue(item, column, roleId, defManager);
 }
 
-bool ReflectedPropertyModel::setData(RefPropertyItem * item, int column, size_t roleId, const Variant & data)
+bool ReflectedPropertyModel::setDataImpl(RefPropertyItem * item, int column, size_t roleId, const Variant & data)
 {
     INTERFACE_REQUEST(IDefinitionManager, defManager, interfacesHolder, false);
     INTERFACE_REQUEST(ICommandManager, commandManager, interfacesHolder, false);

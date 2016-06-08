@@ -114,8 +114,8 @@ private:
 
 private:
     friend class RefPropertyItem;
-    Variant getData(const RefPropertyItem * item, int column, size_t roleId) const;
-    bool setData(RefPropertyItem * item, int column, size_t roleId, const Variant & data);
+    Variant getDataImpl(const RefPropertyItem * item, int column, size_t roleId) const;
+    bool setDataImpl(RefPropertyItem * item, int column, size_t roleId, const Variant & data);
 
     Depends<IDefinitionManager, ICommandManager> interfacesHolder;
     std::unique_ptr<RefPropertyItem> rootItem;

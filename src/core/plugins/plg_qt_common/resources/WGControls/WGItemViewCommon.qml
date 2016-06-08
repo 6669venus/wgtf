@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQml.Models 2.2
 import WGControls 2.0
+import "wg_view_selection.js" as WGViewSelection
 
 WGItemView {
     id: root
@@ -60,13 +61,14 @@ WGItemView {
         headerData: root.headerData
     }
 
-    property var commonExtensions: [columnExtension, imageExtension]
+	property var viewExtension: null
+    property var commonExtensions: [viewExtension, columnExtension, imageExtension]
 
     // Pass signals up to parent
     signal currentChanged(var current, var previous)
     signal selectionChanged(var selected, var deselected)
 
-    extensions: commonExtensions
+    extensions: view.extensions.concat(commonExtensions)
 
     function rowCount() {
         return extendedModel.rowCount();
@@ -79,6 +81,26 @@ WGItemView {
         }
         return count;
     }
+
+	function movePrevious(event) {
+		var newIndex = viewExtension.getPreviousIndex(itemSelectionModel.currentIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemSelectionModel, viewExtension);
+	}
+
+	function moveNext(event) {
+		var newIndex = viewExtension.getNextIndex(itemSelectionModel.currentIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemSelectionModel, viewExtension);
+	}
+
+	function moveBackwards(event) {
+		var newIndex = viewExtension.getBackwardIndex(itemSelectionModel.currentIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemSelectionModel, viewExtension);
+	}
+
+	function moveForwards(event) {
+		var newIndex = viewExtension.getForwardIndex(itemSelectionModel.currentIndex);
+        WGViewSelection.updateKeyboardSelection(event, newIndex, itemSelectionModel, viewExtension);
+	}
 
     ColumnExtension {
         id: columnExtension
@@ -177,5 +199,10 @@ WGItemView {
 			connections = Qt.binding( function() { setCurrentIndex( root.currentIndex, ItemSelectionModel.NoUpdate ); } );
 			root.currentIndex = Qt.binding( function() { return currentIndex; } );
 		}
+    }
+
+	Connections {
+        target: view
+        onItemPressed: WGViewSelection.itemPressed(mouse, itemSelectionModel, viewExtension, rowIndex)
     }
 }

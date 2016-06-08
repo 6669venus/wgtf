@@ -27,10 +27,6 @@ public:
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		qtCopyPasteManager_ = new QtCopyPasteManager();
-		types_.push_back(
-			contextManager.registerInterface(qtCopyPasteManager_));
-
 		IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
 
 		if (pPluginContextManager && pPluginContextManager->getExecutablePath())
@@ -52,6 +48,9 @@ public:
 
 		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
+		qtCopyPasteManager_ = new QtCopyPasteManager();
+		types_.push_back(
+			contextManager.registerInterface(qtCopyPasteManager_));
 		qtCopyPasteManager_->init(definitionManager, commandsystem);
 
 		qtFramework_->initialise( contextManager );
@@ -66,6 +65,7 @@ public:
 		qtCopyPasteManager_->fini();
 		qtApplication_->finalise();
 		qtFramework_->finalise();
+		qtCopyPasteManager_ = nullptr;
 		return true;
 	}
 
@@ -78,7 +78,6 @@ public:
 
 		qtFramework_ = nullptr;
 		qtApplication_ = nullptr;
-		qtCopyPasteManager_ = nullptr;
 	}
 
 private:

@@ -120,6 +120,7 @@ WGListViewBase {
         on header column.
     */
     property alias sortIndicator: itemView.sortIndicator
+    property alias clamp: itemView.clamp
 
 	property alias currentIndex: itemView.currentIndex
 

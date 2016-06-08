@@ -15,7 +15,7 @@ Row {
     property bool clamp: false
 
     onAvailableWidthChanged: {
-        internal.josstleColumnWidths(-1);
+        internal.jostleColumnWidths(-1);
     }
 
     Component.onCompleted: {
@@ -57,7 +57,7 @@ Row {
 
                     onDoubleClicked: {
                         parent.x = Math.max(drag.minimumX, implicitColumnWidths[index]);
-                        internal.josstleColumnWidths(index);
+                        internal.jostleColumnWidths(index);
                     }
                 }
 
@@ -67,7 +67,7 @@ Row {
                     columnWidths = widths
 
                     if (handleMouseArea.drag.active) {
-                        internal.josstleColumnWidths(index);
+                        internal.jostleColumnWidths(index);
                     }
                 }
             }
@@ -79,7 +79,7 @@ Row {
         property var initialColumnWidths: []
         property real previousAvailableWidth: 0
 
-        function josstleColumnWidths(adjustedIndex) {
+        function jostleColumnWidths(adjustedIndex) {
             if (!clamp) {
                 return;
             }

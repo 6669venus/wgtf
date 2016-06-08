@@ -3,6 +3,8 @@
 #include "core_generic_plugin/generic_plugin.hpp"
 
 
+namespace wgt
+{
 class ProgressManagerUIPlugin
 	: public PluginMain
 {
@@ -42,3 +44,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( ProgressManagerUIPlugin )
+} // end namespace wgt

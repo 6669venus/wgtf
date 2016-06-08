@@ -6,6 +6,8 @@
 
 SPECIALIZE_QLIST(QVariant)
 
+namespace wgt
+{
 struct SelectionExtension::Implementation
 {
 	Implementation( SelectionExtension& self );
@@ -176,7 +178,7 @@ void SelectionExtension::Implementation::select(
 		{
 			if (!allowMultiSelect_)
 			{
-				// TODO: http://jira.bigworldtech.com/browse/NGT-1004
+				// TODO: NGT-1004
 				// find a better way to handle removing selected
 				// items which were removed from selection set
 				selection_.erase( lastClickedIndex_ );
@@ -745,3 +747,4 @@ void SelectionExtension::selectCurrentIndex( bool select )
 	this->encodeRole( SelectedRole::roleId_, selectedRole );
 	setData( impl_->currentIndex_, QVariant( select ), selectedRole );
 }
+} // end namespace wgt

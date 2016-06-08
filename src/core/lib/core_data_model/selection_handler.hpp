@@ -3,8 +3,10 @@
 
 #include "i_selection_handler.hpp"
 
-// TODO: http://jira.bigworldtech.com/browse/NGT-849
+// TODO: NGT-849
 // Eventually, we need to remove this class
+namespace wgt
+{
 class SelectionHandler
 	: public ISelectionHandler
 {
@@ -22,6 +24,5 @@ private:
 	std::vector< int > selectedRows_;
 	std::vector< IItem* > selectedItems_;
 };
-
-
+} // end namespace wgt
 #endif //HISTORY_SELECTION_HANDLER_HPP

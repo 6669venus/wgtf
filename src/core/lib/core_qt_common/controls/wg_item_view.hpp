@@ -7,9 +7,12 @@
 #include <QQuickItem>
 #include <QQmlListProperty>
 
-class IModelExtension;
 class QAbstractItemModel;
 class QString;
+
+namespace wgt
+{
+class IModelExtension;
 
 class WGItemView : public QQuickItem
 {
@@ -18,11 +21,13 @@ class WGItemView : public QQuickItem
 	Q_PROPERTY( QAbstractItemModel * model READ getModel WRITE setModel NOTIFY modelChanged )
 
 	Q_PROPERTY( QStringList roles READ getRoles WRITE setRoles )
-	Q_PROPERTY( QQmlListProperty< IModelExtension > extensions READ getExtensions )
+	Q_PROPERTY( QQmlListProperty< wgt::IModelExtension > extensions READ getExtensions )
 
 	Q_PROPERTY( QAbstractItemModel * extendedModel READ getExtendedModel NOTIFY extendedModelChanged )
 	//Enable for headers once body works.
 	Q_PROPERTY( QList< QObject* > headerData READ getHeaderData NOTIFY headerDataChanged )
+
+	Q_PROPERTY( QVariant currentIndex READ getCurrentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged )
 
 	DECLARE_QT_MEMORY_HANDLER
 
@@ -34,6 +39,7 @@ signals:
 	void modelChanged();
 	void extendedModelChanged();
 	void headerDataChanged();
+	void currentIndexChanged();
 
 private:
 	QAbstractItemModel * getModel() const;
@@ -51,10 +57,13 @@ private:
 	QAbstractItemModel * getExtendedModel() const;
     QList< QObject* > getHeaderData() const;
 
+	QVariant getCurrentIndex() const;
+	void setCurrentIndex( const QVariant & index );
+
 	void refresh();
 
 	struct Impl;
 	std::unique_ptr< Impl > impl_;
 };
-
+} // end namespace wgt
 #endif//WG_ITEM_VIEW_HPP

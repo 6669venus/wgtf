@@ -8,6 +8,8 @@
 #include "core_serialization/resizing_memory_stream.hpp"
 #include <memory>
 
+namespace wgt
+{
 template< typename T >
 class GenericListT;
 
@@ -454,5 +456,5 @@ private:
 
 	friend class Iterator;
 };
-
+} // end namespace wgt
 #endif // GENERIC_LIST_HPP

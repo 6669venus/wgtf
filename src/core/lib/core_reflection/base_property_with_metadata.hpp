@@ -6,6 +6,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class BasePropertyWithMetaData : public IBaseProperty
 {
 public:
@@ -35,6 +37,7 @@ public:
 		const IDefinitionManager & definitionManager ) const override;
 
 	virtual Variant invoke( const ObjectHandle & object,
+		const IDefinitionManager & definitionManager,
 		const ReflectedMethodParameters & parameters ) override;
 
 	virtual size_t parameterCount() const override;
@@ -43,5 +46,5 @@ private:
 	IBasePropertyPtr property_;
 	MetaHandle metaData_;
 };
-
+} // end namespace wgt
 #endif // BASE_REFLECTED_PROPERTY_HPP

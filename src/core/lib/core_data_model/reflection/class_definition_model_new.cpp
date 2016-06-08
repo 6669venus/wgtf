@@ -9,6 +9,8 @@
 
 #include <iterator>
 
+namespace wgt
+{
 namespace
 {
 	class ClassDefinitionItem : public AbstractListItem
@@ -28,10 +30,6 @@ namespace
 			else if (roleId == ValueTypeRole::roleId_)
 			{
 				return TypeId::getType< ObjectHandle >().getName();
-			}
-			else if (roleId == IndexPathRole::roleId_)
-			{
-				return definition_->getName();
 			}
 			return Variant();
 		}	
@@ -97,3 +95,4 @@ int ClassDefinitionModelNew::columnCount() const /* override */
 {
 	return 1;
 }
+} // end namespace wgt

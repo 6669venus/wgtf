@@ -18,6 +18,8 @@
 #include <functional>
 #include <memory>
 
+namespace wgt
+{
 class IFileSystem
 {
 public:
@@ -43,5 +45,5 @@ public:
 	virtual IStreamPtr		readFile(const char* path, std::ios::openmode mode) const = 0;
 	virtual bool			writeFile(const char* path, const void* data, size_t len, std::ios::openmode mode) = 0;
 };
-
+} // end namespace wgt
 #endif // I_FILE_SYSTEM_HPP_

@@ -9,21 +9,24 @@
 #include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/qt_new_handler.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
+#include "private/ui_view_creator.hpp"
+
 #include <vector>
 #include <QApplication>
 
+namespace wgt
+{
 class MayaAdapterPlugin
 	: public PluginMain
 {
 public:
-	MayaAdapterPlugin( IComponentContext & contextManager ){}
+	MayaAdapterPlugin( IComponentContext & contextManager )
+	{
+		contextManager.registerInterface(new UIViewCreator(contextManager));
+	}
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-		qtCopyPasteManager_ = new QtCopyPasteManager();
-		types_.push_back(
-			contextManager.registerInterface(qtCopyPasteManager_));
-
 		IPluginContextManager* pPluginContextManager = contextManager.queryInterface<IPluginContextManager>();
 
 		if (pPluginContextManager && pPluginContextManager->getExecutablePath())
@@ -45,6 +48,9 @@ public:
 
 		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
+		qtCopyPasteManager_ = new QtCopyPasteManager();
+		types_.push_back(
+			contextManager.registerInterface(qtCopyPasteManager_));
 		qtCopyPasteManager_->init(definitionManager, commandsystem);
 
 		qtFramework_->initialise( contextManager );
@@ -59,6 +65,7 @@ public:
 		qtCopyPasteManager_->fini();
 		qtApplication_->finalise();
 		qtFramework_->finalise();
+		qtCopyPasteManager_ = nullptr;
 		return true;
 	}
 
@@ -71,7 +78,6 @@ public:
 
 		qtFramework_ = nullptr;
 		qtApplication_ = nullptr;
-		qtCopyPasteManager_ = nullptr;
 	}
 
 private:
@@ -82,4 +88,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( MayaAdapterPlugin )
-
+} // end namespace wgt

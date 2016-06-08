@@ -2,6 +2,8 @@
 #include "command_instance.hpp"
 #include "command.hpp"
 
+namespace wgt
+{
 CustomUndoRedoData::CustomUndoRedoData( CommandInstance & commandInstance )
 	: commandInstance_( commandInstance )
 {
@@ -23,3 +25,4 @@ void CustomUndoRedoData::redo()
 	auto commandArgs = commandInstance_.getArguments();
 	command->redo( commandArgs );
 }
+} // end namespace wgt

@@ -5,6 +5,8 @@
 #include <vector>
 #include <sstream>
 
+namespace wgt
+{
 class Utf16to8Facet
 	: public std::codecvt_utf8< wchar_t >
 {
@@ -51,5 +53,5 @@ public:
 	}
 
 };
-
+} // end namespace wgt
 #endif //TOOLS_STRING_UTILS_HPP

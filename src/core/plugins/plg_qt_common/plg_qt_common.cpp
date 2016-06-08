@@ -11,11 +11,14 @@
 
 #include "core_generic_plugin/interfaces/i_component_context_creator.hpp"
 #include "core_dependency_system/i_interface.hpp"
+#include "private/ui_view_creator.hpp"
 
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
 
+namespace wgt
+{
 class QtPluginContextCreator
 	: public Implements< IComponentContextCreator >
 {
@@ -63,18 +66,16 @@ class QtPlugin
 	: public PluginMain
 {
 public:
-	QtPlugin( IComponentContext & contextManager ){}
+	QtPlugin( IComponentContext & contextManager )
+	{
+		contextManager.registerInterface(new UIViewCreator(contextManager));
+	}
 
 	bool PostLoad( IComponentContext & contextManager ) override
 	{
-        qtCopyPasteManager_ = new QtCopyPasteManager();
+		qtFramework_.reset(new QtFramework(contextManager));
 		types_.push_back(
-			contextManager.registerInterface( qtCopyPasteManager_ ) );
-
-		qtFramework_.reset( new QtFramework(contextManager) );
-		types_.push_back(
-			contextManager.registerInterface( new QtPluginContextCreator( qtFramework_.get() ) ) );
-
+			contextManager.registerInterface(new QtPluginContextCreator(qtFramework_.get())));
 		return true;
 	}
 
@@ -84,6 +85,9 @@ public:
 
 		auto definitionManager = contextManager.queryInterface<IDefinitionManager>();
 		auto commandsystem = contextManager.queryInterface<ICommandManager>();
+
+		qtCopyPasteManager_ = new QtCopyPasteManager();
+		contextManager.registerInterface(qtCopyPasteManager_);
 		qtCopyPasteManager_->init( definitionManager, commandsystem );
 		qtFramework_->initialise( contextManager );
 	}
@@ -91,6 +95,7 @@ public:
 	bool Finalise( IComponentContext & contextManager ) override
 	{
         qtCopyPasteManager_->fini();
+		qtCopyPasteManager_ = nullptr;
 		qtFramework_->finalise();
 		return true;
 	}
@@ -101,8 +106,6 @@ public:
 		{
 			contextManager.deregisterInterface( type );
 		}
-
-        qtCopyPasteManager_ = nullptr;
 	}
 
 private:
@@ -112,4 +115,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( QtPlugin )
-
+} // end namespace wgt

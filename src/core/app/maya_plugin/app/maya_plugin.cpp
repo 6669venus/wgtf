@@ -41,6 +41,8 @@
 #include <maya/MTemplateCommand.h>
 #include <assert.h>
 
+namespace wgt
+{
 char NGT_MAYA_COMMAND_SHOW[] = "NGTShow";
 char NGT_MAYA_COMMAND_HIDE[] = "NGTHide";
 char NGT_MAYA_COMMAND_START[] = "NGTStart";
@@ -171,16 +173,7 @@ MStatus NGTStopCommand::doIt(const MArgList& args)
 	return MStatus::kSuccess;
 }
 
-PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
-//
-//	Description:
-//		this method is called when the plug-in is loaded into Maya.  It 
-//		registers all of the services that this plug-in provides with 
-//		Maya.
-//
-//	Arguments:
-//		obj - a handle to the plug-in object (use MFnPlugin to access it)
-//
+MStatus initializeMayaPlugin(MObject obj)
 {
 	MStatus status;
 
@@ -252,6 +245,32 @@ PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
 	return loadNGT() ? MStatus::kSuccess : MStatus::kFailure;
 }
 
+MStatus uninitializeMayaPlugin(MObject obj)
+{
+	delete ngtApp;
+	ngtApp = nullptr;
+	delete pluginManager;
+	pluginManager = nullptr;
+	// TODO: Maya crashes if return MStatus::kSuccess here
+	return MStatus::kFailure;
+}
+
+}
+
+PLUGIN_EXPORT MStatus initializePlugin(MObject obj)
+//
+//	Description:
+//		this method is called when the plug-in is loaded into Maya.  It 
+//		registers all of the services that this plug-in provides with 
+//		Maya.
+//
+//	Arguments:
+//		obj - a handle to the plug-in object (use MFnPlugin to access it)
+//
+{
+	return wgt::initializeMayaPlugin(obj);
+}
+
 PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 //
 //	Description:
@@ -262,12 +281,7 @@ PLUGIN_EXPORT MStatus uninitializePlugin(MObject obj)
 //		obj - a handle to the plug-in object (use MFnPlugin to access it)
 //
 {
-	delete ngtApp;
-	ngtApp = nullptr;
-	delete pluginManager;
-	pluginManager = nullptr;
-	// TODO: Maya crashes if return MStatus::kSuccess here
-	return MStatus::kFailure;
-}
+	return wgt::uninitializeMayaPlugin(obj);
+} // end namespace wgt
 
 #pragma warning( pop )

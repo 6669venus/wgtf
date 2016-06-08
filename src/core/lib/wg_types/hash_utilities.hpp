@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string>
 
+namespace wgt
+{
 namespace HashUtilities
 {
 
@@ -30,5 +32,5 @@ namespace HashUtilities
 
     void directCombine(uint64_t & seed, uint64_t value);
 }
-
+} // end namespace wgt
 #endif // HASH_UTILITIES_HPP

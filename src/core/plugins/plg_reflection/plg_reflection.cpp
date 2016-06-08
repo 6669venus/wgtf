@@ -15,6 +15,8 @@
 #include "core_command_system/i_command_manager.hpp"
 #include "core_string_utils/string_utils.hpp"
 
+namespace wgt
+{
 //==============================================================================
 class ReflectionSystemContextManager
 	: public Implements< IComponentContextCreator >
@@ -251,9 +253,9 @@ private:
 public:
 	//==========================================================================
 	ReflectionPlugin( IComponentContext & contextManager )
-		: reflectionSystemHolder_( new ReflectionSystemHolder )
-		, baseProviderMetaType_( new MetaTypeImpl<ObjectHandle>() )
-	{ 
+		: baseProviderMetaType_( new MetaTypeImpl<ObjectHandle>() )
+        , reflectionSystemHolder_( new ReflectionSystemHolder )
+     	{
 		//Force linkage
 		Reflection::inspect();
 		Reflection::inspectVariant();
@@ -311,3 +313,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC(ReflectionPlugin)
+} // end namespace wgt

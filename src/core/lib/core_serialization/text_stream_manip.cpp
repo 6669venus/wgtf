@@ -4,6 +4,8 @@
 #include "resizing_memory_stream.hpp"
 
 
+namespace wgt
+{
 namespace text_stream_manip_details
 {
 
@@ -80,5 +82,4 @@ namespace text_stream_manip_details
 	}
 
 }
-
-
+} // end namespace wgt

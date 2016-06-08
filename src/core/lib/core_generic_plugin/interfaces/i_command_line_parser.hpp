@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace wgt
+{
 class IInterface;
 
 class ICommandLineParser
@@ -16,5 +18,5 @@ public:
 	virtual std::string getParamStr( const char * arg ) const = 0;
 	virtual std::wstring getParamStrW( const char * arg ) const = 0;
 };
-
+} // end namespace wgt
 #endif // I_COMMAND_LINE_PARSER_HPP

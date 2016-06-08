@@ -9,6 +9,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_reflection/interfaces/i_class_definition.hpp"
 
+namespace wgt
+{
 AssetItemExtension::AssetItemExtension()
 {	
 	qtFramework_ = Context::queryInterface< IQtFramework >();
@@ -114,3 +116,4 @@ void AssetItemExtension::onDataChanged( const QModelIndex &index, int role, cons
 		emit const_cast< QAbstractItemModel * >( model )->dataChanged( index, index, roles );
 	}
 }
+} // end namespace wgt

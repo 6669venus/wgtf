@@ -4,6 +4,8 @@
 #include "metadata/test_polystruct.mpp"
 #include "metadata/test_methods_object.mpp"
 
+namespace wgt
+{
 //==============================================================================
 void TestObjects::initDefs( IDefinitionManager & definitionManager )
 {
@@ -32,3 +34,4 @@ TestStructure & TestObjects::getTestStructure()
 {
 	return structure_;
 }
+} // end namespace wgt

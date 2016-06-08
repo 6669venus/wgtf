@@ -1,6 +1,8 @@
 #include "i_serializer.hpp"
 
 
+namespace wgt
+{
 ISerializer::~ISerializer()
 {
 	// nop
@@ -29,5 +31,4 @@ bool ISerializer::read( IDataStream * dataStream, Variant & variant )
 {
 	return false;
 }
-
-
+} // end namespace wgt

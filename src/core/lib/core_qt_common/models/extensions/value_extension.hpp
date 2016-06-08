@@ -6,6 +6,8 @@
 #include <QQmlListProperty>
 #include <QStringList>
 
+namespace wgt
+{
 class ValueExtension : public IModelExtension
 {
 	Q_OBJECT
@@ -47,5 +49,5 @@ private:
 
 	QStringList roles_;
 };
-
+} // end namespace wgt
 #endif // COMPONENT_EXTENSION_HPP

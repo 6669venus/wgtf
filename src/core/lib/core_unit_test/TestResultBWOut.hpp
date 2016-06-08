@@ -5,6 +5,8 @@
 #include <string>
 
 
+namespace wgt
+{
 class TestResultBWOut : public TestResult
 {
 public:
@@ -26,7 +28,5 @@ private:
 	std::string name_;
 	bool usingXML_;
 };
-
-
+} // end namespace wgt
 #endif // TESTRESULTBWOUT_H
-

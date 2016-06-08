@@ -6,6 +6,8 @@
 #include "core_qt_common/helpers/wg_filter.hpp"
 #include <memory>
 
+namespace wgt
+{
 class WGFilteredListModel : public WGListModel
 {
 	Q_OBJECT
@@ -42,5 +44,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // WG_FILTERED_LIST_MODEL_HPP

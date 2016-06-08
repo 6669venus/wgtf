@@ -5,8 +5,11 @@
 #include <map>
 #include <memory>
 
-class IAction;
 class QIODevice;
+
+namespace wgt
+{
+class IAction;
 struct QtActionData;
 
 class QtActionManager
@@ -28,5 +31,5 @@ public:
 private:
 	std::map< std::string, std::unique_ptr< QtActionData > > actionData_;
 };
-
+} // end namespace wgt
 #endif//ACTION_MANAGER_HPP

@@ -6,6 +6,8 @@
 #include "core_reflection/object_handle.hpp"
 #include "core_unit_test/unit_test.hpp"
 
+namespace wgt
+{
 //---------------------------------------------------------------------------
 // Test Fixture Class
 //---------------------------------------------------------------------------
@@ -485,3 +487,4 @@ bool TestFixture::verifyTreeItemMatch( IItem * item, const char * value, bool ex
 
 	return false;
 }
+} // end namespace wgt

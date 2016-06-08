@@ -6,6 +6,8 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 
 
+namespace wgt
+{
 template< class T >
 class DIRef
 	: public IComponentContextListener
@@ -99,5 +101,5 @@ private:
 	IComponentContext & contextManager_;
 	mutable T * pValue_;
 };
-
+} // end namespace wgt
 #endif //DI_REF_HPP

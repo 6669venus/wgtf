@@ -12,7 +12,8 @@
 #include <vector>
 
 
-
+namespace wgt
+{
 //==============================================================================
 class EnvrionmentTestPlugin
 	: public PluginMain
@@ -206,4 +207,4 @@ public:
 
 
 PLG_CALLBACK_FUNC( EnvrionmentTestPlugin )
-
+} // end namespace wgt

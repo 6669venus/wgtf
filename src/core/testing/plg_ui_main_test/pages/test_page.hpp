@@ -10,6 +10,8 @@
 #include <vector>
 #include <memory>
 
+namespace wgt
+{
 class TestPolyStruct;
 
 typedef ObjectHandleT< TestPolyStruct >  TestPolyStructPtr;
@@ -86,6 +88,8 @@ private:
 
 	const std::string & getAssetUrl() const;
 	void setAssetUrl( const std::string & url );
+
+	void methodOnly();
 	
 	bool bChecked_;
 	bool boolTest_;
@@ -122,6 +126,5 @@ public:
 private:
 	ObjectHandleT<TestPage> testPage_;
 };
-
-
+} // end namespace wgt
 #endif // TEST_PAGE_IMPL_HPP

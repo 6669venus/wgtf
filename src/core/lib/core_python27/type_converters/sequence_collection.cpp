@@ -6,6 +6,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -402,3 +404,4 @@ template class Sequence< PyScript::ScriptTuple >;
 
 
 } // namespace PythonType
+} // end namespace wgt

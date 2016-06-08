@@ -25,6 +25,8 @@
 #include "core_data_model/generic_list.hpp"
 #pragma warning( pop )
 
+namespace wgt
+{
 class CurveEditor : public Implements<ICurveEditor>
 {
 	DECLARE_REFLECTED
@@ -33,6 +35,7 @@ class CurveEditor : public Implements<ICurveEditor>
 
 public:
 	CurveEditor() : xScale_(1.0f), yScale_(1.0f), timeScaleEditEnabled_(true) {}
+	virtual ~CurveEditor() {};
 
 	virtual ICurvePtr createCurve(CurveTypes::CurveType curveType = CurveTypes::Linear, bool add = false) override;
 	virtual bool addCurve(ICurvePtr curve) override;
@@ -66,5 +69,5 @@ private:
 
 	ScaleChangeSignal scaleChangeSignal_;
 };
-
+} // end namespace wgt
 #endif // CURVES_MODEL_H_

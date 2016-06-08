@@ -1,6 +1,8 @@
 #ifndef VECTOR2_HPP
 #define VECTOR2_HPP
 
+namespace wgt
+{
 class Vector2
 {
 public:
@@ -15,6 +17,5 @@ public:
 		return x == v.x && y == v.y;
 	}
 };
-
+} // end namespace wgt
 #endif // VECTOR2_HPP
-

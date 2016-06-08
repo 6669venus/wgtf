@@ -18,6 +18,8 @@
 #include <unordered_map>
 
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 struct TestStructure2
 {
@@ -190,5 +192,5 @@ public:
 	IClassDefinition * klass_;
 	IClassDefinition * derived_klass_;
 };
-
+} // end namespace wgt
 #endif //TEST_OBJECTS2_HPP

@@ -3,6 +3,8 @@
 
 #include "reflected_item.hpp"
 
+namespace wgt
+{
 class MetaGroupObj;
 
 class ReflectedGroupItem : public ReflectedItem
@@ -41,5 +43,5 @@ private:
 	std::string displayName_;
 	mutable std::vector< std::unique_ptr< ReflectedItem > > children_;
 };
-
+} // end namespace wgt
 #endif //REFLECTED_GROUP_ITEM_HPP

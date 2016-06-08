@@ -4,6 +4,8 @@
 
 #include "core_generic_plugin/generic_plugin.hpp"
 
+namespace wgt
+{
 class Automation : public Implements< AutomationInterface >
 {
 public:
@@ -43,4 +45,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( AutomationPlugin )
-
+} // end namespace wgt

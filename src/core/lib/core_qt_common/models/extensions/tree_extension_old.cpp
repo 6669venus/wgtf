@@ -10,6 +10,8 @@
 #include "core_reflection/property_accessor.hpp"
 #include <QSettings>
 
+namespace wgt
+{
 struct TreeExtensionOld::Implementation
 {
 	Implementation( TreeExtensionOld& self );
@@ -597,3 +599,4 @@ void TreeExtensionOld::setSelectionExtension( QObject * selectionExtension )
 	impl_->selectionExtension_ = qobject_cast< SelectionExtension * >( selectionExtension );
 	emit selectionExtensionChanged();
 }
+} // end namespace wgt

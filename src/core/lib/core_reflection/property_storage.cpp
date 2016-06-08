@@ -3,6 +3,8 @@
 
 #include "interfaces/i_base_property.hpp"
 
+namespace wgt
+{
 class PropertyStorageIterator : public PropertyIteratorImplBase
 {
 public:
@@ -68,3 +70,4 @@ bool PropertyStorageIterator::next()
 	++iterator_;
 	return true;
 }
+} // end namespace wgt

@@ -3,6 +3,8 @@
 #include "core_common/ngt_windows.hpp"
 
 
+namespace wgt
+{
 namespace HashUtilities
 {
 
@@ -100,3 +102,4 @@ void directCombine(uint64_t & seed, uint64_t value)
 }
 
 }
+} // end namespace wgt

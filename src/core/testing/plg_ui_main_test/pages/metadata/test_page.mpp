@@ -4,6 +4,8 @@
 #include "core_reflection/metadata/meta_types.hpp"
 #include "core_reflection/utilities/reflection_function_utilities.hpp"
 
+namespace wgt
+{
 namespace
 {
 	const wchar_t * s_Group1 = L"SimpleCases";
@@ -62,6 +64,9 @@ BEGIN_EXPOSE( TestPage, MetaNone() )
 	EXPOSE( "UseAssetBrowserDialog",
 		getAssetUrl, setAssetUrl,
 		MetaGroup( s_Group1 ) + MetaUrl( true, "AssetBrowser") )
+	EXPOSE_METHOD( "BUG MethodOnly should not be visible in the UI",
+		methodOnly,
+		MetaGroup( s_Group1 ) )
 	EXPOSE( "TestIntStringVectorMap", testVectorMap_, MetaNone() )
 	EXPOSE( "TestIntStringMap", testMap_, MetaNone() )
 	EXPOSE( "TestStringMap", testStringMap_, MetaNone() )
@@ -74,3 +79,4 @@ END_EXPOSE()
 BEGIN_EXPOSE( TestPage2, MetaNone() )
 	EXPOSE( "TestPage", getTestPage, setTestPage, MetaNone() )
 END_EXPOSE()
+} // end namespace wgt

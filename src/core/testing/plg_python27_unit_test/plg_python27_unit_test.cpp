@@ -10,6 +10,8 @@
 #include "python27_unit_test.hpp"
 
 
+namespace wgt
+{
 /**
  *	Runs unit tests.
  */
@@ -85,3 +87,4 @@ public:
 };
 
 PLG_CALLBACK_FUNC( Python27UnitTestPlugin )
+} // end namespace wgt

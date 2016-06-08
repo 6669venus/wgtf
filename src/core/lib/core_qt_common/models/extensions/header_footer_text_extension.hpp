@@ -3,6 +3,8 @@
 
 #include "i_model_extension.hpp"
 
+namespace wgt
+{
 class HeaderFooterTextExtension: public IModelExtension
 {
 public:
@@ -11,5 +13,5 @@ public:
 
 	QHash<int, QByteArray> roleNames() const override;
 };
-
+} // end namespace wgt
 #endif

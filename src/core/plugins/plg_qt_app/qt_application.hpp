@@ -6,9 +6,12 @@
 
 #include <memory>
 
-class IQtFramework;
 class QApplication;
 class QSplashScreen;
+
+namespace wgt
+{
+class IQtFramework;
 
 class QtApplication : public Implements< IUIApplication >
 {
@@ -50,5 +53,5 @@ private:
 	std::unique_ptr< QSplashScreen > splash_;
 	bool bQuit_;
 };
-
+} // end namespace wgt
 #endif//QT_APPLICATION_HPP

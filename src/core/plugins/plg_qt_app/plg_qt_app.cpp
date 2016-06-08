@@ -12,6 +12,8 @@
 #include <vector>
 #include <QApplication>
 
+namespace wgt
+{
 class QtPlugin
 	: public PluginMain
 {
@@ -63,4 +65,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( QtPlugin )
-
+} // end namespace wgt

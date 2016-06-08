@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <type_traits>
 
+namespace wgt
+{
 class IClassDefinition;
 class MetaBase;
 
@@ -72,6 +74,5 @@ template< typename T, bool IsAbstract = std::is_abstract< T >::value >
 struct CreateHelper : public CreateHelperBase<T, IsAbstract>
 {
 };
-
-
+} // end namespace wgt
 #endif

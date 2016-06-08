@@ -1,6 +1,9 @@
 #include "generic_tree_model.hpp"
 #include "generic_tree_item.hpp"
 
+
+namespace wgt
+{
 GenericTreeModel::GenericTreeModel( int columnCount/* = 1 */ )
 	:columnCount_( columnCount )
 {
@@ -253,3 +256,4 @@ size_t GenericTreeModel::getChildCountInternal( const GenericTreeItem * item ) c
 
 	return item->size();
 }
+} // end namespace wgt

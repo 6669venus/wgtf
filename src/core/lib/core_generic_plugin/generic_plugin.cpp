@@ -7,6 +7,8 @@
 
 #include <cstdint>
 
+namespace wgt
+{
 namespace
 {
 	class DefaultMemoryAllocator : public IMemoryAllocator
@@ -127,12 +129,11 @@ namespace Context
 }/* Namespace context*/
 
 #ifdef NGT_ALLOCATOR
-
+} // end namespace wgt
 //==============================================================================
-
 void * operator new( std::size_t size )
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		return malloc( size );
@@ -144,7 +145,7 @@ void * operator new( std::size_t size )
 //==============================================================================
 void * operator new ( std::size_t size, const std::nothrow_t & throwable ) NOEXCEPT
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		return malloc( size );
@@ -155,18 +156,18 @@ void * operator new ( std::size_t size, const std::nothrow_t & throwable ) NOEXC
 //==============================================================================
 void * operator new[]( std::size_t size )
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		return malloc( size );
 	}
-	return getMemoryAllocator()->mem_new_array( size );
+	return wgt::getMemoryAllocator()->mem_new_array( size );
 }
 
 //==============================================================================
 void * operator new[]( std::size_t size, const std::nothrow_t & throwable ) NOEXCEPT
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		return malloc( size );
@@ -178,7 +179,7 @@ void * operator new[]( std::size_t size, const std::nothrow_t & throwable ) NOEX
 //==============================================================================
 void operator delete( void* ptr ) NOEXCEPT
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		free( ptr );
@@ -191,7 +192,7 @@ void operator delete( void* ptr ) NOEXCEPT
 //==============================================================================
 void operator delete( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		free( ptr );
@@ -204,7 +205,7 @@ void operator delete( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 //==============================================================================
 void operator delete[]( void* ptr ) NOEXCEPT
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		free( ptr );
@@ -216,7 +217,7 @@ void operator delete[]( void* ptr ) NOEXCEPT
 //==============================================================================
 void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 {
-	IMemoryAllocator * memAlloc = getMemoryAllocator();
+	wgt::IMemoryAllocator * memAlloc = wgt::getMemoryAllocator();
 	if (memAlloc == nullptr)
 	{
 		free( ptr );
@@ -224,7 +225,8 @@ void operator delete[]( void* ptr, const std::nothrow_t & throwable ) NOEXCEPT
 	}
 	memAlloc->mem_delete_array( ptr, throwable );
 }
-
+namespace wgt
+{
 #endif // NGT_ALLOCATOR
 
 PluginMain * createPlugin( IComponentContext & contextManager );
@@ -289,3 +291,4 @@ EXPORT bool __cdecl PLG_CALLBACK( GenericPluginLoadState loadState )
 	}
 	return false;
 }
+} // end namespace wgt

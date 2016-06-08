@@ -5,6 +5,8 @@
 #include "core_dependency_system/depends.hpp"
 #include "core_ui_framework/i_view.hpp"
 
+namespace wgt
+{
 class AbstractTreeModel;
 class IAction;
 class IUIApplication;
@@ -16,6 +18,7 @@ class ICommandManager;
 class IDefinitionManager;
 class IReflectionController;
 class IEnvManager;
+class IViewCreator;
 
 class TestUI
 	: Depends<
@@ -23,15 +26,10 @@ class TestUI
 		ICommandManager,
 		IReflectionController,
 		IDataSourceManager,
-		IEnvManager >
+		IEnvManager,
+		IViewCreator >
 	, public IViewEventListener
 {
-	typedef Depends<
-		IDefinitionManager,
-		ICommandManager,
-		IReflectionController,
-		IDataSourceManager,
-		IEnvManager> DepsBase;
 public:
 	explicit TestUI( IComponentContext & context );
 	~TestUI();
@@ -42,6 +40,7 @@ public:
 	// IViewEventListener
 	virtual void onFocusIn( IView* view ) override;
 	virtual void onFocusOut( IView* view ) override;
+	virtual void onLoaded(IView* view) override {}
 
 private:
 	void createActions( IUIFramework & uiFramework );
@@ -50,7 +49,6 @@ private:
 	void destroyViews( size_t idx );
 
 	void addActions( IUIApplication & uiApplication );
-	void addViews( IUIApplication & uiApplication );
 
 	void undo( IAction * action );
 	void redo( IAction * action );
@@ -84,6 +82,5 @@ private:
 	TestViews test1Views_;
 	TestViews test2Views_;
 };
-
-
+} // end namespace wgt
 #endif // TEST_UI_H

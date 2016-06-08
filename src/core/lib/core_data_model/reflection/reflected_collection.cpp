@@ -2,6 +2,8 @@
 #include "core_reflection/property_accessor_listener.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 
+namespace wgt
+{
 namespace
 {
 	class ReflectedCollectionListener : public PropertyAccessorListener
@@ -103,8 +105,8 @@ namespace
 
 ReflectedCollection::ReflectedCollection( const PropertyAccessor & pa, IReflectionController * controller )
 	: pa_( pa )
-	, controller_( controller )
 	, listener_( new ReflectedCollectionListener( *this ) )
+    , controller_( controller )
 {
 	auto definitionManager = const_cast< IDefinitionManager * >( pa_.getDefinitionManager() );
 	definitionManager->registerPropertyAccessorListener( listener_ );
@@ -208,4 +210,4 @@ int ReflectedCollection::flags() const
 {
 	return collection_.flags();
 }
-
+} // end namespace wgt

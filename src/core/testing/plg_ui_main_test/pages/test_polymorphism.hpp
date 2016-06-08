@@ -4,6 +4,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "testing/reflection_objects_test/test_polystruct.hpp"
 
+namespace wgt
+{
 class TestPolyCheckBox
 	: public TestPolyStruct
 {
@@ -56,4 +58,5 @@ private:
 
 	int seletColor_;
 };
+} // end namespace wgt
 #endif // TEST_POLYMORPHISM_HPP

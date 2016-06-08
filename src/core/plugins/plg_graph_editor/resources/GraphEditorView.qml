@@ -135,9 +135,9 @@ Rectangle
                 model : connectors
                 delegate : ConnectionItem
                 {
-                    outputSlot : slotsIndex[Value.outputSlot]
-                    inputSlot : slotsIndex[Value.inputSlot]
-                    uid : Value.uid
+                    outputSlot : slotsIndex[value.outputSlot]
+                    inputSlot : slotsIndex[value.inputSlot]
+                    uid : value.uid
                 }
             }
 
@@ -154,7 +154,7 @@ Rectangle
                 delegate: NodeComponent
                 {
                     z : graphCanvas.z + 10
-                    node : Value
+                    node : value
                     nodeContextMenu : getNodeContextMenu()
                 }
             }

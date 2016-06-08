@@ -23,7 +23,7 @@ Example:
 
 ListView {
     id: treeItem
-    objectName: typeof(itemData) != "undefined" ? itemData.IndexPath : "WGListView"
+    objectName: typeof(itemData) != "undefined" ? itemData.indexPath : "WGListView"
 
     property real columnSpacing: treeView.columnSpacing
     property real selectionMargin: treeView.selectionMargin
@@ -88,7 +88,7 @@ ListView {
         treeView.removeDepthLevel(depth);
     }
 
-    model: ChildModel
+    model: childModel
     height: visible ? contentHeight + topMargin + bottomMargin : 0
     leftMargin: 0
     rightMargin: 0
@@ -100,7 +100,7 @@ ListView {
         id: itemDelegate
 
         property real actualIndentation: treeView.indentation * depth
-        property real verticalMargins: !HasChildren ? childRowMargin * 2 : Expanded ? 0 : headerRowMargin
+        property real verticalMargins: !hasChildren ? childRowMargin * 2 : expanded ? 0 : headerRowMargin
         readonly property bool oddDepth: depth % 2 !== 0
         readonly property bool oddIndex: treeItem.parentListIndex % 2 !== 0
         readonly property bool switchRowColours: oddDepth !== oddIndex
@@ -131,7 +131,7 @@ ListView {
             id: content
             objectName: "content"
             height: childrenRect.height
-            y: HasChildren ? treeView.headerRowMargin : treeView.childRowMargin
+            y: hasChildren ? treeView.headerRowMargin : treeView.childRowMargin
             anchors.left: parent.left
             anchors.right: parent.right
 
@@ -140,9 +140,9 @@ ListView {
             Component.onCompleted: {
                 if(treeItem.depth === 0)
                 {
-                    if (treeView.rootExpanded && HasChildren)
+                    if (treeView.rootExpanded && hasChildren)
                     {
-                        Expanded = true;
+                        expanded = true;
                     }
                 }
             }
@@ -248,14 +248,14 @@ ListView {
 
                 columnDelegates: []
                 selectionExtension: treeView.selectionExtension
-                modelIndex: treeView.model.index(rowIndex, 0, ParentIndex)
+                modelIndex: treeView.model.index(rowIndex, 0, parentIndex)
 
                 onClicked: {
                     if (treeExtension && treeExtension.blockSelection) {
                         return;
                     }
 
-                    var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
+                    var modelIndex = treeView.model.index(rowIndex, 0, parentIndex);
                     treeView.rowClicked(mouse, modelIndex);
                     currentIndex = rowIndex;
 
@@ -274,7 +274,7 @@ ListView {
                         return;
                     }
 
-                    var modelIndex = treeView.model.index(rowIndex, 0, ParentIndex);
+                    var modelIndex = treeView.model.index(rowIndex, 0, parentIndex);
                     treeView.rowDoubleClicked(mouse, modelIndex);
                     toggleExpandRow();
                     currentIndex = rowIndex;
@@ -285,7 +285,7 @@ ListView {
 
                 function isExpandable()
                 {
-                    return (HasChildren && typeof Expanded !== "undefined");
+                    return (hasChildren && typeof expanded !== "undefined");
                 }
 
 
@@ -293,16 +293,16 @@ ListView {
                 {
                     if (isExpandable())
                     {
-                        Expanded = !Expanded;
+                        expanded = !expanded;
                     }
                 }
 
                 // return - true - if child tree is expanded
                 function expandRow()
                 {
-                    if (isExpandable() && !Expanded)
+                    if (isExpandable() && !expanded)
                     {
-                        Expanded = true;
+                        expanded = true;
 
                         // handled
                         return true;
@@ -315,9 +315,9 @@ ListView {
                 // return - true - if child tree is collapsed
                 function collapseRow()
                 {
-                    if (isExpandable() && Expanded)
+                    if (isExpandable() && expanded)
                     {
-                        Expanded = false;
+                        expanded = false;
 
                         // handled
                         return true;
@@ -335,7 +335,7 @@ ListView {
                         height: headerContent.status === Loader.Ready ? headerContent.height : expandIconArea.height
                         property var parentItemData: itemData
                         property bool firstColumn: columnIndex === 0
-                        property bool showExpandIcon: firstColumn && HasChildren
+                        property bool showExpandIcon: firstColumn && hasChildren
 
                         Rectangle {
                             id: expandIconArea
@@ -352,14 +352,14 @@ ListView {
                                 color:
                                     !showExpandIcon ? "transparent" :
                                     expandMouseArea.containsMouse ? palette.highlightColor :
-                                    Expanded ? palette.textColor :
+                                    expanded ? palette.textColor :
                                     palette.neutralTextColor
 
                                 width: firstColumn ? paintedWidth : 0
                                 font.family : "Marlett"
                                 font.pixelSize: treeView.expandIconSize
                                 renderType: globalSettings.wgNativeRendering ? Text.NativeRendering : Text.QtRendering
-                                text : Expanded ? "\uF036" : "\uF034"
+                                text : expanded ? "\uF036" : "\uF034"
                                 x: expandIconMargin
                                 anchors.verticalCenter: parent.verticalCenter
                                 verticalAlignment: Text.AlignVCenter
@@ -401,9 +401,9 @@ ListView {
                     }
                 }
 
-                property var selected: typeof Selected != 'undefined' ? Selected : false
-                onSelectedChanged: {
-                    if (!selected) {
+                property var isSelected: typeof selected != 'undefined' ? selected : false
+                onIsSelectedChanged: {
+                    if (!isSelected) {
                         return;
                     }
 
@@ -443,12 +443,12 @@ ListView {
                 id: childItems
                 anchors.right: parent.right
                 anchors.left: parent.left
-                y: rowDelegate.y + rowDelegate.height + (HasChildren ? treeView.headerRowMargin : 0) + (Expanded ? childListMargin : 0)
+                y: rowDelegate.y + rowDelegate.height + (hasChildren ? treeView.headerRowMargin : 0) + (expanded ? childListMargin : 0)
                 height: visible ? subTree.height : 0
                 visible: !ancestorCollapsed
 
                 property int depth: treeItem.depth + 1
-                property bool ancestorCollapsed: !treeItem.visible || typeof Expanded === "undefined" || !Expanded || subTree.status !== Loader.Ready
+                property bool ancestorCollapsed: !treeItem.visible || typeof expanded === "undefined" || !expanded || subTree.status !== Loader.Ready
 
                 Loader {
                     id: subTree

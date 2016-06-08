@@ -7,6 +7,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 class ObjectHandle;
 class Variant;
 
@@ -205,7 +207,5 @@ bool TypeConverterQueue< ITypeConverter, ScriptType >::toVariantWithParent(
 
 	return false;
 }
-
-
+} // end namespace wgt
 #endif // TYPE_CONVERTER_QUEUE_HPP
-

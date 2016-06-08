@@ -6,6 +6,8 @@
 
 #include "core_qt_common/helpers/qt_helpers.hpp"
 
+namespace wgt
+{
 WGListIterator::WGListIterator( IListModel & listModel )
 	: listModel_( listModel )
 	, size_( listModel.size() )
@@ -56,3 +58,4 @@ void WGListIterator::setCurrent( QVariant & value )
 	auto data = QtHelpers::toVariant( value );
 	currentItem_->setData( 0, ValueRole::roleId_, data );
 }
+} // end namespace wgt

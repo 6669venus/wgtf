@@ -9,6 +9,8 @@
 #include "property_storage.hpp"
 #include <memory>
 
+namespace wgt
+{
 template< typename Type >
 class TypeClassDefinition
 	: public IClassDefinitionDetails
@@ -143,6 +145,5 @@ public:
 private:
 	PropertyStorage properties_;
 };
-
+} // end namespace wgt
 #endif // #define TYPE_CLASS_DEFINITION_HPP
-

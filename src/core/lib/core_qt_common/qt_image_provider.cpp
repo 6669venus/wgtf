@@ -2,6 +2,8 @@
 
 #include <QIcon>
 
+namespace wgt
+{
 QtImageProvider::QtImageProvider()
 	: QQuickImageProvider( ImageType::Image )
 {
@@ -58,3 +60,4 @@ const char * QtImageProvider::providerId()
 {
 	return "QtImageProvider";
 }
+} // end namespace wgt

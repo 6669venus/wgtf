@@ -6,6 +6,8 @@
 #include <string>
 #include <expat.h>
 
+namespace wgt
+{
 class SimpleApiForXml
 {
 public:
@@ -34,6 +36,5 @@ private:
 	virtual void characterData( const char* data, size_t length );
 
 };
-
-
+} // end namespace wgt
 #endif

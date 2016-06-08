@@ -11,8 +11,11 @@
 #include "core_logging/logging.hpp"
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 
 
+namespace wgt
+{
 PythonPanel::PythonPanel( IComponentContext & context,
 	ObjectHandle & contextObject )
 	: Depends( context )
@@ -31,26 +34,14 @@ PythonPanel::~PythonPanel()
 
 bool PythonPanel::addPanel()
 {
-	auto uiFramework = get< IUIFramework >();
-	auto uiApplication = get< IUIApplication >();
-	
-	if (uiFramework == nullptr || uiApplication == nullptr)
+	auto viewCreator = get< IViewCreator >();
+	if (viewCreator == nullptr)
 	{
-		NGT_ERROR_MSG( "Failed to find IUIFramework or IUIApplication\n" );
+		NGT_ERROR_MSG("Failed to find IViewCreator\n");
 		return false;
 	}
-
-	pythonView_ = uiFramework->createView(
-		"Python27UITest/PythonObjectTestPanel.qml", IUIFramework::ResourceType::Url, contextObject_ );
-
-	if (pythonView_ != nullptr)
-	{
-		uiApplication->addView( *pythonView_ );
-	}
-	else
-	{
-		NGT_ERROR_MSG( "Failed to load qml\n" );
-	}
+	viewCreator->createView(
+		"Python27UITest/PythonObjectTestPanel.qml", contextObject_, pythonView_ );
 	return true;
 }
 
@@ -70,4 +61,4 @@ void PythonPanel::removePanel()
 		uiApplication->removeView( *pythonView_ );
 	}
 }
-
+} // end namespace wgt

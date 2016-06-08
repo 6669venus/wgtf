@@ -15,6 +15,8 @@
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 
+namespace wgt
+{
 namespace {
     static const char * s_projectVersion = "v0.";
     static const char * s_projectFileExtension = "ngtprj";
@@ -432,4 +434,4 @@ void ProjectData::getColor4(Vector4 * color) const
 	color->z = color4_.z;
 	color->w = color4_.w;
 }
-
+} // end namespace wgt

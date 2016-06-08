@@ -11,6 +11,8 @@
 #include <string>
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -67,3 +69,4 @@ template class PrimitiveConverter< std::wstring >;
 
 
 } // namespace PythonType
+} // end namespace wgt

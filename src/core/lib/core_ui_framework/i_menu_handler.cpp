@@ -14,6 +14,8 @@
 #include "core_ui_framework/i_action.hpp"
 #include <assert.h>
 
+namespace wgt
+{
 IMenuHandler::IMenuHandler(IComponentContext& contextManager)
 	: contextManager_(contextManager)
 {
@@ -57,3 +59,4 @@ void IMenuHandler::registerActions()
 		uiApplication->addAction(**itr);
 	}
 }
+} // end namespace wgt

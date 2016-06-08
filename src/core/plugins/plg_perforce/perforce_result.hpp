@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+namespace wgt
+{
 class PerforceResult : public IResult
 {
 public:
@@ -42,5 +44,5 @@ private:
 	mutable std::string output_;
 	mutable std::string errors_;
 };
-
+} // end namespace wgt
 #endif // PERFORCE_RESULT_H_

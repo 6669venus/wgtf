@@ -8,11 +8,13 @@
 	#define _stricmp strcasecmp
 #endif
 
+namespace wgt
+{
 namespace PyScript
 {
 
 
-/// @see //bw/bigworld/branches/release/2/current/programming/bigworld/lib/pyscript/script.cpp
+/// @see //lib/pyscript/script.cpp
 namespace Script
 {
 
@@ -609,4 +611,4 @@ PyObject * getData( const wchar_t * data )
 
 
 } // namespace PyScript
-
+} // end namespace wgt

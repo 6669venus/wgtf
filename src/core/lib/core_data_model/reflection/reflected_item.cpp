@@ -3,6 +3,8 @@
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 
+namespace wgt
+{
 const IClassDefinition * ReflectedItem::getDefinition() const 
 { 
 	auto parent = getParent();
@@ -121,3 +123,4 @@ bool ReflectedItem::EnumerateVisibleProperties(ObjectHandle object, const IDefin
 	}
 	return true;
 }
+} // end namespace wgt

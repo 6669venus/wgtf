@@ -7,6 +7,8 @@
 
 #include "structmember.h"
 
+namespace wgt
+{
 const char * g_reflectionDefinition = "__reflectionDefinition";
 
 
@@ -242,8 +244,8 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 		const auto isClass = PyScript::ScriptClass::check( object );
 		if (canSet && !isType && !isClass)
 		{
-			auto definition = definitionManager_->registerDefinition(
-				new ReflectedPython::DefinitionDetails( context_, object ) );
+			auto definition = definitionManager_->registerDefinition( std::unique_ptr<IClassDefinitionDetails>(
+				new ReflectedPython::DefinitionDetails( context_, object ) ) );
 			assert( definition != nullptr );
 
 			std::shared_ptr< IClassDefinition > pointer( definition,
@@ -295,8 +297,8 @@ std::shared_ptr< IClassDefinition > ScriptObjectDefinitionRegistry::findOrCreate
 		definitionManager_->deregisterDefinition( definition );
 	}
 
-	auto definition = definitionManager_->registerDefinition(
-		new ReflectedPython::DefinitionDetails( context_, object ) );
+	auto definition = definitionManager_->registerDefinition( std::unique_ptr<IClassDefinitionDetails>(
+		new ReflectedPython::DefinitionDetails( context_, object ) ) );
 	assert( definition != nullptr );
 
 	std::shared_ptr<IClassDefinition> pointer( definition, ScriptObjectDefinitionDeleter( object, *this ) );
@@ -433,3 +435,4 @@ const RefObjectId & ScriptObjectDefinitionRegistry::getID(
 
 
 } // namespace ReflectedPython
+} // end namespace wgt

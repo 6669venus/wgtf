@@ -1,10 +1,3 @@
-/**
- * CustomPanelMainPlugin
- *
- * This is the main application's plugin. It creates the CustomPanel and
- * registers it with the UIFramework. So that it will be added to the main dialog
- */
- 
 // Declaration of PluginMain
 #include "core_generic_plugin/generic_plugin.hpp"
  
@@ -18,6 +11,14 @@
 #include <memory>
  
  
+namespace wgt
+{
+/**
+ * CustomPanelMainPlugin
+ *
+ * This is the main application's plugin. It creates the CustomPanel and
+ * registers it with the UIFramework. So that it will be added to the main dialog
+ */
 class CustomPanelPlugin
     : public PluginMain
 {
@@ -64,3 +65,4 @@ private:
  
  
 PLG_CALLBACK_FUNC( CustomPanelPlugin )
+} // end namespace wgt

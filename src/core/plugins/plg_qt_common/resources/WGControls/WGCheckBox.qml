@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
-import BWControls 1.0
+import WGControls 1.0
 
 /*!
  \brief A WG styled control that allows the user to make a binary choice.
@@ -58,7 +58,7 @@ WGCheckBase {
     WGCopyable {
         id: copyableControl
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {

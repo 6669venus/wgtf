@@ -3,6 +3,8 @@
 
 #include "core_command_system/command.hpp"
 
+namespace wgt
+{
 class ReflectedCollectionEraseCommand;
 
 class ReflectedCollectionEraseCommandParameters
@@ -33,10 +35,10 @@ public:
 	bool redo( const ObjectHandle & arguments ) const override;
 	CommandThreadAffinity threadAffinity() const override;
 
-	ObjectHandle getCommandDescription(const ObjectHandle & arguments) const;
+	ObjectHandle getCommandDescription(const ObjectHandle & arguments) const override;
 
 private:
 	IDefinitionManager & definitionManager_;
 };
-
+} // end namespace wgt
 #endif // REFLECTED_COLLECTION_ERASE_COMMAND_HPP

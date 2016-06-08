@@ -17,6 +17,7 @@
 #include "core_qt_common/qt_image_provider_old.hpp"
 #include "core_qt_common/shared_controls.hpp"
 #include "core_qt_common/helpers/qt_helpers.hpp"
+#include "core_qt_common/helpers/qml_component_loader_helper.hpp"
 #include "core_qt_script/qt_scripting_engine.hpp"
 #include "core_qt_script/qt_script_object.hpp"
 #include "core_common/platform_env.hpp"
@@ -65,6 +66,8 @@ namespace QT_NAMESPACE {
 using namespace QT_NAMESPACE;
 #endif
 
+namespace wgt
+{
 namespace QtFramework_Locals
 {
 	// Temporary command event listener to handle process events when the command
@@ -313,15 +316,70 @@ QmlComponent * QtFramework::createComponent( const QUrl & resource )
 	auto qmlComponent = new QmlComponent( *qmlEngine_ );
 	if (!resource.isEmpty())
 	{
-		qmlComponent->component()->loadUrl( resource );
+		QmlComponentLoaderHelper helper( qmlComponent->component(), resource );
+		helper.load( true );
 	}
 	return qmlComponent;
 }
 
 
-std::unique_ptr< IView > QtFramework::createView( 
+//------------------------------------------------------------------------------
+std::unique_ptr< IView > QtFramework::createView(
 	const char * resource, ResourceType type,
-	const ObjectHandle & context )
+	const ObjectHandle & context)
+{
+	NGT_WARNING_MSG("Deprecated function call, please use async version instead" );
+	std::unique_ptr< IView > returnView;
+	createViewInternal(
+		nullptr,
+		resource, type,
+		context,
+		[ &returnView ] ( std::unique_ptr< IView > & view )
+	{
+		returnView = std::move( view );
+	}, false);
+	return returnView;
+}
+
+
+//------------------------------------------------------------------------------
+std::unique_ptr< IView > QtFramework::createView(const char* uniqueName,
+	const char * resource, ResourceType type,
+	const ObjectHandle & context)
+{
+	NGT_WARNING_MSG("Deprecated function call, please use async version instead");
+	std::unique_ptr< IView > returnView;
+	createViewInternal(
+		uniqueName,
+		resource, type,
+		context,
+		[&returnView](std::unique_ptr< IView > & view)
+	{
+		returnView = std::move(view);
+	}, false);
+	return returnView;
+}
+
+//------------------------------------------------------------------------------
+void QtFramework::createViewAsync(
+	const char* uniqueName,
+	const char * resource, ResourceType type,
+	const ObjectHandle & context,
+	std::function< void(std::unique_ptr< IView > &) > loadedHandler)
+{
+	createViewInternal(
+		uniqueName,
+		resource, type,
+		context,
+		loadedHandler, true);
+}
+
+//------------------------------------------------------------------------------
+void QtFramework::createViewInternal(
+	const char * uniqueName,
+	const char * resource, ResourceType type,
+	const ObjectHandle & context,
+	std::function< void ( std::unique_ptr< IView > & ) > loadedHandler, bool async )
 {
 	// TODO: This function assumes the resource is a qml file
 
@@ -338,12 +396,12 @@ std::unique_ptr< IView > QtFramework::createView(
 		break;
 
 	default:
-		return nullptr;
+		return;
 	}
 
-	auto scriptObject = scriptingEngine_->createScriptObject( context );
 	// by default using resource path as qml view id
-	auto view = new QmlView( resource, *this, *qmlEngine_ );
+	auto view = new QmlView( uniqueName ? uniqueName : resource, *this, *qmlEngine_ );
+	auto scriptObject = scriptingEngine_->createScriptObject(context, view->view());
 
 	if (scriptObject)
 	{
@@ -351,59 +409,15 @@ std::unique_ptr< IView > QtFramework::createView(
 	}
 	else
 	{
-		auto source = toQVariant( context,  view->view() );
+		auto source = toQVariant( context, view->view() );
 		view->setContextProperty( QString( "source" ), source );
 	}
 
-	if(!view->load( qUrl, nullptr ))
-    {
-        delete view;
-        return nullptr;
-    }
-	return std::unique_ptr< IView >( view );
-}
-
-std::unique_ptr< IView > QtFramework::createView( 
-    const char* uniqueName, const char * resource, 
-    ResourceType type, const ObjectHandle & context )
-{
-    // TODO: This function assumes the resource is a qml file
-
-    QUrl qUrl;
-
-    switch (type)
-    {
-    case IUIFramework::ResourceType::File:
-        qUrl = QUrl::fromLocalFile( resource );
-        break;
-
-    case IUIFramework::ResourceType::Url:
-        qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
-        break;
-
-    default:
-        return nullptr;
-    }
-
-    auto scriptObject = scriptingEngine_->createScriptObject( context );
-    auto view = new QmlView( resource, *this, *qmlEngine_ );
-
-    if (scriptObject)
-    {
-        view->setContextObject( scriptObject );
-    }
-    else
-    {
-        auto source = toQVariant( context,  view->view() );
-        view->setContextProperty( QString( "source" ), source );
-    }
-
-    if(!view->load( qUrl, uniqueName ))
-    {
-        delete view;
-        return nullptr;
-    }
-    return std::unique_ptr< IView >( view );
+    view->load(qUrl, [loadedHandler, view ]()
+	{
+        std::unique_ptr< IView > localView( view );
+		loadedHandler( localView );
+	}, async );
 }
 
 QmlWindow * QtFramework::createQmlWindow()
@@ -437,8 +451,9 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 	case IUIFramework::ResourceType::Url:
 		{
 			QUrl qUrl = QtHelpers::resolveQmlPath( *qmlEngine_, resource );
-			auto scriptObject = scriptingEngine_->createScriptObject( context );
 			auto qmlWindow = createQmlWindow();
+
+			auto scriptObject = scriptingEngine_->createScriptObject(context, qmlWindow->window());
 
 			if (scriptObject)
 			{
@@ -450,11 +465,7 @@ std::unique_ptr< IWindow > QtFramework::createWindow(
 				qmlWindow->setContextProperty( QString( "source" ), source );
 			}
 
-			if(!qmlWindow->load( qUrl ))
-            {
-                delete qmlWindow;
-                return nullptr;
-            }
+			qmlWindow->load( qUrl );
 			window = qmlWindow;
 		}
 		break;
@@ -544,7 +555,7 @@ int QtFramework::displayMessageBox( const char* title, const char* message, int 
 		QMessageBox::StandardButton qtButton;
 	};
 
-	static MessageBoxQtMapping buttonMappings[] = 
+	MessageBoxQtMapping buttonMappings[] = 
 	{
 		{ Ok, QMessageBox::StandardButton::Ok },
 		{ Cancel, QMessageBox::StandardButton::Cancel },
@@ -554,7 +565,7 @@ int QtFramework::displayMessageBox( const char* title, const char* message, int 
 		{ No, QMessageBox::StandardButton::No },
 	};
 
-	static size_t count = sizeof( buttonMappings ) / sizeof( buttonMappings[0] );
+	size_t count = sizeof( buttonMappings ) / sizeof( buttonMappings[0] );
 	
 	int desiredButtons = 0;
 
@@ -716,3 +727,4 @@ IPreferences * QtFramework::getPreferences()
 {
 	return preferences_.get();
 }
+} // end namespace wgt

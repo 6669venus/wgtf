@@ -225,29 +225,36 @@ namespace
 
     void QtPreferencesImpl::onAddEnv( IEnvState* state ) 
     {
+#if !defined(FAST_WORKAROUND_TASK_NGT_2540)
         ENV_STATE_ADD( PreferenceEnvCom, ec );
+#endif
     }
 
     void QtPreferencesImpl::onRemoveEnv( IEnvState* state )
     {
+#if !defined(FAST_WORKAROUND_TASK_NGT_2540)
         ENV_STATE_REMOVE( PreferenceEnvCom, ec );
         if (ec == preferenceState_)
         {
             switchEnvContext( &globalPreferenceState_ );
         }
+#endif
     }
 
     void QtPreferencesImpl::onSelectEnv( IEnvState* state ) 
     {
+#if !defined(FAST_WORKAROUND_TASK_NGT_2540)
         ENV_STATE_QUERY( PreferenceEnvCom, ec );
         if (ec != preferenceState_)
         {
             switchEnvContext(ec);
         }
+#endif
     }
 
     void QtPreferencesImpl::onSaveEnvState( IEnvState* state ) 
     {
+#if !defined(FAST_WORKAROUND_TASK_NGT_2540)
         ENV_STATE_QUERY( PreferenceEnvCom, ec );
         std::string settings = genProjectSettingName( state->description() );
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
@@ -259,10 +266,12 @@ namespace
             XMLSerializer serializer( *stream, *definitionManager );
             savePreferenceState( serializer, ec );
         }
+#endif
     }
 
     void QtPreferencesImpl::onLoadEnvState( IEnvState* state ) 
     {
+#if !defined(FAST_WORKAROUND_TASK_NGT_2540)
         ENV_STATE_QUERY( PreferenceEnvCom, ec );
         std::string settings = genProjectSettingName( state->description() );
         auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
@@ -274,6 +283,7 @@ namespace
             XMLSerializer serializer( *stream, *definitionManager );
             loadPreferenceState( serializer, ec );
         }
+#endif
     }
 
     void QtPreferencesImpl::switchEnvContext(PreferenceEnvCom* ec)

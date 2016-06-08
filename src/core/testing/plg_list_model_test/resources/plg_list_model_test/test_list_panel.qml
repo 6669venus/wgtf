@@ -59,6 +59,7 @@ WG1.WGPanel {
                 model: sourceModel
                 sortIndicator: indicator
                 clamp: false
+                currentIndex: 0
             }
         }
         ScrollView {
@@ -82,6 +83,7 @@ WG1.WGPanel {
                 model: sourceModel
                 sortIndicator: indicator
                 clamp: true
+                currentIndex: 0
             }
         }
 

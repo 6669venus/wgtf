@@ -32,12 +32,7 @@ Item {
     property var implicitColumnWidths: []
     property alias columnSpacing: row.spacing
     property bool isSelected: false
-    
-    /*! Stores which item is currently in focus by the keyboard.
-        Often this will correspond to the selected item, but not always.
-        E.g. pressing ctrl+up will move the current index, but not the selected index.
-    */
-    property bool isKeyboardHighlight: false
+    property bool isCurrent: false
 
     /*! Pass parameters from mouse events up to parent.
         \see columnMouseArea for original event.
@@ -74,7 +69,7 @@ Item {
         anchors.fill: row
         color: palette.highlightShade
         opacity: 0.25
-        visible: isKeyboardHighlight
+        visible: isCurrent
     }
     /**/
 

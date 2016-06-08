@@ -123,8 +123,9 @@ WGListViewBase {
     property alias sortIndicator: itemView.sortIndicator
     property alias clamp: itemView.clamp
 
-    property var extensions: []
+	property alias currentIndex: itemView.currentIndex
 
+    property var extensions: []
 
     /*! Move the keyboard highlight up/left.
      */
@@ -145,7 +146,6 @@ WGListViewBase {
     clip: true
     view: itemView
     internalModel: itemView.extendedModel
-    keyboardHighlightModelIndex: itemView.currentIndex
 
     Keys.onUpPressed: {
         if (orientation == ListView.Vertical) {

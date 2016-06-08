@@ -495,6 +495,8 @@ struct WGItemView::Impl
 	QStringList roles_;
 	std::unique_ptr< ExtendedModel > extendedModel_;
 	QList< QObject* > headerData_;
+	QVariant currentIndexVar_;
+	QModelIndex currentIndex_;
 };
 
 WGItemView::WGItemView()
@@ -598,6 +600,38 @@ QList< QObject* > WGItemView::getHeaderData() const
     return impl_->headerData_;
 }
 
+QVariant WGItemView::getCurrentIndex() const
+{
+	return impl_->currentIndex_;
+}
+
+void WGItemView::setCurrentIndex( const QVariant & index )
+{
+	impl_->currentIndexVar_ = index;
+	if (getModel() == nullptr)
+	{
+		return;
+	}
+
+	auto modelIndex = QModelIndex();
+	if (index.type() == QMetaType::QModelIndex)
+	{
+		modelIndex = index.value< QModelIndex >();
+	}
+	else
+	{
+		modelIndex = getExtendedModel()->index( index.toInt(), 0 );
+	}
+
+	if (impl_->currentIndex_ == modelIndex)
+	{
+		return;
+	}
+
+	impl_->currentIndex_ = modelIndex;
+	emit currentIndexChanged();
+}
+
 void WGItemView::refresh()
 {
 	impl_->extendedModel_->reset( impl_->model_ );
@@ -614,5 +648,10 @@ void WGItemView::refresh()
         }
 	}
 	emit headerDataChanged();
+
+	if (impl_->extendedModel_ != nullptr)
+	{
+		setCurrentIndex( impl_->currentIndexVar_ );
+	}
 }
 } // end namespace wgt

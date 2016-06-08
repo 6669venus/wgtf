@@ -74,6 +74,7 @@ WG1.WGPanel {
             roles: ["value", "headerText", "footerText"]
             model: sourceModel
             sortIndicator: indicator
+            currentIndex: 0
 
             Component {
                 id: indicator

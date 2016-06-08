@@ -14,14 +14,6 @@ ListView {
     footerPositioning: ListView.OverlayFooter
     contentWidth: contentItem.childrenRect.width 
 
-    /*! Stores which item is currently in focus by the keyboard.
-        Often this will correspond to the selected item, but not always.
-        E.g. pressing ctrl+up will move the current index, but not the selected index.
-        The default value is the same as the selection (modelIndex).
-        To be initialized by the parent.
-    */
-    property var keyboardHighlightModelIndex: null
-
     /*! Propogates events from children to parents.
         \param mouse the MouseEvent that triggered the signal.
         \param itemIndex index of items inside the WGItemRow.
@@ -41,7 +33,7 @@ ListView {
         columnWidths: view.columnWidths
         columnSpacing: view.columnSpacing
         isSelected: view.selectionModel.isSelected(modelIndex)
-        isKeyboardHighlight: (keyboardHighlightModelIndex === modelIndex)
+        isCurrent: view.selectionModel.currentIndex === modelIndex
 
         Connections {
             target: view.selectionModel

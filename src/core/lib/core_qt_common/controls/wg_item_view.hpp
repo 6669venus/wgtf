@@ -27,6 +27,8 @@ class WGItemView : public QQuickItem
 	//Enable for headers once body works.
 	Q_PROPERTY( QList< QObject* > headerData READ getHeaderData NOTIFY headerDataChanged )
 
+	Q_PROPERTY( QVariant currentIndex READ getCurrentIndex WRITE setCurrentIndex NOTIFY currentIndexChanged )
+
 	DECLARE_QT_MEMORY_HANDLER
 
 public:
@@ -37,6 +39,7 @@ signals:
 	void modelChanged();
 	void extendedModelChanged();
 	void headerDataChanged();
+	void currentIndexChanged();
 
 private:
 	QAbstractItemModel * getModel() const;
@@ -53,6 +56,9 @@ private:
 
 	QAbstractItemModel * getExtendedModel() const;
     QList< QObject* > getHeaderData() const;
+
+	QVariant getCurrentIndex() const;
+	void setCurrentIndex( const QVariant & index );
 
 	void refresh();
 

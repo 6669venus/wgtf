@@ -43,22 +43,17 @@ Variant RefPropertyItem::getInjectedData(size_t roleId)
     return Variant();
 }
 
+AbstractItemModel::ItemIndex RefPropertyItem::getItemIndex() const
+{
+    return AbstractItemModel::ItemIndex(getPosition(), 0, parent);
+}
+
 const RefPropertyItem * RefPropertyItem::getParent() const
 {
     return parent;
 }
 
-const char * RefPropertyItem::getDisplayText(int column) const
-{
-    return getProperty()->getName();
-}
-
-ThumbnailData RefPropertyItem::getThumbnail(int column) const
-{
-    return nullptr;
-}
-
-Variant RefPropertyItem::getData(int column, size_t roleId) const
+Variant RefPropertyItem::getData(int row, int column, size_t roleId) const
 {
     if (column == RPMDetails::ValueColumn)
     {
@@ -72,11 +67,21 @@ Variant RefPropertyItem::getData(int column, size_t roleId) const
     return model.getDataImpl(this, column, roleId);
 }
 
-bool RefPropertyItem::setData(int column, size_t roleId, const Variant & data)
+bool RefPropertyItem::setData(int row, int column, size_t roleId, const Variant & data)
 {
     return false;
     // TODO uncomment this after back write on multiselection will be fixed
     //return model.setData(this, column, roleId, data);
+}
+
+wgt::Connection RefPropertyItem::connectPreDataChanged(DataCallback callback)
+{
+    return preDataChanged.connect(callback);
+}
+
+wgt::Connection RefPropertyItem::connectPostDataChanged(DataCallback callback)
+{
+    return postDataChanged.connect(callback);
 }
 
 const std::string & RefPropertyItem::getIndexPath() const
@@ -269,24 +274,25 @@ void ReflectedPropertyModel::update(RefPropertyItem* item)
         update(child.get());
     }
 
+    AbstractItemModel::ItemIndex itemIndex = item->getItemIndex();
     Variant value = item->evalValue(defManager);
     if (value != item->itemValue)
     {
-        signalPreItemDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
+        preDataChanged(itemIndex, ValueRole::roleId_, item->itemValue);
         item->setValue(std::move(value));
-        signalPostItemDataChanged(item, 1, ValueRole::roleId_, item->itemValue);
+        postDataChanged(itemIndex, ValueRole::roleId_, item->itemValue);
     }
 }
 
 void ReflectedPropertyModel::setObjects(const std::vector<ObjectHandle>& objects)
 {
-    size_t childCount = rootItem->getChildCount();
+    int childCount = static_cast<int>(rootItem->getChildCount());
     if (childCount != 0)
     {
         nodeToItem.clear();
-        signalPreItemsRemoved(nullptr, 0, childCount);
+        preRowRemoved(ItemIndex(), 0, childCount);
         rootItem->removeChildren();
-        signalPostItemsRemoved(nullptr, 0, childCount);
+        postRowRemoved(ItemIndex(), 0, childCount);
         rootItem->removeObjects();
         childCreator.clear();
     }
@@ -301,24 +307,33 @@ void ReflectedPropertyModel::setObjects(const std::vector<ObjectHandle>& objects
     update();
 }
 
-IItem * ReflectedPropertyModel::item(size_t index, const IItem * parent) const
+AbstractItem * ReflectedPropertyModel::item(const ItemIndex & index) const
 {
-    return getEffectiveParent(parent)->getChild(index);
+    const RefPropertyItem* parent = getEffectiveParent(index.parent_);
+    if (parent == nullptr)
+        return nullptr;
+
+    if (index.row_ < parent->getChildCount())
+        return parent->getChild(index.row_);
+
+    return nullptr;
 }
 
-ITreeModel::ItemIndex ReflectedPropertyModel::index(const IItem * item) const
+void ReflectedPropertyModel::index(const AbstractItem * item, ItemIndex & o_Index) const
 {
     assert(item != nullptr);
-    const RefPropertyItem * refItem = static_cast<const RefPropertyItem *>(item);
-    return ITreeModel::ItemIndex(refItem->getPosition(), getModelParent(refItem->getNonConstParent()));
+    const RefPropertyItem* refItem = static_cast<const RefPropertyItem *>(item);
+    o_Index.column_ = 0;
+    o_Index.row_ = refItem->getPosition();
+    o_Index.parent_ = refItem->getParent();
 }
 
-size_t ReflectedPropertyModel::size(const IItem * item) const
+int ReflectedPropertyModel::rowCount(const AbstractItem * item) const
 {
     return getEffectiveParent(item)->getChildCount();
 }
 
-int ReflectedPropertyModel::columnCount() const
+int ReflectedPropertyModel::columnCount(const AbstractItem * item) const
 {
     return 2;
 }
@@ -342,12 +357,12 @@ void ReflectedPropertyModel::childAdded(const std::shared_ptr<const PropertyNode
     else
     {
         size_t childCount = parentItem->getChildCount();
-        const IItem* modelParent = getModelParent(parentItem);
+        AbstractItemModel::ItemIndex parentIndex = getModelParent(parentItem);
 
-        signalPreItemsInserted(modelParent, childCount, 1);
+        preRowInserted(parentIndex, childCount, 1);
         childItem = parentItem->createChild();
         childItem->addObject(node);
-        signalPostItemsInserted(modelParent, childCount, 1);
+        postRowInserted(parentIndex, childCount, 1);
         injectExtension->inject(childItem);
     }
 
@@ -359,19 +374,17 @@ void ReflectedPropertyModel::childRemoved(const std::shared_ptr<const PropertyNo
 {
     auto iter = nodeToItem.find(node);
     assert(iter != nodeToItem.end());
-    
+
     RefPropertyItem* item = iter->second;
     item->removeObject(node);
     nodeToItem.erase(node);
 
     if (!item->hasObjects())
     {
-        RefPropertyItem* parent = item->getNonConstParent();
-        size_t positionIndex = item->getPosition();
-        const IItem* modelParent = getModelParent(parent);
-        signalPreItemsRemoved(modelParent, positionIndex, 1);
-        parent->removeChild(positionIndex);
-        signalPostItemsRemoved(modelParent, positionIndex, 1);
+        AbstractItemModel::ItemIndex index = getModelParent(item->getParent());
+        preRowRemoved(index, index.row_, 1);
+        item->getNonConstParent()->removeChild(index.row_);
+        postRowRemoved(index, index.row_, 1);
     }
     else
     {
@@ -379,24 +392,19 @@ void ReflectedPropertyModel::childRemoved(const std::shared_ptr<const PropertyNo
     }
 }
 
-const RefPropertyItem* ReflectedPropertyModel::getEffectiveParent(const IItem* modelParent) const
+const RefPropertyItem* ReflectedPropertyModel::getEffectiveParent(const AbstractItem* modelParent) const
 {
-    return getEffectiveParent(const_cast<IItem *>(modelParent));
+    return getEffectiveParent(const_cast<AbstractItem *>(modelParent));
 }
 
-RefPropertyItem * ReflectedPropertyModel::getEffectiveParent(IItem * modelParent) const
+RefPropertyItem* ReflectedPropertyModel::getEffectiveParent(AbstractItem * modelParent) const
 {
     return modelParent == nullptr ? rootItem.get() : static_cast<RefPropertyItem *>(modelParent);
 }
 
-const IItem* ReflectedPropertyModel::getModelParent(const RefPropertyItem* effectiveParent) const
+AbstractListModel::ItemIndex ReflectedPropertyModel::getModelParent(const RefPropertyItem * effectiveParent) const
 {
-    return getModelParent(const_cast<RefPropertyItem *>(effectiveParent));
-}
-
-IItem * ReflectedPropertyModel::getModelParent(RefPropertyItem * effectiveParent) const
-{
-    return effectiveParent == rootItem.get() ? nullptr : effectiveParent;
+    return effectiveParent == rootItem.get() ? ItemIndex() : effectiveParent->getItemIndex();
 }
 
 Variant ReflectedPropertyModel::getDataImpl(const RefPropertyItem * item, int column, size_t roleId) const
@@ -450,3 +458,35 @@ void ReflectedPropertyModel::unregisterExtension(const std::shared_ptr<Extension
 
     iter->second = ExtensionChain::removeExtension(iter->second, extension);
 }
+
+wgt::Connection ReflectedPropertyModel::connectPreItemDataChanged(DataCallback callback)
+{
+    return preDataChanged.connect(callback);
+}
+
+wgt::Connection ReflectedPropertyModel::connectPostItemDataChanged(DataCallback callback)
+{
+    return postDataChanged.connect(callback);
+}
+
+wgt::Connection ReflectedPropertyModel::connectPreRowsInserted(RangeCallback callback)
+{
+    return preRowInserted.connect(callback);
+}
+
+wgt::Connection ReflectedPropertyModel::connectPostRowsInserted(RangeCallback callback)
+{
+    return postRowInserted.connect(callback);
+}
+
+wgt::Connection ReflectedPropertyModel::connectPreRowsRemoved(RangeCallback callback)
+{
+    return preRowRemoved.connect(callback);
+}
+
+wgt::Connection ReflectedPropertyModel::connectPostRowsRemoved(RangeCallback callback)
+{
+    return postRowRemoved.connect(callback);
+}
+
+} // namespace wgt

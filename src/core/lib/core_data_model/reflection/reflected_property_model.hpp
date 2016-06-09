@@ -4,8 +4,8 @@
 #include "child_creator.hpp"
 
 #include "core_data_model/reflection/property_model_extensions.hpp"
-#include "core_data_model/i_tree_model.hpp"
-#include "core_data_model/i_item.hpp"
+#include "core_data_model/abstract_item_model.hpp"
+#include "core_data_model/abstract_item.hpp"
 
 #include "core_reflection/ref_object_id.hpp"
 #include "core_reflection/object_handle.hpp"
@@ -21,15 +21,16 @@ class IDefinitionManager;
 class IReflectionController;
 class ReflectedPropertyModel;
 
-class RefPropertyItem: public IItem
+class RefPropertyItem: public AbstractItem
 {
 public:
     RefPropertyItem(ReflectedPropertyModel & model);
 
-    const char * getDisplayText(int column) const override;
-    ThumbnailData getThumbnail(int column) const override;
-    Variant getData(int column, size_t roleId) const override;
-    bool setData(int column, size_t roleId, const Variant & data) override;
+    Variant getData(int row, int column, size_t roleId) const override;
+    bool setData(int row, int column, size_t roleId, const Variant & data) override;
+
+    Connection connectPreDataChanged(DataCallback callback) override;
+    Connection connectPostDataChanged(DataCallback callback) override;
 
     const std::string& getIndexPath() const;
     IBasePropertyPtr getProperty() const;
@@ -40,6 +41,7 @@ public:
     void injectData(size_t roleId, const Variant& value);
     Variant getInjectedData(size_t roleId);
 
+    AbstractItemModel::ItemIndex getItemIndex() const;
     const RefPropertyItem * getParent() const;
 
 private:
@@ -71,8 +73,8 @@ private:
     RefPropertyItem(RefPropertyItem * parent, size_t position);
 
 private:
-    ReflectedPropertyModel & model;
-    RefPropertyItem * parent;
+    ReflectedPropertyModel& model;
+    RefPropertyItem* parent;
     size_t position;
     std::vector<std::unique_ptr<RefPropertyItem>> children;
     std::vector<std::shared_ptr<const PropertyNode>> nodes;
@@ -80,9 +82,12 @@ private:
     mutable std::string indexPath;
 
     std::unordered_map<size_t, Variant> injectedData;
+
+    Signal<AbstractItem::DataSignature> preDataChanged;
+    Signal<AbstractItem::DataSignature> postDataChanged;
 };
 
-class ReflectedPropertyModel: public ITreeModel
+class ReflectedPropertyModel: public AbstractItemModel
 {
 public:
     ReflectedPropertyModel(IComponentContext& context);
@@ -92,23 +97,30 @@ public:
 
     void setObjects(const std::vector<ObjectHandle>& objects);
 
-    IItem * item(size_t index, const IItem * parent) const override;
-    ItemIndex index(const IItem * item) const override;
-    size_t size(const IItem * item) const override;
-    int columnCount() const override;
+    AbstractItem * item(const ItemIndex & index) const override;
+    void index(const AbstractItem * item, ItemIndex & o_Index) const override;
+
+    int rowCount(const AbstractItem * item) const override;
+    int columnCount(const AbstractItem * item) const override;
 
     void registerExtension(const std::shared_ptr<ExtensionChain>& extension);
     void unregisterExtension(const std::shared_ptr<ExtensionChain>& extension);
+
+    Connection connectPreItemDataChanged(DataCallback callback) override;
+    Connection connectPostItemDataChanged(DataCallback callback) override;
+    Connection connectPreRowsInserted(RangeCallback callback) override;
+    Connection connectPostRowsInserted(RangeCallback callback) override;
+    Connection connectPreRowsRemoved(RangeCallback callback) override;
+    Connection connectPostRowsRemoved(RangeCallback callback) override;
 
 private:
     void childAdded(const std::shared_ptr<const PropertyNode>& parent, const std::shared_ptr<const PropertyNode>& node, size_t childPosition);
     void childRemoved(const std::shared_ptr<const PropertyNode>& node);
 
-    const RefPropertyItem* getEffectiveParent(const IItem* modelParent) const;
-    RefPropertyItem* getEffectiveParent(IItem* modelParent) const;
+    const RefPropertyItem* getEffectiveParent(const AbstractItem* modelParent) const;
+    RefPropertyItem* getEffectiveParent(AbstractItem* modelParent) const;
 
-    const IItem* getModelParent(const RefPropertyItem* effectiveParent) const;
-    IItem* getModelParent(RefPropertyItem* effectiveParent) const;
+    AbstractListModel::ItemIndex getModelParent(const RefPropertyItem* effectiveParent) const;
 
     void update(RefPropertyItem* item);
 
@@ -126,6 +138,13 @@ private:
 
     ChildCreator childCreator;
     std::map<TypeId, std::shared_ptr<ExtensionChain>> extensions;
+
+    Signal<AbstractItemModel::DataSignature> preDataChanged;
+    Signal<AbstractItemModel::DataSignature> postDataChanged;
+    Signal<AbstractItemModel::RangeSignature> preRowInserted;
+    Signal<AbstractItemModel::RangeSignature> postRowInserted;
+    Signal<AbstractItemModel::RangeSignature> preRowRemoved;
+    Signal<AbstractItemModel::RangeSignature> postRowRemoved;
 };
 
 template<typename Dst, typename Src>

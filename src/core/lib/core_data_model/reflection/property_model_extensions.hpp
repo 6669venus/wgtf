@@ -59,7 +59,7 @@ public:
 
     virtual ~ExtensionChain()
     {
-        assert(nextExtension == nullptr);
+        nextExtension.reset();
     }
 
     static std::shared_ptr<ExtensionChain> addExtension(std::shared_ptr<ExtensionChain> head, const std::shared_ptr<ExtensionChain>& extension)

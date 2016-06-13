@@ -55,6 +55,11 @@ private:
         {
         }
 
+        ~PoolNode()
+        {
+            delete[] batchStart;
+        }
+
         ObjectNode* batchStart;
         ObjectNode* batchHead;
     };

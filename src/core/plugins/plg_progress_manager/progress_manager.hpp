@@ -10,11 +10,14 @@
 #include <thread>
 
 
-class IComponentContext;
-class ILoggingSystem;
 class QQuickView;
 class QTimer;
 class QWindow;
+
+namespace wgt
+{
+class IComponentContext;
+class ILoggingSystem;
 
 typedef std::vector< QString > CommandIdList;
 
@@ -105,5 +108,5 @@ private:
 	bool isCurrentCommandActive() { return (  commandIdList_.size() > 0 && commandIdList_.end() != curCommandId_  ); }
 
 };
-
+} // end namespace wgt
 #endif // PROGRESS_MANAGER_HPP

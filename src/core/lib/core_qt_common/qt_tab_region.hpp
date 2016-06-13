@@ -8,8 +8,11 @@
 #include <QMetaObject>
 
 class QWidget;
-class IQtFramework;
 class QTabWidget;
+
+namespace wgt
+{
+class IQtFramework;
 
 class QtTabRegion : public IRegion
 {
@@ -31,5 +34,5 @@ private:
 	QMetaObject::Connection m_connection;
 	QWidget* current_;
 };
-
+} // end namespace wgt
 #endif//QT_DOCK_REGION_HPP

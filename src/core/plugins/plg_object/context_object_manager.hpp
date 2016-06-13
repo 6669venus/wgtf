@@ -4,6 +4,8 @@
 #include "core_dependency_system/i_interface.hpp"
 #include "interfaces/i_object_manager.hpp"
 
+namespace wgt
+{
 class ContextObjectManager : public Implements< IObjectManagerNew >
 {
 public:
@@ -12,5 +14,5 @@ public:
 private:
 	IObjectManagerNew & parent_;
 };
-
+} // end namespace wgt
 #endif //CONTEXT_OBJECT_MANAGER_HPP

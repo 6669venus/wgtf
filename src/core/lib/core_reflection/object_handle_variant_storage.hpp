@@ -6,6 +6,8 @@
 #include "core_variant/variant.hpp"
 
 
+namespace wgt
+{
 class ObjectHandleVariantStorage
 	: public IObjectHandleStorage
 {
@@ -23,6 +25,5 @@ private:
 	const IClassDefinition* definition_;
 
 };
-
-
+} // end namespace wgt
 #endif // OBJECT_HANDLE_STORAGE_VARIANT_HPP_INCLUDED

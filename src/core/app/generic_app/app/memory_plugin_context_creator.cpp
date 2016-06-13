@@ -4,6 +4,8 @@
 
 #include <typeinfo>
 
+namespace wgt
+{
 //==============================================================================
 IInterface * MemoryPluginContextCreator::createContext(
 	const wchar_t * contextId )
@@ -25,3 +27,4 @@ bool MemoryPluginContextCreator::ownsSubContext() const
 {
 	return true;
 }
+} // end namespace wgt

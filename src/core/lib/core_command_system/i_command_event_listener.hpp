@@ -3,6 +3,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class CommandInstance;
 
 enum class CommandOperation
@@ -30,5 +32,5 @@ public:
 	virtual void handleCommandQueued( const char * commandId ) const { }
 	virtual void onNonBlockingProcessExecution( const char * commandId ) const { }
 };
-
+} // end namespace wgt
 #endif //I_COMMAND_EVENT_LISTENER_HPP

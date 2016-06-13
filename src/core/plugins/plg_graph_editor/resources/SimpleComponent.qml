@@ -107,7 +107,7 @@ Rectangle
                     {
                         z : root.z + 10
                         nodeObject : root
-                        slotObject : Value
+                        slotObject : value
 
                     }
                 }
@@ -137,7 +137,7 @@ Rectangle
                     {
                         z : root.z + 10
                         nodeObject : root
-                        slotObject : Value
+                        slotObject : value
                         Layout.alignment : Qt.AlignTop | Qt.AlignRight
                     }
                 }

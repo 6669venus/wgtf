@@ -1,65 +1,74 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtQuick.Layouts 1.0
-import BWControls 1.0
 
-Item {
-    id: itemRow
-    objectName: "WGHeaderRow"
+Row {
+    id: columns
+    objectName: "WGDataModelHeaderRow"
 
-    width: childrenRect.width != 0 ? childrenRect.width : 1024
-    height: childrenRect.height != 0 ? childrenRect.height : 1024
+    height: minimumRowHeight + topMargin + bottomMargin
 
-    property var columnDelegates: []
-    property var columnSequence: []
-    property var columnWidths: []
-    property var headerData: []
-    property alias columnSpacing: row.spacing
+    property real topMargin: 0
+    property real bottomMargin: 0
+    property int columnCount: 0
+    property var columnWidthFunction: null
+    property color backgroundColour: "transparent"
+    property Component columnDelegate: null
+    property var model: null
+    property real minimumRowHeight: 0
 
-    signal itemPressed(var mouse, var itemIndex)
-    signal itemClicked(var mouse, var itemIndex)
-    signal itemDoubleClicked(var mouse, var itemIndex)
+    function dataChanged(fromColumn, toColumn)
+    {
+        toColumn = Math.min(columnRepeater.children.length - 1, toColumn);
 
-    /* MOVE INTO STYLE*/
-    Rectangle {
-        id: backgroundArea
-        anchors.fill: row
-        color: palette.midDarkColor
-        opacity: 1
-        visible: true
+        for (var i = fromColumn; i <= toColumn; ++i)
+        {
+            var child = columnRepeater.children[i];
+
+            if (child !== null)
+            {
+                child.dataChanged();
+            }
+        }
     }
-    /**/
 
-    Row {
-        id: row
-        Repeater {
-            model: columnCount()
+    Component.onCompleted: dataChanged(0, columnCount - 1)
 
-            Item {
-                width: columnWidths[index]
-                height: childrenRect.height
-                clip: true
-                MouseArea {
-                    width: columnWidths[index]
-                    height: row.height
-                    acceptedButtons: Qt.RightButton | Qt.LeftButton;
+    Repeater {
+        id: columnRepeater
+        model: columnCount
 
-                    onPressed: itemPressed(mouse, index)
-                    onClicked: itemClicked(mouse, index)
-                    onDoubleClicked: itemDoubleClicked(mouse, index)
+        Rectangle {
+            id: columnDelegate
+            y: topMargin
+            height: columns.height - topMargin - bottomMargin
+            width: columnWidthFunction(index);
+            color: backgroundColour
+
+            signal dataChanged;
+
+            Loader {
+                sourceComponent: columns.columnDelegate
+                anchors.fill: parent
+
+                property int columnIndex: index
+
+                function getData(roleName)
+                {
+                    return columns.model.headerData(columnIndex, roleName);
                 }
 
-                Row {
-                    id: columnLayoutRow
-                    Loader {
-                        id: columnDelegateLoader
-                        property var headerData: columnSequence.length <= index ? itemRow.headerData[index] :  itemRow.headerData[itemRow.columnSequence[index]]
-                        property var headerWidth: columnWidths[index] - x
-                        sourceComponent: itemRow.columnDelegates[index]
+                onLoaded: {
+                    var widthFunction = function() { return columnWidthFunction(index); }
+                    width = Qt.binding(widthFunction);
+                    columns.height = Math.max(height, minimumRowHeight) + topMargin + bottomMargin;
+                    item.clip = true;
+
+                    if (typeof(item.dataChanged) !== "undefined")
+                    {
+                        columnDelegate.dataChanged.connect(item.dataChanged);
                     }
                 }
             }
         }
     }
 }
-

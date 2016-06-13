@@ -17,6 +17,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 namespace
 {
 	class VoidMetaType
@@ -457,4 +459,4 @@ const MetaType* DefaultMetaTypeManager::findType(const TypeId& typeId)  const
 
 	return nullptr;
 }
-
+} // end namespace wgt

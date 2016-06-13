@@ -1,12 +1,12 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
-import BWControls 1.0
+import WGControls 1.0
 
 ListView {
-    objectName:  itemData != null ? itemData.IndexPath : "TreeItem"
-    property bool expanded_ : typeof Expanded != "undefined" ? Expanded : false
-    property variant model_ : ChildModel
+    objectName:  itemData != null ? itemData.indexPath : "TreeItem"
+    property bool expanded_ : typeof expanded != "undefined" ? expanded : false
+    property variant model_ : childModel
     property int depth_ : 0
     signal doubleClicked( var clickedItem )
 
@@ -34,20 +34,20 @@ ListView {
 
 
     delegate : Rectangle {
-        property bool hasChildren_ : HasChildren
-        property bool expanded_ : Expanded
-        property bool selected_ : Selected
+        property bool hasChildren_ : hasChildren
+        property bool expanded_ : expanded
+        property bool selected_ : selected
 
 
-        BWCopyable {
+        WGCopyController {
             id: copyableObject
 
             onDataCopied : {
-                setValue( Value )
+                setValue( value )
             }
 
             onDataPasted : {
-                Value = data
+                value = data
             }
 
         }
@@ -121,10 +121,10 @@ ListView {
 
                 onClicked: {
                     if (hasChildren_ && mouseX < expandMouseArea.columnStart){
-                        Expanded = !expanded_;
+                        expanded = !expanded_;
                     } else {
-                        Selected = !selected_;
-                        if(Selected)
+                        selected = !selected_;
+                        if(selected)
                         {
                             selectControl( copyableObject, false )
                         }
@@ -277,8 +277,8 @@ ListView {
 
                 Row {
                     Repeater {
-                        model : SequenceList {
-                            model : ColumnModel
+                        model : WGSequenceList {
+                            model : columnModel
                             sequence : columnSequence_
                         }
                         delegate : Row {

@@ -7,6 +7,8 @@
 #include <functional>
 #include <memory>
 
+namespace wgt
+{
 class FilteredListModel : public IListModel
 {
 	typedef Signal< void( void ) > SignalVoid;
@@ -24,8 +26,8 @@ public:
 	virtual size_t size() const override;
 	virtual int columnCount() const override;
 
-	virtual Variant getData( int column, size_t roleId ) const;
-	virtual bool setData( int column, size_t roleId, const Variant & data );
+	virtual Variant getData( int column, size_t roleId ) const override;
+	virtual bool setData( int column, size_t roleId, const Variant & data ) override;
 
 	void setSource( IListModel * source );
 	void setFilter( IItemFilter * filter );
@@ -44,5 +46,5 @@ private:
 	struct Implementation;
 	std::unique_ptr< Implementation > impl_;
 };
-
+} // end namespace wgt
 #endif // FILTERED_LIST_MODEL_HPP

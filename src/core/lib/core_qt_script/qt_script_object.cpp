@@ -13,6 +13,10 @@
 #include "qt_scripting_engine.hpp"
 #include "core_logging/logging.hpp"
 
+namespace wgt
+{
+#include <QEvent>
+
 namespace
 {
 	PropertyAccessor bindProperty( ObjectHandle & object, int propertyIndex, IDefinitionManager & definitionManager, bool method = false )
@@ -76,31 +80,27 @@ namespace
 	}
 }
 
-QtScriptObject::QtScriptObject(
-	IComponentContext& contextManager,
-	QtScriptingEngine& scriptEngine,
-	const QMetaObject & metaObject,
-	const ObjectHandle & object,
-	QObject * parent )
-	: QObject( parent )
-	, definitionManager_( contextManager )
-	, controller_( contextManager )
-	, scriptEngine_( scriptEngine )
-	, metaObject_( metaObject )
-	, object_( object )
-{
-}
 
 QtScriptObject::~QtScriptObject()
 {
-	scriptEngine_.deregisterScriptObject( *this );
+	data_->scriptEngine_.deregisterScriptObject( *this );
 }
 
 const QMetaObject * QtScriptObject::metaObject() const
 {
-	return &metaObject_;
+	return &data_->metaObject_;
 }
 
+
+//------------------------------------------------------------------------------
+void QtScriptObject::setParent(QObject * parent)
+{
+	data_->scriptEngine_.swapParent( *this, parent );
+	QObject::setParent( parent );
+}
+
+
+//------------------------------------------------------------------------------
 int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 {
 	id = QObject::qt_metacall( c, id, argv );
@@ -115,14 +115,14 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 	case QMetaObject::InvokeMetaMethod:
 		{
 			callMethod( id, argv );
-			int methodCount = metaObject_.methodCount() - metaObject_.methodOffset();
+			int methodCount = data_->metaObject_.methodCount() - data_->metaObject_.methodOffset();
 			id -= methodCount;
 			break;
 		}
 	case QMetaObject::ReadProperty:
 	case QMetaObject::WriteProperty:
 		{
-			int propertyCount = metaObject_.propertyCount() - metaObject_.propertyOffset();
+			int propertyCount = data_->metaObject_.propertyCount() - data_->metaObject_.propertyOffset();
 
 			if (id == 0)
 			{
@@ -137,25 +137,24 @@ int QtScriptObject::qt_metacall( QMetaObject::Call c, int id, void **argv )
 			}
 
 			// The property offset is in our QtScriptObject
-			auto property = bindProperty( object_, id, *definitionManager_ );
+			auto property = bindProperty( data_->object_, id, *data_->get< IDefinitionManager >() );
 
 			if (property.isValid())
 			{
 				auto value = reinterpret_cast< QVariant * >( argv[0] );
 
+				auto controller = data_->get< IReflectionController >();
 				if (c == QMetaObject::ReadProperty)
 				{
-					*value = QtHelpers::toQVariant( controller_->getValue( property ), this );
-				}
+					*value = QtHelpers::toQVariant( controller->getValue( property ), this );				}
 				else
 				{
-					auto oldValue = QtHelpers::toQVariant( controller_->getValue( property ), this );
-
+					auto oldValue = QtHelpers::toQVariant( controller->getValue( property ), this );
 					if (*value != oldValue)
 					{
 						RefObjectId objectId;
 						Variant valueVariant = QtHelpers::toVariant( *value );
-						controller_->setValue( property, valueVariant );
+						controller->setValue( property, valueVariant );
 					}
 				}
 			}
@@ -176,7 +175,7 @@ void QtScriptObject::firePropertySignal( const IBasePropertyPtr & property, cons
 {
 	QVariant qvariant = QtHelpers::toQVariant( value, this );
 	void *parameters[] = { nullptr, &qvariant };
-	int signalId = findPropertyId( *definitionManager_.get(), object_, property );
+	int signalId = findPropertyId( *data_->get< IDefinitionManager>(), data_->object_, property );
 	callMethod( signalId, parameters );
 }
 
@@ -185,8 +184,8 @@ void QtScriptObject::fireMethodSignal( const IBasePropertyPtr & method, bool und
 {
 	QVariant qvariant = undo;
 	void *parameters[] = { nullptr, &qvariant };
-	int methodId = findPropertyId( *definitionManager_.get(), object_, method );
-	int propertyCount = metaObject_.propertyCount() - metaObject_.propertyOffset();
+	int methodId = findPropertyId( *data_->get< IDefinitionManager >(), data_->object_, method );
+	int propertyCount = data_->metaObject_.propertyCount() - data_->metaObject_.propertyOffset();
 	int firstMethodSignalId = propertyCount - 1;
 	int nonReflectedMethodSignals = 2;
 	int signalId = firstMethodSignalId + nonReflectedMethodSignals + methodId;
@@ -196,21 +195,21 @@ void QtScriptObject::fireMethodSignal( const IBasePropertyPtr & method, bool und
 
 void QtScriptObject::callMethod( int id, void **argv )
 {
-	int methodCount = metaObject_.methodCount() - metaObject_.methodOffset();
+	int methodCount = data_->metaObject_.methodCount() - data_->metaObject_.methodOffset();
 
 	if (id >= methodCount)
 	{
 		return;
 	}
 
-	int propertyCount = metaObject_.propertyCount() - metaObject_.propertyOffset();
+	int propertyCount = data_->metaObject_.propertyCount() - data_->metaObject_.propertyOffset();
 	int firstMethodSignalId = propertyCount - 1;
 	int methodSignalCount = (methodCount - firstMethodSignalId - 1) / 2;
 	int firstMethodId = firstMethodSignalId + methodSignalCount;
 
 	if (id < firstMethodId)
 	{
-		metaObject_.activate( this, id + metaObject_.methodOffset(), argv );
+		data_->metaObject_.activate( this, id + data_->metaObject_.methodOffset(), argv );
 		return;
 	}
 
@@ -219,7 +218,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 
 	if (id < 3)
 	{
-		auto definition = object_.getDefinition( *definitionManager_ );
+		auto definition = data_->object_.getDefinition( *data_->get< IDefinitionManager >() );
 
 		if (definition == nullptr)
 		{
@@ -288,7 +287,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 	else
 	{
 		int methodId = id - 2;
-		auto pa = bindProperty( object_, methodId, *definitionManager_, true );
+		auto pa = bindProperty(data_->object_, methodId, *data_->get< IDefinitionManager >(), true );
 		ReflectedMethodParameters parameters;
 
 		for (size_t i = 0; i < pa.getProperty()->parameterCount(); ++i)
@@ -297,7 +296,7 @@ void QtScriptObject::callMethod( int id, void **argv )
 			parameters.push_back( QtHelpers::toVariant( qvariant ) );
 		}
 
-		Variant returnValue = controller_->invoke( pa, parameters );
+		Variant returnValue = data_->get< IReflectionController >()->invoke( pa, parameters );
 		*result = QtHelpers::toQVariant( returnValue, this );
 	}
 
@@ -342,11 +341,12 @@ MetaHandle QtScriptObject::getMetaObject(
 	TypeId metaTypeId( metaClassName.toUtf8().data() );
 
 	auto metaObject = getMetaObject( definition, property );
-	return findFirstMetaData( metaTypeId, metaObject, *definitionManager_ );
+	return findFirstMetaData( metaTypeId, metaObject, *data_->get< IDefinitionManager >() );
 }
 
 
 const ObjectHandle & QtScriptObject::object() const
 { 
-	return object_; 
+	return data_->object_;
 }
+} // end namespace wgt

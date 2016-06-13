@@ -5,6 +5,8 @@
 #include "../interfaces/i_base_property.hpp"
 #include "core_variant/collection.hpp"
 
+namespace wgt
+{
 //TODO Move this into a CPP instead
 // ==============================================================================
 class ReflectedCollectionImpl
@@ -34,7 +36,5 @@ public:
 private:
 	IBasePropertyPtr baseProperty_;
 };
-
+} // end namespace wgt
 #endif // REFLECTED_COLLECTION_IMPL_HPP
-
-

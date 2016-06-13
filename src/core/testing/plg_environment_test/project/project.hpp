@@ -8,6 +8,8 @@
 #include <string>
 #include "core_ui_framework/i_view.hpp"
 
+namespace wgt
+{
 class IComponentContext;
 
 
@@ -110,7 +112,5 @@ private:
 	Vector3 color3_;
 	Vector4 color4_;
 };
-
-
-
+} // end namespace wgt
 #endif // PROJECT_HPP

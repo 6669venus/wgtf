@@ -8,6 +8,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 /**
  *	Create an item in a ReflectedTreeModel from an IBaseProperty on an ObjectHandle.
  *	Must be a child item.
@@ -32,6 +34,7 @@ public:
 	ReflectedPropertyItemNew( IComponentContext & contextManager,
 		const IBasePropertyPtr & property,
 		ReflectedTreeItemNew * parent,
+		size_t index,
 		const std::string & inPlacePath );
 
 	/**
@@ -47,7 +50,8 @@ public:
 	ReflectedPropertyItemNew( IComponentContext & contextManager,
 		const std::string & propertyName,
 		std::string displayName,
-		ReflectedTreeItemNew * parent );
+		ReflectedTreeItemNew * parent,
+		size_t index );
 	virtual ~ReflectedPropertyItemNew();
 
 	// AbstractItem
@@ -74,6 +78,5 @@ private:
 	class Implementation;
 	std::unique_ptr< Implementation > impl_;
 };
-
+} // end namespace wgt
 #endif // _REFLECTED_PROPERTY_ITEM_NEW_HPP
-

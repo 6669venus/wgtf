@@ -21,6 +21,8 @@
 #include <codecvt>
 
 
+namespace wgt
+{
 namespace
 {
 	enum class ModelPropertyValueType : uint8_t
@@ -182,6 +184,10 @@ void DemoObjects::updateRootObject( int index )
 
 int DemoObjects::rootObjectIndex()
 {
+	if (objects_ == nullptr)
+	{
+		return 0;
+	}
 	return objects_->index_;
 }
 
@@ -362,3 +368,4 @@ void DemoObjects::automationUpdate()
 		}
 	}
 }
+} // end namespace wgt

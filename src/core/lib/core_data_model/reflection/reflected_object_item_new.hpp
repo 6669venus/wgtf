@@ -7,6 +7,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 /**
  *	Create an item in a ReflectedTreeModel from an ObjectHandle.
  *	Can be a root or child item.
@@ -34,7 +36,8 @@ public:
 	 */
 	ReflectedObjectItemNew( IComponentContext & contextManager,
 		const ObjectHandle & object,
-		ReflectedTreeItemNew * parent );
+		ReflectedTreeItemNew * parent,
+		size_t index );
 	virtual ~ReflectedObjectItemNew();
 
 	// AbstractItem
@@ -67,6 +70,5 @@ private:
 	typedef std::function< bool( ReflectedTreeItemNew & ) > ReflectedItemCallback;
 	void enumerateChildren( const ReflectedItemCallback & callback ) const;
 };
-
+} // end namespace wgt
 #endif // _REFLECTED_OBJECT_ITEM_NEW_HPP
-

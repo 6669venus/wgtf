@@ -3,7 +3,10 @@
 
 #include <cassert>
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_variant/type_id.hpp"
 
+namespace wgt
+{
 class DummyDependsType {};
 
 //==============================================================================
@@ -15,12 +18,13 @@ template<
 	typename T2 = DummyDependsType,
 	typename T3 = DummyDependsType,
 	typename T4 = DummyDependsType,
-	typename T5 = DummyDependsType>
+	typename T5 = DummyDependsType,
+	typename T6 = DummyDependsType>
 class DependsImpl
-	: public DependsImpl< T2, T3, T4, T5 > 
+	: public DependsImpl< T2, T3, T4, T5, T6 > 
 {
 protected:
-	typedef DependsImpl< T2, T3, T4, T5 > Base;
+	typedef DependsImpl< T2, T3, T4, T5, T6 > Base;
 
 	DependsImpl()
 		: pValue_( nullptr )
@@ -163,12 +167,13 @@ template<
 	typename T2 = DummyDependsType,
 	typename T3 = DummyDependsType,
 	typename T4 = DummyDependsType,
-	typename T5 = DummyDependsType>
+	typename T5 = DummyDependsType,
+	typename T6 = DummyDependsType>
 class Depends
 	: public IComponentContextListener
-	, private DependsImpl< T1, T2, T3, T4, T5 >
+	, private DependsImpl< T1, T2, T3, T4, T5, T6 >
 {
-	typedef DependsImpl< T1, T2, T3, T4, T5 > Base;
+	typedef DependsImpl< T1, T2, T3, T4, T5, T6 > Base;
 public:
 	Depends( IComponentContext & context )
 		: context_( context )
@@ -216,5 +221,5 @@ private:
 
 	IComponentContext & context_;
 };
-
+} // end namespace wgt
 #endif //DEPENDS_HPP

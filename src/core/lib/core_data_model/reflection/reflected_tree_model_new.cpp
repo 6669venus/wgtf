@@ -6,6 +6,8 @@
 #include <vector>
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -148,14 +150,7 @@ size_t ReflectedTreeModelNew::Implementation::getIndexInternal(
 	auto parent = item->getParent();
 	if (parent != nullptr)
 	{
-		const auto count = parent->rowCount();
-		for (int i = 0; i < count; ++i)
-		{
-			if (parent->getChild( i ) == item)
-			{
-				return i;
-			}
-		}
+		return item->getIndex();
 	}
 
 	assert( item == rootItem_.get() );
@@ -289,6 +284,29 @@ int ReflectedTreeModelNew::columnCount() const /* override */
 }
 
 
+bool ReflectedTreeModelNew::hasChildren( 
+	const AbstractItem * item ) const /* override */
+{
+	auto reflectedItem = static_cast< const ReflectedTreeItemNew * >( item );
+	assert( item == nullptr || reflectedItem != nullptr );
+
+	auto childCount = impl_->getChildCountInternal( reflectedItem );
+	for (int i = 0; i < childCount; ++i)
+	{
+		auto childItem = impl_->getItemInternal( i, reflectedItem );
+		if (childItem != nullptr && childItem->isInPlace())
+		{
+			if (!hasChildren( childItem ))
+			{
+				continue;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+
 #define CONNECT_METHOD( method, connection, callbackType ) \
 Connection ReflectedTreeModelNew::method( \
 	AbstractTreeModel::callbackType callback ) /* override */ \
@@ -306,3 +324,4 @@ CONNECT_METHOD( connectPreRowsRemoved, preRowsRemoved_, RangeCallback )
 CONNECT_METHOD( connectPostRowsRemoved, postRowsRemoved_, RangeCallback )
 
 #undef CONNECT_METHOD
+} // end namespace wgt

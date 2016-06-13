@@ -1,6 +1,8 @@
 #include "serialization_manager.hpp"
 #include "core_serialization/serializer/i_serializer.hpp"
 
+namespace wgt
+{
 SerializationManager::SerializationManager()
 {
 	serializerMap_.clear();
@@ -45,4 +47,4 @@ ISerializer * SerializationManager::getSerializer( const TypeId & typeId )
 	}
 	return ret;
 }
-
+} // end namespace wgt

@@ -164,7 +164,7 @@ public:
 #endif
 
 /**
- *  BigWorld additions to the CppUnitLite2 interface, to make it more like
+ *  Wargaming additions to the CppUnitLite2 interface, to make it more like
  *  vanilla cppunit.  Notable difference between these and the other macros is
  *  that these will return from the current test function rather than
  *	continuing on with the subsequent tests.
@@ -233,7 +233,7 @@ public:
 
 
 /**
- *  BigWorld additions to the CppUnitLite2 interface, to allow
+ *  Wargaming additions to the CppUnitLite2 interface, to allow
  *	calls to helper functions (implemented as functors) that call the test
  *	macros (CHECK*, etc).
  */

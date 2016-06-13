@@ -6,6 +6,8 @@
 #include <core_data_model/i_item.hpp>
 #include <core_data_model/i_item_role.hpp>
 
+namespace wgt
+{
 template <typename T>
 class BaseModel : public IListModel
 {
@@ -128,5 +130,5 @@ public:
 protected:
     TCollection items;
 };
-
+} // end namespace wgt
 #endif // __GRAPHEDITOR_BASEMODEL_H__

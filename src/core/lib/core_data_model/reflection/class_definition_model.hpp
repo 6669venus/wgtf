@@ -4,6 +4,8 @@
 #include "core_data_model/i_list_model.hpp"
 #include <vector>
 
+namespace wgt
+{
 class IClassDefinition;
 class IDefinitionManager;
 
@@ -23,5 +25,5 @@ public:
 private:
 	std::vector< IItem * > items_;
 };
-
+} // end namespace wgt
 #endif // CLASS_DEFINITION_MODEL_HPP

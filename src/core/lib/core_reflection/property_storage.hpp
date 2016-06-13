@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+namespace wgt
+{
 class IBaseProperty;
 typedef std::shared_ptr< IBaseProperty > IBasePropertyPtr;
 typedef std::vector< IBasePropertyPtr > SortedProperties;
@@ -24,5 +26,5 @@ private:
 
 	friend class PropertyStorageIterator;
 };
-
+} // end namespace wgt
 #endif

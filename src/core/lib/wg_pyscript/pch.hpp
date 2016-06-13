@@ -5,4 +5,3 @@
 #include "Python.h"
 
 #endif // WG_PYSCRIPT_PCH_HPP
-

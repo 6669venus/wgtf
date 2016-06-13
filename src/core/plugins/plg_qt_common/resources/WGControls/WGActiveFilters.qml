@@ -272,7 +272,7 @@ Item {
                         text: "Save New Filter..."
                         onTriggered: {
                             // TODO - Refine saving to allow for naming of the filter
-                            // JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+                            // JIRA - NGT-1484
 
                             if (rootFrame.__loadedFilterId.length > 0) {
                                 // Prompt the user!
@@ -301,11 +301,11 @@ Item {
                             model: savedFiltersModel
 
                             delegate: MenuItem {
-                                text: Value.filterId + ": " + Value.terms
+                                text: value.filterId + ": " + value.terms
                                 onTriggered: {
-                                    var result = rootFrame.dataModel.loadFilter(Value.filterId);
+                                    var result = rootFrame.dataModel.loadFilter(value.filterId);
                                     if (result) {
-                                        rootFrame.__loadedFilterId = Value.filterId;
+                                        rootFrame.__loadedFilterId = value.filterId;
                                     }
                                     else {
                                         rootFrame.__loadedFilterId = "";
@@ -425,25 +425,26 @@ Item {
                     }
 
                     delegate: WGButtonBar {
+                        property var myValue: value;
                         showSeparators: false
                         evenBoxes: false
                         buttonList: [
                             WGPushButton {
                                 id: filterString
                                 objectName: "filterStringButton"
-                                text: Value.value
+                                text: myValue.value
                                 checkable: true
-                                checked: Value.active
+                                checked: myValue.active
                                 style: WGTagButtonStyle{}
 
                                 Binding {
-                                    target: Value
+                                    target: myValue
                                     property: "active"
                                     value: filterString.checked
                                 }
 
                                 Connections {
-                                    target: Value
+                                    target: myValue
                                     onActiveChanged: {
                                         updateStringValue();
                                     }

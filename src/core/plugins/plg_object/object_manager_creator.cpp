@@ -7,6 +7,8 @@
 
 #include <cassert>
 
+namespace wgt
+{
 class ObjectManagerCreator::Impl
 {
 public:
@@ -49,3 +51,4 @@ IInterface * ObjectManagerCreator::createContext( const wchar_t * contextId )
 	auto context = new ContextObjectManager( impl_->objectManager_, contextId );
 	return new InterfaceHolder< ContextObjectManager >( context, true );
 }
+} // end namespace wgt

@@ -1,7 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
-import BWControls 1.0
 import WGControls 1.0
 
 // This component is for displaying the history panel
@@ -30,7 +29,7 @@ WGPanel {
         }
     }
 
-    SelectionHelper {
+    WGSelectionHelper {
         id: historySelectionHelper
         source: SelectionHandlerSource
         onSourceChanged: {
@@ -38,7 +37,7 @@ WGPanel {
         }
     }
 
-    BWDataChangeNotifier {
+    WGDataChangeNotifier {
         id: historySelection
         source: CurrentIndexSource
         // When the model changes, update the selection on the view

@@ -10,6 +10,8 @@
 #include "core_reflection/i_object_manager.hpp"
 #include "wg_types/binary_block.hpp"
 
+namespace wgt
+{
 namespace RPURU = ReflectedPropertyUndoRedoUtility;
 namespace
 {
@@ -127,6 +129,30 @@ public:
 		else
 		{
 			helper->parameters_ = parameters;
+		}
+	}
+
+	void postInvoke( const PropertyAccessor & accessor, Variant result, bool undo ) override
+	{
+		const auto& object = accessor.getRootObject();
+		assert( object != nullptr );
+
+		RefObjectId id;
+		bool ok = object.getId( id );
+		assert( ok );
+
+		if (undoRedoHelperList_.size() > 0)
+		{
+			auto helper = undoRedoHelperList_.back().get();
+			if (helper->isMethod())
+			{
+				auto methodHelper = (RPURU::ReflectedMethodUndoRedoHelper*)helper;
+
+				if (methodHelper->objectId_ == id)
+				{
+					methodHelper->result_ = result;
+				}
+			}
 		}
 	}
 
@@ -435,3 +461,4 @@ void ReflectionUndoRedoData::setRedoData( const std::shared_ptr<BinaryBlock> & r
 {
     redoData_.setBuffer( std::string( redoData->cdata(), redoData->length() ) );
 }
+} // end namespace wgt

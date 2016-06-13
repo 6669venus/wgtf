@@ -5,6 +5,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_variant/collection.hpp"
 
+namespace wgt
+{
 class PropertyAccessor;
 class IReflectionController;
 class ObjectHandle;
@@ -63,5 +65,5 @@ protected:
 private:
 	static bool EnumerateVisibleProperties(ObjectHandle object, const IDefinitionManager & definitionManager, const std::string & inplacePath, const PropertyCallback& callback);
 };
-
+} // end namespace wgt
 #endif //REFLECTED_ITEM_HPP

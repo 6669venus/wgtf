@@ -1,12 +1,12 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
-import BWControls 1.0
+
 
 Loader
 {
     id: color3_Loader
-    objectName:  itemData != null ? itemData.IndexPath : "color3_component"
+    objectName:  itemData != null ? itemData.indexPath : "color3_component"
     Component.onCompleted: {
         color3_Loader.setSource("color4_component.qml", { "showAlpha": false });
     }

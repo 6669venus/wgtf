@@ -4,6 +4,8 @@
 #include "i_asset_object_item.hpp"
 #include "core_serialization/i_file_system.hpp"
 
+namespace wgt
+{
 class BaseAssetObjectItem : public IAssetObjectItem
 {
 public:
@@ -16,7 +18,7 @@ public:
 
 	// File Information
 	// TODO: Remove dependency on the file system on low level models in the asset browser.
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-1248
+	// JIRA: NGT-1248
 	IFileInfoPtr getFileInfo() const;
 
 	// IItem Implementation
@@ -53,5 +55,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // BASE_ASSET_OBJECT_ITEM_HPP

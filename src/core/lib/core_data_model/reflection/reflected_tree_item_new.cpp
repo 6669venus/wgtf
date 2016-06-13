@@ -4,10 +4,14 @@
 #include "core_reflection/metadata/meta_impl.hpp"
 
 
+namespace wgt
+{
 ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	const ReflectedTreeModelNew & model )
 	: parent_( nullptr )
+	, id_( 0 )
 	, path_( "" )
+	, index_( -1 )
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
 	, model_( &model )
@@ -17,8 +21,11 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 
 ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	ReflectedTreeItemNew * parent,
+	size_t index,
 	const char * path ) 
 	: parent_( parent )
+	, index_( index )
+	, id_( HashUtilities::compute( path ) )
 	, path_( path )
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
@@ -29,8 +36,11 @@ ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 
 ReflectedTreeItemNew::ReflectedTreeItemNew( IComponentContext & contextManager,
 	ReflectedTreeItemNew * parent,
+	size_t index,
 	const std::string & path ) 
 	: parent_( parent )
+	, index_( index )
+	, id_( HashUtilities::compute( path ) )
 	, path_( path )
 	, controller_( contextManager )
 	, definitionManager_( contextManager )
@@ -58,6 +68,12 @@ const IClassDefinition * ReflectedTreeItemNew::getDefinition() const
 bool ReflectedTreeItemNew::isInPlace() const
 {
 	return false;
+}
+
+
+uint64_t ReflectedTreeItemNew::getId() const
+{
+	return id_;
 }
 
 
@@ -111,6 +127,18 @@ const ReflectedTreeItemNew * ReflectedTreeItemNew::getParent() const
 ReflectedTreeItemNew * ReflectedTreeItemNew::getParent()
 {
 	return parent_;
+}
+
+
+size_t ReflectedTreeItemNew::getIndex() const
+{
+	return index_;
+}
+
+
+void ReflectedTreeItemNew::setIndex( size_t index )
+{
+	index_ = index;
 }
 
 
@@ -201,3 +229,4 @@ bool ReflectedTreeItemNew::enumerateVisibleProperties( ObjectHandle object,
 	}
 	return true;
 }
+} // end namespace wgt

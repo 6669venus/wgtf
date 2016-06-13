@@ -10,6 +10,8 @@
 #include <cassert>
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -209,3 +211,4 @@ CollectionIteratorImplPtr MappingIterator::clone() const /* override */
 
 
 } // namespace PythonType
+} // end namespace wgt

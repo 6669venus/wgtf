@@ -1,6 +1,6 @@
 To use Python, the Python source must be added under Python/<version>.
 Use an unmodified version of the Python sources,
-not the one from BigWorld Technology.
+not the one from Wargaming.
 If Python is not present, Python projects will be disabled.
 
 Example to use Python 2.7.11:

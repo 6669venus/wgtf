@@ -27,7 +27,10 @@
 #include <QElapsedTimer>
 #include "wg_types/binary_block.hpp"
 #include "wg_types/vector2.hpp"
+#include "core_qt_script/qt_script_object.hpp"
 
+namespace wgt
+{
 namespace
 {
 	template< typename T >
@@ -53,17 +56,17 @@ namespace
 
 QmlWindow::QmlWindow( IQtFramework & qtFramework, QQmlEngine & qmlEngine )
 	: qtFramework_( qtFramework )
-    , qmlEngine_( qmlEngine )
-	, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
-	, mainWindow_( new QQuickWidget( &qmlEngine, nullptr ) )
-	, released_( false )
-	, application_( nullptr )
-    , isMaximizedInPreference_( false )
-    , firstTimeShow_( true )
-{
-	mainWindow_->setMinimumSize( QSize( 100, 100 ) );
-	QQmlEngine::setContextForObject( mainWindow_, qmlContext_.get() );
-}
+		, qmlEngine_( qmlEngine )
+		, qmlContext_( new QQmlContext( qmlEngine.rootContext() ) )
+		, mainWindow_( new QQuickWidget( &qmlEngine, nullptr ) )
+		, released_( false )
+		, application_( nullptr )
+		, isMaximizedInPreference_( false )
+		, firstTimeShow_( true )
+	{
+		mainWindow_->setMinimumSize( QSize( 100, 100 ) );
+		QQmlEngine::setContextForObject( mainWindow_, qmlContext_.get() );
+	}
 
 QmlWindow::~QmlWindow()
 {
@@ -80,7 +83,15 @@ QmlWindow::~QmlWindow()
 
 void QmlWindow::setContextObject( QObject * object )
 {
-    object->setParent( qmlContext_.get() );
+	auto qtScriptObject = dynamic_cast<QtScriptObject *>( object );
+	if(qtScriptObject)
+	{
+		qtScriptObject->setParent( qmlContext_.get() );
+	}
+	else
+	{
+		object->setParent(qmlContext_.get());
+	}
 	qmlContext_->setContextObject( object );
 }
 
@@ -92,7 +103,15 @@ void QmlWindow::setContextProperty(
         auto object = property.value< QObject * >();
         if(!object->isWidgetType() && !object->isWindowType())
         {
-            object->setParent( qmlContext_.get() );
+			auto qtScriptObject = dynamic_cast<QtScriptObject *>( object );
+			if(qtScriptObject)
+			{
+				qtScriptObject->setParent( qmlContext_.get() );
+			}
+			else
+			{
+				object->setParent(qmlContext_.get());
+			}
         }
     }
 	qmlContext_->setContextProperty( name, property );
@@ -366,7 +385,7 @@ void QmlWindow::savePreference()
     {
         return;
     }
-    std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+    std::string key = id_ + g_internalPreferenceId ;
     auto & preference = preferences->getPreference( key.c_str() );
     QByteArray geometryData = mainWindow_->saveGeometry();
     std::shared_ptr< BinaryBlock > geometry = 
@@ -400,7 +419,7 @@ bool QmlWindow::loadPreference()
         {
             break;
         }
-        std::string key = (id_ == "") ? g_internalPreferenceId : id_;
+        std::string key = id_ + g_internalPreferenceId ;
         auto & preference = preferences->getPreference( key.c_str() );
         // check the preferences
         auto accessor = preference->findProperty( "geometry" );
@@ -466,3 +485,4 @@ bool QmlWindow::loadPreference()
     NGT_DEBUG_MSG( "Load Qml Window Preferences Failed.\n" );
     return false;
 }
+} // end namespace wgt

@@ -3,6 +3,8 @@
 #include "core_reflection/property_accessor.hpp"
 #include "core_reflection/base_property.hpp"
 
+namespace wgt
+{
 TestPolyCheckBox::TestPolyCheckBox()
 	: checked_( false )
 {
@@ -10,7 +12,7 @@ TestPolyCheckBox::TestPolyCheckBox()
 }
 
 TestPolyTextField::TestPolyTextField()
-	: text_( "BigWorld" )
+	: text_( "Wargaming" )
 	, num_( 55 )
 {
 
@@ -67,3 +69,4 @@ void TestPolyColor3::setSelected( const int & select )
 {
 	seletColor_ = select;
 }
+} // end namespace wgt

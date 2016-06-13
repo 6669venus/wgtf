@@ -16,6 +16,8 @@
 #include <string>
 
 
+namespace wgt
+{
 namespace PythonType
 {
 
@@ -61,6 +63,5 @@ private:
 };
 
 } // namespace PythonType
-
-
+} // end namespace wgt
 #endif // PYTHON_TYPE_CONVERTER_HPP

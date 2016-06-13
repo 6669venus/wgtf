@@ -7,6 +7,8 @@
 #include <set>
 #include <map>
 
+namespace wgt
+{
 class RTTIHelper;
 
 class DefaultComponentContext
@@ -18,18 +20,18 @@ public:
 
 	IInterface * registerInterfaceImpl(
 		const TypeId &, IInterface * pImpl,
-		ContextRegState regState ); 
+		ContextRegState regState ) override;
 
-	bool deregisterInterface( IInterface * typeId );
+	bool deregisterInterface( IInterface * typeId ) override;
 
-	void * queryInterface( const TypeId & );
+	void * queryInterface( const TypeId & ) override;
 
 	void queryInterface(
 		const TypeId &,
-		std::vector< void * > & o_Impls );
+		std::vector< void * > & o_Impls ) override;
 
-	void registerListener( IComponentContextListener & listener );
-	void deregisterListener( IComponentContextListener & listener );
+	void registerListener( IComponentContextListener & listener ) override;
+	void deregisterListener( IComponentContextListener & listener ) override;
 
 private:
 	virtual void onInterfaceRegistered( InterfaceCaster & ) override;
@@ -41,5 +43,5 @@ private:
 	IComponentContext *									parentContext_;
 	std::vector< IComponentContextListener * >			listeners_;
 };
-
+} // end namespace wgt
 #endif

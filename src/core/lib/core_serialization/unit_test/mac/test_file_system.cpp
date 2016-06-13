@@ -4,6 +4,8 @@
 #include "core_serialization/file_system.hpp"
 #include <unistd.h>
 
+namespace wgt
+{
 TEST(file_sytem)
 {
 	FileSystem fileSystem;
@@ -71,3 +73,4 @@ TEST(file_sytem)
 
 	free(readedData);
 }
+} // end namespace wgt

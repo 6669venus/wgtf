@@ -13,6 +13,8 @@
 
 #include <memory>
 
+namespace wgt
+{
 class IResult
 {
 public:
@@ -24,5 +26,5 @@ public:
 };
 
 typedef std::unique_ptr<IResult> IResultPtr;
-
+} // end namespace wgt
 #endif // I_RESULT_H_

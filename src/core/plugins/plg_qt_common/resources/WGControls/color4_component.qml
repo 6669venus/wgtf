@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
-import BWControls 1.0
+
 
 // TODO:
 // * Labels should probably be set via C++/data somehow
@@ -13,7 +13,7 @@ import BWControls 1.0
 
 WGExpandingRowLayout {
     id: colorLayout
-    objectName:  itemData != null ? itemData.IndexPath : "color4_component"
+    objectName:  itemData != null ? itemData.indexPath : "color4_component"
 
     property bool showAlpha: true
 
@@ -50,7 +50,7 @@ WGExpandingRowLayout {
         WGColorButton {
             id: colButton
             objectName: "colorButton"
-            color: getColor(itemData.Value)
+            color: getColor(itemData.value)
             anchors.left: parent.left
             width: 40
             height: parent.height
@@ -58,9 +58,9 @@ WGExpandingRowLayout {
 
             onClicked: {
                 beginUndoFrame();
-                // moving init ColorDialog's color property here since using color: getColor(itemData.Value)
-                // in ColorDialog, the alpha channel data is always 255 which may not equals itemData.Value.w
-                reflectColorDialog.color = getColor(itemData.Value);
+                // moving init ColorDialog's color property here since using color: getColor(itemData.value)
+                // in ColorDialog, the alpha channel data is always 255 which may not equals itemData.value.w
+                reflectColorDialog.color = getColor(itemData.value);
                 reflectColorDialog.visible = true
             }
 
@@ -99,12 +99,12 @@ WGExpandingRowLayout {
             onAccepted: {
                 setValueHelper(colButton, "color", reflectColorDialog.color);
                 var vector = getVector(reflectColorDialog.color);
-                itemData.Value = vector;
+                itemData.value = vector;
                 endUndoFrame();
             }
             onCurrentColorChanged: {
-                if (!Qt.colorEqual(reflectColorDialog.currentColor, getColor(itemData.Value))) {
-                    itemData.Value = getVector(reflectColorDialog.currentColor)
+                if (!Qt.colorEqual(reflectColorDialog.currentColor, getColor(itemData.value))) {
+                    itemData.value = getVector(reflectColorDialog.currentColor)
                     setValueHelper(colButton, "color", reflectColorDialog.currentColor);
                 }
             }
@@ -130,34 +130,34 @@ WGExpandingRowLayout {
                 WGNumberBox {
                     id: boxX
                     objectName: "numberBox_X"
-                    number: itemData.Value.x
+                    number: itemData.value.x
                     minimumValue: 0
                     maximumValue: 255
 
                     onNumberChanged: {
-                        itemData.Value.x = number
+                        itemData.value.x = number
                     }
                 },
                 WGNumberBox {
                     id: boxY
                     objectName: "numberBox_Y"
-                    number: itemData.Value.y
+                    number: itemData.value.y
                     minimumValue: 0
                     maximumValue: 255
 
                     onNumberChanged: {
-                        itemData.Value.y = number
+                        itemData.value.y = number
                     }
                 },
                 WGNumberBox {
                     id: boxZ
                     objectName: "numberBox_Z"
-                    number: itemData.Value.z
+                    number: itemData.value.z
                     minimumValue: 0
                     maximumValue: 255
 
                     onNumberChanged: {
-                        itemData.Value.z = number
+                        itemData.value.z = number
                     }
                 }
             ]
@@ -175,7 +175,7 @@ WGExpandingRowLayout {
 
             visible: showAlpha
 
-            number: showAlpha ? itemData.Value.w : 255
+            number: showAlpha ? itemData.value.w : 255
             minimumValue: 0
             maximumValue: 255
             hasArrows: false
@@ -184,7 +184,7 @@ WGExpandingRowLayout {
             onNumberChanged: {
                 if(showAlpha)
                 {
-                    itemData.Value.w = number
+                    itemData.value.w = number
                 }
             }
         }

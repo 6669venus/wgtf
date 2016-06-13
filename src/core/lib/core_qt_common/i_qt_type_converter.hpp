@@ -1,13 +1,15 @@
 #ifndef I_QT_TYPE_CONVERTER_HPP
 #define I_QT_TYPE_CONVERTER_HPP
+
 #include "wg_types/binary_block.hpp"
 #include <core_variant/variant.hpp>
 #include <QVariant>
 
+Q_DECLARE_METATYPE( std::shared_ptr< wgt::BinaryBlock > );
 
+namespace wgt
+{
 class ObjectHandle;
-
-Q_DECLARE_METATYPE( std::shared_ptr< BinaryBlock > );
 
 /**
  *	Interface for converting custom C++ types to/from QVariant.
@@ -31,7 +33,7 @@ public:
 	virtual bool toQVariant(const Variant & variant, QVariant & o_qVariant, QObject* parent = nullptr ) const = 0;
 
 	virtual bool toQVariant( const ObjectHandle & object,
-		QVariant & o_qVariant ) const
+		QVariant & o_qVariant, QObject* parent = nullptr ) const
 	{ return false; };
 };
 
@@ -70,5 +72,5 @@ public:
 		return true;
 	}
 };
-
+} // end namespace wgt
 #endif

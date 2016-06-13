@@ -8,11 +8,13 @@
 	Windows-based output logging in Visual Studio.
  */
 
+namespace wgt
+{
 class WindowsDebugLogger : public ILogger
 {
 public:
 	virtual ~WindowsDebugLogger() {}
 	virtual void out( LogMessage* message );
 };
-
+} // end namespace wgt
 #endif // WINDOWS_DEBUG_LOGGER_HPP

@@ -5,6 +5,8 @@
 #include "core_data_model/reflection/reflected_object_item.hpp"
 
 
+namespace wgt
+{
 class IDefinitionManager;
 class IReflectionController;
 class PropertyAccessorListener;
@@ -37,5 +39,5 @@ private:
 	IDefinitionManager & definitionManager_;
 	std::shared_ptr< PropertyAccessorListener > listener_;
 };
-
+} // end namespace wgt
 #endif

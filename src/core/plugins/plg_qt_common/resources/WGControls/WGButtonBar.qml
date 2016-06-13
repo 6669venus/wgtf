@@ -39,7 +39,7 @@ WGButtonBar {
         WGPushButton {
             text: "Tag label"
             checkable: true
-            checked: Value.active
+            checked: value.active
             style: WGTagButtonStyle{}
         },
         WGToolButton {

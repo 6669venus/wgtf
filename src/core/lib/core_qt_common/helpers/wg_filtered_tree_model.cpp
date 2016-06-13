@@ -10,6 +10,8 @@
 
 #include <QRegExp>
 
+namespace wgt
+{
 struct WGFilteredTreeModel::Implementation
 {
 	Implementation( WGFilteredTreeModel & self );
@@ -70,7 +72,7 @@ WGFilteredTreeModel::~WGFilteredTreeModel()
 	impl_->connections_.reset();
 	
 	// Temporary hack to circumvent threading deadlock
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-227
+	// JIRA: NGT-227
 	impl_->filteredModel_.setSource( nullptr );
 	// End temporary hack
 
@@ -113,3 +115,4 @@ void WGFilteredTreeModel::setFilter( QObject * filter )
 	auto wgFilter = qobject_cast< WGFilter * >( filter );
 	impl_->setFilter( wgFilter );
 }
+} // end namespace wgt

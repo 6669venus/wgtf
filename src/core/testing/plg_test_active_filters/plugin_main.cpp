@@ -6,6 +6,9 @@
 #include "core_qt_common/i_qt_framework.hpp"
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
+
+#include "core_dependency_system/depends.hpp"
 
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/reflection_macros.hpp"
@@ -15,6 +18,8 @@
 
 #include "active_filters_test_view_model.hpp"
 
+namespace wgt
+{
 //------------------------------------------------------------------------------
 // Plugin Class
 // Spins up an instance of the plugin and creates the panel with the view
@@ -22,10 +27,14 @@
 //------------------------------------------------------------------------------
 class TestActiveFiltersPlugin
 	: public PluginMain
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
-	TestActiveFiltersPlugin( IComponentContext & contextManager ) {}
+	TestActiveFiltersPlugin( IComponentContext & contextManager )
+		: Depends( contextManager )
+	{
+	}
 
 	//==========================================================================
 	void Initialise(IComponentContext & contextManager) override
@@ -45,35 +54,19 @@ public:
 			return;
 		}
 
-		defManager->registerDefinition( new TypeClassDefinition< ActiveFiltersTestViewModel >() );
+		defManager->registerDefinition< TypeClassDefinition< ActiveFiltersTestViewModel > >();
 
 		auto testViewModel = defManager->create< ActiveFiltersTestViewModel >();
 		testViewModel->init( *defManager, *uiFramework );
 
-		auto qtFramework = contextManager.queryInterface< IQtFramework >();
-		if (qtFramework == nullptr)
+		auto viewCreator = get< IViewCreator >();
+		if (viewCreator == nullptr)
 		{
 			return;
 		}
-
-		testView_ = qtFramework->createView( 
-			"plg_test_active_filters/active_filters_test_panel.qml",
-			IUIFramework::ResourceType::Url, testViewModel );
-
-		auto uiApplication = contextManager.queryInterface< IUIApplication >();
-		if (uiApplication == nullptr)
-		{
-			return;
-		}
-
-		if (testView_ != nullptr)
-		{
-			uiApplication->addView( *testView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
-		}
+		viewCreator->createView( 
+			"TestActiveFilters/ActiveFiltersTestPanel.qml",
+			testViewModel, testView_ );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
@@ -97,4 +90,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestActiveFiltersPlugin )
-
+} // end namespace wgt

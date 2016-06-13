@@ -5,6 +5,8 @@
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/property_accessor.hpp"
 
+namespace wgt
+{
 TEST_F( TestReflectionFixture, testBinding )
 {
 	TestStructure & testStructure = getTestStructure();
@@ -23,3 +25,4 @@ TEST_F( TestReflectionFixture, testBinding )
 	}
 
 }
+} // end namespace wgt

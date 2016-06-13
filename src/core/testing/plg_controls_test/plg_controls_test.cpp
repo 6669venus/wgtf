@@ -8,6 +8,8 @@
 #include <memory>
 
 
+namespace wgt
+{
 class ControlsTestUIPlugin
 	: public PluginMain
 {
@@ -50,4 +52,4 @@ private:
 
 
 PLG_CALLBACK_FUNC( ControlsTestUIPlugin )
-
+} // end namespace wgt

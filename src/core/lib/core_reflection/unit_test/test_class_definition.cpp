@@ -17,6 +17,8 @@
 
 #include "core_variant/collection.hpp"
 
+namespace wgt
+{
 std::ostream & operator << (
 	std::ostream & output, const TypeId & propType )
 {
@@ -902,4 +904,4 @@ TEST_F( TestDefinitionFixture, multidimensional )
 	CHECK( v1.tryCast( s1 ) );
 	CHECK_EQUAL( "two", s1 );
 }
-
+} // end namespace wgt

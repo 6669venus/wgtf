@@ -5,6 +5,8 @@
 #include "metadata/ui_test_panel_context.mpp"
 
 
+namespace wgt
+{
 namespace
 {
 
@@ -28,7 +30,7 @@ void callMethod( Variant & object,
 	}
 
 	ReflectedMethodParameters parameters;
-	property->invoke( handle, parameters );
+	property->invoke( handle, definitionManager, parameters );
 }
 
 } // namespace
@@ -80,4 +82,4 @@ void PanelContext::updateValues()
 	callMethod( oldStylePythonObject_, definitionManager, methodName );
 	callMethod( newStylePythonObject_, definitionManager, methodName );
 }
-
+} // end namespace wgt

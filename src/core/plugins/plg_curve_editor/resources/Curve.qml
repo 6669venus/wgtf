@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import BWControls 1.0
 import WGControls 1.0 as WGOne
 import WGControls 2.0
 
@@ -139,7 +138,7 @@ Canvas {
         model: pointModel
         delegate: Point{
             objectName: index
-            point: Value;
+            point: value;
             parentCurve: curve;
             baseColor: curve.color;
             enabled: curve.enabled;
@@ -231,7 +230,7 @@ Canvas {
         }
     }
 
-    BWDataChangeNotifier
+    WGDataChangeNotifier
     {
         source: curveModel.notifyDirty
         onDataChanged:

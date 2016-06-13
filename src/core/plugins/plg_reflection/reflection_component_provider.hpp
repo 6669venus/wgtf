@@ -4,6 +4,8 @@
 #include "core_ui_framework/i_component_provider.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 class ReflectionComponentProvider : public IComponentProvider
 {
 public:
@@ -30,5 +32,5 @@ public:
 public:
 	IDefinitionManager & defManager_;
 };
-
+} // end namespace wgt
 #endif//REFLECTION_COMPONENT_PROVIDER_HPP

@@ -8,6 +8,8 @@
 #include "i_item_role.hpp"
 #include <sstream>
 
+namespace wgt
+{
 static const char * sDefaultActiveFiltersPropertyKey = "activefilters";
 static const char * sTempSavedFilterPrefix = "Filter";
 
@@ -159,7 +161,7 @@ void SimpleActiveFiltersModel::Impl::loadSavedFilterPreferences()
 	for (size_t i = 1; i <= count; ++i)
 	{
 		// TODO - allow the user to input the name for the saved filter
-		// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+		// JIRA - NGT-1484
 		std::string name = sTempSavedFilterPrefix + std::to_string( i );
 		std::string value( "" );
 
@@ -255,7 +257,7 @@ std::string SimpleActiveFiltersModel::saveFilter( bool overwrite )
 
 		// Create the new filter string
 		// TODO - allow the user to input the name for the saved filter
-		// JIRA - http://jira.bigworldtech.com/browse/NGT-1484
+		// JIRA - NGT-1484
 		++propertyCount;
 		std::stringstream stream;
 		stream << sTempSavedFilterPrefix << propertyCount;
@@ -314,5 +316,6 @@ bool SimpleActiveFiltersModel::loadFilter( std::string filterId )
 void SimpleActiveFiltersModel::clearSavedFilters()
 {
 	// TODO - can't even do this as GenericObject has no way to clear its properties
-	// JIRA: http://jira.bigworldtech.com/browse/NGT-861
+	// JIRA: NGT-861
 }
+} // end namespace wgt

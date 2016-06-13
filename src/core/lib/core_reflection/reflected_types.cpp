@@ -6,6 +6,8 @@
 
 #include "metadata/meta_impl.hpp"
 
+namespace wgt
+{
 namespace Reflection
 {
 
@@ -39,3 +41,4 @@ void initReflectedTypes( IDefinitionManager & definitionManager )
 }
 
 }
+} // end namespace wgt

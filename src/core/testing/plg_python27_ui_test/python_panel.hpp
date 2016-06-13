@@ -9,13 +9,16 @@
 #include <memory>
 
 
+namespace wgt
+{
 class IUIFramework;
 class IUIApplication;
-
+class IViewCreator;
 
 #define DEPENDS_ON_CLASSES \
 	IUIFramework, \
-	IUIApplication
+	IUIApplication,\
+	IViewCreator
 
 
 /**
@@ -23,9 +26,6 @@ class IUIApplication;
  */
 class PythonPanel: Depends<DEPENDS_ON_CLASSES>
 {
-	typedef Depends<DEPENDS_ON_CLASSES> DepsBase;
-
-
 public:
 	PythonPanel( IComponentContext & context,
 		ObjectHandle & contextObject );
@@ -51,4 +51,4 @@ private:
 	std::unique_ptr<IView> pythonView_;
 	ObjectHandle contextObject_;
 };
-
+} // end namespace wgt

@@ -4,6 +4,8 @@
 #include "core_data_model/i_list_model.hpp"
 #include <vector>
 
+namespace wgt
+{
 class PropertyAccessor;
 class MetaEnumObj;
 
@@ -23,5 +25,5 @@ public:
 private:
 	std::vector< IItem * > items_;
 };
-
+} // end namespace wgt
 #endif // REFLECTED_ENUM_MODEL_HPP

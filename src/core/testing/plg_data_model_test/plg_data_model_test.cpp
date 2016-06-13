@@ -3,13 +3,18 @@
 #include "core_variant/variant.hpp"
 #include "core_variant/default_meta_type_manager.hpp"
 
+namespace wgt
+{
 //==============================================================================
 class TestDataModelPlugin
 	: public PluginMain
 {
 public:
 	//==========================================================================
-	TestDataModelPlugin( IComponentContext & contextManager ) {}
+	TestDataModelPlugin( IComponentContext & contextManager )
+		: customModelInterfaceTest( contextManager )
+	{
+	}
 
 	//==========================================================================
 	void Initialise(IComponentContext & contextManager) override
@@ -32,4 +37,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( TestDataModelPlugin )
-
+} // end namespace wgt

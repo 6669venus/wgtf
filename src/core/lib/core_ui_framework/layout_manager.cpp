@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <cassert>
 
+namespace wgt
+{
 namespace 
 {
 	const char * safe_str( const char * str )
@@ -24,7 +26,6 @@ bool LayoutManager::matchMenu( IMenu & menu, const char * path )
 	auto menuPathLen = strlen( menuPath );
 
 	auto chr = strchr( path, '|' );
-	auto minPath = chr != nullptr ? path : nullptr;
 	auto minPathLen = chr != nullptr ? static_cast< size_t >( chr - path ) : 0;
 	auto optPath = chr != nullptr ? chr + 1 : path;
 
@@ -408,3 +409,4 @@ const Windows & LayoutManager::windows() const
 {
 	return windows_;
 }
+} // end namespace wgt

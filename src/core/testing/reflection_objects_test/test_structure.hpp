@@ -6,6 +6,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/i_definition_manager.hpp"
 
+namespace wgt
+{
 typedef uint32_t uint32;
 typedef int64_t int64;
 typedef uint64_t uint64;
@@ -34,5 +36,5 @@ struct TestInheritedStruct
 
 	DEFINE_INHERITS_TEST_DATA_TYPES()
 };
-
+} // end namespace wgt
 #endif //TEST_STRUCTURE

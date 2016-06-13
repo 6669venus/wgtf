@@ -8,15 +8,23 @@
 #include "core_ui_framework/i_ui_framework.hpp"
 #include "core_ui_framework/i_view.hpp"
 #include "core_ui_framework/i_window.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 #include "core_variant/variant.hpp"
+#include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
 //==============================================================================
 class ContextMenuTest
 	: public PluginMain
+	, public Depends< IViewCreator >
 {
 public:
 	//==========================================================================
-	ContextMenuTest( IComponentContext & contextManager ){}
+	ContextMenuTest( IComponentContext & contextManager )
+		: Depends( contextManager )
+	{
+	}
 
 	//==========================================================================
 	bool PostLoad( IComponentContext & contextManager )
@@ -51,18 +59,13 @@ public:
 			std::bind( &ContextMenuTest::canTestPerforce, this, _1 ));
 		uiApplication->addAction( *cmTestCheckOut_ );
 
-		// Create the view and present it
-		testView_ = uiFramework->createView(
-			"plg_context_menu_test/test_contextmenu_panel.qml",
-			IUIFramework::ResourceType::Url );
-
-		if (testView_ != nullptr)
+		auto viewCreator = get< IViewCreator >();
+		if (viewCreator)
 		{
-			uiApplication->addView( *testView_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
+			// Create the view and present it
+			viewCreator->createView(
+				"plg_context_menu_test/test_contextmenu_panel.qml",
+				ObjectHandle(), testView_ );
 		}
 	}
 
@@ -133,4 +136,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( ContextMenuTest )
-
+} // end namespace wgt

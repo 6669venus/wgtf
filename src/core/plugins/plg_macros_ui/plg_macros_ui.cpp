@@ -15,13 +15,19 @@
 
 #include "core_ui_framework/i_ui_application.hpp"
 #include "core_ui_framework/i_view.hpp"
+#include "core_ui_framework/interfaces/i_view_creator.hpp"
 
+#include "core_dependency_system/depends.hpp"
 
+namespace wgt
+{
 class MacrosUIPlugin
 	: public PluginMain
+	, public Depends< IViewCreator >
 {
 public:
 	MacrosUIPlugin( IComponentContext& contextManager )
+		: Depends( contextManager )
 	{
 	}
 
@@ -35,12 +41,6 @@ public:
 		Variant::setMetaTypeManager(
 			contextManager.queryInterface< IMetaTypeManager >() );
 
-		auto uiApplication = Context::queryInterface< IUIApplication >();
-		if (uiApplication == nullptr)
-		{
-			return;
-		}
-		
 		auto qtFramework = Context::queryInterface< IQtFramework >();
 		if (qtFramework == nullptr)
 		{
@@ -69,17 +69,13 @@ public:
 		macros_ = pMacroDefinition->create();
 		macros_.getBase< MacrosObject >()->init( *pCommandSystemProvider );
 
-		panel_ = qtFramework->createView( 
-			"WGMacros/WGMacroView.qml",
-			IUIFramework::ResourceType::Url, macros_ );
-
-		if (panel_ != nullptr)
+		auto viewCreator = get< IViewCreator >();
+		if (viewCreator)
 		{
-			uiApplication->addView( *panel_ );
-		}
-		else
-		{
-			NGT_ERROR_MSG( "Failed to load qml\n" );
+			viewCreator->createView(
+				"WGMacros/WGMacroView.qml",
+				macros_,
+				panel_);
 		}
 	}
 
@@ -105,3 +101,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( MacrosUIPlugin )
+} // end namespace wgt

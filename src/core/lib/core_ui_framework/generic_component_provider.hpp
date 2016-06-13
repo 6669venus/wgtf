@@ -3,6 +3,8 @@
 
 #include "simple_component_provider.hpp"
 
+namespace wgt
+{
 template< typename T >
 class GenericComponentProvider : public SimpleComponentProvider
 {
@@ -29,5 +31,5 @@ public:
 		return SimpleComponentProvider::componentId( typeId, predicate );
 	}
 };
-
+} // end namespace wgt
 #endif

@@ -6,6 +6,8 @@
 #include "core_reflection/i_definition_manager.hpp"
 #include "core_dependency_system/i_interface.hpp"
 
+namespace wgt
+{
 class GenericProperty;
 
 class ContextDefinitionManager
@@ -25,7 +27,7 @@ private:
 	IClassDefinition * getDefinition( const char * name ) const override;
 	IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
 
-	IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) override;
+	IClassDefinition * registerDefinition( std::unique_ptr<IClassDefinitionDetails> definition ) override;
 
 	bool deregisterDefinition( const IClassDefinition * definition ) override;
 
@@ -51,11 +53,11 @@ private:
 
 	const PropertyAccessorListeners & getPropertyAccessorListeners() const override;
 
-	IClassDefinitionDetails * createGenericDefinition( const char * name ) const override;
+	std::unique_ptr<IClassDefinitionDetails> createGenericDefinition( const char * name ) const override;
 private:
 	IDefinitionManager * pBaseManager_;
 	std::set<const IClassDefinition *> contextDefinitions_;
 	const std::wstring contextName_;
 };
-
+} // end namespace wgt
 #endif // CONTEXT_DEFINITION_MANAGER_HPP

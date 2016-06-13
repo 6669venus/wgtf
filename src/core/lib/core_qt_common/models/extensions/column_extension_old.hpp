@@ -4,6 +4,8 @@
 #include "i_model_extension.hpp"
 #include <memory>
 
+namespace wgt
+{
 class ColumnExtensionOld : public IModelExtension
 {
 public:
@@ -31,5 +33,5 @@ private:
 	struct Implementation;
 	std::unique_ptr<Implementation> impl_;
 };
-
+} // end namespace wgt
 #endif // COLUMN_EXTENSION_OLD_HPP

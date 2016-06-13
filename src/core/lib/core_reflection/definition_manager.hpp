@@ -8,6 +8,8 @@
 
 #include "wg_types/hashed_string_ref.hpp"
 
+namespace wgt
+{
 /**
  * DefinitionManager
  */
@@ -19,8 +21,7 @@ public:
 	virtual IClassDefinition * getDefinition( const char * name ) const override;
 	virtual IClassDefinition * getObjectDefinition( const ObjectHandle & object ) const override;
 
-	IClassDefinitionDetails * createGenericDefinition(
-		const char * name ) const override;
+	std::unique_ptr<IClassDefinitionDetails>  createGenericDefinition( const char * name ) const override;
 
 	virtual void getDefinitionsOfType( const IClassDefinition * definition,
 		std::vector< IClassDefinition * > & o_Definitions ) const override;
@@ -37,7 +38,7 @@ public:
 
 	virtual IObjectManager * getObjectManager() const override;
 
-	virtual IClassDefinition * registerDefinition( IClassDefinitionDetails * definition ) override;
+	virtual IClassDefinition * registerDefinition( std::unique_ptr<IClassDefinitionDetails> definition ) override;
 	virtual bool deregisterDefinition( const IClassDefinition * definition ) override;
 
 	bool serializeDefinitions( ISerializer & serializer ) override;
@@ -61,6 +62,5 @@ private:
 	PropertyAccessorListeners listeners_;
 	IObjectManager & objectManager_;
 };
-
-
+} // end namespace wgt
 #endif // DEFINITION_MANAGER_HPP

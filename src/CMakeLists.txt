@@ -1,4 +1,4 @@
-# Root level BigWorld CMake script. CMake should always be invoked at this
+# Root level Wargaming CMake script. CMake should always be invoked at this
 # level rather than on specific subdirectories. Specify what projects you
 # want to generate using the BW_CMAKE_TARGET option, e.g.
 #
@@ -8,10 +8,10 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.1.1 )
 
 # Ensure the BW_CMAKE_TARGET has been set
 IF( NOT BW_CMAKE_TARGET )
-	MESSAGE( FATAL_ERROR "BW_CMAKE_TARGET is not set, either configure CMake by running build/bigworld_cmake.bat or specify BW_CMAKE_TARGET when invoking CMake." )
+	MESSAGE( FATAL_ERROR "BW_CMAKE_TARGET is not set, either configure CMake by running build/wg_cmake.bat or specify BW_CMAKE_TARGET when invoking CMake." )
 ENDIF()
 
-# Set the BigWorld source directory
+# Set the Wargaming source directory
 SET( WG_TOOLS_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR} )
 
 # Still set BW_SOURCE_DIR here for just back compatibility, don't use BW_SOURCE_DIR for new code
@@ -28,7 +28,7 @@ SET( CMAKE_CONFIGURATION_TYPES Debug;Hybrid;Release
 	FORCE )
 
 # Include useful macros
-INCLUDE( BWMacros )
+INCLUDE( WGMacros )
 
 # Detect clang-cl
 IF( ${CMAKE_C_COMPILER_ID} MATCHES "Clang" )
@@ -36,7 +36,7 @@ IF( ${CMAKE_C_COMPILER_ID} MATCHES "Clang" )
 ENDIF()
 
 # Set compiler and linker options
-INCLUDE( BWCompilerAndLinkerOptions )
+INCLUDE( WGCompilerAndLinkerOptions )
 
 # Ensure we have a functioning compiler. Work around CMake failing to detect
 # that the compiler is unknown, do this by making sure there's some flags
@@ -57,25 +57,25 @@ GET_FILENAME_COMPONENT( BW_GAME_DIR "${PROJECT_SOURCE_DIR}/../bin" REALPATH )
 # Options
 OPTION( BW_UNIT_TESTS_ENABLED "Enable unit tests" ON )
 
-# Discover available BigWorld projects to generate. These are defined by
-# BWConfiguration_<name>.cmake files in the cmake module path.
-FILE( GLOB _target_cmake_files "${CMAKE_MODULE_PATH}/BWConfiguration_*.cmake" )
+# Discover available Wargaming projects to generate. These are defined by
+# WGConfiguration_<name>.cmake files in the cmake module path.
+FILE( GLOB _target_cmake_files "${CMAKE_MODULE_PATH}/WGConfiguration_*.cmake" )
 FOREACH( _filename ${_target_cmake_files} )
 	GET_FILENAME_COMPONENT( _target_name ${_filename} NAME_WE )
-	STRING( REPLACE "BWConfiguration_" "" _target_name ${_target_name} )
+	STRING( REPLACE "WGConfiguration_" "" _target_name ${_target_name} )
 	SET( BW_AVAILABLE_TARGETS ${BW_AVAILABLE_TARGETS} ${_target_name} )
 ENDFOREACH()
 
 # What are we generating?
 LIST( FIND BW_AVAILABLE_TARGETS ${BW_CMAKE_TARGET} _exists )
 IF( NOT ${_exists} EQUAL -1 )
-	MESSAGE( STATUS "Generating BigWorld ${BW_CMAKE_TARGET}..." )
+	MESSAGE( STATUS "Generating Wargaming ${BW_CMAKE_TARGET}..." )
 ELSE()
-	MESSAGE( FATAL_ERROR "Unknown BigWorld CMake target '${BW_CMAKE_TARGET}'." )
+	MESSAGE( FATAL_ERROR "Unknown Wargaming CMake target '${BW_CMAKE_TARGET}'." )
 ENDIF()
 
 SET( BW_CMAKE_TARGET ${BW_CMAKE_TARGET}
-	CACHE STRING "Type of BigWorld project to generate" )
+	CACHE STRING "Type of Wargaming project to generate" )
 
 # Set BW_IS_<name> variables
 FOREACH( _targetname ${BW_AVAILABLE_TARGETS} )
@@ -93,7 +93,6 @@ SET_PROPERTY( GLOBAL PROPERTY USE_FOLDERS ON )
 
 # Default feature support, may be overridden by target configuration
 SET( BW_PCH_SUPPORT ON )
-SET( BW_ASSET_PIPELINE_SUPPORT OFF )
 SET( USE_MEMHOOK OFF )
 SET( BW_FMOD_SUPPORT ON )
 SET( BW_PYTHON_MODULE_SUPPORT OFF )
@@ -101,14 +100,13 @@ SET( BW_PYTHON_DLL_SUPPORT ON )
 SET( BW_SCALEFORM_SUPPORT OFF )
 SET( BW_SPEEDTREE_SUPPORT ON )
 SET( BW_UMBRA_SUPPORT ON )
-SET( BW_SINGLETON_MANAGER_SUPPORT OFF )
 SET( NGT_SUPPORT OFF )
 SET( CORE_PYTHON_SUPPORT OFF )
 SET( DEPLOY_QT_SUPPORT OFF )
 SET( DEPLOY_PYTHON_SUPPORT OFF )
 
 # Include target specific configuration
-INCLUDE( BWConfiguration_${BW_CMAKE_TARGET} )
+INCLUDE( WGConfiguration_${BW_CMAKE_TARGET} )
 
 # blob specific configuration
 IF( BW_BLOB_CONFIG )
@@ -123,9 +121,6 @@ ENDIF()
 # Add feature flags
 IF( BW_PCH_SUPPORT )
 	ADD_DEFINITIONS( -DPCH_SUPPORT=1 )
-ENDIF()
-IF( BW_ASSET_PIPELINE_SUPPORT )
- 	ADD_DEFINITIONS( -DASSET_PIPELINE_SUPPORT=1 )
 ENDIF()
 IF( USE_MEMHOOK )
 	ADD_DEFINITIONS( -DUSE_MEMHOOK=1 )
@@ -159,9 +154,6 @@ ENDIF()
 IF( BW_UMBRA_SUPPORT )
 	ADD_DEFINITIONS( -DUMBRA_ENABLE=1 )
 ENDIF()
-IF( BW_SINGLETON_MANAGER_SUPPORT )
-	ADD_DEFINITIONS( -DENABLE_SINGLETON_MANAGER )
-ENDIF()
 IF( NGT_SUPPORT )
 	ADD_DEFINITIONS( -DENABLE_NGT_SUPPORT )
 ENDIF()
@@ -190,8 +182,6 @@ ELSE()
 	BW_SET_EXECUTABLE_DST_DIR("${BW_GAME_DIR}/${TARGET_PLUGIN_APP_FOLDER_NAME}/${BW_PLATFORM}")
 ENDIF()
 
-BW_SET_ASSET_PIPELINE_DST_DIR("${BW_GAME_DIR}/asset_pipeline/${BW_PLATFORM}")
-
 # Add libraries
 ARRAY2D_BEGIN_LOOP( _islooping "${BW_LIBRARY_PROJECTS}" 2 "libname;libpath" )
 	WHILE( _islooping )
@@ -203,7 +193,7 @@ ARRAY2D_BEGIN_LOOP( _islooping "${BW_LIBRARY_PROJECTS}" 2 "libname;libpath" )
 ARRAY2D_END_LOOP()
 
 # Add executables
-INCLUDE( BWProjectUserFile )
+INCLUDE( WGProjectUserFile )
 ARRAY2D_BEGIN_LOOP( _islooping "${BW_BINARY_PROJECTS}" 2 "projname;projpath" )
 	WHILE( _islooping )
 		MESSAGE( STATUS "Adding executable: ${projname} from ${projpath}" )

@@ -10,6 +10,8 @@
 #include "core_data_model/asset_browser/i_asset_browser_event_model.hpp"
 #include "interfaces/panel_manager/i_panel_manager.hpp"
 
+namespace wgt
+{
 //==============================================================================
 class TestPanelManagerPlugin
 	: public PluginMain
@@ -43,11 +45,7 @@ public:
 		
 		auto dataDef = definitionManager->getDefinition<IAssetBrowserModel>();
 		dataModel_ = ObjectHandleT<IAssetBrowserModel>(std::move(browserModel), dataDef);
-		assetBrowserView_ = panelManager->createAssetBrowser( dataModel_ );
-		if (assetBrowserView_ != nullptr)
-		{
-			uiApplication->addView( *assetBrowserView_ );
-		}
+		panelManager->createAssetBrowser( dataModel_, assetBrowserView_ );
 	}
 
 	bool Finalise( IComponentContext & contextManager ) override
@@ -76,3 +74,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC(TestPanelManagerPlugin)
+} // end namespace wgt

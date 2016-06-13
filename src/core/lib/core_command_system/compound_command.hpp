@@ -4,6 +4,8 @@
 #include "command.hpp"
 #include "core_reflection/reflected_object.hpp"
 
+namespace wgt
+{
 class MacroObject;
 class IReflectionController;
 
@@ -36,5 +38,5 @@ private:
 	std::string id_;
 	ObjectHandleT<MacroObject> macroObject_;
 };
-
+} // end namespace wgt
 #endif //COMPOUND_COMMAND_HPP

@@ -10,6 +10,8 @@
 
 #include "core_serialization/file_system.hpp"
 
+namespace wgt
+{
 /**
  * FileSystemPlugin
  *
@@ -53,3 +55,4 @@ private:
 };
 
 PLG_CALLBACK_FUNC( FileSystemPlugin )
+} // end namespace wgt

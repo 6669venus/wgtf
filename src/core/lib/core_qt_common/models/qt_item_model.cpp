@@ -239,7 +239,7 @@ QVariant QtItemModel::data( const QModelIndex &index, int role ) const
 		return QVariant();
 	}
 	
-	size_t roleId = role;
+	size_t roleId = static_cast<unsigned int>(role);
 	switch (role)
 	{
 	case Qt::DisplayRole:

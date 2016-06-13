@@ -7,6 +7,7 @@
 #include "core_data_model/abstract_item_model.hpp"
 #include "core_data_model/abstract_item.hpp"
 
+#include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/ref_object_id.hpp"
 #include "core_reflection/object_handle.hpp"
 #include "core_variant/type_id.hpp"
@@ -16,9 +17,6 @@
 namespace wgt
 {
 
-class ICommandManager;
-class IDefinitionManager;
-class IReflectionController;
 class ReflectedPropertyModel;
 
 class RefPropertyItem: public AbstractItem

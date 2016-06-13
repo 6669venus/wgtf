@@ -3,6 +3,7 @@
 
 #include "property_model_extensions.hpp"
 #include "core_dependency_system/depends.hpp"
+#include "core_reflection/interfaces/i_reflection_controller.hpp"
 
 namespace wgt
 {

@@ -8,6 +8,7 @@
 #include "core_data_model/reflection/reflected_property_model.hpp"
 
 #include "core_command_system/i_command_manager.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/base_property.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"

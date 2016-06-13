@@ -5,6 +5,8 @@
 #include "core_reflection/reflected_object.hpp"
 #include "core_reflection/base_property.hpp"
 
+#include "core_command_system/i_command_manager.hpp"
+
 namespace wgt
 {
 

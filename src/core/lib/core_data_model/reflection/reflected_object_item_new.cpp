@@ -3,6 +3,7 @@
 #include "reflected_property_item_new.hpp"
 
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
 #include "core_reflection/metadata/meta_utilities.hpp"
 #include "core_reflection/object_handle.hpp"
@@ -15,8 +16,6 @@
 
 namespace wgt
 {
-ITEMROLE( display )
-ITEMROLE( itemId )
 
 namespace
 {

@@ -4,21 +4,26 @@
 #include "wg_types/hash_utilities.hpp"
 
 #define ITEMROLE( ROLE )														\
+namespace wgt {																	\
 namespace ItemRole {															\
 	namespace {																	\
 		const char * ROLE##Name = #ROLE;										\
 		const unsigned int ROLE##Id = ItemRole::compute( #ROLE );				\
 	}																			\
+}																				\
 }
 
 namespace wgt
 {
+
 namespace ItemRole
 {
-	inline unsigned int compute( const char * roleName )
-	{
-		return static_cast<unsigned int>(HashUtilities::compute( roleName ));
-	}
+
+inline unsigned int compute(const char * roleName)
+{
+    return static_cast<unsigned int>(HashUtilities::compute(roleName));
+}
+
 }
 
 // DEPRECATED

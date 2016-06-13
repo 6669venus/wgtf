@@ -1,6 +1,7 @@
 #include "file_system_model.hpp"
 #include "core_data_model/abstract_item.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "core_serialization/i_file_system.hpp"
 
 #include <string>
@@ -24,7 +25,7 @@ namespace
 
 		Variant getData( int column, size_t roleId ) const override
 		{
-			static size_t displayRole = ItemRole::compute( "display" );
+			static size_t displayRole = ItemRole::displayId;
 			if (roleId == displayRole)
 			{
 				return fileInfo_->name();

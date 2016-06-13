@@ -46,6 +46,7 @@ SET( MODEL_SRCS
 	value_change_notifier.hpp
 	selection_handler.cpp
 	selection_handler.hpp
+	common_data_roles.hpp
 )
 SOURCE_GROUP( "DataModel" FILES ${MODEL_SRCS} )
 

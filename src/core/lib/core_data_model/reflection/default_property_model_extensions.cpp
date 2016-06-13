@@ -4,6 +4,7 @@
 #include "reflected_enum_model.hpp"
 
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "core_data_model/reflection/reflected_property_model.hpp"
 
 #include "core_command_system/i_command_manager.hpp"
@@ -144,17 +145,21 @@ DefaultSetterGetterExtension::DefaultSetterGetterExtension(IComponentContext& co
 
 Variant DefaultSetterGetterExtension::getValue(const RefPropertyItem* item, int column, size_t roleId, IDefinitionManager& defMng) const
 {
-    if (roleId == ValueTypeRole::roleId_)
+    if (roleId == ItemRole::displayId)
+    {
+        return item->getProperty()->getName();
+    }
+    else if (roleId == ItemRole::itemIdId)
+    {
+        return item->getProperty()->getName();
+    }
+    else if (roleId == ItemRole::valueTypeId)
     {
         return item->getProperty()->getType().getName();
     }
-    else if (roleId == ValueRole::roleId_)
+    else if (roleId == ItemRole::valueId)
     {
         return item->getValue();
-    }
-    else if (roleId == IndexPathRole::roleId_)
-    {
-        return item->getIndexPath();
     }
     else if (roleId == IsEnumRole::roleId_)
     {

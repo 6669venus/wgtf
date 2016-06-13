@@ -7,6 +7,7 @@
 #include "reflected_tree_model_new.hpp"
 
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "core_reflection/interfaces/i_base_property.hpp"
 #include "core_reflection/interfaces/i_reflection_controller.hpp"
 #include "core_reflection/metadata/meta_impl.hpp"
@@ -20,17 +21,14 @@
 #include <codecvt>
 #include <limits>
 
-namespace wgt
-{
-ITEMROLE( display )
-ITEMROLE( value )
-ITEMROLE( valueType )
 ITEMROLE( key )
 ITEMROLE( keyType )
 ITEMROLE( isCollection )
 ITEMROLE( elementValueType )
 ITEMROLE( elementKeyType )
-ITEMROLE( itemId )
+
+namespace wgt
+{
 
 namespace
 {

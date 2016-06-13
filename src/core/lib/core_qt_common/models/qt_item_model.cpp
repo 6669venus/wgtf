@@ -2,12 +2,13 @@
 
 #include "core_data_model/abstract_item_model.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "helpers/qt_helpers.hpp"
+
+ITEMROLE( decoration )
 
 namespace wgt
 {
-ITEMROLE( display )
-ITEMROLE( decoration )
 
 struct QtItemModel::Impl
 {

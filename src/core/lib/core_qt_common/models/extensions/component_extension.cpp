@@ -1,14 +1,15 @@
 #include "component_extension.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "core_qt_common/i_qt_framework.hpp"
 
 #include <QQmlComponent>
 #include <QModelIndex>
 
+ITEMROLE( component )
+
 namespace wgt
 {
-ITEMROLE( valueType )
-ITEMROLE( component )
 
 ComponentExtension::ComponentExtension()
 	: qtFramework_( Context::queryInterface< IQtFramework >() )

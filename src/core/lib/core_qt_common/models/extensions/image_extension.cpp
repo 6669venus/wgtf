@@ -4,9 +4,10 @@
 
 #include <QIcon>
 
+ITEMROLE( image )
+
 namespace wgt
 {
-ITEMROLE( image )
 
 ImageExtension::ImageExtension()
 {

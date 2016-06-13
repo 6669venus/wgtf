@@ -1,5 +1,6 @@
 #include "wg_item_view.hpp"
 #include "qt_connection_holder.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "models/extensions/i_model_extension.hpp"
 #include "models/qt_abstract_item_model.hpp"
 
@@ -13,10 +14,10 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+ITEMROLE( modelIndex )
+
 namespace wgt
 {
-ITEMROLE( itemId )
-ITEMROLE( modelIndex )
 
 namespace
 {
@@ -48,7 +49,7 @@ namespace
 				}
 			}
 
-			QVariant id = index.model()->data( index, static_cast< int >( ItemRole::itemIdId ) );
+			QVariant id = index.model()->data( index, static_cast< int >(ItemRole::itemIdId) );
 			{
 				auto it = itemIds_.find( id );
 				if (it != itemIds_.end())

@@ -278,7 +278,7 @@ void ReflectedPropertyModel::update(RefPropertyItem* item)
     Variant value = item->evalValue(defManager);
     if (value != item->itemValue)
     {
-        preDataChanged(itemIndex, ValueRole::roleId_, item->itemValue);
+        preDataChanged(itemIndex, ValueRole::roleId_, value);
         item->setValue(std::move(value));
         postDataChanged(itemIndex, ValueRole::roleId_, item->itemValue);
     }

@@ -8,6 +8,7 @@
 #include "core_qt_common/qt_global_settings.hpp"
 #include "core_command_system/i_env_system.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_generic_plugin/interfaces/i_command_line_parser.hpp"
 #include <unordered_map>
 #include <mutex>
 
@@ -45,7 +46,6 @@ namespace
 class QtPreferences::Implementation : public IEnvEventListener
 {
 public:
-
     Implementation( IComponentContext& contextManager, QtPreferences& qtPreferences)
         : contextManager_( contextManager )
         , qtPreferences_(qtPreferences)
@@ -53,12 +53,20 @@ public:
     {
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
         assert( fileSystem != nullptr );
-        if (fileSystem->exists( s_globalPreference ))
+
+        ICommandLineParser* commandLine = contextManager.queryInterface<ICommandLineParser>();
+        if (commandLine != nullptr)
+        {
+            setPreferencesFolder(commandLine->getParamStr("preferenceFolder"), *fileSystem);
+        }
+
+        std::string globalPreferencesFilePath = formatPreferenceFilePath(s_globalPreference);
+        if (fileSystem->exists(globalPreferencesFilePath.c_str()))
         {
             auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
             assert( definitionManager != nullptr );
             IFileSystem::IStreamPtr fileStream = 
-                fileSystem->readFile( s_globalPreference, std::ios::in | std::ios::binary );
+                fileSystem->readFile(globalPreferencesFilePath.c_str(), std::ios::in | std::ios::binary );
             XMLSerializer serializer( *fileStream, *definitionManager );
             loadPreferenceState( serializer, preferenceState_ );
         }
@@ -71,7 +79,7 @@ public:
     {
         auto fileSystem = contextManager_.queryInterface< IFileSystem >();
         assert( fileSystem != nullptr );
-        auto stream = fileSystem->readFile( s_globalPreference, std::ios::out | std::ios::binary );
+        auto stream = fileSystem->readFile(formatPreferenceFilePath(s_globalPreference).c_str(), std::ios::out | std::ios::binary );
         if(stream)
         {
             auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
@@ -107,6 +115,8 @@ public:
 
 private:
     void switchEnvContext(PreferenceEnvCom* ec);
+    void setPreferencesFolder(std::string&& folderPath, IFileSystem& fileSystem);
+    std::string formatPreferenceFilePath(const char* fileName);
 
     IComponentContext& contextManager_;
     QtPreferences& qtPreferences_;
@@ -114,6 +124,7 @@ private:
     PreferenceEnvCom* preferenceState_;
     IPreferences::PreferencesListeners listeners_;
     std::mutex								mutex_;
+    std::string preferencesFolder;
 
 };
 
@@ -143,10 +154,11 @@ void QtPreferences::Implementation::deregisterPreferencesListener( std::shared_p
 
 void QtPreferences::Implementation::saveCurrentPreferenceToFile( const char * filePath )
 {
+    std::string fullFilePath = formatPreferenceFilePath(filePath);
     auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
     auto fileSystem = contextManager_.queryInterface< IFileSystem >();
     assert( definitionManager && fileSystem );
-    auto stream = fileSystem->readFile( filePath, std::ios::out | std::ios::binary );
+    auto stream = fileSystem->readFile(fullFilePath.c_str(), std::ios::out | std::ios::binary );
     if(stream)
     {
         XMLSerializer serializer( *stream, *definitionManager );
@@ -154,18 +166,19 @@ void QtPreferences::Implementation::saveCurrentPreferenceToFile( const char * fi
     }
 }
 
-void QtPreferences::Implementation::loadCurrentPreferenceFromFile( const char * filePath )
+void QtPreferences::Implementation::loadCurrentPreferenceFromFile( const char * filePath)
 {
+    std::string fullFilePath = formatPreferenceFilePath(filePath);
     auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
     auto fileSystem = contextManager_.queryInterface< IFileSystem >();
     assert( definitionManager && fileSystem );
-    if(!fileSystem->exists( filePath ))
+    if(!fileSystem->exists(fullFilePath.c_str()))
     {
         assert( false );
         return;
     }
     IFileSystem::IStreamPtr fileStream = 
-        fileSystem->readFile( filePath, std::ios::in | std::ios::binary );
+        fileSystem->readFile(fullFilePath.c_str(), std::ios::in | std::ios::binary );
     XMLSerializer serializer( *fileStream, *definitionManager );
     loadPreferenceState( serializer, preferenceState_ );
 
@@ -259,7 +272,7 @@ void QtPreferences::Implementation::onSaveEnvState( IEnvState* state )
 {
 #if !defined(FAST_WORKAROUND_TASK_NGT_2540)
     ENV_STATE_QUERY( PreferenceEnvCom, ec );
-    std::string settings = genProjectSettingName( state->description() );
+    std::string settings = formatPreferenceFilePath(genProjectSettingName( state->description() ).c_str());
     auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
     auto fileSystem = contextManager_.queryInterface< IFileSystem >();
     assert( definitionManager && fileSystem );
@@ -276,7 +289,7 @@ void QtPreferences::Implementation::onLoadEnvState( IEnvState* state )
 {
 #if !defined(FAST_WORKAROUND_TASK_NGT_2540)
     ENV_STATE_QUERY( PreferenceEnvCom, ec );
-    std::string settings = genProjectSettingName( state->description() );
+    std::string settings = formatPreferenceFilePath(genProjectSettingName( state->description() ).c_str());
     auto definitionManager = contextManager_.queryInterface< IDefinitionManager >();
     auto fileSystem = contextManager_.queryInterface< IFileSystem >();
     assert( definitionManager && fileSystem );
@@ -305,9 +318,10 @@ void QtPreferences::Implementation::switchEnvContext(PreferenceEnvCom* ec)
         listener->prePreferencesChanged();
     }
     qGlobalSettings->firePrePreferenceChangeEvent();
+
     if(preferenceState_ == &globalPreferenceState_)
     {
-        saveCurrentPreferenceToFile( s_globalPreference );
+        saveCurrentPreferenceToFile(s_globalPreference);
     }
     {
         std::unique_lock<std::mutex> lock( mutex_ );
@@ -315,7 +329,7 @@ void QtPreferences::Implementation::switchEnvContext(PreferenceEnvCom* ec)
     }
     if(preferenceState_ == &globalPreferenceState_)
     {
-        loadCurrentPreferenceFromFile( s_globalPreference );
+        loadCurrentPreferenceFromFile(s_globalPreference);
     }
     for( auto it = itBegin; it != itEnd; ++it )
     {
@@ -325,6 +339,28 @@ void QtPreferences::Implementation::switchEnvContext(PreferenceEnvCom* ec)
     }
 
     qGlobalSettings->firePostPreferenceChangeEvent();
+}
+
+void QtPreferences::Implementation::setPreferencesFolder(std::string&& folderPath, IFileSystem& fileSystem)
+{
+    preferencesFolder = std::move(folderPath);
+    if (preferencesFolder.back() != '/')
+    {
+        preferencesFolder += '/';
+    }
+
+    if (!fileSystem.exists(preferencesFolder.c_str()))
+    {
+        preferencesFolder = std::string();
+    }
+}
+
+std::string QtPreferences::Implementation::formatPreferenceFilePath(const char* fileName)
+{
+    if (preferencesFolder.empty())
+        return std::string(fileName);
+
+    return preferencesFolder + fileName;
 }
 
 //------------------------------------------------------------------------------

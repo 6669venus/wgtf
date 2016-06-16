@@ -14,7 +14,10 @@ ELSEIF( APPLE )
 	SET( BW_PLATFORM_MAC ON )
 	SET( BW_PLATFORM "mac" )
 	SET( BW_COMPILER_TOKEN "clang" )
-	SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++" )
+	# DAVA team use C++14 feature, and as DAVA is only one team that compile WGTF for macos,
+	# there is no reason to write some complicated logic to resolve feature subset.
+	# I simple commented this line, because DAVA team use inherited compiler flags for WGTF. 
+	#SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++" )
 ELSE()
 	MESSAGE( FATAL_ERROR "Only Windows builds are currently supported." )
 ENDIF()

@@ -2,8 +2,6 @@
 #include "default_property_model_extensions.hpp"
 #include "reflected_collection_item.hpp"
 
-#include "core_reflection/i_definition_manager.hpp"
-
 namespace wgt
 {
 

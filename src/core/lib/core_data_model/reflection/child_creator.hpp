@@ -5,6 +5,7 @@
 
 #include "core_common/signal.hpp"
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
+#include "core_reflection/i_definition_manager.hpp"
 #include "core_dependency_system/depends.hpp"
 
 namespace wgt

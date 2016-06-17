@@ -80,9 +80,8 @@ private:
     };
 
     void releaseObject(T* object);
-    bool isOutMemory(T * object); 
+    bool isOurMemory(T * object); 
     PoolNode* allocateNewBatch();
-    size_t calculateNodeIndex(ObjectNode* batchStart, ObjectNode* node);
     
     const size_t batchSize;
     std::vector<PoolNode> objectBatches;
@@ -160,7 +159,7 @@ template <typename T, typename TLockStrategy>
 void ObjectsPool<T, TLockStrategy>::releaseObject(T * object)
 {
     LockGuard guard(lockStrategy);
-    assert(isOutMemory(object));
+    assert(isOurMemory(object));
     ObjectNode* objectNode = reinterpret_cast<ObjectNode*>(reinterpret_cast<uint8_t*>(object) - 2 * sizeof(size_t));
     size_t generation = objectNode->nodeGeneration;
     assert(generation < objectBatches.size());
@@ -198,13 +197,7 @@ typename ObjectsPool<T, TLockStrategy>::PoolNode* ObjectsPool<T, TLockStrategy>:
 }
 
 template <typename T, typename TLockStrategy>
-size_t ObjectsPool<T, TLockStrategy>::calculateNodeIndex(ObjectNode* batchStart, ObjectNode* node)
-{
-    return node - batchStart;
-}
-
-template <typename T, typename TLockStrategy>
-bool ObjectsPool<T, TLockStrategy>::isOutMemory(T * object)
+bool ObjectsPool<T, TLockStrategy>::isOurMemory(T * object)
 {
     uint8_t* rawObjectPointer = reinterpret_cast<uint8_t*>(object);
     for (const PoolNode& node : objectBatches)

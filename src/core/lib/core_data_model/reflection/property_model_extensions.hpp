@@ -121,11 +121,16 @@ private:
     std::shared_ptr<ExtensionChain> nextExtension;
 };
 
+
+// The main goal of this extension is create children of some property.
+// parent - is property node, that you should create children for.
+// children - return value
+// use allocator to create children
 class ChildCreatorExtension: public ExtensionChain
 {
 public:
     ChildCreatorExtension();
-    virtual void exposeChildren(const std::shared_ptr<const PropertyNode>&, std::vector<std::shared_ptr<const PropertyNode>> & children, IDefinitionManager& defMng) const;
+    virtual void exposeChildren(const std::shared_ptr<const PropertyNode>& parent, std::vector<std::shared_ptr<const PropertyNode>>& children, IDefinitionManager& defMng) const;
     static std::shared_ptr<ChildCreatorExtension> createDummy();
 
     void setAllocator(std::shared_ptr<IChildAllocator> allocator);
@@ -134,6 +139,9 @@ protected:
     std::shared_ptr<IChildAllocator> allocator;
 };
 
+// This extension provide way to customize algorithm of set/get data to/from property.
+// In getter you can for example calculate value for some virtual property
+// And in setter you can make some validation, or update some dependent properties.
 class SetterGetterExtension: public ExtensionChain
 {
 public:
@@ -144,6 +152,11 @@ public:
     static std::shared_ptr<SetterGetterExtension> createDummy();
 };
 
+// This extension should implements custom rules of search ReflectedPropertyItem for some value.
+// As ReflectedPropertyItem is real item that user will see, in multi selection case we should make decision in which 
+// ReflectedPropertyItem add current property.
+// Limitation - node.propertyInstance should be equal of item.property()
+// If your extension return nullptr, ReflectedPropertyModel will create new ReflectedPropertyItem for that.
 class MergeValuesExtension: public ExtensionChain
 {
 public:
@@ -153,6 +166,10 @@ public:
     static std::shared_ptr<MergeValuesExtension> createDummy();
 };
 
+// By this extension, you can inject into item some data for some roles. for example information about buttons.
+// inject are being called for every new ReflectedPropertyItem.
+// updateInjection are being called every time, when MergeValueExtension said as, that we should add/remove PropertyNode
+// from ReflectedPropertyItem. You can update state of buttons for example
 class InjectDataExtension: public ExtensionChain
 {
 public:

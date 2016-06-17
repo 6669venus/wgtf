@@ -28,6 +28,8 @@ SET( DATA_MODEL_SRCS
 	models/wg_list_model.hpp
 	models/role_provider.cpp
 	models/role_provider.hpp
+	models/buttons_model.hpp
+	models/buttons_model.cpp
 	models/qt_abstract_item_model.hpp
 	models/qt_abstract_item_model.cpp
 )
@@ -73,6 +75,10 @@ SET( DATA_MODEL_EXTENSIONS_SRCS
 	models/extensions/image_extension.hpp
 	models/extensions/i_model_extension.cpp
 	models/extensions/i_model_extension.hpp
+	models/extensions/buttons_model_extension.hpp
+	models/extensions/buttons_model_extension.cpp
+	models/extensions/buttons_definition_extension.hpp
+	models/extensions/buttons_definition_extension.cpp
 	models/extensions/header_footer_text_extension.cpp
 	models/extensions/header_footer_text_extension.hpp
 )

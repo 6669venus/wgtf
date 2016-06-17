@@ -46,6 +46,7 @@ SET( MODEL_SRCS
 	value_change_notifier.hpp
 	selection_handler.cpp
 	selection_handler.hpp
+	common_data_roles.hpp
 )
 SOURCE_GROUP( "DataModel" FILES ${MODEL_SRCS} )
 
@@ -80,6 +81,16 @@ SET( MODEL_REFLECTION_SRCS
 	reflection/reflected_tree_model_new.hpp
 	reflection/reflected_list.cpp
 	reflection/reflected_list.hpp
+	reflection/reflected_property_model.hpp
+	reflection/reflected_property_model.cpp
+	reflection/default_property_model_extensions.cpp
+	reflection/default_property_model_extensions.hpp
+	reflection/property_model_extensions.hpp
+	reflection/property_model_extensions.cpp
+	reflection/reflected_collection_item.hpp
+	reflection/reflected_collection_item.cpp
+	reflection/child_creator.hpp
+	reflection/child_creator.cpp
 	reflection/reflected_collection.cpp
 	reflection/reflected_collection.hpp
 )

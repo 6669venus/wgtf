@@ -1,5 +1,6 @@
 #include "wg_item_view.hpp"
 #include "qt_connection_holder.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "models/extensions/i_model_extension.hpp"
 #include "models/qt_abstract_item_model.hpp"
 
@@ -13,10 +14,10 @@
 
 #include <private/qmetaobjectbuilder_p.h>
 
+ITEMROLE( modelIndex )
+
 namespace wgt
 {
-ITEMROLE( itemId )
-ITEMROLE( modelIndex )
 
 namespace
 {
@@ -48,7 +49,7 @@ namespace
 				}
 			}
 
-			QVariant id = index.model()->data( index, static_cast< int >( ItemRole::itemIdId ) );
+			QVariant id = index.model()->data( index, static_cast< int >(ItemRole::itemIdId) );
 			{
 				auto it = itemIds_.find( id );
 				if (it != itemIds_.end())
@@ -495,6 +496,8 @@ struct WGItemView::Impl
 	QStringList roles_;
 	std::unique_ptr< ExtendedModel > extendedModel_;
 	QList< QObject* > headerData_;
+	QVariant currentIndexVar_;
+	QModelIndex currentIndex_;
 };
 
 WGItemView::WGItemView()
@@ -598,6 +601,38 @@ QList< QObject* > WGItemView::getHeaderData() const
     return impl_->headerData_;
 }
 
+QVariant WGItemView::getCurrentIndex() const
+{
+	return impl_->currentIndex_;
+}
+
+void WGItemView::setCurrentIndex( const QVariant & index )
+{
+	impl_->currentIndexVar_ = index;
+	if (getModel() == nullptr)
+	{
+		return;
+	}
+
+	auto modelIndex = QModelIndex();
+	if (index.type() == QMetaType::QModelIndex)
+	{
+		modelIndex = index.value< QModelIndex >();
+	}
+	else
+	{
+		modelIndex = getExtendedModel()->index( index.toInt(), 0 );
+	}
+
+	if (impl_->currentIndex_ == modelIndex)
+	{
+		return;
+	}
+
+	impl_->currentIndex_ = modelIndex;
+	emit currentIndexChanged();
+}
+
 void WGItemView::refresh()
 {
 	impl_->extendedModel_->reset( impl_->model_ );
@@ -614,5 +649,10 @@ void WGItemView::refresh()
         }
 	}
 	emit headerDataChanged();
+
+	if (impl_->extendedModel_ != nullptr)
+	{
+		setCurrentIndex( impl_->currentIndexVar_ );
+	}
 }
 } // end namespace wgt

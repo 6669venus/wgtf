@@ -5,6 +5,12 @@
 #include "core_generic_plugin/interfaces/i_component_context.hpp"
 #include "core_variant/type_id.hpp"
 
+#define INTERFACE_REQUEST(type, var, holder, retOnFalse)\
+    type* var##Pointer = holder.get<type>(); \
+    if (var##Pointer == nullptr)\
+        return retOnFalse;\
+    type& var = *var##Pointer;
+
 namespace wgt
 {
 class DummyDependsType {};
@@ -13,6 +19,7 @@ class DummyDependsType {};
 // Change this to support as many classes as we need to inherit, until we have
 // support for variadic templates
 //==============================================================================
+
 template<
 	typename T1,
 	typename T2 = DummyDependsType,

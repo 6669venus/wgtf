@@ -2,9 +2,10 @@
 #include "core_qt_common/models/adapters/column_list_adapter.hpp"
 #include "core_qt_common/models/adapters/indexed_adapter.hpp"
 
+ITEMROLE( columnModel )
+
 namespace wgt
 {
-ITEMROLE( columnModel )
 
 struct ColumnExtension::Implementation
 {

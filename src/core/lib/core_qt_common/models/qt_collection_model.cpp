@@ -1,15 +1,13 @@
 #include "qt_collection_model.hpp"
 
+#include "core_data_model/common_data_roles.hpp"
 #include "helpers/qt_helpers.hpp"
 
-
+ITEMROLE( key )
+ITEMROLE( keyType )
 
 namespace wgt
 {
-ITEMROLE( value )
-ITEMROLE( key )
-ITEMROLE( valueType )
-ITEMROLE( keyType )
 
 QtCollectionModel::QtCollectionModel( std::unique_ptr<CollectionModel>&& source )
 	: QtListModel( *source.get() ), model_( std::move( source ) )

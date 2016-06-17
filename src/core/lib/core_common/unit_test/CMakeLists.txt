@@ -6,6 +6,7 @@ INCLUDE( WGToolsCoreProject )
 SET( ALL_SRCS
 	main.cpp
 	test_wg_condition_variable.cpp
+      test_objects_pool.cpp
 )
 
 BW_BLOB_SOURCES( BLOB_SRCS ${ALL_SRCS} )

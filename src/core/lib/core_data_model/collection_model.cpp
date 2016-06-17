@@ -1,14 +1,14 @@
 #include "collection_model.hpp"
 #include "core_data_model/i_item_role.hpp"
+#include "core_data_model/common_data_roles.hpp"
 #include "core_variant/collection.hpp"
 #include "core_serialization/resizing_memory_stream.hpp"
 
+ITEMROLE( key )
+ITEMROLE( keyType )
+
 namespace wgt
 {
-ITEMROLE( value )
-ITEMROLE( key )
-ITEMROLE( valueType )
-ITEMROLE( keyType )
 namespace
 {
 	class CollectionItem : public AbstractItem

@@ -23,6 +23,8 @@
 #include "models/extensions/tree_extension.hpp"
 #include "models/extensions/tree_extension_old.hpp"
 #include "models/extensions/value_extension.hpp"
+#include "models/extensions/buttons_definition_extension.hpp"
+#include "models/extensions/buttons_model_extension.hpp"
 #include "models/extensions/image_extension.hpp"
 #include "models/extensions/header_footer_text_extension.hpp"
 #include "models/wg_list_model.hpp"
@@ -116,6 +118,8 @@ namespace wgt
 	qmlRegisterType< TreeExtension >( "WGControls", 2, 0, "TreeExtension" );
 	qmlRegisterType< WGItemView >( "WGControls", 2, 0, "WGItemView" );
 
+    qmlRegisterType< ButtonsDefinitionExtension, 1 >("WGControls", 1, 0, "ButtonsDefinitionExtension");
+    qmlRegisterType< ButtonsModelExtension, 1 >("WGControls", 1, 0, "ButtonsModelExtension");
 }
 
 

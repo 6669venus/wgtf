@@ -324,13 +324,7 @@ AbstractItem * ReflectedPropertyModel::item(const ItemIndex & index) const
 void ReflectedPropertyModel::index(const AbstractItem * item, ItemIndex & o_Index) const
 {
     assert(item != nullptr);
-    const RefPropertyItem* refItem = static_cast<const RefPropertyItem *>(item);
-    o_Index.column_ = 0;
-    o_Index.row_ = refItem->getPosition();
-    o_Index.parent_ = refItem->getParent();
-
-    if (o_Index.parent_ == rootItem.get())
-        o_Index.parent_ = nullptr;
+    o_Index = getModelParent(static_cast<const RefPropertyItem *>(item));
 }
 
 int ReflectedPropertyModel::rowCount(const AbstractItem * item) const

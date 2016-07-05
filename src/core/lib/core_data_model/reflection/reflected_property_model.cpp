@@ -328,6 +328,9 @@ void ReflectedPropertyModel::index(const AbstractItem * item, ItemIndex & o_Inde
     o_Index.column_ = 0;
     o_Index.row_ = refItem->getPosition();
     o_Index.parent_ = refItem->getParent();
+
+    if (o_Index.parent_ == rootItem.get())
+        o_Index.parent_ = nullptr;
 }
 
 int ReflectedPropertyModel::rowCount(const AbstractItem * item) const
@@ -406,7 +409,19 @@ RefPropertyItem* ReflectedPropertyModel::getEffectiveParent(AbstractItem * model
 
 AbstractListModel::ItemIndex ReflectedPropertyModel::getModelParent(const RefPropertyItem * effectiveParent) const
 {
-    return effectiveParent == rootItem.get() ? ItemIndex() : effectiveParent->getItemIndex();
+    ItemIndex idx;
+
+    if (effectiveParent != rootItem.get())
+    {
+        idx = effectiveParent->getItemIndex();
+
+        if (idx.parent_ == rootItem.get())
+        {
+            idx.parent_ = nullptr;
+        }
+    }
+
+    return idx;
 }
 
 Variant ReflectedPropertyModel::getDataImpl(const RefPropertyItem * item, int column, size_t roleId) const

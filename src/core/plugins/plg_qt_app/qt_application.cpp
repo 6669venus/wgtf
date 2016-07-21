@@ -57,7 +57,7 @@ namespace
 	};
 }
 
-QtApplication::QtApplication( int argc, char** argv )
+QtApplication::QtApplication( int argc, char** argv, bool showLogo)
 	: application_( nullptr )
 	, argc_( argc )
 	, argv_( argv )
@@ -87,9 +87,12 @@ QtApplication::QtApplication( int argc, char** argv )
 	QObject::connect( dispatcher, &QAbstractEventDispatcher::awake, idleLoop, &IdleLoop::stop );
 
 	//Splash
-	QPixmap pixmap( ":/qt_app/splash" );
-	splash_.reset( new QSplashScreen( pixmap ) );
-	splash_->show();
+    if (showLogo)
+    {
+        QPixmap pixmap(":/qt_app/splash");
+        splash_.reset(new QSplashScreen(pixmap));
+        splash_->show();
+    }
 }
 
 QtApplication::~QtApplication()
@@ -136,8 +139,12 @@ int QtApplication::startApplication()
 {
 	assert( application_ != nullptr );
 	signalStartUp();
-	splash_->close();
-	splash_ = nullptr;
+    if (splash_)
+    {
+        splash_->close();
+        splash_ = nullptr;
+    }
+
 	if(bQuit_)
 	{
 		return 0;

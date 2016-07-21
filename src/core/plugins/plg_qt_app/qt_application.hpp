@@ -18,7 +18,7 @@ class QtApplication : public Implements< IUIApplication >
 	typedef Signal<void(void)> SignalVoid;
 
 public:
-	QtApplication( int argc, char** argv );
+	QtApplication( int argc, char** argv, bool showLogo );
 	virtual ~QtApplication();
 
 	void initialise( IQtFramework * qtFramework );

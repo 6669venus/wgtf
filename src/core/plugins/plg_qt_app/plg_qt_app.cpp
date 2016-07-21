@@ -25,7 +25,7 @@ public:
 		auto clp = contextManager.queryInterface< ICommandLineParser >();
 		assert( clp != nullptr );
 
-		qtApplication_ = new QtApplication( clp->argc(), clp->argv() );
+		qtApplication_ = new QtApplication( clp->argc(), clp->argv(), !clp->getFlag("hideLogo") );
 		types_.push_back(
 			contextManager.registerInterface( qtApplication_ ) );
 		return true;
